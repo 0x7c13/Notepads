@@ -61,6 +61,7 @@ internal sealed class RecoveryRecord
     public RecoveryStamp TargetStamp { get; set; }
     public List<RecoveryConsumption> Consumptions { get; set; } = [];
     public List<string> ResetAcceptedLegacySources { get; set; } = [];
+    public List<Guid> ResetRetiredContentOperations { get; set; } = [];
     public Guid PreviousEpochId { get; set; }
     public Guid ClosedEditorId { get; set; }
     public Guid TargetReceiptOperationId { get; set; }

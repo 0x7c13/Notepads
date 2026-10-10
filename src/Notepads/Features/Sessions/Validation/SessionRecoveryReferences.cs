@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Contracts.Legacy;
@@ -36,10 +37,10 @@ internal sealed class SessionRecoveryReferences : SessionReferenceSet
 
     public void Include(NotepadsSessionDataV2 session)
     {
-        if (session?.TextEditors == null || session.UnrecoveredLegacyEditors == null)
+        if (session?.TextEditors == null || session.PendingRescues == null || session.UnrecoveredLegacyEditors == null)
             throw new InvalidDataException("Invalid V2 recovery reference collection.");
         ValidateTransferReferences(session);
-        foreach (var editor in session.TextEditors)
+        foreach (var editor in session.TextEditors.Concat(session.PendingRescues))
         {
             if (editor == null) throw new InvalidDataException("Invalid V2 recovery record.");
             Include(editor.SavedBaseline);
@@ -62,7 +63,8 @@ internal sealed class SessionRecoveryReferences : SessionReferenceSet
     {
         var kinds = (session.TransferSource == null ? 0 : 1) + (session.TransferReceipt == null ? 0 : 1) +
             (session.TransferAcknowledgement == null ? 0 : 1);
-        if (kinds > 1 || session.TransferAcknowledgement == null && session.AcknowledgedSource != null)
+        if (kinds > 1 || session.PendingRescues == null || kinds != 0 && session.PendingRescues.Count != 0 ||
+            session.TransferAcknowledgement == null && session.AcknowledgedSource != null)
             throw new InvalidDataException("Conflicting durable transfer root kinds.");
         if (session.TransferAcknowledgement != null)
         {

@@ -45,6 +45,7 @@ internal static class Program
         await TestUnreadableAsync();
         await TestTransferShapeAsync();
         Console.WriteLine($"PASS: {assertions} session metadata assertions on real FileStream storage.");
+        RecoverySelectorTests.Run();
     }
 
     private static async Task TestFailingObserverAsync(string mode)
@@ -213,17 +214,32 @@ internal static class Program
     {
         using var fixture = new StoreFixture();
         var area = fixture.Store.GetScopeArea(fixture.Owner, RecoveryAreaKind.Decisions);
+        var retired = new[] { Guid.NewGuid(), Guid.NewGuid() };
         var reset = new RecoveryRecord
         {
             Kind = RecoveryRecordKind.Reset,
             Stamp = new RecoveryStamp { ScopeId = fixture.Owner, EpochId = Guid.NewGuid(), OperationId = Guid.NewGuid(), Ordinal = 1 },
             PreviousEpochId = fixture.Owner,
-            ResetAcceptedLegacySources = [new string('a', 64)]
+            ResetAcceptedLegacySources = [new string('a', 64)],
+            ResetRetiredContentOperations = retired.ToList()
         };
+        var address = Address(area, reset);
+        reset.ResetRetiredContentOperations = null;
+        Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(reset, address), "null reset retirement list is rejected");
+        reset.ResetRetiredContentOperations = [Guid.Empty];
+        Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(reset, address), "empty retired operation identity is rejected");
+        reset.ResetRetiredContentOperations = [retired[0], retired[0]];
+        Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(reset, address), "duplicate retired operation identities are rejected");
+        reset.ResetRetiredContentOperations = retired.ToList();
+        var nonReset = fixture.Checkpoint();
+        nonReset.ResetRetiredContentOperations = retired.ToList();
+        Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(nonReset, Address(fixture.Area, nonReset)),
+            "only reset records can retire content operations");
         var intent = await fixture.Store.PublishResetIntentAsync(area, reset);
         Check(intent.IsCommitted, "reset barrier is durable before decision publication");
         var readIntent = await fixture.Store.ReadResetIntentAsync(intent.Address);
         Check(readIntent.State == RecoveryReadState.Valid && readIntent.Record.Stamp.EpochId == reset.Stamp.EpochId, "intent binds exact new epoch and operation");
+        Check(readIntent.Record.ResetRetiredContentOperations.SequenceEqual(retired), "reset intent preserves exact content retirement identities");
         Check((await fixture.Store.ReadAsync(intent.Address)).State == RecoveryReadState.Absent, "an intent alone is not a complete decision");
         Check(fixture.Store.AllocateOrdinal(area) == 2, "intent occupies its ordinal");
         File.WriteAllText(fixture.Store.Paths.CopyPath(intent.Address, "a"), "damaged interrupted A");
@@ -232,6 +248,8 @@ internal static class Program
             "verified intent can finish a reset whose interrupted final copies are both corrupt");
         var result = await fixture.Store.PublishAsync(area, reset);
         Check(result.IsCommitted && result.PayloadSha256 == intent.PayloadSha256, "matching decision commits the exact reset payload");
+        Check((await fixture.Store.ReadAsync(result.Address)).Record.ResetRetiredContentOperations.SequenceEqual(retired),
+            "completed reset mirrors preserve exact content retirement identities");
         var closed = new RecoveryRecord
         { Kind = RecoveryRecordKind.Closed, ClosedEditorId = Guid.NewGuid(), Stamp = fixture.Store.CreatePublicationStamp(area, reset.Stamp) };
         Check((await fixture.Store.PublishAsync(area, closed)).IsCommitted && fixture.Store.Enumerate(area).ResetIntents.SetEquals(new[] { intent.Address }),

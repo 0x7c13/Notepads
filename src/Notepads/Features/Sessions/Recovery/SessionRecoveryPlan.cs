@@ -6,10 +6,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Contracts.Legacy;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Validation;
+using Notepads.Infrastructure.Storage;
+using Windows.Storage;
 
 namespace Notepads.Features.Sessions.Recovery;
 
@@ -54,27 +59,35 @@ internal sealed class RecoveryDocumentSource
 {
     private readonly TextEditorSessionDataV2 _descriptor;
     private readonly TextEditorSessionDataV1 _legacy;
-    private readonly TextEditorSessionDataV2[] _fallbacks;
     private readonly RecoveryStamp _expectedStamp;
     private readonly RecoverySourceLifetime _lifetime;
     private readonly RecoveryStamp _targetStamp;
+    private readonly Lazy<Task<StorageFile>> _editingFile;
+    private readonly Lazy<Task<StorageFile>>[] _fallbackEditingFiles;
 
-    internal RecoveryDocumentSource(TextEditorSessionDataV2 descriptor, TextEditorSessionDataV1 legacy,
-        bool isOwned, RecoveryStamp expectedStamp, IEnumerable<TextEditorSessionDataV2> fallbacks,
-        RecoveryAdoptionOrigin origin, RecoverySourceLifetime lifetime, RecoveryStamp targetStamp = null)
+    internal RecoveryDocumentSource(RecoveryDocumentDecision decision, TextEditorSessionDataV1 legacy,
+        bool isOwned, RecoveryStamp expectedStamp, RecoveryAdoptionOrigin origin,
+        RecoverySourceLifetime lifetime, RecoveryStamp targetStamp = null, TextEditorSessionDataV2 descriptorOverride = null)
     {
-        _descriptor = descriptor == null ? null : SessionRecoveryCatalog.CloneEditor(descriptor);
+        if ((decision == null) == (legacy == null))
+            throw new ArgumentException("A recovery source requires exactly one current or legacy document.");
+        if (origin?.Decision != null && !ReferenceEquals(decision, origin.Decision))
+            throw new ArgumentException("The adoption origin must retain this source's recovery decision.");
+        Decision = decision;
+        _descriptor = descriptorOverride == null ? decision?.Descriptor : SessionRecoveryCatalog.CloneEditor(descriptorOverride);
         _legacy = CloneLegacy(legacy);
-        _fallbacks = (fallbacks ?? []).Select(SessionRecoveryCatalog.CloneEditor).ToArray();
         _expectedStamp = SessionRecoveryAuthority.CopyStamp(expectedStamp);
         _targetStamp = SessionRecoveryAuthority.CopyStamp(targetStamp ?? expectedStamp);
         IsOwned = isOwned;
         Origin = origin;
         _lifetime = lifetime;
+        _editingFile = CreateEditingFileBinding(-1);
+        _fallbackEditingFiles = Enumerable.Range(0, FallbackCount).Select(CreateEditingFileBinding).ToArray();
     }
 
     public Guid Id => _descriptor?.Id ?? _legacy.Id;
     public bool IsOwned { get; }
+    public bool IsOwnScopeRescue => !IsOwned && Origin?.SourceStamp?.ScopeId == _targetStamp.ScopeId;
     public TextEditorSessionDataV2 Descriptor => _descriptor == null ? null : SessionRecoveryCatalog.CloneEditor(_descriptor);
     public TextEditorSessionDataV1 LegacyDescriptor => CloneLegacy(_legacy);
     public DocumentMetadata Metadata => (_descriptor?.StateMetaData ?? _legacy?.StateMetaData)?.Clone();
@@ -83,15 +96,37 @@ internal sealed class RecoveryDocumentSource
     public string EditingFileFutureAccessToken => _descriptor?.EditingFileFutureAccessToken ?? _legacy?.EditingFileFutureAccessToken;
     public RecoveryStamp ExpectedStamp => SessionRecoveryAuthority.CopyStamp(_expectedStamp);
     public RecoveryStamp TargetStamp => SessionRecoveryAuthority.CopyStamp(_targetStamp);
-    public int FallbackCount => _fallbacks.Length;
+    public int FallbackCount => Decision?.Fallbacks.Count ?? 0;
+    internal RecoveryDocumentDecision Decision { get; }
     internal RecoveryAdoptionOrigin Origin { get; }
 
     internal void RequireAvailable() => ObjectDisposedException.ThrowIf(_lifetime.Disposed, this);
 
+    internal Task<StorageFile> ResolveEditingFileAsync(int fallbackIndex = -1)
+    {
+        RequireAvailable();
+        return (fallbackIndex < 0 ? _editingFile : _fallbackEditingFiles[fallbackIndex]).Value;
+    }
+
+    internal string GetEditingFilePath(int fallbackIndex = -1)
+    {
+        RequireAvailable();
+        return fallbackIndex < 0 && _legacy != null ? _legacy.EditingFilePath : GetDescriptor(fallbackIndex)?.EditingFilePath;
+    }
+
+    private Lazy<Task<StorageFile>> CreateEditingFileBinding(int fallbackIndex) => new(() =>
+    {
+        var token = fallbackIndex < 0 && _legacy != null ? _legacy.EditingFileFutureAccessToken :
+            GetDescriptor(fallbackIndex)?.EditingFileFutureAccessToken;
+        // Keep a missing grant detached for this source lifetime. Each caller cancels only its wait.
+        return token == null ? Task.FromResult<StorageFile>(null) :
+            FutureAccessListUtility.GetFileFromFutureAccessListAsync(token);
+    }, LazyThreadSafetyMode.ExecutionAndPublication);
+
     internal TextEditorSessionDataV2 GetDescriptor(int fallbackIndex)
     {
         RequireAvailable();
-        var data = fallbackIndex < 0 ? Descriptor : SessionRecoveryCatalog.CloneEditor(_fallbacks[fallbackIndex]);
+        var data = fallbackIndex < 0 ? Descriptor : Decision.Fallbacks[fallbackIndex].Descriptor;
         if (data != null && data.Id != Id)
         {
             data.Id = Id;
@@ -116,11 +151,26 @@ internal sealed class RecoveryDocumentSource
 
 internal sealed class RecoveryAdoptionOrigin
 {
-    public string LegacyFingerprint { get; init; }
-    public RecoveryStamp SourceStamp { get; init; }
-    public RecoveryAddress RootAddress { get; init; }
-    public string RootSha256 { get; init; }
-    public TextEditorSessionDataV2 SourceEditor { get; init; }
-    public long ConsumptionCutoff { get; init; }
-    public IReadOnlyList<TextEditorSessionDataV2> UnselectedNewerDescriptors { get; init; } = [];
+    private readonly RecoveryStamp _sourceStamp;
+
+    public RecoveryAdoptionOrigin(string legacyFingerprint) => LegacyFingerprint = legacyFingerprint;
+
+    public RecoveryAdoptionOrigin(RecoveryStamp sourceStamp, RecoveryDocumentDecision decision,
+        RecoveryAddress rootAddress, string rootSha256)
+    {
+        ArgumentNullException.ThrowIfNull(sourceStamp);
+        ArgumentNullException.ThrowIfNull(decision);
+        _sourceStamp = SessionRecoveryAuthority.CopyStamp(sourceStamp);
+        Decision = decision;
+        RootAddress = rootAddress;
+        RootSha256 = rootSha256;
+    }
+
+    public string LegacyFingerprint { get; }
+    public RecoveryStamp SourceStamp => SessionRecoveryAuthority.CopyStamp(_sourceStamp);
+    public RecoveryDocumentDecision Decision { get; }
+    public RecoveryAddress RootAddress { get; }
+    public string RootSha256 { get; }
+    public TextEditorSessionDataV2 SourceEditor => Decision?.Descriptor;
+    public long ConsumptionCutoff => Decision?.ConsumptionCutoff ?? 0;
 }

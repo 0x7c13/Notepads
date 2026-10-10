@@ -21,6 +21,9 @@ internal sealed class NotepadsSessionDataV2
 
     public List<TextEditorSessionDataV2> TextEditors { get; set; } = new List<TextEditorSessionDataV2>();
 
+    // Original own-scope rescue descriptors awaiting adoption, separate from the visible tab roster.
+    public List<TextEditorSessionDataV2> PendingRescues { get; set; } = [];
+
     // Failed V1 recovery records remain intact until they can be restored.
     // Publishing V2 must never imply that those tabs were intentionally closed.
     public List<TextEditorSessionDataV1> UnrecoveredLegacyEditors { get; set; } = new List<TextEditorSessionDataV1>();

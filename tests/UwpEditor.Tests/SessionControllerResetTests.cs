@@ -106,7 +106,7 @@ internal static partial class SessionControllerTests
             }
         }
         finally { await SessionTestProtocol.CleanupAsync(owner); }
-        log.AppendLine("PASS: controller reset retains live Unicode/native identity after a committed intent and failed final record, retires obsolete sources, resumes presentation, and commits/restarts an exact new-epoch workspace.");
+        log.AppendLine("PASS: interrupted reset preserves live editors and restarts safely in the new epoch.");
     }
 
     private sealed class ControllerResetDecisionFailure : IRecoveryStorageFaults

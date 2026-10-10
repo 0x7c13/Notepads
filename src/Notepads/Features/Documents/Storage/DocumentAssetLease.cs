@@ -17,7 +17,7 @@ namespace Notepads.Features.Documents.Storage;
 /// Shared ownership for document assets. Acquisition and deletion reservation
 /// use the same gate, so GC cannot race a new baseline or journal reader.
 /// </summary>
-internal sealed class DocumentAssetLease : IDisposable
+internal sealed partial class DocumentAssetLease : IDisposable
 {
     private static readonly object RegistrySync = new();
     private static readonly Dictionary<string, SharedAsset> Registry =
@@ -230,6 +230,9 @@ internal sealed class DocumentAssetLease : IDisposable
         if (_disposed) throw new ObjectDisposedException(nameof(DocumentAssetLease));
     }
 
+    // Source-linked tests can cancel a fork after its actual read; erased in production.
+    static partial void OnLeasedRead(string path, int byteCount, CancellationToken cancellationToken);
+
     private sealed class SharedAsset
     {
         public StorageFile File;
@@ -276,6 +279,7 @@ internal sealed class DocumentAssetLease : IDisposable
             ValidateBuffer(buffer, offset, count);
             var read = await _stream.ReadAsync(buffer, offset,
                 (int)Math.Min(count, _length - _position), cancellationToken).ConfigureAwait(false);
+            if (read != 0) OnLeasedRead(_lease.File?.Path, read, cancellationToken);
             return CompleteRead(read, count);
         }
 

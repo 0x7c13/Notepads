@@ -92,11 +92,15 @@ internal static partial class SessionControllerTests
             observer.Dispose();
             await SessionTestProtocol.CleanupAsync(owner);
         }
-        log.AppendLine("PASS: session authority, discovery, background preparation, backup, close, maintenance and reset run on the pool; native restore and capture stay on the UI thread across two window lifetimes.");
+        log.AppendLine("PASS: persistence runs on the pool; native restore and capture stay on the UI thread.");
         await VerifyLazyWorkspaceAsync(log);
         await VerifyInterruptedResetAsync(log);
         await VerifyBackgroundOutcomesAsync(log);
         await VerifyImportedWorkspaceAsync(log);
+        await VerifyImportedFileLookupAsync(log);
+        await VerifyDiscoveryRetryAsync(log);
+        await VerifyRecoveryAdmissionAsync(log);
+        await VerifyPendingRescuePersistenceAsync(log);
     }
 
     private static NotSupportedException Unused() => new("The session controller test host does not use this member.");
@@ -150,11 +154,11 @@ internal static partial class SessionControllerTests
     {
         private bool _closed;
 
-        public ControllerHost(Guid owner, SessionRegistry registry, RecoveryRecordStore store = null)
+        public ControllerHost(Guid owner, SessionRegistry registry, RecoveryRecordStore store = null, bool primary = false)
         {
             var dispatcher = Window.Current.Dispatcher;
             Core = new FakeNotepadsCore(owner, dispatcher);
-            Service = SessionTestProtocol.CreateService(owner, store);
+            Service = SessionTestProtocol.CreateService(owner, store, primary);
             Controller = new SessionController(Core, Service, dispatcher, registry.Register);
         }
 
@@ -221,6 +225,7 @@ internal static partial class SessionControllerTests
             RequireUIThread(_dispatcher);
             var editor = new FakeTextEditor(id, _owner, _dispatcher)
             {
+                EditingFile = editingFile,
                 RestoreStarting = RestoreStarting,
                 NativeRestoreReturned = NativeRestoreReturned,
                 RestoreReady = RestoreReady
@@ -244,7 +249,7 @@ internal static partial class SessionControllerTests
         public void OpenTabs(WorkspaceTab[] tabs, Guid? selectedTabId = null, bool allowWhileClosing = false)
         {
             foreach (var tab in tabs) OpenTab(tab, select: false);
-            SwitchTo(tabs.FirstOrDefault(tab => tab.Id == selectedTabId) ?? tabs.LastOrDefault());
+            SwitchTo(GetTabs().FirstOrDefault(tab => tab.Id == selectedTabId) ?? tabs.LastOrDefault());
         }
 
         public bool AttachEditor(WorkspaceTab tab, ITextEditor editor, bool showEditor = true)
@@ -310,7 +315,9 @@ internal static partial class SessionControllerTests
         public void SwitchTo(bool next) => throw Unused();
         public void SwitchTo(int index) => throw Unused();
         public void SwitchTo(ITextEditor textEditor) => throw Unused();
-        public Task<WorkspaceTab> FindTabAsync(StorageFile file) => throw Unused();
+        public WorkspaceTab FindReadyTab(StorageFile file) =>
+            _open.FirstOrDefault(tab => tab.ReadyEditor?.EditingFile?.IsEqual(file) == true);
+        public Task<bool> OpenFileAsync(StorageFile file, Func<WorkspaceFileOpenResult, Task> presentResultAsync) => throw Unused();
         public void FocusOnTextEditor(ITextEditor textEditor) => throw Unused();
         public void FocusOnSelectedTextEditor() => throw Unused();
     }
@@ -337,9 +344,9 @@ internal static partial class SessionControllerTests
         public Action<FakeTextEditor> RestoreReady { get; set; }
         public string Text => Document.Editor.GetText(Document.Editor.Length);
         public Guid Id { get; set; }
-        public StorageFile EditingFile => null;
-        public string EditingFileName => null;
-        public string EditingFilePath => null;
+        public StorageFile EditingFile { get; set; }
+        public string EditingFileName => EditingFile?.Name;
+        public string EditingFilePath => EditingFile?.Path;
         public Task DisposalCompletion => Task.CompletedTask;
 
         public async Task CreateDocumentAsync(string text) => Document = await SessionTestDocument.CreateAsync(_owner, text);
@@ -365,6 +372,7 @@ internal static partial class SessionControllerTests
             Document = await SessionTestDocument.FromPreparedAsync(_owner, new PreparedRecoveryDocument
             { SavedSnapshot = savedSnapshot, RecoveryBaseline = recoveryBaseline, Checkpoint = checkpoint, Metadata = metadata },
                 () => NativeRestoreReturned?.Invoke(Id));
+            EditingFile = file;
             RestoreReady?.Invoke(this);
         }
 
@@ -407,10 +415,11 @@ internal static partial class SessionControllerTests
             DocumentBaseline pendingBaseline)
         {
             RequireUIThread(_dispatcher);
-            if (pendingBaseline != null || file != null) throw Unused(); // Saved-only legacy import fixture.
+            if (pendingBaseline != null) throw Unused(); // Saved-only legacy import fixture.
             RestoreStarting?.Invoke(Id);
             Document = await SessionTestDocument.CreateAsync(_owner, snapshot.Baseline);
             Document.Metadata = metadata.Clone();
+            EditingFile = file;
             NativeRestoreReturned?.Invoke(Id);
             RestoreReady?.Invoke(this);
         }

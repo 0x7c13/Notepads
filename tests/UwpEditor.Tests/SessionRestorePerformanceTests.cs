@@ -18,6 +18,7 @@ using Notepads.Composition;
 using Notepads.Features.Documents.IO;
 using Notepads.Features.Documents.Storage;
 using Notepads.Features.Sessions.Contracts;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Windows.ApplicationModel;
@@ -389,13 +390,13 @@ internal static partial class SessionControllerTests
             {
                 var catalog = await SessionRecoveryCatalog.ReadScopeAsync(fixture.OwnerId);
                 SessionTestProtocol.Check(!catalog.Blocked && catalog.SelectedCheckpoint != null &&
-                    catalog.Session.Scope?.OwnerId == fixture.OwnerId &&
-                    catalog.Session.SelectedTextEditor == fixture.SelectedEditorId &&
-                    catalog.Session.TextEditors.Select(row => row.Id).SequenceEqual(orderedIds),
+                    catalog.Selection.Stamp.ScopeId == fixture.OwnerId &&
+                    catalog.Selection.SelectedEditorId == fixture.SelectedEditorId &&
+                    catalog.Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Id).SequenceEqual(orderedIds),
                     "Fresh durable catalog changed the fixture owner, ordered IDs or selected ID.");
                 for (var index = 0; index < expected.Length; index++)
                 {
-                    var journal = catalog.Session.TextEditors[index].Journal;
+                    var journal = catalog.Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Descriptor).ElementAt(index).Journal;
                     SessionTestProtocol.Check(journal != null && journal.OwnerId == fixture.OwnerId &&
                         journal.GenerationId == expected[index].JournalGenerationId,
                         "Attachment did not publish a restored journal generation to the durable catalog.");

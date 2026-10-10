@@ -63,7 +63,8 @@ internal sealed partial class SessionService
     {
         await EnsureWriterLeaseAsync(cancellation);
         using (await SessionRecoveryTransaction.EnterAsync(cancellation))
-            BindAuthority(await SessionRecoveryCatalog.ReadScopeAsync(_sessionScope.OwnerId, cancellation, content: false));
+            BindAuthority(await SessionRecoveryCatalog.ReadScopeAsync(_sessionScope.OwnerId, cancellation,
+                content: _committedSessionData == null));
     }
 
     private void BindAuthority(RecoveryScopeSnapshot authority)
@@ -160,9 +161,13 @@ internal sealed partial class SessionService
             using (await SessionRecoveryTransaction.EnterAsync(cancellation))
             {
                 var pass = new RecoveryCatalogPass();
-                var authority = await SessionRecoveryCatalog.ReadScopeAsync(expected.ScopeId, cancellation, content: false, pass);
+                // Before this service admits a complete checkpoint, unreadable rescue-only
+                // history must not become an apparently empty replacement workspace.
+                var authority = await SessionRecoveryCatalog.ReadScopeAsync(expected.ScopeId, cancellation,
+                    content: _committedSessionData == null, pass);
                 IsRecoveryBlocked = authority.Blocked;
                 SessionRecoveryAuthority.RequireCurrent(expected, authority);
+                session.PendingRescues = await ValidatePendingRescuesAsync(capture, authority, cancellation);
                 var committedEditors = _committedSessionData?.TextEditors.ToDictionary(editor => editor.Id) ?? [];
                 foreach (var document in capture.Documents)
                 {
@@ -273,7 +278,8 @@ internal sealed partial class SessionService
             using (await SessionRecoveryTransaction.EnterAsync(cancellation))
             {
                 var pass = new RecoveryCatalogPass();
-                var authority = await SessionRecoveryCatalog.ReadScopeAsync(expected.ScopeId, cancellation, content: false, pass);
+                var authority = await SessionRecoveryCatalog.ReadScopeAsync(expected.ScopeId, cancellation,
+                    content: _committedSessionData == null, pass);
                 IsRecoveryBlocked = authority.Blocked;
                 SessionRecoveryAuthority.RequireCurrent(expected, authority);
                 if (SessionRecoveryAuthority.IsClosed(expected, document.Id, authority.Decisions.Select(read => read.Record)))
@@ -332,7 +338,7 @@ internal sealed partial class SessionService
                 key.Kind == RecoveryConsumptionKind.Legacy && string.Equals(key.LegacyFingerprint, origin.LegacyFingerprint,
                     StringComparison.OrdinalIgnoreCase) && key.SourceEditorId == target.Id :
                 key.Kind == RecoveryConsumptionKind.Inactive && key.SourceScopeId == origin.SourceStamp.ScopeId &&
-                key.SourceEpochId == origin.SourceStamp.EpochId && key.SourceEditorId == origin.SourceEditor.Id &&
+                key.SourceEpochId == origin.SourceStamp.EpochId && key.SourceEditorId == origin.Decision.Id &&
                 key.SourceCaptureRevision == sourceCutoff));
         if (priorAdoption != null) return SessionRecoveryCatalog.CloneEditor(priorAdoption.Record.Editor);
         var area = store.GetScopeArea(expected.ScopeId, RecoveryAreaKind.Decisions);
@@ -363,38 +369,36 @@ internal sealed partial class SessionService
                 if (exact.State != RecoveryReadState.Valid || exact.PayloadSha256 != source.RootSha256)
                     throw new InvalidDataException("The inactive source checkpoint changed before adoption.");
             }
-            var candidate = current.Session.TextEditors.Concat(current.EligibleRescues.Select(read => read.Record.Editor))
-                .FirstOrDefault(editor => editor.Id == origin.SourceEditor.Id);
+            var candidateHash = current.Selection.Documents.FirstOrDefault(document => document.Id == source.Decision.Id)
+                ?.DescriptorSha256;
             // Another own tab can publish the new workspace while this queued rescue is loading.
-            // Its exact pinned rescue remains valid even though the new index suppresses salvage discovery.
+            // Its exact pinned rescue remains valid even if a caller omitted it from the new index.
             if (source.SourceStamp.ScopeId == expected.ScopeId && source.RootAddress?.Area.Kind == RecoveryAreaKind.Rescue &&
                 SessionRecoveryAuthority.IsEligible(source.SourceStamp, source.SourceEditor, current.Stamp,
                     current.Decisions.Select(read => read.Record), current.AllDecisions))
-                candidate = current.CurrentDescriptors(source.SourceEditor.Id)
-                    .FirstOrDefault(editor => editor.ComputeSha256() == source.SourceEditor.ComputeSha256());
-            if (candidate == null || candidate.ComputeSha256() != origin.SourceEditor.ComputeSha256())
+                candidateHash = current.CurrentDescriptors(source.Decision.Id)
+                    .Any(editor => editor.ComputeSha256() == source.Decision.DescriptorSha256) ? source.Decision.DescriptorSha256 : null;
+            if (candidateHash != source.Decision.DescriptorSha256)
                 throw new InvalidDataException("The inactive source incarnation changed before adoption.");
             // A partially published newer capture may not have entered the
             // selected workspace. Preserve its exact source descriptor before
             // consuming the whole observed incarnation history.
-            if (source.UnselectedNewerDescriptors.Count != 0)
+            foreach (var protectedVersion in source.Decision.ProtectedNewer)
             {
-                foreach (var descriptor in source.UnselectedNewerDescriptors)
+                var descriptor = protectedVersion.Descriptor;
+                var pendingArea = store.GetScopeArea(source.SourceStamp.ScopeId, RecoveryAreaKind.Pending, descriptor.Id);
+                if (current.Pending.Any(read => read.State == RecoveryReadState.Valid &&
+                    read.Record.Editor.ComputeSha256() == protectedVersion.DescriptorSha256))
                 {
-                    var pendingArea = store.GetScopeArea(source.SourceStamp.ScopeId, RecoveryAreaKind.Pending, descriptor.Id);
-                    if (current.Pending.Any(read => read.State == RecoveryReadState.Valid &&
-                        read.Record.Editor.ComputeSha256() == descriptor.ComputeSha256()))
-                    {
-                        continue;
-                    }
-
-                    RecoveryRootStore.RequireCommitted(await store.PublishAsync(pendingArea, new RecoveryRecord
-                    {
-                        Kind = RecoveryRecordKind.Pending,
-                        Stamp = store.CreatePublicationStamp(pendingArea, source.SourceStamp),
-                        Editor = descriptor
-                    }, cancellation));
+                    continue;
                 }
+
+                RecoveryRootStore.RequireCommitted(await store.PublishAsync(pendingArea, new RecoveryRecord
+                {
+                    Kind = RecoveryRecordKind.Pending,
+                    Stamp = store.CreatePublicationStamp(pendingArea, source.SourceStamp),
+                    Editor = descriptor
+                }, cancellation));
             }
 
             record.SourceStamp = SessionRecoveryAuthority.CopyStamp(source.SourceStamp);
@@ -403,7 +407,7 @@ internal sealed partial class SessionService
                 Kind = RecoveryConsumptionKind.Inactive,
                 SourceScopeId = source.SourceStamp.ScopeId,
                 SourceEpochId = source.SourceStamp.EpochId,
-                SourceEditorId = origin.SourceEditor.Id,
+                SourceEditorId = origin.Decision.Id,
                 SourceCaptureRevision = sourceCutoff
             });
         }
@@ -472,13 +476,14 @@ internal sealed partial class SessionService
             await ArchiveSourcesAsync(unconsumed, expected, cancellation);
             // Archive first. Partial/uncertain decisions can be retried from the same frozen plan.
             var decisions = _recordStore.GetScopeArea(expected.ScopeId, RecoveryAreaKind.Decisions);
-            foreach (var source in unconsumed.Where(source => source.IsOwned))
+            foreach (var source in unconsumed.Where(source => source.IsOwned || source.IsOwnScopeRescue))
             {
-                if (SessionRecoveryAuthority.IsClosed(expected, source.Id, authority.Decisions.Select(read => read.Record))) continue;
+                var editorId = source.IsOwned ? source.Id : source.Origin.Decision.Id;
+                if (SessionRecoveryAuthority.IsClosed(expected, editorId, authority.Decisions.Select(read => read.Record))) continue;
                 RecoveryRootStore.RequireCommitted(await _recordStore.PublishAsync(decisions, new RecoveryRecord
                 {
                     Kind = RecoveryRecordKind.Closed,
-                    Stamp = _recordStore.CreatePublicationStamp(decisions, expected), ClosedEditorId = source.Id
+                    Stamp = _recordStore.CreatePublicationStamp(decisions, expected), ClosedEditorId = editorId
                 }, cancellation));
             }
             _lastSessionJson = null;
@@ -535,7 +540,8 @@ internal sealed partial class SessionService
                 Kind = RecoveryRecordKind.Reset,
                 Stamp = stamp,
                 PreviousEpochId = expected.EpochId,
-                ResetAcceptedLegacySources = _acceptedLegacySources.ToList()
+                ResetAcceptedLegacySources = _acceptedLegacySources.ToList(),
+                ResetRetiredContentOperations = CollectResetContentOperations(store, expected.ScopeId, cancellation)
             };
             try
             {
@@ -562,6 +568,27 @@ internal sealed partial class SessionService
                 throw;
             }
         }
+    }
+
+    private static List<Guid> CollectResetContentOperations(RecoveryRecordStore store, Guid owner,
+        CancellationToken cancellation)
+    {
+        // Freeze exact operations under the reset's store admission. Per-directory
+        // ordinals cannot prove a reset boundary and can be reused after pruning.
+        var operations = new HashSet<Guid>();
+        foreach (var kind in new[] { RecoveryAreaKind.Checkpoints, RecoveryAreaKind.Rescue })
+        {
+            var areas = store.EnumerateScopeAreas(owner, kind);
+            if (!areas.IsComplete) throw new IOException("Cannot reset an incompletely enumerated content directory.", areas.Error);
+            foreach (var area in areas.Entries)
+            {
+                cancellation.ThrowIfCancellationRequested();
+                var roots = store.Enumerate(area);
+                if (!roots.IsComplete) throw new IOException("Cannot reset incompletely enumerated content operations.", roots.Error);
+                operations.UnionWith(roots.Entries.Select(address => address.OperationId));
+            }
+        }
+        return operations.OrderBy(operation => operation).ToList();
     }
 
     private void AcceptResetEpoch(RecoveryStamp stamp)

@@ -5,25 +5,32 @@
 
 using System;
 using System.Collections.Generic;
-using Notepads.Features.Sessions.Contracts;
+using System.Linq;
 
 namespace Notepads.Features.Sessions.Contracts.Recovery;
 
 /// <summary>An immutable recovery root retained until the importing session durably adopts its records.</summary>
 internal sealed class SessionRecoverySource : IDisposable
 {
-    public NotepadsSessionDataV2 Session { get; set; }
-    public RecoveryStamp ExpectedStamp { get; set; }
-    public RecoveryAddress RootAddress { get; set; }
-    public string RootSha256 { get; set; }
-    public HashSet<Guid> RescueEditorIds { get; } = [];
-    public Dictionary<Guid, IReadOnlyList<TextEditorSessionDataV2>> EarlierDescriptors { get; } = [];
-    public Dictionary<Guid, IReadOnlyList<TextEditorSessionDataV2>> UnselectedNewerDescriptors { get; } = [];
-    public Dictionary<Guid, long> ConsumptionCutoffs { get; } = [];
-    public long CaptureRevisionFloor { get; set; }
-    public SessionRecoveryOutcome Outcome { get; set; }
-    public IDisposable WriterLease { get; set; }
-    public IDisposable ReaderPin { get; set; }
+    public SessionRecoverySource(RecoverySelection selection, long captureRevisionFloor,
+        IDisposable writerLease, IDisposable readerPin)
+    {
+        Selection = selection;
+        Documents = Array.AsReadOnly(selection.Documents.Where(document => document.ImportFromInactive).ToArray());
+        CaptureRevisionFloor = captureRevisionFloor;
+        WriterLease = writerLease;
+        ReaderPin = readerPin;
+    }
+
+    public RecoverySelection Selection { get; }
+    public IReadOnlyList<RecoveryDocumentDecision> Documents { get; }
+    public RecoveryStamp ExpectedStamp => Selection.Stamp;
+    public RecoveryAddress RootAddress => Selection.SelectedCheckpointAddress;
+    public string RootSha256 => Selection.SelectedCheckpointSha256;
+    public long CaptureRevisionFloor { get; }
+    public SessionRecoveryOutcome Outcome => Selection.InactiveOutcome;
+    private IDisposable WriterLease { get; set; }
+    private IDisposable ReaderPin { get; set; }
     public void Dispose()
     {
         try { ReaderPin?.Dispose(); }

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Composition;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Presentation.Workspace;
@@ -62,8 +63,8 @@ internal static partial class SessionControllerTests
                     using (await SessionRecoveryTransaction.EnterAsync())
                     {
                         var catalog = await SessionRecoveryCatalog.ReadScopeAsync(owner);
-                        SessionTestProtocol.Check(catalog.Session.TextEditors.Select(row => row.Id).SequenceEqual(ids) &&
-                            catalog.Session.TextEditors[0].Journal.GenerationId == retained.Descriptor.Journal.GenerationId,
+                        SessionTestProtocol.Check(catalog.Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Id).SequenceEqual(ids) &&
+                            catalog.Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Descriptor).First().Journal.GenerationId == retained.Descriptor.Journal.GenerationId,
                             "A mixed checkpoint lost order or replaced unread content.");
                     }
                 });
@@ -142,6 +143,6 @@ internal static partial class SessionControllerTests
             }
         }
         finally { await SessionTestProtocol.CleanupAsync(owner); }
-        log.AppendLine("PASS: selected-first lazy restoration, blocked-I/O suspension, exact mixed capture, pending close, selection priority and fresh recovery.");
+        log.AppendLine("PASS: lazy restoration preserves mixed captures, pending tabs and selection priority.");
     }
 }

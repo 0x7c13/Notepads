@@ -22,6 +22,10 @@ namespace Notepads.Presentation.Workspace;
 
 internal sealed partial class SessionController
 {
+    private enum RecoveryAdmission { Pending, Restored, Archiving, Archived }
+
+    private RecoveryAdmission _recoveryAdmission;
+    private bool _restoreRequested;
     private SessionRecoveryPlan _restorePlan;
     private readonly List<WorkspaceTab> _imports = [];
     private readonly HashSet<WorkspaceTab> _demands = [];
@@ -34,7 +38,6 @@ internal sealed partial class SessionController
     private TaskCompletionSource<object> _restorationChanged = NewSignal();
     private bool _restoreCheckpointRequested;
     private Task _restoreCheckpointWork = Task.CompletedTask;
-    private bool _unclaimedRecoveryArchived;
     private Exception _restoreDrainFailure;
     private SessionRecoveryOutcome _reportedRecoveryOutcome;
     private int _reportedUnrecoveredCount;
@@ -43,10 +46,12 @@ internal sealed partial class SessionController
     public event EventHandler RecoveryStateChanged;
     public event EventHandler RestorationBackupFailed;
 
-    // A deterministic boundary for the source-linked integration hosts. It runs
-    // before payload I/O, outside session serialization, and owns no production state.
+    // Deterministic boundaries for the source-linked integration hosts. Payload
+    // preparation/promotion run outside the coordinator; discovery/archive inside it.
+    // These hooks own no production state.
     internal Func<RecoveryDocumentSource, CancellationToken, Task> BeforeRestorePreparation { get; set; }
     internal Func<CancellationToken, Task> BeforeRecoveryDiscovery { get; set; }
+    internal Func<CancellationToken, Task> BeforeRecoveryArchive { get; set; }
     internal Func<RecoveryDocumentSource, ITextEditor, CancellationToken, Task> BeforeRestorePromotion { get; set; }
 
     private static TaskCompletionSource<object> NewSignal() => new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -57,33 +62,69 @@ internal sealed partial class SessionController
             throw new InvalidOperationException("A recovery editor did not release its native work; session ownership must remain held.", _restoreDrainFailure);
     }
 
+    public void RequestRestoration()
+    {
+        if (!_disposed && _recoveryAdmission == RecoveryAdmission.Pending) _restoreRequested = true;
+    }
+
+    public CancellationToken FileOperationToken => _disposed ? new CancellationToken(true) : _restoreLifetime.Token;
+
     public Task<int> LoadLastSessionAsync()
     {
-        if (_initialRestore != null) return _initialRestore;
-        if (_loaded) return Task.FromResult(0);
+        RequestRestoration();
+        if (_initialRestore is { IsCompleted: false }) return _initialRestore;
+        if (_disposed || _recoveryAdmission is RecoveryAdmission.Archiving or RecoveryAdmission.Archived)
+            return Task.FromResult(0);
         return _initialRestore = LoadWorkspaceAsync();
+    }
+
+    // Called only inside session serialization. Discovery does not choose whether
+    // the sources are restored or archived; intent is read again after the await.
+    private async Task DiscoverRecoveryPlanAsync(CancellationToken cancellation)
+    {
+        if (_restorePlan == null)
+        {
+            if (BeforeRecoveryDiscovery != null) await BeforeRecoveryDiscovery(cancellation);
+            _restorePlan = await Task.Run(() => _service.DiscoverRecoveryAsync(cancellation));
+        }
+        cancellation.ThrowIfCancellationRequested();
+    }
+
+    // Failed discovery leaves Pending and preserves intent. A later save or open
+    // retries admission before it can replace the old workspace's recovery index.
+    private async Task DiscoverWorkspaceAsync(CancellationToken cancellation)
+    {
+        if (_recoveryAdmission != RecoveryAdmission.Pending || !_restoreRequested) return;
+        await DiscoverRecoveryPlanAsync(cancellation);
+        if (_disposed) return;
+        AdmitDiscoveredWorkspace();
+    }
+
+    private void AdmitDiscoveredWorkspace()
+    {
+        // Discovery yields: keep the selection and scroll the user has now, not
+        // the ones from before I/O. An empty startup still uses the saved state.
+        var selected = _notepadsCore.GetSelectedTab();
+        var scroll = _notepadsCore.GetTabCount() == 0 ? _restorePlan.TabScrollOffset :
+            _notepadsCore.GetTabScrollViewerHorizontalOffset();
+        var admitted = _notepadsCore.GetTabs().Concat(_imports).Select(tab => tab.Id).ToHashSet();
+        var missing = _restorePlan.Sources.Where(source => !admitted.Contains(source.Id)).ToArray();
+        var owned = missing.Where(source => source.IsOwned).Select(source => new WorkspaceTab(source)).ToArray();
+        _imports.AddRange(missing.Where(source => !source.IsOwned).Select(source => new WorkspaceTab(source)));
+        // Closing pauses native promotion, but terminal capture still needs every owned row.
+        _notepadsCore.OpenTabs(owned, selected?.Id ?? _restorePlan.SelectedEditorId, allowWhileClosing: true);
+        _notepadsCore.SetTabScrollViewerHorizontalOffset(scroll);
+        _priorityTab = _notepadsCore.GetSelectedTab() ??
+            _imports.FirstOrDefault(tab => tab.Id == _restorePlan.SelectedEditorId) ?? _imports.FirstOrDefault();
+        _recoveryAdmission = RecoveryAdmission.Restored;
     }
 
     private async Task<int> LoadWorkspaceAsync()
     {
-        await _sessionOperations.RunAsync(async cancellation =>
-        {
-            if (_loaded) return;
-            if (BeforeRecoveryDiscovery != null) await BeforeRecoveryDiscovery(cancellation);
-            _restorePlan = await Task.Run(() => _service.DiscoverRecoveryAsync(cancellation));
-            var owned = _restorePlan.Sources.Where(source => source.IsOwned).Select(source => new WorkspaceTab(source)).ToArray();
-            _imports.AddRange(_restorePlan.Sources.Where(source => !source.IsOwned).Select(source => new WorkspaceTab(source)));
-            if (_disposed) return;
-            // Index membership is required even if close began during discovery.
-            // Native promotion stays paused, but terminal capture must retain these rows.
-            _notepadsCore.OpenTabs(owned, _restorePlan.SelectedEditorId, allowWhileClosing: true);
-            _notepadsCore.SetTabScrollViewerHorizontalOffset(_restorePlan.TabScrollOffset);
-            _priorityTab = _notepadsCore.GetSelectedTab() ??
-                _imports.FirstOrDefault(tab => tab.Id == _restorePlan.SelectedEditorId) ?? _imports.FirstOrDefault();
-            _loaded = true;
-        });
+        if (_recoveryAdmission == RecoveryAdmission.Pending)
+            await _sessionOperations.RunAsync(DiscoverWorkspaceAsync);
 
-        if (_disposed || !_loaded) return 0;
+        if (_disposed || _recoveryAdmission != RecoveryAdmission.Restored) return 0;
         var selected = _notepadsCore.GetSelectedTab() ?? _priorityTab;
         StartRestoreWorker();
         try
@@ -148,7 +189,7 @@ internal sealed partial class SessionController
     private void OnTabSelected(object sender, WorkspaceTab tab)
     {
         if (tab?.State == WorkspaceTabState.Pending) _priorityTab = tab;
-        if (_loaded) StartRestoreWorker();
+        if (_recoveryAdmission == RecoveryAdmission.Restored) StartRestoreWorker();
     }
 
     private WorkspaceTab NextRestoreTab()
@@ -163,7 +204,8 @@ internal sealed partial class SessionController
 
     private void StartRestoreWorker()
     {
-        if (_disposed || !_loaded || _workerRunning || _restoreLifetime.IsCancellationRequested || NextRestoreTab() == null) return;
+        if (_disposed || _recoveryAdmission != RecoveryAdmission.Restored || _workerRunning ||
+            _restoreLifetime.IsCancellationRequested || NextRestoreTab() == null) return;
         _workerRunning = true;
         _restoreWorker = RestoreRowsAsync();
     }
@@ -389,9 +431,9 @@ internal sealed partial class SessionController
 
     private void TryReleaseRestorePlan()
     {
-        if (_restorePlan == null || _restoreDrainFailure != null || _workerRunning || _imports.Count != 0 ||
-            _notepadsCore.GetTabs().Any(tab => tab.State is WorkspaceTabState.Pending or WorkspaceTabState.Loading ||
-                (tab.State == WorkspaceTabState.Ready && tab.RecoverySource != null))) return;
+        if (_restorePlan == null || _recoveryAdmission is RecoveryAdmission.Pending or RecoveryAdmission.Archiving ||
+            _restoreDrainFailure != null || _workerRunning || _imports.Count != 0 ||
+            LiveTabs().Any(tab => tab.RecoverySource != null)) return;
         _restorePlan.Dispose();
         _restorePlan = null;
         _maintenanceDue = true;

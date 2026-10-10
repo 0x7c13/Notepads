@@ -15,7 +15,7 @@ using Notepads.Features.Sessions.Legacy;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Infrastructure.Diagnostics;
-using Notepads.Infrastructure.Storage;
+using Windows.Storage;
 
 namespace Notepads.Features.Sessions;
 
@@ -32,20 +32,24 @@ internal static class RecoveryDocumentPreparation
         if (legacy != null)
         {
             if (fallbackIndex >= 0) throw new ArgumentOutOfRangeException(nameof(fallbackIndex));
-            prepared = await LegacySessionImporter.PrepareAsync(legacy, targetOwnerId, defaults, cancellation);
+            var editingFile = await source.ResolveEditingFileAsync().WaitAsync(cancellation);
+            prepared = await LegacySessionImporter.PrepareAsync(legacy, editingFile, targetOwnerId, defaults, cancellation);
             if (prepared?.EditingFile != null)
                 prepared.FileAccessBinding = new RecoveryFileAccessBinding(prepared.EditingFile, legacy.EditingFileFutureAccessToken);
         }
-        else prepared = await PrepareCurrentDocumentAsync(source.GetDescriptor(fallbackIndex), targetOwnerId, defaults, cancellation);
+        else
+        {
+            var data = source.GetDescriptor(fallbackIndex);
+            if (data.StateMetaData == null) throw new InvalidDataException("The recovery editor has no saved metadata.");
+            var editingFile = await source.ResolveEditingFileAsync(fallbackIndex).WaitAsync(cancellation);
+            prepared = await PrepareCurrentDocumentAsync(data, editingFile, targetOwnerId, defaults, cancellation);
+        }
         if (prepared != null) prepared.Source = source;
         return prepared;
     }
-    private static async Task<PreparedRecoveryDocument> PrepareCurrentDocumentAsync(TextEditorSessionDataV2 data, Guid targetOwnerId,
-        DocumentLoadOptions defaults, CancellationToken cancellation)
+    private static async Task<PreparedRecoveryDocument> PrepareCurrentDocumentAsync(TextEditorSessionDataV2 data,
+        StorageFile editingFile, Guid targetOwnerId, DocumentLoadOptions defaults, CancellationToken cancellation)
     {
-        if (data.StateMetaData == null) throw new InvalidDataException("The recovery editor has no saved metadata.");
-        var editingFile = data.EditingFileFutureAccessToken == null ? null :
-            await FutureAccessListUtility.GetFileFromFutureAccessListAsync(data.EditingFileFutureAccessToken);
         if (editingFile != null && !data.StateMetaData.IsModified && !data.TextDirty)
         {
             try
@@ -63,11 +67,11 @@ internal static class RecoveryDocumentPreparation
         var prepared = new PreparedRecoveryDocument { Id = data.Id, Metadata = data.StateMetaData, TextDirty = data.TextDirty };
         try
         {
-            using (var savedSource = await SessionDocumentStore.OpenBaselineAsync(data.SavedBaseline))
+            using (var savedSource = await SessionDocumentStore.OpenBaselineAsync(data.SavedBaseline, cancellation))
             using (var recoverySource = data.SavedBaseline.Matches(data.RecoveryBaseline) ? savedSource.Retain() :
-                await SessionDocumentStore.OpenBaselineAsync(data.RecoveryBaseline))
+                await SessionDocumentStore.OpenBaselineAsync(data.RecoveryBaseline, cancellation))
             using (var saved = data.SavedBaseline.OwnerId != targetOwnerId ?
-                await SessionDocumentStore.ForkBaselineAsync(savedSource, targetOwnerId) : savedSource.Retain())
+                await SessionDocumentStore.ForkBaselineAsync(savedSource, targetOwnerId, cancellation) : savedSource.Retain())
             {
                 prepared.SavedSnapshot = new DocumentSnapshot(saved,
                     EncodingCatalog.GetEncodingByName(data.StateMetaData.LastSavedEncoding),
@@ -75,12 +79,12 @@ internal static class RecoveryDocumentPreparation
                     data.StateMetaData.DateModifiedFileTime);
                 prepared.RecoveryBaseline = data.SavedBaseline.Matches(data.RecoveryBaseline) ? saved.Retain() :
                     data.RecoveryBaseline.OwnerId != targetOwnerId ?
-                        await SessionDocumentStore.ForkBaselineAsync(recoverySource, targetOwnerId) : recoverySource.Retain();
+                        await SessionDocumentStore.ForkBaselineAsync(recoverySource, targetOwnerId, cancellation) : recoverySource.Retain();
             }
-            prepared.Journal = await SessionDocumentStore.OpenJournalAsync(data.Journal);
+            prepared.Journal = await SessionDocumentStore.OpenJournalAsync(data.Journal, cancellation);
             prepared.Checkpoint = await prepared.Journal.OpenCheckpointAsync(data.Journal.BaselineSequence,
                 data.Journal.CommittedSequence, data.Journal.CommittedByteLength,
-                data.Journal.PrefixSha256, data.Journal.DocumentByteLength);
+                data.Journal.PrefixSha256, data.Journal.DocumentByteLength, cancellation);
             prepared.EditingFile = editingFile;
             if (editingFile != null) prepared.FileAccessBinding = new RecoveryFileAccessBinding(editingFile, data.EditingFileFutureAccessToken);
             prepared.FileNamePlaceholder = data.StateMetaData.FileNamePlaceholder ?? data.EditingFileName;

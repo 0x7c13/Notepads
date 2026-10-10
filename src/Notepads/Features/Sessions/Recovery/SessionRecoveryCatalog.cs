@@ -18,7 +18,7 @@ using Notepads.Infrastructure.Diagnostics;
 
 namespace Notepads.Features.Sessions.Recovery;
 
-/// <summary>Interprets immutable content roots separately from durable lifecycle decisions.</summary>
+/// <summary>Reads and verifies roots, then selects recovery content from the complete evidence.</summary>
 internal static class SessionRecoveryCatalog
 {
     // Callers hold store admission throughout all catalog reads and repairs. A pass shares
@@ -48,7 +48,15 @@ internal static class SessionRecoveryCatalog
         result.GlobalRecords.AddRange(pass.Transfers);
         if (result.GlobalRecords.Any(read => read.State != RecoveryReadState.Valid))
             Block(result, "A transfer lifecycle decision cannot be verified.");
-        if (!content || result.Blocked) return result;
+        if (!content) return result;
+        if (result.Blocked)
+        {
+            result.AttachSelection(SessionRecoverySelector.Select(result));
+            return result;
+        }
+        result.RetiredContentOperations.UnionWith(result.Decisions.Where(read => read.State == RecoveryReadState.Valid &&
+            read.Record.Kind == RecoveryRecordKind.Reset && read.Record.Stamp.ScopeId == scopeId)
+            .SelectMany(read => read.Record.ResetRetiredContentOperations));
         result.Checkpoints.AddRange(await ReadAreaAsync(store,
             store.GetScopeArea(scopeId, RecoveryAreaKind.Checkpoints), cancellation));
         var pendingAreas = store.EnumerateScopeAreas(scopeId, RecoveryAreaKind.Pending);
@@ -59,80 +67,7 @@ internal static class SessionRecoveryCatalog
         if (!rescueAreas.IsComplete) Block(result, "The rescue descriptor directory is unreadable.");
         foreach (var area in rescueAreas.Entries)
             result.Rescues.AddRange(await ReadAreaAsync(store, area, cancellation));
-        if (result.Checkpoints.Concat(result.Pending).Concat(result.Rescues).Any(read => read.State == RecoveryReadState.Conflict))
-            Block(result, "Complete recovery mirrors disagree.");
-        if (result.Blocked) return result;
-
-        var own = result.Decisions.Select(read => read.Record).ToArray();
-        var all = result.AllDecisions.ToArray();
-        var newest = result.Checkpoints.OrderByDescending(read => read.Address.Ordinal).FirstOrDefault();
-        result.SelectedCheckpoint = result.Checkpoints.Where(read => read.State == RecoveryReadState.Valid &&
-            SessionRecoveryAuthority.SameEpoch(read.Record.Stamp, result.Stamp))
-            .OrderByDescending(read => read.Address.Ordinal).FirstOrDefault();
-        result.Session = result.SelectedCheckpoint == null ? new NotepadsSessionDataV2() :
-            CloneSession(result.SelectedCheckpoint.Record.Session);
-        result.Session.Scope ??= new SessionScopeData
-        {
-            OwnerId = scopeId,
-            InstanceId = scopeId,
-            Kind = SessionScopeData.IsReservedOwner(scopeId) ? SessionScopeData.Primary : SessionScopeData.Secondary
-        };
-        if (result.SelectedCheckpoint != null)
-        {
-            result.Session.TextEditors.RemoveAll(editor => !SessionRecoveryAuthority.IsEligible(
-                result.SelectedCheckpoint.Record.Stamp, editor, result.Stamp, own, all));
-        }
-        // Durable target adoption content survives bounded checkpoint history.
-        foreach (var read in result.Decisions.Concat(result.GlobalRecords)
-            .Where(read => read.State == RecoveryReadState.Valid && read.Record.Editor != null &&
-                read.Record.Kind is RecoveryRecordKind.AdoptLegacy or RecoveryRecordKind.AdoptInactive or RecoveryRecordKind.TransferReceipt)
-            .OrderByDescending(read => read.Address.Ordinal))
-        {
-            var record = read.Record;
-            var stamp = record.Kind == RecoveryRecordKind.TransferReceipt ? record.TargetStamp : record.Stamp;
-            if (!SessionRecoveryAuthority.IsEligible(stamp, record.Editor, result.Stamp, own, all) ||
-                result.Session.TextEditors.Any(editor => editor.Id == record.Editor.Id))
-            {
-                continue;
-            }
-
-            result.Session.TextEditors.Add(CloneEditor(record.Editor));
-        }
-        foreach (var read in result.GlobalRecords.Where(read => read.State == RecoveryReadState.Valid &&
-            read.Record.Kind == RecoveryRecordKind.TransferOffer))
-        {
-            var record = read.Record;
-            if (!SessionRecoveryAuthority.IsEligible(record.SourceStamp, record.Editor, result.Stamp, own, all)) continue;
-            var existing = result.Session.TextEditors.FindIndex(editor => editor.Id == record.Editor.Id);
-            if (existing < 0) result.Session.TextEditors.Add(CloneEditor(record.Editor));
-            else if (record.Editor.CaptureRevision > result.Session.TextEditors[existing].CaptureRevision)
-                result.Session.TextEditors[existing] = CloneEditor(record.Editor);
-        }
-        if (result.SelectedCheckpoint != null)
-        {
-            result.Outcome = newest?.Address == result.SelectedCheckpoint.Address ?
-                result.SelectedCheckpoint.Redundancy is RecoveryRedundancy.Single or RecoveryRedundancy.Repaired ?
-                    SessionRecoveryOutcome.MirrorRepaired : SessionRecoveryOutcome.Exact : SessionRecoveryOutcome.OlderCheckpoint;
-        }
-        else
-        {
-            foreach (var read in result.Rescues.Where(read => read.State == RecoveryReadState.Valid)
-                .OrderByDescending(read => read.Address.Ordinal))
-            {
-                if (!SessionRecoveryAuthority.IsEligible(read.Record.Stamp, read.Record.Editor, result.Stamp, own, all) ||
-                    result.Session.TextEditors.Any(existing => existing.Id == read.Record.Editor.Id) ||
-                    result.EligibleRescues.Any(existing => existing.Record.Editor.Id == read.Record.Editor.Id))
-                {
-                    continue;
-                }
-
-                result.EligibleRescues.Add(read);
-            }
-            if (result.EligibleRescues.Count != 0) result.Outcome = SessionRecoveryOutcome.Rescue;
-            else if (result.Session.TextEditors.Count != 0) result.Outcome = SessionRecoveryOutcome.OlderCheckpoint;
-            else if (result.Checkpoints.Any(read => read.State != RecoveryReadState.Valid))
-                Block(result, "No valid checkpoint or rescue descriptor remains.");
-        }
+        result.AttachSelection(SessionRecoverySelector.Select(result));
         return result;
     }
 
@@ -247,57 +182,12 @@ internal static class SessionRecoveryCatalog
                 {
                     reader = SessionScopeLease.AcquireReader(owner);
                     var snapshot = await ReadScopeAsync(owner, cancellationToken, pass: pass);
-                    if (snapshot.Blocked)
-                    {
-                        // The primary catalog has already verified every
-                        // lifecycle log under this admission. Content failure
-                        // in one inactive owner must preserve that owner and
-                        // report degradation without aborting healthy tabs.
-                        sources.Add(new SessionRecoverySource
-                        {
-                            Session = new NotepadsSessionDataV2
-                            {
-                                Scope = new SessionScopeData
-                                { OwnerId = owner, InstanceId = owner, Kind = SessionScopeData.Secondary }
-                            },
-                            ExpectedStamp = snapshot.Stamp,
-                            Outcome = SessionRecoveryOutcome.Partial,
-                            CaptureRevisionFloor = SessionRecoveryAuthority.GetCaptureRevisionFloor(snapshot.VerifiedRecords),
-                            WriterLease = writer,
-                            ReaderPin = reader
-                        });
-                        writer = null; reader = null;
-                        continue;
-                    }
-                    if (snapshot.Outcome == SessionRecoveryOutcome.Rescue)
-                        snapshot.Session.TextEditors.AddRange(snapshot.EligibleRescues.Select(read => CloneEditor(read.Record.Editor)));
-                    // Another window's unacknowledged receiver is not a move.
-                    snapshot.Session.TextEditors.RemoveAll(editor => snapshot.GlobalRecords.Any(read =>
-                        read.Record.Kind == RecoveryRecordKind.TransferReceipt && read.Record.Editor.Id == editor.Id &&
-                        read.Record.TargetStamp.ScopeId == owner && !snapshot.GlobalRecords.Any(ack =>
-                            ack.Record.Kind == RecoveryRecordKind.SourceMoved && ack.Record.TargetReceiptOperationId == read.Address.OperationId)));
-                    if (snapshot.Session.TextEditors.Count == 0) continue;
-                    var source = new SessionRecoverySource
-                    {
-                        Session = snapshot.Session,
-                        ExpectedStamp = snapshot.Stamp,
-                        RootAddress = snapshot.SelectedCheckpoint?.Address,
-                        RootSha256 = snapshot.SelectedCheckpoint?.PayloadSha256,
-                        WriterLease = writer,
-                        ReaderPin = reader,
-                        Outcome = snapshot.Outcome,
-                        CaptureRevisionFloor = SessionRecoveryAuthority.GetCaptureRevisionFloor(snapshot.VerifiedRecords)
-                    };
-                    source.RescueEditorIds.UnionWith(snapshot.EligibleRescues.Select(read => read.Record.Editor.Id));
-                    foreach (var editor in source.Session.TextEditors)
-                    {
-                        source.EarlierDescriptors[editor.Id] = snapshot.EarlierDescriptors(editor.Id).ToArray();
-                        source.ConsumptionCutoffs[editor.Id] = snapshot.ConsumptionCutoff(editor.Id);
-                        source.UnselectedNewerDescriptors[editor.Id] = snapshot.CurrentDescriptors(editor.Id)
-                            .Where(candidate => candidate.CaptureRevision > editor.CaptureRevision)
-                            .DistinctBy(candidate => candidate.ComputeSha256()).ToArray();
-                    }
-                    sources.Add(source);
+                    var selection = snapshot.Selection;
+                    if (!snapshot.Blocked && !selection.Documents.Any(document => document.ImportFromInactive)) continue;
+                    // Failed inactive content remains pinned as an empty Partial source;
+                    // it must not abort healthy imports or authorize collection.
+                    sources.Add(new SessionRecoverySource(selection,
+                        SessionRecoveryAuthority.GetCaptureRevisionFloor(snapshot.VerifiedRecords), writer, reader));
                     writer = null; reader = null;
                 }
                 finally { reader?.Dispose(); writer?.Dispose(); }
@@ -373,7 +263,8 @@ internal static class SessionRecoveryCatalog
         switch (record.Kind)
         {
             case RecoveryRecordKind.Checkpoint:
-                foreach (var editor in record.Session.TextEditors) IncludeEligible(record.Stamp, editor);
+                foreach (var editor in record.Session.TextEditors.Concat(record.Session.PendingRescues))
+                    IncludeEligible(record.Stamp, editor);
                 break;
             case RecoveryRecordKind.Rescue:
             case RecoveryRecordKind.AdoptLegacy:
@@ -401,7 +292,9 @@ internal static class SessionRecoveryCatalog
 
     private static void Block(RecoveryScopeSnapshot result, string reason)
     {
-        result.Blocked = true; result.Outcome = SessionRecoveryOutcome.Blocked; result.AttentionReason ??= reason;
+        result.ControlBlocked = true;
+        result.ControlOutcome = SessionRecoveryOutcome.Blocked;
+        result.ControlAttentionReason ??= reason;
     }
 }
 

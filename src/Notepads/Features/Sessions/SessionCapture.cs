@@ -16,6 +16,7 @@ namespace Notepads.Features.Sessions;
 internal sealed class SessionCapture : IDisposable
 {
     public List<SessionDocumentCapture> Documents { get; } = new List<SessionDocumentCapture>();
+    public List<RecoveryDocumentSource> PendingRescues { get; } = [];
     public Guid? SelectedEditorId { get; set; }
     public double TabScrollOffset { get; set; }
     public RecoveryStamp ExpectedStamp { get; set; }

@@ -78,7 +78,9 @@ public interface INotepadsCore : IDisposable, IAsyncDisposable
 
     bool ContainsTab(WorkspaceTab tab);
 
-    Task<WorkspaceTab> FindTabAsync(StorageFile file);
+    WorkspaceTab FindReadyTab(StorageFile file);
+
+    Task<bool> OpenFileAsync(StorageFile file, Func<WorkspaceFileOpenResult, Task> presentResultAsync);
 
     void DeleteTab(WorkspaceTab tab);
 

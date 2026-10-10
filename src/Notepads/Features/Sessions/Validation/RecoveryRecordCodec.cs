@@ -163,7 +163,7 @@ internal static class RecoveryRecordCodec
         if (!allowedKind) throw new InvalidDataException("Recovery record kind does not match its directory.");
         ValidateExpectedStamp(record.SourceStamp);
         ValidateExpectedStamp(record.TargetStamp);
-        if (record.Consumptions == null || record.ResetAcceptedLegacySources == null)
+        if (record.Consumptions == null || record.ResetAcceptedLegacySources == null || record.ResetRetiredContentOperations == null)
             throw new InvalidDataException("Invalid lifecycle metadata collections.");
         var consumptionIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var consumption in record.Consumptions)
@@ -184,6 +184,12 @@ internal static class RecoveryRecordCodec
         {
             if (!Sha256Hex.IsValid(fingerprint) || !fingerprints.Add(fingerprint))
                 throw new InvalidDataException("Invalid or duplicate legacy source suppression.");
+        }
+        var retiredOperations = new HashSet<Guid>();
+        foreach (var operation in record.ResetRetiredContentOperations)
+        {
+            if (record.Kind != RecoveryRecordKind.Reset || operation == Guid.Empty || !retiredOperations.Add(operation))
+                throw new InvalidDataException("Invalid or duplicate reset content retirement identity.");
         }
 
         if (record.Kind == RecoveryRecordKind.Reset && (record.PreviousEpochId == Guid.Empty || record.PreviousEpochId == stamp.EpochId) ||
@@ -208,7 +214,7 @@ internal static class RecoveryRecordCodec
         if (record.Session != null)
         {
             if (record.Session.Version != 2 || record.Session.Scope == null || record.Session.Scope.OwnerId != stamp.ScopeId ||
-                record.Session.TextEditors == null || record.Session.UnrecoveredLegacyEditors == null ||
+                record.Session.TextEditors == null || record.Session.PendingRescues == null || record.Session.UnrecoveredLegacyEditors == null ||
                 !address.Area.AllowsForeignOwners && record.Session.UnrecoveredLegacyEditors.Count != 0 ||
                 record.Session.SourceRemovalRevision < 0 || record.Session.SourceRemovalRevision == long.MaxValue ||
                 !double.IsFinite(record.Session.TabScrollViewerHorizontalOffset) || record.Session.TabScrollViewerHorizontalOffset < 0)
@@ -225,6 +231,11 @@ internal static class RecoveryRecordCodec
             }
             if (record.Session.SelectedTextEditor != Guid.Empty && !editors.Contains(record.Session.SelectedTextEditor))
                 throw new InvalidDataException("The selected editor is absent from its recovery session.");
+            foreach (var editor in record.Session.PendingRescues)
+            {
+                ValidateEditor(editor, stamp.ScopeId);
+                if (!editors.Add(editor.Id)) throw new InvalidDataException("Duplicate pending rescue incarnation.");
+            }
             foreach (var editor in record.Session.UnrecoveredLegacyEditors)
             {
                 if (editor == null || editor.Id == Guid.Empty || !editors.Add(editor.Id))

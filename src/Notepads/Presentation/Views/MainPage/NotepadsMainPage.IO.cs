@@ -24,13 +24,6 @@ namespace Notepads.Presentation.Views.MainPage;
 
 public sealed partial class NotepadsMainPage
 {
-    private readonly List<FileOpenRequest> _openingFiles = [];
-
-    private sealed class FileOpenRequest(StorageFile file)
-    {
-        public StorageFile File { get; } = file;
-        public TaskCompletionSource<object> Completion { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
-    }
 
     private async Task CreateNewTextEditorAsync()
     {
@@ -86,84 +79,33 @@ public sealed partial class NotepadsMainPage
         }
     }
 
-    public async Task<bool> OpenFileAsync(StorageFile file, bool rebuildOpenRecentItems = true)
+    public Task<bool> OpenFileAsync(StorageFile file, bool rebuildOpenRecentItems = true)
     {
-        if (_viewClosed || _isAppClosing || file == null || NotepadsCore.IsClosing) return false;
-        var pending = _openingFiles.FirstOrDefault(request => request.File.IsEqual(file));
-        if (pending != null)
+        if (_viewClosed || _isAppClosing || file == null || NotepadsCore.IsClosing) return Task.FromResult(false);
+        return NotepadsCore.OpenFileAsync(file, async result =>
         {
-            // A StorageFile rejects overlapping metadata operations on the same
-            // instance. Join the original open, then select its surviving tab.
-            await pending.Completion.Task;
-            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return false;
-            var existing = await NotepadsCore.FindTabAsync(file);
-            if (!_viewClosed && !_isAppClosing && !NotepadsCore.IsClosing && existing != null)
-                NotepadsCore.SwitchTo(existing);
-            return false;
-        }
-        var request = new FileOpenRequest(file);
-        _openingFiles.Add(request);
-        try { return await OpenFileCoreAsync(file, rebuildOpenRecentItems); }
-        finally
-        {
-            _openingFiles.Remove(request);
-            request.Completion.TrySetResult(null);
-        }
-    }
-
-    private async Task<bool> OpenFileCoreAsync(StorageFile file, bool rebuildOpenRecentItems)
-    {
-        if (_viewClosed || _isAppClosing || file == null || NotepadsCore.IsClosing) return false;
-        ITextEditor editor = null;
-        try
-        {
-            var openedEditor = await NotepadsCore.FindTabAsync(file);
-            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return false;
-            if (openedEditor != null && NotepadsCore.ContainsTab(openedEditor))
+            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return;
+            switch (result.Kind)
             {
-                NotepadsCore.SwitchTo(openedEditor);
-                NotificationCenter.Instance.PostNotification(
-                    _resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
-                return false;
+                case WorkspaceFileOpenKind.Existing:
+                    NotificationCenter.Instance.PostNotification(
+                        _resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
+                    break;
+                case WorkspaceFileOpenKind.Created:
+                    if (MRUService.TryAdd(file) && rebuildOpenRecentItems)
+                        await BuildOpenRecentButtonSubItemsAsync();
+                    TrackFileExtensionIfNotSupported(file);
+                    break;
+                case WorkspaceFileOpenKind.Failed:
+                    LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to open [{file.Path}]: {result.Error}");
+                    var message = result.Error is SessionFileRecoveryException ?
+                        _resourceLoader.GetString("SessionBackup_NotificationMsg_RecoveryIncomplete") : result.Error.Message;
+                    var dialog = new FileOpenErrorDialog(file.Path, message);
+                    await DialogManager.OpenDialogAsync(dialog, awaitPreviousDialog: false);
+                    if (!dialog.IsAborted) NotepadsCore.FocusOnSelectedTextEditor();
+                    break;
             }
-
-            editor = await NotepadsCore.CreateTextEditorAsync(Guid.NewGuid(), file);
-            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) { await NotepadsCore.DiscardUnattachedEditorAsync(editor); return false; }
-            // Another activation or drop can finish opening the same file
-            // while this candidate is decoding its retained source stream.
-            openedEditor = await NotepadsCore.FindTabAsync(file);
-            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) { await NotepadsCore.DiscardUnattachedEditorAsync(editor); return false; }
-            if (openedEditor != null && NotepadsCore.ContainsTab(openedEditor))
-            {
-                await NotepadsCore.DiscardUnattachedEditorAsync(editor);
-                NotepadsCore.SwitchTo(openedEditor);
-                return false;
-            }
-            NotepadsCore.OpenTextEditor(editor);
-            NotepadsCore.FocusOnSelectedTextEditor();
-            var success = MRUService.TryAdd(file); // Remember recently used files
-            if (success && rebuildOpenRecentItems)
-            {
-                await BuildOpenRecentButtonSubItemsAsync();
-            }
-
-            TrackFileExtensionIfNotSupported(file);
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            if (editor != null && NotepadsCore.GetTab(editor) == null) await NotepadsCore.DiscardUnattachedEditorAsync(editor);
-            if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return false;
-            LoggingService.LogError($"[{nameof(NotepadsMainPage)}] Failed to open [{file.Path}]: {ex}");
-            var fileOpenErrorDialog = new FileOpenErrorDialog(file.Path, ex.Message);
-            await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-            if (!fileOpenErrorDialog.IsAborted)
-            {
-                NotepadsCore.FocusOnSelectedTextEditor();
-            }
-            return false;
-        }
+        });
     }
 
     // Here we track the file extension opened by user but not supported by Notepads.

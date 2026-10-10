@@ -13,6 +13,7 @@ using Notepads.Features.Documents;
 using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.Text;
 using Notepads.Features.Sessions.Contracts;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Features.Sessions.Transfer;
@@ -28,6 +29,7 @@ internal static class SessionRecoveryTests
         await CheckTransferCloseOrderingAsync(closeBeforeAck: true);
         await CheckTransferCloseOrderingAsync(closeBeforeAck: false);
         await CheckInactiveConsumptionAsync();
+        await SessionRecoveryCatalogRegressionTests.RunAsync(log);
         log.AppendLine("PASS: streamed independent transfer journal forks, receipt/ACK target binding, receiver close before/after ACK, exact stale-source suppression, epoch rejection and inactive incarnation consumption across target reset.");
     }
 
@@ -106,9 +108,9 @@ internal static class SessionRecoveryTests
                 {
                     var sourceAfter = await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner);
                     var targetAfter = await SessionRecoveryCatalog.ReadScopeAsync(targetOwner);
-                    SessionTestProtocol.Check(sourceAfter.Session.TextEditors.Any(editor => editor.Id == sourceId) == closeBeforeAck,
+                    SessionTestProtocol.Check(sourceAfter.Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Descriptor).Any(editor => editor.Id == sourceId) == closeBeforeAck,
                         "Receiver close reversed an ACK or an unacknowledged close discarded the source.");
-                    SessionTestProtocol.Check(targetAfter.Session.TextEditors.All(editor => editor.Id != targetId),
+                    SessionTestProtocol.Check(targetAfter.Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Descriptor).All(editor => editor.Id != targetId),
                         "A receipt resurrected its explicitly closed target.");
                     var references = await SessionRecoveryCatalog.ReadReferencesAsync();
                     SessionTestProtocol.Check(!references.JournalFileNames.Contains(targetData.Journal.FileName),
@@ -133,7 +135,7 @@ internal static class SessionRecoveryTests
                 SessionTestProtocol.Check((await sourceService.SaveAsync(later, CancellationToken.None)).Succeeded, "Later source capture did not commit.");
                 using (await SessionRecoveryTransaction.EnterAsync())
                 {
-                    SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Session.TextEditors.Any(editor => editor.Id == sourceId),
+                    SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Descriptor).Any(editor => editor.Id == sourceId),
                         "An old move consumed edits made after its frozen source cutoff.");
                 }
             }
@@ -192,13 +194,13 @@ internal static class SessionRecoveryTests
                     SourceCaptureRevision = cutoff
                 });
                 RecoveryRootStore.RequireCommitted(await store.PublishAsync(area, adoption));
-                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Session.TextEditors.Count == 0,
+                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Selection.Documents.Count(row => row.Membership == RecoveryMembership.Owned) == 0,
                     "Inactive consumption did not suppress its older checkpoint incarnation.");
             }
             await targetService.ClearSessionDataAsync([]);
             using (await SessionRecoveryTransaction.EnterAsync())
             {
-                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Session.TextEditors.Count == 0,
+                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Selection.Documents.Count(row => row.Membership == RecoveryMembership.Owned) == 0,
                     "Target reset revoked source consumption and resurrected the inactive source.");
             }
         }

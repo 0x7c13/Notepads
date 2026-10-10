@@ -23,7 +23,7 @@ internal static partial class SessionControllerTests
     {
         await VerifyBackgroundRestoreOutcomeAsync();
         await VerifyRestorationBackupOutcomeAsync();
-        log.AppendLine("PASS: background recovery failure reports one Partial/count change while the selected editor remains usable; failed restoration checkpoints report one backup failure across repeated requests, preserve ready content/sources, and acknowledge sources after an explicit successful save.");
+        log.AppendLine("PASS: recovery failures report once and retain edits and sources until a successful save.");
     }
 
     private static async Task VerifyBackgroundRestoreOutcomeAsync()

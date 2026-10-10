@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Sessions.Contracts;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 
@@ -99,7 +100,7 @@ internal static class SessionPerformanceRegressionTests
             using (await SessionRecoveryTransaction.EnterAsync())
             {
                 var snapshot = await SessionRecoveryCatalog.ReadScopeAsync(owner);
-                SessionTestProtocol.Check(snapshot.Session.TextEditors.Select(editor => editor.Id).SequenceEqual(new[] { identities[0], identities[2] }),
+                SessionTestProtocol.Check(snapshot.Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Id).SequenceEqual(new[] { identities[0], identities[2] }),
                     "Delta checkpoints must retain full tab order and honor durable closure.");
             }
         }

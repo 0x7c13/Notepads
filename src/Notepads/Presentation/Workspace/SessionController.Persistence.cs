@@ -31,17 +31,27 @@ internal sealed partial class SessionController
         {
             cancellation.ThrowIfCancellationRequested();
             if (!IsBackupEnabled || _disposed) return false;
-            if (!_loaded)
+            if (_recoveryAdmission is RecoveryAdmission.Pending or RecoveryAdmission.Archiving)
             {
-                // Enabling snapshots in a workspace that did not restore must
-                // explicitly protect its old recovery before writing a new roster.
-                _restorePlan ??= await Task.Run(() => _service.DiscoverRecoveryAsync(cancellation));
-                if (!_unclaimedRecoveryArchived)
+                await DiscoverRecoveryPlanAsync(cancellation);
+                if (_disposed) return false;
+                if (_recoveryAdmission == RecoveryAdmission.Pending && _restoreRequested)
                 {
-                    await Task.Run(() => _service.ArchiveRecoverySourcesAsync(_restorePlan.Sources, cancellation));
-                    _unclaimedRecoveryArchived = true;
+                    AdmitDiscoveredWorkspace();
+                    // Do not await payload loading under the capture/publication gate.
+                    StartRestoreWorker();
                 }
-                _loaded = true;
+                else
+                {
+                    // Snapshots were deliberately enabled without requesting restoration.
+                    // Protect the unclaimed old workspace before replacing its index.
+                    // This synchronous decision is final even if publication fails:
+                    // a later Load cannot restore a partly archived frozen plan.
+                    _recoveryAdmission = RecoveryAdmission.Archiving;
+                    if (BeforeRecoveryArchive != null) await BeforeRecoveryArchive(cancellation);
+                    await Task.Run(() => _service.ArchiveRecoverySourcesAsync(_restorePlan.Sources, cancellation));
+                    _recoveryAdmission = RecoveryAdmission.Archived;
+                }
             }
             foreach (var editor in LiveTabs().Select(tab => tab.ReadyEditor).Where(editor => editor != null))
                 await editor.RepairRecoveryJournalAsync(cancellation);
@@ -52,6 +62,8 @@ internal sealed partial class SessionController
             capture.ExpectedStamp = _service.CurrentStamp;
             capture.SelectedEditorId = _notepadsCore.GetSelectedTab()?.Id;
             capture.TabScrollOffset = _notepadsCore.GetTabScrollViewerHorizontalOffset();
+            capture.PendingRescues.AddRange(_imports.Select(tab => tab.RecoverySource)
+                .Where(source => source?.IsOwnScopeRescue == true));
             var entries = new List<CaptureEntry>(tabs.Length);
             foreach (var tab in tabs)
             {
@@ -129,7 +141,7 @@ internal sealed partial class SessionController
         {
             if (_restorationPaused || _notepadsCore.IsClosing)
                 throw new InvalidOperationException("Recovery settings cannot change while the workspace is closing.");
-            if (_initialRestore != null) await _initialRestore;
+            if (_restoreRequested) await LoadLastSessionAsync();
             // Resolve outside session serialization: the worker's completion must
             // itself enter that coordinator. Failure cannot erase a pending source.
             foreach (var tab in LiveTabs())
@@ -146,9 +158,9 @@ internal sealed partial class SessionController
                     throw new InvalidOperationException("The workspace started closing before recovery settings could change.");
                 if (LiveTabs().Any(tab => tab.ReadyEditor == null))
                     throw new InvalidOperationException("A document appeared during reset and must be loaded before recovery can be disabled.");
-                if (!_loaded)
-                    _restorePlan ??= await Task.Run(() => _service.DiscoverRecoveryAsync(cancellation));
-                var sources = !_loaded ? _restorePlan.Sources :
+                var unadmitted = _recoveryAdmission is RecoveryAdmission.Pending or RecoveryAdmission.Archiving;
+                if (unadmitted) await DiscoverRecoveryPlanAsync(cancellation);
+                var sources = unadmitted ? _restorePlan.Sources :
                     (IEnumerable<RecoveryDocumentSource>)_imports.Select(tab => tab.RecoverySource).Where(source => source != null).ToArray();
                 var before = _service.CurrentStamp;
                 try { await Task.Run(() => _service.ClearSessionDataAsync(sources, cancellation)); }
@@ -163,7 +175,8 @@ internal sealed partial class SessionController
                         _imports.Clear();
                         _restorePlan?.Dispose();
                         _restorePlan = null;
-                        _loaded = true;
+                        _recoveryAdmission = RecoveryAdmission.Archived;
+                        _restoreRequested = false;
                     }
                 }
             });

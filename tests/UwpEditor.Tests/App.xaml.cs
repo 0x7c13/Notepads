@@ -113,6 +113,7 @@ public sealed partial class App : Application
                 {
                     await SessionRegistryTests.RunAsync(log);
                     await SessionControllerTests.RunAsync(log);
+                    await SessionRecoveryBindingTests.RunAsync(log);
                 }
                 CompleteTests(log);
                 return;
@@ -711,6 +712,7 @@ public sealed partial class App : Application
             await SessionServiceTests.RunAsync(log);
             await SessionRegistryTests.RunAsync(log);
             await SessionControllerTests.RunAsync(log);
+            await SessionRecoveryBindingTests.RunAsync(log);
             await DocumentFileWriterTests.RunAsync(log);
         }
         catch (Exception ex) { WriteDiagnostic(ex.ToString()); log.AppendLine("FAIL: " + ex); }

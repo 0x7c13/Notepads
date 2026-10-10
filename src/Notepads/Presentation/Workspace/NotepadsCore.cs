@@ -10,10 +10,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Notepads.Controls;
-using Notepads.Features.Documents;
 using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.IO;
-using Notepads.Features.Documents.Text;
 using Notepads.Features.Preferences;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Storage;
@@ -26,7 +24,6 @@ using Notepads.Presentation.Workspace.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -66,6 +63,8 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     private readonly Func<ITextEditor, Task> _renameTextEditorAsync;
 
+    private readonly Func<ISessionController> _sessionController;
+
     private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
     private readonly WindowContext _context;
@@ -80,10 +79,10 @@ public sealed partial class NotepadsCore : INotepadsCore
         TaskCreationOptions.RunContinuationsAsynchronously);
     private Exception _shutdownFailure;
 
-    public NotepadsCore(SetsView sets,
+    internal NotepadsCore(SetsView sets,
         INotepadsExtensionProvider extensionProvider,
         CoreDispatcher dispatcher, WindowContext context,
-        Func<ITextEditor, Task> renameTextEditorAsync)
+        Func<ITextEditor, Task> renameTextEditorAsync, Func<ISessionController> sessionController)
     {
         _sets = sets;
         _sets.SetClosing += SetsView_OnSetClosing;
@@ -100,6 +99,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         _extensionProvider = extensionProvider;
         // The page owns the guarded rename flow; tab menus route to it.
         _renameTextEditorAsync = renameTextEditorAsync ?? throw new ArgumentNullException(nameof(renameTextEditorAsync));
+        _sessionController = sessionController ?? throw new ArgumentNullException(nameof(sessionController));
 
         ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
     }
@@ -109,6 +109,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         if (_disposed) return;
         var items = _sets.Items?.Cast<SetsViewItem>().ToArray() ?? [];
         _disposed = true;
+        _fileOperationLifetime.Cancel();
         ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         _sets.SetClosing -= SetsView_OnSetClosing;
         _sets.SetTapped -= SetsView_OnSetTapped;
@@ -188,6 +189,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         {
             // Finishing a drop can add its unattached editor's shutdown task.
             while (_pendingWork.Count != 0) await Task.WhenAll(_pendingWork.ToArray());
+            _fileOperationLifetime.Dispose();
             if (_shutdownFailure != null) throw new InvalidOperationException("Native workspace shutdown could not be proved.", _shutdownFailure);
             _disposalCompletion.TrySetResult(null);
         }
@@ -205,7 +207,21 @@ public sealed partial class NotepadsCore : INotepadsCore
         if (IsClosing) throw new OperationCanceledException("The view is closing.");
     }
 
-    public bool IsClosing { get; set; }
+    public bool IsClosing
+    {
+        get => _isClosing;
+        set
+        {
+            if (_isClosing == value) return;
+            _isClosing = value;
+            if (value) _fileOperationLifetime.Cancel();
+            else if (!_disposed)
+            {
+                _fileOperationLifetime.Dispose();
+                _fileOperationLifetime = new();
+            }
+        }
+    }
 
     private bool _isEditorPresentationPaused;
     public bool IsEditorPresentationPaused
@@ -524,54 +540,6 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     public void CloseTab(WorkspaceTab tab) => GetTabSetsViewItem(tab)?.Close();
 
-    public async Task<WorkspaceTab> FindTabAsync(StorageFile file)
-    {
-        if (_disposed || file == null) return null;
-        while (!_disposed)
-        {
-            if (FindTabWithoutFileResolution(file) is WorkspaceTab existing) return existing;
-            var tabs = GetTabs();
-            var versions = tabs.Select(tab => tab.RepresentationVersion).ToArray();
-            foreach (var tab in tabs)
-            {
-                if (!ContainsTab(tab) || tab.ReadyEditor != null) continue;
-                var source = tab.RecoverySource;
-                var token = source?.EditingFileFutureAccessToken;
-                if (string.IsNullOrEmpty(token)) continue;
-                try
-                {
-                    var resolved = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token);
-                    // Another open or rename may have finished anywhere in the
-                    // roster while the broker call yielded, including an earlier row.
-                    if (FindTabWithoutFileResolution(file) is WorkspaceTab current) return current;
-                    if (ContainsTab(tab) && tab.ReadyEditor == null &&
-                        ReferenceEquals(tab.RecoverySource, source) && resolved.IsEqual(file)) return tab;
-                }
-                catch (Exception ex) { LoggingService.LogException(ex); }
-            }
-            var currentTabs = GetTabs();
-            if (tabs.Length != currentTabs.Length || tabs.Where((tab, index) =>
-                !ReferenceEquals(tab, currentTabs[index]) || tab.RepresentationVersion != versions[index]).Any()) continue;
-            // Ready file identity can change without changing its representation version.
-            return FindTabWithoutFileResolution(file);
-        }
-        return null;
-    }
-
-    private WorkspaceTab FindTabWithoutFileResolution(StorageFile file)
-    {
-        foreach (var tab in GetTabs())
-        {
-            if (tab.ReadyEditor is ITextEditor editor)
-            {
-                if (editor.EditingFile?.IsEqual(file) == true) return tab;
-            }
-            else if (!string.IsNullOrEmpty(file.Path) && !string.IsNullOrEmpty(tab.EditingFilePath) &&
-                string.Equals(file.Path, tab.EditingFilePath, StringComparison.OrdinalIgnoreCase)) return tab;
-        }
-        return null;
-    }
-
     public double GetTabScrollViewerHorizontalOffset()
     {
         return _sets.ScrollViewerHorizontalOffset;
@@ -852,7 +820,6 @@ public sealed partial class NotepadsCore : INotepadsCore
     private async Task DropAsync(SetsView sets, DragEventArgs args)
     {
         var deferral = args.GetDeferral();
-        ITextEditor candidate = null;
         IDisposable sourcePin = null;
         bool published = false;
         try
@@ -867,6 +834,7 @@ public sealed partial class NotepadsCore : INotepadsCore
                 return;
             }
             args.Handled = true;
+            using var lifetime = CaptureFileOperation();
             var expectedTarget = _context.Sessions.CurrentStamp;
             var serialized = await args.DataView.GetDataAsync(TextEditorTransfer.DataFormat) as string;
             var token = JsonSerializer.Deserialize<TransferToken>(serialized ?? throw new InvalidOperationException("Missing transfer token."), SessionJsonContext.Default.TransferToken);
@@ -899,44 +867,24 @@ public sealed partial class NotepadsCore : INotepadsCore
 
                 editingFile = file;
             }
-            if (editingFile != null && await FindTabAsync(editingFile) is WorkspaceTab existing)
+            var result = await OpenTransferredFileAsync(editingFile,
+                () => PrepareTransferredEditorAsync(data, editingFile),
+                editor => ProtectTransferredEditorAsync(editor, token, expectedTarget),
+                GetDropIndex(sets, args), lifetime.Token);
+            if (result.Kind == WorkspaceFileOpenKind.Existing)
             {
-                SwitchTo(existing);
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
                 return;
             }
-            using (var savedSource = await SessionDocumentStore.OpenBaselineAsync(data.SavedBaseline))
-            using (var recoverySource = await SessionDocumentStore.OpenBaselineAsync(data.RecoveryBaseline))
-            using (var journal = await SessionDocumentStore.OpenJournalAsync(data.Journal))
-            using (var checkpoint = await journal.OpenCheckpointAsync(
-                data.Journal.BaselineSequence, data.Journal.CommittedSequence,
-                data.Journal.CommittedByteLength, data.Journal.PrefixSha256, data.Journal.DocumentByteLength))
-            using (var saved = await SessionDocumentStore.ForkBaselineAsync(savedSource, DocumentOwnerId))
-            using (var recovery = data.SavedBaseline.Matches(data.RecoveryBaseline) ?
-                saved.Retain() : await SessionDocumentStore.ForkBaselineAsync(recoverySource, DocumentOwnerId))
-            using (var snapshot = new DocumentSnapshot(saved,
-                EncodingCatalog.GetEncodingByName(data.StateMetaData.LastSavedEncoding),
-                LineEndingUtility.GetLineEndingByName(data.StateMetaData.LastSavedLineEnding), data.StateMetaData.DateModifiedFileTime))
-            {
-                candidate = CreateTextEditor(Guid.NewGuid(), editingFile, data.StateMetaData.FileNamePlaceholder);
-                await candidate.RestoreV2Async(snapshot, recovery, journal, checkpoint,
-                    editingFile, data.StateMetaData, data.TextDirty);
-            }
-            // The destination owns independent baselines and an imported
-            // journal before the source is allowed to close its editor.
-            ThrowIfDisposedOrClosing();
-            if (editingFile != null && await FindTabAsync(editingFile) is WorkspaceTab duplicate)
-            {
-                SwitchTo(duplicate);
-                return;
-            }
-            ThrowIfDisposedOrClosing();
-            await ProtectTransferredEditorAsync(candidate, token, expectedTarget);
-            OpenTextEditor(candidate, GetDropIndex(sets, args));
+            if (result.Kind == WorkspaceFileOpenKind.Failed) throw result.Error;
+            if (result.Kind != WorkspaceFileOpenKind.Created) return;
             published = true;
             args.DataView.ReportOperationCompleted(DataPackageOperation.Move);
-            if (data.StateMetaData.IsContentPreviewPanelOpened) candidate.ShowHideContentPreview();
-            if (data.StateMetaData.IsInDiffPreviewMode) await candidate.OpenSideBySideDiffViewerAsync();
+            if (!_disposed && !IsClosing && result.Tab.ReadyEditor is ITextEditor candidate)
+            {
+                if (data.StateMetaData.IsContentPreviewPanelOpened) candidate.ShowHideContentPreview();
+                if (data.StateMetaData.IsInDiffPreviewMode) await candidate.OpenSideBySideDiffViewerAsync();
+            }
             AnalyticsService.TrackEvent("OnSetDropped");
         }
         catch (Exception ex) { LoggingService.LogException(ex); }
@@ -944,14 +892,6 @@ public sealed partial class NotepadsCore : INotepadsCore
         {
             if (!published)
             {
-                if (candidate != null)
-                {
-                    // A source may have consumed the durable receipt while
-                    // this view was closing. Publication rollback is not an
-                    // intentional discard of its independent recovery data.
-                    if (GetTab(candidate) != null) DeleteTab(GetTab(candidate));
-                    else await DiscardUnattachedEditorAsync(candidate);
-                }
                 if (args.DataView.Contains(TextEditorTransfer.DataFormat)) args.DataView.ReportOperationCompleted(DataPackageOperation.None);
             }
             try { sourcePin?.Dispose(); }

@@ -73,7 +73,8 @@ public sealed partial class NotepadsMainPage : Page
         {
             if (_notepadsCore != null) return _notepadsCore;
 
-            _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher, _context, RenameFileAsync);
+            _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher, _context,
+                RenameFileAsync, () => SessionController);
             _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
             _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
             _notepadsCore.TabClosed += OnTabClosed;
@@ -144,6 +145,8 @@ public sealed partial class NotepadsMainPage : Page
         InitializeControls();
         InitializeMainMenu();
         InitializeKeyboardShortcuts();
+        // Activation can open another file before Sets_Loaded begins restoration.
+        if (ApplicationPreferences.IsSessionSnapshotEnabled) SessionController.RequestRestoration();
         Loaded += MainPage_Loaded;
         Unloaded += MainPage_Unloaded;
 
@@ -572,6 +575,11 @@ public sealed partial class NotepadsMainPage : Page
             HideAllOpenFlyouts();
             IsEnabled = false;
             SessionController.StopSessionBackup();
+
+            // A receipt/adoption already publishing must install its document before
+            // the close decision examines the roster. Keep demand loading available for Save All.
+            await SessionController.WaitForSessionOperationsAsync();
+            if (_viewClosed) return;
 
             await Task.WhenAll(NotepadsCore.GetTabs().Where(tab => tab.ReadyEditor != null)
                 .Select(tab => tab.ReadyEditor.WaitForDocumentOperationsAsync()));

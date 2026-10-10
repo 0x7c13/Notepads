@@ -81,6 +81,7 @@
     <Compile Include="..\..\src\Notepads\Presentation\Workspace\ISessionController.cs" />
     <Compile Include="..\..\src\Notepads\Presentation\Workspace\SessionController*.cs" />
     <Compile Include="..\..\src\Notepads\Presentation\Workspace\WorkspaceTab.cs" />
+    <Compile Include="..\..\src\Notepads\Presentation\Workspace\WorkspaceFileOpenResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="..\..\src\Notepads\Presentation\Theming\SyntaxThemes.xaml">

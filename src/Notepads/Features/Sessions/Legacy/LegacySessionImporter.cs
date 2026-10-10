@@ -14,18 +14,15 @@ using Notepads.Features.Documents.Storage;
 using Notepads.Features.Documents.Text;
 using Notepads.Features.Sessions.Contracts.Legacy;
 using Notepads.Features.Sessions.Recovery;
-using Notepads.Infrastructure.Storage;
 using Windows.Storage;
 
 namespace Notepads.Features.Sessions.Legacy;
 
 internal static class LegacySessionImporter
 {
-    public static async Task<PreparedRecoveryDocument> PrepareAsync(TextEditorSessionDataV1 data,
+    public static async Task<PreparedRecoveryDocument> PrepareAsync(TextEditorSessionDataV1 data, StorageFile file,
         Guid ownerId, DocumentLoadOptions defaults, CancellationToken cancellation)
     {
-        var file = data.EditingFileFutureAccessToken == null ? null :
-            await FutureAccessListUtility.GetFileFromFutureAccessListAsync(data.EditingFileFutureAccessToken);
         var lastSaved = data.LastSavedBackupFilePath;
         var pending = data.PendingBackupFilePath;
         if (lastSaved == null && pending == null)

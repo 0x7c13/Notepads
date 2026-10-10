@@ -16,6 +16,7 @@ using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.Storage;
 using Notepads.Features.Sessions;
 using Notepads.Features.Sessions.Contracts;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Contracts.Legacy;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
@@ -38,6 +39,7 @@ internal static class SessionServiceTests
         await CheckLegacyConsumptionAsync();
         await CheckAdoptionRetryAsync();
         await CheckMixedRescueAsync();
+        await SessionPendingRescueTests.RunAsync(log);
         await CheckInactiveAdoptionRetryAsync();
         await CheckNewerRescueRetentionAsync();
         await CheckDeletedEditingFileAsync();
@@ -52,7 +54,7 @@ internal static class SessionServiceTests
         await CheckRetiredScopePruningAsync();
         await CheckLiveRecoveryBlockAsync();
         await SessionPerformanceRegressionTests.RunAsync(log);
-        log.AppendLine("PASS: immutable session checkpoints/mirrors, bounded history, failed newest Pending protection, rescue Save As, stale epoch rejection, V1 partial adoption/close/reset, deleted editing files, clean file reload, empty V1 rows, interrupted reset, partial close batches, retirement of closed or cleared rescue history, snapshot-off orphan collection that spares live editors and other windows, one maintenance pass that both prunes and collects, another window's pruning of a retired scope's checkpoints that keeps its rescues and referenced assets, and a live blocked-recovery signal that saves and closes set and the next clean save clears.");
+        log.AppendLine("PASS: session recovery, reset and maintenance preserve documents across save failures.");
     }
 
     private static async Task CheckFrozenMixedCaptureAsync()
@@ -97,7 +99,7 @@ internal static class SessionServiceTests
             {
                 var snapshot = await SessionRecoveryCatalog.ReadScopeAsync(owner);
                 SessionTestProtocol.Check(snapshot.SelectedCheckpoint.Record.Session.TextEditors.Select(item => item.Id).SequenceEqual(new[] { second, first }) &&
-                    snapshot.Session.SelectedTextEditor == second && snapshot.Session.TabScrollViewerHorizontalOffset == 31,
+                    snapshot.Selection.SelectedEditorId == second && snapshot.Selection.TabScrollViewerHorizontalOffset == 31,
                     "Mixed native/retained capture lost exact tab order, selection or scroll.");
             }
             plan.Dispose();
@@ -163,7 +165,7 @@ internal static class SessionServiceTests
             {
                 var snapshot = await SessionRecoveryCatalog.ReadScopeAsync(owner);
                 var references = await SessionRecoveryCatalog.ReadReferencesAsync();
-                SessionTestProtocol.Check(snapshot.Session.TextEditors.Single().Id == replacement &&
+                SessionTestProtocol.Check(snapshot.Selection.Documents.Single(row => row.Membership == RecoveryMembership.Owned).Descriptor.Id == replacement &&
                     references.JournalFileNames.Contains(old.Journal.FileName) &&
                     SessionRecoveryAuthority.IsClosed(snapshot.Stamp, id, snapshot.Decisions.Select(item => item.Record)),
                     "Archiving unclaimed recovery dropped its bytes or left it eligible for automatic reimport.");
@@ -433,7 +435,7 @@ internal static class SessionServiceTests
                 SessionTestProtocol.Check(store.Enumerate(store.GetScopeArea(owner, RecoveryAreaKind.Rescue, kept)).Entries.Count == 3,
                     "Maintenance did not keep exactly three rescue generations of the open tab.");
                 var snapshot = await SessionRecoveryCatalog.ReadScopeAsync(owner);
-                SessionTestProtocol.Check(snapshot.Checkpoints.Count == 3 && snapshot.Session.TextEditors.Single().Id == kept &&
+                SessionTestProtocol.Check(snapshot.Checkpoints.Count == 3 && snapshot.Selection.Documents.Single(row => row.Membership == RecoveryMembership.Owned).Descriptor.Id == kept &&
                     snapshot.Pending.Single().Record.Editor.ComputeSha256() == pending.ComputeSha256() &&
                     closed.All(id => SessionRecoveryAuthority.IsClosed(snapshot.Stamp, id, snapshot.Decisions.Select(read => read.Record))),
                     "Rescue retirement lost checkpoint history, Pending evidence or close suppression.");
@@ -726,10 +728,10 @@ internal static class SessionServiceTests
             {
                 var repaired = await SessionRecoveryCatalog.ReadScopeAsync(owner);
                 SessionTestProtocol.Check(repaired.Outcome == SessionRecoveryOutcome.MirrorRepaired &&
-                    repaired.Session.TextEditors.Single().Id == id, "A verified peer did not repair its mirror.");
+                    repaired.Selection.Documents.Single(row => row.Membership == RecoveryMembership.Owned).Descriptor.Id == id, "A verified peer did not repair its mirror.");
                 // A rescue may commit before its workspace checkpoint fails.
                 // Its higher revision must still be part of restart ordering.
-                var laterRescue = SessionRecoveryCatalog.CloneEditor(snapshot.Session.TextEditors.Single());
+                var laterRescue = SessionRecoveryCatalog.CloneEditor(snapshot.Selection.Documents.Single(row => row.Membership == RecoveryMembership.Owned).Descriptor);
                 laterRescue.CaptureRevision += 10000;
                 var area = store.GetScopeArea(owner, RecoveryAreaKind.Rescue, id);
                 RecoveryRootStore.RequireCommitted(await store.PublishAsync(area, new RecoveryRecord
@@ -743,7 +745,7 @@ internal static class SessionServiceTests
             using (var ordering = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None))
             using (var resumed = document.CaptureState())
             {
-                SessionTestProtocol.Check(resumed.CaptureRevision > snapshot.Session.TextEditors.Single().CaptureRevision + 10000,
+                SessionTestProtocol.Check(resumed.CaptureRevision > snapshot.Selection.Documents.Single(row => row.Membership == RecoveryMembership.Owned).Descriptor.CaptureRevision + 10000,
                     "Restart ordering omitted a newer rescue whose workspace checkpoint never committed.");
             }
             // Metadata remains valid while only the newer NPJ tail is missing.
@@ -882,7 +884,7 @@ internal static class SessionServiceTests
             {
                 var authority = await SessionRecoveryCatalog.ReadScopeAsync(owner);
                 SessionTestProtocol.Check(authority.Decisions.Count(read => read.Record.Kind == RecoveryRecordKind.AdoptLegacy) == 1 &&
-                    authority.Session.TextEditors.Single().Id == id,
+                    authority.Selection.Documents.Single(row => row.Membership == RecoveryMembership.Owned).Descriptor.Id == id,
                     "A committed adoption followed by failed checkpoint could not retry idempotently.");
             }
         }
@@ -901,6 +903,7 @@ internal static class SessionServiceTests
 
     private static async Task CheckMixedRescueAsync()
     {
+        const string adoptedEdit = "later adopted العربية e\u0301😀\r";
         var owner = Guid.NewGuid(); var adoptedId = Guid.NewGuid(); var ordinaryId = Guid.NewGuid();
         var service = SessionTestProtocol.CreateService(owner);
         var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
@@ -922,6 +925,7 @@ internal static class SessionServiceTests
                 await using var adopted = await SessionTestDocument.CreateAsync(owner, "adopted text");
                 using (var initial = adopted.Capture(adoptedId, prepared.ExpectedStamp))
                     await SessionTestProtocol.PublishRecoveredAsync(service, prepared, initial);
+                adopted.Editor.InsertText(0, adoptedEdit);
                 await using var ordinary = await SessionTestDocument.CreateAsync(owner, "ordinary text");
                 using var capture = adopted.Capture(adoptedId, service.CurrentStamp);
                 capture.Documents.Add(new SessionDocumentCapture { Id = ordinaryId, Recovery = ordinary.CaptureState() });
@@ -935,12 +939,14 @@ internal static class SessionServiceTests
                 foreach (var copy in new[] { "a", "b" }) File.WriteAllText(store.Paths.CopyPath(checkpoint.Address, copy), "bad");
             await service.DisposeAsync(); service = SessionTestProtocol.CreateService(owner);
             using var recovered = await SessionTestProtocol.MaterializeAsync(service, new DocumentLoadOptions(), CancellationToken.None);
-            SessionTestProtocol.Check(recovered.Documents.Count == 2 && recovered.Documents.Any(document => document.Id == adoptedId) &&
+            SessionTestProtocol.Check(recovered.Documents.Count == 2 && recovered.Documents.Any(document => document.Id == adoptedId && document.Source.IsOwned) &&
                 recovered.Documents.Any(document => document.Id != adoptedId && document.Metadata.RequiresSaveAs) &&
                 service.RecoveryOutcome == SessionRecoveryOutcome.Rescue,
                 "Durable adoption suppressed salvage of another ordinary tab when every checkpoint was lost.");
             // A normal checkpoint may publish while another own rescue waits in the background queue.
             await using var ready = await SessionTestDocument.FromPreparedAsync(owner, recovered.Documents.Single(item => item.Id == adoptedId));
+            SessionTestProtocol.Check(ready.Editor.GetText(1000) == adoptedEdit + "adopted text",
+                "Recovery kept the adopted identity but replaced its later persisted edits with the original adoption content.");
             using (var first = ready.Capture(adoptedId, recovered.ExpectedStamp))
                 await SessionTestProtocol.PublishRecoveredAsync(service, recovered, first);
             var queuedRescue = recovered.Documents.Single(item => item.Id != adoptedId);
@@ -951,7 +957,7 @@ internal static class SessionServiceTests
                 await SessionTestProtocol.PublishRecoveredAsync(service, recovered, both);
             }
             using (await SessionRecoveryTransaction.EnterAsync())
-                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(owner)).Session.TextEditors.Count == 2,
+                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(owner)).Selection.Documents.Count(row => row.Membership == RecoveryMembership.Owned) == 2,
                     "An intervening workspace checkpoint made a queued, pinned own rescue impossible to adopt.");
         }
         finally { await service.DisposeAsync(); await SessionTestProtocol.CleanupAsync(owner); }
@@ -1012,7 +1018,7 @@ internal static class SessionServiceTests
             catch (IOException) { }
             using (await SessionRecoveryTransaction.EnterAsync())
             {
-                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Session.TextEditors.Count == 0,
+                SessionTestProtocol.Check((await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner)).Selection.Documents.Count(row => row.Membership == RecoveryMembership.Owned) == 0,
                     "The committed inactive adoption did not consume its source before the later checkpoint failed.");
             }
 
@@ -1023,7 +1029,7 @@ internal static class SessionServiceTests
             {
                 var targetRoots = await SessionRecoveryCatalog.ReadScopeAsync(targetOwner);
                 SessionTestProtocol.Check(targetRoots.Decisions.Count(read => read.Record.Kind == RecoveryRecordKind.AdoptInactive) == 1 &&
-                    targetRoots.Session.TextEditors.Any(editor => editor.Id == id),
+                    targetRoots.Selection.Documents.Where(row => row.Membership == RecoveryMembership.Owned).Select(row => row.Descriptor).Any(editor => editor.Id == id),
                     "Already consumed inactive source prevented checkpoint retry or was consumed twice.");
             }
         }
@@ -1095,7 +1101,7 @@ internal static class SessionServiceTests
                     foreach (var peer in new[] { "a", "b" }) File.WriteAllText(store.Paths.CopyPath(checkpoint.Address, peer), "bad");
                 snapshot = await SessionRecoveryCatalog.ReadScopeAsync(sourceOwner);
                 var references = await SessionRecoveryCatalog.ReadReferencesAsync();
-                SessionTestProtocol.Check(snapshot.Session.TextEditors.Count == 0 && snapshot.EligibleRescues.Count == 0 &&
+                SessionTestProtocol.Check(snapshot.Selection.Documents.Count(row => row.Membership == RecoveryMembership.Owned) == 0 && snapshot.Selection.Documents.Count(row => row.Membership == RecoveryMembership.Rescue) == 0 &&
                     references.JournalFileNames.Contains(newerDescriptor.Journal.FileName),
                     "A consumed higher source rescue was reimported or its manual recovery assets became collectible.");
             }

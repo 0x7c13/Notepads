@@ -7,6 +7,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Infrastructure.Threading;
+using Windows.Foundation;
 using Windows.Storage;
 using WinUIEditor;
 
@@ -17,7 +19,7 @@ namespace Notepads.Features.Documents.Storage;
 /// StopJournalAsync/CloseAsync finishes and retain it for every prefix reader.
 /// Native framing, capture, replay, and checksums stay in WinUIEdit.
 /// </summary>
-public sealed class DocumentJournal : IDisposable
+public sealed partial class DocumentJournal : IDisposable
 {
     private readonly DocumentAssetLease _asset;
 
@@ -70,21 +72,38 @@ public sealed class DocumentJournal : IDisposable
         (committedByteLength >= 4UL * 1024 * 1024 && committedByteLength / 4 >= documentByteLength);
 
     public async Task<EditorJournalCheckpoint> OpenCheckpointAsync(ulong baselineSequence,
-        ulong committedSequence, long committedByteLength, string prefixSha256, long documentByteLength)
+        ulong committedSequence, long committedByteLength, string prefixSha256, long documentByteLength,
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var expectedDocumentLength = checked((ulong)documentByteLength);
         using (var retained = Retain())
         {
-            var checkpoint = await EditorJournalCheckpoint.OpenAsync(retained.File.Path, baselineSequence,
+            var operation = EditorJournalCheckpoint.OpenAsync(retained.File.Path, baselineSequence,
                 committedSequence, checked((ulong)committedByteLength), prefixSha256);
-            if (expectedDocumentLength != checkpoint.CommittedDocumentByteLength)
+            OnCheckpointOpening(operation, cancellationToken);
+            // Cancel the native validator, but keep its journal lease until it finishes unwinding.
+            var checkpoint = await operation.AsCompletionTask(cancellationToken).ConfigureAwait(false);
+            try
             {
-                checkpoint.Dispose();
-                throw new InvalidDataException("The recovered document length does not match its committed descriptor.");
+                OnCheckpointOpened(checkpoint, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                if (expectedDocumentLength != checkpoint.CommittedDocumentByteLength)
+                    throw new InvalidDataException("The recovered document length does not match its committed descriptor.");
+                return checkpoint;
             }
-            return checkpoint;
+            catch
+            {
+                // Native completion can win the cancellation race and return an owned result.
+                checkpoint.Dispose();
+                throw;
+            }
         }
     }
+
+    // Source-linked tests implement these boundaries; production builds erase the calls.
+    static partial void OnCheckpointOpening(IAsyncOperation<EditorJournalCheckpoint> operation, CancellationToken cancellationToken);
+    static partial void OnCheckpointOpened(EditorJournalCheckpoint checkpoint, CancellationToken cancellationToken);
 
     public void PreserveForRecovery() => _asset.PreserveForRecovery();
 

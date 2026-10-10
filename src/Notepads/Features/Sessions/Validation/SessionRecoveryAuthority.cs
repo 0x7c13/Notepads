@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Notepads.Features.Sessions.Contracts;
+using Notepads.Features.Sessions.Contracts.Recovery;
 
 namespace Notepads.Features.Sessions.Validation;
 
@@ -50,7 +51,8 @@ internal static class SessionRecoveryAuthority
             floor = Math.Max(floor, record.Session?.AcknowledgedSource?.CaptureRevision ?? 0);
             floor = Math.Max(floor, record.Session?.SourceRemovalRevision ?? 0);
             if (record.Session != null)
-                foreach (var editor in record.Session.TextEditors) floor = Math.Max(floor, editor.CaptureRevision);
+                foreach (var editor in record.Session.TextEditors.Concat(record.Session.PendingRescues))
+                    floor = Math.Max(floor, editor.CaptureRevision);
             foreach (var key in record.Consumptions) floor = Math.Max(floor, key.SourceCaptureRevision);
         }
         return floor;
@@ -118,67 +120,77 @@ internal static class SessionRecoveryAuthority
 /// <summary>A catalog view owns no document streams and never turns content fallback into lifecycle rollback.</summary>
 internal sealed class RecoveryScopeSnapshot
 {
+    private RecoverySelection _selection;
+
     public RecoveryStamp Stamp { get; set; }
-    public bool Blocked { get; set; }
-    public SessionRecoveryOutcome Outcome { get; set; } = SessionRecoveryOutcome.Absent;
+    public bool ControlBlocked { get; set; }
+    public SessionRecoveryOutcome ControlOutcome { get; set; } = SessionRecoveryOutcome.Absent;
+    public string ControlAttentionReason { get; set; }
+    public bool Blocked => ControlBlocked || _selection?.Blocked == true;
+    public SessionRecoveryOutcome Outcome => Blocked ? SessionRecoveryOutcome.Blocked :
+        SessionRecoveryAuthority.CombineOutcomes(ControlOutcome, _selection?.Outcome ?? SessionRecoveryOutcome.Absent);
+    public string AttentionReason => ControlAttentionReason ?? _selection?.AttentionReason;
+    public RecoverySelection Selection => _selection ??
+        throw new InvalidOperationException("Lifecycle-only recovery evidence has no content selection.");
     public List<RecoveryReadResult> Checkpoints { get; } = [];
     public List<RecoveryReadResult> Rescues { get; } = [];
     public List<RecoveryReadResult> Decisions { get; } = [];
     public List<RecoveryReadResult> Pending { get; } = [];
     public List<RecoveryReadResult> GlobalRecords { get; } = [];
+    public HashSet<Guid> RetiredContentOperations { get; } = [];
     public IEnumerable<RecoveryRecord> AllDecisions => Decisions.Concat(GlobalRecords)
         .Where(read => read.State == RecoveryReadState.Valid).Select(read => read.Record);
-    public IEnumerable<RecoveryRecord> VerifiedRecords => Checkpoints.Concat(Rescues).Concat(Pending)
-        .Concat(Decisions).Concat(GlobalRecords).Where(read => read.State == RecoveryReadState.Valid).Select(read => read.Record);
-    public NotepadsSessionDataV2 Session { get; set; }
-    public RecoveryReadResult SelectedCheckpoint { get; set; }
-    public string AttentionReason { get; set; }
-    public List<RecoveryReadResult> EligibleRescues { get; } = [];
+    private IEnumerable<RecoveryReadResult> VerifiedReads => Checkpoints.Concat(Rescues).Concat(Pending)
+        .Concat(Decisions).Concat(GlobalRecords).Where(read => read.State == RecoveryReadState.Valid);
+    public IEnumerable<RecoveryRecord> VerifiedRecords => VerifiedReads.Select(read => read.Record);
+    public RecoveryReadResult SelectedCheckpoint { get; private set; }
 
-    public IEnumerable<TextEditorSessionDataV2> CurrentDescriptors(Guid editorId)
+    public void AttachSelection(RecoverySelection selection)
     {
-        foreach (var record in VerifiedRecords.Where(record => SessionRecoveryAuthority.SameEpoch(record.Stamp, Stamp)))
+        ArgumentNullException.ThrowIfNull(selection);
+        if (_selection != null) throw new InvalidOperationException("Recovery evidence already has its content selection.");
+        if (!SessionRecoveryAuthority.SameEpoch(Stamp, selection.Stamp))
+            throw new InvalidOperationException("A recovery selection belongs to a different source epoch.");
+        SelectedCheckpoint = selection.SelectedCheckpointAddress == null ? null : Checkpoints.Single(read =>
+            read.Address == selection.SelectedCheckpointAddress && read.PayloadSha256 == selection.SelectedCheckpointSha256);
+        _selection = selection;
+    }
+
+    public IEnumerable<TextEditorSessionDataV2> CurrentDescriptors(Guid editorId) =>
+        CurrentDescriptorEvidence(editorId).Select(evidence => evidence.Editor);
+
+    internal IEnumerable<(TextEditorSessionDataV2 Editor, RecoveryReadResult Root)> CurrentDescriptorEvidence(Guid editorId)
+    {
+        foreach (var read in VerifiedReads)
         {
-            if (record.Editor?.Id == editorId && record.Editor.Journal.OwnerId == Stamp.ScopeId) yield return record.Editor;
-            if (record.SourceEditor?.Id == editorId && record.SourceEditor.Journal.OwnerId == Stamp.ScopeId) yield return record.SourceEditor;
-            if (record.Session != null)
+            var record = read.Record;
+            var contentStamp = record.Kind switch
             {
-                foreach (var editor in record.Session.TextEditors)
-                    if (editor.Id == editorId && editor.Journal.OwnerId == Stamp.ScopeId) yield return editor;
+                RecoveryRecordKind.TransferOffer => record.SourceStamp,
+                RecoveryRecordKind.TransferReceipt or RecoveryRecordKind.SourceMoved => record.TargetStamp,
+                _ => record.Stamp
+            };
+            if (SessionRecoveryAuthority.SameEpoch(contentStamp, Stamp))
+            {
+                if (record.Editor?.Id == editorId && record.Editor.Journal.OwnerId == Stamp.ScopeId) yield return (record.Editor, read);
+                if (record.Session != null)
+                    foreach (var editor in record.Session.TextEditors.Concat(record.Session.PendingRescues))
+                        if (editor.Id == editorId && editor.Journal.OwnerId == Stamp.ScopeId) yield return (editor, read);
+            }
+            if (SessionRecoveryAuthority.SameEpoch(record.SourceStamp, Stamp))
+            {
+                if (record.SourceEditor?.Id == editorId && record.SourceEditor.Journal.OwnerId == Stamp.ScopeId)
+                    yield return (record.SourceEditor, read);
+                if (record.Session?.AcknowledgedSource?.Id == editorId &&
+                    record.Session.AcknowledgedSource.Journal.OwnerId == Stamp.ScopeId)
+                    yield return (record.Session.AcknowledgedSource, read);
             }
         }
     }
 
-    public long ConsumptionCutoff(Guid editorId)
-    {
-        var floor = CurrentDescriptors(editorId).Select(editor => editor.CaptureRevision).DefaultIfEmpty(0).Max();
-        foreach (var record in VerifiedRecords)
-        {
-            foreach (var key in record.Consumptions)
-            {
-                if (key.Kind == RecoveryConsumptionKind.Inactive && key.SourceScopeId == Stamp.ScopeId &&
-                    key.SourceEpochId == Stamp.EpochId && key.SourceEditorId == editorId)
-                {
-                    floor = Math.Max(floor, key.SourceCaptureRevision);
-                }
-            }
+    public bool IsRetiredContent(RecoveryReadResult read) =>
+        read.Address.Area.ScopeId == Stamp.ScopeId &&
+        read.Address.Area.Kind is RecoveryAreaKind.Checkpoints or RecoveryAreaKind.Rescue &&
+        RetiredContentOperations.Contains(read.Address.OperationId);
 
-            if (record.Kind == RecoveryRecordKind.SourceMoved && SessionRecoveryAuthority.SameEpoch(record.SourceStamp, Stamp) &&
-                record.SourceEditor.Id == editorId)
-            {
-                floor = Math.Max(floor, record.Session.SourceRemovalRevision);
-            }
-        }
-        return floor;
-    }
-
-    public IEnumerable<TextEditorSessionDataV2> EarlierDescriptors(Guid editorId) =>
-        Checkpoints.Where(read => read.State == RecoveryReadState.Valid &&
-            read.Record.Stamp.EpochId == Stamp.EpochId &&
-            (SelectedCheckpoint == null || read.Record.Stamp.Ordinal < SelectedCheckpoint.Record.Stamp.Ordinal))
-            .OrderByDescending(read => read.Record.Stamp.Ordinal)
-            .SelectMany(read => read.Record.Session.TextEditors).Where(editor => editor.Id == editorId)
-            .Concat(Rescues.Where(read => read.State == RecoveryReadState.Valid &&
-                read.Record.Stamp.EpochId == Stamp.EpochId && read.Record.Editor.Id == editorId)
-                .OrderByDescending(read => read.Record.Stamp.Ordinal).Select(read => read.Record.Editor));
 }

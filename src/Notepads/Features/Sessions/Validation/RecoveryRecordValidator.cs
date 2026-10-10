@@ -15,6 +15,7 @@ internal static class RecoveryRecordValidator
     {
         if (session?.Version != 2 || session.TextEditors == null || session.TextEditors.Count != 0 ||
             session.UnrecoveredLegacyEditors == null || session.UnrecoveredLegacyEditors.Count != 0 ||
+            session.PendingRescues == null || session.PendingRescues.Count != 0 ||
             session.TransferSource != null || session.TransferReceipt != null || !token.Matches(session.TransferAcknowledgement) ||
             session.AcknowledgedSource?.Id != token.SourceEditorId || session.AcknowledgedSource.Journal?.OwnerId != token.SourceOwnerId ||
             session.SourceRemovalRevision < session.AcknowledgedSource.CaptureRevision ||
@@ -39,7 +40,8 @@ internal static class RecoveryRecordValidator
     internal static TextEditorSessionDataV2 ValidateEditorRoot(NotepadsSessionDataV2 session)
     {
         if (session?.Version != 2 || session.TextEditors == null || session.TextEditors.Count != 1 ||
-            session.UnrecoveredLegacyEditors == null || session.UnrecoveredLegacyEditors.Count != 0)
+            session.UnrecoveredLegacyEditors == null || session.UnrecoveredLegacyEditors.Count != 0 ||
+            session.PendingRescues == null || session.PendingRescues.Count != 0)
         {
             throw new InvalidDataException("Invalid durable transfer root.");
         }

@@ -53,7 +53,12 @@ public sealed partial class NotepadsMainPage
     private void SetupStatusBar(ITextEditor textEditor)
     {
         if (textEditor == null) return;
-        if (StatusBar != null) StatusBar.IsHitTestVisible = true;
+        if (StatusBar != null)
+        {
+            StatusBar.IsHitTestVisible = true;
+            FontZoomIndicator.Visibility = LineEndingIndicator.Visibility =
+                EncodingIndicator.Visibility = LanguageIndicator.Visibility = Visibility.Visible;
+        }
         UpdateApplicationTitle(textEditor);
         UpdateFileModificationStateIndicator(textEditor);
         UpdatePathIndicator(textEditor);
@@ -84,10 +89,8 @@ public sealed partial class NotepadsMainPage
         ModificationIndicator.Visibility = tab?.IsModified == true ? Visibility.Visible : Visibility.Collapsed;
         LineColumnIndicator.Text = tab == null ? string.Empty : _resourceLoader.GetString(
             tab.State == WorkspaceTabState.Failed ? "WorkspaceTab_LoadFailed" : "WorkspaceTab_Loading");
-        EncodingIndicator.Text = string.Empty;
-        LineEndingIndicator.Text = string.Empty;
-        FontZoomIndicator.Text = string.Empty;
-        LanguageIndicator.Text = string.Empty;
+        FontZoomIndicator.Visibility = LineEndingIndicator.Visibility =
+            EncodingIndicator.Visibility = LanguageIndicator.Visibility = Visibility.Collapsed;
         UpdateShadowWindowIndicator();
     }
 

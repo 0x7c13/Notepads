@@ -20,7 +20,7 @@ namespace Notepads.Features.Documents.Storage;
 /// A lease on an immutable canonical UTF-8 document generation. Temporary
 /// generations are deleted only after their final handle and reader close.
 /// </summary>
-public sealed class DocumentBaseline : IDisposable
+public sealed partial class DocumentBaseline : IDisposable
 {
     public const long MaximumByteLength = DocumentLimits.MaximumCanonicalByteLength;
 
@@ -144,6 +144,7 @@ public sealed class DocumentBaseline : IDisposable
                 {
                     var count = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
                     if (count == 0) break;
+                    OnBaselineRead(file.Path, count, cancellationToken);
                     await validator.WriteAsync(buffer, 0, count, cancellationToken).ConfigureAwait(false);
                 }
                 var actualHash = validator.Complete();
@@ -164,6 +165,9 @@ public sealed class DocumentBaseline : IDisposable
     {
         return new DocumentBaseline(_asset.Retain(), _ownerId, _generationId, _byteLength, _sha256);
     }
+
+    // Source-linked tests can cancel after real I/O; production builds erase this call.
+    static partial void OnBaselineRead(string path, int byteCount, CancellationToken cancellationToken);
 
     /// <summary>The returned stream owns a separate lease until it is disposed.</summary>
     public Task<Stream> OpenReadStreamAsync(CancellationToken cancellationToken = default)

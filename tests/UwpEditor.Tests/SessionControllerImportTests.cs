@@ -119,7 +119,7 @@ internal static partial class SessionControllerTests
             }
         }
         finally { await SessionTestProtocol.CleanupAsync(owner); }
-        log.AppendLine("PASS: legacy imports expose the selected native document first, automatically checkpoint initial/final membership and selection, preserve source order and Unicode edits across restart, and adopt each legacy row exactly once.");
+        log.AppendLine("PASS: legacy imports restore selected first and preserve order, edits and single adoption.");
     }
 
     private static Task VerifyImportedCheckpointAsync(Guid owner, Guid[] ids, Guid selected,

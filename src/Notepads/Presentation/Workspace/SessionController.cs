@@ -50,7 +50,6 @@ internal sealed partial class SessionController : ISessionController, ISessionPe
     private readonly ConcurrentDictionary<Guid, long> _editorRevisions = new();
     private readonly HashSet<ITextEditor> _trackedEditors = new();
     private readonly SessionService _service;
-    private bool _loaded;
     private bool _disposed;
     // Maintenance state is only touched on the UI thread: saves, the startup pass and the timer's UI step.
     private bool _startupMaintenanceQueued;
@@ -70,7 +69,6 @@ internal sealed partial class SessionController : ISessionController, ISessionPe
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _service = service ?? throw new ArgumentNullException(nameof(service));
         _registration = registerSession(this);
-        _loaded = false;
 
         foreach (var tab in _notepadsCore.GetTabs())
         {
@@ -336,6 +334,8 @@ internal sealed partial class SessionController : ISessionController, ISessionPe
     }
 
     public Task<bool> SaveForSuspensionAsync(CancellationToken cancellation) => SaveSessionAsync(cancellationToken: cancellation);
+
+    public Task WaitForSessionOperationsAsync() => _sessionOperations.WaitForIdleAsync();
 
     public Task DrainAsync() => _disposal ?? DrainActiveWorkAsync();
 
