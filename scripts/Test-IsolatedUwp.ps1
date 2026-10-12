@@ -4,8 +4,6 @@
 # ---------------------------------------------------------------------------------------------
 
 param(
-    # Retained command-line compatibility; both suites now share the App host.
-    [ValidateSet('Integration', 'Editor', 'Workspace')] [string] $Project = 'Integration',
     [ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64',
     [ValidateSet('Debug', 'Release')] [string] $Configuration = 'Release',
     [string[]] $TestArguments = @('--workspace-seed', '--workspace', '--workspace-window-close', '--workspace-restart'),
@@ -27,7 +25,6 @@ try {
     if ($LeaseProbe) { Invoke-LeaseProbe $session -TimeoutSeconds $TimeoutSeconds }
     else {
         foreach ($argument in $TestArguments) {
-            if (!$argument -and $Project -eq 'Editor') { $argument = '--editor' }
             if (!$argument) { throw 'An empty integration phase is not a valid selection.' }
             Invoke-IsolatedTestPhase $session $argument -TimeoutSeconds $TimeoutSeconds -WaitForUserExit:$WaitForUserExit
         }

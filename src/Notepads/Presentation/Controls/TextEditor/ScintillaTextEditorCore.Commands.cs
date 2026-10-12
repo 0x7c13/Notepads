@@ -117,8 +117,13 @@ public sealed partial class TextEditorCore
         }
 
         _hasAddedLogEntry = true;
-        Native.SetSel(Native.Length, Native.Length);
+        var previousLength = Native.Length;
+        Native.SetSel(previousLength, previousLength);
         TypeText("\r" + DateTime.Now.ToString("h:mm tt M/dd/yyyy") + "\r");
+        // Follow the new entry after layout and wrapping are ready, even if the
+        // old viewport was already painted. PasteText only scrolls immediately.
+        if (Native.Length > previousLength)
+            SetScrollViewerInitPosition(0, 0);
     }
 
     public async Task SearchInWebAsync()

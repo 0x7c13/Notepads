@@ -346,7 +346,8 @@ public sealed partial class TextEditor
         TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
         TextEditorCore.FontSize = metadata.FontZoomFactor * ApplicationPreferences.EditorFontSize;
         TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
-        TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset);
+        TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset,
+            metadata.FirstVisibleDocumentLine, metadata.FirstVisibleSubLine);
         TextEditorCore.ClearUndoQueue();
         IsModified = !NoChangesSinceLastSaved();
     }

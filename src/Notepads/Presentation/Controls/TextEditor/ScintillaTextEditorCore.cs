@@ -65,7 +65,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     private const ModificationFlags TextModifications = ModificationFlags.InsertText | ModificationFlags.DeleteText;
     private double _horizontalOffset;
     private double _verticalOffset;
-    private bool _restoreScroll;
+    private int? _firstVisibleDocumentLine;
+    private int _firstVisibleSubLine;
     private int _lineNumberDigits;
 
     public event EventHandler TextChanging;
@@ -206,19 +207,18 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         _view.PointerWheelChanged += OnPointerWheelChanged;
         AddHandler(PointerMovedEvent, new PointerEventHandler(OnEditorPointerMoved), true);
         AddHandler(PointerExitedEvent, new PointerEventHandler(OnEditorPointerExited), true);
-        Loaded += OnLoaded;
+        Loading += OnLoading;
         ActualThemeChanged += OnActualThemeChanged;
         ThemeSettingsService.OnThemeChanged += OnAppThemeChanged;
         _accessibility.HighContrastChanged += OnHighContrastChanged;
         HookExternalEvents();
     }
 
-    // Loaded runs on every tab switch. Font and theme apply when they change;
+    // Loading runs on every tab switch. Font and theme apply when they change;
     // restyling here would re-wrap the whole document each time.
-    private void OnLoaded(object sender, RoutedEventArgs args)
+    private void OnLoading(FrameworkElement sender, object args)
     {
         ApplyEditorPadding();
-        if (_restoreScroll) RestoreScroll();
     }
 
     private void ApplyEditorPadding()
@@ -596,7 +596,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     public void GetScrollViewerPosition(out double horizontalOffset, out double verticalOffset)
     {
         // A tab that was never shown keeps the offsets it was restored with.
-        if (_restoreScroll)
+        if (_view.IsViewportRestorePending)
         {
             horizontalOffset = _horizontalOffset;
             verticalOffset = _verticalOffset;
@@ -606,17 +606,28 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         verticalOffset = Native.FirstVisibleLine * GetSingleLineHeight() / _dpiScale;
     }
 
-    public void SetScrollViewerInitPosition(double horizontalOffset, double verticalOffset)
+    public void GetViewportAnchor(out int? documentLine, out int subLine)
     {
-        _horizontalOffset = horizontalOffset; _verticalOffset = verticalOffset;
-        _restoreScroll = true;
+        if (_view.IsViewportRestorePending)
+        {
+            documentLine = _firstVisibleDocumentLine;
+            subLine = _firstVisibleSubLine;
+            return;
+        }
+        var row = Native.FirstVisibleLine;
+        documentLine = (int)Native.DocLineFromVisible(row);
+        subLine = (int)(row - Native.VisibleFromDocLine(documentLine.Value));
     }
 
-    private void RestoreScroll()
+    public void SetScrollViewerInitPosition(double horizontalOffset, double verticalOffset,
+        int? documentLine = null, int subLine = 0)
     {
-        Native.XOffset = (int)Math.Round(_horizontalOffset * _dpiScale);
-        Native.FirstVisibleLine = (long)(_verticalOffset * _dpiScale / Math.Max(1, GetSingleLineHeight()));
-        _restoreScroll = false;
+        _horizontalOffset = horizontalOffset; _verticalOffset = verticalOffset;
+        // A missing anchor follows the caret: V1 import has only RichEdit pixel
+        // offsets, and automatic .LOG insertion must show the new entry.
+        _firstVisibleDocumentLine = documentLine;
+        _firstVisibleSubLine = subLine;
+        _view.RestoreViewport(horizontalOffset, documentLine ?? -1, subLine);
     }
 
     public new bool Focus(FocusState state) => _view.Focus(state);
@@ -707,7 +718,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         RemoveHandler(PointerMovedEvent, new PointerEventHandler(OnEditorPointerMoved));
         RemoveHandler(PointerExitedEvent, new PointerEventHandler(OnEditorPointerExited));
         _view.DpiChanged -= OnNativeDpiChanged;
-        Loaded -= OnLoaded;
+        Loading -= OnLoading;
         ActualThemeChanged -= OnActualThemeChanged;
         ThemeSettingsService.OnThemeChanged -= OnAppThemeChanged;
         _accessibility.HighContrastChanged -= OnHighContrastChanged;

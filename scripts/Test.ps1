@@ -61,6 +61,7 @@ $groups = [ordered]@{
     SessionResilience = @{ Profile = 'App'; Arguments = @('--session-resilience'); Default = $false }
     Syntax = @{ Profile = 'App'; Arguments = @('--syntax'); Default = $false }
     Diff = @{ Profile = 'App'; Arguments = @('--diff'); Default = $false }
+    ScrollRestoration = @{ Profile = 'App'; Arguments = @('--scroll-restoration'); Default = $true }
     AutomationNavigation = @{ Profile = 'App'; Arguments = @('--automation-navigation'); Default = $false }
     UIAutomation = @{ Profile = 'Desktop'; Default = $false }
     DragDrop = @{ Profile = 'Desktop'; Default = $false }

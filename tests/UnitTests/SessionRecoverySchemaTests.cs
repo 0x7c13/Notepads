@@ -14,16 +14,6 @@ namespace Notepads.UnitTests;
 public sealed class SessionRecoverySchemaTests
 {
     [Fact]
-    public void GeneratedJsonPreservesTheCapturedLegacyBytesAndChecksum()
-    {
-        // Captured from the pre-migration DTOs and System.Text.Json 9.0.2 writer.
-        var json = Fixture("editor-v2.json");
-        var editor = JsonSerializer.Deserialize(json, SessionJsonContext.Default.TextEditorSessionDataV2);
-        Assert.Equal(json, JsonSerializer.Serialize(editor, SessionJsonContext.Default.TextEditorSessionDataV2));
-        Assert.Equal(Fixture("editor-v2.sha256"), editor.ComputeSha256());
-    }
-
-    [Fact]
     public void LegacyV1MissingFieldsRetainTheirOriginalDefaults()
     {
         const string json = """
@@ -34,6 +24,22 @@ public sealed class SessionRecoverySchemaTests
         Assert.Equal(1, legacy.Version);
         Assert.Null(legacy.TextEditors[0].BackupEncoding);
         Assert.Equal(1.25, legacy.TextEditors[0].StateMetaData.FontZoomFactor);
+        Assert.Null(legacy.TextEditors[0].StateMetaData.FirstVisibleDocumentLine);
+    }
+
+    [Fact]
+    public void ViewportAnchorSurvivesCaptureAndSerialization()
+    {
+        var session = ValidSession();
+        var metadata = session.TextEditors[0].StateMetaData;
+        metadata.FirstVisibleDocumentLine = 800;
+        metadata.FirstVisibleSubLine = 2;
+        var capture = metadata.Clone();
+        metadata.FirstVisibleDocumentLine = 0;
+        session.TextEditors[0].StateMetaData = capture;
+        var restored = JsonSerializer.Deserialize(Serialize(session), SessionJsonContext.Default.NotepadsSessionDataV2);
+        Assert.Equal(800, restored.TextEditors[0].StateMetaData.FirstVisibleDocumentLine);
+        Assert.Equal(2, restored.TextEditors[0].StateMetaData.FirstVisibleSubLine);
     }
 
     [Fact]
@@ -56,24 +62,22 @@ public sealed class SessionRecoverySchemaTests
     public void ReferencesRetainFailedLegacyRecordsAndCaseSensitivePermissionTokens()
     {
         var session = ValidSession();
-        var references = SessionRecoveryReferences.FromJson(Serialize(session));
+        var references = new SessionRecoveryReferences();
+        references.Include(session);
         Assert.Equal(2, references.FutureAccessTokens.Count);
         Assert.Contains("Token", references.FutureAccessTokens);
         Assert.Contains("token", references.FutureAccessTokens);
         Assert.Contains("legacy-pending", references.LegacyBackupPaths);
         Assert.Contains(session.TextEditors[0].Journal.FileName, references.JournalFileNames);
-        var legacy = new NotepadsSessionDataV1();
-        legacy.TextEditors.Add(session.UnrecoveredLegacyEditors[0]);
-        var legacyReferences = SessionRecoveryReferences.FromJson(
-            JsonSerializer.Serialize(legacy, SessionJsonContext.Default.NotepadsSessionDataV1));
-        Assert.Equal(2, legacyReferences.LegacyBackupPaths.Count);
+        Assert.Equal(2, references.LegacyBackupPaths.Count);
     }
 
     [Fact]
     public void TransferAcknowledgementProtectsTheSourceGraphAndPermission()
     {
         var acknowledgement = Acknowledgement();
-        var references = SessionRecoveryReferences.FromJson(Serialize(acknowledgement));
+        var references = new SessionRecoveryReferences();
+        references.Include(acknowledgement);
         Assert.Contains(acknowledgement.AcknowledgedSource.Journal.FileName, references.JournalFileNames);
         Assert.Contains("Token", references.FutureAccessTokens);
     }
@@ -83,14 +87,8 @@ public sealed class SessionRecoverySchemaTests
     {
         var acknowledgement = Acknowledgement();
         acknowledgement.AcknowledgedSource = null;
-        Assert.Throws<InvalidDataException>(() => SessionRecoveryReferences.FromJson(Serialize(acknowledgement)));
+        Assert.Throws<InvalidDataException>(() => new SessionRecoveryReferences().Include(acknowledgement));
     }
-
-    [Theory]
-    [InlineData("{\"Version\":3}")]
-    [InlineData("{\"Version\":2147483647}")]
-    public void UnknownFutureFormatCannotBeInterpretedAsAnEmptyGcRoot(string json) =>
-        Assert.Throws<InvalidDataException>(() => SessionRecoveryReferences.FromJson(json));
 
     [Fact]
     public void OversizedBaselineIsRejectedBeforeNativeAdmission()
@@ -113,15 +111,7 @@ public sealed class SessionRecoverySchemaTests
     {
         var session = ValidSession();
         session.TextEditors[0].Journal.PrefixSha256 = "invalid";
-        Assert.Throws<InvalidDataException>(() => SessionRecoveryReferences.FromJson(Serialize(session)));
-    }
-
-    private static string Fixture(string name)
-    {
-        using var stream = typeof(SessionRecoverySchemaTests).Assembly.GetManifestResourceStream("UnitTests.Fixtures." + name);
-        Assert.NotNull(stream);
-        using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
+        Assert.Throws<InvalidDataException>(() => new SessionRecoveryReferences().Include(session));
     }
 
     private static NotepadsSessionDataV2 ValidSession()

@@ -31,6 +31,9 @@ namespace NotepadsWorkspaceTests;
 
 internal static class WorkspaceLifecycleTests
 {
+    private const int InitialViewportLine = 80;
+    private static readonly string LogText = ".LOG\r" + string.Concat(Enumerable.Range(0, 160)
+        .Select(line => $"previous log entry {line}\r"));
     private static string Root => ApplicationData.Current.LocalFolder.Path;
     private static string FixturePath => Path.Combine(Root, "fixture.ids");
     private static readonly string[] Names = ["selected.txt", "discard.txt", "cancel.txt", "save.txt", "missing-grant.txt", "log.txt"];
@@ -59,7 +62,7 @@ internal static class WorkspaceLifecycleTests
         for (var index = 0; index < names.Length; index++)
         {
             var file = await folder.CreateFileAsync(names[index], CreationCollisionOption.FailIfExists);
-            var text = index == 5 ? ".LOG\r" : string.Concat(Enumerable.Range(0, index == 0 ? 160 : 4)
+            var text = index == 5 ? LogText : string.Concat(Enumerable.Range(0, index == 0 ? 160 : 4)
                 .Select(line => $"{names[index]} line {line}: 你好 😀 Кириллица e\u0301 {new string('x', 100)}\r"));
             await FileIO.WriteTextAsync(file, text);
             var editor = await core.CreateTextEditorAsync(Guid.NewGuid(), file);
@@ -69,7 +72,8 @@ internal static class WorkspaceLifecycleTests
             metadata.SelectionStartPosition = 23;
             metadata.SelectionEndPosition = 29;
             metadata.ScrollViewerHorizontalOffset = index == 0 ? 30 : 0;
-            metadata.ScrollViewerVerticalOffset = index == 0 ? 150 : 0;
+            metadata.FirstVisibleDocumentLine = index == 0 ? InitialViewportLine : index == 5 ? 40 : 0;
+            metadata.FirstVisibleSubLine = 0;
             metadata.FontZoomFactor = 1.2;
             editor.ResetEditorState(metadata);
             tabs[index] = new WorkspaceTab(editor);
@@ -78,8 +82,9 @@ internal static class WorkspaceLifecycleTests
         }
         await page.TestCloseTabAsync(original);
         core.SwitchTo(tabs[0]);
-        await UntilAsync(() => ((FrameworkElement)tabs[0].ReadyEditor).ActualWidth > 0, "Seed editor did not become visible.");
-        await Task.Delay(80);
+        var selectedCore = await WaitForViewportAsync(tabs[0].ReadyEditor);
+        Check(selectedCore.FirstVisibleRow == InitialViewportLine,
+            "Seed viewport must actually show the requested nonzero line before saving.");
         core.SetTabScrollViewerHorizontalOffset(17);
         Check(await page.TestController.SaveSessionAsync(), "Could not publish real-editor seed state.");
         File.WriteAllLines(FixturePath, tabs.Select(tab => tab.Id.ToString("N")));
@@ -91,10 +96,15 @@ internal static class WorkspaceLifecycleTests
         StorageApplicationPermissions.FutureAccessList.Remove(missing.EditingFileFutureAccessToken);
         Check(!StorageApplicationPermissions.FutureAccessList.ContainsItem(missing.EditingFileFutureAccessToken), "Could not revoke the owned fixture grant.");
         var selected = checkpoint.TextEditors.Single(editor => editor.Id == tabs[0].Id).StateMetaData;
+        Check(selected.FirstVisibleDocumentLine == InitialViewportLine && selected.FirstVisibleSubLine == 0 &&
+            selected.ScrollViewerVerticalOffset > 0,
+            "The committed seed must retain the nonzero document anchor and actual vertical offset.");
         File.WriteAllText(Path.Combine(Root, "selected-viewport.txt"),
             string.Join("\n", selected.SelectionStartPosition, selected.SelectionEndPosition,
                 selected.ScrollViewerHorizontalOffset.ToString("R", System.Globalization.CultureInfo.InvariantCulture),
-                selected.ScrollViewerVerticalOffset.ToString("R", System.Globalization.CultureInfo.InvariantCulture)));
+                selected.ScrollViewerVerticalOffset.ToString("R", System.Globalization.CultureInfo.InvariantCulture),
+                selected.FirstVisibleDocumentLine, selected.FirstVisibleSubLine));
+        log.AppendLine($"PASS: seed viewport shows and persists document line {InitialViewportLine} with its saved selection.");
         log.AppendLine($"PASS: {tabs.Length} actual editors seed ordered Unicode snapshots; one clean file grant is revoked within the private scope.");
     }
 
@@ -137,17 +147,26 @@ internal static class WorkspaceLifecycleTests
         Check(page.TestContainer(tabs[1]).Icon.Visibility == Visibility.Visible &&
             page.TestContainer(tabs[4]).Icon.Visibility == Visibility.Collapsed, "Pending modified indicators do not reflect retained metadata.");
         var viewport = File.ReadAllLines(Path.Combine(Root, "selected-viewport.txt"));
+        var selectedCore = await WaitForViewportAsync(tabs[0].ReadyEditor);
         var current = tabs[0].ReadyEditor.GetTextEditorStateMetaData();
         Check(current.SelectionStartPosition == int.Parse(viewport[0]) && current.SelectionEndPosition == int.Parse(viewport[1]),
             "The actual selected editor lost its saved caret/selection during first visual Loaded.");
         var expectedY = double.Parse(viewport[3], System.Globalization.CultureInfo.InvariantCulture);
         var expectedX = double.Parse(viewport[2], System.Globalization.CultureInfo.InvariantCulture);
-        Check(Math.Abs(current.ScrollViewerVerticalOffset - expectedY) <= ((TextEditor)tabs[0].ReadyEditor).TestNativeCore.GetSingleLineHeight(),
+        var expectedLine = int.Parse(viewport[4]);
+        var expectedSubLine = int.Parse(viewport[5]);
+        Check(expectedLine == InitialViewportLine && expectedSubLine == 0 && expectedY > 0,
+            "The cross-process viewport fixture must describe a nonzero document anchor.");
+        Check(selectedCore.FirstVisibleRow == expectedLine && current.FirstVisibleDocumentLine == expectedLine &&
+            current.FirstVisibleSubLine == expectedSubLine,
+            "A fresh process must restore the actual native viewport, not only retain pending metadata.");
+        Check(Math.Abs(current.ScrollViewerVerticalOffset - expectedY) <= selectedCore.GetSingleLineHeight(),
             "The first visual Loaded discarded the saved viewport.");
         Check(Math.Abs(current.ScrollViewerHorizontalOffset - expectedX) <= 2,
             "The first visual Loaded discarded the saved horizontal viewport.");
         Check(page.TestStatusModified && ApplicationView.GetForCurrentView().Title.Contains(Names[0], StringComparison.Ordinal),
             "Selected status/title did not reflect the restored editor.");
+        log.AppendLine($"PASS: a fresh MainPage process restores document line {expectedLine}, horizontal offset and selection.");
         log.AppendLine("PASS: selected-first production MainPage paints every header with exactly one native editor, correct title/modified state and restored caret/viewport.");
 
         var duplicateFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("concurrent-open.txt", CreationCollisionOption.FailIfExists);
@@ -231,7 +250,7 @@ internal static class WorkspaceLifecycleTests
         await gate.PromotionReached.WaitAsync(TimeSpan.FromSeconds(20));
         Check(ReferenceEquals(core.GetSelectedTab(), tabs[2]), "Background completion stole tab selection.");
         var logBefore = gate.PromotionCandidate.GetText();
-        Check(logBefore == ".LOG\r", "Off-tree background restoration fired .LOG before its first visual Loaded.");
+        Check(logBefore == LogText, "Off-tree background restoration fired .LOG before its first visual Loaded.");
         var attachedWhileDisabled = false;
         void OnAttached(object sender, WorkspaceTab tab)
         {
@@ -259,11 +278,17 @@ internal static class WorkspaceLifecycleTests
         Check(tabs[4].ReadyEditor.EditingFile == null && tabs[4].ReadyEditor.IsModified,
             "A revoked clean-file grant did not restore recoverable content requiring Save As.");
         await UntilAsync(() => tabs[5].ReadyEditor.GetText().Length > logBefore.Length, ".LOG did not append on the actual first visual Loaded.");
+        var logCore = await WaitForViewportAsync(tabs[5].ReadyEditor);
+        var logNative = logCore.TestFeatureNative;
+        var caretY = logNative.PointYFromPosition(logNative.CurrentPos);
+        Check(logNative.CurrentPos == logNative.Length && logNative.Anchor == logNative.Length &&
+            caretY >= 0 && caretY < logNative.LinesOnScreen * logNative.TextHeight(0),
+            "Long .LOG must show its appended EOF caret after the actual first visual Loaded.");
         var logAfter = tabs[5].ReadyEditor.GetText();
         core.SwitchTo(tabs[0]);
-        await Task.Delay(40);
+        await UntilAsync(() => !logCore.IsLoaded, ".LOG editor did not unload on tab switch.");
         core.SwitchTo(tabs[5]);
-        await Task.Delay(40);
+        await UntilAsync(() => logCore.IsLoaded, ".LOG editor did not reload on tab reselection.");
         Check(tabs[5].ReadyEditor.GetText() == logAfter, ".LOG appended twice after tab reselection.");
         core.SwitchTo(tabs[0]);
         ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, true);
@@ -330,6 +355,15 @@ internal static class WorkspaceLifecycleTests
         foreach (var tab in tabs) File.WriteAllText(Path.Combine(folder, tab.Id.ToString("N") + ".txt"), tab.ReadyEditor.GetText(), new UTF8Encoding(false, true));
         File.WriteAllLines(Path.Combine(Root, "expected-order.txt"), tabs.Select(tab => tab.Id.ToString("N")));
         File.WriteAllText(Path.Combine(Root, "expected-selected.txt"), selected.ToString("N"));
+    }
+
+    private static async Task<TextEditorCore> WaitForViewportAsync(ITextEditor editor)
+    {
+        var core = ((TextEditor)editor).TestNativeCore;
+        await UntilAsync(() => core.IsLoaded && core.ActualWidth > 0, "Selected editor did not become visible.");
+        var view = Descendants(core).OfType<WinUIEditor.EditorBaseControl>().Single();
+        await UntilAsync(() => !view.IsViewportRestorePending, "Native viewport restoration did not complete.");
+        return core;
     }
 
     private static Task<NotepadsSessionDataV2> ReadCommittedAsync(Guid owner) => Task.Run(async () =>

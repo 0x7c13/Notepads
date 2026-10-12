@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Wrapper.h"
+#include <utility>
 
 namespace WinUIEditor
 {
@@ -26,6 +27,7 @@ namespace WinUIEditor
 
 		void SetScrollBars(winrt::DUX::Controls::Primitives::ScrollBar const &horizontalScrollBar, winrt::DUX::Controls::Primitives::ScrollBar const &verticalScrollBar);
 		bool HasScrollBars();
+		std::pair<bool, bool> ScrollBarVisibility() const;
 		void HorizontalScrollBarInset(int pixels);
 		void HorizontalScrollBarValue(double value);
 		void VerticalScrollBarValue(double value);

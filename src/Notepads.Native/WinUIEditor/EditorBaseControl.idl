@@ -22,6 +22,10 @@ namespace WinUIEditor
 		Boolean MouseWheelZoomEnabled;
 		// Unlike SCI_STYLESETBACK, this preserves alpha for XAML backdrops.
 		void SetBackgroundColor(Windows.UI.Color color);
+		// Apply a saved document anchor before drawing, after DPI and layout are ready.
+		// documentLine -1 follows the current caret once layout is ready.
+		void RestoreViewport(Double horizontalOffset, Int64 documentLine, Int64 subLine);
+		Boolean IsViewportRestorePending { get; };
 		event Windows.Foundation.EventHandler<Double> DpiChanged;
 	}
 }

@@ -203,6 +203,14 @@ internal static class RecoveryStorageSuite
         invalid.Session.TextEditors[0].Journal.CommittedSequence = 1;
         invalid.Session.TextEditors[0].Journal.BaselineSequence = 2;
         Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(invalid, Address(fixture.Area, invalid)), "invalid committed prefix ranges are rejected");
+        foreach (var (line, subLine) in new (int?, int)[] { (-1, 0), (0, -1), (null, 1) })
+        {
+            var invalidView = fixture.Checkpoint();
+            invalidView.Session.TextEditors[0].StateMetaData.FirstVisibleDocumentLine = line;
+            invalidView.Session.TextEditors[0].StateMetaData.FirstVisibleSubLine = subLine;
+            Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(invalidView, Address(fixture.Area, invalidView)),
+                "invalid viewport anchors are rejected before native restore");
+        }
         Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(record, new RecoveryAddress(fixture.Area, record.Stamp.Ordinal + 1, record.Stamp.OperationId)), "filename ordering must match checksummed identity");
         Throws<ArgumentException>(() => fixture.Store.Paths.UnderRoot("..", "elsewhere"), "path components cannot escape Recovery");
         Throws<ArgumentException>(() => fixture.Store.GetScopeArea(fixture.Owner, RecoveryAreaKind.Transfers), "global paths cannot masquerade as local roots");

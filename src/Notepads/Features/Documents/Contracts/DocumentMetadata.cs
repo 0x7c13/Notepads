@@ -40,6 +40,13 @@ public sealed class DocumentMetadata
 
     public double ScrollViewerVerticalOffset { get; set; }
 
+    // A display row changes as wrapping progresses; the document anchor does not.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public int? FirstVisibleDocumentLine { get; set; }
+
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public int FirstVisibleSubLine { get; set; }
+
     public bool IsContentPreviewPanelOpened { get; set; }
 
     public bool IsInDiffPreviewMode { get; set; }

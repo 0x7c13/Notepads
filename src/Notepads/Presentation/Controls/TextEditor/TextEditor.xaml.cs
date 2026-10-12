@@ -319,6 +319,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     public DocumentMetadata GetTextEditorStateMetaData()
     {
         TextEditorCore.GetScrollViewerPosition(out var horizontalOffset, out var verticalOffset);
+        TextEditorCore.GetViewportAnchor(out var documentLine, out var subLine);
         TextEditorCore.GetTextSelectionPosition(out var textSelectionStartPosition, out var textSelectionEndPosition);
 
         var metaData = new DocumentMetadata
@@ -337,6 +338,8 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
                        TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
             ScrollViewerHorizontalOffset = horizontalOffset,
             ScrollViewerVerticalOffset = verticalOffset,
+            FirstVisibleDocumentLine = documentLine,
+            FirstVisibleSubLine = subLine,
             FontZoomFactor = TextEditorCore.GetFontZoomFactor() / 100,
             IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
             IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)

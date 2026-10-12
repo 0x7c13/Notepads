@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Contracts.Legacy;
 
@@ -101,32 +100,6 @@ internal sealed class SessionRecoveryReferences : SessionReferenceSet
                     throw new InvalidDataException("Invalid durable target receipt graph.");
             }
         }
-    }
-
-    public void Include(NotepadsSessionDataV1 session)
-    {
-        if (session?.TextEditors == null) throw new InvalidDataException("Invalid V1 recovery reference collection.");
-        foreach (var editor in session.TextEditors) Include(editor);
-    }
-
-    public static SessionRecoveryReferences FromJson(string json)
-    {
-        var references = new SessionRecoveryReferences();
-        using (var document = JsonDocument.Parse(json))
-        {
-            switch (document.RootElement.GetProperty("Version").GetInt32())
-            {
-                case 1:
-                    references.Include(JsonSerializer.Deserialize<NotepadsSessionDataV1>(json, SessionJsonContext.Default.NotepadsSessionDataV1));
-                    break;
-                case 2:
-                    references.Include(JsonSerializer.Deserialize<NotepadsSessionDataV2>(json, SessionJsonContext.Default.NotepadsSessionDataV2));
-                    break;
-                default:
-                    throw new InvalidDataException("Unknown archived session version; recovery GC must retain its assets.");
-            }
-        }
-        return references;
     }
 
     private void Include(DocumentBaselineData baseline)

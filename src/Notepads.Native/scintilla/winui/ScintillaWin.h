@@ -78,6 +78,8 @@ namespace Scintilla::Internal {
 		ScintillaWinUI &operator=(ScintillaWinUI &&) = delete;
 		void DpiChanged();
 		void SizeChanged();
+		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine);
+		bool IsViewportRestorePending() const noexcept { return _viewportRestore.has_value(); }
 		void FocusChanged(bool focused);
 		void PointerPressed(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers);
 		void RightPointerPressed(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers);
@@ -283,6 +285,14 @@ namespace Scintilla::Internal {
 		winrt::DUX::DispatcherTimer _idleTimer{};
 		winrt::DUX::DispatcherTimer::Tick_revoker _idleTickRevoker{};
 		bool _idleSuspended{};
+		struct ViewportRestore {
+			double horizontalOffset;
+			int64_t documentLine;
+			int64_t subLine;
+		};
+		std::optional<ViewportRestore> _viewportRestore;
+		std::pair<bool, bool> _layoutScrollBars{};
+		bool PrepareViewportRestore();
 		bool _idleFinalized{};
 		std::shared_ptr<WinUIEditor::SyntaxHighlightingState> _syntaxState;
 		bool _syntaxMemoryPaused{};

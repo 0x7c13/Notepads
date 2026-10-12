@@ -1065,6 +1065,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::FinalizeAfterApartmentClosed() noexcept
 	{
+		_viewportRestore.reset();
 		_compositionCount = 0;
 		_idleFinalized = true;
 		_idleSuspended = true;
@@ -2694,7 +2695,9 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::SizeChanged()
 	{
+		_layoutScrollBars = _mainWrapper->ScrollBarVisibility();
 		ChangeSize();
+		if (_viewportRestore) Redraw();
 	}
 
 	void ScintillaWinUI::FocusChanged(bool focused)
@@ -2953,6 +2956,8 @@ namespace Scintilla::Internal {
 
 	IFACEMETHODIMP ScintillaWinUI::UpdatesNeeded()
 	{
+		if (!PrepareViewportRestore()) return S_OK;
+
 		ULONG drawingBoundsCount = 0;
 		HRESULT hr = _mainWrapper->VsisNative()->GetUpdateRectCount(&drawingBoundsCount);
 		if (FAILED(hr))
@@ -2998,6 +3003,86 @@ namespace Scintilla::Internal {
 		paintState = PaintState::notPainting;
 
 		return hr;
+	}
+
+	void ScintillaWinUI::RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine)
+	{
+		if (!std::isfinite(horizontalOffset) || horizontalOffset < 0 ||
+			documentLine < -1 || subLine < 0)
+			throw winrt::hresult_invalid_argument();
+		_viewportRestore = { horizontalOffset, documentLine, subLine };
+		Redraw();
+	}
+
+	bool ScintillaWinUI::PrepareViewportRestore()
+	{
+		if (!_viewportRestore) return true;
+		if (_mainWrapper->ScrollBarVisibility() != _layoutScrollBars) return false;
+		if (_mainWrapper->Width() <= 0 || _mainWrapper->Height() <= 0) return false;
+		// XAML can request pixels before Loaded. Wrapping must retain its idle
+		// budget instead of falling back to a synchronous whole-document wrap.
+		ResumeIdleWork();
+		RefreshStyleData();
+		const auto request = *_viewportRestore;
+		const double scale = _mainWrapper->LogicalDpi() / 96.0;
+		const auto line = request.documentLine < 0 ? pdoc->SciLineFromPosition(sel.MainCaret()) :
+			static_cast<Sci::Line>(std::min<int64_t>(request.documentLine, pdoc->LinesTotal() - 1));
+		auto subLine = static_cast<Sci::Line>(std::min<int64_t>(request.subLine, INT_MAX));
+		if (Wrapping()) {
+			// Prepare the anchor itself, even if very long preceding lines exhaust
+			// the normal visible-wrap budget before reaching it.
+			const auto text = GetTextRectangle();
+			wrapWidth = static_cast<int>(text.Width());
+			AutoSurface surface(this);
+			if (!surface) return false;
+			pdoc->EnsureStyledTo(pdoc->LineStart(line + 1));
+			WrapOneLine(surface, line);
+			if (request.documentLine < 0) {
+				SetTopLine(pcs->DisplayFromDoc(line));
+				subLine = static_cast<Sci::Line>(PointMainCaret().y / vs.lineHeight);
+			}
+			subLine = std::clamp<Sci::Line>(subLine, 0, pcs->GetHeight(line) - 1);
+			// Resolve one viewport, including the tail at EOF, before clamping.
+			// Unknown following heights must not make a valid anchor appear too low.
+			Sci::Line rows = pcs->GetHeight(line) - subLine;
+			for (Sci::Line next = line + 1; rows <= LinesOnScreen() && next < pdoc->LinesTotal(); next++) {
+				pdoc->EnsureStyledTo(pdoc->LineStart(next + 1));
+				WrapOneLine(surface, next);
+				rows += pcs->GetHeight(next);
+			}
+			for (Sci::Line previous = line; rows < LinesOnScreen() && previous > 0;) {
+				WrapOneLine(surface, --previous);
+				rows += pcs->GetHeight(previous);
+			}
+		} else {
+			// A previously wrapped control may still have wrapped display heights.
+			WrapLines(WrapScope::wsVisible);
+		}
+		SetTopLine(pcs->DisplayFromDocSub(line, subLine));
+		scrollToAfterWrap.reset();
+		// Without a document anchor, make the current caret visible on both axes.
+		const int x = Wrapping() ? 0 : request.documentLine < 0 ?
+			XYScrollToMakeVisible(SelectionRange(sel.RangeMain().caret), XYScrollOptions::horizontal, caretPolicies).xOffset :
+			static_cast<int>(std::min<double>(INT_MAX / 2, std::round(request.horizontalOffset * scale)));
+		// Initialization starts with an unknown text width. Keep the restored
+		// horizontal position while the visible lines establish that extent.
+		if (trackLineWidth && !Wrapping()) {
+			scrollWidth = std::max(scrollWidth, MeasureVisibleLineWidth());
+			if (x > 0) scrollWidth = std::max(scrollWidth, x + GetHorizontalScrollRange().pageWidth);
+		}
+		// This explicit saved offset supersedes the pre-load font/DPI width
+		// measurement, including while awaiting scrollbar layout.
+		pendingWidthMeasure = WidthMeasure::none;
+		SetScrollBars();
+		// Scrollbars occupy an Auto row/column. Wait for their layout before
+		// wrapping or clamping against the final text width and height.
+		if (_mainWrapper->ScrollBarVisibility() != _layoutScrollBars) return false;
+		SetTopLine(std::clamp<Sci::Line>(pcs->DisplayFromDocSub(line, subLine), 0, MaxScrollPos()));
+		HorizontalScrollTo(x);
+		SetVerticalScrollPos();
+		_viewportRestore.reset();
+		Redraw();
+		return true;
 	}
 
 	void ScintillaWinUI::DrawBit(RECT const &drawingBounds)
@@ -3482,6 +3567,7 @@ namespace Scintilla::Internal {
 			throw;
 		}
 		previous->ReleaseLineCharacterIndex(LineCharacterIndexType::Utf16);
+		_viewportRestore.reset();
 		_syntaxState.reset();
 		_syntaxMemoryPaused = false;
 		++_documentRevision;
@@ -3822,6 +3908,7 @@ namespace Scintilla::Internal {
 		}
 		// Logical publication has completed. Presentation failures cannot turn
 		// committed content into a reported rejected/canceled transaction.
+		_viewportRestore.reset();
 		try
 		{
 			view.llc.Deallocate();

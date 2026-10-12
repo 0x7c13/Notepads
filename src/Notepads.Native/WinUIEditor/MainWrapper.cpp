@@ -138,6 +138,14 @@ namespace WinUIEditor
 		_horizontalScrollBar.Visibility(value ? winrt::DUX::Visibility::Visible : winrt::DUX::Visibility::Collapsed);
 	}
 
+	std::pair<bool, bool> MainWrapper::ScrollBarVisibility() const
+	{
+		return {
+			_horizontalScrollBar && _horizontalScrollBar.Visibility() == winrt::DUX::Visibility::Visible,
+			_verticalScrollBar && _verticalScrollBar.Visibility() == winrt::DUX::Visibility::Visible
+		};
+	}
+
 	void MainWrapper::VerticalScrollBarVisible(bool value)
 	{
 		_verticalScrollBar.Visibility(value ? winrt::DUX::Visibility::Visible : winrt::DUX::Visibility::Collapsed);

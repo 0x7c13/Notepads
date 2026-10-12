@@ -102,6 +102,7 @@ and `artifacts/test-overhaul`; those local artifacts are not checked into Git.
 | Theme/accent/slider, zoom geometry, language, view modes | `AppearanceFeatureTests` |
 | Command-line/protocol, picker, recent-file menu, web search, printing | `ShellWorkflowTests` |
 | Session restore, backup, close/save, import/transfer and recovery | Existing controller/storage/recovery tests plus actual MainPage phases |
+| Restored viewport on the first paint, wrapping, focus, tab reattachment and long `.LOG` append | `ScrollRestoration` App group |
 | Process leases and abrupt exit | Two packaged processes in the Leases group |
 | Native indentation, syntax, diff geometry, regex | Editor suite and native C++ helpers; Debug-only fault lane |
 | Accessibility/input/drag | Native UIA navigation; separate desktop UI Automation and drag groups |

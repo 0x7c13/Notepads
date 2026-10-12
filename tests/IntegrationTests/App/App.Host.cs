@@ -112,6 +112,7 @@ public sealed partial class App : Application
         "--zoom-language" => AppearanceFeatureTests.RunZoomAndLanguageAsync(log),
         "--view-modes" => AppearanceFeatureTests.RunViewModeAsync(log),
         "--editor" => EditorSuite.RunAsync("", log),
+        "--scroll-restoration" => ScrollRestorationTests.RunAsync(log),
         "--persistence" or "--session-resilience" or "--syntax" or "--diff" or "--search" or
         "--automation-navigation" or "--native-storage" or "--regex-memory" or "--performance" or
         "--preview" or "--bidi-preview" => EditorSuite.RunAsync(phase, log),

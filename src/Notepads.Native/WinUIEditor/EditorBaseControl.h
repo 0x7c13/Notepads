@@ -29,6 +29,9 @@ namespace winrt::WinUIEditor::implementation
 		bool MouseWheelZoomEnabled() const noexcept { return _mouseWheelZoomEnabled; }
 		void MouseWheelZoomEnabled(bool value) noexcept { _mouseWheelZoomEnabled = value; }
 		void SetBackgroundColor(Windows::UI::Color const &color);
+		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine)
+		{ _scintilla->RestoreViewport(horizontalOffset, documentLine, subLine); }
+		bool IsViewportRestorePending() const noexcept { return _scintilla->IsViewportRestorePending(); }
 		void PasteText(hstring const &text);
 		void SetSyntaxLexer(hstring const &name, array_view<hstring const> keywords,
 			array_view<hstring const> propertyNames, array_view<hstring const> propertyValues)
