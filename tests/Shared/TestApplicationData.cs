@@ -1,4 +1,8 @@
-// Copyright (c) 2026, Jiaqi (0x7c13) Liu. See LICENSE.
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE.txt in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
 // This alias applies to source-linked product code as well as the test cases.
 global using ApplicationData = NotepadsTestIsolation.TestApplicationData;
 
@@ -6,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -19,10 +25,11 @@ internal sealed class TestApplicationData
     private static TestApplicationData _current;
     private static Dictionary<string, string> _originalFileGrants;
 
-    private TestApplicationData(StorageFolder local, StorageFolder temporary)
+    private TestApplicationData(StorageFolder local, StorageFolder temporary, ApplicationDataContainer settings)
     {
         LocalFolder = local;
         TemporaryFolder = temporary;
+        LocalSettings = settings;
     }
 
     public static TestApplicationData Current => _current ??
@@ -31,6 +38,25 @@ internal sealed class TestApplicationData
     public static string Arguments { get; private set; }
     public StorageFolder LocalFolder { get; }
     public StorageFolder TemporaryFolder { get; }
+    public ApplicationDataContainer LocalSettings { get; }
+
+    // Only the explicit final cleanup phase removes the container, so restart tests
+    // observe genuine persisted settings instead of an in-memory replacement.
+    public static void RemoveOwnedSettings()
+    {
+        Windows.Storage.ApplicationData.Current.LocalSettings.DeleteContainer("IntegrationTests-" + RunId.ToString("N"));
+        // The runner exclusively owns this test identity across all restart phases.
+        // Repair leaked run-created grants even on failure, but never turn that
+        // repair into PASS or remove a token present in the immutable first snapshot.
+        var leaked = StorageApplicationPermissions.FutureAccessList.Entries
+            .Where(entry => !_originalFileGrants.ContainsKey(entry.Token)).Select(entry => entry.Token).ToArray();
+        foreach (var token in leaked) StorageApplicationPermissions.FutureAccessList.Remove(token);
+        var final = StorageApplicationPermissions.FutureAccessList.Entries
+            .ToDictionary(entry => entry.Token, entry => entry.Metadata, StringComparer.Ordinal);
+        WriteGrants("grants-after.json", final);
+        if (leaked.Length != 0)
+            throw new InvalidOperationException($"Test fixtures leaked {leaked.Length} file grants; run-created grants were removed during failed cleanup.");
+    }
 
     // Called on the entry thread before Application.Start and before any diagnostics.
     // A fresh process must explicitly reuse the same ID to reopen a prior fixture.
@@ -60,12 +86,20 @@ internal sealed class TestApplicationData
             var expected = Path.Combine(root.Path, "WorkspaceTests", runId.ToString("N"));
             if (!string.Equals(Path.GetFullPath(local.Path), Path.GetFullPath(expected), StringComparison.OrdinalIgnoreCase))
                 throw new IOException("The test data root escaped its explicitly owned directory.");
-            return new TestApplicationData(local, temporary);
+            var settings = Windows.Storage.ApplicationData.Current.LocalSettings.CreateContainer(
+                "IntegrationTests-" + runId.ToString("N"), ApplicationDataCreateDisposition.Always);
+            return new TestApplicationData(local, temporary, settings);
         }).GetAwaiter().GetResult();
         File.WriteAllText(Path.Combine(Current.LocalFolder.Path, "storage-boundary.txt"),
             "Run=" + RunId.ToString("N") + Environment.NewLine + "LocalFolder=" + Current.LocalFolder.Path);
-        _originalFileGrants = StorageApplicationPermissions.FutureAccessList.Entries
-            .ToDictionary(entry => entry.Token, entry => entry.Metadata, StringComparer.Ordinal);
+        var baseline = Path.Combine(Current.LocalFolder.Path, "grants-before.json");
+        _originalFileGrants = File.Exists(baseline)
+            ? JsonSerializer.Deserialize(File.ReadAllText(baseline), IsolationJsonContext.Default.DictionaryStringString)
+                ?? throw new InvalidDataException("The immutable file-grant baseline is empty.")
+            : StorageApplicationPermissions.FutureAccessList.Entries
+                .ToDictionary(entry => entry.Token, entry => entry.Metadata, StringComparer.Ordinal);
+        if (!File.Exists(baseline))
+            WriteGrants("grants-before.json", _originalFileGrants);
     }
 
     public static void ValidatePreservedFileGrants()
@@ -76,4 +110,10 @@ internal sealed class TestApplicationData
             if (!current.TryGetValue(entry.Key, out var metadata) || metadata != entry.Value)
                 throw new InvalidOperationException("The suite changed a pre-existing file grant: " + entry.Key);
     }
+
+    private static void WriteGrants(string name, Dictionary<string, string> grants) => File.WriteAllText(
+        Path.Combine(Current.LocalFolder.Path, name), JsonSerializer.Serialize(grants, IsolationJsonContext.Default.DictionaryStringString));
 }
+
+[JsonSerializable(typeof(Dictionary<string, string>))]
+internal partial class IsolationJsonContext : JsonSerializerContext;

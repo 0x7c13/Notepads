@@ -1,8 +1,7 @@
 // ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2026, Jiaqi (0x7c13) Liu. All rights reserved.
-//  See LICENSE file in the project root for license information.
+//  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
-
 
 using System;
 using System.IO;

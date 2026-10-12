@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2026, Jiaqi (0x7c13) Liu. All rights reserved.
-//  See LICENSE file in the project root for license information.
+//  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
 using System;
@@ -432,28 +432,21 @@ public static class ApplicationPreferences
     private static void InitializeEncodingSettings()
     {
         Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+        _editorDefaultEncoding = new UTF8Encoding(false);
 
         if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultEncodingCodePageInt) is int encodingCodePage)
         {
-            var encoding = Encoding.GetEncoding(encodingCodePage);
-
-            if (encoding is UTF8Encoding)
+            try
             {
-                if (ApplicationSettingsStore.Read(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool) is bool shouldEmitBom)
-                {
-                    encoding = new UTF8Encoding(shouldEmitBom);
-                }
-                else
-                {
-                    encoding = new UTF8Encoding(false);
-                }
+                var encoding = Encoding.GetEncoding(encodingCodePage);
+                if (encoding is UTF8Encoding)
+                    encoding = new UTF8Encoding(ApplicationSettingsStore.Read(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool) is true);
+                _editorDefaultEncoding = encoding;
             }
-
-            _editorDefaultEncoding = encoding;
-        }
-        else
-        {
-            _editorDefaultEncoding = new UTF8Encoding(false);
+            catch (Exception ex) when (ex is ArgumentException or NotSupportedException)
+            {
+                LoggingService.LogError($"[{nameof(ApplicationPreferences)}] Invalid default encoding, code page: {encodingCodePage}, ex: {ex.Message}");
+            }
         }
     }
 

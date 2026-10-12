@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2026, Jiaqi (0x7c13) Liu. All rights reserved.
-//  See LICENSE file in the project root for license information.
+//  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
 using System;
@@ -101,6 +101,19 @@ public sealed partial class TextAndEditorSettingsPage : Page
     public TextAndEditorSettingsPage()
     {
         InitializeComponent();
+        InitializeRadioButtonGroup(LineEndingPanel);
+        InitializeRadioButtonGroup(EncodingPanel);
+        InitializeRadioButtonGroup(DecodingPanel);
+        InitializeRadioButtonGroup(TabBehaviorPanel);
+        InitializeRadioButtonGroup(SearchEnginePanel);
+    }
+
+    private static void InitializeRadioButtonGroup(Panel panel)
+    {
+        // Preferences initialize before this page joins the visual tree. Explicit
+        // groups must distinguish both these panels and retired page instances.
+        var groupName = Guid.NewGuid().ToString("N");
+        foreach (var button in panel.Children.OfType<RadioButton>()) button.GroupName = groupName;
     }
 
     internal void Initialize(SettingsContext context)

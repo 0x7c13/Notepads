@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2026, Jiaqi (0x7c13) Liu. All rights reserved.
-//  See LICENSE file in the project root for license information.
+//  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
 using System;
@@ -15,7 +15,7 @@ public static class ApplicationSettingsStore
     {
         object obj = null;
 
-        ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
         if (localSettings.Values.TryGetValue(key, out var value))
         {
@@ -27,7 +27,7 @@ public static class ApplicationSettingsStore
 
     public static void Write(string key, object obj)
     {
-        ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
         localSettings.Values[key] = obj;
     }
 
@@ -35,7 +35,7 @@ public static class ApplicationSettingsStore
     {
         try
         {
-            ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             return localSettings.Values.Remove(key);
         }
         catch (Exception ex)

@@ -1,6 +1,6 @@
-﻿# ---------------------------------------------------------------------------------------------
-# Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
-# See LICENSE file in the project root for license information.
+# ---------------------------------------------------------------------------------------------
+#  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+#  See LICENSE.txt in the project root for license information.
 # ---------------------------------------------------------------------------------------------
 
 # Requires the Release AOT test project to have been published for Platform.
@@ -8,6 +8,8 @@
 param([ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64')
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'EditorTestSession.ps1')
+. (Join-Path $PSScriptRoot 'TestBuildIdentity.ps1')
+$null = Assert-TestBuildIdentity App Release $Platform
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 if (!('EditorNavigationEventObserver' -as [type])) {

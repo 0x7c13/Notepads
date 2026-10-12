@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2020-2026, Jiaqi (0x7c13) Liu. All rights reserved.
-//  See LICENSE file in the project root for license information.
+//  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -65,8 +65,6 @@ public sealed partial class NotepadsMainPage
             MenuSaveAsButton.IsEnabled = false;
             MenuFindButton.IsEnabled = false;
             MenuReplaceButton.IsEnabled = false;
-            MenuPrintButton.IsEnabled = false;
-            MenuPrintAllButton.IsEnabled = false;
         }
         else if (selectedTextEditor.IsEditorEnabled() == false)
         {
@@ -81,12 +79,6 @@ public sealed partial class NotepadsMainPage
             MenuSaveAsButton.IsEnabled = true;
             MenuFindButton.IsEnabled = true;
             MenuReplaceButton.IsEnabled = true;
-
-            if (PrintManager.IsSupported())
-            {
-                MenuPrintButton.IsEnabled = !selectedTextEditor.IsDocumentEmpty;
-                MenuPrintAllButton.IsEnabled = NotepadsCore.HasPrintableTabs();
-            }
         }
 
         MenuFullScreenButton.Text = _resourceLoader.GetString(
@@ -98,6 +90,7 @@ public sealed partial class NotepadsMainPage
                 ? "App_ExitCompactOverlayMode_Text"
                 : "App_EnterCompactOverlayMode_Text");
         MenuSaveAllButton.IsEnabled = NotepadsCore.HasTabsRequiringSave();
+        MenuPrintButton.IsEnabled = PrintManager.IsSupported() && selectedTextEditor != null && !selectedTextEditor.IsDocumentEmpty;
         MenuPrintAllButton.IsEnabled = PrintManager.IsSupported() && NotepadsCore.HasPrintableTabs();
     }
 

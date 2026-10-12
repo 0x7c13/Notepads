@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------------------------
-# Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
-# See LICENSE file in the project root for license information.
+#  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+#  See LICENSE.txt in the project root for license information.
 # ---------------------------------------------------------------------------------------------
 
 # Publish the isolated UWP host and desktop peer for the same architecture first.
@@ -12,6 +12,9 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'EditorTestSession.ps1')
+. (Join-Path $PSScriptRoot 'TestBuildIdentity.ps1')
+$null = Assert-TestBuildIdentity App Release $Platform
+$null = Assert-TestBuildIdentity DragPeer Release $Platform
 if (!('EditorDragInput' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'EditorDragInput.cs') }
 
 $script:session = $null
@@ -106,13 +109,14 @@ function Write-Atomic([string] $Path, [string] $Value) {
     [IO.File]::WriteAllText($Path + '.tmp', $Value, $script:utf8)
     [IO.File]::Move($Path + '.tmp', $Path)
 }
-function Invoke-PeerCommand([string] $Command, [int] $TimeoutSeconds = 5) {
+function Invoke-PeerCommand([string] $Command, [int] $TimeoutSeconds = 5, [DateTime] $DeadlineUtc = [DateTime]::MaxValue) {
     Assert-PeerAlive
     $script:peer.Sequence++
     $id = '{0:D4}' -f $script:peer.Sequence
     Write-Atomic (Join-Path $script:peer.Channel "command-$id.txt") $Command
     $response = Join-Path $script:peer.Channel "response-$id.txt"
     $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+    if ($DeadlineUtc -lt $deadline) { $deadline = $DeadlineUtc }
     while (!(Test-Path -LiteralPath $response)) {
         Assert-DragAlive
         if ([DateTime]::UtcNow -ge $deadline) { throw "Desktop peer command timed out: $Command" }
@@ -225,6 +229,46 @@ function Get-DragPoints($Fixture) {
     Write-DragTrace 'physical-points' $result
     return $result
 }
+function Wait-PeerTargetReady($Points, [bool] $Copy) {
+    $deadline = [DateTime]::UtcNow.AddSeconds(5)
+    $timeline = Event-Path 'peer' 'events.tsv'
+    $expectedEffect = if ($Copy) { 1 } else { 2 }
+    while ([DateTime]::UtcNow -lt $deadline) {
+        Assert-DragAlive
+        $script:inputDriver.RequireCursorAt([uint32]$Points.TargetPid, $Points.Target.X, $Points.Target.Y)
+        $script:inputDriver.RequireHeldMouse()
+        if (Test-Path -LiteralPath (Event-Path 'editor' 'editor-drag-completed')) {
+            throw 'Editor source completed before the desktop receiver acknowledged this held drag.'
+        }
+        $entered = $false
+        foreach ($line in (Read-EditorTestFile $timeline -AsLines -CompleteLinesOnly)) {
+            $parts = $line.Split("`t")
+            if ($parts.Length -lt 6 -or $parts[3] -ne 'target-drag-enter') { continue }
+            Assert-DragEqual ([int]$parts[1]) ([int]$script:peer.ProcessId) 'Target-enter evidence belongs to the owned peer process'
+            $entered = $true
+        }
+        if ($entered) {
+            # The same-case enter event proves real OLE delivery; the live state
+            # also excludes an old enter followed by leave/reset/drop.
+            $target = Invoke-PeerCommand 'state' -DeadlineUtc $deadline
+            Assert-DragEqual $target.case $script:activeCase 'Receiver readiness belongs to the current drag case'
+            Assert-DragEqual (State-Bool $target.targetDropped) $false 'Mouse remains held before the receiver Drop callback'
+            $script:inputDriver.RequireCursorAt([uint32]$Points.TargetPid, $Points.Target.X, $Points.Target.Y)
+            $script:inputDriver.RequireHeldMouse()
+            if (Test-Path -LiteralPath (Event-Path 'editor' 'editor-drag-completed')) {
+                throw 'Editor source completed while checking desktop receiver readiness.'
+            }
+            if ((State-Bool $target.targetHovering) -and [int]$target.targetProvisional -eq $expectedEffect -and
+                (([int]$target.targetAllowed -band $expectedEffect) -ne 0)) {
+                if ([DateTime]::UtcNow -ge $deadline) { break }
+                Write-DragTrace 'peer-target-ready-before-release' $target
+                return
+            }
+        }
+        Start-Sleep -Milliseconds 20
+    }
+    throw 'Desktop receiver did not acknowledge and provisionally accept the held drag within five seconds; no mouse-up was issued.'
+}
 function Start-RealDrag($Fixture, [bool] $Copy, [bool] $Cancel) {
     $points = Get-DragPoints $Fixture
     Assert-DragAlive
@@ -234,6 +278,7 @@ function Start-RealDrag($Fixture, [bool] $Copy, [bool] $Cancel) {
     if ($Fixture.Direction -eq 'incoming') { $null = Wait-DragEvent 'peer' 'source-started' }
     else { $null = Wait-DragEvent 'editor' 'editor-drag-started' }
     $script:inputDriver.MoveTo($points.Target.X, $points.Target.Y, 30)
+    if ($Fixture.Direction -eq 'outgoing') { Wait-PeerTargetReady $points $Copy }
     if ($Cancel) {
         $script:inputDriver.Escape()
         # Wait for the real drag loop to observe Escape before releasing the
@@ -309,6 +354,7 @@ function Mutate-PendingEditor([string] $Mutation, $Fixture) {
         'failure' { $state = Editor-Command 'state' }
         'replace-same' {
             $state = Editor-Command "replace|$(Encode-Text $Fixture.EditorText)"
+            Assert-DragTrue (State-Bool $state.documentReplaced) 'Replacement publishes a distinct native document while the drag is gated'
             if ($Fixture.Direction -eq 'outgoing') {
                 # Loading a new native document collapses selection. Restore it
                 # so this case isolates document identity/revision invalidation.
@@ -359,9 +405,20 @@ function Test-Immediate([string] $Name, [string] $Direction, [string] $Operation
     Assert-Immediate $fixture $state $effect
     if ($cancel) { Test-Recovery $Name }
 }
+function Prepare-ReplacementFixture($Fixture) {
+    $prepared = Editor-Command "prepare-replace|$(Encode-Text $Fixture.EditorText)" 15
+    Assert-DragEqual $prepared.replacementCase $script:activeCase 'Replacement fixture belongs to this exact drag case'
+    Assert-DragEqual (Decode-Text $prepared.replacementText64) $Fixture.EditorText 'Replacement fixture binds the exact candidate text'
+    Assert-DragEqual (Decode-Text $prepared.text64) $Fixture.EditorText 'Preparing a candidate does not replace the active document'
+    Assert-DragEqual $prepared.anchor $Fixture.Editor.anchor 'Preparing a candidate preserves the source selection anchor'
+    Assert-DragEqual $prepared.caret $Fixture.Editor.caret 'Preparing a candidate preserves the source selection caret'
+    Assert-DragEqual (State-Bool $prepared.canUndo) $false 'Preparing a candidate adds no editor undo entry'
+    Write-DragTrace 'replacement-fixture-prepared' $prepared
+}
 function Test-IncomingDelayed([string] $Name, [string] $Mutation) {
     $mode = if ($Mutation -eq 'failure') { 'fail' } else { 'delayed' }
     $fixture = New-DragCase $Name 'incoming' $mode 'normal'
+    if ($Mutation -eq 'replace-same') { Prepare-ReplacementFixture $fixture }
     Start-RealDrag $fixture $false $false
     $null = Wait-DragEvent 'editor' 'editor-drop-entered'
     $request = Wait-DragEvent 'peer' 'data-requested'
@@ -388,6 +445,7 @@ function Test-IncomingDelayed([string] $Name, [string] $Mutation) {
 }
 function Test-OutgoingDelayed([string] $Name, [string] $Mutation) {
     $fixture = New-DragCase $Name 'outgoing' 'normal' 'delayed'
+    if ($Mutation -eq 'replace-same') { Prepare-ReplacementFixture $fixture }
     Start-RealDrag $fixture $false $false
     $captured = Wait-DragEvent 'peer' 'target-drop-entered'
     Assert-DragEqual (Decode-Text $captured.received64) (Normalize-Text $script:payload) 'Delayed receiver already captured the original payload'
@@ -466,7 +524,7 @@ $failure = $null
 try {
     $repo = Split-Path $PSScriptRoot -Parent
     $runtime = 'win-' + $Platform.ToLowerInvariant()
-    $peerExe = [IO.Path]::GetFullPath((Join-Path $repo "tests\DragDrop.Peer\bin\Release\net10.0-windows\$runtime\DragDrop.Peer.exe"))
+    $peerExe = [IO.Path]::GetFullPath((Join-Path $repo "tests\IntegrationTests\Support\DragDrop.Peer\bin\Release\net10.0-windows\$runtime\DragDrop.Peer.exe"))
     if (!(Test-Path -LiteralPath $peerExe)) { throw "Publish DragDrop.Peer for $runtime first. Missing $peerExe" }
     $script:session = Start-EditorTestSession -Platform $Platform
     Write-Output "Evidence: $($script:session.Root)"
@@ -512,7 +570,7 @@ try {
     $script:inputDriver = [EditorDragInput]::new([uint32]$script:session.ProcessId, [uint32]$script:peer.ProcessId)
     $script:inputDriver.Arrange()
     $script:inputDriver.Activate([uint32]$script:session.ProcessId)
-    Write-DragTrace 'owned-windows' @{ editorPid = $script:session.ProcessId; peerPid = $script:peer.ProcessId; editorHwnd = $script:inputDriver.EditorWindow.ToInt64(); peerHwnd = $script:inputDriver.PeerWindow.ToInt64(); physicalWorkArea = $script:inputDriver.WorkArea; selected = $selected.Name; totalMatrix = $matrix.Count }
+    Write-DragTrace 'owned-windows' @{ editorPid = $script:session.ProcessId; peerPid = $script:peer.ProcessId; editorHwnd = $script:inputDriver.EditorWindow.ToInt64(); peerHwnd = $script:inputDriver.PeerWindow.ToInt64(); editorAnchor = $script:inputDriver.EditorAnchor.ToInt64(); peerAnchor = $script:inputDriver.PeerAnchor.ToInt64(); physicalWorkArea = $script:inputDriver.WorkArea; selected = $selected.Name; totalMatrix = $matrix.Count }
     foreach ($scenario in $selected) {
         $started = [DateTime]::UtcNow
         $beforeChecks = $script:checks

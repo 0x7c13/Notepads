@@ -1,0 +1,110 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <LangVersion>14.0</LangVersion>
+    <NotepadsSourceRoot Condition="'$(NotepadsSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\src\Notepads</NotepadsSourceRoot>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IntegrationHost)' == 'App'">
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <UseUwp>true</UseUwp>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <LangVersion>14.0</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <CsWinRTGenerateProjection>false</CsWinRTGenerateProjection>
+    <Configurations>Debug;Release</Configurations>
+    <OutputType>WinExe</OutputType>
+    <PublishAot>true</PublishAot>
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+    <PublishAppxPackage>true</PublishAppxPackage>
+    <IncludePublishItemsOutputGroup Condition="'$(Configuration)' != 'Debug'">true</IncludePublishItemsOutputGroup>
+    <IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <SelfContained>true</SelfContained>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxAutoIncrementPackageRevision>false</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Never</AppxBundle>
+    <AppxSymbolPackageEnabled>true</AppxSymbolPackageEnabled>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <AssemblyName>NotepadsIntegrationTests</AssemblyName>
+    <RootNamespace>Notepads</RootNamespace>
+    <EnableTypeInfoReflection>false</EnableTypeInfoReflection>
+    <!-- Allows an isolated source checkout to use this same boundary for A/B measurements. -->
+    <NotepadsSourceRoot Condition="'$(NotepadsSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\src\Notepads</NotepadsSourceRoot>
+    <Win32Resource>$(NotepadsSourceRoot)\Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IntegrationHost)' == 'App' and ('$(Platform)' != '' and '$(Platform)' != 'AnyCPU')">
+    <RuntimeIdentifier>win-$([System.String]::Copy('$(Platform)').ToLowerInvariant())</RuntimeIdentifier>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IntegrationHost)' == 'App'">
+    <PackageReference Include="Microsoft.Windows.CsWinRT" />
+    <PackageReference Include="Microsoft.UI.Xaml" />
+    <PackageReference Include="UTF.Unknown" />
+    <PackageReference Include="Win2D.uwp" />
+    <PackageReference Include="CommunityToolkit.Uwp.Extensions" />
+    <PackageReference Include="CommunityToolkit.Uwp.Converters" />
+    <PackageReference Include="CommunityToolkit.Uwp.Helpers" />
+    <ProjectReference Include="..\..\src\Notepads.Native\Projection\Notepads.Native.Projection.csproj" />
+    <ProjectReference Include="..\..\src\Notepads.Controls\Notepads.Controls.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IntegrationHost)' == 'App'">
+    <Compile Include="$(NotepadsSourceRoot)\**\*.cs" Exclude="$(NotepadsSourceRoot)\bin\**;$(NotepadsSourceRoot)\obj\**;$(NotepadsSourceRoot)\App.xaml.cs;$(NotepadsSourceRoot)\Program.cs;$(NotepadsSourceRoot)\Composition\BootstrapContext.cs;$(NotepadsSourceRoot)\Composition\WindowContextFactory.cs;$(NotepadsSourceRoot)\Infrastructure\Shell\MRUService.cs;$(NotepadsSourceRoot)\Infrastructure\Diagnostics\AnalyticsService.cs;$(NotepadsSourceRoot)\Presentation\Controls\Markdown\**">
+      <Link>Product\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <ApplicationDefinition Include="$(NotepadsSourceRoot)\App.xaml" Link="App.xaml" />
+    <Page Include="$(NotepadsSourceRoot)\**\*.xaml" Exclude="$(NotepadsSourceRoot)\bin\**;$(NotepadsSourceRoot)\obj\**;$(NotepadsSourceRoot)\App.xaml;$(NotepadsSourceRoot)\Presentation\Controls\Markdown\**">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Page>
+    <Page Update="$(NotepadsSourceRoot)\Presentation\Theming\*Themes.xaml">
+      <Link>Theming\%(Filename)%(Extension)</Link>
+    </Page>
+    <PRIResource Include="$(NotepadsSourceRoot)\Strings\**\*.resw">
+      <Link>Strings\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </PRIResource>
+    <Content Include="$(NotepadsSourceRoot)\Assets\**\*.png" Exclude="$(NotepadsSourceRoot)\Assets\**\*-dev.png">
+      <Link>Assets\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="$(NotepadsSourceRoot)\Resource\Text Document.txt" Link="Resource\Text Document.txt" />
+  </ItemGroup>
+  <Import Project="..\Shared\TestStorageIsolation.targets" Condition="'$(IntegrationHost)' == 'App'" />
+  <PropertyGroup Condition="'$(IntegrationHost)' == 'Headless'">
+    <AssemblyName>NotepadsIntegrationTests.Headless</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <StartupObject>NotepadsIntegrationTests.Program</StartupObject>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IntegrationHost)' == 'Headless'">
+    <Compile Include="Headless\**\*.cs" />
+    <Compile Include="../../src/Notepads/Infrastructure/Diagnostics/OperationMetrics.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentMetadata.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentLimits.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/*.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Legacy/*.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Recovery/RecoverySelection.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/RecoveryRecordCodec.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/SessionRecoveryReferences.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/RecoveryRecordValidator.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/SessionRecoveryAuthority.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/SessionRecoverySelector.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryRecordStore.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryStoragePaths.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryStorageFaults.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IntegrationHost)' == 'App'">
+    <Compile Include="App\**\*.cs" />
+  </ItemGroup>
+  <Target Name="ValidateIntegrationHost" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(IntegrationHost)' != 'App' and '$(IntegrationHost)' != 'Headless'" Text="IntegrationHost must be App or Headless." />
+  </Target>
+</Project>

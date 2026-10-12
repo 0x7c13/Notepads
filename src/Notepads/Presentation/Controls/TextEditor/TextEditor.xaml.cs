@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------------------------
 //  Copyright (c) 2019-2026, Jiaqi (0x7c13) Liu. All rights reserved.
-//  See LICENSE file in the project root for license information.
+//  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
 using System;
@@ -593,37 +593,43 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private bool CopyTextToWindowsClipboardInternal(bool clearLineSelection)
     {
+        var selectedCurrentLine = false;
+        var copied = false;
+        var cursorPosition = 0;
         try
         {
             DataPackage dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
 
             var isTextSelected = TextEditorCore.HasSelection;
-            TextEditorCore.GetTextSelectionPosition(out var cursorPosition, out _);
+            TextEditorCore.GetTextSelectionPosition(out cursorPosition, out _);
 
             if (!isTextSelected)
             {
+                selectedCurrentLine = true;
                 TextEditorCore.SelectCurrentLine();
             }
 
             var text = LineEndingUtility.ApplyLineEnding(TextEditorCore.GetSelectedText(), GetLineEnding());
             dataPackage.SetText(text);
 
-            if (clearLineSelection && !isTextSelected)
-            {
-                TextEditorCore.SetTextSelectionPosition(cursorPosition, cursorPosition);
-            }
-
             if (!Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true }))
             {
                 return false;
             }
             Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
+            copied = true;
             return true;
         }
         catch (Exception ex)
         {
             LoggingService.LogError($"[{nameof(TextEditor)}] Failed to copy plain text to Windows clipboard: {ex.Message}");
             return false;
+        }
+        finally
+        {
+            // Only a successful Cut keeps the temporary line selection for deletion.
+            if (selectedCurrentLine && (clearLineSelection || !copied))
+                TextEditorCore.SetTextSelectionPosition(cursorPosition, cursorPosition);
         }
     }
 

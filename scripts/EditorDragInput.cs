@@ -1,13 +1,16 @@
-// Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
-// See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE.txt in the project root for license information.
+// ---------------------------------------------------------------------------------------------
 
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 
 // Loaded by Test-EditorDragDrop.ps1. Coordinates and SendInput are physical on
-// both supported 64-bit architectures; only the two discovered roots are trusted.
+// both supported 64-bit architectures. Roots are bound to exact owned HWNDs.
 public sealed class EditorDragInput : IDisposable
 {
     [StructLayout(LayoutKind.Sequential)] public struct Point { public int X, Y; public Point(int x, int y) { X = x; Y = y; } }
@@ -40,6 +43,7 @@ public sealed class EditorDragInput : IDisposable
     [DllImport("user32.dll")] private static extern bool ShowWindowAsync(IntPtr window, int command);
     [DllImport("user32.dll", SetLastError = true)] private static extern bool SetWindowPos(IntPtr window, IntPtr after, int x, int y, int width, int height, uint flags);
     [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr window, out Rect rect);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern int GetClassName(IntPtr window, StringBuilder name, int capacity);
     [DllImport("user32.dll")] private static extern IntPtr MonitorFromWindow(IntPtr window, uint flags);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
     [DllImport("user32.dll")] private static extern IntPtr SetThreadDpiAwarenessContext(IntPtr context);
@@ -53,6 +57,8 @@ public sealed class EditorDragInput : IDisposable
     private readonly IntPtr priorDpi;
     private bool mouseDown, controlDown, escapeDown;
     private uint sourceProcess;
+    public IntPtr EditorAnchor { get; private set; }
+    public IntPtr PeerAnchor { get; private set; }
     public IntPtr EditorWindow { get; private set; }
     public IntPtr PeerWindow { get; private set; }
     public Rect WorkArea { get; private set; }
@@ -71,7 +77,10 @@ public sealed class EditorDragInput : IDisposable
         {
             EditorWindow = FindRoot(editorPid);
             PeerWindow = FindRoot(peerPid);
+            EditorAnchor = FindOwnedAnchor(EditorWindow, editorPid);
+            PeerAnchor = FindOwnedAnchor(PeerWindow, peerPid);
             AssertIdleInput();
+            WaitForEditorFrame();
         }
         catch { SetThreadDpiAwarenessContext(priorDpi); throw; }
     }
@@ -79,10 +88,36 @@ public sealed class EditorDragInput : IDisposable
     private static uint ProcessOf(IntPtr window) { uint pid; GetWindowThreadProcessId(window, out pid); return pid; }
     private static bool ContainsProcess(IntPtr root, uint pid)
     {
+        // EnumChildWindows(NULL) enumerates unrelated top-level windows.
+        if (root == IntPtr.Zero || !IsWindow(root)) return false;
         if (ProcessOf(root) == pid) return true;
         bool found = false;
         EnumChildWindows(root, delegate(IntPtr child, IntPtr ignored) { if (ProcessOf(child) == pid && IsWindowVisible(child)) found = true; return !found; }, IntPtr.Zero);
         return found;
+    }
+    private string DescribeWindow(string label, IntPtr window)
+    {
+        IntPtr root = GetAncestor(window, 2);
+        var name = new StringBuilder(256);
+        GetClassName(window, name, name.Capacity);
+        Rect rect;
+        bool hasRect = GetWindowRect(window, out rect);
+        return label + "={hwnd=" + window + ",pid=" + ProcessOf(window) + ",class=" + name +
+            ",exists=" + IsWindow(window) + ",visible=" + IsWindowVisible(window) +
+            ",rect=" + (hasRect ? rect.Left + "," + rect.Top + "," + rect.Right + "," + rect.Bottom : "unavailable") +
+            ",root=" + root + ",rootPid=" + ProcessOf(root) +
+            ",rootContainsEditor=" + ContainsProcess(root, editorProcess) +
+            ",rootContainsPeer=" + ContainsProcess(root, peerProcess) + "}";
+    }
+    private string DescribeOwnership()
+    {
+        return Environment.NewLine + "Ownership: editorPid=" + editorProcess + ",peerPid=" + peerProcess +
+            ",mouseDown=" + mouseDown + ",controlDown=" + controlDown + ",escapeDown=" + escapeDown + Environment.NewLine +
+            DescribeWindow("cachedEditor", EditorWindow) + Environment.NewLine +
+            DescribeWindow("cachedPeer", PeerWindow) + Environment.NewLine +
+            DescribeWindow("editorAnchor", EditorAnchor) + Environment.NewLine +
+            DescribeWindow("peerAnchor", PeerAnchor) + Environment.NewLine +
+            DescribeWindow("foreground", GetForegroundWindow());
     }
     private static IntPtr FindRoot(uint pid)
     {
@@ -100,10 +135,69 @@ public sealed class EditorDragInput : IDisposable
         if (found == IntPtr.Zero) throw new InvalidOperationException("Visible owned window not found for PID " + pid);
         return found;
     }
+    private static IntPtr FindOwnedAnchor(IntPtr root, uint pid)
+    {
+        if (ProcessOf(root) == pid) return root;
+        IntPtr found = IntPtr.Zero;
+        EnumChildWindows(root, delegate(IntPtr child, IntPtr ignored)
+        {
+            if (ProcessOf(child) == pid && IsWindowVisible(child)) { found = child; return false; }
+            return true;
+        }, IntPtr.Zero);
+        if (found == IntPtr.Zero) throw new InvalidOperationException("Exact owned HWND anchor not found for PID " + pid);
+        return found;
+    }
+    private static bool OwnedAnchorIdentity(IntPtr anchor, uint pid)
+    {
+        return IsWindow(anchor) && ProcessOf(anchor) == pid;
+    }
+    private static bool ValidAnchor(IntPtr anchor, uint pid)
+    {
+        return OwnedAnchorIdentity(anchor, pid) && IsWindowVisible(anchor);
+    }
+    private void WaitForEditorFrame()
+    {
+        // A newly activated UWP CoreWindow can initially be top-level. Its
+        // frame is attached later and replaces the initial window placement.
+        // Observe that real relationship before arranging either participant.
+        DateTime deadline = DateTime.UtcNow.AddSeconds(5);
+        bool activationRequested = false;
+        while (true)
+        {
+            AssertIdleInput();
+            if (!OwnedAnchorIdentity(EditorAnchor, editorProcess) || !OwnedAnchorIdentity(PeerAnchor, peerProcess) ||
+                GetAncestor(PeerAnchor, 2) != PeerWindow)
+                throw new InvalidOperationException("An owned HWND changed while waiting for the UWP frame." + DescribeOwnership());
+            IntPtr root = GetAncestor(EditorAnchor, 2);
+            // Reparenting may briefly hide the same owned CoreWindow. That is
+            // pending setup readiness; a changed HWND/PID still fails above.
+            if (root != IntPtr.Zero && root != EditorAnchor && IsWindowVisible(root) &&
+                ValidAnchor(EditorAnchor, editorProcess) && ValidAnchor(PeerAnchor, peerProcess))
+            {
+                EditorWindow = root;
+                ValidateWindows();
+                return;
+            }
+            if (!activationRequested && root == EditorAnchor && ValidAnchor(EditorAnchor, editorProcess))
+            {
+                // The unframed editor may be behind the newly launched peer.
+                // Restore/activate its verified owned HWND once so desktop UWP
+                // hosting can finish. No pointer or keyboard input is injected.
+                ShowWindowAsync(root, 9);
+                SetForegroundWindow(root);
+                activationRequested = true;
+            }
+            if (DateTime.UtcNow >= deadline)
+                throw new InvalidOperationException("The owned UWP HWND did not acquire a visible frame before input setup." + DescribeOwnership());
+            Thread.Sleep(15);
+        }
+    }
     public void ValidateWindows()
     {
-        if (!IsWindow(EditorWindow) || !IsWindow(PeerWindow) || !ContainsProcess(EditorWindow, editorProcess) || !ContainsProcess(PeerWindow, peerProcess))
-            throw new InvalidOperationException("An exact owned window/descendant relationship changed.");
+        if (!ValidAnchor(EditorAnchor, editorProcess) || !ValidAnchor(PeerAnchor, peerProcess) ||
+            !IsWindow(EditorWindow) || !IsWindow(PeerWindow) ||
+            GetAncestor(EditorAnchor, 2) != EditorWindow || GetAncestor(PeerAnchor, 2) != PeerWindow)
+            throw new InvalidOperationException("An exact owned window/descendant relationship changed." + DescribeOwnership());
     }
     private IntPtr RootFor(uint pid)
     {
@@ -113,6 +207,8 @@ public sealed class EditorDragInput : IDisposable
     }
     public void Arrange()
     {
+        if (HasPressedInput) throw new InvalidOperationException("Cannot arrange windows while driver-owned input is held.");
+        AssertIdleInput();
         ValidateWindows();
         var monitor = new MonitorInfo { Size = Marshal.SizeOf(typeof(MonitorInfo)) };
         if (!GetMonitorInfo(MonitorFromWindow(EditorWindow, 2), ref monitor)) throw new InvalidOperationException("Cannot read physical work area.");
@@ -133,7 +229,7 @@ public sealed class EditorDragInput : IDisposable
         DateTime deadline = DateTime.UtcNow.AddSeconds(2);
         while (GetAncestor(GetForegroundWindow(), 2) != root)
         {
-            if (DateTime.UtcNow >= deadline) throw new InvalidOperationException("Could not activate the owned source window; no input was injected.");
+            if (DateTime.UtcNow >= deadline) throw new InvalidOperationException("Could not activate the owned source window; no input was injected." + DescribeOwnership());
             Thread.Sleep(15);
         }
         RequireForeground();
@@ -152,14 +248,14 @@ public sealed class EditorDragInput : IDisposable
             ValidateWindows();
             root = GetAncestor(GetForegroundWindow(), 2);
         }
-        if (root != EditorWindow && root != PeerWindow) throw new InvalidOperationException("Foreground moved outside the two owned windows: HWND " + root + ", PID " + ProcessOf(root));
+        if (root != EditorWindow && root != PeerWindow) throw new InvalidOperationException("Foreground moved outside the two owned windows: HWND " + root + ", PID " + ProcessOf(root) + DescribeOwnership());
     }
     public void RequirePoint(int x, int y, uint pid)
     {
         ValidateWindows();
         IntPtr hit = WindowFromPoint(new Point(x, y));
         if (GetAncestor(hit, 2) != RootFor(pid) || ProcessOf(hit) != pid)
-            throw new InvalidOperationException("Input point does not hit the expected owned process: " + x + "," + y + " expected PID " + pid + " hit PID " + ProcessOf(hit));
+            throw new InvalidOperationException("Input point does not hit the expected owned process: " + x + "," + y + " expected PID " + pid + " hit PID " + ProcessOf(hit) + "; " + DescribeWindow("hit", hit) + DescribeOwnership());
     }
     public void AssertIdleInput()
     {
@@ -197,12 +293,23 @@ public sealed class EditorDragInput : IDisposable
         RequireForeground(); RequirePoint(x, y, pid);
         Send(new Input { MouseFlags = 2 }); mouseDown = true;
     }
-    public void End(uint pid, int x, int y)
+    public void RequireCursorAt(uint pid, int x, int y)
     {
         RequireForeground(); RequirePoint(x, y, pid);
         Point actual;
-        if (!GetCursorPos(out actual) || Math.Abs(actual.X - x) > 1 || Math.Abs(actual.Y - y) > 1) throw new InvalidOperationException("Cursor moved unexpectedly before mouse release.");
+        if (!GetCursorPos(out actual)) throw new InvalidOperationException("Could not read cursor position before mouse release.");
+        if (Math.Abs(actual.X - x) > 1 || Math.Abs(actual.Y - y) > 1)
+            throw new InvalidOperationException("Cursor moved unexpectedly before mouse release: expected " + x + "," + y + "; actual " + actual.X + "," + actual.Y + ".");
         RequirePoint(actual.X, actual.Y, pid);
+    }
+    public void RequireHeldMouse()
+    {
+        if (!mouseDown || (GetAsyncKeyState(1) & 0x8000) == 0)
+            throw new InvalidOperationException("The driver-owned mouse press is no longer held.");
+    }
+    public void End(uint pid, int x, int y)
+    {
+        RequireCursorAt(pid, x, y);
         if (!mouseDown) throw new InvalidOperationException("Driver does not own a mouse press.");
         Send(new Input { MouseFlags = 4 }); mouseDown = false;
     }
