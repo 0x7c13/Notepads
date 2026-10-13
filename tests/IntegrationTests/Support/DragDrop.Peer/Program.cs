@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Security.Principal;
 using System.Windows.Forms;
 
 namespace NotepadsDragDropPeer;
@@ -22,6 +23,13 @@ internal static class Program
             }
 
             channel = new PeerChannel(args[0]);
+            using WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            bool elevated = new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator);
+            channel.WriteAtomic("identity.txt", $"User={identity.Name}\nElevated={elevated}\n");
+            if (Environment.GetEnvironmentVariable("RUNNER_ENVIRONMENT") == "github-hosted" && elevated)
+            {
+                throw new InvalidOperationException("The hosted drag peer must run with normal-user rights.");
+            }
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
             Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
             Application.EnableVisualStyles();

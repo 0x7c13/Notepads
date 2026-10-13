@@ -1,5 +1,13 @@
 # Notepads tests
 
+GitHub CI runs the unit, source, headless and native checks automatically, and
+publishes/validates Production Native AOT packages for x86, x64 and ARM64.
+The required hosted E2E job executes the x64 Release AOT App groups, Debug native
+fault tests, external UI Automation and cross-process drag tests. An additional
+manual desktop workflow supports dedicated x64/ARM64 machines. Package validation
+is not a substitute for executing an AOT app.
+See [CI and local reproduction](../CI.md) for commands, artifacts and runner setup.
+
 Two test projects serve different iteration loops. `UnitTests` runs actual pure
 production logic without files, native libraries, Windows UI or external services.
 `IntegrationTests` runs either its portable Headless host or the isolated Windows
@@ -77,11 +85,11 @@ Some outbound boundaries intentionally stop at the operating system:
 These distinctions are deliberate. A passing payload or policy test is not a
 claim that the corresponding operating-system interaction was exercised.
 
-The October 2026 test reorganization was validated through focused runs, not one
-uninterrupted `-Suite All` invocation. Recorded App runtime checks used Windows
-ARM64 Release Native AOT plus a separate Debug native-fault lane; the two C++
-helpers ran as x64. This does not establish runtime coverage for every shipping
-architecture. The future Markdown renderer is outside the current feature map.
+Hosted CI executes the x64 Release Native AOT App groups and a separate Debug
+native-fault lane, plus the external UIA and drag drivers. Earlier local validation
+used Windows ARM64 Release Native AOT and Debug; the two C++ helpers ran as x64.
+This does not establish runtime coverage for every shipping architecture. The
+future Markdown renderer is outside the current feature map.
 Historical receipts remain under `artifacts/test-runs`, `artifacts/isolated-uwp`
 and `artifacts/test-overhaul`; those local artifacts are not checked into Git.
 

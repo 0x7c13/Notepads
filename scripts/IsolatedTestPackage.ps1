@@ -4,6 +4,7 @@
 # ---------------------------------------------------------------------------------------------
 
 # One registration/desktop owner shared by ordinary, UIA and drag integration runs.
+if (!('IsolatedTestProcess' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'IsolatedTestProcess.cs') }
 
 function Assert-IsolatedTestPreservation {
     param([hashtable] $Session)
@@ -52,7 +53,7 @@ function Assert-IsolatedTestExit {
     if (!$Identity.Verified -or !$Identity.Process -or !$Identity.Process.HasExited) {
         throw 'The verified test process has not exited.'
     }
-    $Identity.ExitCode = $Identity.Process.ExitCode
+    $Identity.ExitCode = $Identity.Process.get_ExitCode()
     if (!$Identity.ExpectedTermination -and $Identity.ExitCode -ne 0) {
         throw "The test process exited with code $($Identity.ExitCode); a published PASS cannot override a process failure."
     }
@@ -70,11 +71,10 @@ function Start-IsolatedTestProcess {
     $id = [PreservingUwpTestLauncher]::Launch("$($Session.Package.PackageFamilyName)!App", "--test-run $($Session.RunId) $Argument")
     $identity = @{ Id = $id; Path = $Session.Executable; StartTicks = 0L; Verified = $false; ExpectedTermination = [bool]$ExpectedTermination; Process = $null }
     $Session.Processes.Add($identity)
-    $process = Get-Process -Id $id -ErrorAction Stop
+    $process = [IsolatedTestProcess]::new($id)
     $identity.Process = $process
-    # Open and retain the exact process handle now. A fresh PID lookup after
-    # exit cannot recover its exit code, and the PID may already be reused.
-    $null = $process.Handle
+    # The wrapper retains an exact handle with limited rights. Metadata, waiting,
+    # exit-code reads and termination all refer to that same process instance.
     if ($process.Path -ne $Session.Executable) { throw 'Activation returned an unowned executable.' }
     $identity.StartTicks = $process.StartTime.ToUniversalTime().Ticks
     $identity.Verified = $true
@@ -148,7 +148,7 @@ function Invoke-IsolatedTestPhase {
                 Copy-Item -LiteralPath $source -Destination (Join-Path $Session.Root "phase-$($Session.Phase)-$name")
             }
         }
-        if ($identity -and $identity.Process -and $identity.Process.HasExited) { $identity.ExitCode = $identity.Process.ExitCode }
+        if ($identity -and $identity.Process -and $identity.Process.HasExited) { $identity.ExitCode = $identity.Process.get_ExitCode() }
         if ($identity -and $identity.ContainsKey('ExitCode')) {
             @{ ProcessId = $identity.Id; ExitCode = $identity.ExitCode } |
                 ConvertTo-Json | Set-Content -LiteralPath (Join-Path $Session.Root "phase-$($Session.Phase)-process.json") -Encoding utf8

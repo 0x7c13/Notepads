@@ -23,11 +23,23 @@ You can contribute to Notepads project by:
 Note: This repository follows [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/), format your pull request title according to specifications.
 
 # How to Build and Run Notepads from source:
-* Make sure your machine is running on Windows 10 1903+.
+* V2 is work in progress. Only compatibility with released V1 data is required; intermediate V2 development formats are not release contracts.
 * Install Visual Studio 2026 with UWP .NET tools, the SDK selected by `global.json`, Windows SDK 10.0.26100.0, and the latest C++ UWP tools (v145).
 * Open `src/Notepads.sln` and select Debug with x86, x64 or ARM64.
 * Restore NuGet packages, then build and run the app. Debug uses the managed runtime for debugging.
 * Publish Release or Production with Native AOT before testing changes to reflection, serialization, WinRT or XAML bindings. From a Visual Studio Developer PowerShell, run `msbuild src/Notepads/Notepads.csproj /restore /t:Publish /p:Configuration=Release /p:Platform=x64` (or choose x86/ARM64).
+
+Run `./scripts/Test.ps1` for fast unit tests. Select the relevant integration groups
+with `./scripts/Test.ps1 -Suite Integration -List`; see the [test guide](tests/README.md)
+for isolation requirements and coverage boundaries. Tests use `Notepads.Editor.Tests`,
+not your installed Notepads or development package. Physical input tests require an
+exclusive desktop. Changes to WinRT, XAML, trimming or serialization also need an
+actual Release Native AOT application test run.
+
+[CI.md](CI.md) documents the required GitHub checks, local reproduction commands,
+unsigned package artifacts, hosted UI tests and optional desktop workflow. CI retains the
+current Windows build 17763 minimum and x86/x64/ARM64 package matrix; a future
+platform decision must update the projects, package checks and CI together.
 
 # TL;DR:
 This is my first UWP project and I learn as I go. As a result, the code base is not well organized, and it is not well written. The philosophy here is to create a text editor that is easy to use, lightweight and yet stylish instead of creating another Notepad++ or VS Code in anyway. If you are looking for a code/programming editor, you might want to use VS Code instead. If you are looking for a lightweight text editor, you come to the right place. Notepads is here to help you do small things quicker and you should always install and use other editors that suit your need.

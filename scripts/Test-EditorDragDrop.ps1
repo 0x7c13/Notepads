@@ -528,11 +528,10 @@ try {
     if (!(Test-Path -LiteralPath $peerExe)) { throw "Publish DragDrop.Peer for $runtime first. Missing $peerExe" }
     $script:session = Start-EditorTestSession -Platform $Platform
     Write-Output "Evidence: $($script:session.Root)"
-    $script:editorProcess = [Diagnostics.Process]::GetProcessById($script:session.ProcessId)
-    $null = $script:editorProcess.Handle
+    $script:editorProcess = [IsolatedTestProcess]::new($script:session.ProcessId)
     if ($script:editorProcess.HasExited -or
         $script:editorProcess.StartTime.ToUniversalTime().Ticks -ne $script:session.ProcessStartTicks -or
-        !$script:editorProcess.MainModule.FileName.StartsWith($script:session.Layout + '\', [StringComparison]::OrdinalIgnoreCase)) {
+        !$script:editorProcess.Path.StartsWith($script:session.Layout + '\', [StringComparison]::OrdinalIgnoreCase)) {
         throw 'The retained editor handle does not match the owned session process.'
     }
     $nativeBuild = Join-Path $repo "src\_buildUwp\$Platform\Release\WinUIEditor\bin\WinUIEditor\WinUIEditor.dll"
@@ -553,7 +552,11 @@ try {
     $start.WorkingDirectory = Split-Path $peerExe -Parent
     $start.UseShellExecute = $false
     $start.CreateNoWindow = $true
-    $script:peerProcess = [Diagnostics.Process]::Start($start)
+    if ($env:RUNNER_ENVIRONMENT -eq 'github-hosted') {
+        if (!('CiDesktopPeer' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'CiDesktopPeer.cs') }
+        $script:peerProcess = [CiDesktopPeer]::Start($start.FileName, $start.Arguments, $start.WorkingDirectory)
+    }
+    else { $script:peerProcess = [Diagnostics.Process]::Start($start) }
     $script:peer = @{ ProcessId = $script:peerProcess.Id; Path = $peerExe; StartTicks = 0; Channel = $channel; Sequence = 0; IdentityReady = $false }
     Write-DragTrace 'peer-launched' $script:peer
     Wait-PeerIdentity

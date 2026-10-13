@@ -82,13 +82,41 @@ function New-ExitedProcessFixture([int] $ExitCode) {
     $start.WindowStyle = [Diagnostics.ProcessWindowStyle]::Hidden
     foreach ($argument in @('/d', '/c', 'exit', [string]$ExitCode)) { $start.ArgumentList.Add($argument) }
     $process = [Diagnostics.Process]::Start($start)
+    $retained = $null
     try {
-        $null = $process.Handle
-        $identity = @{ Id = $process.Id; Path = $start.FileName; StartTicks = $process.StartTime.ToUniversalTime().Ticks; Verified = $true; ExpectedTermination = $false; Process = $process }
+        $retained = [IsolatedTestProcess]::new($process.Id)
+        $identity = @{ Id = $process.Id; Path = $retained.Path; StartTicks = $retained.StartTime.Ticks; Verified = $true; ExpectedTermination = $false; Process = $retained }
         if (!$process.WaitForExit(5000)) { $process.Kill(); throw 'Private exit-code fixture timed out.' }
         return $identity
     }
-    catch { $process.Dispose(); throw }
+    catch { if ($retained) { $retained.Dispose() }; throw }
+    finally { $process.Dispose() }
+}
+
+# A live private child verifies wait, identity and termination through the same
+# limited handle. The exited-child fixtures also dispose the launcher object.
+$childStart = [Diagnostics.ProcessStartInfo]::new((Get-Process -Id $PID).Path)
+$childStart.UseShellExecute = $false
+$childStart.CreateNoWindow = $true
+$childStart.WindowStyle = [Diagnostics.ProcessWindowStyle]::Hidden
+$childStart.RedirectStandardInput = $true
+foreach ($argument in @('-NoLogo', '-NoProfile', '-Command', '[Console]::ReadLine() | Out-Null')) { $childStart.ArgumentList.Add($argument) }
+$child = [Diagnostics.Process]::Start($childStart)
+$retained = $null
+try {
+    $retained = [IsolatedTestProcess]::new($child.Id)
+    if ($retained.Path -ne $childStart.FileName -or $retained.StartTime.Ticks -ne $child.StartTime.ToUniversalTime().Ticks -or
+        $retained.WaitForExit(0)) { throw 'Retained process metadata or live wait is incorrect.' }
+    $checks.Add('Limited process handle preserves executable, creation time and live state')
+    Expect-Rejection 'A live process has no final exit code' '*still running*' { $retained.get_ExitCode() }
+    $retained.Kill()
+    if (!$retained.WaitForExit(5000) -or $retained.get_ExitCode() -ne -1) { throw 'Exact-handle termination or exit-code observation failed.' }
+    $checks.Add('Limited process handle terminates only its owned child and retains the exit code')
+}
+finally {
+    if ($retained) { $retained.Dispose() }
+    if (!$child.HasExited) { $child.Kill(); $null = $child.WaitForExit(5000) }
+    $child.Dispose()
 }
 
 # The child has exited before the first poll: a fresh Get-Process lookup cannot
@@ -410,3 +438,4 @@ Assert-IsolatedTestPreservation $session
 $checks.Add('Restored fixtures accept the unchanged valid build and ownership')
 $checks | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $fixtureRoot 'checks.json') -Encoding utf8
 Write-Output "PASS: Runner contracts ($($checks.Count) checks); private evidence: $fixtureRoot"
+& (Join-Path $PSScriptRoot 'CIContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'ci')
