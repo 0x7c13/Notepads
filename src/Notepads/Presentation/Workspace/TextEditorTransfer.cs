@@ -126,25 +126,23 @@ internal sealed class TextEditorTransfer
     /// <summary>Do not discard edits or save-setting changes made after the captured revision.</summary>
     public bool IsSourceUnchanged()
     {
-        using (var current = Editor.CaptureRecoveryState())
-        {
-            var metadata = current.MetaData;
-            var captured = _recovery.MetaData;
-            var unchanged = current.Checkpoint.CommittedSequence == _recovery.Checkpoint.CommittedSequence &&
-                current.SavedSnapshot.Baseline.OwnerId == _recovery.SavedSnapshot.Baseline.OwnerId &&
-                current.SavedSnapshot.Baseline.GenerationId == _recovery.SavedSnapshot.Baseline.GenerationId &&
-                metadata.RequestedEncoding == captured.RequestedEncoding &&
-                metadata.RequestedLineEnding == captured.RequestedLineEnding &&
-                metadata.LanguageOverride == captured.LanguageOverride &&
-                metadata.FileNamePlaceholder == captured.FileNamePlaceholder &&
-                metadata.RequiresSaveAs == captured.RequiresSaveAs &&
-                metadata.HasEditingFile == captured.HasEditingFile &&
-                (Editor.EditingFile == null ? _editingFile == null :
-                    _editingFile != null && Editor.EditingFile.IsEqual(_editingFile)) &&
-                Editor.EditingFile?.Name == _fileName && Editor.EditingFilePath == _filePath;
-            _sourceRemovalRevision = unchanged ? current.CaptureRevision : 0;
-            return unchanged;
-        }
+        using var current = Editor.CaptureRecoveryState();
+        var metadata = current.MetaData;
+        var captured = _recovery.MetaData;
+        var unchanged = current.Checkpoint.CommittedSequence == _recovery.Checkpoint.CommittedSequence &&
+            current.SavedSnapshot.Baseline.OwnerId == _recovery.SavedSnapshot.Baseline.OwnerId &&
+            current.SavedSnapshot.Baseline.GenerationId == _recovery.SavedSnapshot.Baseline.GenerationId &&
+            metadata.RequestedEncoding == captured.RequestedEncoding &&
+            metadata.RequestedLineEnding == captured.RequestedLineEnding &&
+            metadata.LanguageOverride == captured.LanguageOverride &&
+            metadata.FileNamePlaceholder == captured.FileNamePlaceholder &&
+            metadata.RequiresSaveAs == captured.RequiresSaveAs &&
+            metadata.HasEditingFile == captured.HasEditingFile &&
+            (Editor.EditingFile == null ? _editingFile == null :
+                _editingFile != null && Editor.EditingFile.IsEqual(_editingFile)) &&
+            Editor.EditingFile?.Name == _fileName && Editor.EditingFilePath == _filePath;
+        _sourceRemovalRevision = unchanged ? current.CaptureRevision : 0;
+        return unchanged;
     }
 
     public Task<bool> HasReceiptAsync() => _token == null ? Task.FromResult(false) :

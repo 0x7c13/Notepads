@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
-using System.Linq;
 
 namespace Notepads.Features.Documents.FileTypes;
 
@@ -19,45 +18,40 @@ public static class FileTypeUtility
 {
     public static string GetFileExtension(string filename)
     {
-        if (string.IsNullOrEmpty(filename) || !filename.Contains("."))
+        var dot = filename?.LastIndexOf('.') ?? -1;
+        if (dot < 0)
         {
             return string.Empty;
         }
 
-        return filename.Substring(filename.LastIndexOf(".", StringComparison.Ordinal));
+        return filename[dot..];
     }
 
-    public static FileType GetFileTypeByFileName(string filename)
+    public static FileType GetFileTypeByFileName(ReadOnlySpan<char> filename)
     {
-        if (string.IsNullOrEmpty(filename) || !filename.Contains("."))
+        var dot = filename.LastIndexOf('.');
+        if (dot < 0)
         {
             return FileType.Unknown;
         }
 
-        return GetFileTypeByFileExtension(filename.Split(".").Last());
+        return GetFileTypeByFileExtension(filename[(dot + 1)..]);
     }
 
-    public static FileType GetFileTypeByFileExtension(string extension)
+    public static FileType GetFileTypeByFileExtension(ReadOnlySpan<char> extension)
     {
-        if (string.IsNullOrEmpty(extension))
-        {
-            return FileType.Unknown;
-        }
-
-        var ext = extension.ToLower();
-
-        if (ext == "txt")
+        if (extension.Equals("txt", StringComparison.OrdinalIgnoreCase))
         {
             return FileType.TextFile;
         }
 
-        if (ext == "md" ||
-            ext == "markdown" ||
-            ext == "mkd" ||
-            ext == "mdwn" ||
-            ext == "mdown" ||
-            ext == "markdn" ||
-            ext == "mdtxt")
+        if (extension.Equals("md", StringComparison.OrdinalIgnoreCase) ||
+            extension.Equals("markdown", StringComparison.OrdinalIgnoreCase) ||
+            extension.Equals("mkd", StringComparison.OrdinalIgnoreCase) ||
+            extension.Equals("mdwn", StringComparison.OrdinalIgnoreCase) ||
+            extension.Equals("mdown", StringComparison.OrdinalIgnoreCase) ||
+            extension.Equals("markdn", StringComparison.OrdinalIgnoreCase) ||
+            extension.Equals("mdtxt", StringComparison.OrdinalIgnoreCase))
         {
             return FileType.MarkdownFile;
         }

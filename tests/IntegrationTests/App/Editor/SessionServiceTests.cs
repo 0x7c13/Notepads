@@ -16,8 +16,8 @@ using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.Storage;
 using Notepads.Features.Sessions;
 using Notepads.Features.Sessions.Contracts;
-using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Contracts.Legacy;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Features.Sessions.Validation;
@@ -1120,7 +1120,7 @@ internal static class SessionServiceTests
     }
 }
 
-internal sealed class SessionTestRecoveryBatch : IDisposable
+internal sealed partial class SessionTestRecoveryBatch : IDisposable
 {
     public SessionTestRecoveryBatch(SessionRecoveryPlan plan) { Plan = plan; }
     public SessionRecoveryPlan Plan { get; }

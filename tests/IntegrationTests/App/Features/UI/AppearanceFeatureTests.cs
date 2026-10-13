@@ -19,8 +19,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using WinUIEditor;
-using static NotepadsWorkspaceTests.WorkspaceTestUI;
 using static NotepadsIntegrationTests.FeatureUI;
+using static NotepadsWorkspaceTests.WorkspaceTestUI;
 
 namespace NotepadsIntegrationTests;
 

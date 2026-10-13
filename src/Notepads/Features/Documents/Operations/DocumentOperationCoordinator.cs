@@ -13,7 +13,7 @@ namespace Notepads.Features.Documents.Operations;
 /// Serializes document I/O and cancels queued work when its tab closes.
 /// Resources remain alive until every operation has finished unwinding.
 /// </summary>
-internal sealed class DocumentOperationCoordinator : IDisposable
+internal sealed partial class DocumentOperationCoordinator : IDisposable
 {
     private readonly object _sync = new();
     private readonly SemaphoreSlim _gate = new(1, 1);
@@ -46,7 +46,7 @@ internal sealed class DocumentOperationCoordinator : IDisposable
     public async Task RunAsync(Func<CancellationToken, Task> operation,
         CancellationToken cancellationToken = default)
     {
-        if (operation == null) throw new ArgumentNullException(nameof(operation));
+        ArgumentNullException.ThrowIfNull(operation);
         lock (_sync)
         {
             if (_disposed) throw new ObjectDisposedException(nameof(DocumentOperationCoordinator));

@@ -111,7 +111,7 @@ internal static partial class SessionControllerTests
     }
 
     /// <summary>Observes recovery metrics, which record on the thread doing the persistence work.</summary>
-    private sealed class PersistenceThreadObserver : IDisposable
+    private sealed partial class PersistenceThreadObserver : IDisposable
     {
         private readonly MeterListener _listener = new();
         private readonly ConcurrentQueue<(string Name, bool OnUIThread)> _observations = new();
@@ -182,7 +182,7 @@ internal static partial class SessionControllerTests
     }
 
     /// <summary>A tab strip without XAML: it opens, closes and lists fake editors, on the UI thread only.</summary>
-    private sealed class FakeNotepadsCore : INotepadsCore
+    private sealed partial class FakeNotepadsCore : INotepadsCore
     {
         private readonly Guid _owner;
         private readonly CoreDispatcher _dispatcher;

@@ -3,6 +3,8 @@
 //  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
+using System;
+using System.Buffers;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,14 +19,14 @@ internal static class CanonicalLineCounter
     // Counted streaming admission; no strings or per-line allocations.
     internal static async Task<long> CountAsync(Stream stream, CancellationToken cancellationToken)
     {
-        var buffer = new byte[65536];
+        using var lease = MemoryPool<byte>.Shared.Rent(65536);
+        var buffer = lease.Memory[..65536];
         long lines = 1;
         while (true)
         {
             var count = await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
             if (count == 0) return lines;
-            for (var i = 0; i < count; i++)
-                if (buffer[i] == '\r') lines++;
+            lines += buffer.Span[..count].Count((byte)'\r');
             if (lines > MaximumDiffLines) return lines;
         }
     }

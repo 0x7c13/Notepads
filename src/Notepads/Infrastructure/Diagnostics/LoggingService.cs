@@ -29,7 +29,7 @@ public static class LoggingService
 
     internal static async Task InitializeAsync(ILogSink sink)
     {
-        if (sink == null) throw new ArgumentNullException(nameof(sink));
+        ArgumentNullException.ThrowIfNull(sink);
         await InitializeLogFileWriterBackgroundTaskAsync(sink);
     }
 

@@ -36,7 +36,8 @@ internal sealed class TextEditorSessionDataV2
 
     internal string ComputeSha256()
     {
-        return Convert.ToHexStringLower(SHA256.HashData(
-            JsonSerializer.SerializeToUtf8Bytes(this, SessionJsonContext.Default.TextEditorSessionDataV2)));
+        Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
+        SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(this, SessionJsonContext.Default.TextEditorSessionDataV2), hash);
+        return Convert.ToHexStringLower(hash);
     }
 }

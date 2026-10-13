@@ -33,14 +33,14 @@ public static class NotepadsProtocolService
                 return NotepadsOperationProtocol.Unrecognized;
             }
 
-            var operation = uriStr.Substring("notepads://".Length);
+            var operation = uriStr.AsSpan("notepads://".Length);
 
-            if (operation.EndsWith("/"))
+            if (operation.EndsWith("/", StringComparison.Ordinal))
             {
-                operation = operation.Remove(operation.Length - 1);
+                operation = operation[..^1];
             }
 
-            if (!string.IsNullOrEmpty(operation) && string.Equals(NewInstanceProtocolStr, operation, StringComparison.OrdinalIgnoreCase))
+            if (operation.Equals(NewInstanceProtocolStr, StringComparison.OrdinalIgnoreCase))
             {
                 return NotepadsOperationProtocol.OpenNewInstance;
             }

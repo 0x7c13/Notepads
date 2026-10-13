@@ -14,7 +14,7 @@ using Windows.Storage;
 namespace Notepads.Features.Sessions.Storage;
 
 /// <summary>Writer ownership and reader protection shared by every process using this recovery store.</summary>
-internal static class SessionScopeLease
+internal static partial class SessionScopeLease
 {
     private static readonly object Sync = new();
     // Ownership ends only through explicit disposal or process exit. Keeping
@@ -66,7 +66,7 @@ internal static class SessionScopeLease
         return Path.Combine(ApplicationData.Current.LocalFolder.Path, "Recovery", "Scopes", ownerId.ToString("N"), fileName);
     }
 
-    private sealed class WriterLease : IDisposable
+    private sealed partial class WriterLease : IDisposable
     {
         private readonly Guid _ownerId;
         private IDisposable _lease;

@@ -19,7 +19,7 @@ using Windows.Storage;
 namespace Notepads.Features.Sessions.Recovery;
 
 /// <summary>Frozen discovery results. The caller drains all readers before disposing these shared history pins.</summary>
-internal sealed class SessionRecoveryPlan : IDisposable
+internal sealed partial class SessionRecoveryPlan : IDisposable
 {
     private readonly List<IDisposable> _pins;
     private readonly RecoveryStamp _expectedStamp;

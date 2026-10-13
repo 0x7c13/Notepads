@@ -65,10 +65,8 @@ internal static class LegacySessionImporter
     {
         var file = await StorageFile.GetFileFromPathAsync(path);
         var options = new DocumentLoadOptions(encoding, defaults.GetInitialEncoding());
-        using (var decoded = await DocumentTextPipeline.DecodeFileAsync(file, options, ownerId,
-            cancellationToken: cancellation))
-        {
-            return decoded.Baseline.Retain();
-        }
+        using var decoded = await DocumentTextPipeline.DecodeFileAsync(file, options, ownerId,
+            cancellationToken: cancellation);
+        return decoded.Baseline.Retain();
     }
 }

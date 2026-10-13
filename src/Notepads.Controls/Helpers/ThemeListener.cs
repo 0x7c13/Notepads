@@ -24,7 +24,7 @@ public delegate void ThemeChangedEvent(ThemeListener sender);
 /// and Signals an Event when they occur.
 /// </summary>
 [AllowForWeb]
-public sealed class ThemeListener : IDisposable
+public sealed partial class ThemeListener : IDisposable
 {
     /// <summary>
     /// Gets the Name of the Current Theme.

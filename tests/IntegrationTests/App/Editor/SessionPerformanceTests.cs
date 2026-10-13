@@ -27,7 +27,7 @@ using Windows.System;
 
 namespace NotepadsEditorTests;
 
-internal static class SessionPerformanceTests
+internal static partial class SessionPerformanceTests
 {
     public static async Task RunAsync(StringBuilder log)
     {
@@ -203,7 +203,7 @@ internal static class SessionPerformanceTests
         });
     }
 
-    private sealed class PerformanceObserver : IDisposable
+    private sealed partial class PerformanceObserver : IDisposable
     {
         private readonly MeterListener _listener = new();
         private long _reads, _readBytes, _writes, _writeBytes;

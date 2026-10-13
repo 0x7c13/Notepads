@@ -189,13 +189,11 @@ internal static class SessionRecoveryCancellationTests
 
         public async Task CheckRetryAsync(Guid owner)
         {
-            using (var prepared = await PrepareAsync(owner, CancellationToken.None))
-            {
-                Check(await prepared.SavedSnapshot.ReadTextAsync() == SavedText, "Cancellation changed the saved baseline.");
-                await using var restored = await SessionTestDocument.FromPreparedAsync(owner, prepared);
-                Check(restored.Editor.GetText(1024 * 1024) == RecoveryText + JournalText,
-                    "An uncanceled retry did not restore the original Unicode baseline and committed journal prefix.");
-            }
+            using var prepared = await PrepareAsync(owner, CancellationToken.None);
+            Check(await prepared.SavedSnapshot.ReadTextAsync() == SavedText, "Cancellation changed the saved baseline.");
+            await using var restored = await SessionTestDocument.FromPreparedAsync(owner, prepared);
+            Check(restored.Editor.GetText(1024 * 1024) == RecoveryText + JournalText,
+                "An uncanceled retry did not restore the original Unicode baseline and committed journal prefix.");
         }
 
         public async ValueTask DisposeAsync()

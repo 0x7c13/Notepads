@@ -16,8 +16,8 @@ using Notepads.Presentation.Workspace;
 using Windows.Graphics.Printing;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using static NotepadsWorkspaceTests.WorkspaceTestUI;
 using static NotepadsIntegrationTests.FeatureUI;
+using static NotepadsWorkspaceTests.WorkspaceTestUI;
 
 namespace NotepadsIntegrationTests;
 

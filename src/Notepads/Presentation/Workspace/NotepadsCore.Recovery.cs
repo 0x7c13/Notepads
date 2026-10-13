@@ -48,13 +48,11 @@ public sealed partial class NotepadsCore
     private async Task ProtectTransferredEditorAsync(ITextEditor editor, TransferToken token, RecoveryStamp expectedStamp)
     {
         var rootId = Guid.NewGuid();
-        using (var recovery = editor.CaptureRecoveryState())
-        {
-            await recovery.Checkpoint.FlushAsync();
-            var descriptor = SessionDocumentStore.CaptureEditor(editor.Id, recovery,
-                editor.EditingFile?.Name, editor.EditingFilePath);
-            await TransferRecoveryStore.CreateReceiptAsync(token, rootId, _context.InstanceId,
-                descriptor, recovery, editor.EditingFile, expectedStamp);
-        }
+        using var recovery = editor.CaptureRecoveryState();
+        await recovery.Checkpoint.FlushAsync();
+        var descriptor = SessionDocumentStore.CaptureEditor(editor.Id, recovery,
+            editor.EditingFile?.Name, editor.EditingFilePath);
+        await TransferRecoveryStore.CreateReceiptAsync(token, rootId, _context.InstanceId,
+            descriptor, recovery, editor.EditingFile, expectedStamp);
     }
 }

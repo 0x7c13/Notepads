@@ -74,7 +74,7 @@ internal static class TransferRecoveryStore
         TextEditorSessionDataV2 target, DocumentRecoveryState capture, StorageFile editingFile,
         RecoveryStamp expectedTargetStamp, CancellationToken cancellationToken = default)
     {
-        if (capture == null) throw new ArgumentNullException(nameof(capture));
+        ArgumentNullException.ThrowIfNull(capture);
         token = token?.Clone() ?? throw new ArgumentNullException(nameof(token)); token.Validate();
         var expected = SessionRecoveryAuthority.CopyStamp(expectedTargetStamp);
         target = SessionRecoveryCatalog.CloneEditor(target);
@@ -130,7 +130,7 @@ internal static class TransferRecoveryStore
 
     public static async Task<bool> HasReceiptAsync(TransferToken token, CancellationToken cancellation = default)
     {
-        if (token == null) throw new ArgumentNullException(nameof(token));
+        ArgumentNullException.ThrowIfNull(token);
         token = token.Clone(); token.Validate();
         using (await SessionRecoveryTransaction.EnterAsync(cancellation))
         {
@@ -150,7 +150,7 @@ internal static class TransferRecoveryStore
     public static async Task MarkSourceAcknowledgedAsync(TransferToken token, long sourceRemovalRevision,
         CancellationToken cancellationToken = default)
     {
-        if (token == null) throw new ArgumentNullException(nameof(token));
+        ArgumentNullException.ThrowIfNull(token);
         token = token.Clone(); token.Validate();
         using (await SessionRecoveryTransaction.EnterAsync(cancellationToken))
         {

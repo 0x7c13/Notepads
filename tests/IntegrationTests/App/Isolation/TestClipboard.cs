@@ -4,9 +4,8 @@
 // ---------------------------------------------------------------------------------------------
 
 global using Clipboard = NotepadsIntegrationTests.TestClipboard;
-
-using Windows.ApplicationModel.DataTransfer;
 using System;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace NotepadsIntegrationTests;
 

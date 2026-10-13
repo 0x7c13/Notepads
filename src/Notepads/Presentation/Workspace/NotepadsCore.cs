@@ -280,7 +280,7 @@ public sealed partial class NotepadsCore : INotepadsCore
     public void OpenTextEditor(ITextEditor textEditor, int atIndex = -1)
     {
         ThrowIfDisposedOrClosing();
-        if (textEditor == null) throw new ArgumentNullException(nameof(textEditor));
+        ArgumentNullException.ThrowIfNull(textEditor);
         if (GetTab(textEditor) is WorkspaceTab existing) { SwitchTo(existing); return; }
         var placeholder = GetTabs().Length == 1 && atIndex == -1 && textEditor.EditingFile != null
             ? GetTabs()[0] : null;
@@ -294,7 +294,7 @@ public sealed partial class NotepadsCore : INotepadsCore
     {
         ThrowIfDisposed();
         if (IsClosing && !allowWhileClosing) throw new OperationCanceledException("The view is closing.");
-        if (tab == null) throw new ArgumentNullException(nameof(tab));
+        ArgumentNullException.ThrowIfNull(tab);
         if (tab.State == WorkspaceTabState.Closed) throw new InvalidOperationException("The tab is closed.");
         if (ContainsTab(tab)) { if (select) SwitchTo(tab); return; }
         if (GetTabs().Any(current => current.Id == tab.Id)) throw new InvalidOperationException("Duplicate document identity.");
@@ -353,12 +353,10 @@ public sealed partial class NotepadsCore : INotepadsCore
     {
         ThrowIfDisposedOrClosing();
         var options = new DocumentLoadOptions(encoding, ApplicationPreferences.EditorDefaultDecoding);
-        using (var snapshot = await DocumentTextPipeline.DecodeFileAsync(file, options, DocumentOwnerId))
-        {
-            var editor = CreateTextEditor(id, file, file.Name);
-            try { await editor.InitAsync(snapshot, file); ThrowIfDisposedOrClosing(); return editor; }
-            catch { DisposeTextEditor(editor); throw; }
-        }
+        using var snapshot = await DocumentTextPipeline.DecodeFileAsync(file, options, DocumentOwnerId);
+        var editor = CreateTextEditor(id, file, file.Name);
+        try { await editor.InitAsync(snapshot, file); ThrowIfDisposedOrClosing(); return editor; }
+        catch { DisposeTextEditor(editor); throw; }
     }
 
     public ITextEditor CreateTextEditor(

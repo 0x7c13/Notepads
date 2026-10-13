@@ -60,9 +60,9 @@ internal static class DocumentFileWriter
         IDocumentFileUpdates updates, CancellationToken cancellationToken = default)
     {
         using var measurement = OperationMetrics.Measure("document.save");
-        if (file == null) throw new ArgumentNullException(nameof(file));
-        if (writeCandidate == null) throw new ArgumentNullException(nameof(writeCandidate));
-        if (updates == null) throw new ArgumentNullException(nameof(updates));
+        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(writeCandidate);
+        ArgumentNullException.ThrowIfNull(updates);
         cancellationToken.ThrowIfCancellationRequested();
         var currentFile = file;
         var deferred = TryDeferUpdates(updates, currentFile);

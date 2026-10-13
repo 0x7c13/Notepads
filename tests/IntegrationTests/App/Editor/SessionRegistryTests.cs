@@ -32,13 +32,11 @@ internal static class SessionRegistryTests
         using (registry.Register(healthy))
         {
             original.Dispose();
-            using (var deadline = new CancellationTokenSource())
-            {
-                deadline.Cancel();
-                await registry.SaveBeforeSuspensionAsync(deadline.Token);
-                Check(healthy.LastCancellation == deadline.Token && healthy.SaveCount == 2,
-                    "An old token removed a newer registration or the suspension deadline was lost.");
-            }
+            using var deadline = new CancellationTokenSource();
+            deadline.Cancel();
+            await registry.SaveBeforeSuspensionAsync(deadline.Token);
+            Check(healthy.LastCancellation == deadline.Token && healthy.SaveCount == 2,
+                "An old token removed a newer registration or the suspension deadline was lost.");
         }
         await registry.SaveBeforeSuspensionAsync(CancellationToken.None);
         Check(healthy.SaveCount == 2, "A logically closed window remained in the registry.");

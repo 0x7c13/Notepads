@@ -13,7 +13,7 @@ using Windows.Storage;
 namespace Notepads.Features.Sessions;
 
 /// <summary>Detached state owned by the caller throughout manifest publication.</summary>
-internal sealed class SessionCapture : IDisposable
+internal sealed partial class SessionCapture : IDisposable
 {
     public List<SessionDocumentCapture> Documents { get; } = new List<SessionDocumentCapture>();
     public List<RecoveryDocumentSource> PendingRescues { get; } = [];

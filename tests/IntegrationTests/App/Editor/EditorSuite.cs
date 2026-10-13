@@ -822,7 +822,7 @@ internal static class EditorSuite
         try { ansiEditor.ReadUtf8Range(0, 4); }
         catch (ArgumentException) { rejectedAnsiRead = true; }
         var rejectedAnsiLease = false;
-        try { using (var reader = ansiEditor.AcquireUtf8Reader()) { } }
+        try { using var reader = ansiEditor.AcquireUtf8Reader(); }
         catch (ArgumentException) { rejectedAnsiLease = true; }
         var rejectedAnsiReplace = false;
         using (var stream = await CreateUtf8StreamAsync(Encoding.UTF8.GetBytes("canonical")))
@@ -985,7 +985,7 @@ internal static class EditorSuite
             if ((modification.ModificationType & (int)WinUIEditor.ModificationFlags.InsertText) == 0) return;
             try { editor.EmptyUndoBuffer(); }
             catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedUndoRetirement = true; }
-            try { using (var midEdit = editor.AcquireUtf8Reader()) { } }
+            try { using var midEdit = editor.AcquireUtf8Reader(); }
             catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedMidEditReader = true; }
         };
         WinUIEditor.ModifiedHandler inspectHandler = (sender, modification) =>
@@ -1094,8 +1094,8 @@ internal static class EditorSuite
             var invalidPrefix = false;
             try
             {
-                using (var invalid = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(latest.FilePath, latest.BaseSequence,
-                    latest.CommittedSequence, latest.CommittedByteLength - 1, latest.PrefixSha256)) { }
+                using var invalid = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(latest.FilePath, latest.BaseSequence,
+                    latest.CommittedSequence, latest.CommittedByteLength - 1, latest.PrefixSha256);
             }
             catch (Exception) { invalidPrefix = true; }
             Check(invalidPrefix, "recovery rejects a torn committed prefix");
@@ -1110,14 +1110,12 @@ internal static class EditorSuite
             {
                 await continued.FlushAsync();
                 Check(continued.CommittedSequence == 2, "chunked INSERT payloads commit one native edit operation");
-                using (var verified = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(continued.FilePath, continued.BaseSequence,
-                    continued.CommittedSequence, continued.CommittedByteLength, continued.PrefixSha256))
-                using (var stream = await CreateUtf8StreamAsync(baselineBytes))
-                using (var input = stream.GetInputStreamAt(0))
-                {
-                    await editor.StopJournalAsync();
-                    await editor.RestoreUtf8Async(input, (ulong)baselineBytes.Length, verified);
-                }
+                using var verified = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(continued.FilePath, continued.BaseSequence,
+                    continued.CommittedSequence, continued.CommittedByteLength, continued.PrefixSha256);
+                using var stream = await CreateUtf8StreamAsync(baselineBytes);
+                using var input = stream.GetInputStreamAt(0);
+                await editor.StopJournalAsync();
+                await editor.RestoreUtf8Async(input, (ulong)baselineBytes.Length, verified);
             }
             Equal(edited + appended, editor.GetText(editor.Length + 1), "imported journal retains its original prefix and split UTF-8 INSERT payload");
             using (var reader = restored.AcquireUtf8Reader())
@@ -1221,19 +1219,17 @@ internal static class EditorSuite
                 Check(first.PrefixSha256 == firstHash, "flushing an already flushed prefix returns the same verified prefix");
                 editor.GotoPos(editor.Length);
                 editor.PasteText("Y");
-                using (var second = editor.AcquireJournalCheckpoint())
-                {
-                    await first.FlushAsync();
-                    await second.FlushAsync();
-                    Check(second.CommittedByteLength > first.CommittedByteLength && first.PrefixSha256 == firstHash,
-                        "a longer prefix beyond the flushed range is flushed on its own");
-                    using (var onDisk = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(second.FilePath, second.BaseSequence,
-                        second.CommittedSequence, second.CommittedByteLength, second.PrefixSha256))
-                        Check(onDisk.CommittedDocumentByteLength == second.CommittedDocumentByteLength,
-                            "a flushed prefix validates from the file after an earlier skipped flush");
-                    committedSequence = second.CommittedSequence;
-                    committedLength = second.CommittedByteLength;
-                }
+                using var second = editor.AcquireJournalCheckpoint();
+                await first.FlushAsync();
+                await second.FlushAsync();
+                Check(second.CommittedByteLength > first.CommittedByteLength && first.PrefixSha256 == firstHash,
+                    "a longer prefix beyond the flushed range is flushed on its own");
+                using (var onDisk = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(second.FilePath, second.BaseSequence,
+                    second.CommittedSequence, second.CommittedByteLength, second.PrefixSha256))
+                    Check(onDisk.CommittedDocumentByteLength == second.CommittedDocumentByteLength,
+                        "a flushed prefix validates from the file after an earlier skipped flush");
+                committedSequence = second.CommittedSequence;
+                committedLength = second.CommittedByteLength;
             }
             await editor.StopJournalAsync();
 
@@ -1264,27 +1260,25 @@ internal static class EditorSuite
 
             var legacyFile = await folder.CreateFileAsync("legacy-crc.npj");
             await FileIO.WriteBytesAsync(legacyFile, legacy);
-            using (var checkpoint = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(legacyFile.Path, 0, committedSequence,
-                committedLength, Convert.ToHexStringLower(SHA256.HashData(legacy))))
-            {
-                using (var stream = await CreateUtf8StreamAsync(baseline))
-                using (var input = stream.GetInputStreamAt(0))
-                    await restored.RestoreUtf8Async(input, (ulong)baseline.Length, checkpoint);
-                Equal(edited, restored.GetText(restored.Length + 1), "a legacy journal with nonzero CRC fields validates and replays");
+            using var checkpoint = await WinUIEditor.EditorJournalCheckpoint.OpenAsync(legacyFile.Path, 0, committedSequence,
+                committedLength, Convert.ToHexStringLower(SHA256.HashData(legacy)));
+            using (var stream = await CreateUtf8StreamAsync(baseline))
+            using (var input = stream.GetInputStreamAt(0))
+                await restored.RestoreUtf8Async(input, (ulong)baseline.Length, checkpoint);
+            Equal(edited, restored.GetText(restored.Length + 1), "a legacy journal with nonzero CRC fields validates and replays");
 
-                // Change validated bytes without breaking structure: only the prefix hash can catch it.
-                legacy[lastPayload] ^= 0x01;
-                await FileIO.WriteBytesAsync(legacyFile, legacy);
-                var candidate = await folder.CreateFileAsync("rejected-import.npj");
-                var rejectedImport = false;
-                try { await restored.StartJournalFromCheckpointAsync(candidate.Path, checkpoint); }
-                catch (Exception) { rejectedImport = true; }
-                var adopted = true;
-                try { using (restored.AcquireJournalCheckpoint()) { } }
-                catch (Exception) { adopted = false; }
-                Check(rejectedImport && !adopted, "journal import rejects a prefix whose bytes no longer match its hash");
-                Equal(edited, restored.GetText(restored.Length + 1), "a rejected import leaves the document unchanged");
-            }
+            // Change validated bytes without breaking structure: only the prefix hash can catch it.
+            legacy[lastPayload] ^= 0x01;
+            await FileIO.WriteBytesAsync(legacyFile, legacy);
+            var candidate = await folder.CreateFileAsync("rejected-import.npj");
+            var rejectedImport = false;
+            try { await restored.StartJournalFromCheckpointAsync(candidate.Path, checkpoint); }
+            catch (Exception) { rejectedImport = true; }
+            var adopted = true;
+            try { using (restored.AcquireJournalCheckpoint()) { } }
+            catch (Exception) { adopted = false; }
+            Check(rejectedImport && !adopted, "journal import rejects a prefix whose bytes no longer match its hash");
+            Equal(edited, restored.GetText(restored.Length + 1), "a rejected import leaves the document unchanged");
         }
         finally
         {
@@ -1327,29 +1321,27 @@ internal static class EditorSuite
             editor.Undo();
             editor.Redo();
             Check(editor.DocumentSequence == 6, "a container action ending redo completes its text journal operation");
-            using (var checkpoint = editor.AcquireJournalCheckpoint())
-            {
-                await checkpoint.FlushAsync();
-                using (var stream = await CreateUtf8StreamAsync(baseline))
-                using (var input = stream.GetInputStreamAt(0))
-                    await restored.RestoreUtf8Async(input, (ulong)baseline.Length, checkpoint);
-                Equal("baseXY", restored.GetText(restored.Length + 1), "container-ended operations replay exactly into native recovery");
-                using (var stream = await CreateUtf8StreamAsync(Encoding.UTF8.GetBytes("baseXY")))
-                using (var input = stream.GetInputStreamAt(0))
-                    await canceled.LoadUtf8Async(input, 6, false);
-                var candidate = await folder.CreateFileAsync("canceled-import.npj");
-                var import = canceled.StartJournalFromCheckpointAsync(candidate.Path, checkpoint);
-                Check(!canceled.ReadOnly, "immutable journal import preparation keeps editing enabled");
-                import.Cancel();
-                try { await import; }
-                catch (OperationCanceledException) { }
-                Check(!canceled.ReadOnly, "canceling journal preparation leaves no private edit freeze");
-                using (var stream = await CreateUtf8StreamAsync(Encoding.UTF8.GetBytes("after canceled import")))
-                using (var input = stream.GetInputStreamAt(0))
-                    await canceled.LoadUtf8Async(input, stream.Size, false);
-                Equal("after canceled import", canceled.GetText(canceled.Length + 1),
-                    "a replacement can immediately follow canceled journal preparation");
-            }
+            using var checkpoint = editor.AcquireJournalCheckpoint();
+            await checkpoint.FlushAsync();
+            using (var stream = await CreateUtf8StreamAsync(baseline))
+            using (var input = stream.GetInputStreamAt(0))
+                await restored.RestoreUtf8Async(input, (ulong)baseline.Length, checkpoint);
+            Equal("baseXY", restored.GetText(restored.Length + 1), "container-ended operations replay exactly into native recovery");
+            using (var stream = await CreateUtf8StreamAsync(Encoding.UTF8.GetBytes("baseXY")))
+            using (var input = stream.GetInputStreamAt(0))
+                await canceled.LoadUtf8Async(input, 6, false);
+            var candidate = await folder.CreateFileAsync("canceled-import.npj");
+            var import = canceled.StartJournalFromCheckpointAsync(candidate.Path, checkpoint);
+            Check(!canceled.ReadOnly, "immutable journal import preparation keeps editing enabled");
+            import.Cancel();
+            try { await import; }
+            catch (OperationCanceledException) { }
+            Check(!canceled.ReadOnly, "canceling journal preparation leaves no private edit freeze");
+            using (var stream = await CreateUtf8StreamAsync(Encoding.UTF8.GetBytes("after canceled import")))
+            using (var input = stream.GetInputStreamAt(0))
+                await canceled.LoadUtf8Async(input, stream.Size, false);
+            Equal("after canceled import", canceled.GetText(canceled.Length + 1),
+                "a replacement can immediately follow canceled journal preparation");
         }
         finally
         {
@@ -1563,6 +1555,10 @@ internal static class EditorSuite
             native.SelectionMode = WinUIEditor.SelectionMode.Stream;
 
             WriteDiagnostic("Native editing: rectangle selection/deletion fixture");
+            core.SetText(" \t\r  中😀word\r\t ");
+            native.SetSel(native.Length, 0);
+            core.SmartlyTrimTextSelection();
+            Equal("  中😀word", core.GetSelectedText(), "smart copy trims by UTF-8 boundaries and preserves first-line indentation");
             core.SetText("aa\rbb\rcc");
             native.SelectionMode = WinUIEditor.SelectionMode.Rectangle;
             native.RectangularSelectionAnchor = 1;

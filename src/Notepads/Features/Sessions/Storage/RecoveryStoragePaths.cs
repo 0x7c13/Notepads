@@ -127,10 +127,10 @@ internal sealed class RecoveryStoragePaths
             return false;
         }
 
-        var suffix = name.Substring(StemLength);
-        if (suffix.StartsWith(".a.json", StringComparison.Ordinal)) { copy = "a"; suffix = suffix.Substring(".a.json".Length); }
-        else if (suffix.StartsWith(".b.json", StringComparison.Ordinal)) { copy = "b"; suffix = suffix.Substring(".b.json".Length); }
-        else if (suffix.StartsWith(".reset.intent", StringComparison.Ordinal)) { copy = "intent"; suffix = suffix.Substring(".reset.intent".Length); }
+        var suffix = name.AsSpan(StemLength);
+        if (suffix.StartsWith(".a.json", StringComparison.Ordinal)) { copy = "a"; suffix = suffix[".a.json".Length..]; }
+        else if (suffix.StartsWith(".b.json", StringComparison.Ordinal)) { copy = "b"; suffix = suffix[".b.json".Length..]; }
+        else if (suffix.StartsWith(".reset.intent", StringComparison.Ordinal)) { copy = "intent"; suffix = suffix[".reset.intent".Length..]; }
         else
         {
             return false;
@@ -140,7 +140,7 @@ internal sealed class RecoveryStoragePaths
         {
             // Temporary copies append ".{Guid:N}.tmp".
             if (suffix.Length != 1 + GuidDigits + ".tmp".Length || suffix[0] != '.' || !suffix.EndsWith(".tmp", StringComparison.Ordinal) ||
-                !Guid.TryParseExact(suffix.AsSpan(1, GuidDigits), "N", out _))
+                !Guid.TryParseExact(suffix.Slice(1, GuidDigits), "N", out _))
             {
                 return false;
             }

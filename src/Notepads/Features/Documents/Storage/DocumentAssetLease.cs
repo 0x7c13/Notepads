@@ -96,7 +96,7 @@ internal sealed partial class DocumentAssetLease : IDisposable
 
     public async Task<Stream> OpenReadStreamAsync(long byteLength, CancellationToken cancellationToken)
     {
-        if (byteLength < 0) throw new ArgumentOutOfRangeException(nameof(byteLength));
+        ArgumentOutOfRangeException.ThrowIfNegative(byteLength);
         cancellationToken.ThrowIfCancellationRequested();
         var lease = Retain();
         Stream stream = null;
@@ -168,7 +168,7 @@ internal sealed partial class DocumentAssetLease : IDisposable
     /// </summary>
     public static async Task<bool> TryDeleteUnusedAsync(StorageFile file)
     {
-        if (file == null) throw new ArgumentNullException(nameof(file));
+        ArgumentNullException.ThrowIfNull(file);
         SharedAsset asset;
         Task completion;
         var startDelete = false;
@@ -246,7 +246,7 @@ internal sealed partial class DocumentAssetLease : IDisposable
         public SharedAsset(StorageFile file, string path) { File = file; Path = path; }
     }
 
-    private sealed class LeasedReadStream : Stream
+    private sealed partial class LeasedReadStream : Stream
     {
         private readonly Stream _stream;
         private readonly DocumentAssetLease _lease;
@@ -270,17 +270,27 @@ internal sealed partial class DocumentAssetLease : IDisposable
         public override int Read(byte[] buffer, int offset, int count)
         {
             ValidateBuffer(buffer, offset, count);
-            var read = _stream.Read(buffer, offset, (int)Math.Min(count, _length - _position));
-            return CompleteRead(read, count);
+            return Read(buffer.AsSpan(offset, count));
         }
 
-        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        public override int Read(Span<byte> buffer)
+        {
+            var read = _stream.Read(buffer[..(int)Math.Min(buffer.Length, _length - _position)]);
+            return CompleteRead(read, buffer.Length);
+        }
+
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             ValidateBuffer(buffer, offset, count);
-            var read = await _stream.ReadAsync(buffer, offset,
-                (int)Math.Min(count, _length - _position), cancellationToken).ConfigureAwait(false);
+            return ReadAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
+        }
+
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            var read = await _stream.ReadAsync(buffer[..(int)Math.Min(buffer.Length, _length - _position)],
+                cancellationToken).ConfigureAwait(false);
             if (read != 0) OnLeasedRead(_lease.File?.Path, read, cancellationToken);
-            return CompleteRead(read, count);
+            return CompleteRead(read, buffer.Length);
         }
 
         private int CompleteRead(int read, int requested)
@@ -293,7 +303,7 @@ internal sealed partial class DocumentAssetLease : IDisposable
 
         private static void ValidateBuffer(byte[] buffer, int offset, int count)
         {
-            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
+            ArgumentNullException.ThrowIfNull(buffer);
             if (offset < 0 || count < 0 || offset > buffer.Length - count) throw new ArgumentOutOfRangeException();
         }
 

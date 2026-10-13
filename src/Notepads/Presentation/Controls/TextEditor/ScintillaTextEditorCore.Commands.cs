@@ -103,7 +103,7 @@ public sealed partial class TextEditorCore
         var rangeStart = right ? start : otherStart;
         var rangeEnd = right ? otherEnd : end;
         ReplaceRange(rangeStart, rangeEnd, right ? other + separator + word : word + separator + other);
-        var selectionStart = right ? rangeStart + Encoding.UTF8.GetByteCount(other + separator) : rangeStart;
+        var selectionStart = right ? rangeStart + Encoding.UTF8.GetByteCount(other) + Encoding.UTF8.GetByteCount(separator) : rangeStart;
         Native.SetSel(selectionStart, selectionStart + Encoding.UTF8.GetByteCount(word));
     }
 

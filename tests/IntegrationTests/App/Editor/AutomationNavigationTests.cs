@@ -7,13 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using static NotepadsEditorTests.EditorTestLayout;
 using Notepads.Presentation.Controls.TextEditor;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Automation.Text;
 using Windows.UI.Xaml.Controls;
+using static NotepadsEditorTests.EditorTestLayout;
 
 namespace NotepadsEditorTests;
 

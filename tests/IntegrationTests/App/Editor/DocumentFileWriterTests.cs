@@ -138,20 +138,18 @@ internal static class DocumentFileWriterTests
 
     private static async Task AssertBytesAsync(StorageFile file, byte[] expected, string scenario)
     {
-        using (var stream = await file.OpenStreamForReadAsync())
-        using (var buffer = new MemoryStream())
-        {
-            await stream.CopyToAsync(buffer);
-            var actual = buffer.ToArray();
-            if (actual.SequenceEqual(expected)) return;
-            var offset = 0;
-            while (offset < Math.Min(expected.Length, actual.Length) && expected[offset] == actual[offset]) offset++;
-            var expectedByte = offset < expected.Length ? $"0x{expected[offset]:X2}" : "<end>";
-            var actualByte = offset < actual.Length ? $"0x{actual[offset]:X2}" : "<end>";
-            Assert(false, $"{scenario}: first difference at byte {offset}.\n" +
-                $"  Expected {expected.Length} bytes, {expectedByte} at this offset.\n" +
-                $"  Actual {actual.Length} bytes, {actualByte} at this offset.");
-        }
+        using var stream = await file.OpenStreamForReadAsync();
+        using var buffer = new MemoryStream();
+        await stream.CopyToAsync(buffer);
+        var actual = buffer.ToArray();
+        if (actual.SequenceEqual(expected)) return;
+        var offset = 0;
+        while (offset < Math.Min(expected.Length, actual.Length) && expected[offset] == actual[offset]) offset++;
+        var expectedByte = offset < expected.Length ? $"0x{expected[offset]:X2}" : "<end>";
+        var actualByte = offset < actual.Length ? $"0x{actual[offset]:X2}" : "<end>";
+        Assert(false, $"{scenario}: first difference at byte {offset}.\n" +
+            $"  Expected {expected.Length} bytes, {expectedByte} at this offset.\n" +
+            $"  Actual {actual.Length} bytes, {actualByte} at this offset.");
     }
 
     private static async Task ExpectAsync<T>(Func<Task> operation) where T : Exception

@@ -34,8 +34,8 @@ internal static class SessionDocumentStore
     public static string TryRegisterFileAccess(Guid editorId, StorageFile file, Guid ownerId, SessionGenerationDraft draft)
     {
         if (editorId == Guid.Empty) throw new ArgumentException("A file permission requires an editor identity.", nameof(editorId));
-        if (file == null) throw new ArgumentNullException(nameof(file));
-        if (draft == null) throw new ArgumentNullException(nameof(draft));
+        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(draft);
         var token = GetFutureAccessTokenPrefix(ownerId) + editorId.ToString("N") + "-" + Guid.NewGuid().ToString("N");
         draft.RegisterAccessToken(token);
         try { StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file); }
@@ -51,7 +51,7 @@ internal static class SessionDocumentStore
     public static TextEditorSessionDataV2 CaptureEditor(Guid id, DocumentRecoveryState recovery,
         string editingFileName, string editingFilePath)
     {
-        if (recovery == null) throw new ArgumentNullException(nameof(recovery));
+        ArgumentNullException.ThrowIfNull(recovery);
         var checkpoint = recovery.Checkpoint;
         var journal = recovery.DocumentJournal;
         if (!string.Equals(journal.File.Path, checkpoint.FilePath, StringComparison.OrdinalIgnoreCase))
@@ -87,19 +87,17 @@ internal static class SessionDocumentStore
     public static async Task<DocumentBaseline> ForkBaselineAsync(DocumentBaseline source, Guid ownerId,
         CancellationToken cancellationToken = default)
     {
-        if (source == null) throw new ArgumentNullException(nameof(source));
+        ArgumentNullException.ThrowIfNull(source);
         cancellationToken.ThrowIfCancellationRequested();
         if (source.ByteLength == 0) return DocumentBaseline.CreateEmpty(ownerId);
-        using (var stream = await source.OpenReadStreamAsync(cancellationToken).ConfigureAwait(false))
-        {
-            return await DocumentBaseline.CreateAsync(output => stream.CopyToAsync(output, 65536, cancellationToken),
-                ownerId, cancellationToken).ConfigureAwait(false);
-        }
+        using var stream = await source.OpenReadStreamAsync(cancellationToken).ConfigureAwait(false);
+        return await DocumentBaseline.CreateAsync(output => stream.CopyToAsync(output, 65536, cancellationToken),
+            ownerId, cancellationToken).ConfigureAwait(false);
     }
 
     public static DocumentBaselineData CaptureBaseline(DocumentBaseline baseline)
     {
-        if (baseline == null) throw new ArgumentNullException(nameof(baseline));
+        ArgumentNullException.ThrowIfNull(baseline);
         return new DocumentBaselineData
         {
             OwnerId = baseline.OwnerId,
@@ -113,7 +111,7 @@ internal static class SessionDocumentStore
     public static async Task<DocumentBaseline> OpenBaselineAsync(DocumentBaselineData data,
         CancellationToken cancellationToken = default)
     {
-        if (data == null) throw new ArgumentNullException(nameof(data));
+        ArgumentNullException.ThrowIfNull(data);
         data.Validate();
         cancellationToken.ThrowIfCancellationRequested();
         StorageFile file = null;
@@ -129,7 +127,7 @@ internal static class SessionDocumentStore
     public static async Task<DocumentJournal> OpenJournalAsync(DocumentJournalData data,
         CancellationToken cancellationToken = default)
     {
-        if (data == null) throw new ArgumentNullException(nameof(data));
+        ArgumentNullException.ThrowIfNull(data);
         data.Validate();
         cancellationToken.ThrowIfCancellationRequested();
         var folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("DocumentJournals");

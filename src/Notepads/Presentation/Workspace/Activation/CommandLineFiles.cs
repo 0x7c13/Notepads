@@ -5,7 +5,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Infrastructure.Storage;
@@ -16,10 +15,11 @@ namespace Notepads.Presentation.Workspace.Activation;
 public static class CommandLineFiles
 {
     private const string WslRootPath = "\\\\wsl$\\";
+    private static readonly char[] InvalidPathCharacters = Path.GetInvalidPathChars();
     public static bool IsFullPath(string path)
     {
         return !String.IsNullOrWhiteSpace(path)
-               && path.IndexOfAny(System.IO.Path.GetInvalidPathChars().ToArray()) == -1
+               && path.AsSpan().IndexOfAny(InvalidPathCharacters) == -1
                && Path.IsPathRooted(path)
                && !Path.GetPathRoot(path).Equals(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal);
     }

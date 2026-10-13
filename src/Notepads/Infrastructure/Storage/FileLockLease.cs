@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Notepads.Infrastructure.Storage;
 
 /// <summary>A process-released Windows file-sharing lease, independent of application policy.</summary>
-internal sealed class FileLockLease : IDisposable
+internal sealed partial class FileLockLease : IDisposable
 {
     private const int FileExists = 80;
     private const int AlreadyExists = 183;

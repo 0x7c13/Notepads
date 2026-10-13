@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Buffers;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,22 +47,12 @@ public static class LineEndingUtility
 
     public static string GetLineEndingName(LineEnding lineEnding)
     {
-        string lineEndingName = "CRLF";
-
-        switch (lineEnding)
+        return lineEnding switch
         {
-            case LineEnding.Crlf:
-                lineEndingName = "CRLF";
-                break;
-            case LineEnding.Cr:
-                lineEndingName = "CR";
-                break;
-            case LineEnding.Lf:
-                lineEndingName = "LF";
-                break;
-        }
-
-        return lineEndingName;
+            LineEnding.Cr => "CR",
+            LineEnding.Lf => "LF",
+            _ => "CRLF",
+        };
     }
 
     public static LineEnding GetLineEndingByName(string name)
@@ -100,29 +91,33 @@ public static class LineEndingUtility
     /// <summary>Encode/save with bounded temporary memory, including mixed EOLs.</summary>
     public static async Task WriteAsync(TextWriter writer, string text, LineEnding? lineEnding = null)
     {
-        var buffer = new char[16384];
-        var count = 0;
-        var ending = lineEnding.HasValue ? GetSequence(lineEnding.Value) : null;
-        for (var i = 0; i < text.Length; i++)
+        var buffer = ArrayPool<char>.Shared.Rent(16384);
+        try
         {
-            var character = text[i];
-            if (ending != null && (character == '\r' || character == '\n'))
+            var count = 0;
+            var ending = lineEnding.HasValue ? GetSequence(lineEnding.Value) : null;
+            for (var i = 0; i < text.Length; i++)
             {
-                if (character == '\r' && i + 1 < text.Length && text[i + 1] == '\n') i++;
-                foreach (var endCharacter in ending) buffer[count++] = endCharacter;
+                var character = text[i];
+                if (ending != null && (character == '\r' || character == '\n'))
+                {
+                    if (character == '\r' && i + 1 < text.Length && text[i + 1] == '\n') i++;
+                    foreach (var endCharacter in ending) buffer[count++] = endCharacter;
+                }
+                else
+                {
+                    buffer[count++] = character;
+                }
+                // Leave room for the two-character CRLF sequence. StreamWriter's
+                // encoder retains a high surrogate across WriteAsync calls.
+                if (count >= buffer.Length - 1)
+                {
+                    await writer.WriteAsync(buffer.AsMemory(0, count)).ConfigureAwait(false);
+                    count = 0;
+                }
             }
-            else
-            {
-                buffer[count++] = character;
-            }
-            // Leave room for the two-character CRLF sequence. StreamWriter's
-            // encoder retains a high surrogate across WriteAsync calls.
-            if (count >= buffer.Length - 1)
-            {
-                await writer.WriteAsync(buffer, 0, count).ConfigureAwait(false);
-                count = 0;
-            }
+            if (count > 0) await writer.WriteAsync(buffer.AsMemory(0, count)).ConfigureAwait(false);
         }
-        if (count > 0) await writer.WriteAsync(buffer, 0, count).ConfigureAwait(false);
+        finally { ArrayPool<char>.Shared.Return(buffer); }
     }
 }

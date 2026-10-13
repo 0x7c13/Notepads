@@ -31,7 +31,7 @@ internal static class RecoveryDocumentPreparation
         var legacy = source.LegacyDescriptor;
         if (legacy != null)
         {
-            if (fallbackIndex >= 0) throw new ArgumentOutOfRangeException(nameof(fallbackIndex));
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(fallbackIndex, 0);
             var editingFile = await source.ResolveEditingFileAsync().WaitAsync(cancellation);
             prepared = await LegacySessionImporter.PrepareAsync(legacy, editingFile, targetOwnerId, defaults, cancellation);
             if (prepared?.EditingFile != null)

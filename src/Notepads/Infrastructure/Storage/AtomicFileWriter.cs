@@ -33,9 +33,9 @@ internal static class AtomicFileWriter
     internal static async Task WriteAsync(StorageFile file, Func<Stream, Task> writeAsync,
         AtomicFileWriteState state, CancellationToken cancellationToken = default)
     {
-        if (file == null) throw new ArgumentNullException(nameof(file));
-        if (writeAsync == null) throw new ArgumentNullException(nameof(writeAsync));
-        if (state == null) throw new ArgumentNullException(nameof(state));
+        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(writeAsync);
+        ArgumentNullException.ThrowIfNull(state);
         if (state.Opened || state.Committed) throw new ArgumentException("Each transaction requires a new outcome state.", nameof(state));
         cancellationToken.ThrowIfCancellationRequested();
 

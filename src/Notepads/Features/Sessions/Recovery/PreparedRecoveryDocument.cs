@@ -19,7 +19,7 @@ using WinUIEditor;
 namespace Notepads.Features.Sessions.Recovery;
 
 /// <summary>Owns prepared assets until a native document retains them.</summary>
-internal sealed class PreparedRecoveryDocument : IDisposable
+internal sealed partial class PreparedRecoveryDocument : IDisposable
 {
     public Guid Id { get; set; }
     public RecoveryDocumentSource Source { get; internal set; }

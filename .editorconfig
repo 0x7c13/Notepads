@@ -345,4 +345,7 @@ csharp_style_prefer_not_pattern = true:suggestion
 # interface boundaries can introduce compiler-owned types without WinRT projections.
 dotnet_style_prefer_collection_expression = false:suggestion
 dotnet_diagnostic.CsWinRT1032.severity = error
+dotnet_diagnostic.CsWinRT1028.severity = error
+dotnet_diagnostic.CA1510.severity = warning
+dotnet_diagnostic.IDE0063.severity = warning
 csharp_style_prefer_primary_constructors = false:suggestion

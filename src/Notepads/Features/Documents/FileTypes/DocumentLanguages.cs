@@ -49,38 +49,49 @@ public static class DocumentLanguages
 
     public static string NormalizeOverride(string id) => Find(id)?.Id;
 
-    public static DocumentLanguage Detect(string fileName, string firstLineSample)
+    public static DocumentLanguage Detect(ReadOnlySpan<char> fileName, ReadOnlySpan<char> firstLineSample)
     {
-        fileName = Path.GetFileName(fileName ?? string.Empty);
-        if (string.Equals(fileName, "Cargo.lock", StringComparison.OrdinalIgnoreCase)) return Find("toml");
+        fileName = Path.GetFileName(fileName);
+        if (fileName.Equals("Cargo.lock", StringComparison.OrdinalIgnoreCase)) return Find("toml");
         var extension = Path.GetExtension(fileName);
         foreach (var language in _languages)
             foreach (var candidate in language.Extensions)
-                if (string.Equals(extension, candidate, StringComparison.OrdinalIgnoreCase)) return language;
+                if (extension.Equals(candidate, StringComparison.OrdinalIgnoreCase)) return language;
         return DetectShebang(firstLineSample) ?? PlainText;
     }
 
-    private static DocumentLanguage DetectShebang(string sample)
+    private static DocumentLanguage DetectShebang(ReadOnlySpan<char> sample)
     {
-        if (string.IsNullOrEmpty(sample) || !sample.StartsWith("#!", StringComparison.Ordinal)) return null;
+        if (!sample.StartsWith("#!", StringComparison.Ordinal)) return null;
         sample = sample[..Math.Min(sample.Length, DetectionSampleBytes)];
-        var end = sample.IndexOfAny(['\r', '\n']);
+        var end = sample.IndexOfAny('\r', '\n');
         if (end >= 0) sample = sample[..end];
-        var words = sample[2..].Split([' ', '\t'], StringSplitOptions.RemoveEmptyEntries);
-        if (words.Length == 0) return null;
-        var interpreter = Path.GetFileName(words[0]);
-        if (interpreter == "env")
+        var arguments = sample[2..];
+        var words = arguments.SplitAny(" \t");
+        ReadOnlySpan<char> interpreter = default;
+        while (words.MoveNext())
         {
-            interpreter = null;
-            for (var i = 1; i < words.Length; i++)
+            var word = arguments[words.Current];
+            if (word.IsEmpty) continue;
+            interpreter = Path.GetFileName(word);
+            break;
+        }
+        if (interpreter is "env")
+        {
+            interpreter = default;
+            var skipVariable = false;
+            while (words.MoveNext())
             {
-                if (words[i] == "-u" || words[i] == "--unset") { i++; continue; }
-                if (words[i].StartsWith('-') || words[i].Contains('=')) continue;
-                interpreter = Path.GetFileName(words[i].Trim('\'', '"'));
+                var word = arguments[words.Current];
+                if (word.IsEmpty) continue;
+                if (skipVariable) { skipVariable = false; continue; }
+                if (word is "-u" or "--unset") { skipVariable = true; continue; }
+                if (word[0] == '-' || word.Contains('=')) continue;
+                interpreter = Path.GetFileName(word.Trim("'\""));
                 break;
             }
         }
-        if (interpreter == null) return null;
+        if (interpreter.IsEmpty) return null;
         if (interpreter is "sh" or "bash" or "zsh" or "dash" or "ksh") return Find("bash");
         if (interpreter is "node" or "nodejs") return Find("javascript");
         if (interpreter is "pwsh" or "powershell") return Find("powershell");
@@ -89,11 +100,11 @@ public static class DocumentLanguages
         return null;
     }
 
-    private static bool HasVersionSuffix(string interpreter, string name)
+    private static bool HasVersionSuffix(ReadOnlySpan<char> interpreter, ReadOnlySpan<char> name)
     {
         if (!interpreter.StartsWith(name, StringComparison.Ordinal)) return false;
         if (interpreter.Length > name.Length && !char.IsAsciiDigit(interpreter[name.Length])) return false;
-        foreach (var character in interpreter.AsSpan(name.Length))
+        foreach (var character in interpreter[name.Length..])
             if (character != '.' && (character < '0' || character > '9')) return false;
         return true;
     }

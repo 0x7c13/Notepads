@@ -25,10 +25,7 @@ public static class DispatcherQueueHelper
     /// <remarks>If the current thread has UI access, <paramref name="function"/> will be invoked directly.</remarks>
     public static Task ExecuteOnUIThreadAsync(this DispatcherQueue dispatcher, Action function, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
     {
-        if (function is null)
-        {
-            throw new ArgumentNullException(nameof(function));
-        }
+        ArgumentNullException.ThrowIfNull(function);
 
         /* Run the function directly when we have thread access.
          * Also reuse Task.CompletedTask in case of success,
@@ -81,10 +78,7 @@ public static class DispatcherQueueHelper
     /// <remarks>If the current thread has UI access, <paramref name="function"/> will be invoked directly.</remarks>
     public static Task<T> ExecuteOnUIThreadAsync<T>(this DispatcherQueue dispatcher, Func<T> function, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
     {
-        if (function is null)
-        {
-            throw new ArgumentNullException(nameof(function));
-        }
+        ArgumentNullException.ThrowIfNull(function);
 
         // Skip the dispatch, if possible
         // Ignoring for now, but need to map the CurrentThreadID for all dispatcher queue code we have
@@ -129,10 +123,7 @@ public static class DispatcherQueueHelper
     /// <remarks>If the current thread has UI access, <paramref name="function"/> will be invoked directly.</remarks>
     public static Task ExecuteOnUIThreadAsync(this DispatcherQueue dispatcher, Func<Task> function, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
     {
-        if (function is null)
-        {
-            throw new ArgumentNullException(nameof(function));
-        }
+        ArgumentNullException.ThrowIfNull(function);
 
         /* If we have thread access, we can retrieve the task directly.
          * We don't use ConfigureAwait(false) in this case, in order
@@ -196,10 +187,7 @@ public static class DispatcherQueueHelper
     /// <remarks>If the current thread has UI access, <paramref name="function"/> will be invoked directly.</remarks>
     public static Task<T> ExecuteOnUIThreadAsync<T>(this DispatcherQueue dispatcher, Func<Task<T>> function, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
     {
-        if (function is null)
-        {
-            throw new ArgumentNullException(nameof(function));
-        }
+        ArgumentNullException.ThrowIfNull(function);
 
         // Skip the dispatch, if possible
         // Ignoring for now, but need to map the CurrentThreadID for all dispatcher queue code we have

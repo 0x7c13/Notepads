@@ -424,15 +424,13 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     internal Task LoadBaselineAsync(DocumentBaseline baseline, bool preserveUndo,
         CancellationToken cancellationToken = default)
     {
-        if (baseline == null) throw new ArgumentNullException(nameof(baseline));
+        ArgumentNullException.ThrowIfNull(baseline);
         return LoadNativeDocumentAsync(async () =>
         {
-            using (var stream = await baseline.OpenReadStreamAsync(cancellationToken))
-            using (var input = stream.AsInputStream())
-            {
-                await Native.LoadUtf8Async(input, checked((ulong)baseline.ByteLength), preserveUndo)
-                    .AsCompletionTask(cancellationToken);
-            }
+            using var stream = await baseline.OpenReadStreamAsync(cancellationToken);
+            using var input = stream.AsInputStream();
+            await Native.LoadUtf8Async(input, checked((ulong)baseline.ByteLength), preserveUndo)
+                .AsCompletionTask(cancellationToken);
         });
     }
 
@@ -441,12 +439,10 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     {
         return LoadNativeDocumentAsync(async () =>
         {
-            using (var stream = await baseline.OpenReadStreamAsync(cancellationToken))
-            using (var input = stream.AsInputStream())
-            {
-                await Native.RestoreUtf8Async(input, checked((ulong)baseline.ByteLength), checkpoint)
-                    .AsCompletionTask(cancellationToken);
-            }
+            using var stream = await baseline.OpenReadStreamAsync(cancellationToken);
+            using var input = stream.AsInputStream();
+            await Native.RestoreUtf8Async(input, checked((ulong)baseline.ByteLength), checkpoint)
+                .AsCompletionTask(cancellationToken);
         });
     }
 
@@ -657,12 +653,12 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         if (Native.SelectionIsRectangle || Native.Selections != 1) return;
         var text = GetSelectedText();
         if (string.IsNullOrWhiteSpace(text)) return;
-        var trimmedStart = text.TrimStart(' ', '\t', '\r');
-        var leading = text.Substring(0, text.Length - trimmedStart.Length);
+        var trimmedStart = text.AsSpan().TrimStart(" \t\r");
+        var leading = text.AsSpan(0, text.Length - trimmedStart.Length);
         var offset = leading.LastIndexOf('\r') + 1;
-        var trailing = trimmedStart.Length - trimmedStart.TrimEnd(' ', '\t', '\r').Length;
-        Native.SetSel(Native.SelectionStart + Encoding.UTF8.GetByteCount(text.Substring(0, offset)),
-            Native.SelectionEnd - Encoding.UTF8.GetByteCount(text.Substring(text.Length - trailing)));
+        var trailing = trimmedStart.Length - trimmedStart.TrimEnd(" \t\r").Length;
+        Native.SetSel(Native.SelectionStart + Encoding.UTF8.GetByteCount(text.AsSpan(0, offset)),
+            Native.SelectionEnd - Encoding.UTF8.GetByteCount(text.AsSpan(text.Length - trailing)));
     }
 
     public async Task PastePlainTextFromWindowsClipboardAsync(TextControlPasteEventArgs args)

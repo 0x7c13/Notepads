@@ -135,12 +135,10 @@ internal static partial class SessionControllerTests
                 await closing.Controller.DrainAsync();
                 await loading;
             }
-            await using (var afterEarlyClose = new ControllerHost(owner, registry))
-            {
-                SessionTestProtocol.Check(await afterEarlyClose.Controller.LoadLastSessionAsync() == 3,
-                    "Closing before native loading lost the previous session.");
-                await afterEarlyClose.Controller.WaitForRestorationCheckpointAsync();
-            }
+            await using var afterEarlyClose = new ControllerHost(owner, registry);
+            SessionTestProtocol.Check(await afterEarlyClose.Controller.LoadLastSessionAsync() == 3,
+                "Closing before native loading lost the previous session.");
+            await afterEarlyClose.Controller.WaitForRestorationCheckpointAsync();
         }
         finally { await SessionTestProtocol.CleanupAsync(owner); }
         log.AppendLine("PASS: lazy restoration preserves mixed captures, pending tabs and selection priority.");

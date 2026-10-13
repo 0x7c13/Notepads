@@ -295,37 +295,33 @@ public sealed partial class HostBackdropAcrylicBrush : XamlCompositionBrushBase,
     {
         try
         {
-            using (CanvasDevice sharedDevice = CanvasDevice.GetSharedDevice())
+            using CanvasDevice sharedDevice = CanvasDevice.GetSharedDevice();
+            DisplayInformation display = DisplayInformation.GetForCurrentView();
+            float dpi = display.LogicalDpi;
+
+            CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(sharedDevice, textureUri, dpi >= 96 ? dpi : 96);
+
+            CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(Window.Current.Compositor, sharedDevice);
+            CompositionDrawingSurface surface = device.CreateDrawingSurface(default, DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
+
+            Size size = bitmap.Size;
+            Size sizeInPixels = new Size(bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height);
+            CanvasComposition.Resize(surface, sizeInPixels);
+
+            using CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface, new Rect(0, 0, sizeInPixels.Width, sizeInPixels.Height), dpi);
+            session.Clear(Color.FromArgb(0, 0, 0, 0));
+            session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
+            session.EffectTileSize = new BitmapSize { Width = (uint)size.Width, Height = (uint)size.Height };
+
+            CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
+            brush.Stretch = CompositionStretch.None;
+            double pixels = display.RawPixelsPerViewPixel;
+            if (pixels > 1)
             {
-                DisplayInformation display = DisplayInformation.GetForCurrentView();
-                float dpi = display.LogicalDpi;
-
-                CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(sharedDevice, textureUri, dpi >= 96 ? dpi : 96);
-
-                CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(Window.Current.Compositor, sharedDevice);
-                CompositionDrawingSurface surface = device.CreateDrawingSurface(default, DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
-
-                Size size = bitmap.Size;
-                Size sizeInPixels = new Size(bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height);
-                CanvasComposition.Resize(surface, sizeInPixels);
-
-                using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface, new Rect(0, 0, sizeInPixels.Width, sizeInPixels.Height), dpi))
-                {
-                    session.Clear(Color.FromArgb(0, 0, 0, 0));
-                    session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
-                    session.EffectTileSize = new BitmapSize { Width = (uint)size.Width, Height = (uint)size.Height };
-
-                    CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
-                    brush.Stretch = CompositionStretch.None;
-                    double pixels = display.RawPixelsPerViewPixel;
-                    if (pixels > 1)
-                    {
-                        brush.Scale = new Vector2((float)(1 / pixels));
-                        brush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
-                    }
-                    return brush;
-                }
+                brush.Scale = new Vector2((float)(1 / pixels));
+                brush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
             }
+            return brush;
         }
         catch (Exception ex)
         {

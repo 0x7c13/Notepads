@@ -29,7 +29,7 @@ internal static class SessionRecoveryGarbageCollector
         if (ownerId == Guid.Empty) throw new ArgumentException("Recovery GC requires an owned scope.", nameof(ownerId));
         if (string.IsNullOrEmpty(futureAccessTokenPrefix))
             throw new ArgumentException("Recovery GC requires a scoped permission prefix.", nameof(futureAccessTokenPrefix));
-        if (readReferencesAsync == null) throw new ArgumentNullException(nameof(readReferencesAsync));
+        ArgumentNullException.ThrowIfNull(readReferencesAsync);
         var references = await readReferencesAsync(cancellationToken);
         if (references == null) throw new InvalidOperationException("Recovery GC has no reference graph.");
         if (references.BlocksGlobalCollection || references.BlockedOwners.Contains(ownerId) ||
@@ -86,9 +86,10 @@ internal static class SessionRecoveryGarbageCollector
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (referenced.Contains(file.Name) || !file.Name.EndsWith(extension, StringComparison.OrdinalIgnoreCase)) continue;
-                var identity = file.Name.Substring(0, file.Name.Length - extension.Length).Split('-');
-                if (identity.Length != 2 || !Guid.TryParseExact(identity[0], "N", out var assetOwner) ||
-                    assetOwner != ownerId || !Guid.TryParseExact(identity[1], "N", out _))
+                var identity = file.Name.AsSpan(0, file.Name.Length - extension.Length);
+                var separator = identity.IndexOf('-');
+                if (separator < 0 || !Guid.TryParseExact(identity[..separator], "N", out var assetOwner) ||
+                    assetOwner != ownerId || !Guid.TryParseExact(identity[(separator + 1)..], "N", out _))
                 {
                     continue;
                 }

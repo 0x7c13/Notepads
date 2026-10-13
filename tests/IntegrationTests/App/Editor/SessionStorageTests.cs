@@ -71,11 +71,9 @@ internal static class SessionStorageTests
             const string recovery = "ASCII file, new 中文 العربية 😀\0\rnext";
             await AtomicFileWriter.WriteAsync(file, async stream =>
             {
-                using (var writer = new StreamWriter(stream, new UTF8Encoding(true), 1024, leaveOpen: true))
-                {
-                    await LineEndingUtility.WriteAsync(writer, recovery);
-                    await writer.FlushAsync();
-                }
+                using var writer = new StreamWriter(stream, new UTF8Encoding(true), 1024, leaveOpen: true);
+                await LineEndingUtility.WriteAsync(writer, recovery);
+                await writer.FlushAsync();
             });
             using (var stream = await file.OpenStreamForReadAsync())
             using (var reader = new StreamReader(stream, Encoding.ASCII))

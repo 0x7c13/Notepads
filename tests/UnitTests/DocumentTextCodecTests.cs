@@ -36,7 +36,7 @@ public sealed class DocumentTextCodecTests
         var encoded = encoding.GetPreamble().Concat(encoding.GetBytes(text)).ToArray();
         using var input = new ShortReadStream(encoded, readSize);
         using var output = new MemoryStream();
-        var selected = DocumentTextCodec.DetectPreamble(encoded, encoded.Length, encoding, out var preambleLength);
+        var selected = DocumentTextCodec.DetectPreamble(encoded, encoding, out var preambleLength);
         // The BCL decoder is an independent reference for character/chunk behavior.
         // Fixed byte oracles below independently check BOM choice and EOL semantics.
         var decoded = selected.GetString(encoded, preambleLength, encoded.Length - preambleLength);
@@ -45,6 +45,7 @@ public sealed class DocumentTextCodecTests
         Assert.Equal(Canonicalize(decoded), new UTF8Encoding(false, true).GetString(output.ToArray()));
         Assert.Equal(encoded.Length, result.InputBytes);
         Assert.Equal(output.Length, result.CanonicalBytes);
+        input.AssertReadBoundaries();
         Assert.True(input.CanRead && output.CanWrite, "The codec must not dispose caller-owned streams.");
     }
 
@@ -72,6 +73,7 @@ public sealed class DocumentTextCodecTests
         var eol = ending == LineEnding.Cr ? "\r" : ending == LineEnding.Lf ? "\n" : "\r\n";
         Assert.Equal(encoding.GetPreamble().Concat(encoding.GetBytes(text.Replace("\r", eol))).ToArray(), destination.ToArray());
         Assert.Equal(canonical.Length, copied);
+        input.AssertReadBoundaries();
         Assert.True(input.CanRead && baseline.CanWrite && destination.CanWrite, "Save must retain caller-owned streams.");
     }
 
@@ -90,7 +92,7 @@ public sealed class DocumentTextCodecTests
     public async Task FixedBytesDetermineBomEncodingAndCanonicalOutput(string name, string hex, int bomLength, LineEnding ending)
     {
         var bytes = Convert.FromHexString(hex);
-        var selected = DocumentTextCodec.DetectPreamble(bytes, bytes.Length,
+        var selected = DocumentTextCodec.DetectPreamble(bytes,
             bomLength == 0 ? new UTF8Encoding(false, true) : Encoding.ASCII, out var skipped);
         Assert.Equal(EncodingFor(name).CodePage, selected.CodePage);
         Assert.Equal(bomLength, skipped);
@@ -129,7 +131,7 @@ public sealed class DocumentTextCodecTests
     {
         var bytes = Convert.FromHexString(hex);
         var fallback = Encoding.ASCII;
-        var selected = DocumentTextCodec.DetectPreamble(bytes, available, fallback, out var skipped);
+        var selected = DocumentTextCodec.DetectPreamble(bytes.AsSpan(0, available), fallback, out var skipped);
         Assert.Same(fallback, selected);
         Assert.Equal(0, skipped);
     }
@@ -148,6 +150,68 @@ public sealed class DocumentTextCodecTests
         "utf32-be-bom" => new UTF32Encoding(true, true, true),
         _ => Encoding.GetEncoding(int.Parse(name, System.Globalization.CultureInfo.InvariantCulture))
     };
+
+    [Fact]
+    public void PreambleDetectionUsesOnlyTheSuppliedSlice()
+    {
+        byte[] bytes = [0xcc, 0xff, 0xfe, 0x00, 0x00, 0xcc];
+        var encoding = DocumentTextCodec.DetectPreamble(bytes.AsSpan(1, 2), Encoding.ASCII, out var length);
+        Assert.Equal(1200, encoding.CodePage);
+        Assert.Equal(2, length);
+        Assert.Same(Encoding.ASCII, DocumentTextCodec.DetectPreamble(bytes.AsSpan(1, 1), Encoding.ASCII, out length));
+        Assert.Equal(0, length);
+    }
+
+    [Fact]
+    public async Task ConcurrentConversionsRetainBuffersUntilDelayedWritesFinish()
+    {
+        var firstWrites = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var arrived = 0;
+        async Task WaitForAllWritersAsync()
+        {
+            if (Interlocked.Increment(ref arrived) == 8) firstWrites.SetResult();
+            await firstWrites.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+        }
+        await Task.WhenAll(Enumerable.Range(0, 8).Select(async index =>
+        {
+            var text = new string((char)('a' + index), DocumentTextCodec.BufferSize + index) + "😀中\r\n\0tail";
+            var sourceEncoding = new UTF32Encoding(index % 2 == 0, false, true);
+            using var input = new ShortReadStream(sourceEncoding.GetBytes(text), 8191);
+            using var canonical = new DelayedWriteStream(WaitForAllWritersAsync);
+            await DocumentTextCodec.DecodeToCanonicalUtf8Async(input, canonical, sourceEncoding,
+                cancellationToken: TestContext.Current.CancellationToken);
+            var expected = Encoding.UTF8.GetBytes(text.Replace("\r\n", "\r", StringComparison.Ordinal));
+            Assert.Equal(expected, canonical.ToArray());
+
+            canonical.Position = 0;
+            using var baseline = new DelayedWriteStream();
+            using var encoded = new DelayedWriteStream();
+            var destinationEncoding = new UnicodeEncoding(false, true, true);
+            await DocumentTextCodec.CopyFromNativeAsync(canonical, baseline, encoded, destinationEncoding, LineEnding.Crlf,
+                cancellationToken: TestContext.Current.CancellationToken);
+            Assert.Equal(expected, baseline.ToArray());
+            Assert.Equal(destinationEncoding.GetPreamble().Concat(destinationEncoding.GetBytes(text)).ToArray(), encoded.ToArray());
+        }));
+    }
+
+    private sealed class DelayedWriteStream : MemoryStream
+    {
+        private Func<Task> _beforeFirstWrite;
+        public DelayedWriteStream(Func<Task> beforeFirstWrite = null) => _beforeFirstWrite = beforeFirstWrite;
+
+        public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            if (_beforeFirstWrite != null)
+            {
+                await _beforeFirstWrite();
+                _beforeFirstWrite = null;
+            }
+            // Consume the borrowed memory only after other conversions can rent and use their buffers.
+            await Task.Yield();
+            cancellationToken.ThrowIfCancellationRequested();
+            base.Write(buffer.Span);
+        }
+    }
 
     private static string Sample(string name) => name switch
     {
@@ -198,14 +262,12 @@ public sealed class DocumentTextCodecTests
         var actual = await DocumentTextCodec.RetryDecodeAsync(async encoding =>
         {
             attempts++;
-            using (var source = new ShortReadStream(original, 17))
-            using (var candidate = new TrackingStream())
-            {
-                candidateStreams.Add(candidate);
-                await DocumentTextCodec.DecodeToCanonicalUtf8Async(source, candidate, encoding,
-                    cancellationToken: TestContext.Current.CancellationToken);
-                return candidate.ToArray();
-            }
+            using var source = new ShortReadStream(original, 17);
+            using var candidate = new TrackingStream();
+            candidateStreams.Add(candidate);
+            await DocumentTextCodec.DecodeToCanonicalUtf8Async(source, candidate, encoding,
+                cancellationToken: TestContext.Current.CancellationToken);
+            return candidate.ToArray();
         }, new UTF8Encoding(false, true), fallback);
         EqualBytes(new UTF8Encoding(false, true).GetBytes(fallback.GetString(original)), actual, "restart fallback from byte zero");
         EqualBytes(unchanged, original, "source not modified");
@@ -302,9 +364,26 @@ public sealed class DocumentTextCodecTests
     private sealed class ShortReadStream : MemoryStream
     {
         private readonly int _maximumRead;
+        private int _nonEmptyReads;
+        private int _largestRead;
         public ShortReadStream(byte[] bytes, int maximumRead) : base(bytes, writable: false) { _maximumRead = maximumRead; }
         public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
-            => base.ReadAsync(buffer, offset, Math.Min(count, _maximumRead), cancellationToken);
+            => ReadAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
+
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            var count = await base.ReadAsync(buffer[..Math.Min(buffer.Length, _maximumRead)], cancellationToken);
+            if (count > 0) _nonEmptyReads++;
+            _largestRead = Math.Max(_largestRead, count);
+            return count;
+        }
+
+        public void AssertReadBoundaries()
+        {
+            Assert.InRange(_largestRead, 0, _maximumRead);
+            Assert.True(_nonEmptyReads >= (Length + _maximumRead - 1) / _maximumRead,
+                "The codec must exercise the configured short reads, not bypass the stream's async overrides.");
+        }
     }
 
     private sealed class TrackingStream : MemoryStream

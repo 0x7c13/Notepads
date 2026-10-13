@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Buffers;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -14,7 +15,7 @@ using Notepads.Features.Documents.Storage;
 namespace Notepads.Features.Documents;
 
 /// <summary>Saved file metadata and an independently retained immutable document generation.</summary>
-public sealed class DocumentSnapshot : IDisposable
+public sealed partial class DocumentSnapshot : IDisposable
 {
     private readonly DocumentBaseline _baseline;
     private readonly Encoding _encoding;
@@ -22,8 +23,8 @@ public sealed class DocumentSnapshot : IDisposable
     public DocumentSnapshot(DocumentBaseline baseline, Encoding encoding, LineEnding lineEnding,
         long dateModifiedFileTime = -1)
     {
-        if (baseline == null) throw new ArgumentNullException(nameof(baseline));
-        if (encoding == null) throw new ArgumentNullException(nameof(encoding));
+        ArgumentNullException.ThrowIfNull(baseline);
+        ArgumentNullException.ThrowIfNull(encoding);
         if (!Enum.IsDefined(typeof(LineEnding), lineEnding)) throw new ArgumentOutOfRangeException(nameof(lineEnding));
         _encoding = (Encoding)encoding.Clone();
         _baseline = baseline.Retain();
@@ -53,22 +54,21 @@ public sealed class DocumentSnapshot : IDisposable
     /// </summary>
     public async Task<string> ReadTextAsync(CancellationToken cancellationToken = default)
     {
-        using (var stream = await _baseline.OpenReadStreamAsync(cancellationToken).ConfigureAwait(false))
-        using (var reader = new StreamReader(stream, new UTF8Encoding(false, true),
-            detectEncodingFromByteOrderMarks: false, bufferSize: 16384))
+        using var stream = await _baseline.OpenReadStreamAsync(cancellationToken).ConfigureAwait(false);
+        using var reader = new StreamReader(stream, new UTF8Encoding(false, true),
+            detectEncodingFromByteOrderMarks: false, bufferSize: 16384);
+        using var buffer = MemoryPool<char>.Shared.Rent(16384);
+        var characters = buffer.Memory[..16384];
+        var text = new StringBuilder();
+        while (true)
         {
-            var characters = new char[16384];
-            var text = new StringBuilder();
-            while (true)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var count = await reader.ReadAsync(characters, 0, characters.Length).ConfigureAwait(false);
-                if (count == 0) break;
-                text.Append(characters, 0, count);
-            }
             cancellationToken.ThrowIfCancellationRequested();
-            return text.ToString();
+            var count = await reader.ReadAsync(characters, cancellationToken).ConfigureAwait(false);
+            if (count == 0) break;
+            text.Append(characters.Span[..count]);
         }
+        cancellationToken.ThrowIfCancellationRequested();
+        return text.ToString();
     }
 
     public void Dispose() => _baseline.Dispose();

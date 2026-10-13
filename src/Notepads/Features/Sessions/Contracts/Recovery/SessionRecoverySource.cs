@@ -10,7 +10,7 @@ using System.Linq;
 namespace Notepads.Features.Sessions.Contracts.Recovery;
 
 /// <summary>An immutable recovery root retained until the importing session durably adopts its records.</summary>
-internal sealed class SessionRecoverySource : IDisposable
+internal sealed partial class SessionRecoverySource : IDisposable
 {
     public SessionRecoverySource(RecoverySelection selection, long captureRevisionFloor,
         IDisposable writerLease, IDisposable readerPin)

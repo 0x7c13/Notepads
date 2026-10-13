@@ -3,12 +3,28 @@
 //  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
+using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Documents.IO;
 
 namespace Notepads.UnitTests;
 
 public sealed class FileNameTests
 {
+    [Theory]
+    [InlineData(null, "", FileType.Unknown)]
+    [InlineData("README", "", FileType.Unknown)]
+    [InlineData("note.", ".", FileType.Unknown)]
+    [InlineData("archive.backup.TXT", ".TXT", FileType.TextFile)]
+    [InlineData("notes.MARKDOWN", ".MARKDOWN", FileType.MarkdownFile)]
+    [InlineData(".md", ".md", FileType.MarkdownFile)]
+    [InlineData("notes.md.txt", ".txt", FileType.TextFile)]
+    [InlineData("notes.txt.exe", ".exe", FileType.Unknown)]
+    public void FileTypeUsesOnlyTheLastExtension(string filename, string extension, FileType type)
+    {
+        Assert.Equal(extension, FileTypeUtility.GetFileExtension(filename));
+        Assert.Equal(type, FileTypeUtility.GetFileTypeByFileName(filename));
+    }
+
     [Theory]
     [InlineData("note.txt")]
     [InlineData("notes with spaces.md")]

@@ -17,7 +17,7 @@ namespace Notepads.Features.Documents.IO;
 /// An asynchronous forward reader over a native document lease. WinUIEdit
 /// owns the edit freeze and dispatches range reads to the editor apartment.
 /// </summary>
-internal sealed class EditorDocumentStream : Stream
+internal sealed partial class EditorDocumentStream : Stream
 {
     private const int BufferSize = 65536;
     private readonly EditorUtf8Reader _reader;
@@ -46,15 +46,20 @@ internal sealed class EditorDocumentStream : Stream
         set => throw new NotSupportedException();
     }
 
-    public override async Task<int> ReadAsync(byte[] buffer, int offset, int count,
+    public override Task<int> ReadAsync(byte[] buffer, int offset, int count,
         CancellationToken cancellationToken)
     {
-        if (buffer == null) throw new ArgumentNullException(nameof(buffer));
+        ArgumentNullException.ThrowIfNull(buffer);
         if (offset < 0 || count < 0 || offset > buffer.Length - count)
             throw new ArgumentOutOfRangeException(nameof(offset));
+        return ReadAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
+    }
+
+    public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+    {
         ThrowIfDisposed();
         cancellationToken.ThrowIfCancellationRequested();
-        if (count == 0) return 0;
+        if (buffer.IsEmpty) return 0;
 
         if (_bufferOffset == _bufferLength)
         {
@@ -70,8 +75,8 @@ internal sealed class EditorDocumentStream : Stream
             _readOffset += _bufferLength;
         }
 
-        var copied = Math.Min(count, _bufferLength - _bufferOffset);
-        Array.Copy(_buffer, _bufferOffset, buffer, offset, copied);
+        var copied = Math.Min(buffer.Length, _bufferLength - _bufferOffset);
+        _buffer.AsSpan(_bufferOffset, copied).CopyTo(buffer.Span);
         _bufferOffset += copied;
         _position += copied;
         return copied;

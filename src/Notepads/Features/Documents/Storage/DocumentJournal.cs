@@ -51,7 +51,7 @@ public sealed partial class DocumentJournal : IDisposable
     /// <summary>Retain before awaiting native checkpoint validation of this committed file.</summary>
     public static DocumentJournal OpenExisting(StorageFile file, Guid ownerId, Guid generationId)
     {
-        if (file == null) throw new ArgumentNullException(nameof(file));
+        ArgumentNullException.ThrowIfNull(file);
         if (generationId == Guid.Empty || !string.Equals(file.Name,
             ownerId.ToString("N") + "-" + generationId.ToString("N") + ".npj", StringComparison.OrdinalIgnoreCase))
         {
@@ -77,27 +77,25 @@ public sealed partial class DocumentJournal : IDisposable
     {
         cancellationToken.ThrowIfCancellationRequested();
         var expectedDocumentLength = checked((ulong)documentByteLength);
-        using (var retained = Retain())
+        using var retained = Retain();
+        var operation = EditorJournalCheckpoint.OpenAsync(retained.File.Path, baselineSequence,
+            committedSequence, checked((ulong)committedByteLength), prefixSha256);
+        OnCheckpointOpening(operation, cancellationToken);
+        // Cancel the native validator, but keep its journal lease until it finishes unwinding.
+        var checkpoint = await operation.AsCompletionTask(cancellationToken).ConfigureAwait(false);
+        try
         {
-            var operation = EditorJournalCheckpoint.OpenAsync(retained.File.Path, baselineSequence,
-                committedSequence, checked((ulong)committedByteLength), prefixSha256);
-            OnCheckpointOpening(operation, cancellationToken);
-            // Cancel the native validator, but keep its journal lease until it finishes unwinding.
-            var checkpoint = await operation.AsCompletionTask(cancellationToken).ConfigureAwait(false);
-            try
-            {
-                OnCheckpointOpened(checkpoint, cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
-                if (expectedDocumentLength != checkpoint.CommittedDocumentByteLength)
-                    throw new InvalidDataException("The recovered document length does not match its committed descriptor.");
-                return checkpoint;
-            }
-            catch
-            {
-                // Native completion can win the cancellation race and return an owned result.
-                checkpoint.Dispose();
-                throw;
-            }
+            OnCheckpointOpened(checkpoint, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (expectedDocumentLength != checkpoint.CommittedDocumentByteLength)
+                throw new InvalidDataException("The recovered document length does not match its committed descriptor.");
+            return checkpoint;
+        }
+        catch
+        {
+            // Native completion can win the cancellation race and return an owned result.
+            checkpoint.Dispose();
+            throw;
         }
     }
 

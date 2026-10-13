@@ -31,7 +31,7 @@ public sealed partial class NotepadsCore
         internal TaskCompletionSource<object> Completion { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     }
 
-    private sealed class FileAdmission(NotepadsCore owner, StorageFile file) : IDisposable
+    private sealed partial class FileAdmission(NotepadsCore owner, StorageFile file) : IDisposable
     {
         internal StorageFile File { get; } = file;
         internal TaskCompletionSource<object> Completion { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);

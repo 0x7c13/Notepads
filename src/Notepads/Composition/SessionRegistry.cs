@@ -13,14 +13,14 @@ using Notepads.Infrastructure.Diagnostics;
 
 namespace Notepads.Composition;
 
-internal sealed class SessionRegistry
+internal sealed partial class SessionRegistry
 {
     private readonly ConcurrentDictionary<ISessionPersistenceParticipant, Registration> _participants =
         new();
 
     public IDisposable Register(ISessionPersistenceParticipant participant)
     {
-        if (participant == null) throw new ArgumentNullException(nameof(participant));
+        ArgumentNullException.ThrowIfNull(participant);
         var registration = new Registration(this, participant);
         if (!_participants.TryAdd(participant, registration))
             throw new InvalidOperationException("The session participant is already registered.");
@@ -52,7 +52,7 @@ internal sealed class SessionRegistry
         }
     }
 
-    private sealed class Registration : IDisposable
+    private sealed partial class Registration : IDisposable
     {
         private readonly SessionRegistry _owner;
         private readonly ISessionPersistenceParticipant _participant;

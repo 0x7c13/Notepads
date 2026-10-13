@@ -13,7 +13,7 @@ using WinUIEditor;
 namespace Notepads.Features.Documents;
 
 /// <summary>One captured completed document operation and independently owned recovery/file metadata.</summary>
-public sealed class DocumentRecoveryState : IDisposable
+public sealed partial class DocumentRecoveryState : IDisposable
 {
     private readonly DocumentMetadata _metadata;
     private static long _nextCaptureRevision;
@@ -23,11 +23,11 @@ public sealed class DocumentRecoveryState : IDisposable
         DocumentJournal documentJournal, EditorJournalCheckpoint checkpoint,
         DocumentMetadata metaData, bool textDirty, long documentByteLength, long captureRevision = 0)
     {
-        if (savedSnapshot == null) throw new ArgumentNullException(nameof(savedSnapshot));
-        if (recoveryBaseline == null) throw new ArgumentNullException(nameof(recoveryBaseline));
-        if (documentJournal == null) throw new ArgumentNullException(nameof(documentJournal));
-        if (checkpoint == null) throw new ArgumentNullException(nameof(checkpoint));
-        if (metaData == null) throw new ArgumentNullException(nameof(metaData));
+        ArgumentNullException.ThrowIfNull(savedSnapshot);
+        ArgumentNullException.ThrowIfNull(recoveryBaseline);
+        ArgumentNullException.ThrowIfNull(documentJournal);
+        ArgumentNullException.ThrowIfNull(checkpoint);
+        ArgumentNullException.ThrowIfNull(metaData);
         if (documentByteLength < 0 || documentByteLength > DocumentBaseline.MaximumByteLength)
             throw new ArgumentOutOfRangeException(nameof(documentByteLength));
         if (checked((ulong)documentByteLength) != checkpoint.CommittedDocumentByteLength)

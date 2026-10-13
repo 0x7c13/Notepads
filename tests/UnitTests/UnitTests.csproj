@@ -24,6 +24,7 @@
     <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentLimits.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/FileTypes/DocumentLanguage.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/FileTypes/DocumentLanguages.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/FileTypeUtility.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/LineEndingUtility.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTextCodec.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/IndentationDetector.cs" />

@@ -14,6 +14,15 @@ namespace Notepads.UnitTests;
 public sealed class SessionRecoverySchemaTests
 {
     [Fact]
+    public void StableOwnerRetainsThePersistedIdentity()
+    {
+        var expected = new Guid("30465059-7d20-d6d3-3375-af64c4b81a1f");
+        Assert.Equal(expected, SessionScopeData.GetStableOwner());
+        Assert.True(SessionScopeData.IsReservedOwner(expected));
+        Assert.Equal("NotepadsSessionData.json", SessionScopeData.GetManifestFileName(expected));
+    }
+
+    [Fact]
     public void LegacyV1MissingFieldsRetainTheirOriginalDefaults()
     {
         const string json = """

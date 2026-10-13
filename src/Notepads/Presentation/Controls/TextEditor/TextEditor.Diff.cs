@@ -20,7 +20,7 @@ public sealed partial class TextEditor
         Justification = "The document coordinator owns preparing generations; CloseSideBySideDiffViewer disposes ready generations, including shutdown.")]
     private DiffGeneration _diffGeneration;
 
-    private sealed class DiffGeneration : IDisposable
+    private sealed partial class DiffGeneration : IDisposable
     {
         public CancellationTokenSource Cancellation { get; }
         public SideBySideDiffViewer Viewer { get; } = new();

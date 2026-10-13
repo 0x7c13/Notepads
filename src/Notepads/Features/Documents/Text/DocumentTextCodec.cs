@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Buffers;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -59,24 +60,29 @@ internal static class DocumentTextCodec
         long maximumCanonicalBytes = DocumentLimits.MaximumCanonicalByteLength)
     {
         ValidateStreams(input, canonicalOutput);
-        if (sourceEncoding == null) throw new ArgumentNullException(nameof(sourceEncoding));
-        if (preambleLength < 0) throw new ArgumentOutOfRangeException(nameof(preambleLength));
+        ArgumentNullException.ThrowIfNull(sourceEncoding);
+        ArgumentOutOfRangeException.ThrowIfNegative(preambleLength);
         if (maximumCanonicalBytes < 0 || maximumCanonicalBytes > DocumentLimits.MaximumCanonicalByteLength)
             throw new ArgumentOutOfRangeException(nameof(maximumCanonicalBytes));
 
         sourceEncoding = (Encoding)sourceEncoding.Clone();
         var decoder = sourceEncoding.GetDecoder();
-        var bytes = new byte[BufferSize];
-        var characters = new char[sourceEncoding.GetMaxCharCount(BufferSize)];
-        var canonicalCharacters = new char[characters.Length];
-        var writer = new EncodedWriter(canonicalOutput, CanonicalEncoding, characters.Length, maximumCanonicalBytes);
+        var characterCapacity = sourceEncoding.GetMaxCharCount(BufferSize);
+        using var byteBuffer = MemoryPool<byte>.Shared.Rent(BufferSize);
+        using var characterBuffer = MemoryPool<char>.Shared.Rent(characterCapacity);
+        using var canonicalBuffer = MemoryPool<char>.Shared.Rent(characterCapacity);
+        using var encodedBuffer = MemoryPool<byte>.Shared.Rent(CanonicalEncoding.GetMaxByteCount(characterCapacity));
+        var bytes = byteBuffer.Memory[..BufferSize];
+        var characters = characterBuffer.Memory[..characterCapacity];
+        var canonicalCharacters = canonicalBuffer.Memory[..characterCapacity];
+        var writer = new EncodedWriter(canonicalOutput, CanonicalEncoding, encodedBuffer.Memory, maximumCanonicalBytes);
         var endings = new InputLineEndings();
         long inputBytes = 0;
 
         while (preambleLength > 0)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var count = await input.ReadAsync(bytes, 0, Math.Min(preambleLength, bytes.Length), cancellationToken).ConfigureAwait(false);
+            var count = await input.ReadAsync(bytes[..Math.Min(preambleLength, bytes.Length)], cancellationToken).ConfigureAwait(false);
             if (count == 0) throw new EndOfStreamException("The file changed before its encoding preamble could be read.");
             inputBytes += count;
             preambleLength -= count;
@@ -85,7 +91,7 @@ internal static class DocumentTextCodec
         while (true)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var count = await input.ReadAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);
+            var count = await input.ReadAsync(bytes, cancellationToken).ConfigureAwait(false);
             inputBytes = checked(inputBytes + count);
             var final = count == 0;
             var offset = 0;
@@ -93,11 +99,11 @@ internal static class DocumentTextCodec
             do
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                decoder.Convert(bytes, offset, count - offset, characters, 0, characters.Length, final,
+                decoder.Convert(bytes.Span.Slice(offset, count - offset), characters.Span, final,
                     out var bytesUsed, out var charactersUsed, out complete);
                 offset += bytesUsed;
-                var canonicalCount = endings.Normalize(characters, charactersUsed, canonicalCharacters);
-                await writer.WriteAsync(canonicalCharacters, canonicalCount, final && complete, cancellationToken).ConfigureAwait(false);
+                var canonicalCount = endings.Normalize(characters.Span[..charactersUsed], canonicalCharacters.Span);
+                await writer.WriteAsync(canonicalCharacters[..canonicalCount], final && complete, cancellationToken).ConfigureAwait(false);
                 if (!complete && bytesUsed == 0 && charactersUsed == 0)
                     throw new InvalidDataException("The document decoder could not make progress.");
             }
@@ -125,54 +131,46 @@ internal static class DocumentTextCodec
         ValidateStreams(canonicalUtf8Reader, encodedDestination);
         if (ReferenceEquals(preparedCanonicalBaseline, encodedDestination))
             throw new ArgumentException("Canonical and encoded outputs must be separate streams.");
-        if (requestedEncoding == null) throw new ArgumentNullException(nameof(requestedEncoding));
+        ArgumentNullException.ThrowIfNull(requestedEncoding);
         var ending = GetLineEnding(requestedLineEnding);
         requestedEncoding = (Encoding)requestedEncoding.Clone();
         var decoder = CanonicalEncoding.GetDecoder();
-        var bytes = new byte[BufferSize];
-        var characters = new char[CanonicalEncoding.GetMaxCharCount(BufferSize)];
-        var encodedCharacters = new char[checked(characters.Length * 2)];
-        var writer = new EncodedWriter(encodedDestination, requestedEncoding, encodedCharacters.Length, long.MaxValue);
+        var characterCapacity = CanonicalEncoding.GetMaxCharCount(BufferSize);
+        var encodedCharacterCapacity = checked(characterCapacity * 2);
+        using var byteBuffer = MemoryPool<byte>.Shared.Rent(BufferSize);
+        using var characterBuffer = MemoryPool<char>.Shared.Rent(characterCapacity);
+        using var encodedCharacterBuffer = MemoryPool<char>.Shared.Rent(encodedCharacterCapacity);
+        using var encodedBuffer = MemoryPool<byte>.Shared.Rent(requestedEncoding.GetMaxByteCount(encodedCharacterCapacity));
+        var bytes = byteBuffer.Memory[..BufferSize];
+        var characters = characterBuffer.Memory[..characterCapacity];
+        var encodedCharacters = encodedCharacterBuffer.Memory[..encodedCharacterCapacity];
+        var writer = new EncodedWriter(encodedDestination, requestedEncoding, encodedBuffer.Memory, long.MaxValue);
         long canonicalBytes = 0;
         var preamble = requestedEncoding.GetPreamble();
         cancellationToken.ThrowIfCancellationRequested();
         if (preamble.Length > 0)
-            await encodedDestination.WriteAsync(preamble, 0, preamble.Length, cancellationToken).ConfigureAwait(false);
+            await encodedDestination.WriteAsync(preamble, cancellationToken).ConfigureAwait(false);
 
         while (true)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var count = await canonicalUtf8Reader.ReadAsync(bytes, 0, bytes.Length, cancellationToken).ConfigureAwait(false);
+            var count = await canonicalUtf8Reader.ReadAsync(bytes, cancellationToken).ConfigureAwait(false);
             if (count > DocumentLimits.MaximumCanonicalByteLength - canonicalBytes)
                 throw new NotSupportedException("The document exceeds the supported canonical UTF-8 size.");
             canonicalBytes += count;
             if (count > 0)
-                await preparedCanonicalBaseline.WriteAsync(bytes, 0, count, cancellationToken).ConfigureAwait(false);
+                await preparedCanonicalBaseline.WriteAsync(bytes[..count], cancellationToken).ConfigureAwait(false);
             var final = count == 0;
             var offset = 0;
             bool complete;
             do
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                decoder.Convert(bytes, offset, count - offset, characters, 0, characters.Length, final,
+                decoder.Convert(bytes.Span.Slice(offset, count - offset), characters.Span, final,
                     out var bytesUsed, out var charactersUsed, out complete);
                 offset += bytesUsed;
-                var convertedCount = 0;
-                for (var index = 0; index < charactersUsed; index++)
-                {
-                    var character = characters[index];
-                    if (character == '\n')
-                        throw new InvalidDataException("The native document is not in canonical CR format.");
-                    if (character == '\r')
-                    {
-                        foreach (var endingCharacter in ending) encodedCharacters[convertedCount++] = endingCharacter;
-                    }
-                    else
-                    {
-                        encodedCharacters[convertedCount++] = character;
-                    }
-                }
-                await writer.WriteAsync(encodedCharacters, convertedCount, final && complete, cancellationToken).ConfigureAwait(false);
+                var convertedCount = ExpandLineEndings(characters.Span[..charactersUsed], encodedCharacters.Span, ending);
+                await writer.WriteAsync(encodedCharacters[..convertedCount], final && complete, cancellationToken).ConfigureAwait(false);
                 if (!complete && bytesUsed == 0 && charactersUsed == 0)
                     throw new InvalidDataException("The native UTF-8 decoder could not make progress.");
             }
@@ -189,62 +187,55 @@ internal static class DocumentTextCodec
     // fallback decode to the already partially decoded first generation.
     public static async Task<T> RetryDecodeAsync<T>(Func<Encoding, Task<T>> attempt, Encoding encoding, Encoding fallbackEncoding)
     {
-        if (attempt == null) throw new ArgumentNullException(nameof(attempt));
-        if (encoding == null) throw new ArgumentNullException(nameof(encoding));
-        if (fallbackEncoding == null) throw new ArgumentNullException(nameof(fallbackEncoding));
+        ArgumentNullException.ThrowIfNull(attempt);
+        ArgumentNullException.ThrowIfNull(encoding);
+        ArgumentNullException.ThrowIfNull(fallbackEncoding);
         try { return await attempt(encoding).ConfigureAwait(false); }
         catch (DecoderFallbackException) { return await attempt(fallbackEncoding).ConfigureAwait(false); }
     }
 
-    internal static Encoding DetectPreamble(byte[] sample, int count, Encoding selectedEncoding, out int preambleLength)
+    internal static Encoding DetectPreamble(ReadOnlySpan<byte> sample, Encoding selectedEncoding, out int preambleLength)
     {
-        if (sample == null) throw new ArgumentNullException(nameof(sample));
-        if (count < 0 || count > sample.Length) throw new ArgumentOutOfRangeException(nameof(count));
-        if (selectedEncoding == null) throw new ArgumentNullException(nameof(selectedEncoding));
+        ArgumentNullException.ThrowIfNull(selectedEncoding);
         Encoding encoding = selectedEncoding;
         preambleLength = 0;
-        if (count >= 4 && sample[0] == 0xff && sample[1] == 0xfe && sample[2] == 0 && sample[3] == 0)
+        if (sample.StartsWith<byte>([0xff, 0xfe, 0x00, 0x00]))
         {
             encoding = new UTF32Encoding(false, true);
             preambleLength = 4;
         }
-        else if (count >= 4 && sample[0] == 0 && sample[1] == 0 && sample[2] == 0xfe && sample[3] == 0xff)
+        else if (sample.StartsWith<byte>([0x00, 0x00, 0xfe, 0xff]))
         {
             encoding = new UTF32Encoding(true, true);
             preambleLength = 4;
         }
-        else if (count >= 3 && sample[0] == 0xef && sample[1] == 0xbb && sample[2] == 0xbf)
+        else if (sample.StartsWith<byte>([0xef, 0xbb, 0xbf]))
         {
             encoding = new UTF8Encoding(true);
             preambleLength = 3;
         }
-        else if (count >= 2 && sample[0] == 0xff && sample[1] == 0xfe)
+        else if (sample.StartsWith<byte>([0xff, 0xfe]))
         {
             encoding = new UnicodeEncoding(false, true);
             preambleLength = 2;
         }
-        else if (count >= 2 && sample[0] == 0xfe && sample[1] == 0xff)
+        else if (sample.StartsWith<byte>([0xfe, 0xff]))
         {
             encoding = new UnicodeEncoding(true, true);
             preambleLength = 2;
         }
         else
         {
-            var preamble = encoding.GetPreamble();
-            if (preamble.Length > 0 && count >= preamble.Length)
-            {
-                var matches = true;
-                for (var index = 0; index < preamble.Length; index++) matches &= sample[index] == preamble[index];
-                if (matches) preambleLength = preamble.Length;
-            }
+            var preamble = encoding.Preamble;
+            if (!preamble.IsEmpty && sample.StartsWith(preamble)) preambleLength = preamble.Length;
         }
         return encoding;
     }
 
     private static void ValidateStreams(Stream input, Stream output)
     {
-        if (input == null) throw new ArgumentNullException(nameof(input));
-        if (output == null) throw new ArgumentNullException(nameof(output));
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(output);
         if (!input.CanRead) throw new ArgumentException("A readable input stream is required.", nameof(input));
         if (!output.CanWrite) throw new ArgumentException("A writable output stream is required.", nameof(output));
         if (ReferenceEquals(input, output)) throw new ArgumentException("Input and output must be separate streams.");
@@ -261,38 +252,55 @@ internal static class DocumentTextCodec
         };
     }
 
+    private static int ExpandLineEndings(ReadOnlySpan<char> input, Span<char> output, ReadOnlySpan<char> ending)
+    {
+        var written = 0;
+        foreach (var character in input)
+        {
+            if (character == '\n')
+                throw new InvalidDataException("The native document is not in canonical CR format.");
+            if (character == '\r')
+            {
+                ending.CopyTo(output[written..]);
+                written += ending.Length;
+            }
+            else output[written++] = character;
+        }
+        return written;
+    }
+
     private sealed class EncodedWriter
     {
         private readonly Stream _output;
         private readonly Encoder _encoder;
-        private readonly byte[] _bytes;
+        private readonly Memory<byte> _bytes;
         private readonly long _maximumBytes;
 
-        public EncodedWriter(Stream output, Encoding encoding, int characterCapacity, long maximumBytes)
+        public EncodedWriter(Stream output, Encoding encoding, Memory<byte> bytes, long maximumBytes)
         {
             _output = output;
             _encoder = encoding.GetEncoder();
-            _bytes = new byte[encoding.GetMaxByteCount(characterCapacity)];
+            _bytes = bytes;
             _maximumBytes = maximumBytes;
         }
 
         public long BytesWritten { get; private set; }
 
-        public async Task WriteAsync(char[] characters, int count, bool final, CancellationToken cancellationToken)
+        public async ValueTask WriteAsync(ReadOnlyMemory<char> characters, bool final, CancellationToken cancellationToken)
         {
             var offset = 0;
             bool complete;
             do
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                _encoder.Convert(characters, offset, count - offset, _bytes, 0, _bytes.Length, final,
+                _encoder.Convert(characters.Span[offset..], _bytes.Span, final,
                     out var charactersUsed, out var bytesUsed, out complete);
                 offset += charactersUsed;
                 if (bytesUsed > _maximumBytes - BytesWritten)
                     throw new NotSupportedException("The document exceeds the supported encoded size.");
                 if (bytesUsed > 0)
                 {
-                    await _output.WriteAsync(_bytes, 0, bytesUsed, cancellationToken).ConfigureAwait(false);
+                    await _output.WriteAsync(_bytes[..bytesUsed], cancellationToken).ConfigureAwait(false);
                     BytesWritten += bytesUsed;
                 }
                 if (!complete && bytesUsed == 0 && charactersUsed == 0)
@@ -311,10 +319,10 @@ internal static class DocumentTextCodec
 
         public LineEnding DetectedEnding => _hasCrlf ? LineEnding.Crlf : _hasCr ? LineEnding.Cr : _hasLf ? LineEnding.Lf : LineEnding.Crlf;
 
-        public int Normalize(char[] input, int count, char[] output)
+        public int Normalize(ReadOnlySpan<char> input, Span<char> output)
         {
             var written = 0;
-            for (var index = 0; index < count; index++)
+            for (var index = 0; index < input.Length; index++)
             {
                 var character = input[index];
                 if (_afterCr)

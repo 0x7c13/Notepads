@@ -16,7 +16,7 @@ namespace Notepads.Features.Sessions.Validation;
 internal sealed record RecoveryEncodedRecord(RecoveryRecord Record, string PayloadSha256, byte[] EnvelopeBytes);
 
 /// <summary>One bounded wire format for recovery content and lifecycle metadata.</summary>
-internal static class RecoveryRecordCodec
+internal static partial class RecoveryRecordCodec
 {
     public const int FormatVersion = 1;
     public const int MaximumMetadataByteLength = 8 * 1024 * 1024;
@@ -26,16 +26,17 @@ internal static class RecoveryRecordCodec
     public static RecoveryEncodedRecord Encode(RecoveryRecord record, RecoveryAddress address)
     {
         Validate(record, address);
-        byte[] payload;
+        using var buffer = new MetadataBuffer();
         try
         {
-            using var buffer = new MetadataBuffer();
             JsonSerializer.Serialize(buffer, record, SessionJsonContext.Default.RecoveryRecord);
-            payload = buffer.ToArray();
         }
         catch (JsonException error) { throw new InvalidDataException("Recovery metadata could not be serialized.", error); }
+        var payload = buffer.GetBuffer().AsSpan(0, checked((int)buffer.Length));
         ValidateJson(payload);
-        var hash = Convert.ToHexStringLower(SHA256.HashData(payload));
+        Span<byte> digest = stackalloc byte[SHA256.HashSizeInBytes];
+        SHA256.HashData(payload, digest);
+        var hash = Convert.ToHexStringLower(digest);
         using var output = new MetadataBuffer();
         using (var writer = new Utf8JsonWriter(output))
         {
@@ -49,7 +50,7 @@ internal static class RecoveryRecordCodec
         if (output.Length > MaximumMetadataByteLength)
             throw new InvalidDataException("Recovery metadata exceeds the 8 MiB limit.");
         // Own a deserialized snapshot; subsequent caller mutations cannot alter the published identity.
-        return Decode(output.ToArray(), address);
+        return Decode(output.GetBuffer().AsSpan(0, checked((int)output.Length)), address);
     }
 
     public static RecoveryEncodedRecord Decode(ReadOnlySpan<byte> envelope, RecoveryAddress address)
@@ -90,7 +91,9 @@ internal static class RecoveryRecordCodec
             }
             if (version != FormatVersion || !Sha256Hex.IsValid(hash) || payload.IsEmpty)
                 throw new InvalidDataException("Invalid recovery envelope version, hash or payload.");
-            var actualHash = Convert.ToHexStringLower(SHA256.HashData(payload));
+            Span<byte> digest = stackalloc byte[SHA256.HashSizeInBytes];
+            SHA256.HashData(payload, digest);
+            var actualHash = Convert.ToHexStringLower(digest);
             if (!string.Equals(hash, actualHash, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidDataException("The recovery payload checksum does not match its original bytes.");
             var record = JsonSerializer.Deserialize(payload, SessionJsonContext.Default.RecoveryRecord);
@@ -357,7 +360,7 @@ internal static class RecoveryRecordCodec
         }
     }
 
-    private sealed class MetadataBuffer : MemoryStream
+    private sealed partial class MetadataBuffer : MemoryStream
     {
         public override void Write(byte[] buffer, int offset, int count)
         {

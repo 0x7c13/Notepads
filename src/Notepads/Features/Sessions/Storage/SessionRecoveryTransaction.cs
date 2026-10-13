@@ -17,7 +17,7 @@ namespace Notepads.Features.Sessions.Storage;
 /// OS admission protects every process; scope pins and asset leases protect
 /// native writers, immutable candidates and readers outside this short gate.
 /// </summary>
-internal static class SessionRecoveryTransaction
+internal static partial class SessionRecoveryTransaction
 {
     private static readonly SemaphoreSlim Gate = new(1, 1);
 
@@ -37,7 +37,7 @@ internal static class SessionRecoveryTransaction
         }
     }
 
-    private sealed class Lease : IDisposable
+    private sealed partial class Lease : IDisposable
     {
         private int _disposed;
         private readonly IDisposable _fileLease;

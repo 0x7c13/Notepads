@@ -6,7 +6,6 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Notepads.Features.Sessions.Contracts;
 
@@ -14,6 +13,8 @@ internal sealed class SessionScopeData
 {
     public const string Primary = "Primary";
     public const string Secondary = "Secondary";
+
+    private static readonly Guid StableOwner = CreateStableOwner();
 
     public Guid OwnerId { get; set; }
 
@@ -31,15 +32,13 @@ internal sealed class SessionScopeData
         }
     }
 
-    public static Guid GetStableOwner()
+    public static Guid GetStableOwner() => StableOwner;
+
+    private static Guid CreateStableOwner()
     {
-        using (var hash = SHA256.Create())
-        {
-            var bytes = hash.ComputeHash(Encoding.UTF8.GetBytes("Notepads.DocumentOwner/NotepadsSessionData.json"));
-            var identity = new byte[16];
-            Array.Copy(bytes, identity, identity.Length);
-            return new Guid(identity);
-        }
+        Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
+        SHA256.HashData("Notepads.DocumentOwner/NotepadsSessionData.json"u8, hash);
+        return new Guid(hash[..16]);
     }
 
     public static bool IsReservedOwner(Guid ownerId) => ownerId == GetStableOwner();

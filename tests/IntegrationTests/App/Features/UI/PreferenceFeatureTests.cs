@@ -19,12 +19,12 @@ using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using static NotepadsWorkspaceTests.WorkspaceTestUI;
 using static NotepadsIntegrationTests.FeatureUI;
+using static NotepadsWorkspaceTests.WorkspaceTestUI;
 
 namespace NotepadsIntegrationTests;
 
-internal static class PreferenceFeatureTests
+internal static partial class PreferenceFeatureTests
 {
     private const string RestartMarker = "IntegrationPreferencesRestartMarker";
     private static readonly string[] Keys =
@@ -290,7 +290,7 @@ internal static class PreferenceFeatureTests
         log.AppendLine("PASS: Preferences.Restart — a fresh process, settings controls and native editor agree on retained values.");
     }
 
-    private sealed class StoredPreferences : IDisposable
+    private sealed partial class StoredPreferences : IDisposable
     {
         private readonly Dictionary<string, object> _saved;
         internal StoredPreferences(IEnumerable<string> keys) => _saved = keys.ToDictionary(key => key, ApplicationSettingsStore.Read);

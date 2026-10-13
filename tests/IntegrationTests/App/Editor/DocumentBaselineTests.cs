@@ -31,6 +31,7 @@ internal static class DocumentBaselineTests
         {
             await CheckSnapshotAndReaderOwnershipAsync(folder, owner);
             await CheckCanonicalChunksAsync(owner);
+            await CheckSpanAndMemoryStreamsAsync(owner);
             await CheckFailedCandidatesAsync(folder, owner);
             await CheckRecoveryOwnershipAsync(folder, owner);
             await CheckPreparedGenerationOwnershipAsync(folder, owner);
@@ -110,8 +111,8 @@ internal static class DocumentBaselineTests
             var disk = await FileIO.ReadBufferAsync(input);
             Assert(disk.ToArray().SequenceEqual(raw), "Encoding retries modified the source file.");
             await FileIO.WriteBytesAsync(input, []);
-            using (var empty = await DocumentTextPipeline.DecodeFileAsync(input, automatic, owner))
-                Assert(empty.Baseline.ByteLength == 0, "Auto detection rejected a valid empty file.");
+            using var empty = await DocumentTextPipeline.DecodeFileAsync(input, automatic, owner);
+            Assert(empty.Baseline.ByteLength == 0, "Auto detection rejected a valid empty file.");
         }
         finally
         {
@@ -204,6 +205,13 @@ internal static class DocumentBaselineTests
             stream => stream.WriteAsync([0xF0, 0x9F], 0, 2), ownerId: owner));
         await AssertThrowsAsync<InvalidDataException>(() => DocumentBaseline.CreateAsync(
             stream => stream.WriteAsync([65, 10], 0, 2), ownerId: owner));
+        await AssertThrowsAsync<DecoderFallbackException>(() => DocumentBaseline.CreateAsync(
+            stream => stream.WriteAsync(new byte[] { 0xF0, 0x9F }.AsMemory()).AsTask(), ownerId: owner));
+        await AssertThrowsAsync<InvalidOperationException>(() => DocumentBaseline.CreateAsync(async stream =>
+        {
+            try { await stream.WriteAsync(new byte[] { 10 }.AsMemory()); }
+            catch (InvalidDataException) { }
+        }, ownerId: owner));
         await AssertThrowsAsync<InvalidOperationException>(() => DocumentBaseline.CreateAsync(async stream =>
         {
             try { await stream.WriteAsync([10], 0, 1); }
@@ -291,19 +299,50 @@ internal static class DocumentBaselineTests
         {
             Assert(baseline.File == null && baseline.OwnerId == owner && baseline.ByteLength == 0 &&
                 baseline.Sha256 == Hash([]), "An empty generation requires disk storage or has incorrect identity.");
-            using (var snapshot = new DocumentSnapshot(baseline, Encoding.UTF8, LineEnding.Crlf))
-            {
-                await baseline.DisposeAsync();
-                Assert(await snapshot.ReadTextAsync() == string.Empty, "An empty snapshot could not be independently retained.");
-            }
+            using var snapshot = new DocumentSnapshot(baseline, Encoding.UTF8, LineEnding.Crlf);
+            await baseline.DisposeAsync();
+            Assert(await snapshot.ReadTextAsync() == string.Empty, "An empty snapshot could not be independently retained.");
         }
         finally { await baseline.DisposeAsync(); }
     }
 
     private static string Hash(byte[] bytes)
     {
-        using (var hash = SHA256.Create())
-            return BitConverter.ToString(hash.ComputeHash(bytes)).Replace("-", string.Empty).ToLowerInvariant();
+        using var hash = SHA256.Create();
+        return BitConverter.ToString(hash.ComputeHash(bytes)).Replace("-", string.Empty).ToLowerInvariant();
+    }
+
+    private static async Task CheckSpanAndMemoryStreamsAsync(Guid owner)
+    {
+        // Invalid bytes around the slice must neither be validated, hashed nor written.
+        byte[] padded = [0xff, 0xe4, 0xb8, 0xad, 0xf0, 0x9f, 0x98, 0x80, 0x0d, 0x00, 0xff];
+        var expected = padded[1..^1];
+        var baseline = await DocumentBaseline.CreateAsync(async stream =>
+        {
+            stream.Write(padded.AsSpan(1, 2));
+            await Task.Yield();
+            await stream.WriteAsync(padded.AsMemory(3, padded.Length - 4));
+        }, owner);
+        try
+        {
+            Assert(baseline.ByteLength == expected.Length && baseline.Sha256 == Hash(expected),
+                "Span and Memory writes changed the baseline bytes or hash.");
+            using var reader = await baseline.OpenReadStreamAsync();
+            var output = Enumerable.Repeat((byte)0xcc, expected.Length + 2).ToArray();
+            var count = reader.Read(output.AsSpan(1, 2));
+            Assert(await reader.ReadAsync(Memory<byte>.Empty) == 0 && reader.Position == count,
+                "An empty Memory read advanced the lease.");
+            while (count < expected.Length)
+            {
+                var read = await reader.ReadAsync(output.AsMemory(1 + count, expected.Length - count));
+                Assert(read > 0, "The leased reader ended before its committed prefix.");
+                count += read;
+            }
+            Assert(output[0] == 0xcc && output[^1] == 0xcc && output.AsSpan(1, expected.Length).SequenceEqual(expected),
+                "The leased Span/Memory reader wrote outside the requested slice or changed its content.");
+            Assert(await reader.ReadAsync(output.AsMemory(1, 1)) == 0, "A lease read past its committed prefix.");
+        }
+        finally { await baseline.DisposeAsync(); }
     }
 
     private static async Task<bool> ExistsAsync(StorageFolder folder, string name)

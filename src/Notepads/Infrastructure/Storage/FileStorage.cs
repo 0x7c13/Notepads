@@ -47,7 +47,7 @@ public static class FileStorage
     {
         try
         {
-            using (var stream = await file.OpenStreamForReadAsync()) { }
+            using var stream = await file.OpenStreamForReadAsync();
             return true;
         }
         catch (FileNotFoundException)

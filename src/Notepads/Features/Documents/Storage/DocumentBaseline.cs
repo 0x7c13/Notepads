@@ -65,7 +65,7 @@ public sealed partial class DocumentBaseline : IDisposable
     public static async Task<DocumentBaseline> CreateAsync(Func<Stream, Task> writeCanonicalUtf8Async,
         Guid ownerId, CancellationToken cancellationToken = default)
     {
-        if (writeCanonicalUtf8Async == null) throw new ArgumentNullException(nameof(writeCanonicalUtf8Async));
+        ArgumentNullException.ThrowIfNull(writeCanonicalUtf8Async);
         if (ownerId == Guid.Empty) throw new ArgumentException("A document asset requires its owning scope.", nameof(ownerId));
         cancellationToken.ThrowIfCancellationRequested();
         var generation = Guid.NewGuid();
@@ -102,14 +102,12 @@ public sealed partial class DocumentBaseline : IDisposable
     public static Task<DocumentBaseline> FromTextAsync(string text, Guid ownerId,
         CancellationToken cancellationToken = default)
     {
-        if (text == null) throw new ArgumentNullException(nameof(text));
+        ArgumentNullException.ThrowIfNull(text);
         return CreateAsync(async stream =>
         {
-            using (var writer = new StreamWriter(stream, new UTF8Encoding(false, true), 16384, leaveOpen: true))
-            {
-                await LineEndingUtility.WriteAsync(writer, text, LineEnding.Cr).ConfigureAwait(false);
-                await writer.FlushAsync().ConfigureAwait(false);
-            }
+            using var writer = new StreamWriter(stream, new UTF8Encoding(false, true), 16384, leaveOpen: true);
+            await LineEndingUtility.WriteAsync(writer, text, LineEnding.Cr).ConfigureAwait(false);
+            await writer.FlushAsync().ConfigureAwait(false);
         }, ownerId, cancellationToken);
     }
 
@@ -135,24 +133,22 @@ public sealed partial class DocumentBaseline : IDisposable
         var asset = DocumentAssetLease.Acquire(file, persistent: true);
         try
         {
-            using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
-            using (var validator = new CanonicalWriteStream(Stream.Null, cancellationToken))
+            using var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false);
+            using var validator = new CanonicalWriteStream(Stream.Null, cancellationToken);
+            if (stream.Length != byteLength) throw new InvalidDataException("The saved document baseline length changed.");
+            var buffer = new byte[65536];
+            while (true)
             {
-                if (stream.Length != byteLength) throw new InvalidDataException("The saved document baseline length changed.");
-                var buffer = new byte[65536];
-                while (true)
-                {
-                    var count = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
-                    if (count == 0) break;
-                    OnBaselineRead(file.Path, count, cancellationToken);
-                    await validator.WriteAsync(buffer, 0, count, cancellationToken).ConfigureAwait(false);
-                }
-                var actualHash = validator.Complete();
-                if (validator.Length != byteLength || !string.Equals(actualHash, sha256, StringComparison.OrdinalIgnoreCase))
-                    throw new InvalidDataException("The saved document baseline checksum changed.");
-                cancellationToken.ThrowIfCancellationRequested();
-                return new DocumentBaseline(asset, ownerId, generationId, byteLength, actualHash);
+                var count = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+                if (count == 0) break;
+                OnBaselineRead(file.Path, count, cancellationToken);
+                await validator.WriteAsync(buffer, 0, count, cancellationToken).ConfigureAwait(false);
             }
+            var actualHash = validator.Complete();
+            if (validator.Length != byteLength || !string.Equals(actualHash, sha256, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException("The saved document baseline checksum changed.");
+            cancellationToken.ThrowIfCancellationRequested();
+            return new DocumentBaseline(asset, ownerId, generationId, byteLength, actualHash);
         }
         catch
         {
@@ -192,15 +188,14 @@ public sealed partial class DocumentBaseline : IDisposable
         return _asset.DisposeAsync();
     }
 
-    private sealed class CanonicalWriteStream : Stream
+    private sealed partial class CanonicalWriteStream : Stream
     {
         [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed",
             Justification = "The baseline creation transaction owns this borrowed output stream and closes it after validation and flush.")]
         private readonly Stream _stream;
         private readonly CancellationToken _cancellationToken;
-        private readonly SHA256 _hash = SHA256.Create();
+        private readonly IncrementalHash _hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         private readonly Decoder _decoder = new UTF8Encoding(false, true).GetDecoder();
-        private readonly char[] _characters = new char[16384];
         private long _length;
         private bool _completed;
         private bool _faulted;
@@ -221,8 +216,22 @@ public sealed partial class DocumentBaseline : IDisposable
         {
             try
             {
-                ValidateWrite(buffer, offset, count);
-                _stream.Write(buffer, offset, count);
+                ValidateBufferArguments(buffer, offset, count);
+                Write(buffer.AsSpan(offset, count));
+            }
+            catch
+            {
+                _faulted = true;
+                throw;
+            }
+        }
+
+        public override void Write(ReadOnlySpan<byte> buffer)
+        {
+            try
+            {
+                ValidateWrite(buffer);
+                _stream.Write(buffer);
             }
             catch
             {
@@ -236,18 +245,31 @@ public sealed partial class DocumentBaseline : IDisposable
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                ValidateWrite(buffer, offset, count);
+                ValidateBufferArguments(buffer, offset, count);
+                await WriteAsync(buffer.AsMemory(offset, count), cancellationToken).ConfigureAwait(false);
+            }
+            catch
+            {
+                _faulted = true;
+                throw;
+            }
+        }
+
+        public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                ValidateWrite(buffer.Span);
                 if (!cancellationToken.CanBeCanceled)
                 {
-                    await _stream.WriteAsync(buffer, offset, count, _cancellationToken).ConfigureAwait(false);
+                    await _stream.WriteAsync(buffer, _cancellationToken).ConfigureAwait(false);
                 }
                 else
                 {
-                    using (var cancellation = CancellationTokenSource.CreateLinkedTokenSource(
-                        cancellationToken, _cancellationToken))
-                    {
-                        await _stream.WriteAsync(buffer, offset, count, cancellation.Token).ConfigureAwait(false);
-                    }
+                    using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                        cancellationToken, _cancellationToken);
+                    await _stream.WriteAsync(buffer, cancellation.Token).ConfigureAwait(false);
                 }
             }
             catch
@@ -257,34 +279,29 @@ public sealed partial class DocumentBaseline : IDisposable
             }
         }
 
-        private void ValidateWrite(byte[] buffer, int offset, int count)
+        private void ValidateWrite(ReadOnlySpan<byte> buffer)
         {
             if (_completed) throw new ObjectDisposedException(nameof(CanonicalWriteStream));
             if (_faulted) throw new InvalidOperationException("A failed canonical writer cannot publish a generation.");
             _cancellationToken.ThrowIfCancellationRequested();
-            if (buffer == null) throw new ArgumentNullException(nameof(buffer));
-            if (offset < 0 || count < 0 || offset > buffer.Length - count) throw new ArgumentOutOfRangeException();
-            if (count > MaximumByteLength - _length)
+            if (buffer.Length > MaximumByteLength - _length)
                 throw new NotSupportedException("The document exceeds the supported UTF-8 byte length.");
-            ValidateUtf8(buffer, offset, count, flush: false);
-            _hash.TransformBlock(buffer, offset, count, buffer, offset);
-            _length += count;
+            ValidateUtf8(buffer, flush: false);
+            _hash.AppendData(buffer);
+            _length += buffer.Length;
         }
 
-        private void ValidateUtf8(byte[] buffer, int offset, int count, bool flush)
+        private void ValidateUtf8(ReadOnlySpan<byte> buffer, bool flush)
         {
+            Span<char> characters = stackalloc char[1024];
             bool completed;
             do
             {
-                _decoder.Convert(buffer, offset, count, _characters, 0, _characters.Length, flush,
+                _decoder.Convert(buffer, characters, flush,
                     out var bytesUsed, out var charactersUsed, out completed);
-                for (var i = 0; i < charactersUsed; i++)
-                {
-                    if (_characters[i] == '\n')
-                        throw new InvalidDataException("Canonical document baselines require CR line endings.");
-                }
-                offset += bytesUsed;
-                count -= bytesUsed;
+                if (characters[..charactersUsed].Contains('\n'))
+                    throw new InvalidDataException("Canonical document baselines require CR line endings.");
+                buffer = buffer[bytesUsed..];
             } while (!completed);
         }
 
@@ -293,10 +310,11 @@ public sealed partial class DocumentBaseline : IDisposable
             if (_completed) throw new ObjectDisposedException(nameof(CanonicalWriteStream));
             if (_faulted) throw new InvalidOperationException("A failed canonical writer cannot publish a generation.");
             _cancellationToken.ThrowIfCancellationRequested();
-            ValidateUtf8([], 0, 0, flush: true);
-            _hash.TransformFinalBlock([], 0, 0);
+            ValidateUtf8([], flush: true);
+            Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
+            _hash.GetHashAndReset(hash);
             _completed = true;
-            return BitConverter.ToString(_hash.Hash).Replace("-", string.Empty).ToLowerInvariant();
+            return Convert.ToHexStringLower(hash);
         }
 
         public override void Flush() => _stream.Flush();

@@ -19,7 +19,7 @@ internal static class TransferRootReader
     public static async Task<TextEditorSessionDataV2> ReadSourceTransferAsync(TransferToken token,
         CancellationToken cancellationToken = default)
     {
-        if (token == null) throw new ArgumentNullException(nameof(token));
+        ArgumentNullException.ThrowIfNull(token);
         token = token.Clone(); token.Validate();
         var root = await RecoveryRootStore.ReadTransferAsync(token.TransferId, RecoveryRecordKind.TransferOffer, cancellationToken);
         var session = root.Record.Session;

@@ -40,11 +40,13 @@ internal static class SessionManifestStore
         fingerprint.AppendData(Encoding.UTF8.GetBytes(Path.GetFullPath(path).ToUpperInvariant()));
         fingerprint.AppendData([0]);
         fingerprint.AppendData(bytes);
-        var identity = Convert.ToHexStringLower(fingerprint.GetHashAndReset());
+        Span<byte> hash = stackalloc byte[SHA256.HashSizeInBytes];
+        fingerprint.GetHashAndReset(hash);
+        var identity = Convert.ToHexStringLower(hash);
         try
         {
             var jsonBytes = bytes.AsSpan();
-            if (jsonBytes.StartsWith(new byte[] { 0xef, 0xbb, 0xbf })) jsonBytes = jsonBytes.Slice(3);
+            if (jsonBytes.StartsWith<byte>([0xef, 0xbb, 0xbf])) jsonBytes = jsonBytes[3..];
             RecoveryRecordCodec.ValidateJson(jsonBytes);
             var session = JsonSerializer.Deserialize(jsonBytes, SessionJsonContext.Default.NotepadsSessionDataV1);
             if (session?.Version != 1 || session.TextEditors == null ||

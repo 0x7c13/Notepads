@@ -28,12 +28,25 @@ public sealed class DocumentLanguageTests
     [InlineData("plaintext", "Untitled.txt", "comment\r#!/usr/bin/python\r")]
     [InlineData("csharp", "program.cs", "#!/bin/bash\r")]
     [InlineData("plaintext", "script", "#!/usr/bin/python...")]
+    [InlineData("plaintext", "script", "#! \t ")]
+    [InlineData("plaintext", "script", "#!/usr/bin/env -u IGNORED")]
+    [InlineData("plaintext", "script", "#!/usr/bin/env --unset")]
+    [InlineData("python", "script", "#!/usr/bin/env\t-u  IGNORED --unset\tALSO_IGNORED -S 'python3.12' -u")]
+    [InlineData("lua", "script", "#!/usr/bin/env KEY=value \"lua5.4\"\n")]
+    [InlineData("plaintext", null, null)]
     public void DetectUsesFilenameThenSupportedFirstLineInterpreter(string expected, string name, string sample) =>
         Assert.Equal(expected, DocumentLanguages.Detect(name, sample).Id);
 
     [Fact]
     public void DetectionDoesNotScanBeyondTheBoundedPrefix() =>
         Assert.Equal("plaintext", DocumentLanguages.Detect("Unknown.bin", new string(' ', 1024) + "#!/bin/bash").Id);
+
+    [Fact]
+    public void DetectionAcceptsSlicesWithoutReadingSurroundingContent()
+    {
+        Assert.Equal("python", DocumentLanguages.Detect("bad.cs|script.py|bad.json".AsSpan(7, 9), default).Id);
+        Assert.Equal("bash", DocumentLanguages.Detect(default, "junk#!/bin/bash\rjunk".AsSpan(4, 12)).Id);
+    }
 
     [Fact]
     public void FilenameMatchingIsOrdinalInTurkishCulture()
