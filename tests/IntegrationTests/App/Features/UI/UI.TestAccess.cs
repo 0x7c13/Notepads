@@ -22,6 +22,8 @@ namespace Notepads.Presentation.Views.MainPage
         internal bool TestFeatureStatusInteractive => StatusBar?.IsHitTestVisible == true;
         internal ElementTheme TestFeatureTheme => RootGrid.ActualTheme;
         internal MenuFlyout TestFeatureLanguageMenu => LanguageSelectionFlyout;
+        internal MenuFlyout TestFeatureEncodingMenu => EncodingSelectionFlyout;
+        internal void TestFeatureOpenEncodingMenu() => EncodingIndicatorClicked();
         internal void TestFeatureOpenLanguageMenu() => LanguageSelectionFlyout_OnOpening(LanguageSelectionFlyout, null);
         internal void TestFeatureSelectLanguage(MenuFlyoutItem item) => LanguageSelection_OnClick(item, new RoutedEventArgs());
         internal void TestFeatureOpenZoom() => FontZoomIndicatorClicked(NotepadsCore.GetSelectedReadyEditor());

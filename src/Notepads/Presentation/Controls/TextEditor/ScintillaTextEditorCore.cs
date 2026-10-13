@@ -171,6 +171,9 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         RegisterPropertyChangedCallback(ContextFlyoutProperty, (_, __) => _view.ContextFlyout = ContextFlyout);
         _view.DpiChanged += OnNativeDpiChanged;
         Native.CodePage = (int)EditorConstants.ScCpUtf8;
+        // Reuse visible line measurements across viewport restoration and paint tiles.
+        // Native layout falls back to a single-line cache if it encounters a long line.
+        Native.LayoutCache = LineCache.Page;
         // DirectWrite supports mixed RTL/LTR text with an LTR paragraph base.
         // This does not request the unimplemented default-RTL paragraph mode.
         Native.Bidirectional = Bidirectional.L2r;

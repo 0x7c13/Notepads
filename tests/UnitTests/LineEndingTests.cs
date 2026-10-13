@@ -3,6 +3,7 @@
 //  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
+using System.Globalization;
 using System.Text;
 using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.Text;
@@ -11,6 +12,27 @@ namespace Notepads.UnitTests;
 
 public sealed class LineEndingTests
 {
+    [Theory]
+    [InlineData("CR", LineEnding.Cr)]
+    [InlineData("cr", LineEnding.Cr)]
+    [InlineData("Lf", LineEnding.Lf)]
+    [InlineData("cRlF", LineEnding.Crlf)]
+    [InlineData("", LineEnding.Crlf)]
+    [InlineData("unknown", LineEnding.Crlf)]
+    public void StoredEndingNamesAreIndependentOfUserCulture(string name, LineEnding expected)
+    {
+        var previous = CultureInfo.CurrentCulture;
+        try
+        {
+            foreach (var culture in new[] { "en-US", "tr-TR" })
+            {
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
+                Assert.Equal(expected, LineEndingUtility.GetLineEndingByName(name));
+            }
+        }
+        finally { CultureInfo.CurrentCulture = previous; }
+    }
+
     public static TheoryData<string, string> Samples => new()
     {
         { "empty", "" },

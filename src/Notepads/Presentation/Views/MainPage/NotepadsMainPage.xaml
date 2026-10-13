@@ -557,7 +557,8 @@
                            IsTapEnabled="True"
                            Tapped="StatusBarComponent_OnTapped">
                     <TextBlock.ContextFlyout>
-                        <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                        <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight"
+                                    Opening="EncodingSelectionFlyout_OnOpening" Closing="StatusBarFlyout_OnClosing">
                             <MenuFlyout.MenuFlyoutPresenterStyle>
                                 <Style TargetType="MenuFlyoutPresenter">
                                     <Setter Property="BorderThickness" Value="0" />

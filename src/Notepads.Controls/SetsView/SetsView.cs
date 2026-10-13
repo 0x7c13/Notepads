@@ -50,9 +50,13 @@ public partial class SetsView : ListViewBase
 
     private bool _hasLoaded;
     private bool _isDragging;
+    private bool _scrollerReady;
+    private bool _applyingScroll;
+    private double? _pendingScrollOffset;
+    private SetsViewItem _pendingScrollItem;
 
     private double _scrollViewerHorizontalOffset = .0f;
-    public double ScrollViewerHorizontalOffset => _scrollViewerHorizontalOffset;
+    public double ScrollViewerHorizontalOffset => _pendingScrollOffset ?? _scrollViewerHorizontalOffset;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SetsView"/> class.
@@ -115,6 +119,7 @@ public partial class SetsView : ListViewBase
     /// <inheritdoc/>
     protected override void OnApplyTemplate()
     {
+        _scrollerReady = false;
         base.OnApplyTemplate();
 
         if (_setItemsPresenter != null)
@@ -125,6 +130,7 @@ public partial class SetsView : ListViewBase
         if (_setsScroller != null)
         {
             _setsScroller.Loaded -= SetsScrollViewer_Loaded;
+            _setsScroller.LayoutUpdated -= SetsScrollViewer_PendingScrollLayoutUpdated;
             _setsScroller.ViewChanged -= SetsScrollViewer_ViewChanged;
         }
 
@@ -147,8 +153,7 @@ public partial class SetsView : ListViewBase
 
     private void SetsScrollViewer_Loaded(object sender, RoutedEventArgs e)
     {
-        _setsScroller.Loaded -= SetsScrollViewer_Loaded;
-
+        _scrollerReady = false;
         if (_setsScrollBackButton != null)
         {
             _setsScrollBackButton.Click -= ScrollSetBackButton_Click;
@@ -173,6 +178,23 @@ public partial class SetsView : ListViewBase
         {
             _setsScrollForwardButton.Click += ScrollSetForwardButton_Click;
         }
+
+        // Tab headers finish sizing during their own Loaded handlers. Applying
+        // an offset here would clamp it against an extent that can still be zero.
+        _setsScroller.LayoutUpdated -= SetsScrollViewer_PendingScrollLayoutUpdated;
+        _setsScroller.LayoutUpdated += SetsScrollViewer_PendingScrollLayoutUpdated;
+    }
+
+    private void SetsScrollViewer_PendingScrollLayoutUpdated(object sender, object e)
+    {
+        if (_setsScroller == null) return;
+        // The empty scroller may load before restored headers are added.
+        // Their first Loaded handler establishes the constrained header width.
+        if (_setsScroller.IsLoaded && Items.Count > 0 && !_hasLoaded) return;
+        _setsScroller.LayoutUpdated -= SetsScrollViewer_PendingScrollLayoutUpdated;
+        if (!_setsScroller.IsLoaded) return;
+        _scrollerReady = true;
+        ApplyPendingScroll();
     }
 
     private void ScrollSetBackButton_Click(object sender, RoutedEventArgs e)
@@ -192,6 +214,13 @@ public partial class SetsView : ListViewBase
             // Skip if we're dragging, we'll reset when we're done.
             return;
         }
+
+        // Input can change selection before a deferred scroll is applied. Keep
+        // the latest selection visible, but do not let synthetic Loaded refreshes
+        // replace the explicitly restored tab-strip position.
+        if (e?.AddedItems.Count > 0 && (_pendingScrollOffset != null || _pendingScrollItem != null) &&
+            SelectedItem is SetsViewItem selected)
+            ScrollSetIntoView(selected);
 
         if (_setsContentPresenter != null)
         {
@@ -474,15 +503,62 @@ public partial class SetsView : ListViewBase
 
     public void ScrollTo(double offset)
     {
+        _pendingScrollItem = null;
+        _pendingScrollOffset = offset;
+        SchedulePendingScroll();
+    }
+
+    public void ScrollSetIntoView(SetsViewItem item)
+    {
+        _pendingScrollOffset = null;
+        _pendingScrollItem = item;
+        SchedulePendingScroll();
+    }
+
+    private void SchedulePendingScroll()
+    {
+        // New tabs can arrive after the scroller itself has loaded. Their header
+        // sizes must settle before ChangeView clamps the requested offset.
+        _scrollerReady = false;
+        if (_setsScroller == null) return;
+        _setsScroller.LayoutUpdated -= SetsScrollViewer_PendingScrollLayoutUpdated;
+        _setsScroller.LayoutUpdated += SetsScrollViewer_PendingScrollLayoutUpdated;
+        _setsScroller.InvalidateArrange();
+    }
+
+    private void ApplyPendingScroll()
+    {
+        if (_applyingScroll || !_scrollerReady || _setsScroller?.IsLoaded != true) return;
+        _applyingScroll = true;
         try
         {
-            _setsScroller?.UpdateLayout();
-            _setsScroller?.ChangeView(offset, 0.0f, 1.0f);
+            while (_scrollerReady && _setsScroller?.IsLoaded == true &&
+                (_pendingScrollOffset != null || _pendingScrollItem != null))
+            {
+                // Layout may issue a newer request. Read it afterward, and drain
+                // requests made by ChangeView/ScrollIntoView before leaving the guard.
+                _setsScroller.UpdateLayout();
+                if (!_scrollerReady || _setsScroller?.IsLoaded != true) return;
+                if (_pendingScrollOffset is double offset)
+                {
+                    // Preserve the requested position for checkpoints even before
+                    // the asynchronous ViewChanged event publishes the actual offset.
+                    _scrollViewerHorizontalOffset = Math.Clamp(offset, 0, _setsScroller.ScrollableWidth);
+                    _pendingScrollOffset = null;
+                    _setsScroller.ChangeView(offset, 0.0f, 1.0f, disableAnimation: true);
+                }
+                else if (_pendingScrollItem is { } item)
+                {
+                    _pendingScrollItem = null;
+                    if (Items.Contains(item)) ScrollIntoView(item);
+                }
+            }
         }
         catch (Exception ex)
         {
-            throw new Exception($"SetsView failed to scroll to offset: {(long)offset}, Exception: {ex}");
+            throw new InvalidOperationException("SetsView failed to apply its requested scroll position.", ex);
         }
+        finally { _applyingScroll = false; }
     }
 
     // HACK: Simulate left most and right most (tab) edge shadow

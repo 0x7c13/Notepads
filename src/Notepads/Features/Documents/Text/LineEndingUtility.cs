@@ -66,22 +66,9 @@ public static class LineEndingUtility
 
     public static LineEnding GetLineEndingByName(string name)
     {
-        LineEnding lineEnding = LineEnding.Crlf;
-
-        switch (name.ToUpper())
-        {
-            case "CRLF":
-                lineEnding = LineEnding.Crlf;
-                break;
-            case "CR":
-                lineEnding = LineEnding.Cr;
-                break;
-            case "LF":
-                lineEnding = LineEnding.Lf;
-                break;
-        }
-
-        return lineEnding;
+        if (name.Equals("CR", StringComparison.OrdinalIgnoreCase)) return LineEnding.Cr;
+        if (name.Equals("LF", StringComparison.OrdinalIgnoreCase)) return LineEnding.Lf;
+        return LineEnding.Crlf;
     }
 
     public static string ApplyLineEnding(string text, LineEnding lineEnding)

@@ -507,7 +507,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         if (!ReferenceEquals(_sets.SelectedItem, item))
         {
             _sets.SelectedItem = item;
-            _sets.ScrollIntoView(item);
+            _sets.ScrollSetIntoView(item);
         }
     }
 
@@ -516,7 +516,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         var item = GetTabSetsViewItem(tab);
         if (item == null || ReferenceEquals(_sets.SelectedItem, item)) return;
         _sets.SelectedItem = item;
-        _sets.ScrollIntoView(item);
+        _sets.ScrollSetIntoView(item);
     }
 
     public WorkspaceTab GetSelectedTab() => _disposed ? null : (_sets.SelectedItem as SetsViewItem)?.Tag as WorkspaceTab;

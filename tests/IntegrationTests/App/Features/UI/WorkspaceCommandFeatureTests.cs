@@ -134,11 +134,13 @@ internal static class WorkspaceCommandFeatureTests
             core.DeleteTab(pending);
             page.TestController.ResumeRestoration();
         }
+        Check(!core.ContainsTab(pending), "A pending tab can close before its first layout without remaining in the roster.");
         core.SwitchTo(first);
         page.TestRefreshMenu();
         Check(Enabled("MenuFindButton") && page.TestFeatureStatusInteractive,
             "Returning to a ready tab restores search and status interaction.");
         log.AppendLine("PASS: WorkspaceCommands.Pending — real pending row has accurate menu, status and context guards.");
+        log.AppendLine("PASS: WorkspaceCommands.Pending — closing before first layout removes the pending tab safely.");
 
         bool Enabled(string name) => ((Control)page.TestFeatureControl(name)).IsEnabled;
     }

@@ -162,7 +162,11 @@ public partial class SetsViewItem : ListViewItem
 
     public void PrepareForClosing()
     {
-        _setSelectionIndicator.Fill = new SolidColorBrush(Colors.Transparent);
+        // A tab can close before its first layout has created the template parts.
+        if (_setSelectionIndicator != null)
+        {
+            _setSelectionIndicator.Fill = new SolidColorBrush(Colors.Transparent);
+        }
     }
 
     public void Close()

@@ -152,9 +152,10 @@ namespace winrt::WinUIEditor::implementation
 				const auto count = received.Length();
 				if (count == 0 || count > request)
 					throw_hresult(HRESULT_FROM_WIN32(ERROR_HANDLE_EOF));
+				const auto data = received.data();
 				for (uint32_t i = 0; i < count; ++i)
 				{
-					const uint8_t value = received.data()[i];
+					const uint8_t value = data[i];
 					if (continuationBytes)
 					{
 						if (value < nextMin || value > nextMax)
@@ -185,7 +186,7 @@ namespace winrt::WinUIEditor::implementation
 					else
 						throw hresult_invalid_argument();
 				}
-				const auto status = loader->AddData(reinterpret_cast<const char *>(received.data()), count);
+				const auto status = loader->AddData(reinterpret_cast<const char *>(data), count);
 				if (status == static_cast<int>(Scintilla::Status::BadAlloc))
 					throw_hresult(E_OUTOFMEMORY);
 				if (status != static_cast<int>(Scintilla::Status::Ok))

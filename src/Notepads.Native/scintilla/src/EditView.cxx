@@ -335,6 +335,14 @@ std::shared_ptr<LineLayout> EditView::RetrieveLineLayout(Sci::Line lineNumber, c
 	const Sci::Position posLineStart = model.pdoc->LineStart(lineNumber);
 	const Sci::Position posLineEnd = model.pdoc->LineStart(lineNumber + 1);
 	PLATFORM_ASSERT(posLineEnd >= posLineStart);
+	// A page is bounded by line count, not bytes; bidi layouts retain several
+	// arrays per byte of a complete logical line. Keep the original single-line
+	// cache once a long line is encountered, without scanning the document or
+	// repeatedly switching cache modes while scrolling or editing.
+	constexpr Sci::Position maximumPageCacheLineBytes = 4096;
+	if (llc.GetLevel() == LineCache::Page && posLineEnd - posLineStart > maximumPageCacheLineBytes) {
+		llc.SetLevel(LineCache::Caret);
+	}
 	const Sci::Line lineCaret = model.pdoc->SciLineFromPosition(model.sel.MainCaret());
 	return llc.Retrieve(lineNumber, lineCaret,
 		static_cast<int>(posLineEnd - posLineStart), model.pdoc->GetStyleClock(),

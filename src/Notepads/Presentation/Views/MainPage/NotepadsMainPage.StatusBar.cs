@@ -101,7 +101,6 @@ public sealed partial class NotepadsMainPage
             if (StatusBar == null)
             {
                 FindName("StatusBar");
-                BuildEncodingIndicatorFlyout();
             } // Lazy loading
 
             SetupSelectedTabStatus();
@@ -410,7 +409,7 @@ public sealed partial class NotepadsMainPage
         }
         else if (ReferenceEquals(sender, EncodingIndicator))
         {
-            EncodingIndicatorClicked(selectedEditor);
+            EncodingIndicatorClicked();
         }
         else if (ReferenceEquals(sender, ShadowWindowIndicator))
         {
@@ -508,17 +507,22 @@ public sealed partial class NotepadsMainPage
         LineEndingIndicator?.ContextFlyout.ShowAt(LineEndingIndicator);
     }
 
-    private void EncodingIndicatorClicked(ITextEditor selectedEditor)
+    private void EncodingIndicatorClicked()
     {
+        EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
+    }
+
+    private void EncodingSelectionFlyout_OnOpening(object sender, object args)
+    {
+        BuildEncodingIndicatorFlyout();
+        var selectedEditor = NotepadsCore.GetSelectedReadyEditor();
         var reopenWithEncoding = EncodingSelectionFlyout?.Items?.FirstOrDefault(i => i.Name.Equals("ReopenWithEncoding"));
         if (reopenWithEncoding != null)
         {
-            reopenWithEncoding.IsEnabled = selectedEditor.EditingFile != null &&
+            reopenWithEncoding.IsEnabled = selectedEditor?.EditingFile != null &&
                                            selectedEditor.FileModificationState !=
                                            FileModificationState.RenamedMovedOrDeleted;
         }
-
-        EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
     }
 
     private void ShadowWindowIndicatorClicked()

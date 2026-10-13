@@ -22,6 +22,7 @@ internal static class ScrollRestorationTests
 
     internal static async Task RunAsync(StringBuilder log)
     {
+        await LineLayoutCacheTests.RunAsync(log);
         foreach (var wrapping in new[] { TextWrapping.NoWrap, TextWrapping.Wrap })
             await CheckFirstPaintAsync(log, wrapping);
         await CheckFirstPaintAsync(log, TextWrapping.NoWrap, atEnd: true);
