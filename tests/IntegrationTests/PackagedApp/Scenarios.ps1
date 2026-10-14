@@ -339,9 +339,14 @@ try {
                 # Set default -> Choose an app -> list. Home selects the default
                 # app; two Down keys cross the Suggested apps header to Notepads.
                 [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
+                Start-Sleep -Milliseconds 100
                 [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
+                Start-Sleep -Milliseconds 100
                 foreach ($keyCode in @(0x24, 0x28, 0x28, 0x20, 0x09, 0x09, 0x0D)) {
                     [PackagedAppDriver]::Key($picker.Id, $keyCode, $false, $false)
+                    Start-Sleep -Milliseconds 100
+                    $focused = $elementType::FocusedElement
+                    Write-Host "PICKER key=$keyCode focus=$($focused.Current.Name) class=$($focused.Current.ClassName)"
                 }
             }
             finally { $picker.Dispose() }
