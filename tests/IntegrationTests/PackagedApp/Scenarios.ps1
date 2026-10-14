@@ -334,20 +334,30 @@ try {
             } 'foreground Windows file handler picker'
             try {
                 Check ($picker.Path -ieq (Join-Path $env:windir 'System32/OpenWith.exe')) 'Unexpected default-app picker executable.'
-                Check ($picker.WaitForInputIdle(5000)) 'Windows default-app picker did not become idle.'
-                Start-Sleep -Milliseconds 250
-                # Set default -> Choose an app -> list. Home selects the default
-                # app; two Down keys cross the Suggested apps header to Notepads.
-                [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
-                Start-Sleep -Milliseconds 100
-                [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
-                Start-Sleep -Milliseconds 100
-                foreach ($keyCode in @(0x24, 0x28, 0x28, 0x20, 0x09, 0x09, 0x0D)) {
-                    [PackagedAppDriver]::Key($picker.Id, $keyCode, $false, $false)
-                    Start-Sleep -Milliseconds 100
-                    $focused = $elementType::FocusedElement
-                    Write-Host "PICKER key=$keyCode focus=$($focused.Current.Name) class=$($focused.Current.ClassName)"
+                function Wait-PickerFocus([string] $Pattern) {
+                    return Wait-Until {
+                        $focused = $elementType::FocusedElement
+                        if ($focused -and $focused.Current.ProcessId -eq $picker.Id -and
+                            $focused.Current.Name -match $Pattern) { return $focused }
+                    } "Windows picker focus: $Pattern"
                 }
+                $confirm = Wait-PickerFocus '^Set default$'
+                [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
+                $null = Wait-PickerFocus '^Choose an app on your PC$'
+                [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
+                $null = Wait-PickerFocus '^(?!Choose an app on your PC$).+'
+                [PackagedAppDriver]::Key($picker.Id, 0x24, $false, $false)
+                $null = Wait-PickerFocus '^Notepad$'
+                [PackagedAppDriver]::Key($picker.Id, 0x28, $false, $false)
+                $null = Wait-PickerFocus '^Suggested apps$'
+                [PackagedAppDriver]::Key($picker.Id, 0x28, $false, $false)
+                $choice = Wait-PickerFocus '^Notepads(?:, new)?$'
+                # FocusedElement reaches the actual peer even though desktop
+                # tree enumeration cannot traverse this immersive popup.
+                $selection = $choice.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern)
+                $selection.Select()
+                $null = Wait-Until { $selection.Current.IsSelected } 'Notepads selected in Windows picker'
+                Invoke-UI $confirm
             }
             finally { $picker.Dispose() }
             # This strict readback detects image/picker layout changes before
