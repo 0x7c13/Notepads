@@ -138,6 +138,7 @@ function Select-Tab($App, [int] $Index) {
 }
 
 function Invoke-UI($Element) {
+    Check $Element.Current.IsEnabled ("Control is disabled: " + $Element.Current.AutomationId + ' ' + $Element.Current.Name)
     $Element.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
 }
 
@@ -227,7 +228,10 @@ try {
         Wait-Windows 2
         $script:second = @(Get-AppWindows | Where-Object Id -ne $main.Id)[0]
         Expect-Text $second 'second file 世界'
-        Set-Preference $second 'AlwaysOpenNewWindowToggleSwitch' $false
+        # Preferences are intentionally edited in the primary window. Activation
+        # must still read the new value when redirected to a secondary window.
+        Set-Preference $main 'AlwaysOpenNewWindowToggleSwitch' $false
+        Focus-Editor $second
         $tabsBefore = @(Get-Tabs $second).Count
         $null = $Driver.OpenFile($firstFile)
         Wait-Windows 2
