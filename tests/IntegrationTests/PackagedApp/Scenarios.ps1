@@ -292,6 +292,69 @@ try {
         Close-All
     }
 
+    Run-Case 'Explorer default-file association opens the installed application' {
+        # Use Windows' own default-app UI, never forge the protected UserChoice
+        # hash. This entire user profile belongs to the disposable hosted VM.
+        Start-Process 'ms-settings:defaultapps'
+        $settings = Wait-Until {
+            foreach ($process in @(Get-Process SystemSettings -ErrorAction SilentlyContinue)) {
+                if ([PackagedAppDriver]::Window($process.Id) -ne [IntPtr]::Zero) {
+                    return [IsolatedTestProcess]::new($process.Id)
+                }
+            }
+        } 'Windows default-app settings'
+        try {
+            [PackagedAppDriver]::Focus($settings.Id)
+            $search = Wait-Until {
+                $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)
+                foreach ($edit in (Get-Root $settings).FindAll($descendants, $condition)) {
+                    if ($edit.Current.Name -match 'file type|file extension') { return $edit }
+                }
+            } 'default-app file extension search'
+            $search.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('.txt')
+            $association = Wait-Until {
+                foreach ($element in (Get-Root $settings).FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
+                    if ($element.Current.ControlType -eq [Windows.Automation.ControlType]::Button -and $element.Current.Name -match '\.txt') { return $element }
+                }
+            } '.txt default application selector'
+            Invoke-UI $association
+            $choice = Wait-Until {
+                $condition = [Windows.Automation.OrCondition]::new(
+                    [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Notepads App'),
+                    [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Notepads'))
+                foreach ($element in $elementType::RootElement.FindAll($descendants, $condition)) {
+                    if (!$element.Current.IsOffscreen -and $element.Current.ControlType -eq [Windows.Automation.ControlType]::ListItem) { return $element }
+                }
+            } 'installed Notepads file handler in Windows picker'
+            $choice.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+            $confirm = Wait-Until {
+                $condition = [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Set default')
+                return $elementType::RootElement.FindFirst($descendants, $condition)
+            } 'Windows Set default button'
+            Invoke-UI $confirm
+            [PackagedAppDriver]::Close($settings.Id)
+
+            $explorerFile = Join-Path $fixtures 'explorer-activation.txt'
+            [IO.File]::WriteAllText($explorerFile, 'Explorer association Ω😀', [Text.UTF8Encoding]::new($false))
+            Start-Process explorer.exe -ArgumentList ('/select,"' + $explorerFile + '"')
+            $fileItem = Wait-Until {
+                $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::ListItem)
+                foreach ($element in $elementType::RootElement.FindAll($descendants, $condition)) {
+                    if ($element.Current.Name -in 'explorer-activation', 'explorer-activation.txt' -and !$element.Current.IsOffscreen) { return $element }
+                }
+            } 'Explorer fixture file'
+            # Explorer's Invoke pattern performs the item's default action,
+            # following the same association as a double-click on that file.
+            Invoke-UI $fileItem
+            Wait-Windows 1
+            $script:main = @(Get-AppWindows)[0]
+            Expect-Text $main 'Explorer association Ω😀'
+            Check ($main.Path -ieq $expectedExe) 'Explorer activated a different application.'
+            Close-All
+        }
+        finally { $settings.Dispose() }
+    }
+
     Run-Case 'V1 session fixture imports pending Unicode backups and selected tab' {
         # This LocalState belongs exclusively to the package installed by this
         # test. Keep LocalSettings (snapshot preference), replace only fixture data.
@@ -362,68 +425,7 @@ try {
         Close-All
     }
 
-    Run-Case 'Explorer default-file association opens the installed application' {
-        # Use Windows' own default-app UI, never forge the protected UserChoice
-        # hash. This entire user profile belongs to the disposable hosted VM.
-        Start-Process 'ms-settings:defaultapps'
-        $settings = Wait-Until {
-            foreach ($process in @(Get-Process SystemSettings -ErrorAction SilentlyContinue)) {
-                if ([PackagedAppDriver]::Window($process.Id) -ne [IntPtr]::Zero) {
-                    return [IsolatedTestProcess]::new($process.Id)
-                }
-            }
-        } 'Windows default-app settings'
-        try {
-            [PackagedAppDriver]::Focus($settings.Id)
-            $search = Wait-Until {
-                $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)
-                foreach ($edit in (Get-Root $settings).FindAll($descendants, $condition)) {
-                    if ($edit.Current.Name -match 'file type|file extension') { return $edit }
-                }
-            } 'default-app file extension search'
-            $search.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('.txt')
-            $association = Wait-Until {
-                foreach ($element in (Get-Root $settings).FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
-                    if ($element.Current.ControlType -eq [Windows.Automation.ControlType]::Button -and $element.Current.Name -match '\.txt') { return $element }
-                }
-            } '.txt default application selector'
-            Invoke-UI $association
-            $choice = Wait-Until {
-                $condition = [Windows.Automation.OrCondition]::new(
-                    [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Notepads App'),
-                    [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Notepads'))
-                foreach ($element in $elementType::RootElement.FindAll($descendants, $condition)) {
-                    if (!$element.Current.IsOffscreen -and $element.Current.ControlType -eq [Windows.Automation.ControlType]::ListItem) { return $element }
-                }
-            } 'installed Notepads file handler in Windows picker'
-            $choice.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
-            $confirm = Wait-Until {
-                $condition = [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Set default')
-                return $elementType::RootElement.FindFirst($descendants, $condition)
-            } 'Windows Set default button'
-            Invoke-UI $confirm
-            [PackagedAppDriver]::Close($settings.Id)
 
-            $explorerFile = Join-Path $fixtures 'explorer-activation.txt'
-            [IO.File]::WriteAllText($explorerFile, 'Explorer association Ω😀', [Text.UTF8Encoding]::new($false))
-            Start-Process explorer.exe -ArgumentList ('/select,"' + $explorerFile + '"')
-            $fileItem = Wait-Until {
-                $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::ListItem)
-                foreach ($element in $elementType::RootElement.FindAll($descendants, $condition)) {
-                    if ($element.Current.Name -in 'explorer-activation', 'explorer-activation.txt' -and !$element.Current.IsOffscreen) { return $element }
-                }
-            } 'Explorer fixture file'
-            # Explorer's Invoke pattern performs the item's default action,
-            # following the same association as a double-click on that file.
-            Invoke-UI $fileItem
-            Wait-Windows 1
-            $script:main = @(Get-AppWindows)[0]
-            Expect-Text $main 'Explorer association Ω😀'
-            Check ($main.Path -ieq $expectedExe) 'Explorer activated a different application.'
-            Close-All
-        }
-        finally { $settings.Dispose() }
-    }
 }
 catch {
     try {
