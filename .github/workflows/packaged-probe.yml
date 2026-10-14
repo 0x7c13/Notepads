@@ -36,6 +36,8 @@ jobs:
             $zip = Join-Path $env:RUNNER_TEMP "$id.zip"
             Invoke-WebRequest "https://api.nuget.org/v3-flatcontainer/$id/$version/$id.$version.nupkg" -OutFile $zip
             Expand-Archive -LiteralPath $zip -DestinationPath $destination
+            $encodedSdk = Join-Path $destination 'SDK/Windows%20Kits'
+            if (Test-Path -LiteralPath $encodedSdk) { Rename-Item -LiteralPath $encodedSdk -NewName 'Windows Kits' }
           }
       - name: Prepare desktop
         run: ./scripts/Initialize-CIDesktop.ps1 -Production
