@@ -331,7 +331,17 @@ try {
             [PackagedAppDriver]::Key($pickerPid, 0x24, $false, $false)
             [PackagedAppDriver]::Key($pickerPid, 0x28, $false, $false)
             Start-Sleep -Milliseconds 300
-            throw 'PROBE: keyboard selection checkpoint'
+            [PackagedAppDriver]::Key($pickerPid, 0x28, $false, $false)
+            [PackagedAppDriver]::Key($pickerPid, 0x20, $false, $false)
+            [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $false)
+            [PackagedAppDriver]::Key($pickerPid, 0x0D, $false, $false)
+            $null = Wait-Until {
+                $root = Get-Root $settings
+                if (!$root) { return $null }
+                foreach($element in $root.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
+                    if ($element.Current.ControlType -eq [Windows.Automation.ControlType]::Button -and $element.Current.Name -match '^\.txt, Notepads,') { return $element }
+                }
+            } 'Windows confirms Notepads as .txt default'
             [PackagedAppDriver]::Close($settings.Id)
 
             $explorerFile = Join-Path $fixtures 'explorer-activation.txt'
