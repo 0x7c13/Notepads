@@ -322,13 +322,10 @@ try {
                 }
             } '.txt default application selector'
             Invoke-UI $association
-            $pickerPid = Wait-Until {
-                foreach ($p in @(Get-Process OpenWith -ErrorAction SilentlyContinue)) {
-                    if ([PackagedAppDriver]::Window($p.Id) -ne [IntPtr]::Zero) { return $p.Id }
-                }
-            } 'Windows OpenWith window'
-            [PackagedAppDriver]::Focus($pickerPid)
-            Write-Host "PICKER OpenWith $pickerPid"
+            Start-Sleep -Seconds 4
+            $pickerPid = [PackagedAppDriver]::ForegroundProcess()
+            $foreground = $elementType::FromHandle([PackagedAppDriver]::ForegroundWindow())
+            Write-Host "PICKER $((Get-Process -Id $pickerPid).Name) $pickerPid $($foreground.Current.Name) $($foreground.Current.ClassName)"
             [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $true)
             [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $true)
             [PackagedAppDriver]::Key($pickerPid, 0x24, $false, $false)
