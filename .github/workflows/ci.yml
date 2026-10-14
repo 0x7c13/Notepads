@@ -144,7 +144,7 @@ jobs:
             lane: E2E
             configuration: Release
             artifact: ui-test-results
-          - name: Fault Injection Tests
+          - name: Resilience Tests
             lane: Faults
             configuration: Debug
             artifact: native-fault-results

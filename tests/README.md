@@ -3,7 +3,7 @@
 GitHub CI runs the unit, source, headless and native checks automatically, and
 publishes/validates Production Native AOT packages for x86, x64 and ARM64.
 The required hosted E2E job executes the x64 Release AOT App groups, external UI
-Automation and cross-process drag tests. Fault Injection Tests runs the dedicated
+Automation and cross-process drag tests. Resilience Tests runs the dedicated
 Debug allocation-failure checks concurrently on a separate VM. An additional
 manual desktop workflow supports dedicated x64/ARM64 machines. The x64 package
 job additionally installs and drives the actual Production application.
@@ -142,6 +142,11 @@ Tests should protect observable contracts with independent expected results.
 Add a reproducer before changing product logic. Avoid duplicate getter checks,
 arbitrary sleeps, tests that simply restate an implementation, and performance
 thresholds tied to one developer's current machine load.
+
+Startup presentation tests observe the native document at its first paint and
+the tab headers at their first three XAML frames after Loaded. Native surface
+painting can precede XAML Loaded, so it cannot establish the header layout's
+readiness. The header checks never wait for the expected scroll offset to appear.
 
 ## Copyright header checks
 

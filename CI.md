@@ -17,12 +17,12 @@ PR/ref. There are no path filters that could leave a required check pending.
 | Native Tests | NativeDiff and RegexText C++ executables, Release x64 |
 | Native AOT / x86, x64, ARM64 | Solution restore; Production AOT publish; compiled managed-assembly dependency guard; unsigned bundle/upload-package validation; x64 also installs and exercises the Production package |
 | E2E Tests | x64 Release AOT App tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
-| Fault Injection Tests | Dedicated Debug host: optional style/lexer allocation failures, editing/undo recovery and journal integrity |
+| Resilience Tests | Dedicated Debug host: optional style/lexer allocation failures, editing/undo recovery and journal integrity |
 | CI Gate | Every job above succeeded, including every architecture; failure, cancellation or an unexpected skip fails the gate |
 
 Configure **`CI Gate`** as the required branch/ruleset check. Managed Tests and
 Native Tests run in parallel first. Only after both succeed do the three Native
-AOT architectures, E2E Tests and Fault Injection Tests start in parallel. A failed prerequisite skips
+AOT architectures, E2E Tests and Resilience Tests start in parallel. A failed prerequisite skips
 these heavier jobs and fails the gate. Once started, a job's failure does not
 cancel its siblings; the package matrix also continues other architectures when
 one fails. Unit fixtures parallelize inside their runner; source and headless
