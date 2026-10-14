@@ -24,6 +24,7 @@ internal static partial class SessionControllerTests
 {
     private static async Task VerifyImportedFileLookupAsync(StringBuilder log)
     {
+        await VerifyFileLookupCannotReplaceStartupSelectionAsync();
         await VerifyFileLookupDuringDiscoveryAsync();
         await VerifyEarlyRestoreIntentLookupAsync();
         await VerifyCanceledCallerLookupAsync();
@@ -131,6 +132,56 @@ internal static partial class SessionControllerTests
                 ((FakeTextEditor)host.Core.GetTabs().Single(tab => tab.Id == fixture.ImportId).ReadyEditor).Text ==
                     FileLookupFixture.RecoveredText,
                 "No-match lookup retried discovery but left the newly admitted recovery worker stopped.");
+        }
+        finally { await fixture.CleanupAsync(); }
+    }
+
+    private static async Task VerifyFileLookupCannotReplaceStartupSelectionAsync()
+    {
+        var fixture = await FileLookupFixture.CreateAsync();
+        try
+        {
+            await using var host = new ControllerHost(fixture.Owner, new SessionRegistry());
+            host.Controller.IsBackupEnabled = false;
+            host.Controller.PauseRestoration();
+            var firstPreparation = new TaskCompletionSource<Guid>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var preparingImport = NewLookupSignal();
+            var releaseImport = NewLookupSignal();
+            host.Controller.BeforeRestorePreparation = async (source, cancellation) =>
+            {
+                firstPreparation.TrySetResult(source.Id);
+                if (source.Id != fixture.ImportId) return;
+                preparingImport.TrySetResult(null);
+                await releaseImport.Task.WaitAsync(cancellation);
+            };
+
+            var startup = host.Controller.LoadLastSessionAsync();
+            // Warm every shared file binding while promotion is paused. The
+            // matching lookup below then changes demand priority synchronously,
+            // before the worker can choose its first row: no scheduling lottery.
+            SessionTestProtocol.Check(await host.Controller.ResolveFileAsync(fixture.UnrelatedFile)
+                    .WaitAsync(TimeSpan.FromSeconds(10)) == null,
+                "An unrelated file was mistaken for a pending import.");
+            var matching = host.Controller.ResolveFileAsync(fixture.File);
+            SessionTestProtocol.Check(!matching.IsCompleted && !startup.IsCompleted,
+                "Paused restoration unexpectedly completed a pending file lookup or startup.");
+            host.Controller.ResumeRestoration();
+            SessionTestProtocol.Check(await firstPreparation.Task.WaitAsync(TimeSpan.FromSeconds(10)) == fixture.SelectedId,
+                "File lookup replaced the saved startup selection before the first recovery row loaded.");
+            SessionTestProtocol.Check(await startup.WaitAsync(TimeSpan.FromSeconds(15)) == 1 &&
+                host.Core.GetSelectedTab()?.Id == fixture.SelectedId,
+                "Startup waited for an unrelated import or selected the lookup target.");
+            await preparingImport.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            SessionTestProtocol.Check(!matching.IsCompleted, "The import preparation barrier was bypassed.");
+            releaseImport.SetResult(null);
+            SessionTestProtocol.Check((await matching.WaitAsync(TimeSpan.FromSeconds(15)))?.Id == fixture.ImportId,
+                "The prioritized file lookup did not receive its recovered editor.");
+            await host.Controller.WaitForRestorationAsync();
+            SessionTestProtocol.Check(host.Core.GetTabs().Select(tab => tab.Id)
+                    .SequenceEqual(new[] { fixture.SelectedId, fixture.ImportId }) &&
+                host.Core.GetSelectedTab()?.Id == fixture.SelectedId &&
+                ((FakeTextEditor)host.Core.GetTabs()[1].ReadyEditor).Text == FileLookupFixture.RecoveredText,
+                "File lookup changed selection/order, duplicated adoption, or lost recovered content.");
         }
         finally { await fixture.CleanupAsync(); }
     }

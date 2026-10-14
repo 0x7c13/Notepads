@@ -85,7 +85,11 @@ internal static class WorkspaceSuite
                 else await WorkspaceLifecycleTests.RunAsync(page, service, registry, gate, phase, owner, log);
                 await page.TestDisposeWindowAsync();
                 page = null;
-                if (phase == "--workspace-restart") await WorkspaceStartupTests.RunAsync(log);
+                if (phase == "--workspace-restart")
+                {
+                    await WorkspaceStartupTests.RunAsync(log);
+                    await WorkspaceActivationTests.RunAsync(log);
+                }
             }
             var currentTokens = StorageApplicationPermissions.FutureAccessList.Entries.ToDictionary(entry => entry.Token, entry => entry.Metadata, StringComparer.Ordinal);
             foreach (var prior in priorTokens)

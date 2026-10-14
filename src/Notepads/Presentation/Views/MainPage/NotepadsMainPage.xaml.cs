@@ -42,14 +42,10 @@ namespace Notepads.Presentation.Views.MainPage;
     Justification = "Window.Closed owns asynchronous shutdown: drain sessions, dispose the core, then release writer ownership; synchronous IDisposable cannot express that protocol.")]
 public sealed partial class NotepadsMainPage : Page
 {
-    private IReadOnlyList<IStorageItem> _appLaunchFiles;
-
-    private string _appLaunchCmdDir;
-    private string _appLaunchCmdArgs;
-
     private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
     private bool _loaded = false;
+    private bool _startupStarted;
     private bool _lastTabMovedToAnotherInstance = false;
     private bool _isAppClosing;
     private bool _viewClosed;
@@ -251,6 +247,8 @@ public sealed partial class NotepadsMainPage : Page
         if (_viewClosed) return;
         _viewClosed = true;
         _isAppClosing = true;
+        _activationReady.TrySetResult(false);
+        _activationLifetime.Cancel();
         ApplicationPreferences.OnSessionBackupAndRestoreOptionChanged -= OnSessionBackupAndRestoreOptionChanged;
         UnbindViewEvents();
         Loaded -= MainPage_Loaded;
@@ -270,6 +268,7 @@ public sealed partial class NotepadsMainPage : Page
         {
             if (sessions != null) await sessions.DrainAsync();
             if (_notepadsCore != null) await _notepadsCore.DisposeAsync();
+            await _activationTail;
             // Keep OS writer ownership until native journals, drops and
             // captured transfers have all completed their shutdown.
             await _context.Sessions.DisposeAsync();
@@ -282,6 +281,7 @@ public sealed partial class NotepadsMainPage : Page
         {
             _sessionManager = null;
             _notepadsCore?.Dispose();
+            _activationLifetime.Dispose();
         }
     }
 
@@ -297,20 +297,28 @@ public sealed partial class NotepadsMainPage : Page
             case null:
                 return;
             case FileActivatedEventArgs fileActivatedEventArgs:
-                _appLaunchFiles = fileActivatedEventArgs.Files;
+                // Do not await: App must activate the window before Sets can load.
+                _ = ActivateFilesAsync(fileActivatedEventArgs.Files);
                 break;
             case CommandLineActivatedEventArgs commandLineActivatedEventArgs:
-                _appLaunchCmdDir = commandLineActivatedEventArgs.Operation.CurrentDirectoryPath;
-                _appLaunchCmdArgs = commandLineActivatedEventArgs.Operation.Arguments;
+                _ = ActivateCommandAsync(commandLineActivatedEventArgs.Operation.CurrentDirectoryPath,
+                    commandLineActivatedEventArgs.Operation.Arguments);
                 break;
         }
     }
 
-    // App should wait for Sets fully loaded before opening files requested by user (by click or from cmd)
-    // Open files from external links or cmd args on Sets Loaded
     private async void Sets_Loaded(object sender, RoutedEventArgs e)
     {
-        if (_context == null || _viewClosed || _isAppClosing) return;
+        if (_context == null || _viewClosed || _startupStarted) return;
+        _startupStarted = true;
+        try { await InitializeWorkspaceAsync(); }
+        catch (OperationCanceledException) when (_viewClosed) { }
+        finally { _activationReady.TrySetResult(false); }
+    }
+
+    private async Task InitializeWorkspaceAsync()
+    {
+        if (!await CanContinueAfterCloseAsync()) return;
 
         if (!_loaded && ApplicationPreferences.IsSessionSnapshotEnabled)
         {
@@ -320,7 +328,7 @@ public sealed partial class NotepadsMainPage : Page
                 // captures the admitted recovery roster. Discovery binds authority.
                 SessionController.IsBackupEnabled = true;
                 await SessionController.LoadLastSessionAsync();
-                if (_viewClosed || _isAppClosing) return;
+                if (!await CanContinueAfterCloseAsync()) return;
                 ShowRecoveryOutcome();
             }
             catch (SessionDataCorruptedException ex)
@@ -356,33 +364,23 @@ public sealed partial class NotepadsMainPage : Page
             }
         }
 
-        if (_viewClosed || _isAppClosing) return;
+        if (!await CanContinueAfterCloseAsync()) return;
         if (ApplicationPreferences.IsSessionSnapshotEnabled)
         {
             SessionController.IsBackupEnabled = true;
             SessionController.StartSessionBackup();
         }
 
-        if (_appLaunchFiles != null && _appLaunchFiles.Count > 0)
-        {
-            await OpenFilesAsync(_appLaunchFiles);
-            _appLaunchFiles = null;
-        }
-        else if (_appLaunchCmdDir != null)
-        {
-            var file = await CommandLineFiles.OpenFileFromCommandLineAsync(_appLaunchCmdDir, _appLaunchCmdArgs, _context.ApplicationName);
-            if (file != null) await OpenFileAsync(file);
-            _appLaunchCmdDir = null;
-            _appLaunchCmdArgs = null;
-        }
+        _activationReady.TrySetResult(true);
+        await _activationTail;
 
-        if (_viewClosed || _isAppClosing) return;
+        if (!await CanContinueAfterCloseAsync()) return;
         if (!_loaded)
         {
             if (NotepadsCore.GetTabCount() == 0)
             {
                 await CreateNewTextEditorAsync();
-                if (_viewClosed || _isAppClosing) return;
+                if (!await CanContinueAfterCloseAsync()) return;
             }
             _loaded = true;
         }
@@ -391,7 +389,7 @@ public sealed partial class NotepadsMainPage : Page
         _ = SessionController.RunStartupMaintenanceAsync();
 
         await BuildOpenRecentButtonSubItemsAsync();
-        if (_viewClosed || _isAppClosing) return;
+        if (!await CanContinueAfterCloseAsync()) return;
 
         Application.Current.EnteredBackground -= App_EnteredBackground;
         Application.Current.EnteredBackground += App_EnteredBackground;
@@ -496,6 +494,7 @@ public sealed partial class NotepadsMainPage : Page
     private async Task<bool> RequestWindowCloseAsync()
     {
         if (_viewClosed || _isAppClosing || _isLastTabCloseInProgress || _closingTextEditors.Count > 0) return false;
+        var closeDecision = _windowCloseDecision = new(TaskCreationOptions.RunContinuationsAsynchronously);
         var closeApproved = false;
         var wasEnabled = IsEnabled;
         try
@@ -540,28 +539,32 @@ public sealed partial class NotepadsMainPage : Page
         }
         finally
         {
-            if (!_viewClosed)
+            try
             {
-                if (closeApproved)
+                if (!_viewClosed)
                 {
-                    IsEnabled = false;
-                    _context.ReleaseInstanceOwnership();
-                }
-                else
-                {
-                    // Loaded can append .LOG text: restore input before promoting parked editors.
-                    IsEnabled = wasEnabled;
-                    _isAppClosing = false;
-                    NotepadsCore.IsClosing = false;
-                    SessionController.ResumeRestoration();
-                    if (ApplicationPreferences.IsSessionSnapshotEnabled)
+                    if (closeApproved)
                     {
-                        SessionController.IsBackupEnabled = true;
-                        SessionController.StartSessionBackup();
+                        IsEnabled = false;
+                        _context.ReleaseInstanceOwnership();
                     }
-                    NotepadsCore.FocusOnSelectedTextEditor();
+                    else
+                    {
+                        // Loaded can append .LOG text: restore input before promoting parked editors.
+                        IsEnabled = wasEnabled;
+                        _isAppClosing = false;
+                        NotepadsCore.IsClosing = false;
+                        SessionController.ResumeRestoration();
+                        if (ApplicationPreferences.IsSessionSnapshotEnabled)
+                        {
+                            SessionController.IsBackupEnabled = true;
+                            SessionController.StartSessionBackup();
+                        }
+                        NotepadsCore.FocusOnSelectedTextEditor();
+                    }
                 }
             }
+            finally { closeDecision.TrySetResult(!closeApproved && !_viewClosed); }
         }
         return closeApproved;
 
