@@ -341,16 +341,22 @@ try {
                             $focused.Current.Name -match $Pattern) { return $focused }
                     } "Windows picker focus: $Pattern"
                 }
+                function Send-PickerKey([int] $Key, [bool] $Shift = $false) {
+                    # OpenWith publishes focus before its keyboard transition
+                    # finishes. Pace real input as well as verifying each target.
+                    Start-Sleep -Milliseconds 100
+                    [PackagedAppDriver]::Key($picker.Id, $Key, $false, $Shift)
+                }
                 $confirm = Wait-PickerFocus '^Set default$'
-                [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
+                Send-PickerKey 0x09 $true
                 $null = Wait-PickerFocus '^Choose an app on your PC$'
-                [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
+                Send-PickerKey 0x09 $true
                 $null = Wait-PickerFocus '^(?!Choose an app on your PC$).+'
-                [PackagedAppDriver]::Key($picker.Id, 0x24, $false, $false)
+                Send-PickerKey 0x24
                 $null = Wait-PickerFocus '^Notepad$'
-                [PackagedAppDriver]::Key($picker.Id, 0x28, $false, $false)
+                Send-PickerKey 0x28
                 $null = Wait-PickerFocus '^Suggested apps$'
-                [PackagedAppDriver]::Key($picker.Id, 0x28, $false, $false)
+                Send-PickerKey 0x28
                 $choice = Wait-PickerFocus '^Notepads(?:, new)?$'
                 # FocusedElement reaches the actual peer even though desktop
                 # tree enumeration cannot traverse this immersive popup.
