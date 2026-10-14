@@ -7,7 +7,7 @@ on:
       package_run:
         description: Build run supplying the unchanged Production artifact
         required: true
-        default: '38529489103'
+        default: '38533664355'
 permissions:
   contents: read
   actions: read
@@ -23,7 +23,7 @@ jobs:
       - name: Download package and framework dependencies
         env:
           GH_TOKEN: ${{ github.token }}
-          PACKAGE_RUN: ${{ inputs.package_run || '38529489103' }}
+          PACKAGE_RUN: ${{ inputs.package_run || '38533664355' }}
         run: |
           gh run download $env:PACKAGE_RUN --name native-aot-x64 --dir artifacts/download
           if ($LASTEXITCODE -ne 0) { throw 'Package download failed.' }

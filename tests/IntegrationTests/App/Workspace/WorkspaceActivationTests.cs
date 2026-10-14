@@ -75,6 +75,7 @@ internal static class WorkspaceActivationTests
         var firstStarted = Signal();
         var releaseFirst = Signal();
         NotepadsMainPage page = null;
+        SessionService service = null;
         try
         {
             await using (var seed = CreateService(owner))
@@ -86,7 +87,7 @@ internal static class WorkspaceActivationTests
                 capture.SelectedEditorId = recoveredId;
                 Check((await seed.SaveAsync(capture, CancellationToken.None)).Succeeded, "Activation recovery fixture could not be saved.");
             }
-            await using var service = CreateService(owner);
+            service = CreateService(owner);
             var workspace = CreatePage(owner, service);
             page = workspace.Page;
             var core = (NotepadsCore)page.TestCore;
@@ -190,6 +191,7 @@ internal static class WorkspaceActivationTests
             releaseFirst.TrySetResult(true);
             DialogManager.ActiveDialog?.Hide();
             if (page != null) await page.TestDisposeWindowAsync();
+            if (service != null) await service.DisposeAsync();
             ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, true);
             ApplicationPreferences.RefreshSessionSnapshotSetting();
             await SessionTestProtocol.CleanupAsync(owner);

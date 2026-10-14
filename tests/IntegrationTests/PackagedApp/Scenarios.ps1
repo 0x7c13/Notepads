@@ -321,26 +321,38 @@ try {
                     if ($element.Current.ControlType -eq [Windows.Automation.ControlType]::Button -and $element.Current.Name -match '\.txt') { return $element }
                 }
             } '.txt default application selector'
+            Check ($association.Current.Name -match '^\.txt, Notepad,') 'The disposable image must begin with Windows Notepad as .txt default.'
             Invoke-UI $association
-            Start-Sleep -Seconds 4
-            $pickerPid = [PackagedAppDriver]::ForegroundProcess()
-            $foreground = $elementType::FromHandle([PackagedAppDriver]::ForegroundWindow())
-            Write-Host "PICKER $((Get-Process -Id $pickerPid).Name) $pickerPid $($foreground.Current.Name) $($foreground.Current.ClassName)"
-            [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $true)
-            [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $true)
-            [PackagedAppDriver]::Key($pickerPid, 0x24, $false, $false)
-            [PackagedAppDriver]::Key($pickerPid, 0x28, $false, $false)
-            Start-Sleep -Milliseconds 300
-            [PackagedAppDriver]::Key($pickerPid, 0x28, $false, $false)
-            [PackagedAppDriver]::Key($pickerPid, 0x20, $false, $false)
-            [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $false)
-            [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $false)
-            [PackagedAppDriver]::Key($pickerPid, 0x0D, $false, $false)
+            # OpenWith's immersive window is not enumerated by EnumWindows and
+            # exposes no UIA descendants on this image. Use its real keyboard UI;
+            # never synthesize UserChoice registry values or bypass its hash.
+            $picker = Wait-Until {
+                $foregroundPid = [PackagedAppDriver]::ForegroundProcess()
+                if (!$foregroundPid) { return $null }
+                $process = Get-Process -Id $foregroundPid -ErrorAction SilentlyContinue
+                if ($process -and $process.Name -eq 'OpenWith') { return $process }
+            } 'foreground Windows file handler picker'
+            try {
+                Check ($picker.Path -ieq (Join-Path $env:windir 'System32/OpenWith.exe')) 'Unexpected default-app picker executable.'
+                Check ($picker.WaitForInputIdle(5000)) 'Windows default-app picker did not become idle.'
+                Start-Sleep -Milliseconds 250
+                # Set default -> Choose an app -> list. Home selects the default
+                # app; two Down keys cross the Suggested apps header to Notepads.
+                [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
+                [PackagedAppDriver]::Key($picker.Id, 0x09, $false, $true)
+                foreach ($keyCode in @(0x24, 0x28, 0x28, 0x20, 0x09, 0x09, 0x0D)) {
+                    [PackagedAppDriver]::Key($picker.Id, $keyCode, $false, $false)
+                }
+            }
+            finally { $picker.Dispose() }
+            # This strict readback detects image/picker layout changes before
+            # Explorer is invoked, rather than silently opening a different app.
             $null = Wait-Until {
                 $root = Get-Root $settings
                 if (!$root) { return $null }
-                foreach($element in $root.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
-                    if ($element.Current.ControlType -eq [Windows.Automation.ControlType]::Button -and $element.Current.Name -match '^\.txt, Notepads,') { return $element }
+                foreach ($element in $root.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
+                    if ($element.Current.ControlType -eq [Windows.Automation.ControlType]::Button -and
+                        $element.Current.Name -match '^\.txt, Notepads,') { return $element }
                 }
             } 'Windows confirms Notepads as .txt default'
             [PackagedAppDriver]::Close($settings.Id)
@@ -395,6 +407,7 @@ try {
             ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $expectedState 'NotepadsSessionData.json') -Encoding utf8
         $script:main = Launch-One
         Expect-Text $main $legacyTexts[1]
+        $null = Wait-Until { @(Get-Tabs $main).Count -ge 2 } 'complete V1 imported tab roster'
         Check (@(Get-Tabs $main).Count -eq 2) 'V1 import did not restore exactly two tabs.'
         Focus-Editor $main
         Key $main 0x31 $true

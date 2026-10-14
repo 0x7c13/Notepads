@@ -87,7 +87,7 @@ Some outbound boundaries intentionally stop at the operating system:
 | Clipboard | Actual copy/cut/paste, selection, undo and Windows DataPackage; rejected/throwing writes | System clipboard history/roaming and cross-app paste in a disposable Windows user/session |
 | File picker | Actual factory, cancel/result/error handling and real file writes | OS chooser UI and arbitrary user folder permissions |
 | Recent files | Actual menu ordering/filtering, open/reuse and clear commands against an in-memory MRU boundary | Windows MRU persistence, permission expiry and access-cache failure handling |
-| Launcher | Actual command-line parsing, protocol policy, URL construction, result/error handling | Store activation, file associations and browser dispatch |
+| Launcher | Actual command-line parsing, protocol policy, URL construction, result/error handling; hosted Explorer default-file association | Store activation and browser dispatch |
 | Printing | Actual print content, limits, commands and lifetime management | OS chooser, pagination against printer capabilities and spooler |
 | Theme | Actual Light/Dark resources, controls, accent and current contrast palette | Physically changing the Windows contrast theme |
 | Input | Native/editor commands, real XAML handlers; separate UIA and drag drivers | Physical IME and assistive-technology interaction |
@@ -121,6 +121,7 @@ and `artifacts/test-overhaul`; those local artifacts are not checked into Git.
 | Theme/accent/slider, zoom geometry, language, view modes | `AppearanceFeatureTests` |
 | Command-line/protocol, picker, recent-file menu, web search, printing | `ShellWorkflowTests` |
 | Session restore, backup, close/save, import/transfer and recovery | Existing controller/storage/recovery tests plus actual MainPage phases |
+| Cold/warm external activation ordering, selected startup tab, close during activation | `WorkspaceActivationTests`, `SessionControllerFileLookupTests`; hosted `PackagedApp` OS activation |
 | Restored viewport on the first paint, wrapping, focus, tab reattachment and long `.LOG` append | `ScrollRestoration` App group |
 | Process leases and abrupt exit | Two packaged processes in the Leases group |
 | Installed Production startup, OS activation, window preference, shutdown, suspension and V1 import | Hosted-only `PackagedApp` external driver |

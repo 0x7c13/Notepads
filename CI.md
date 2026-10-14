@@ -83,12 +83,27 @@ that signing changed only signature footprint metadata and that the installed
 executable matches the archive. A loose development registration is rejected.
 
 An external driver exercises startup, Unicode editing/saving, cold and warm
-Windows file activation, duplicate-file reuse, new-window preferences before and
+Windows file activation, Explorer default-file association, duplicate-file reuse, new-window preferences before and
 after restart, normal close/recovery, OS suspend/resume, termination after a
 completed suspension, and one-time import of V1 UTF-8/UTF-16 recovery fixtures.
 Assertions observe actual editor text through UI Automation, tab membership,
 process/window identity, saved file bytes and OS package execution state. Product
 test hooks and in-process calls to application activation handlers are not used.
+
+The isolated App tests additionally force two startup races found by this work:
+
+- `SessionControllerFileLookupTests` holds a matching imported file while startup
+  restores the saved selected tab. File lookup must not replace the saved selection
+  or make first-document readiness depend on a different file's I/O.
+- `WorkspaceActivationTests` holds recovery and the first activated file, then
+  submits another file/command request. Arrival order and final selection must
+  survive both barriers. Canceling a close during startup must resume processing;
+  actual disposal must settle queued requests even with a file-error dialog open.
+
+The page queues only external activation requests. Normal file commands retain
+their existing admission/coalescing behavior. Initial navigation enqueues without
+waiting, allowing `App` to activate the window; file lookup priority remains
+separate from the saved session selection.
 
 `Test-PackagedApp.ps1` refuses non-hosted machines and pre-existing Notepads
 registrations, processes or data. Its cleanup removes only its installation and
@@ -97,9 +112,14 @@ temporary certificates; cleanup failures fail the test. Evidence under
 UIA/screenshot diagnostics, uploaded with `native-aot-x64`. The private signing key
 is non-exportable and never uploaded. No product installation occurs locally.
 
-Windows `ActivateForFile` tests the OS file activation contract. It does not prove
-Explorer's default-file association or the Microsoft Store installation/update
-service. Migration uses actual V1 data contracts with the installed V2 executable,
+Windows `ActivateForFile` tests the OS file activation contract. A separate case
+chooses Notepads in Windows default-app settings and verifies the association
+before invoking a file's default action in Explorer (the double-click path).
+The default-app picker uses keyboard navigation because its immersive window
+does not expose UIA descendants on the hosted image. An unexpected initial
+handler, picker layout or association readback fails the test.
+This does not exercise the Microsoft Store installation/update service.
+Migration uses actual V1 data contracts with the installed V2 executable,
 not an installed V1 binary upgraded through the Store. These distinctions must
 remain visible when reporting a pass.
 

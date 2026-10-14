@@ -22,7 +22,6 @@ using Notepads.Presentation.PreviewExtensions;
 using Notepads.Presentation.Theming;
 using Notepads.Presentation.Views.Settings;
 using Notepads.Presentation.Workspace;
-using Notepads.Presentation.Workspace.Activation;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;

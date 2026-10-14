@@ -33,10 +33,15 @@ public sealed partial class NotepadsMainPage
     {
         if (_viewClosed) return Task.CompletedTask;
         // Activation and shutdown are dispatched on this window's UI thread.
-        return _activationTail = RunActivationAsync(_activationTail, operation);
+        // Publish this request before invoking any code that could reenter activation.
+        var previous = _activationTail;
+        var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _activationTail = completion.Task;
+        _ = RunActivationAsync(previous, operation, completion);
+        return completion.Task;
     }
 
-    private async Task RunActivationAsync(Task previous, Func<Task> operation)
+    private async Task RunActivationAsync(Task previous, Func<Task> operation, TaskCompletionSource<bool> completion)
     {
         var cancellation = _activationLifetime.Token;
         try
@@ -54,6 +59,7 @@ public sealed partial class NotepadsMainPage
             // File-open failures already show their own dialog in OpenFileAsync.
             LoggingService.LogError($"[{nameof(NotepadsMainPage)}] External activation failed: {ex}");
         }
+        finally { completion.TrySetResult(true); }
     }
 
     private async Task<bool> CanContinueAfterCloseAsync()
