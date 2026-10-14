@@ -121,10 +121,12 @@ function Set-Text($App, [string] $Text) {
 }
 
 function Get-Tabs($App) {
-    $sets = Find-UI $App 'Sets'
-    if (!$sets) { return @() }
+    # SetsView itself is a layout-only element in the UIA control view; its
+    # ListViewItem peers are exposed directly beneath the app window.
+    $root = Get-Root $App
+    if (!$root) { return @() }
     $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::ListItem)
-    return @($sets.FindAll($descendants, $condition))
+    return @($root.FindAll($descendants, $condition) | Where-Object { $_.Current.ProcessId -eq $App.Id -and !$_.Current.IsOffscreen })
 }
 
 function Select-Tab($App, [int] $Index) {
