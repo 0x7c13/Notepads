@@ -117,6 +117,8 @@ temporary certificates; cleanup failures fail the test. Evidence under
 `artifacts/packaged-app/<run-id>` includes per-case results, driver logs, process
 exit codes and failure UIA/screenshot diagnostics, uploaded with `native-aot-x64`.
 Normal-close tests reject abnormal process exits even if recovery data is intact.
+UWP's close exit code `1` is accepted only for a window the driver requested to
+close; that code without a close request, and crash exit codes after one, fail.
 Any lingering closed processes are terminated through retained handles with an
 explicit exit code; a concurrent crash cannot be accepted as that termination.
 The private signing key

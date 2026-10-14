@@ -170,12 +170,17 @@ function Set-Preference($App, [string] $Id, [bool] $Enabled) {
 }
 
 function Close-All {
-    foreach ($app in @(Get-AppWindows)) { [PackagedAppDriver]::Close($app.Id) }
+    $closeRequested = [Collections.Generic.HashSet[object]]::new()
+    foreach ($app in @(Get-AppWindows)) {
+        Check (!$app.HasExited) 'The application exited before its normal close request.'
+        [PackagedAppDriver]::Close($app.Id)
+        $null = $closeRequested.Add($app)
+    }
     Wait-Windows 0
     # UWP may retain a suspended process after normal close. End that already
     # closed instance so the next launch proves disk recovery, not memory reuse.
     Stop-PackagedAppProcesses -Processes $owned -Completed $completedExits `
-        -EvidencePath $exitEvidence -Reason 'Normal window close'
+        -EvidencePath $exitEvidence -Reason 'Normal window close' -CloseRequested $closeRequested
 }
 
 function Launch-One {

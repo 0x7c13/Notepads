@@ -13,18 +13,21 @@ Add-Type -Path (Join-Path $repo 'scripts/IsolatedTestProcess.cs')
 $null = New-Item -ItemType Directory -Path $EvidenceRoot -Force
 $checks = [Collections.Generic.List[string]]::new()
 
-function Verify-Exit([string] $Name, $Process, [string] $ExpectedError, [bool] $Requested) {
+function Verify-Exit([string] $Name, $Process, [string] $ExpectedError, [bool] $Requested, [bool] $Closed = $false) {
     $path = Join-Path $EvidenceRoot "$Name.jsonl"
     $completed = [Collections.Generic.HashSet[object]]::new()
+    $closeRequested = [Collections.Generic.HashSet[object]]::new()
+    if ($Closed) { $null = $closeRequested.Add($Process) }
     $failure = $null
-    try { Stop-PackagedAppProcesses @($Process) $completed $path $Name }
+    try { Stop-PackagedAppProcesses @($Process) $completed $path $Name $closeRequested }
     catch { $failure = $_ }
     if (($ExpectedError -and (!$failure -or $failure.ToString() -notlike $ExpectedError)) -or
         (!$ExpectedError -and $failure)) { throw "Incorrect exit outcome for ${Name}: $failure" }
     $records = @(Get-Content -LiteralPath $path | ConvertFrom-Json)
     $status = if ($ExpectedError) { 'FAIL' } else { 'PASS' }
     if ($records.Count -ne 1 -or $records[0].Status -ne $status -or
-        $records[0].TerminationRequested -ne $Requested -or $records[0].ProcessId -ne $Process.Id -or
+        $records[0].TerminationRequested -ne $Requested -or $records[0].CloseRequested -ne $Closed -or
+        $records[0].ProcessId -ne $Process.Id -or
         $completed.Contains($Process) -ne (!$ExpectedError)) { throw "Incorrect exit evidence for $Name." }
     if ($ExpectedError -notlike '*did not terminate*' -and $records[0].ExitCode -ne $Process.ExitCode) {
         throw "Exit evidence omitted or changed the actual code for $Name."
@@ -41,6 +44,9 @@ foreach ($case in @(
     @{ Name = 'normal-exit'; Code = 0; Error = ''; Terminate = $false },
     @{ Name = 'native-crash'; Code = -1073741819; Error = '*0xC0000005*'; Terminate = $false },
     @{ Name = 'application-failure'; Code = 7; Error = '*0x00000007*'; Terminate = $false },
+    @{ Name = 'unrequested-uwp-exit'; Code = 1; Error = '*0x00000001*'; Terminate = $false },
+    @{ Name = 'requested-uwp-close'; Code = 1; Error = ''; Terminate = $false; Closed = $true },
+    @{ Name = 'crash-after-close-request'; Code = -1073741819; Error = '*0xC0000005*'; Terminate = $false; Closed = $true },
     @{ Name = 'unrequested-minus-one'; Code = -1; Error = '*0xFFFFFFFF*'; Terminate = $false },
     @{ Name = 'intentional-termination'; Code = 0; Error = ''; Terminate = $true }
 )) {
@@ -59,7 +65,7 @@ foreach ($case in @(
             $child.StandardInput.Flush()
             if (!$retained.WaitForExit(10000)) { throw 'Private exit fixture timed out.' }
         }
-        Verify-Exit $case.Name $retained $case.Error $case.Terminate
+        Verify-Exit $case.Name $retained $case.Error $case.Terminate ([bool]$case.Closed)
     }
     finally {
         if (!$child.HasExited) { $child.Kill(); $child.WaitForExit() }

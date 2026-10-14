@@ -7,12 +7,14 @@
 # alone cannot identify a process after exit/reuse. Completed holds handle objects.
 function Stop-PackagedAppProcesses {
     param([object[]] $Processes, [Collections.Generic.HashSet[object]] $Completed,
-        [string] $EvidencePath, [string] $Reason)
+        [string] $EvidencePath, [string] $Reason,
+        [Collections.Generic.HashSet[object]] $CloseRequested)
     foreach ($process in $Processes) {
         if ($Completed.Contains($process)) { continue }
         $record = [ordered]@{
             ProcessId = $process.Id; Path = $process.Path; StartTime = $process.StartTime
-            Reason = $Reason; TerminationRequested = $false; ExitCode = $null
+            Reason = $Reason; CloseRequested = $null -ne $CloseRequested -and $CloseRequested.Contains($process)
+            TerminationRequested = $false; ExitCode = $null
             ExitCodeHex = $null; Status = 'FAIL'; Error = $null
         }
         try {
@@ -23,7 +25,10 @@ function Stop-PackagedAppProcesses {
             if (!$process.WaitForExit(10000)) { throw "Owned process $($process.Id) did not terminate." }
             $record.ExitCode = $process.ExitCode
             $record.ExitCodeHex = '0x{0:X8}' -f $record.ExitCode
-            if ($record.ExitCode -ne 0 -and !($record.TerminationRequested -and $record.ExitCode -eq -1)) {
+            # UWP's window-close path can terminate with 1. Accept it only for a
+            # live window to which this driver actually sent a close request.
+            $normalClose = $record.CloseRequested -and $record.ExitCode -eq 1
+            if ($record.ExitCode -ne 0 -and !$normalClose -and !($record.TerminationRequested -and $record.ExitCode -eq -1)) {
                 throw "Owned process $($process.Id) exited unexpectedly with $($record.ExitCodeHex)."
             }
             $null = $Completed.Add($process)

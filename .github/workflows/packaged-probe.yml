@@ -1,0 +1,69 @@
+name: Packaged app probe
+on:
+  push:
+    branches: [test/packaged-app-e2e]
+  workflow_dispatch:
+    inputs:
+      package_run:
+        description: Build run supplying the unchanged Production artifact
+        required: true
+        default: '38564499115'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  probe:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Download package and framework dependencies
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE_RUN: ${{ inputs.package_run || '38564499115' }}
+        run: |
+          gh run download $env:PACKAGE_RUN --name native-aot-x64 --dir artifacts/download
+          if ($LASTEXITCODE -ne 0) { throw 'Package download failed.' }
+          [xml] $versions = Get-Content Directory.Packages.props
+          foreach ($name in @('Microsoft.UI.Xaml', 'Microsoft.Services.Store.Engagement')) {
+            $version = @($versions.Project.ItemGroup.PackageVersion | Where-Object Include -eq $name).Version
+            $id = $name.ToLowerInvariant()
+            $destination = Join-Path $env:USERPROFILE ".nuget/packages/$id/$version"
+            $null = New-Item -ItemType Directory -Path $destination -Force
+            $zip = Join-Path $env:RUNNER_TEMP "$id.zip"
+            Invoke-WebRequest "https://api.nuget.org/v3-flatcontainer/$id/$version/$id.$version.nupkg" -OutFile $zip
+            Expand-Archive -LiteralPath $zip -DestinationPath $destination
+            $encodedSdk = Join-Path $destination 'SDK/Windows%20Kits'
+            if (Test-Path -LiteralPath $encodedSdk) { Rename-Item -LiteralPath $encodedSdk -NewName 'Windows Kits' }
+          }
+      - name: Prepare desktop
+        run: ./scripts/Initialize-CIDesktop.ps1 -Production
+      - name: Run current driver against retained Production artifact
+        run: |
+          (Get-Date).ToUniversalTime().ToString('O') | Set-Content artifacts/probe-start.txt
+          $packages = @(Get-ChildItem artifacts/download -Recurse -Filter *.msixupload)
+          if ($packages.Count -ne 1) { throw 'Expected one upload package.' }
+          ./scripts/Test.ps1 -Suite Integration -Group PackagedApp -Platform x64 -PackagePath $packages[0].FullName
+      - name: Capture OS exit diagnostics
+        if: always()
+        run: |
+          $start = [datetime](Get-Content artifacts/probe-start.txt)
+          $diagnostics = 'artifacts/exit-diagnostics'
+          $null = New-Item -ItemType Directory -Path $diagnostics -Force
+          foreach ($channel in @('Application', 'Microsoft-Windows-AppModel-Runtime/Admin')) {
+            $events = @(Get-WinEvent -FilterHashtable @{LogName=$channel;StartTime=$start} -ErrorAction SilentlyContinue)
+            ConvertTo-Json -InputObject @($events | Select-Object TimeCreated,ProviderName,Id,LevelDisplayName,Message) -Depth 4 |
+              Set-Content (Join-Path $diagnostics ($channel.Replace('/','-') + '.json'))
+          }
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: packaged-probe
+          path: |
+            artifacts/packaged-app/
+            artifacts/ci-desktop/
+            artifacts/test-runs/
+            artifacts/exit-diagnostics/
