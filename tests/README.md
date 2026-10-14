@@ -2,8 +2,9 @@
 
 GitHub CI runs the unit, source, headless and native checks automatically, and
 publishes/validates Production Native AOT packages for x86, x64 and ARM64.
-The required hosted E2E job executes the x64 Release AOT App groups, Debug native
-fault tests, external UI Automation and cross-process drag tests. An additional
+The required hosted E2E job executes the x64 Release AOT App groups, external UI
+Automation and cross-process drag tests. Fault Injection Tests runs the dedicated
+Debug allocation-failure checks concurrently on a separate VM. An additional
 manual desktop workflow supports dedicated x64/ARM64 machines. The x64 package
 job additionally installs and drives the actual Production application.
 See [CI and local reproduction](../CI.md) for commands, artifacts and runner setup.
@@ -29,6 +30,9 @@ under `Support` are helpers.
 
 # Default correctness matrix, including Release AOT and a separate Debug fault lane.
 ./scripts/Test.ps1 -Suite All -Platform ARM64
+
+# Only optional native allocation failures; this group always builds Debug.
+./scripts/Test.ps1 -Suite Integration -Group NativeFaults -Platform ARM64
 ```
 
 `tests/Tests.slnx` contains both projects. `IntegrationHost=Headless` is the default;
@@ -98,7 +102,10 @@ These distinctions are deliberate. A passing payload or policy test is not a
 claim that the corresponding operating-system interaction was exercised.
 
 Hosted CI executes the x64 Release Native AOT App groups and a separate Debug
-native-fault lane, plus the external UIA and drag drivers. Earlier local validation
+native-fault job, plus the external UIA and drag drivers in the Release job.
+Ordinary syntax and native storage checks run in the Release `Editor` group;
+`NativeFaults` only injects failures and verifies editing, recovery and journal
+integrity. It does not repeat the general syntax/storage suites. Earlier local validation
 used Windows ARM64 Release Native AOT and Debug; the two C++ helpers ran as x64.
 This does not establish runtime coverage for every shipping architecture. The
 future Markdown renderer is outside the current feature map.

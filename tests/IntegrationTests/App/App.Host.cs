@@ -114,7 +114,7 @@ public sealed partial class App : Application
         "--editor" => EditorSuite.RunAsync("", log),
         "--scroll-restoration" => ScrollRestorationTests.RunAsync(log),
         "--persistence" or "--session-resilience" or "--syntax" or "--diff" or "--search" or
-        "--automation-navigation" or "--native-storage" or "--regex-memory" or "--performance" or
+        "--automation-navigation" or "--native-storage" or "--native-faults" or "--regex-memory" or "--performance" or
         "--preview" or "--bidi-preview" => EditorSuite.RunAsync(phase, log),
         _ when phase.StartsWith("--lease-", StringComparison.Ordinal) || phase.StartsWith("--restore-perf-", StringComparison.Ordinal) ||
             phase.StartsWith("--interactive-test ", StringComparison.Ordinal) => EditorSuite.RunAsync(phase, log),

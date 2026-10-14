@@ -132,10 +132,22 @@ jobs:
           if-no-files-found: warn
 
   ui:
-    name: E2E Tests
+    name: ${{ matrix.name }}
     needs: [checks, native]
     runs-on: windows-2025-vs2026
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: E2E Tests
+            lane: E2E
+            configuration: Release
+            artifact: ui-test-results
+          - name: Fault Injection Tests
+            lane: Faults
+            configuration: Debug
+            artifact: native-fault-results
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -157,12 +169,12 @@ jobs:
           $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
           $vs = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
           if ($LASTEXITCODE -ne 0 -or !$vs) { throw 'Visual Studio 2026 is required.' }
-          & (Join-Path $vs 'MSBuild/Current/Bin/MSBuild.exe') ./src/Notepads.sln /t:Restore /p:RestorePackagesConfig=true /p:Configuration=Release /p:Platform=x64 /nologo /v:minimal
+          & (Join-Path $vs 'MSBuild/Current/Bin/MSBuild.exe') ./src/Notepads.sln /t:Restore /p:RestorePackagesConfig=true /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /nologo /v:minimal
           if ($LASTEXITCODE -ne 0) { throw "Solution restore failed: $LASTEXITCODE" }
       - name: Prepare interactive desktop
         run: ./scripts/Initialize-CIDesktop.ps1 -Platform x64
-      - name: Run application and external input tests
-        run: ./scripts/Test-CIUI.ps1
+      - name: Run ${{ matrix.name }}
+        run: ./scripts/Test-CIUI.ps1 -Lane ${{ matrix.lane }}
       - name: Capture desktop failure diagnostics
         if: failure()
         run: |
@@ -192,7 +204,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: ui-test-results
+          name: ${{ matrix.artifact }}
           path: |
             artifacts/ci-desktop/
             artifacts/test-runs/

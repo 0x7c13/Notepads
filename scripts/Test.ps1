@@ -57,7 +57,7 @@ $groups = [ordered]@{
     Search = @{ Profile = 'App'; Arguments = @('--search'); Default = $false }
     NativeStorage = @{ Profile = 'App'; Arguments = @('--native-storage'); Default = $false }
     Persistence = @{ Profile = 'App'; Arguments = @('--persistence'); Default = $true }
-    NativeFaults = @{ Profile = 'App'; Configuration = 'Debug'; Arguments = @('--native-storage', '--syntax'); Default = $true }
+    NativeFaults = @{ Profile = 'App'; Configuration = 'Debug'; Arguments = @('--native-faults'); Default = $true }
     SessionResilience = @{ Profile = 'App'; Arguments = @('--session-resilience'); Default = $false }
     Syntax = @{ Profile = 'App'; Arguments = @('--syntax'); Default = $false }
     Diff = @{ Profile = 'App'; Arguments = @('--diff'); Default = $false }

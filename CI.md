@@ -16,21 +16,24 @@ PR/ref. There are no path filters that could leave a required check pending.
 | Managed Tests | actionlint; all pure unit tests; runner/header/localization checks; real-storage recovery tests; isolated metrics-failure processes; architecture guard negative fixtures |
 | Native Tests | NativeDiff and RegexText C++ executables, Release x64 |
 | Native AOT / x86, x64, ARM64 | Solution restore; Production AOT publish; compiled managed-assembly dependency guard; unsigned bundle/upload-package validation; x64 also installs and exercises the Production package |
-| E2E Tests | x64 Release AOT App tests, Debug native-fault tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
+| E2E Tests | x64 Release AOT App tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
+| Fault Injection Tests | Dedicated Debug host: optional style/lexer allocation failures, editing/undo recovery and journal integrity |
 | CI Gate | Every job above succeeded, including every architecture; failure, cancellation or an unexpected skip fails the gate |
 
 Configure **`CI Gate`** as the required branch/ruleset check. Managed Tests and
 Native Tests run in parallel first. Only after both succeed do the three Native
-AOT architectures and E2E Tests start in parallel. A failed prerequisite skips
+AOT architectures, E2E Tests and Fault Injection Tests start in parallel. A failed prerequisite skips
 these heavier jobs and fails the gate. Once started, a job's failure does not
 cancel its siblings; the package matrix also continues other architectures when
 one fails. Unit fixtures parallelize inside their runner; source and headless
 groups share one build.
-The separate UI job builds and executes the x64 App test host. It runs all default
-App groups from `Test.ps1 -Suite Integration -List`, plus `UIAutomation` and
-`DragDrop`. Its Debug native-fault group remains separate from Release AOT tests.
-App and input tests run sequentially on that job's desktop; package jobs do not
-build the test host again.
+The desktop job matrix gives E2E and fault injection separate VMs and builds.
+E2E runs all default Release App groups from `Test.ps1 -Suite Integration -List`,
+plus `UIAutomation` and `DragDrop`. The Debug lane runs only the default fault
+group, without repeating ordinary syntax or storage tests; those already run in
+the Release `Editor` group. Each desktop runs its groups sequentially. The matrix
+does not cancel one lane when the other fails, and CI Gate requires both.
+Package jobs do not build the test host again.
 
 The Windows image is `windows-2025-vs2026`, with Visual Studio 2026/v145 and Windows
 SDK 10.0.26100.0. `global.json` selects .NET; `Initialize-BuildTools.ps1` checks the
@@ -61,6 +64,8 @@ Artifacts are retained for 14 days, including available diagnostics after failur
 - `ui-test-results`: hosted desktop environment, test/phase results, preservation
   reports and input-driver protocols. Failure diagnostics include an available
   desktop screenshot and recent application/AppModel/deployment event logs.
+- `native-fault-results`: the separate Debug host's build log, fault-injection
+  results, preservation reports and the same desktop failure diagnostics.
 
 `Build-CI.ps1` creates a unique output directory and requires exactly one fresh
 upload package. `Test-AppPackage.ps1` checks the manifest architecture set,
@@ -141,7 +146,11 @@ and registers the restored WinUI framework and SDK VC runtime packages. It refus
 to change a local or self-hosted machine. It also removes the foreground-lock delay
 on its disposable desktop so the input driver can switch between verified test
 windows. An adequate newer framework is retained.
-`Test-CIUI.ps1` selects all default App groups plus the two external input groups.
+`Test-CIUI.ps1 -Lane E2E` selects all default Release App groups plus the two
+external input groups. `-Lane Faults` selects the default Debug group on a separate
+VM. Unsupported configurations or an empty lane fail instead of silently reducing
+coverage. The dedicated `--native-faults` phase rejects Release execution because
+the native injection hooks are compiled only in Debug.
 The hosted driver retains the runner's elevation to arrange the UWP frame. Only
 the desktop drag peer uses a SAFER normal-user token with medium integrity; it
 records and checks its own privilege state before opening its window. No UAC
