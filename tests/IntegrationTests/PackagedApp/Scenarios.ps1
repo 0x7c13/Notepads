@@ -131,10 +131,18 @@ function Get-Tabs($App) {
 
 function Select-Tab($App, [int] $Index) {
     $tabs = @(Get-Tabs $App)
-    Check ($Index -ge 0 -and $Index -lt $tabs.Count) 'Tab index is outside the restored workspace.'
-    $pattern = $tabs[$Index].GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern)
-    $pattern.Select()
-    $null = Wait-Until { $pattern.Current.IsSelected -and (Get-Editor $App) } 'selected tab editor'
+    Check ($Index -ge 0 -and $Index -lt $tabs.Count -and $Index -lt 9) 'Tab index is outside the shortcut fixture range.'
+    $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Text)
+    $title = $tabs[$Index].FindFirst($descendants, $condition).Current.Name
+    Check (![string]::IsNullOrWhiteSpace($title)) 'The tab must expose a readable title.'
+    # SetsView uses its own selection model; its ListViewItem peers do not
+    # implement SelectionItemPattern. Drive the real Ctrl+number shortcut.
+    Focus-Editor $App
+    Key $App (0x31 + $Index) $true
+    $null = Wait-Until {
+        $path = Find-UI $App 'PathIndicator'
+        $path -and $path.Current.Name.EndsWith($title, [StringComparison]::Ordinal) -and (Get-Editor $App)
+    } 'selected tab path and editor'
 }
 
 function Invoke-UI($Element) {
