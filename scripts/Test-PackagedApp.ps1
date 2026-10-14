@@ -48,6 +48,17 @@ function Get-EntryHash($Entry) {
     finally { $stream.Dispose() }
 }
 
+function Get-PayloadHashes($Archive) {
+    $hashes = @{}
+    foreach ($entry in $Archive.Entries) {
+        # SignTool writes these three package footprint files. Everything else,
+        # including AppxManifest.xml, the block map and all resources, must match.
+        if ($entry.FullName -in '[Content_Types].xml', 'AppxSignature.p7x', 'AppxMetadata/CodeIntegrity.cat') { continue }
+        $hashes.Add($entry.FullName, (Get-EntryHash $entry))
+    }
+    return $hashes
+}
+
 try {
     & (Join-Path $PSScriptRoot 'Test-AppPackage.ps1') -Path $sourcePackage -ExpectedArchitectures x64
     $archive = [IO.Compression.ZipFile]::OpenRead($sourcePackage)
@@ -65,11 +76,11 @@ try {
         $payloads = @($bundleManifest.Bundle.Packages.Package | Where-Object { $_.Type -eq 'application' -and $_.Architecture -eq 'x64' })
         if ($payloads.Count -ne 1) { throw 'Expected one x64 application payload.' }
         $payloadName = $payloads[0].FileName
-        $payloadHash = Get-EntryHash $archive.GetEntry($payloadName)
         $payload = [IO.Compression.ZipArchive]::new($archive.GetEntry($payloadName).Open(), [IO.Compression.ZipArchiveMode]::Read)
         try {
             $manifest = Read-ZipXml $payload 'AppxManifest.xml'
             $exeHash = Get-EntryHash $payload.GetEntry('Notepads.exe')
+            $payloadHashes = Get-PayloadHashes $payload
         }
         finally { $payload.Dispose() }
     }
@@ -84,11 +95,14 @@ try {
     if (@(Get-AppxPackage -AllUsers -Name $identity.Name).Count -or @(Get-Process Notepads -ErrorAction SilentlyContinue).Count) {
         throw 'A pre-existing Notepads package/process must never be used or removed by this test.'
     }
+    $priorData = @(Get-ChildItem -LiteralPath (Join-Path $env:LOCALAPPDATA 'Packages') -Directory |
+        Where-Object Name -Like ($identity.Name + '_*'))
+    if ($priorData.Count) { throw 'Pre-existing Notepads package data must never be used as a fixture.' }
 
     # Trust a short-lived public certificate only on this disposable VM. The
     # private key stays in its certificate store and is never uploaded as evidence.
     $certificate = New-SelfSignedCertificate -Type CodeSigningCert -Subject $identity.Publisher `
-        -CertStoreLocation Cert:\CurrentUser\My -NotAfter (Get-Date).AddDays(2)
+        -KeyExportPolicy NonExportable -CertStoreLocation Cert:\CurrentUser\My -NotAfter (Get-Date).AddDays(2)
     $publicCertificate = Join-Path $root 'test-signing.cer'
     $null = Export-Certificate -Cert $certificate -FilePath $publicCertificate
     $trusted = Import-Certificate -FilePath $publicCertificate -CertStoreLocation Cert:\LocalMachine\TrustedPeople
@@ -99,7 +113,13 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Bundle signature verification failed: $LASTEXITCODE" }
     $archive = [IO.Compression.ZipFile]::OpenRead($bundle)
     try {
-        if ((Get-EntryHash $archive.GetEntry($payloadName)) -ne $payloadHash) { throw 'Signing changed the application payload.' }
+        $payload = [IO.Compression.ZipArchive]::new($archive.GetEntry($payloadName).Open(), [IO.Compression.ZipArchiveMode]::Read)
+        try { $signedHashes = Get-PayloadHashes $payload }
+        finally { $payload.Dispose() }
+        if ($signedHashes.Count -ne $payloadHashes.Count) { throw 'Signing changed payload membership.' }
+        foreach ($name in $payloadHashes.Keys) {
+            if ($signedHashes[$name] -cne $payloadHashes[$name]) { throw "Signing changed application content: $name" }
+        }
     }
     finally { $archive.Dispose() }
     Add-AppxPackage -Path $bundle

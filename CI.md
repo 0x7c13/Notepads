@@ -1,8 +1,9 @@
 # V2 continuous integration
 
 V2 is unreleased. GitHub Actions validates changes and produces unsigned
-Production Native AOT packages. Signing, tags, GitHub Releases and Microsoft Store
-submission are deferred. No publishing credentials are needed by these workflows.
+Production Native AOT packages. Release signing, tags, GitHub Releases and
+Microsoft Store submission are deferred. Installed-app tests sign a copy with a
+temporary certificate on their disposable VM; no publishing credentials are used.
 
 ## Automatic checks
 
@@ -14,7 +15,7 @@ PR/ref. There are no path filters that could leave a required check pending.
 | --- | --- |
 | Managed Tests | actionlint; all pure unit tests; runner/header/localization checks; real-storage recovery tests; isolated metrics-failure processes; architecture guard negative fixtures |
 | Native Tests | NativeDiff and RegexText C++ executables, Release x64 |
-| Native AOT / x86, x64, ARM64 | Solution restore; Production AOT publish; compiled managed-assembly dependency guard; unsigned bundle/upload-package validation |
+| Native AOT / x86, x64, ARM64 | Solution restore; Production AOT publish; compiled managed-assembly dependency guard; unsigned bundle/upload-package validation; x64 also installs and exercises the Production package |
 | E2E Tests | x64 Release AOT App tests, Debug native-fault tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
 | CI Gate | Every job above succeeded, including every architecture; failure, cancellation or an unexpected skip fails the gate |
 
@@ -69,11 +70,38 @@ before AOT rather than a separate source-only model.
 
 The build preserves the current x86/x64/ARM64 scope and Windows 10 build 17763
 minimum. A platform change must update projects, package assertions and CI
-together. Generated unsigned packages are validation artifacts; this pipeline
-does not register them or verify Store certification. Artifacts from a PR remain
+together. Generated unsigned packages are validation artifacts. The x64 job
+installs a test-signed copy; this does not verify Store certification. Artifacts from a PR remain
 untrusted build output and are not automatically promoted to a release.
 
 ## Hosted UI and AOT runtime validation
+
+The x64 package job also runs the explicit `PackagedApp` integration group against
+the just-built Production upload package. It installs a temporarily signed bundle,
+preserving the original identity, manifest and executable. SHA-256 checks verify
+that signing changed only signature footprint metadata and that the installed
+executable matches the archive. A loose development registration is rejected.
+
+An external driver exercises startup, Unicode editing/saving, cold and warm
+Windows file activation, duplicate-file reuse, new-window preferences before and
+after restart, normal close/recovery, OS suspend/resume, termination after a
+completed suspension, and one-time import of V1 UTF-8/UTF-16 recovery fixtures.
+Assertions observe actual editor text through UI Automation, tab membership,
+process/window identity, saved file bytes and OS package execution state. Product
+test hooks and in-process calls to application activation handlers are not used.
+
+`Test-PackagedApp.ps1` refuses non-hosted machines and pre-existing Notepads
+registrations, processes or data. Its cleanup removes only its installation and
+temporary certificates; cleanup failures fail the test. Evidence under
+`artifacts/packaged-app/<run-id>` includes per-case results, driver logs and failure
+UIA/screenshot diagnostics, uploaded with `native-aot-x64`. The private signing key
+is non-exportable and never uploaded. No product installation occurs locally.
+
+Windows `ActivateForFile` tests the OS file activation contract. It does not prove
+Explorer's default-file association or the Microsoft Store installation/update
+service. Migration uses actual V1 data contracts with the installed V2 executable,
+not an installed V1 binary upgraded through the Store. These distinctions must
+remain visible when reporting a pass.
 
 The automatic **E2E Tests** job uses its own disposable GitHub-hosted Windows VM.
 `Initialize-CIDesktop.ps1` verifies an interactive session, enables Developer Mode,

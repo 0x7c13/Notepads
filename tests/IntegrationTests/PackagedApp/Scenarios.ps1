@@ -127,6 +127,14 @@ function Get-Tabs($App) {
     return @($sets.FindAll($descendants, $condition))
 }
 
+function Select-Tab($App, [int] $Index) {
+    $tabs = @(Get-Tabs $App)
+    Check ($Index -ge 0 -and $Index -lt $tabs.Count) 'Tab index is outside the restored workspace.'
+    $pattern = $tabs[$Index].GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern)
+    $pattern.Select()
+    $null = Wait-Until { $pattern.Current.IsSelected -and (Get-Editor $App) } 'selected tab editor'
+}
+
 function Invoke-UI($Element) {
     $Element.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
 }
@@ -233,12 +241,19 @@ try {
         Expect-Text $main ''
         Set-Text $main 'close recovery é العربية 😀'
         $script:tabCount = @(Get-Tabs $main).Count
-        $script:tabNames = @((Get-Tabs $main) | ForEach-Object { $_.Current.Name })
+        $script:tabTexts = @(for ($index = 0; $index -lt $tabCount; $index++) {
+            Select-Tab $main $index
+            Get-Text $main
+        })
+        Expect-Text $main 'close recovery é العربية 😀'
         Close-All
         $script:main = Launch-One
         Expect-Text $main 'close recovery é العربية 😀'
         Check (@(Get-Tabs $main).Count -eq $tabCount) 'Normal close changed tab membership.'
-        Check ((@((Get-Tabs $main) | ForEach-Object { $_.Current.Name }) -join '|') -ceq ($tabNames -join '|')) 'Normal close changed tab order/titles.'
+        for ($index = 0; $index -lt $tabCount; $index++) {
+            Select-Tab $main $index
+            Expect-Text $main $tabTexts[$index]
+        }
     }
 
     Run-Case 'OS suspend/resume preserves live edits and accepts further input' {
@@ -316,6 +331,85 @@ try {
         Check (@(Get-Tabs $main).Count -eq 1) 'Consumed V1 migration resurrected an explicitly closed tab.'
         Close-All
     }
+
+    Run-Case 'Consecutive cold file activations retain both files and session recovery' {
+        $null = $Driver.OpenFile($firstFile)
+        $null = $Driver.OpenFile($secondFile)
+        Wait-Windows 1
+        $script:main = @(Get-AppWindows)[0]
+        Expect-Text $main 'second file 世界'
+        Check (@(Get-Tabs $main).Count -eq 3) 'Cold activations lost or duplicated a file/recovered tab.'
+        Select-Tab $main 0
+        Expect-Text $main $legacyTexts[0]
+        Select-Tab $main 1
+        Expect-Text $main 'saved through packaged app 😀'
+        Select-Tab $main 2
+        Expect-Text $main 'second file 世界'
+        Close-All
+    }
+
+    Run-Case 'Explorer default-file association opens the installed application' {
+        # Use Windows' own default-app UI, never forge the protected UserChoice
+        # hash. This entire user profile belongs to the disposable hosted VM.
+        Start-Process 'ms-settings:defaultapps'
+        $settings = Wait-Until {
+            foreach ($process in @(Get-Process SystemSettings -ErrorAction SilentlyContinue)) {
+                if ([PackagedAppDriver]::Window($process.Id) -ne [IntPtr]::Zero) {
+                    return [IsolatedTestProcess]::new($process.Id)
+                }
+            }
+        } 'Windows default-app settings'
+        try {
+            [PackagedAppDriver]::Focus($settings.Id)
+            $search = Wait-Until {
+                $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)
+                foreach ($edit in (Get-Root $settings).FindAll($descendants, $condition)) {
+                    if ($edit.Current.Name -match 'file type|file extension') { return $edit }
+                }
+            } 'default-app file extension search'
+            $search.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('.txt')
+            $association = Wait-Until {
+                foreach ($element in (Get-Root $settings).FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
+                    if ($element.Current.ControlType -eq [Windows.Automation.ControlType]::Button -and $element.Current.Name -match '\.txt') { return $element }
+                }
+            } '.txt default application selector'
+            Invoke-UI $association
+            $choice = Wait-Until {
+                $condition = [Windows.Automation.OrCondition]::new(
+                    [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Notepads App'),
+                    [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Notepads'))
+                foreach ($element in $elementType::RootElement.FindAll($descendants, $condition)) {
+                    if (!$element.Current.IsOffscreen -and $element.Current.ControlType -eq [Windows.Automation.ControlType]::ListItem) { return $element }
+                }
+            } 'installed Notepads file handler in Windows picker'
+            $choice.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+            $confirm = Wait-Until {
+                $condition = [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Set default')
+                return $elementType::RootElement.FindFirst($descendants, $condition)
+            } 'Windows Set default button'
+            Invoke-UI $confirm
+            [PackagedAppDriver]::Close($settings.Id)
+
+            $explorerFile = Join-Path $fixtures 'explorer-activation.txt'
+            [IO.File]::WriteAllText($explorerFile, 'Explorer association Ω😀', [Text.UTF8Encoding]::new($false))
+            Start-Process explorer.exe -ArgumentList ('/select,"' + $explorerFile + '"')
+            $fileItem = Wait-Until {
+                $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::ListItem)
+                foreach ($element in $elementType::RootElement.FindAll($descendants, $condition)) {
+                    if ($element.Current.Name -in 'explorer-activation', 'explorer-activation.txt' -and !$element.Current.IsOffscreen) { return $element }
+                }
+            } 'Explorer fixture file'
+            # Explorer's Invoke pattern performs the item's default action,
+            # following the same association as a double-click on that file.
+            Invoke-UI $fileItem
+            Wait-Windows 1
+            $script:main = @(Get-AppWindows)[0]
+            Expect-Text $main 'Explorer association Ω😀'
+            Check ($main.Path -ieq $expectedExe) 'Explorer activated a different application.'
+            Close-All
+        }
+        finally { $settings.Dispose() }
+    }
 }
 catch {
     try {
@@ -326,6 +420,11 @@ catch {
             }
         }
         ConvertTo-Json -InputObject @($tree) -Depth 4 | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'uia-failure.json')
+        $desktop = $elementType::RootElement.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition) | ForEach-Object {
+            [ordered]@{ Pid = $_.Current.ProcessId; Type = $_.Current.ControlType.ProgrammaticName
+                Id = $_.Current.AutomationId; Name = $_.Current.Name; Class = $_.Current.ClassName; Offscreen = $_.Current.IsOffscreen }
+        }
+        ConvertTo-Json -InputObject @($desktop) -Depth 4 | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'desktop-uia-failure.json')
     }
     catch { Write-Warning "UIA failure dump unavailable: $_" }
     throw

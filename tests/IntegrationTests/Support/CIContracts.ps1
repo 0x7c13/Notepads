@@ -43,6 +43,13 @@ try {
         }
         $checks.Add('Non-hosted invocation rejected: ' + (Split-Path $path -Leaf))
     }
+    $failure = $null
+    try { & (Join-Path $repo 'scripts/Test-PackagedApp.ps1') -PackagePath 'does-not-exist.msixupload' }
+    catch { $failure = $_ }
+    if (!$failure -or $failure.ToString() -notlike '*require a disposable GitHub-hosted runner*') {
+        throw 'Installed package test must reject a non-hosted machine before touching package files or state.'
+    }
+    $checks.Add('Production package installation rejected before accessing local state')
     $env:RUNNER_ENVIRONMENT = 'github-hosted'
     foreach ($case in @(
         @{ Mode = 'success'; Error = ''; Invoked = $true },
