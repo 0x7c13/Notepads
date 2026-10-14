@@ -5,7 +5,7 @@
 
 # Configures only an ephemeral hosted runner; local desktops use their own setup.
 #requires -Version 7.4
-param([ValidateSet('x64', 'ARM64')][string] $Platform = 'x64')
+param([ValidateSet('x64', 'ARM64')][string] $Platform = 'x64', [switch] $Production)
 $ErrorActionPreference = 'Stop'
 if ($env:RUNNER_ENVIRONMENT -ne 'github-hosted') { throw 'Desktop CI setup requires a disposable GitHub-hosted runner.' }
 $repo = Split-Path $PSScriptRoot -Parent
@@ -54,9 +54,15 @@ if (!$xamlVersion) { throw 'The central Microsoft.UI.Xaml package version is mis
 $packages = if ($env:NUGET_PACKAGES) { $env:NUGET_PACKAGES } else { Join-Path $env:USERPROFILE '.nuget/packages' }
 $xaml = Join-Path $packages "microsoft.ui.xaml/$xamlVersion/tools/AppX/$Platform/Release/Microsoft.UI.Xaml.2.8.appx"
 $sdk = Join-Path ${env:ProgramFiles(x86)} 'Microsoft SDKs/Windows Kits/10/ExtensionSDKs/Microsoft.VCLibs/14.0/Appx'
-foreach ($package in @(
+$frameworks = @(
     (Join-Path $sdk "Retail/$Platform/Microsoft.VCLibs.$Platform.14.00.appx"),
-    (Join-Path $sdk "Debug/$Platform/Microsoft.VCLibs.$Platform.Debug.14.00.appx"), $xaml)) {
+    (Join-Path $sdk "Debug/$Platform/Microsoft.VCLibs.$Platform.Debug.14.00.appx"), $xaml)
+if ($Production) {
+    $storeVersion = @($versions.Project.ItemGroup.PackageVersion | Where-Object Include -eq 'Microsoft.Services.Store.Engagement').Version
+    if (!$storeVersion) { throw 'The central Store Engagement package version is missing.' }
+    $frameworks += Join-Path $packages "microsoft.services.store.engagement/$storeVersion/SDK/Windows Kits/10/ExtensionSDKs/Microsoft.Services.Store.Engagement/10.0/Appx/$Platform/Microsoft.Services.Store.Engagement.$Platform.10.0.appx"
+}
+foreach ($package in $frameworks) {
     if (!(Test-Path -LiteralPath $package -PathType Leaf)) { throw "Missing test framework: $package" }
     $archive = [IO.Compression.ZipFile]::OpenRead($package)
     try {

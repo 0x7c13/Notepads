@@ -1,0 +1,333 @@
+# ---------------------------------------------------------------------------------------------
+#  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+#  See LICENSE.txt in the project root for license information.
+# ---------------------------------------------------------------------------------------------
+
+param($Driver, $Installed, [string] $LocalState, [string] $EvidenceRoot,
+    [Collections.Generic.List[object]] $Cases)
+$ErrorActionPreference = 'Stop'
+$owned = [Collections.Generic.List[IsolatedTestProcess]]::new()
+$expectedExe = Join-Path $Installed.InstallLocation 'Notepads.exe'
+$descendants = [Windows.Automation.TreeScope]::Descendants
+$elementType = [Windows.Automation.AutomationElement]
+$assertions = 0
+
+function Check([bool] $Condition, [string] $Message) {
+    if (!$Condition) { throw $Message }
+    $script:assertions++
+}
+
+function Wait-Until([scriptblock] $Condition, [string] $Message, [int] $Seconds = 30) {
+    $timer = [Diagnostics.Stopwatch]::StartNew()
+    do {
+        $value = & $Condition
+        if ($value) { return $value }
+        Start-Sleep -Milliseconds 100
+    } while ($timer.Elapsed.TotalSeconds -lt $Seconds)
+    throw "Timed out: $Message"
+}
+
+function Run-Case([string] $Name, [scriptblock] $Body) {
+    $item = [ordered]@{ Name = $Name; Status = 'RUNNING'; Assertions = 0; Milliseconds = 0; Error = $null }
+    $Cases.Add($item)
+    $before = $script:assertions
+    $timer = [Diagnostics.Stopwatch]::StartNew()
+    try { & $Body; $item.Status = 'PASS'; Write-Host "PASS: $Name" }
+    catch { $item.Status = 'FAIL'; $item.Error = $_.ToString(); throw }
+    finally {
+        $item.Assertions = $script:assertions - $before
+        $item.Milliseconds = $timer.ElapsedMilliseconds
+        ConvertTo-Json -InputObject @($Cases.ToArray()) -Depth 5 | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'cases.json')
+    }
+}
+
+function Get-AppWindows {
+    foreach ($process in @(Get-Process -Name Notepads -ErrorAction SilentlyContinue)) {
+        $retained = @($owned | Where-Object { $_.Id -eq $process.Id -and !$_.HasExited })
+        if (!$retained.Count) {
+            try { $handle = [IsolatedTestProcess]::new($process.Id) }
+            catch {
+                if (!$process.HasExited) { throw }
+                continue
+            }
+            if ($handle.Path -ine $expectedExe) { $handle.Dispose(); throw 'Unexpected Notepads process identity.' }
+            $owned.Add($handle)
+            $retained = @($handle)
+        }
+        if (!$retained[0].HasExited -and [PackagedAppDriver]::Window($process.Id) -ne [IntPtr]::Zero) { $retained[0] }
+    }
+}
+
+function Wait-Windows([int] $Count) {
+    $null = Wait-Until { @(Get-AppWindows).Count -eq $Count } "$Count visible application windows"
+    # Reject delayed duplicate windows from redirected activation as well.
+    Start-Sleep -Milliseconds 400
+    Check (@(Get-AppWindows).Count -eq $Count) 'Window count changed after activation settled.'
+}
+
+function Get-Root($App) {
+    Check (!$App.HasExited) 'The owned application process exited unexpectedly.'
+    $window = [PackagedAppDriver]::Window($App.Id)
+    if ($window -eq [IntPtr]::Zero) { return $null }
+    return [Windows.Automation.AutomationElement]::FromHandle($window)
+}
+
+function Find-UI($App, [string] $Value, [switch] $Name) {
+    $root = Get-Root $App
+    if (!$root) { return $null }
+    $property = if ($Name) { $elementType::NameProperty } else { $elementType::AutomationIdProperty }
+    $condition = [Windows.Automation.PropertyCondition]::new($property, $Value)
+    return $root.FindFirst($descendants, $condition)
+}
+
+function Get-Editor($App) {
+    $root = Get-Root $App
+    if (!$root) { return $null }
+    $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)
+    foreach ($element in $root.FindAll($descendants, $condition)) {
+        if ($element.Current.ProcessId -eq $App.Id -and !$element.Current.IsOffscreen -and
+            $element.Current.ClassName -like '*EditorBaseControl*') { return $element }
+    }
+    return $null
+}
+
+function Get-Text($App) {
+    $editor = Get-Editor $App
+    if (!$editor) { return $null }
+    return $editor.GetCurrentPattern([Windows.Automation.TextPattern]::Pattern).DocumentRange.GetText(-1)
+}
+
+function Expect-Text($App, [string] $Text) {
+    $null = Wait-Until { (Get-Text $App) -ceq $Text } "selected document text [$Text]"
+    Check ((Get-Text $App) -ceq $Text) 'Selected document text differs.'
+}
+
+function Focus-Editor($App) {
+    [PackagedAppDriver]::Focus($App.Id)
+    $editor = Wait-Until { Get-Editor $App } 'visible editor'
+    $editor.SetFocus()
+}
+
+function Key($App, [int] $Key, [bool] $Control = $false, [bool] $Shift = $false) {
+    Check (!$App.HasExited) 'Cannot send input to an exited application.'
+    [PackagedAppDriver]::Key($App.Id, $Key, $Control, $Shift)
+}
+
+function Set-Text($App, [string] $Text) {
+    Focus-Editor $App
+    Key $App 0x41 $true
+    [PackagedAppDriver]::Type($App.Id, $Text)
+    Expect-Text $App $Text
+}
+
+function Get-Tabs($App) {
+    $sets = Find-UI $App 'Sets'
+    if (!$sets) { return @() }
+    $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::ListItem)
+    return @($sets.FindAll($descendants, $condition))
+}
+
+function Invoke-UI($Element) {
+    $Element.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
+}
+
+function Set-Preference($App, [string] $Id, [bool] $Enabled) {
+    [PackagedAppDriver]::Focus($App.Id)
+    Invoke-UI (Wait-Until { Find-UI $App 'MainMenuButton' } 'main menu')
+    Invoke-UI (Wait-Until { Find-UI $App 'MenuSettingsButton' } 'settings menu item')
+    $advanced = Wait-Until { Find-UI $App 'Advanced' -Name } 'Advanced settings navigation'
+    $advanced.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
+    $toggle = Wait-Until { Find-UI $App $Id } "preference $Id"
+    $pattern = $toggle.GetCurrentPattern([Windows.Automation.TogglePattern]::Pattern)
+    $expected = if ($Enabled) { [Windows.Automation.ToggleState]::On } else { [Windows.Automation.ToggleState]::Off }
+    if ($pattern.Current.ToggleState -ne $expected) { $pattern.Toggle() }
+    $null = Wait-Until { $pattern.Current.ToggleState -eq $expected } 'preference state'
+    Check ($pattern.Current.ToggleState -eq $expected) 'Preference UI did not retain the selected value.'
+    Key $App 0x1B
+    Focus-Editor $App
+}
+
+function Close-All {
+    foreach ($app in @(Get-AppWindows)) { [PackagedAppDriver]::Close($app.Id) }
+    Wait-Windows 0
+    # UWP may retain a suspended process after normal close. End that already
+    # closed instance so the next launch proves disk recovery, not memory reuse.
+    $Driver.Terminate()
+    foreach ($app in $owned) {
+        Check ($app.WaitForExit(10000)) 'Closed instance did not terminate.'
+    }
+}
+
+function Launch-One {
+    $null = $Driver.Launch()
+    Wait-Windows 1
+    $app = @(Get-AppWindows)[0]
+    $null = Wait-Until { Get-Editor $app } 'initial editor ready'
+    return $app
+}
+
+try {
+    Run-Case 'Installed Production launch, Unicode editing and session preference' {
+        $script:main = Launch-One
+        Expect-Text $main ''
+        Check (@(Get-Tabs $main).Count -eq 1) 'Fresh installation must contain one tab.'
+        Set-Preference $main 'EnableSessionSnapshotToggleSwitch' $true
+        Set-Text $main 'unsaved startup Ω 世界 😀'
+    }
+
+    $fixtures = Join-Path $EvidenceRoot 'files'
+    $null = New-Item -ItemType Directory -Path $fixtures
+    $firstFile = Join-Path $fixtures 'activation-first.txt'
+    $secondFile = Join-Path $fixtures 'activation-second.txt'
+    [IO.File]::WriteAllText($firstFile, 'first file Ω', [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText($secondFile, 'second file 世界', [Text.UTF8Encoding]::new($false))
+
+    Run-Case 'Warm Windows file activation, duplicate reuse and real file save' {
+        $null = $Driver.OpenFile($firstFile)
+        Wait-Windows 1
+        Expect-Text $main 'first file Ω'
+        Check (@(Get-Tabs $main).Count -eq 2) 'File activation did not add exactly one tab.'
+        $null = $Driver.OpenFile($firstFile)
+        Wait-Windows 1
+        Expect-Text $main 'first file Ω'
+        Check (@(Get-Tabs $main).Count -eq 2) 'Repeated file activation created a duplicate tab.'
+        Set-Text $main 'saved through packaged app 😀'
+        Key $main 0x53 $true
+        $null = Wait-Until { [IO.File]::ReadAllText($firstFile) -ceq 'saved through packaged app 😀' } 'file save bytes'
+        Check ([IO.File]::ReadAllText($firstFile) -ceq 'saved through packaged app 😀') 'Save did not update the activated file.'
+    }
+
+    Run-Case 'New-window preference applies without restarting' {
+        Set-Preference $main 'AlwaysOpenNewWindowToggleSwitch' $true
+        $null = $Driver.OpenFile($secondFile)
+        Wait-Windows 2
+        $script:second = @(Get-AppWindows | Where-Object Id -ne $main.Id)[0]
+        Expect-Text $second 'second file 世界'
+        Expect-Text $main 'saved through packaged app 😀'
+        Check ($second.Id -ne $main.Id) 'New-window preference reused the original instance.'
+    }
+
+    Run-Case 'New-window preference persists after normal close and cold activation' {
+        Close-All
+        $null = $Driver.OpenFile($firstFile)
+        Wait-Windows 1
+        $script:main = @(Get-AppWindows)[0]
+        Expect-Text $main 'saved through packaged app 😀'
+        $null = $Driver.OpenFile($secondFile)
+        Wait-Windows 2
+        $script:second = @(Get-AppWindows | Where-Object Id -ne $main.Id)[0]
+        Expect-Text $second 'second file 世界'
+        Set-Preference $second 'AlwaysOpenNewWindowToggleSwitch' $false
+        $tabsBefore = @(Get-Tabs $second).Count
+        $null = $Driver.OpenFile($firstFile)
+        Wait-Windows 2
+        Expect-Text $second 'saved through packaged app 😀'
+        Check (@(Get-Tabs $second).Count -eq $tabsBefore + 1) 'Redirected file did not reach the last active window.'
+        Close-All
+    }
+
+    Run-Case 'Normal close restores dirty text, tab membership and selected tab' {
+        $script:main = Launch-One
+        Focus-Editor $main
+        Key $main 0x54 $true
+        Expect-Text $main ''
+        Set-Text $main 'close recovery é العربية 😀'
+        $script:tabCount = @(Get-Tabs $main).Count
+        $script:tabNames = @((Get-Tabs $main) | ForEach-Object { $_.Current.Name })
+        Close-All
+        $script:main = Launch-One
+        Expect-Text $main 'close recovery é العربية 😀'
+        Check (@(Get-Tabs $main).Count -eq $tabCount) 'Normal close changed tab membership.'
+        Check ((@((Get-Tabs $main) | ForEach-Object { $_.Current.Name }) -join '|') -ceq ($tabNames -join '|')) 'Normal close changed tab order/titles.'
+    }
+
+    Run-Case 'OS suspend/resume preserves live edits and accepts further input' {
+        Set-Text $main 'suspend recovery Ω😀'
+        $Driver.Suspend()
+        $null = Wait-Until { $Driver.State -eq 3 } 'OS package suspended'
+        Check ($Driver.State -eq 3) 'Package never entered the suspended state.'
+        $Driver.Resume()
+        $null = Wait-Until { $Driver.State -eq 1 } 'OS package resumed'
+        Expect-Text $main 'suspend recovery Ω😀'
+        Set-Text $main 'resumed edit 世界'
+    }
+
+    Run-Case 'Termination after OS suspension restores the completed suspension checkpoint' {
+        $Driver.Suspend()
+        $null = Wait-Until { $Driver.State -eq 3 } 'second OS suspension'
+        $Driver.Terminate()
+        Check ($main.WaitForExit(10000)) 'Suspended instance did not terminate.'
+        $script:main = Launch-One
+        Expect-Text $main 'resumed edit 世界'
+        Check (@(Get-Tabs $main).Count -eq $tabCount) 'Suspension checkpoint lost tabs.'
+        Close-All
+    }
+
+    Run-Case 'V1 session fixture imports pending Unicode backups and selected tab' {
+        # This LocalState belongs exclusively to the package installed by this
+        # test. Keep LocalSettings (snapshot preference), replace only fixture data.
+        $expectedState = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA "Packages/$($Installed.PackageFamilyName)/LocalState"))
+        Check ([IO.Path]::GetFullPath($LocalState) -eq $expectedState) 'Refusing an unexpected migration fixture directory.'
+        Check (@(Get-AppWindows).Count -eq 0) 'Migration seed requires a stopped package.'
+        Remove-Item -LiteralPath $expectedState -Recurse -Force
+        $null = New-Item -ItemType Directory -Path $expectedState
+        $ids = @([Guid]::NewGuid().ToString(), [Guid]::NewGuid().ToString())
+        $script:legacyTexts = @('V1 pending UTF-8 Ω😀', 'V1 pending UTF-16 世界 é')
+        $records = for ($index = 0; $index -lt 2; $index++) {
+            $saved = Join-Path $expectedState "v1-saved-$index.txt"
+            $pending = Join-Path $expectedState "v1-pending-$index.txt"
+            $encoding = if ($index -eq 0) { [Text.UTF8Encoding]::new($false) } else { [Text.UnicodeEncoding]::new($false, $true) }
+            [IO.File]::WriteAllText($saved, "V1 saved $index", $encoding)
+            [IO.File]::WriteAllText($pending, $legacyTexts[$index], $encoding)
+            @{
+                Id = $ids[$index]; LastSavedBackupFilePath = $saved; PendingBackupFilePath = $pending
+                StateMetaData = @{
+                    FileNamePlaceholder = "legacy-$index.txt"; LastSavedEncoding = $encoding.WebName
+                    LastSavedLineEnding = 'CR'; FontZoomFactor = 1.0; HasEditingFile = $false
+                    IsModified = $true; RequiresSaveAs = $true
+                }
+            }
+        }
+        @{ Version = 1; SelectedTextEditor = $ids[1]; TextEditors = @($records); TabScrollViewerHorizontalOffset = 0 } |
+            ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $expectedState 'NotepadsSessionData.json') -Encoding utf8
+        $script:main = Launch-One
+        Expect-Text $main $legacyTexts[1]
+        Check (@(Get-Tabs $main).Count -eq 2) 'V1 import did not restore exactly two tabs.'
+        Focus-Editor $main
+        Key $main 0x31 $true
+        Expect-Text $main $legacyTexts[0]
+        Key $main 0x32 $true
+        Expect-Text $main $legacyTexts[1]
+        Close-All
+    }
+
+    Run-Case 'V1 migration is consumed once across repeated restarts and tab closure' {
+        $script:main = Launch-One
+        Expect-Text $main $legacyTexts[1]
+        Check (@(Get-Tabs $main).Count -eq 2) 'Restart duplicated V1 imported tabs.'
+        Focus-Editor $main
+        Key $main 0x57 $true
+        Invoke-UI (Wait-Until { Find-UI $main "Don't Save" -Name } 'discard migrated tab confirmation')
+        $null = Wait-Until { @(Get-Tabs $main).Count -eq 1 } 'closing migrated tab'
+        Expect-Text $main $legacyTexts[0]
+        Close-All
+        $script:main = Launch-One
+        Expect-Text $main $legacyTexts[0]
+        Check (@(Get-Tabs $main).Count -eq 1) 'Consumed V1 migration resurrected an explicitly closed tab.'
+        Close-All
+    }
+}
+catch {
+    try {
+        $tree = foreach ($app in @(Get-AppWindows)) {
+            (Get-Root $app).FindAll($descendants, [Windows.Automation.Condition]::TrueCondition) | ForEach-Object {
+                [ordered]@{ Pid = $_.Current.ProcessId; Type = $_.Current.ControlType.ProgrammaticName
+                    Id = $_.Current.AutomationId; Name = $_.Current.Name; Class = $_.Current.ClassName; Offscreen = $_.Current.IsOffscreen }
+            }
+        }
+        ConvertTo-Json -InputObject @($tree) -Depth 4 | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'uia-failure.json')
+    }
+    catch { Write-Warning "UIA failure dump unavailable: $_" }
+    throw
+}
+finally { foreach ($app in $owned) { $app.Dispose() } }

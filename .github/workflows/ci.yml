@@ -107,12 +107,25 @@ jobs:
         env:
           BUILD_PLATFORM: ${{ matrix.platform }}
         run: ./scripts/Build-CI.ps1 -Platform $env:BUILD_PLATFORM
+      - name: Prepare installed application desktop
+        if: matrix.platform == 'x64'
+        run: ./scripts/Initialize-CIDesktop.ps1 -Platform x64 -Production
+      - name: Test installed Production application
+        if: matrix.platform == 'x64'
+        run: |
+          $packages = @(Get-ChildItem artifacts/ci/x64 -Recurse -File -Filter *.msixupload)
+          if ($packages.Count -ne 1) { throw 'Expected exactly one fresh Production upload package.' }
+          ./scripts/Test.ps1 -Suite Integration -Group PackagedApp -Platform x64 -PackagePath $packages[0].FullName
       - name: Preserve build and package evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: native-aot-${{ matrix.platform }}
-          path: artifacts/ci/
+          path: |
+            artifacts/ci/
+            artifacts/ci-desktop/
+            artifacts/packaged-app/
+            artifacts/test-runs/
           retention-days: 14
           compression-level: 0
           if-no-files-found: warn
