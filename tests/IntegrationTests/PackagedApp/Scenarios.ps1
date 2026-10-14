@@ -334,6 +334,7 @@ try {
             [PackagedAppDriver]::Key($pickerPid, 0x28, $false, $false)
             [PackagedAppDriver]::Key($pickerPid, 0x20, $false, $false)
             [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $false)
+            [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $false)
             [PackagedAppDriver]::Key($pickerPid, 0x0D, $false, $false)
             $null = Wait-Until {
                 $root = Get-Root $settings
