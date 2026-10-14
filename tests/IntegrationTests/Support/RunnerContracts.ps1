@@ -439,3 +439,4 @@ $checks.Add('Restored fixtures accept the unchanged valid build and ownership')
 $checks | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $fixtureRoot 'checks.json') -Encoding utf8
 Write-Output "PASS: Runner contracts ($($checks.Count) checks); private evidence: $fixtureRoot"
 & (Join-Path $PSScriptRoot 'CIContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'ci')
+& (Join-Path $PSScriptRoot 'PackagedAppProcessContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'packaged-processes')

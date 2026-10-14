@@ -19,10 +19,13 @@ PR/ref. There are no path filters that could leave a required check pending.
 | E2E Tests | x64 Release AOT App tests, Debug native-fault tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
 | CI Gate | Every job above succeeded, including every architecture; failure, cancellation or an unexpected skip fails the gate |
 
-Configure **`CI Gate`** as the required branch/ruleset check. The package matrix
-uses separate machines and continues other architectures when one fails. Source
-and headless checks run independently of the longer native builds. Unit fixtures
-parallelize inside their runner; source and headless groups share one build.
+Configure **`CI Gate`** as the required branch/ruleset check. Managed Tests and
+Native Tests run in parallel first. Only after both succeed do the three Native
+AOT architectures and E2E Tests start in parallel. A failed prerequisite skips
+these heavier jobs and fails the gate. Once started, a job's failure does not
+cancel its siblings; the package matrix also continues other architectures when
+one fails. Unit fixtures parallelize inside their runner; source and headless
+groups share one build.
 The separate UI job builds and executes the x64 App test host. It runs all default
 App groups from `Test.ps1 -Suite Integration -List`, plus `UIAutomation` and
 `DragDrop`. Its Debug native-fault group remains separate from Release AOT tests.
@@ -111,8 +114,12 @@ separate from the saved session selection.
 `Test-PackagedApp.ps1` refuses non-hosted machines and pre-existing Notepads
 registrations, processes or data. Its cleanup removes only its installation and
 temporary certificates; cleanup failures fail the test. Evidence under
-`artifacts/packaged-app/<run-id>` includes per-case results, driver logs and failure
-UIA/screenshot diagnostics, uploaded with `native-aot-x64`. The private signing key
+`artifacts/packaged-app/<run-id>` includes per-case results, driver logs, process
+exit codes and failure UIA/screenshot diagnostics, uploaded with `native-aot-x64`.
+Normal-close tests reject abnormal process exits even if recovery data is intact.
+Any lingering closed processes are terminated through retained handles with an
+explicit exit code; a concurrent crash cannot be accepted as that termination.
+The private signing key
 is non-exportable and never uploaded. No product installation occurs locally.
 
 Windows `ActivateForFile` tests the OS file activation contract. A separate case

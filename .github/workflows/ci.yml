@@ -81,6 +81,7 @@ jobs:
 
   package:
     name: Native AOT / ${{ matrix.platform }}
+    needs: [checks, native]
     runs-on: windows-2025-vs2026
     timeout-minutes: 60
     strategy:
@@ -132,6 +133,7 @@ jobs:
 
   ui:
     name: E2E Tests
+    needs: [checks, native]
     runs-on: windows-2025-vs2026
     timeout-minutes: 45
     steps:

@@ -6,7 +6,10 @@
 param($Driver, $Installed, [string] $LocalState, [string] $EvidenceRoot,
     [Collections.Generic.List[object]] $Cases)
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../../../scripts/PackagedAppProcess.ps1')
 $owned = [Collections.Generic.List[IsolatedTestProcess]]::new()
+$completedExits = [Collections.Generic.HashSet[object]]::new()
+$exitEvidence = Join-Path $EvidenceRoot 'process-exits.jsonl'
 $expectedExe = Join-Path $Installed.InstallLocation 'Notepads.exe'
 $descendants = [Windows.Automation.TreeScope]::Descendants
 $elementType = [Windows.Automation.AutomationElement]
@@ -171,10 +174,8 @@ function Close-All {
     Wait-Windows 0
     # UWP may retain a suspended process after normal close. End that already
     # closed instance so the next launch proves disk recovery, not memory reuse.
-    $Driver.Terminate()
-    foreach ($app in $owned) {
-        Check ($app.WaitForExit(10000)) 'Closed instance did not terminate.'
-    }
+    Stop-PackagedAppProcesses -Processes $owned -Completed $completedExits `
+        -EvidencePath $exitEvidence -Reason 'Normal window close'
 }
 
 function Launch-One {
@@ -284,8 +285,8 @@ try {
     Run-Case 'Termination after OS suspension restores the completed suspension checkpoint' {
         $Driver.Suspend()
         $null = Wait-Until { $Driver.State -eq 3 } 'second OS suspension'
-        $Driver.Terminate()
-        Check ($main.WaitForExit(10000)) 'Suspended instance did not terminate.'
+        Stop-PackagedAppProcesses -Processes $owned -Completed $completedExits `
+            -EvidencePath $exitEvidence -Reason 'Termination after OS suspension'
         $script:main = Launch-One
         Expect-Text $main 'resumed edit 世界'
         Check (@(Get-Tabs $main).Count -eq $tabCount) 'Suspension checkpoint lost tabs.'
