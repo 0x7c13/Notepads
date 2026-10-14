@@ -2,16 +2,18 @@
 
 GitHub CI runs the unit, source, headless and native checks automatically, and
 publishes/validates Production Native AOT packages for x86, x64 and ARM64.
-The required hosted E2E job executes the x64 Release AOT App groups, Debug native
-fault tests, external UI Automation and cross-process drag tests. An additional
-manual desktop workflow supports dedicated x64/ARM64 machines. Package validation
-is not a substitute for executing an AOT app.
+The required hosted E2E job executes the x64 Release AOT App groups, external UI
+Automation and cross-process drag tests. Resilience Tests runs the dedicated
+Debug allocation-failure checks concurrently on a separate VM. An additional
+manual desktop workflow supports dedicated x64/ARM64 machines. The x64 package
+job additionally installs and drives the actual Production application.
 See [CI and local reproduction](../CI.md) for commands, artifacts and runner setup.
 
 Two test projects serve different iteration loops. `UnitTests` runs actual pure
 production logic without files, native libraries, Windows UI or external services.
-`IntegrationTests` runs either its portable Headless host or the isolated Windows
-App host. The native C++ executables and drag peer under `Support` are helpers.
+`IntegrationTests` runs its portable Headless host, isolated Windows App host, or
+external scripts under `PackagedApp`. The native C++ executables and drag peer
+under `Support` are helpers.
 
 ```powershell
 # Fast default: pure unit tests (independent xUnit fixtures run in parallel).
@@ -28,6 +30,9 @@ App host. The native C++ executables and drag peer under `Support` are helpers.
 
 # Default correctness matrix, including Release AOT and a separate Debug fault lane.
 ./scripts/Test.ps1 -Suite All -Platform ARM64
+
+# Only optional native allocation failures; this group always builds Debug.
+./scripts/Test.ps1 -Suite Integration -Group NativeFaults -Platform ARM64
 ```
 
 `tests/Tests.slnx` contains both projects. `IntegrationHost=Headless` is the default;
@@ -57,11 +62,22 @@ different hosting model fails setup rather than relaxing ownership checks.
 
 ## Isolation and the meaning of a pass
 
-Only the `Notepads.Editor.Tests` package is registered. The runner restores the
+Local App/desktop tests register only `Notepads.Editor.Tests`. The runner restores the
 exact prior loose registration, compares pre-existing test LocalState files, and
 checks future-access token/metadata preservation. It verifies executable path and
 process creation time before terminating an owned process. Production/Dev Notepads,
 Visual Studio and user document sessions are outside the runner's scope.
+
+The explicit `PackagedApp` group is a separate hosted-only boundary: it installs a
+temporarily signed copy of the actual Production bundle, retaining its identity
+and checking the installed executable hash. It refuses existing product
+registrations/processes/data, and uninstalls its package and temporary certificate
+afterward. The driver observes UIA text, actual file bytes, process/window identity
+and OS execution state. It drives the shipped entry points without an in-process
+test host.
+Results live under `artifacts/packaged-app`; see [CI.md](../CI.md) for its scenarios
+and the distinctions between Windows file activation, Explorer association and
+Microsoft Store deployment. This group never installs the product locally.
 
 Each run uses a private GUID directory and a real LocalSettings subcontainer.
 Explicit restart phases retain that container; final cleanup removes it. The App
@@ -76,17 +92,20 @@ Some outbound boundaries intentionally stop at the operating system:
 | Clipboard | Actual copy/cut/paste, selection, undo and Windows DataPackage; rejected/throwing writes | System clipboard history/roaming and cross-app paste in a disposable Windows user/session |
 | File picker | Actual factory, cancel/result/error handling and real file writes | OS chooser UI and arbitrary user folder permissions |
 | Recent files | Actual menu ordering/filtering, open/reuse and clear commands against an in-memory MRU boundary | Windows MRU persistence, permission expiry and access-cache failure handling |
-| Launcher | Actual command-line parsing, protocol policy, URL construction, result/error handling | Store activation, file associations and browser dispatch |
+| Launcher | Actual command-line parsing, protocol policy, URL construction, result/error handling; hosted Explorer default-file association | Store activation and browser dispatch |
 | Printing | Actual print content, limits, commands and lifetime management | OS chooser, pagination against printer capabilities and spooler |
 | Theme | Actual Light/Dark resources, controls, accent and current contrast palette | Physically changing the Windows contrast theme |
 | Input | Native/editor commands, real XAML handlers; separate UIA and drag drivers | Physical IME and assistive-technology interaction |
-| App lifecycle | Actual MainPage close, session decisions, fresh-process restore and writer leases | Store activation, normal UWP shutdown, OS suspension/resume and desktop window-manager behavior |
+| App lifecycle | Actual MainPage close, session decisions, fresh-process restore and writer leases; hosted `PackagedApp` covers OS file activation, normal window close, suspension/resume and V1 data import | Microsoft Store deployment/update service; other Windows builds and shipping architectures |
 
 These distinctions are deliberate. A passing payload or policy test is not a
 claim that the corresponding operating-system interaction was exercised.
 
 Hosted CI executes the x64 Release Native AOT App groups and a separate Debug
-native-fault lane, plus the external UIA and drag drivers. Earlier local validation
+native-fault job, plus the external UIA and drag drivers in the Release job.
+Ordinary syntax and native storage checks run in the Release `Editor` group;
+`NativeFaults` only injects failures and verifies editing, recovery and journal
+integrity. It does not repeat the general syntax/storage suites. Earlier local validation
 used Windows ARM64 Release Native AOT and Debug; the two C++ helpers ran as x64.
 This does not establish runtime coverage for every shipping architecture. The
 future Markdown renderer is outside the current feature map.
@@ -110,8 +129,10 @@ and `artifacts/test-overhaul`; those local artifacts are not checked into Git.
 | Theme/accent/slider, zoom geometry, language, view modes | `AppearanceFeatureTests` |
 | Command-line/protocol, picker, recent-file menu, web search, printing | `ShellWorkflowTests` |
 | Session restore, backup, close/save, import/transfer and recovery | Existing controller/storage/recovery tests plus actual MainPage phases |
+| Cold/warm external activation ordering, selected startup tab, close during activation | `WorkspaceActivationTests`, `SessionControllerFileLookupTests`; hosted `PackagedApp` OS activation |
 | Restored viewport on the first paint, wrapping, focus, tab reattachment and long `.LOG` append | `ScrollRestoration` App group |
 | Process leases and abrupt exit | Two packaged processes in the Leases group |
+| Installed Production startup, OS activation, window preference, shutdown, suspension and V1 import | Hosted-only `PackagedApp` external driver |
 | Native indentation, syntax, diff geometry, regex | Editor suite and native C++ helpers; Debug-only fault lane |
 | Accessibility/input/drag | Native UIA navigation; separate desktop UI Automation and drag groups |
 | Localization, package content, dependency architecture | Dedicated integration groups and architecture negative probes |
@@ -121,6 +142,11 @@ Tests should protect observable contracts with independent expected results.
 Add a reproducer before changing product logic. Avoid duplicate getter checks,
 arbitrary sleeps, tests that simply restate an implementation, and performance
 thresholds tied to one developer's current machine load.
+
+Startup presentation tests observe the native document at its first paint and
+the tab headers at their first three XAML frames after Loaded. Native surface
+painting can precede XAML Loaded, so it cannot establish the header layout's
+readiness. The header checks never wait for the expected scroll offset to appear.
 
 ## Copyright header checks
 

@@ -114,10 +114,14 @@ internal sealed partial class SessionController
         // Closing pauses native promotion, but terminal capture still needs every owned row.
         _notepadsCore.OpenTabs(owned, selected?.Id ?? _restorePlan.SelectedEditorId, allowWhileClosing: true);
         _notepadsCore.SetTabScrollViewerHorizontalOffset(scroll);
-        _priorityTab = _notepadsCore.GetSelectedTab() ??
-            _imports.FirstOrDefault(tab => tab.Id == _restorePlan.SelectedEditorId) ?? _imports.FirstOrDefault();
+        _priorityTab = RestoreSelection();
         _recoveryAdmission = RecoveryAdmission.Restored;
     }
+
+    // File lookup can reprioritize payload I/O without changing the user's
+    // selection. Until an import is visible, retain the plan's selected identity.
+    private WorkspaceTab RestoreSelection() => _notepadsCore.GetSelectedTab() ??
+        _imports.FirstOrDefault(tab => tab.Id == _restorePlan?.SelectedEditorId) ?? _imports.FirstOrDefault();
 
     private async Task<int> LoadWorkspaceAsync()
     {
@@ -125,7 +129,7 @@ internal sealed partial class SessionController
             await _sessionOperations.RunAsync(DiscoverWorkspaceAsync);
 
         if (_disposed || _recoveryAdmission != RecoveryAdmission.Restored) return 0;
-        var selected = _notepadsCore.GetSelectedTab() ?? _priorityTab;
+        var selected = RestoreSelection();
         StartRestoreWorker();
         try
         {
@@ -197,6 +201,8 @@ internal sealed partial class SessionController
         bool Pending(WorkspaceTab tab) => tab != null && tab.State == WorkspaceTabState.Pending && _notepadsCore.ContainsTab(tab);
         if (_restorationPaused || _notepadsCore.IsClosing)
             return _demands.FirstOrDefault(Pending);
+        var selected = RestoreSelection();
+        if (Pending(selected) || (selected?.State == WorkspaceTabState.Pending && _imports.Contains(selected))) return selected;
         if (Pending(_priorityTab) || (_priorityTab?.State == WorkspaceTabState.Pending && _imports.Contains(_priorityTab))) return _priorityTab;
         return _notepadsCore.GetTabs().FirstOrDefault(Pending) ??
             _imports.FirstOrDefault(tab => tab.State == WorkspaceTabState.Pending);

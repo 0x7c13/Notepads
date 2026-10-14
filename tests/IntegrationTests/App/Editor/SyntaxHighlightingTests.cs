@@ -152,12 +152,6 @@ internal static class SyntaxHighlightingTests
         await CheckWrappedLanguageChangeAsync(core, native);
         Checkpoint("Streamed replacement");
         await CheckStreamedReplacementAsync(core, native);
-#if DEBUG
-        Checkpoint("Optional allocation failures");
-        await CheckStyleAllocationFailureAsync(core, native);
-        await CheckLexerAllocationFailureAsync(core, native);
-        await CheckJournalStyleFailureAsync(core, native);
-#endif
         await MeasureVisibleStylingAsync(log, core, native);
         core.SetSyntaxLanguage(DocumentLanguages.Find("python"), "sample.py");
         native.SetText("def greet():\r    return 'hi'\r");
@@ -186,6 +180,26 @@ internal static class SyntaxHighlightingTests
         native.Redo();
         Check(core.GetText() == "{\"ok\":true}\r", "styled replacement preserves whole-document redo");
     }
+
+#if DEBUG
+    public static async Task RunFaultsAsync(StringBuilder log, TextEditorCore core)
+    {
+        var native = ((WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0]).Editor;
+        native.WrapMode = WinUIEditor.Wrap.None;
+        Checkpoint("Optional style allocation failures");
+        await CheckStyleAllocationFailureAsync(core, native);
+        log.AppendLine("PASS: optional style allocation failures preserve text, undo/redo and explicit recovery.");
+        Checkpoint("Optional lexer allocation failures");
+        await CheckLexerAllocationFailureAsync(core, native);
+        log.AppendLine("PASS: lexer allocation failures preserve editing, idle styling recovery and wrap geometry.");
+        Checkpoint("Journal commits during syntax allocation failures");
+        await CheckJournalStyleFailureAsync(core, native);
+        log.AppendLine("PASS: syntax allocation failures preserve journal commits and verified checkpoints.");
+    }
+#else
+    public static Task RunFaultsAsync(StringBuilder log, TextEditorCore core) =>
+        throw new InvalidOperationException("Native fault injection requires a Debug test host and native library.");
+#endif
 
 #if DEBUG
     // Debug-only PrivateLexerCall opcodes handled in ScintillaWin.cxx.

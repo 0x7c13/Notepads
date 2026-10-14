@@ -8,7 +8,6 @@ using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Views.MainPage;
 using Notepads.Presentation.Workspace;
 using Windows.ApplicationModel.Activation;
-using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 
 namespace Notepads.Presentation.Workspace.Activation;
@@ -71,7 +70,7 @@ public static class ActivationService
                 rootFrame.Navigate(typeof(NotepadsMainPage), new WorkspaceNavigation(context, fileActivatedEventArgs));
                 break;
             case NotepadsMainPage mainPage:
-                await mainPage.OpenFilesAsync(fileActivatedEventArgs.Files);
+                await mainPage.ActivateFilesAsync(fileActivatedEventArgs.Files);
                 break;
         }
     }
@@ -88,14 +87,9 @@ public static class ActivationService
                 break;
             case NotepadsMainPage mainPage:
                 {
-                    StorageFile file = await CommandLineFiles.OpenFileFromCommandLineAsync(
+                    await mainPage.ActivateCommandAsync(
                         commandLineActivatedEventArgs.Operation.CurrentDirectoryPath,
-                        commandLineActivatedEventArgs.Operation.Arguments, context.ApplicationName);
-
-                    if (file != null)
-                    {
-                        await mainPage.OpenFileAsync(file);
-                    }
+                        commandLineActivatedEventArgs.Operation.Arguments);
 
                     break;
                 }

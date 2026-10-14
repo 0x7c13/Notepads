@@ -57,7 +57,7 @@ $groups = [ordered]@{
     Search = @{ Profile = 'App'; Arguments = @('--search'); Default = $false }
     NativeStorage = @{ Profile = 'App'; Arguments = @('--native-storage'); Default = $false }
     Persistence = @{ Profile = 'App'; Arguments = @('--persistence'); Default = $true }
-    NativeFaults = @{ Profile = 'App'; Configuration = 'Debug'; Arguments = @('--native-storage', '--syntax'); Default = $true }
+    NativeFaults = @{ Profile = 'App'; Configuration = 'Debug'; Arguments = @('--native-faults'); Default = $true }
     SessionResilience = @{ Profile = 'App'; Arguments = @('--session-resilience'); Default = $false }
     Syntax = @{ Profile = 'App'; Arguments = @('--syntax'); Default = $false }
     Diff = @{ Profile = 'App'; Arguments = @('--diff'); Default = $false }
@@ -68,6 +68,7 @@ $groups = [ordered]@{
     RegexMemory = @{ Profile = 'App'; Arguments = @('--regex-memory'); Default = $false; Performance = $true }
     Performance = @{ Profile = 'App'; Arguments = @('--performance'); Default = $false; Performance = $true }
     Package = @{ Profile = 'Package'; Default = $false }
+    PackagedApp = @{ Profile = 'PackageDesktop'; Default = $false }
 }
 
 if ($List) {
@@ -88,7 +89,7 @@ if ($Group.Count -and @($Group | Where-Object { !$groups.Contains($_) }).Count) 
 }
 $selected = if ($Group.Count) { @($Group | Select-Object -Unique) } else { @($groups.Keys | Where-Object { $groups[$_].Default }) }
 if ($Suite -ne 'Unit' -and !$selected.Count) { throw 'No integration groups selected.' }
-if ('Package' -in $selected -and !$PackagePath) { throw '-Group Package requires -PackagePath pointing to the actual packaged product.' }
+if (('Package' -in $selected -or 'PackagedApp' -in $selected) -and !$PackagePath) { throw '-Group Package/PackagedApp requires -PackagePath pointing to the actual packaged product.' }
 $reportRoot = Join-Path $repo ('artifacts/test-runs/' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $reportRoot -Force | Out-Null
 $reports = [Collections.Generic.List[object]]::new()
@@ -215,6 +216,10 @@ try {
                 }
                 elseif ($name -eq 'Localization') { & (Join-Path $PSScriptRoot 'Test-Localization.ps1') }
                 elseif ($name -eq 'Package') { & (Join-Path $PSScriptRoot 'Test-AppPackage.ps1') -Path $PackagePath }
+                elseif ($name -eq 'PackagedApp') {
+                    if ($Platform -ne 'x64') { throw 'PackagedApp currently validates x64 on a hosted desktop.' }
+                    & (Join-Path $PSScriptRoot 'Test-PackagedApp.ps1') -PackagePath $PackagePath
+                }
                 elseif ($spec.Profile -eq 'Desktop') {
                     if ($Configuration -ne 'Release') { throw 'External UIA/drag probes require the Release AOT app.' }
                     Ensure-TestBuild App

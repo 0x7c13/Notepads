@@ -38,7 +38,8 @@ internal static class WorkspaceStartupTests
             await VerifyPresentationAsync(owner, ids);
         }
         finally { await SessionTestProtocol.CleanupAsync(owner); }
-        log.AppendLine("PASS: selected middle tab first paint keeps viewport, caret and tab-strip offset.");
+        log.AppendLine("PASS: selected middle tab first native paint keeps viewport and caret.");
+        log.AppendLine("PASS: the first three XAML frames with loaded headers keep the restored tab-strip offset.");
         log.AppendLine("PASS: reentrant scroll and explicit tab reveal replace pending offsets across layout and reattachment.");
         log.AppendLine("PASS: next/previous and numbered tab commands supersede pending offset/reveal requests.");
         log.AppendLine("PASS: control-level header selection keeps the selected tab visible after pending scrolling.");
@@ -95,19 +96,40 @@ internal static class WorkspaceStartupTests
         var (frame, page) = CreatePage(owner, service);
         WinUIEditor.Editor observed = null;
         var painted = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var presented = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var presentedFrames = 0;
         var sets = (SetsView)page.FindName("Sets");
         sets.Width = 600;
         var core = page.TestCore;
         void OnPainted(WinUIEditor.Editor sender, WinUIEditor.PaintedEventArgs args)
         {
             sender.Painted -= OnPainted;
-            var scroller = Descendants(sets).OfType<ScrollViewer>().First(item => item.Name == "ScrollViewer");
             var correct = sender.FirstVisibleLine == 80 && sender.CurrentPos == 40 &&
-                core.GetSelectedTab()?.Id == ids[3] && Math.Abs(scroller.HorizontalOffset - 120) < 1;
+                core.GetSelectedTab()?.Id == ids[3];
             painted.TrySetResult(correct ? null : $"line={sender.FirstVisibleLine}, caret={sender.CurrentPos}, " +
-                $"selected={Array.IndexOf(ids, core.GetSelectedTab()?.Id ?? Guid.Empty)}, tabOffset={scroller.HorizontalOffset}, " +
-                $"requested={core.GetTabScrollViewerHorizontalOffset()}, max={scroller.ScrollableWidth}, " +
-                $"extent={scroller.ExtentWidth}, viewport={scroller.ViewportWidth}, tabs={core.GetTabCount()}");
+                $"selected={Array.IndexOf(ids, core.GetSelectedTab()?.Id ?? Guid.Empty)}");
+        }
+        void OnRendering(object sender, object args)
+        {
+            // Native Painted can run before XAML Loaded, while its surface is
+            // still inside BeginDraw/EndDraw. Observe the separate header tree
+            // at its own frame boundary, never waiting for the desired offset.
+            var tabs = core.GetTabs();
+            if (!sets.IsLoaded || tabs.Length != ids.Length ||
+                tabs.Any(tab => page.TestContainer(tab)?.IsLoaded != true)) return;
+            var scroller = Descendants(sets).OfType<ScrollViewer>().First(item => item.Name == "ScrollViewer");
+            var correct = Math.Abs(sets.ActualWidth - 600) < 1 &&
+                scroller.ViewportWidth > 0 && scroller.ViewportWidth <= sets.ActualWidth &&
+                scroller.ScrollableWidth >= 120 && Math.Abs(scroller.HorizontalOffset - 120) < 1 &&
+                core.GetSelectedTab()?.Id == ids[3];
+            presentedFrames++;
+            if (!correct || presentedFrames == 3)
+            {
+                CompositionTarget.Rendering -= OnRendering;
+                presented.TrySetResult(correct ? null : $"frame={presentedFrames}, tabOffset={scroller.HorizontalOffset}, " +
+                    $"requested={core.GetTabScrollViewerHorizontalOffset()}, max={scroller.ScrollableWidth}, " +
+                    $"extent={scroller.ExtentWidth}, viewport={scroller.ViewportWidth}, setsWidth={sets.ActualWidth}");
+            }
         }
         // Observe the restored editor before it is attached to the live visual tree.
         page.TestController.BeforeRestorePromotion = (source, editor, cancellation) =>
@@ -122,10 +144,13 @@ internal static class WorkspaceStartupTests
         };
         try
         {
+            CompositionTarget.Rendering += OnRendering;
             Window.Current.Content = frame;
             Window.Current.Activate();
             var failure = await painted.Task.WaitAsync(TimeSpan.FromSeconds(15));
-            Check(failure == null, "First native paint lost viewport, selection or tab-strip position: " + failure);
+            Check(failure == null, "First native paint lost viewport or selection: " + failure);
+            failure = await presented.Task.WaitAsync(TimeSpan.FromSeconds(15));
+            Check(failure == null, "Initial XAML frames lost the restored tab-strip position: " + failure);
             await UntilAsync(() => page.TestStartupComplete, "Startup did not complete.");
             page.TestController.StopSessionBackup();
             Check(core.GetTabCount() == ids.Length && core.GetSelectedReadyEditor() != null,
@@ -161,6 +186,7 @@ internal static class WorkspaceStartupTests
         }
         finally
         {
+            CompositionTarget.Rendering -= OnRendering;
             if (observed != null) observed.Painted -= OnPainted;
             await page.TestDisposeWindowAsync();
         }

@@ -142,7 +142,7 @@ function Invoke-IsolatedTestPhase {
     finally {
         # Preserve this phase before cleanup starts another process and replaces
         # the shared protocol files, including PASS followed by a native crash.
-        foreach ($name in @('results.txt', 'report.json')) {
+        foreach ($name in @('results.txt', 'report.json', 'progress.txt')) {
             $source = Join-Path $Session.RunRoot $name
             if (Test-Path -LiteralPath $source) {
                 Copy-Item -LiteralPath $source -Destination (Join-Path $Session.Root "phase-$($Session.Phase)-$name")

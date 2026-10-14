@@ -1,8 +1,9 @@
 # V2 continuous integration
 
 V2 is unreleased. GitHub Actions validates changes and produces unsigned
-Production Native AOT packages. Signing, tags, GitHub Releases and Microsoft Store
-submission are deferred. No publishing credentials are needed by these workflows.
+Production Native AOT packages. Release signing, tags, GitHub Releases and
+Microsoft Store submission are deferred. Installed-app tests sign a copy with a
+temporary certificate on their disposable VM; no publishing credentials are used.
 
 ## Automatic checks
 
@@ -14,19 +15,25 @@ PR/ref. There are no path filters that could leave a required check pending.
 | --- | --- |
 | Managed Tests | actionlint; all pure unit tests; runner/header/localization checks; real-storage recovery tests; isolated metrics-failure processes; architecture guard negative fixtures |
 | Native Tests | NativeDiff and RegexText C++ executables, Release x64 |
-| Native AOT / x86, x64, ARM64 | Solution restore; Production AOT publish; compiled managed-assembly dependency guard; unsigned bundle/upload-package validation |
-| E2E Tests | x64 Release AOT App tests, Debug native-fault tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
+| Native AOT / x86, x64, ARM64 | Solution restore; Production AOT publish; compiled managed-assembly dependency guard; unsigned bundle/upload-package validation; x64 also installs and exercises the Production package |
+| E2E Tests | x64 Release AOT App tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
+| Resilience Tests | Dedicated Debug host: optional style/lexer allocation failures, editing/undo recovery and journal integrity |
 | CI Gate | Every job above succeeded, including every architecture; failure, cancellation or an unexpected skip fails the gate |
 
-Configure **`CI Gate`** as the required branch/ruleset check. The package matrix
-uses separate machines and continues other architectures when one fails. Source
-and headless checks run independently of the longer native builds. Unit fixtures
-parallelize inside their runner; source and headless groups share one build.
-The separate UI job builds and executes the x64 App test host. It runs all default
-App groups from `Test.ps1 -Suite Integration -List`, plus `UIAutomation` and
-`DragDrop`. Its Debug native-fault group remains separate from Release AOT tests.
-App and input tests run sequentially on that job's desktop; package jobs do not
-build the test host again.
+Configure **`CI Gate`** as the required branch/ruleset check. Managed Tests and
+Native Tests run in parallel first. Only after both succeed do the three Native
+AOT architectures, E2E Tests and Resilience Tests start in parallel. A failed prerequisite skips
+these heavier jobs and fails the gate. Once started, a job's failure does not
+cancel its siblings; the package matrix also continues other architectures when
+one fails. Unit fixtures parallelize inside their runner; source and headless
+groups share one build.
+The desktop job matrix gives E2E and fault injection separate VMs and builds.
+E2E runs all default Release App groups from `Test.ps1 -Suite Integration -List`,
+plus `UIAutomation` and `DragDrop`. The Debug lane runs only the default fault
+group, without repeating ordinary syntax or storage tests; those already run in
+the Release `Editor` group. Each desktop runs its groups sequentially. The matrix
+does not cancel one lane when the other fails, and CI Gate requires both.
+Package jobs do not build the test host again.
 
 The Windows image is `windows-2025-vs2026`, with Visual Studio 2026/v145 and Windows
 SDK 10.0.26100.0. `global.json` selects .NET; `Initialize-BuildTools.ps1` checks the
@@ -57,6 +64,8 @@ Artifacts are retained for 14 days, including available diagnostics after failur
 - `ui-test-results`: hosted desktop environment, test/phase results, preservation
   reports and input-driver protocols. Failure diagnostics include an available
   desktop screenshot and recent application/AppModel/deployment event logs.
+- `native-fault-results`: the separate Debug host's build log, fault-injection
+  results, preservation reports and the same desktop failure diagnostics.
 
 `Build-CI.ps1` creates a unique output directory and requires exactly one fresh
 upload package. `Test-AppPackage.ps1` checks the manifest architecture set,
@@ -69,11 +78,67 @@ before AOT rather than a separate source-only model.
 
 The build preserves the current x86/x64/ARM64 scope and Windows 10 build 17763
 minimum. A platform change must update projects, package assertions and CI
-together. Generated unsigned packages are validation artifacts; this pipeline
-does not register them or verify Store certification. Artifacts from a PR remain
+together. Generated unsigned packages are validation artifacts. The x64 job
+installs a test-signed copy; this does not verify Store certification. Artifacts from a PR remain
 untrusted build output and are not automatically promoted to a release.
 
 ## Hosted UI and AOT runtime validation
+
+The x64 package job also runs the explicit `PackagedApp` integration group against
+the just-built Production upload package. It installs a temporarily signed bundle,
+preserving the original identity, manifest and executable. SHA-256 checks verify
+that signing changed only signature footprint metadata and that the installed
+executable matches the archive. A loose development registration is rejected.
+
+An external driver exercises startup, Unicode editing/saving, cold and warm
+Windows file activation, Explorer default-file association, duplicate-file reuse,
+new-window preferences before and after restart, normal close/recovery, OS suspend/resume, termination after a
+completed suspension, and one-time import of V1 UTF-8/UTF-16 recovery fixtures.
+Assertions observe actual editor text through UI Automation, tab membership,
+process/window identity, saved file bytes and OS package execution state. Product
+test hooks and in-process calls to application activation handlers are not used.
+
+The isolated App tests additionally force startup races found by this work:
+
+- `SessionControllerFileLookupTests` holds a matching imported file while startup
+  restores the saved selected tab. File lookup must not replace the saved selection
+  or make first-document readiness depend on a different file's I/O.
+- `WorkspaceActivationTests` holds recovery and the first activated file, then
+  submits another file/command request. Arrival order and final selection must
+  survive both barriers. Canceling a close during startup must resume processing;
+  actual disposal must settle queued requests even with a file-error dialog open.
+- A delayed default blank document must not add a tab or steal selection from a
+  file opened while the blank document's journal was being created. The unused
+  editor is released; ordinary explicit new-document commands are unaffected.
+
+The page queues only external activation requests. Normal file commands retain
+their existing admission/coalescing behavior. Initial navigation enqueues without
+waiting, allowing `App` to activate the window; file lookup priority remains
+separate from the saved session selection.
+
+`Test-PackagedApp.ps1` refuses non-hosted machines and pre-existing Notepads
+registrations, processes or data. Its cleanup removes only its installation and
+temporary certificates; cleanup failures fail the test. Evidence under
+`artifacts/packaged-app/<run-id>` includes per-case results, driver logs, process
+exit codes and failure UIA/screenshot diagnostics, uploaded with `native-aot-x64`.
+Normal-close tests reject abnormal process exits even if recovery data is intact.
+UWP's close exit code `1` is accepted only for a window the driver requested to
+close; that code without a close request, and crash exit codes after one, fail.
+Any lingering closed processes are terminated through retained handles with an
+explicit exit code; a concurrent crash cannot be accepted as that termination.
+The private signing key
+is non-exportable and never uploaded. No product installation occurs locally.
+
+Windows `ActivateForFile` tests the OS file activation contract. A separate case
+chooses Notepads in Windows default-app settings and verifies the association
+before invoking a file's default action in Explorer (the double-click path).
+The default-app picker uses keyboard navigation because its immersive window
+does not expose UIA descendants on the hosted image. An unexpected initial
+handler, picker layout or association readback fails the test.
+This does not exercise the Microsoft Store installation/update service.
+Migration uses actual V1 data contracts with the installed V2 executable,
+not an installed V1 binary upgraded through the Store. These distinctions must
+remain visible when reporting a pass.
 
 The automatic **E2E Tests** job uses its own disposable GitHub-hosted Windows VM.
 `Initialize-CIDesktop.ps1` verifies an interactive session, enables Developer Mode,
@@ -81,7 +146,11 @@ and registers the restored WinUI framework and SDK VC runtime packages. It refus
 to change a local or self-hosted machine. It also removes the foreground-lock delay
 on its disposable desktop so the input driver can switch between verified test
 windows. An adequate newer framework is retained.
-`Test-CIUI.ps1` selects all default App groups plus the two external input groups.
+`Test-CIUI.ps1 -Lane E2E` selects all default Release App groups plus the two
+external input groups. `-Lane Faults` selects the default Debug group on a separate
+VM. Unsupported configurations or an empty lane fail instead of silently reducing
+coverage. The dedicated `--native-faults` phase rejects Release execution because
+the native injection hooks are compiled only in Debug.
 The hosted driver retains the runner's elevation to arrange the UWP frame. Only
 the desktop drag peer uses a SAFER normal-user token with medium integrity; it
 records and checks its own privilege state before opening its window. No UAC

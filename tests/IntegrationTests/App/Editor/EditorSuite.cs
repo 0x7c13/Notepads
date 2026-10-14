@@ -135,6 +135,12 @@ internal static class EditorSuite
                 core.Dispose();
                 return;
             }
+            if (arguments == "--native-faults")
+            {
+                await SyntaxHighlightingTests.RunFaultsAsync(log, core);
+                core.Dispose();
+                return;
+            }
             if (arguments == "--regex-memory")
             {
                 const int documentBytes = 8 * 1024 * 1024;
