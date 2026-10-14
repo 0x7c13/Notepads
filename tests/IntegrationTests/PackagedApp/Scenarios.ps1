@@ -307,13 +307,17 @@ try {
             [PackagedAppDriver]::Focus($settings.Id)
             $search = Wait-Until {
                 $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Edit)
-                foreach ($edit in (Get-Root $settings).FindAll($descendants, $condition)) {
+                $root = Get-Root $settings
+                if (!$root) { return $null }
+                foreach ($edit in $root.FindAll($descendants, $condition)) {
                     if ($edit.Current.Name -match 'file type|file extension') { return $edit }
                 }
             } 'default-app file extension search'
             $search.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern).SetValue('.txt')
             $association = Wait-Until {
-                foreach ($element in (Get-Root $settings).FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
+                $root = Get-Root $settings
+                if (!$root) { return $null }
+                foreach ($element in $root.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
                     if ($element.Current.ControlType -eq [Windows.Automation.ControlType]::Button -and $element.Current.Name -match '\.txt') { return $element }
                 }
             } '.txt default application selector'
