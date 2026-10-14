@@ -379,7 +379,7 @@ public sealed partial class NotepadsMainPage : Page
         {
             if (NotepadsCore.GetTabCount() == 0)
             {
-                await CreateNewTextEditorAsync();
+                await CreateNewTextEditorAsync(onlyIfEmpty: true);
                 if (!await CanContinueAfterCloseAsync()) return;
             }
             _loaded = true;

@@ -83,14 +83,14 @@ that signing changed only signature footprint metadata and that the installed
 executable matches the archive. A loose development registration is rejected.
 
 An external driver exercises startup, Unicode editing/saving, cold and warm
-Windows file activation, Explorer default-file association, duplicate-file reuse, new-window preferences before and
-after restart, normal close/recovery, OS suspend/resume, termination after a
+Windows file activation, Explorer default-file association, duplicate-file reuse,
+new-window preferences before and after restart, normal close/recovery, OS suspend/resume, termination after a
 completed suspension, and one-time import of V1 UTF-8/UTF-16 recovery fixtures.
 Assertions observe actual editor text through UI Automation, tab membership,
 process/window identity, saved file bytes and OS package execution state. Product
 test hooks and in-process calls to application activation handlers are not used.
 
-The isolated App tests additionally force two startup races found by this work:
+The isolated App tests additionally force startup races found by this work:
 
 - `SessionControllerFileLookupTests` holds a matching imported file while startup
   restores the saved selected tab. File lookup must not replace the saved selection
@@ -99,6 +99,9 @@ The isolated App tests additionally force two startup races found by this work:
   submits another file/command request. Arrival order and final selection must
   survive both barriers. Canceling a close during startup must resume processing;
   actual disposal must settle queued requests even with a file-error dialog open.
+- A delayed default blank document must not add a tab or steal selection from a
+  file opened while the blank document's journal was being created. The unused
+  editor is released; ordinary explicit new-document commands are unaffected.
 
 The page queues only external activation requests. Normal file commands retain
 their existing admission/coalescing behavior. Initial navigation enqueues without

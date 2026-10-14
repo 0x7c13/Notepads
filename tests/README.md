@@ -69,7 +69,8 @@ temporarily signed copy of the actual Production bundle, retaining its identity
 and checking the installed executable hash. It refuses existing product
 registrations/processes/data, and uninstalls its package and temporary certificate
 afterward. The driver observes UIA text, actual file bytes, process/window identity
-and OS execution state. It does not compile product test hooks into the app.
+and OS execution state. It drives the shipped entry points without an in-process
+test host.
 Results live under `artifacts/packaged-app`; see [CI.md](../CI.md) for its scenarios
 and the distinctions between Windows file activation, Explorer association and
 Microsoft Store deployment. This group never installs the product locally.

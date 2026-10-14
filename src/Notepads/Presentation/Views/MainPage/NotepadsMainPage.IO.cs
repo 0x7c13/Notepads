@@ -25,7 +25,7 @@ namespace Notepads.Presentation.Views.MainPage;
 public sealed partial class NotepadsMainPage
 {
 
-    private async Task CreateNewTextEditorAsync()
+    private async Task CreateNewTextEditorAsync(bool onlyIfEmpty = false)
     {
         if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return;
         ITextEditor editor = null;
@@ -33,6 +33,9 @@ public sealed partial class NotepadsMainPage
         {
             editor = await NotepadsCore.CreateNewTextEditorAsync(_defaultNewFileName);
             if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) { await NotepadsCore.DiscardUnattachedEditorAsync(editor); return; }
+            // Creating the journal yields. An external activation or a user
+            // command may have already supplied the startup document meanwhile.
+            if (onlyIfEmpty && NotepadsCore.GetTabCount() != 0) { await NotepadsCore.DiscardUnattachedEditorAsync(editor); return; }
             NotepadsCore.OpenTextEditor(editor);
         }
         catch (Exception ex)
@@ -102,7 +105,7 @@ public sealed partial class NotepadsMainPage
                         _resourceLoader.GetString("SessionBackup_NotificationMsg_RecoveryIncomplete") : result.Error.Message;
                     var dialog = new FileOpenErrorDialog(file.Path, message);
                     await DialogManager.OpenDialogAsync(dialog, awaitPreviousDialog: false);
-                    if (!_viewClosed && !_isAppClosing && !dialog.IsAborted) NotepadsCore.FocusOnSelectedTextEditor();
+                    if (!dialog.IsAborted) NotepadsCore.FocusOnSelectedTextEditor();
                     break;
             }
         });

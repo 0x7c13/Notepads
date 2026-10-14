@@ -34,10 +34,12 @@ internal static class WorkspaceActivationTests
         await VerifyOrderingAsync(commandFirst: false);
         await VerifyOrderingAsync(commandFirst: true);
         await VerifyOrderingAsync(commandFirst: false, cancelStartupClose: true);
+        await VerifyActivationDuringBlankCreationAsync();
         await VerifyCloseBeforeLoadedAsync();
         log.AppendLine("PASS: external file and command activations wait for recovery and retain arrival order and final selection.");
         log.AppendLine("PASS: failed activation allows the next file to open; close before Loaded settles queued requests without opening files.");
         log.AppendLine("PASS: canceled startup close resumes activation; actual disposal does not wait for a file-error dialog.");
+        log.AppendLine("PASS: a late startup placeholder cannot replace an already opened file or retain an unused editor.");
     }
 
     private static TaskCompletionSource<bool> Signal() => new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -83,6 +85,7 @@ internal static class WorkspaceActivationTests
                 seed.IsBackupEnabled = true;
                 await seed.InitializeAuthorityAsync();
                 await using var document = await SessionTestDocument.CreateAsync(owner, "recovered dirty text");
+                document.Metadata.FileNamePlaceholder = "recovered.txt";
                 using var capture = SessionTestProtocol.CaptureDocuments(new[] { document }, new[] { recoveredId }, seed.CurrentStamp);
                 capture.SelectedEditorId = recoveredId;
                 Check((await seed.SaveAsync(capture, CancellationToken.None)).Succeeded, "Activation recovery fixture could not be saved.");
@@ -198,6 +201,50 @@ internal static class WorkspaceActivationTests
             await firstFile.DeleteAsync();
             await secondFile.DeleteAsync();
             await failedFile.DeleteAsync();
+        }
+    }
+
+    private static async Task VerifyActivationDuringBlankCreationAsync()
+    {
+        var owner = Guid.NewGuid();
+        var file = await FileAsync("during-startup.txt");
+        var blankStarted = Signal();
+        var releaseBlank = Signal();
+        try
+        {
+            await using var service = CreateService(owner);
+            var (frame, page) = CreatePage(owner, service);
+            var core = (NotepadsCore)page.TestCore;
+            core.BeforeNewDocumentPreparation = async () =>
+            {
+                blankStarted.TrySetResult(true);
+                await releaseBlank.Task;
+            };
+            try
+            {
+                Window.Current.Content = frame;
+                Window.Current.Activate();
+                await blankStarted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+                await page.ActivateFilesAsync(new IStorageItem[] { file }).WaitAsync(TimeSpan.FromSeconds(10));
+                Check(core.GetTabCount() == 1 && core.GetSelectedReadyEditor()?.EditingFile?.IsEqual(file) == true,
+                    "The activation did not open while the startup placeholder was being prepared.");
+                releaseBlank.SetResult(true);
+                await UntilAsync(() => page.TestStartupComplete, "Startup did not finish after its placeholder was released.");
+                Check(core.GetTabCount() == 1 && core.TestOwnedEditorCount == 1 &&
+                    core.GetSelectedReadyEditor()?.EditingFile?.IsEqual(file) == true &&
+                    core.GetSelectedReadyEditor().GetText() == "during-startup.txt Ω😀",
+                    "The late startup placeholder stole selection, duplicated a tab or leaked an editor.");
+            }
+            finally
+            {
+                releaseBlank.TrySetResult(true);
+                await page.TestDisposeWindowAsync();
+            }
+        }
+        finally
+        {
+            await SessionTestProtocol.CleanupAsync(owner);
+            await file.DeleteAsync();
         }
     }
 

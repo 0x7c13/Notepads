@@ -262,6 +262,8 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     public Guid DocumentOwnerId => _context.DocumentOwnerId;
 
+    internal Func<Task> BeforeNewDocumentPreparation { get; set; }
+
     public Task<ITextEditor> CreateNewTextEditorAsync(string fileNamePlaceholder) =>
         TrackWorkAsync(CreateNewTextEditorCoreAsync(fileNamePlaceholder));
 
@@ -270,6 +272,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         var newEditor = CreateTextEditor(Guid.NewGuid(), null, fileNamePlaceholder);
         try
         {
+            if (BeforeNewDocumentPreparation != null) await BeforeNewDocumentPreparation();
             await newEditor.InitializeNewAsync();
             ThrowIfDisposedOrClosing();
             return newEditor;
