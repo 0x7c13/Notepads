@@ -102,7 +102,7 @@ public sealed partial class NotepadsMainPage
                         _resourceLoader.GetString("SessionBackup_NotificationMsg_RecoveryIncomplete") : result.Error.Message;
                     var dialog = new FileOpenErrorDialog(file.Path, message);
                     await DialogManager.OpenDialogAsync(dialog, awaitPreviousDialog: false);
-                    if (!dialog.IsAborted) NotepadsCore.FocusOnSelectedTextEditor();
+                    if (!_viewClosed && !_isAppClosing && !dialog.IsAborted) NotepadsCore.FocusOnSelectedTextEditor();
                     break;
             }
         });
