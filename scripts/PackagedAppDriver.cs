@@ -147,6 +147,8 @@ public sealed class PackagedAppDriver : IDisposable
         throw new InvalidOperationException("Could not foreground owned process " + pid);
     }
 
+    public static IntPtr ForegroundWindow() { return GetForegroundWindow(); }
+
     private static void RequireFocus(uint pid)
     {
         if (!ContainsProcess(GetForegroundWindow(), pid))

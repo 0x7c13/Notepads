@@ -323,17 +323,16 @@ try {
             } '.txt default application selector'
             Invoke-UI $association
             $choice = Wait-Until {
-                $condition = [Windows.Automation.OrCondition]::new(
-                    [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Notepads App'),
-                    [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Notepads'))
-                foreach ($element in $elementType::RootElement.FindAll($descendants, $condition)) {
-                    if (!$element.Current.IsOffscreen -and $element.Current.ControlType -eq [Windows.Automation.ControlType]::ListItem) { return $element }
+                $picker = $elementType::FromHandle([PackagedAppDriver]::ForegroundWindow())
+                foreach ($element in $picker.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
+                    if (!$element.Current.IsOffscreen -and $element.Current.Name -match '^Notepads(?: App)?(?:,|\s|$)' -and
+                        $element.Current.ControlType -in [Windows.Automation.ControlType]::ListItem, [Windows.Automation.ControlType]::Button) { return $element }
                 }
             } 'installed Notepads file handler in Windows picker'
             $choice.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
             $confirm = Wait-Until {
                 $condition = [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Set default')
-                return $elementType::RootElement.FindFirst($descendants, $condition)
+                return $elementType::FromHandle([PackagedAppDriver]::ForegroundWindow()).FindFirst($descendants, $condition)
             } 'Windows Set default button'
             Invoke-UI $confirm
             [PackagedAppDriver]::Close($settings.Id)
@@ -440,6 +439,11 @@ catch {
             }
         }
         ConvertTo-Json -InputObject @($tree) -Depth 4 | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'uia-failure.json')
+        $foreground = $elementType::FromHandle([PackagedAppDriver]::ForegroundWindow())
+        $foreground.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition) | ForEach-Object {
+            [ordered]@{ Pid = $_.Current.ProcessId; Type = $_.Current.ControlType.ProgrammaticName;
+                Id = $_.Current.AutomationId; Name = $_.Current.Name; Class = $_.Current.ClassName; Offscreen = $_.Current.IsOffscreen }
+        } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'foreground-uia-failure.json')
         $desktop = $elementType::RootElement.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition) | ForEach-Object {
             [ordered]@{ Pid = $_.Current.ProcessId; Type = $_.Current.ControlType.ProgrammaticName
                 Id = $_.Current.AutomationId; Name = $_.Current.Name; Class = $_.Current.ClassName; Offscreen = $_.Current.IsOffscreen }
