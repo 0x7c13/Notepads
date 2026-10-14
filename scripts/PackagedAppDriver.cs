@@ -148,6 +148,7 @@ public sealed class PackagedAppDriver : IDisposable
     }
 
     public static IntPtr ForegroundWindow() { return GetForegroundWindow(); }
+    public static uint ForegroundProcess() { uint pid; GetWindowThreadProcessId(GetForegroundWindow(), out pid); return pid; }
 
     private static void RequireFocus(uint pid)
     {

@@ -322,19 +322,16 @@ try {
                 }
             } '.txt default application selector'
             Invoke-UI $association
-            $choice = Wait-Until {
-                $picker = $elementType::FromHandle([PackagedAppDriver]::ForegroundWindow())
-                foreach ($element in $picker.FindAll($descendants, [Windows.Automation.Condition]::TrueCondition)) {
-                    if (!$element.Current.IsOffscreen -and $element.Current.Name -match '^Notepads(?: App)?(?:,|\s|$)' -and
-                        $element.Current.ControlType -in [Windows.Automation.ControlType]::ListItem, [Windows.Automation.ControlType]::Button) { return $element }
-                }
-            } 'installed Notepads file handler in Windows picker'
-            $choice.GetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern).Select()
-            $confirm = Wait-Until {
-                $condition = [Windows.Automation.PropertyCondition]::new($elementType::NameProperty, 'Set default')
-                return $elementType::FromHandle([PackagedAppDriver]::ForegroundWindow()).FindFirst($descendants, $condition)
-            } 'Windows Set default button'
-            Invoke-UI $confirm
+            Start-Sleep -Seconds 1
+            $pickerPid = [PackagedAppDriver]::ForegroundProcess()
+            $process = Get-Process -Id $pickerPid
+            Write-Host "PICKER $($process.Name) $pickerPid"
+            [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $true)
+            [PackagedAppDriver]::Key($pickerPid, 0x09, $false, $true)
+            [PackagedAppDriver]::Key($pickerPid, 0x24, $false, $false)
+            [PackagedAppDriver]::Key($pickerPid, 0x28, $false, $false)
+            Start-Sleep -Milliseconds 300
+            throw 'PROBE: keyboard selection checkpoint'
             [PackagedAppDriver]::Close($settings.Id)
 
             $explorerFile = Join-Path $fixtures 'explorer-activation.txt'
