@@ -217,8 +217,11 @@ public sealed class EditorDragInput : IDisposable
         int height = monitor.Work.Bottom - monitor.Work.Top - 24;
         if (width < 380 || height < 360) throw new InvalidOperationException("Monitor work area is too small for two visible test windows.");
         ShowWindowAsync(EditorWindow, 9); ShowWindowAsync(PeerWindow, 9);
-        if (!SetWindowPos(EditorWindow, IntPtr.Zero, monitor.Work.Left + 8, monitor.Work.Top + 8, width, height, 0x14) ||
-            !SetWindowPos(PeerWindow, IntPtr.Zero, monitor.Work.Left + width + 24, monitor.Work.Top + 8, width, height, 0x14))
+        // Raise only these owned windows in the ordinary Z order. Keeping
+        // NOZORDER can leave the inactive peer behind an unrelated window;
+        // NOACTIVATE preserves focus until the explicit owned activation.
+        if (!SetWindowPos(EditorWindow, IntPtr.Zero, monitor.Work.Left + 8, monitor.Work.Top + 8, width, height, 0x10) ||
+            !SetWindowPos(PeerWindow, IntPtr.Zero, monitor.Work.Left + width + 24, monitor.Work.Top + 8, width, height, 0x10))
             throw new InvalidOperationException("Could not arrange the owned test windows.");
     }
     public void Activate(uint pid)

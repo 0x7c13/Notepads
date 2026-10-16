@@ -12,6 +12,16 @@
 
 namespace winrt::WinUIEditor::implementation
 {
+	std::vector<Scintilla::Internal::PRectangle> Editor::AutomationRangeRectangles(int64_t start, int64_t end)
+	{
+		auto view = _editor.get();
+		if (!view || view->IsFinalized())
+			winrt::throw_hresult(RO_E_CLOSED);
+		if (!view->Dispatcher().HasThreadAccess())
+			winrt::throw_hresult(RPC_E_WRONG_THREAD);
+		return view->AutomationRangeRectangles(start, end);
+	}
+
 	Scintilla::Internal::Range Editor::AutomationUnitRange(int64_t position, bool word)
 	{
 		auto view = _editor.get();

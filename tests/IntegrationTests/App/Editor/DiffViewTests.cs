@@ -4,10 +4,14 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Documents.Storage;
+using Notepads.Presentation.Controls.DiffViewer;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Theming;
 using Windows.UI.Xaml;
@@ -159,12 +163,12 @@ internal static class DiffViewTests
         EventHandler oldViewport = (_, _) =>
         {
             viewportEvents++;
-            current.SetDiffViewport(old.FirstVisibleRow, old.HorizontalScrollOffset);
+            if (!old.IsDiffViewportPending) current.SetDiffViewport(old.DiffFirstVisibleRow, old.DiffHorizontalOffset);
         };
         EventHandler newViewport = (_, _) =>
         {
             viewportEvents++;
-            old.SetDiffViewport(current.FirstVisibleRow, current.HorizontalScrollOffset);
+            if (!current.IsDiffViewportPending) old.SetDiffViewport(current.DiffFirstVisibleRow, current.DiffHorizontalOffset);
         };
         old.ViewportChanged += oldViewport;
         current.ViewportChanged += newViewport;
@@ -215,8 +219,52 @@ internal static class DiffViewTests
             Native(old).AddText(1, "x");
             Require(old.GetText() == "x", "canceled compare drained leases");
         }
+        await CheckDetachedFirstHunkAsync();
         await CheckOrdinaryPageNavigationAsync();
         log.AppendLine("PASS Scintilla DiffView: native snapshot, aligned read-only panes, Unicode/NUL, terminators, undo isolation and cancellation drain.");
+    }
+
+    private static async Task CheckDetachedFirstHunkAsync()
+    {
+        var text = string.Join('\r', Enumerable.Range(0, 120).Select(line => $"line {line:D3}"));
+        using var baseline = await DocumentBaseline.FromTextAsync(text, Guid.NewGuid());
+        using var source = new TextEditorCore();
+        source.SetText(text.Replace("line 080", "changed 080", StringComparison.Ordinal));
+        using var viewer = new SideBySideDiffViewer { Width = 700, Height = 320 };
+        Require(await viewer.PrepareAsync(baseline, source, DocumentLanguages.PlainText, "sample.txt", CancellationToken.None),
+            "detached real diff viewer prepares the distant change");
+        var old = (TextEditorCore)viewer.FindName("OldEditor");
+        var current = (TextEditorCore)viewer.FindName("NewEditor");
+        var oldView = (EditorBaseControl)((Grid)old.Content).Children[0];
+        var newView = (EditorBaseControl)((Grid)current.Content).Children[0];
+        Require(!oldView.IsLoaded && !newView.IsLoaded &&
+            oldView.IsViewportRestorePending && newView.IsViewportRestorePending &&
+            old.DiffFirstVisibleRow == 78 && current.DiffFirstVisibleRow == 78 &&
+            old.DiffHorizontalOffset == 0 && current.DiffHorizontalOffset == 0,
+            "detached diff queues the distant hunk and leading edge, rather than normal-document caret-follow");
+        var oldRows = new List<long>();
+        var newRows = new List<long>();
+        void OldPainted(Editor sender, PaintedEventArgs args) => oldRows.Add(sender.FirstVisibleLine);
+        void NewPainted(Editor sender, PaintedEventArgs args) => newRows.Add(sender.FirstVisibleLine);
+        oldView.Editor.Painted += OldPainted;
+        newView.Editor.Painted += NewPainted;
+        try
+        {
+            var newPaint = EditorTestLayout.AfterPaintAsync(newView.Editor, () => { });
+            await EditorTestLayout.AfterPaintAsync(oldView.Editor, () => Window.Current.Content = viewer);
+            await newPaint;
+            // The actual viewer navigates to the first changed row with two context rows.
+            Require(oldRows.Count > 0 && newRows.Count > 0 && oldRows.All(row => row == 78) && newRows.All(row => row == 78),
+                "the distant first hunk, rather than caret zero, owns both panes' first paint");
+            Require(!oldView.IsViewportRestorePending && !newView.IsViewportRestorePending,
+                "both diff viewport requests complete before their first paint");
+        }
+        finally
+        {
+            oldView.Editor.Painted -= OldPainted;
+            newView.Editor.Painted -= NewPainted;
+            Window.Current.Content = null;
+        }
     }
 
     private static async Task CheckOrdinaryPageNavigationAsync()

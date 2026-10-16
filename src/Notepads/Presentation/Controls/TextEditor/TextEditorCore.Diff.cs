@@ -25,7 +25,9 @@ public sealed partial class TextEditorCore
     internal event EventHandler ViewportChanged;
     internal event EventHandler AppearanceChanged;
     internal long FirstVisibleRow => Native.FirstVisibleLine;
-    internal long HorizontalScrollOffset => Native.XOffset;
+    internal double DiffHorizontalOffset => _view.DisplayHorizontalOffset;
+    internal long DiffFirstVisibleRow => _view.DisplayFirstVisibleRow;
+    internal bool IsDiffViewportPending => _view.IsViewportRestorePending;
 
     internal void ConfigureDiffPreview()
     {
@@ -92,11 +94,7 @@ public sealed partial class TextEditorCore
         _diffHighlightCount = count;
     }
 
-    internal void SetDiffViewport(long row, long horizontalOffset)
-    {
-        Native.FirstVisibleLine = row;
-        Native.XOffset = checked((int)horizontalOffset);
-    }
+    internal void SetDiffViewport(long row, double leadingOffset) => _view.SetDisplayViewport(row, leadingOffset);
 
     internal void CopyDiffSelection() => Native.Copy();
     internal void SelectDiffDocument() => Native.SelectAll();

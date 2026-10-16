@@ -174,10 +174,10 @@ namespace WinUIEditor
 
 	bool Wrapper::TransformToRoot(float &x, float &y) const
 	{
-		if (const auto control{ _control.get() })
+		if (const auto element{ CoordinateElement() })
 		{
 			// TransformToVisual(nullptr) is relative to root
-			const auto relative{ control.TransformToVisual(nullptr).TransformPoint({ x, y }) };
+			const auto relative{ element.TransformToVisual(nullptr).TransformPoint({ x, y }) };
 			x = relative.X;
 			y = relative.Y;
 			return true;
@@ -186,31 +186,62 @@ namespace WinUIEditor
 		return false;
 	}
 
-	bool Wrapper::TransformToScreen(Scintilla::Internal::PRectangle &rectangle) const noexcept
+	bool Wrapper::TransformFromRoot(float &x, float &y) const
+	{
+		if (const auto element{ CoordinateElement() }) {
+			const auto inverse = element.TransformToVisual(nullptr).Inverse();
+			if (!inverse) return false;
+			const auto relative = inverse.TransformPoint({ x, y });
+			x = relative.X;
+			y = relative.Y;
+			return true;
+		}
+		return false;
+	}
+
+	bool Wrapper::TransformToRoot(Scintilla::Internal::PRectangle &rectangle) const noexcept
 	{
 		try
 		{
-			const auto control{ _control.get() };
-			const auto window{ winrt::Windows::UI::Core::CoreWindow::GetForCurrentThread() };
-			if (!control || !window) return false;
+			const auto element{ CoordinateElement() };
+			if (!element) return false;
 
-			// Scintilla uses physical pixels; XAML transforms and CoreWindow.Bounds use DIPs.
-			// Both ITextStoreACP and CoreText LayoutBounds expect physical screen pixels.
+			// Scintilla and UIA use physical pixels; XAML transforms use DIPs.
 			const auto scale{ _logicalDpi / 96.f };
-			const auto relative{ control.TransformToVisual(nullptr).TransformBounds({
+			const auto relative{ element.TransformToVisual(nullptr).TransformBounds({
 				static_cast<float>(rectangle.left / scale), static_cast<float>(rectangle.top / scale),
 				static_cast<float>(rectangle.Width() / scale), static_cast<float>(rectangle.Height() / scale) }) };
-			const auto bounds{ window.Bounds() };
 			rectangle = Scintilla::Internal::PRectangle{
-				std::floor((relative.X + bounds.X) * scale),
-				std::floor((relative.Y + bounds.Y) * scale),
-				std::ceil((relative.X + relative.Width + bounds.X) * scale),
-				std::ceil((relative.Y + relative.Height + bounds.Y) * scale) };
+				relative.X * scale, relative.Y * scale,
+				(relative.X + relative.Width) * scale, (relative.Y + relative.Height) * scale };
 			return true;
 		}
 		catch (winrt::hresult_error const &)
 		{
 			// A detached/closing XAML view has no usable text layout.
+			return false;
+		}
+	}
+
+	bool Wrapper::TransformToScreen(Scintilla::Internal::PRectangle &rectangle) const noexcept
+	{
+		try
+		{
+			const auto window{ winrt::Windows::UI::Core::CoreWindow::GetForCurrentThread() };
+			if (!window || !TransformToRoot(rectangle)) return false;
+
+			// TSF/CoreText require physical screen coordinates without XAML's UIA adapter.
+			const auto scale{ _logicalDpi / 96.f };
+			const auto bounds{ window.Bounds() };
+			rectangle = Scintilla::Internal::PRectangle{
+				std::floor(rectangle.left + bounds.X * scale),
+				std::floor(rectangle.top + bounds.Y * scale),
+				std::ceil(rectangle.right + bounds.X * scale),
+				std::ceil(rectangle.bottom + bounds.Y * scale) };
+			return true;
+		}
+		catch (winrt::hresult_error const &)
+		{
 			return false;
 		}
 	}

@@ -17,6 +17,7 @@ using Notepads.Presentation.Theming;
 using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -31,8 +32,8 @@ internal static class InteractiveEditorHost
 {
     private static TextEditorCore _editor;
     private static WinUIEditor.EditorBaseControl _view;
-    private static DispatcherTimer _timer;
     private static string _channel;
+    private static DpiChangeFixture _dpiFixture;
     private static StackPanel _panel;
     private static bool _disposed;
     private static string _case;
@@ -41,7 +42,6 @@ internal static class InteractiveEditorHost
     private static int _dragCompleted;
     private static int _dragResult;
     private static int _sequence;
-    private static bool _busy;
     private static DateTime _lastCommand;
     private static DocumentBaseline _preparedReplacement;
     private static string _preparedReplacementCase;
@@ -72,10 +72,9 @@ internal static class InteractiveEditorHost
             ApplicationView.GetForCurrentView().TryResizeView(new Windows.Foundation.Size(800, 600));
             await ResetAsync("", false, 520, 340, 18);
             _lastCommand = DateTime.UtcNow;
-            _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25) };
-            _timer.Tick += async (_, _) => await PollAsync();
-            _timer.Start();
             WriteAtomic("ready.txt", "READY\n" + Snapshot());
+            var dispatcher = Window.Current.Dispatcher;
+            _ = Task.Run(() => RunCommandsAsync(dispatcher));
         }
         catch (Exception ex)
         {
@@ -84,20 +83,67 @@ internal static class InteractiveEditorHost
         }
     }
 
-    private static async Task PollAsync()
+    private static async Task RunCommandsAsync(CoreDispatcher dispatcher)
     {
-        if (_busy) return;
-        _busy = true;
-        int? exitCode = null;
+        var exitCode = 1;
         try
         {
-            if (_sequence >= 1000 || DateTime.UtcNow - _lastCommand > TimeSpan.FromMinutes(10))
+            while (true)
             {
-                throw new TimeoutException("Interactive test exceeded its command or inactivity limit.");
+                if (_sequence >= 1000 || DateTime.UtcNow - _lastCommand > TimeSpan.FromMinutes(10))
+                    throw new TimeoutException("Interactive test exceeded its command or inactivity limit.");
+
+                // XAML timer ticks can be starved by a nested OLE drag loop.
+                // Observe files off-thread and enqueue only an actual command;
+                // the awaited completion keeps all UI operations serialized.
+                var path = Path.Combine(_channel, $"command-{_sequence + 1:D4}.txt");
+                if (!File.Exists(path))
+                {
+                    await Task.Delay(25).ConfigureAwait(false);
+                    continue;
+                }
+                if (await DispatchCommandAsync(dispatcher).ConfigureAwait(false) is { } status)
+                {
+                    exitCode = status;
+                    break;
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            // The external runner retains an owned process handle and validates
+            // this exit even when a closed dispatcher cannot accept an ACK.
+            try { WriteAtomic("fatal.txt", ex.ToString()); }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        }
+        // The UI command has returned, including all readers and finally blocks.
+        // Terminate off-thread so CLR/COM teardown can still use the dispatcher.
+        Environment.Exit(exitCode);
+    }
+
+    private static async Task<int?> DispatchCommandAsync(CoreDispatcher dispatcher)
+    {
+        var completed = new TaskCompletionSource<int?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        if (!await dispatcher.TryRunAsync(CoreDispatcherPriority.Normal, async () =>
+        {
+            try { completed.TrySetResult(await ProcessCommandAsync()); }
+            catch (Exception ex) { completed.TrySetException(ex); }
+        }))
+        {
+            throw new InvalidOperationException("The interactive editor dispatcher has closed.");
+        }
+        // TryRunAsync acknowledges dispatch, not the async handler's completion.
+        return await completed.Task.ConfigureAwait(false);
+    }
+
+    private static async Task<int?> ProcessCommandAsync()
+    {
+        try
+        {
             var next = _sequence + 1;
             var path = Path.Combine(_channel, $"command-{next:D4}.txt");
-            if (!File.Exists(path)) return;
+            if (!File.Exists(path)) return null;
             // The file becomes visible before the publisher's rename handle
             // necessarily closes. Share deletion so this atomic handoff is safe.
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete);
@@ -110,40 +156,43 @@ internal static class InteractiveEditorHost
                 var extra = await ExecuteAsync(command);
                 if (command[0] == "exit")
                 {
-                    _timer.Stop();
                     Window.Current.Content = null;
                     NotepadsTestIsolation.TestApplicationData.ValidatePreservedFileGrants();
                     await LoggingService.FlushAsync();
                     // Do not query the disposed editor to build a final snapshot.
                     WriteAtomic($"response-{next:D4}.txt", "OK\n");
-                    exitCode = 0;
+                    return 0;
                 }
-                else WriteAtomic($"response-{next:D4}.txt", "OK\n" + Snapshot() + extra);
+                else WriteAtomic($"response-{next:D4}.txt", "OK\n" +
+                    (command[0].StartsWith("dpi-", StringComparison.Ordinal) ? string.Empty : Snapshot()) + extra);
             }
             catch (Exception ex)
             {
                 WriteAtomic($"response-{next:D4}.txt", "ERROR\n" + ex);
-                if (command[0] == "exit") { _timer.Stop(); exitCode = 1; }
+                if (command[0] == "exit") return 1;
             }
         }
         catch (Exception ex)
         {
             WriteAtomic("fatal.txt", ex.ToString());
-            _timer.Stop();
-            exitCode = 1;
+            return 1;
         }
-        finally { _busy = false; }
-        // All command readers and the polling finally have completed before
-        // terminating; the runner separately requires acknowledgement and zero.
-        // The test host exits on a worker so CLR/COM cleanup can use the UI
-        // dispatcher after this callback returns instead of blocking teardown.
-        if (exitCode is { } status) _ = Task.Run(() => Environment.Exit(status));
+        return null;
     }
 
     private static async Task<string> ExecuteAsync(string[] command)
     {
         switch (command[0])
         {
+            case "dpi-prepare" when command.Length == 4:
+                _dpiFixture?.Dispose();
+                _dpiFixture = null;
+                _dpiFixture = await DpiChangeFixture.CreateAsync(bool.Parse(command[1]), bool.Parse(command[2]), bool.Parse(command[3]));
+                return _dpiFixture.State();
+            case "dpi-state" when command.Length == 1:
+                return (_dpiFixture ?? throw new InvalidOperationException("No DPI fixture.")).State();
+            case "dpi-validate" when command.Length == 1:
+                return (_dpiFixture ?? throw new InvalidOperationException("No DPI fixture.")).Validate();
             case "reset" when command.Length == 6:
                 var text = DecodeText(command[1]);
                 await ResetAsync(text, bool.Parse(command[2]), Number(command[3]), Number(command[4]), Number(command[5]));
@@ -165,13 +214,90 @@ internal static class InteractiveEditorHost
                 var position = long.Parse(command[1], CultureInfo.InvariantCulture);
                 if (!_view.IsLoaded || position < 0 || position > Native.Length) throw new ArgumentOutOfRangeException(nameof(position));
                 var scale = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
-                var point = _view.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(
+                var geometrySurface = FindImageTarget(_view) ??
+                    throw new InvalidOperationException("The native text surface is not available.");
+                var point = geometrySurface.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point(
                     Native.PointXFromPosition(position) / scale, Native.PointYFromPosition(position) / scale));
                 var bounds = Window.Current.CoreWindow.Bounds;
                 return "pointX=" + ((point.X + bounds.X) * scale).ToString(CultureInfo.InvariantCulture) +
                     "\npointY=" + ((point.Y + bounds.Y) * scale).ToString(CultureInfo.InvariantCulture) + "\n";
             case "undo" when command.Length == 1:
                 Native.Undo();
+                break;
+            case "rectangle-step" when command.Length == 2:
+                switch (command[1])
+                {
+                    case "Left": Native.CharLeftRectExtend(); break;
+                    case "Right": Native.CharRightRectExtend(); break;
+                    case "Down": Native.LineDownRectExtend(); break;
+                    default: throw new ArgumentException("Invalid rectangle navigation direction.");
+                }
+                break;
+            case "scroll-caret" when command.Length == 1:
+                Native.ScrollCaret();
+                break;
+            case "caret-visible" when command.Length == 2:
+                await EditorTestLayout.AfterPaintAsync(Native, () =>
+                {
+                    Native.CaretStyle = bool.Parse(command[1]) ? WinUIEditor.CaretStyle.Line : WinUIEditor.CaretStyle.Invisible;
+                    Native.CaretFore = Native.AdditionalCaretFore = 0xff00ff;
+                    Native.CaretPeriod = 0;
+                });
+                break;
+            case "direction" when command.Length == 2:
+                await EditorTestLayout.AfterPaintAsync(Native, () => _editor.RightToLeftReadingOrder = bool.Parse(command[1]));
+                break;
+            case "line-numbers" when command.Length == 2:
+                await EditorTestLayout.AfterPaintAsync(Native, () => _editor.DisplayLineNumbers = bool.Parse(command[1]));
+                return GutterState();
+            case "gutter-state" when command.Length == 1:
+                return GutterState();
+            case "buffered-draw" when command.Length == 2:
+                await EditorTestLayout.AfterPaintAsync(Native, () =>
+                {
+                    Native.BufferedDraw = bool.Parse(command[1]);
+                    // Changing the buffer mode alone does not invalidate pixels.
+                    Native.StyleSetBack((int)WinUIEditor.StylesCommon.LineNumber,
+                        Native.StyleGetBack((int)WinUIEditor.StylesCommon.LineNumber));
+                });
+                break;
+            case "x-offset" when command.Length == 2:
+                var offset = int.Parse(command[1], CultureInfo.InvariantCulture);
+                if (offset < 0 || offset > 10000) throw new ArgumentOutOfRangeException(nameof(offset));
+                await EditorTestLayout.AfterPaintAsync(Native, () => Native.XOffset = offset);
+                break;
+            case "raster" when command.Length == 2 || command.Length == 3 && command[2] == "Caret":
+                await EditorTestLayout.AfterPaintAsync(Native, () =>
+                {
+                    Native.CaretStyle = command.Length == 3 ? WinUIEditor.CaretStyle.Line : WinUIEditor.CaretStyle.Invisible;
+                    // The app test preferences are Dark while this isolated
+                    // pixel fixture has a white background. Set all observed
+                    // ink explicitly rather than inheriting the white caret.
+                    Native.CaretFore = 0;
+                    Native.CaretPeriod = 0;
+                    _editor.DisplayLineHighlighter = false;
+                    Native.StyleSetFore(0, 0);
+                    Native.StyleSetFore(1, 0x0000ff);
+                    Native.StyleSetFore(2, 0xff0000);
+                    Native.StyleSetFore((int)WinUIEditor.StylesCommon.LineNumber, 0);
+                    Native.StyleSetBack((int)WinUIEditor.StylesCommon.LineNumber, 0xffffff);
+                    // Fixed contrasting selection colors force a multicolor
+                    // foreground paint, independently of the system accent.
+                    Native.SetElementColour(WinUIEditor.Element.SelectionText, unchecked((int)0xffffffff));
+                    Native.SetElementColour(WinUIEditor.Element.SelectionInactiveText, unchecked((int)0xffffffff));
+                    Native.SetElementColour(WinUIEditor.Element.SelectionBack, unchecked((int)0xffff0000));
+                    Native.SetElementColour(WinUIEditor.Element.SelectionInactiveBack, unchecked((int)0xffff0000));
+                    Native.StartStyling(0, 0);
+                    var styled = bool.Parse(command[1]);
+                    var index = 0;
+                    for (long position = 0; position < Native.Length;)
+                    {
+                        var next = Native.PositionAfter(position);
+                        Native.SetStyling(next - position, styled ? ++index % 2 + 1 : 0);
+                        position = next;
+                    }
+                    Native.SetEmptySelection(0);
+                });
                 break;
             case "insert" when command.Length == 2:
                 _editor.TypeText(DecodeText(command[1]));
@@ -183,8 +309,11 @@ internal static class InteractiveEditorHost
                 await PrepareReplacementAsync(DecodeText(command[1]));
                 return "replacementCase=" + _preparedReplacementCase + "\nreplacementText64=" +
                     Convert.ToBase64String(Encoding.UTF8.GetBytes(_preparedReplacementText)) + "\n";
-            case "replace" when command.Length == 2:
-                await ApplyPreparedReplacementAsync(DecodeText(command[1]));
+            case "replace" when command.Length is 2 or 4:
+                (long Anchor, long Caret)? replacementSelection = command.Length == 4
+                    ? (long.Parse(command[2], CultureInfo.InvariantCulture), long.Parse(command[3], CultureInfo.InvariantCulture))
+                    : null;
+                await ApplyPreparedReplacementAsync(DecodeText(command[1]), replacementSelection);
                 return "documentReplaced=True\n";
             case "flags" when command.Length == 4:
                 Native.ReadOnly = bool.Parse(command[1]);
@@ -203,12 +332,18 @@ internal static class InteractiveEditorHost
                 _disposed = true;
                 break;
             case "exit" when command.Length == 1:
+                _dpiFixture?.Dispose();
+                _dpiFixture = null;
                 await DiscardPreparedReplacementAsync();
                 if (!_disposed) _editor.Dispose();
                 _disposed = true;
                 break;
             case "state" when command.Length == 1:
                 break;
+            case "ime-state" when command.Length == 1:
+                // Only IME probes need the OS input profile; ordinary editor
+                // and OLE state snapshots use local control observations.
+                return "inputLanguage=" + Windows.Globalization.Language.CurrentInputMethodLanguageTag + "\n";
             default:
                 throw new ArgumentException("Unknown interactive command: " + command[0]);
         }
@@ -220,6 +355,30 @@ internal static class InteractiveEditorHost
         var text = Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
         if (Encoding.UTF8.GetByteCount(text) > 128 * 1024) throw new ArgumentException("Fixture text exceeds 128 KiB.");
         return text;
+    }
+
+    private static string GutterState()
+    {
+        var surface = FindImageTarget(_view) as FrameworkElement ??
+            throw new InvalidOperationException("The native text surface is not available.");
+        var scale = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+        var origin = surface.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point());
+        var vertical = FindElement(_view, "VerticalScrollBar") ??
+            throw new InvalidOperationException("The native vertical scrollbar is not available.");
+        var scrollbarOrigin = vertical.TransformToVisual(null).TransformPoint(new Windows.Foundation.Point());
+        var bounds = Window.Current.CoreWindow.Bounds;
+        var reveal = (Border)((Grid)_editor.Content).Children[1];
+        return "surfaceLeft=" + ((origin.X + bounds.X) * scale).ToString(CultureInfo.InvariantCulture) +
+            "\nsurfaceTop=" + ((origin.Y + bounds.Y) * scale).ToString(CultureInfo.InvariantCulture) +
+            "\nsurfaceWidth=" + (surface.ActualWidth * scale).ToString(CultureInfo.InvariantCulture) +
+            "\nsurfaceHeight=" + (surface.ActualHeight * scale).ToString(CultureInfo.InvariantCulture) +
+            "\nscrollbarLeft=" + ((scrollbarOrigin.X + bounds.X) * scale).ToString(CultureInfo.InvariantCulture) +
+            "\nscrollbarTop=" + ((scrollbarOrigin.Y + bounds.Y) * scale).ToString(CultureInfo.InvariantCulture) +
+            "\nscrollbarWidth=" + (vertical.ActualWidth * scale).ToString(CultureInfo.InvariantCulture) +
+            "\nscrollbarHeight=" + (vertical.ActualHeight * scale).ToString(CultureInfo.InvariantCulture) +
+            "\ngutterWidth=" + Native.GetMarginWidthN(0) +
+            "\nglowLeft=" + reveal.BorderThickness.Left.ToString(CultureInfo.InvariantCulture) +
+            "\nglowRight=" + reveal.BorderThickness.Right.ToString(CultureInfo.InvariantCulture) + "\n";
     }
 
     private static async Task DiscardPreparedReplacementAsync()
@@ -247,11 +406,14 @@ internal static class InteractiveEditorHost
         RecordDragEvent("editor-replace-baseline-ready", "threadId=" + Environment.CurrentManagedThreadId);
     }
 
-    private static async Task ApplyPreparedReplacementAsync(string text)
+    private static async Task ApplyPreparedReplacementAsync(string text, (long Anchor, long Caret)? selection)
     {
         if (_preparedReplacement == null || _preparedReplacementCase != _case ||
             !string.Equals(_preparedReplacementText, text, StringComparison.Ordinal))
             throw new InvalidOperationException("Replacement must consume this case's exact prepared text.");
+        if (selection is { } range && (range.Anchor < 0 || range.Caret < 0 ||
+            range.Anchor > _preparedReplacement.ByteLength || range.Caret > _preparedReplacement.ByteLength))
+            throw new ArgumentOutOfRangeException(nameof(selection));
         // Consume once. The local lease is disposed on success or failure, while
         // the production loader owns any reader it needs until loading completes.
         using var baseline = _preparedReplacement;
@@ -265,6 +427,10 @@ internal static class InteractiveEditorHost
         RecordDragEvent("editor-replace-native-load-completed", "threadId=" + Environment.CurrentManagedThreadId);
         if (Native.DocPointer == previousDocument)
             throw new InvalidOperationException("Replacement did not publish a distinct native document.");
+        // Keep this fixture's publication and selection restoration in one UI
+        // operation. A subsequent dispatch can wait behind XAML's synchronous
+        // COM release while the external receiver intentionally holds Drop.
+        if (selection is { } restored) Native.SetSelection(restored.Caret, restored.Anchor);
     }
 
     private static void CreateEditor()
@@ -311,11 +477,13 @@ internal static class InteractiveEditorHost
         };
     }
 
-    private static UIElement FindImageTarget(DependencyObject root)
+    private static UIElement FindImageTarget(DependencyObject root) => FindElement(root, "ImageTarget");
+
+    private static FrameworkElement FindElement(DependencyObject root, string name)
     {
-        if (root is FrameworkElement { Name: "ImageTarget" } element) return element;
+        if (root is FrameworkElement element && element.Name == name) return element;
         for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); ++i)
-            if (FindImageTarget(VisualTreeHelper.GetChild(root, i)) is { } result) return result;
+            if (FindElement(VisualTreeHelper.GetChild(root, i), name) is { } result) return result;
         return null;
     }
 
@@ -375,9 +543,18 @@ internal static class InteractiveEditorHost
             _editor.IsEnabled = true;
             Native.ReadOnly = false;
             Native.DragDropEnabled = true;
+            Native.BufferedDraw = false;
             _editor.Width = width;
             _editor.Height = height;
             _editor.FontSize = fontSize;
+            _editor.RightToLeftReadingOrder = false;
+            _editor.DisplayLineNumbers = false;
+            _editor.DisplayLineHighlighter = true;
+            Native.CaretStyle = WinUIEditor.CaretStyle.Line;
+            Native.CaretPeriod = 500;
+            Native.Overtype = false;
+            Native.SelectionMode = WinUIEditor.SelectionMode.Stream;
+            Native.MoveExtendsSelection = false;
             _editor.SetText(text);
             Native.WrapMode = wrap ? WinUIEditor.Wrap.Word : WinUIEditor.Wrap.None;
             Native.SetEmptySelection(0);
@@ -407,6 +584,10 @@ internal static class InteractiveEditorHost
             "\nlinesOnScreen=" + Native.LinesOnScreen + "\nlineHeight=" + Native.TextHeight(0) +
             "\nenabled=" + _editor.IsEnabled + "\nloaded=" + _view.IsLoaded + "\nreadOnly=" + Native.ReadOnly +
             "\ndragDropEnabled=" + Native.DragDropEnabled + "\ncanUndo=" + Native.CanUndo() +
+            "\nrtl=" + _editor.RightToLeftReadingOrder + "\nrevision=" + Native.DocumentRevision +
+            "\novertype=" + Native.Overtype + "\nnativeFocus=" + Native.Focus +
+            "\nisComposing=" + _view.IsComposing +
+            "\nrectangleCaret=" + Native.RectangularSelectionCaret + "\nxOffset=" + Native.XOffset +
             "\ndropStarted=" + _dropStarted + "\ndragStarted=" + _dragStarted +
             "\ndragCompleted=" + _dragCompleted + "\ndragResult=" + _dragResult +
             "\npositionY=" + string.Join(',', samples) + "\n";

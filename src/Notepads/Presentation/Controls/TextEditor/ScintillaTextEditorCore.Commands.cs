@@ -31,10 +31,8 @@ public sealed partial class TextEditorCore
             new(VirtualKeyModifiers.Control, VirtualKey.Insert, () => CopyTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
             new(VirtualKeyModifiers.Shift, VirtualKey.Delete, () => CutSelectedTextToWindowsClipboardRequested?.Invoke(this, EventArgs.Empty)),
             new(VirtualKeyModifiers.Menu, VirtualKey.Z, () => TextWrapping = TextWrapping == TextWrapping.NoWrap ? TextWrapping.Wrap : TextWrapping.NoWrap),
-            // Reserve the old reading-order shortcuts until default-RTL layout
-            // is implemented. Ctrl+L would otherwise cut the current line.
-            new(VirtualKeyModifiers.Control, VirtualKey.L, () => { }),
-            new(VirtualKeyModifiers.Control, VirtualKey.R, () => { }),
+            new(VirtualKeyModifiers.Control, VirtualKey.L, () => SetReadingOrderFromCommand(false)),
+            new(VirtualKeyModifiers.Control, VirtualKey.R, () => SetReadingOrderFromCommand(true)),
             new(VirtualKeyModifiers.Control, VirtualKey.Add, () => IncreaseFontSize(0.1)),
             new(VirtualKeyModifiers.Control, (VirtualKey)187, () => IncreaseFontSize(0.1)),
             new(VirtualKeyModifiers.Control, VirtualKey.Subtract, () => DecreaseFontSize(0.1)),
@@ -55,6 +53,13 @@ public sealed partial class TextEditorCore
             new(VirtualKeyModifiers.None, VirtualKey.Enter, () => EnterWithAutoIndentation()),
             new(VirtualKeyModifiers.Shift, VirtualKey.Enter, () => EnterWithAutoIndentation()),
         ]);
+    }
+
+    private void SetReadingOrderFromCommand(bool rightToLeft)
+    {
+        // Diff snapshots inherit one reading order when prepared. Switching
+        // only the focused pane would make the comparison inconsistent.
+        if (!_disposed && IsEnabled && !_diffPreview) RightToLeftReadingOrder = rightToLeft;
     }
 
     private void JoinText()

@@ -28,7 +28,7 @@ namespace WinUIEditor
 		void SetScrollBars(winrt::DUX::Controls::Primitives::ScrollBar const &horizontalScrollBar, winrt::DUX::Controls::Primitives::ScrollBar const &verticalScrollBar);
 		bool HasScrollBars();
 		std::pair<bool, bool> ScrollBarVisibility() const;
-		void HorizontalScrollBarInset(int pixels);
+		void UpdateScrollBarLayout(int gutterPixels, bool rightToLeft);
 		void HorizontalScrollBarValue(double value);
 		void VerticalScrollBarValue(double value);
 		void HorizontalScrollBarMinimum(double value);
@@ -53,6 +53,10 @@ namespace WinUIEditor
 		void Show(bool visible) override;
 		void Destroy() override;
 		void SetPositionRelative(Scintilla::Internal::PRectangle rc, Wrapper const &wrapper) override;
+
+	protected:
+		winrt::DUX::UIElement CoordinateElement() const override
+		{ return _mouseCaptureElement ? _mouseCaptureElement : Wrapper::CoordinateElement(); }
 
 	private:
 		winrt::DUX::Input::Pointer _lastPointer{ nullptr };

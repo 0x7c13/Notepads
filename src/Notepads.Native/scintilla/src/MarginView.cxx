@@ -404,9 +404,10 @@ void MarginView::PaintOneMargin(Surface *surface, PRectangle rc, PRectangle rcOn
 					sNumber = number;
 				}
 				PRectangle rcNumber = rcMarker;
-				// Right justify
+				// Align towards the text; digits themselves retain their normal order.
 				const XYPOSITION width = surface->WidthText(vs.styles[StyleLineNumber].font.get(), sNumber);
-				const XYPOSITION xpos = rcNumber.right - width - vs.marginNumberPadding;
+				const XYPOSITION xpos = vs.MarginsOnRight(model.BidirectionalR2L()) ?
+					rcNumber.left + vs.marginNumberPadding : rcNumber.right - width - vs.marginNumberPadding;
 				rcNumber.left = xpos;
 				DrawTextNoClipPhase(surface, rcNumber, vs.styles[StyleLineNumber],
 					rcNumber.top + vs.maxAscent, sNumber, DrawPhase::all);
@@ -480,7 +481,9 @@ void MarginView::PaintMargin(Surface *surface, Sci::Line topLine, PRectangle rc,
 	const EditModel &model, const ViewStyle &vs) {
 
 	PRectangle rcOneMargin = rcMargin;
-	rcOneMargin.right = rcMargin.left;
+	const bool onRight = vs.MarginsOnRight(model.BidirectionalR2L());
+	if (onRight) rcOneMargin.left = rcMargin.right;
+	else rcOneMargin.right = rcMargin.left;
 	if (rcOneMargin.bottom < rc.bottom)
 		rcOneMargin.bottom = rc.bottom;
 
@@ -488,8 +491,13 @@ void MarginView::PaintMargin(Surface *surface, Sci::Line topLine, PRectangle rc,
 	for (const MarginStyle &marginStyle : vs.ms) {
 		if (marginStyle.width > 0) {
 
-			rcOneMargin.left = rcOneMargin.right;
-			rcOneMargin.right = rcOneMargin.left + marginStyle.width;
+			if (onRight) {
+				rcOneMargin.right = rcOneMargin.left;
+				rcOneMargin.left = rcOneMargin.right - marginStyle.width;
+			} else {
+				rcOneMargin.left = rcOneMargin.right;
+				rcOneMargin.right = rcOneMargin.left + marginStyle.width;
+			}
 
 			if (marginStyle.style != MarginType::Number) {
 				if (marginStyle.ShowsFolding()) {
@@ -531,9 +539,6 @@ void MarginView::PaintMargin(Surface *surface, Sci::Line topLine, PRectangle rc,
 		}
 	}
 
-	PRectangle rcBlankMargin = rcMargin;
-	rcBlankMargin.left = rcOneMargin.right;
-	surface->FillRectangle(rcBlankMargin, vs.styles[StyleDefault].back);
 }
 
 }

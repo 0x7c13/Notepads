@@ -335,9 +335,10 @@ public sealed partial class TextEditor
             TryChangeLineEnding(LineEndingUtility.GetLineEndingByName(metadata.RequestedLineEnding));
         }
 
+        TextEditorCore.RightToLeftReadingOrder = metadata.RightToLeftReadingOrder;
         TextEditorCore.TextWrapping = metadata.WrapWord ? TextWrapping.Wrap : TextWrapping.NoWrap;
         TextEditorCore.FontSize = metadata.FontZoomFactor * ApplicationPreferences.EditorFontSize;
-        TextEditorCore.SetTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
+        TextEditorCore.RestoreTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
         TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset,
             metadata.FirstVisibleDocumentLine, metadata.FirstVisibleSubLine);
         TextEditorCore.ClearUndoQueue();

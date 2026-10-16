@@ -78,8 +78,13 @@ namespace Scintilla::Internal {
 		ScintillaWinUI &operator=(ScintillaWinUI &&) = delete;
 		void DpiChanged();
 		void SizeChanged();
-		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine);
-		bool IsViewportRestorePending() const noexcept { return _viewportRestore.has_value(); }
+		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, bool preservePreferredColumn);
+		void SetDisplayViewport(int64_t row, double leadingOffset);
+		double DisplayHorizontalOffset() const noexcept;
+		int64_t DisplayFirstVisibleRow() const noexcept;
+		bool IsViewportRestorePending() const noexcept {
+			return _viewportRestore.has_value() || (_displayViewport && _displayViewport->pending);
+		}
 		void FocusChanged(bool focused);
 		void PointerPressed(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers);
 		void RightPointerPressed(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers);
@@ -110,6 +115,8 @@ namespace Scintilla::Internal {
 		uint64_t DocumentRevision() const noexcept { return _documentRevision; }
 		uint64_t SelectionRevision() const noexcept { return selectionRevision; }
 		Range AutomationUnitRange(Sci::Position position, bool word);
+		std::vector<PRectangle> AutomationRangeRectangles(Sci::Position start, Sci::Position end, bool *clipped = nullptr);
+		PRectangle GutterRectangle() const { return vs.MarginRectangle(GetClientRectangle(), BidirectionalR2L()); }
 		bool HasJournal() const noexcept;
 		bool HasTextStoreLock() const noexcept { return _lock != NONE; }
 		bool IsComposing() const noexcept { return _compositionCount != 0; }
@@ -157,7 +164,7 @@ namespace Scintilla::Internal {
 		uint64_t _documentSequence{};
 		uint64_t _documentRevision{};
 		bool _readOnlyBeforeLease{ false };
-		void UpdateHorizontalScrollBarInset();
+		void UpdateScrollBarLayout();
 		bool _tsfCore;
 
 		bool hasOKText{ false };
@@ -226,6 +233,7 @@ namespace Scintilla::Internal {
 		void OnCompositionCompleted(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextCompositionCompletedEventArgs const &args);
 		bool TsfCoreLock(DWORD lock);
 		void TsfCoreUnlock();
+		void SetTextStoreSelection(Sci::Position caretPosition, Sci::Position anchorPosition);
 
 		winrt::com_ptr<ITfThreadMgr2> _tfThreadManager{ nullptr };
 		winrt::com_ptr<ITfDocumentMgr> _tfDocumentManager{ nullptr };
@@ -291,8 +299,36 @@ namespace Scintilla::Internal {
 			int64_t subLine;
 		};
 		std::optional<ViewportRestore> _viewportRestore;
+		// Ordinary RTL views retain their actual leading-edge distance across
+		// lazy measurement. Diff separately retains unclamped peer requests.
+		struct HorizontalViewport {
+			double rightOrigin;
+			double scale;
+			int appliedX;
+			double LeadingOffset() const noexcept { return (rightOrigin - appliedX) / scale; }
+		};
+		std::optional<HorizontalViewport> _horizontalViewport;
+		bool _applyingHorizontalViewport{};
+		void CaptureHorizontalViewport();
+		void ReconcileHorizontalViewport() override;
+		double HorizontalRightOrigin() const;
+		int ProjectHorizontalOffset(double leadingOffset) const;
+		// Diff viewports keep a logical leading-edge offset independently of
+		// each pane's measured canvas. A clamped projection retains its intent.
+		struct DisplayViewport {
+			int64_t row;
+			double leadingOffset;
+			int appliedX;
+			Sci::Line appliedTop;
+			double rightOrigin;
+			double scale;
+			bool pending;
+		};
+		std::optional<DisplayViewport> _displayViewport;
+		uint64_t _displayViewportRevision{};
 		std::pair<bool, bool> _layoutScrollBars{};
 		bool PrepareViewportRestore();
+		bool PrepareDisplayViewport();
 		bool _idleFinalized{};
 		std::shared_ptr<WinUIEditor::SyntaxHighlightingState> _syntaxState;
 		bool _syntaxMemoryPaused{};
@@ -322,6 +358,7 @@ namespace Scintilla::Internal {
 		void HorizontalScrollToClamped(int xPos);
 		[[nodiscard]] HorizontalScrollRange GetHorizontalScrollRange() const;
 		virtual bool ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) override;
+		void SetScrollBars() override;
 		bool ChangeScrollRange(int nBar, int nMin, int nMax, UINT nPage) noexcept;
 		void ChangeScrollPos(int barType, Sci::Position pos);
 		virtual std::unique_ptr<CaseFolder> CaseFolderForEncoding() override;

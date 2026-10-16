@@ -65,6 +65,7 @@ public:
 	int highlightGuideColumn;
 	bool hasFocus;
 	Selection sel;
+	Scintilla::VirtualSpace virtualSpaceOptions = Scintilla::VirtualSpace::None;
 	bool primarySelection;
 	std::string copySeparator;
 
@@ -101,6 +102,7 @@ public:
 	virtual Sci::Line TopLineOfMain() const noexcept = 0;
 	virtual Point GetVisibleOriginInMain() const = 0;
 	virtual Sci::Line LinesOnScreen() const = 0;
+	virtual XYPOSITION BidiLayoutWidth() const = 0;
 	bool BidirectionalEnabled() const noexcept;
 	bool BidirectionalR2L() const noexcept;
 	SurfaceMode CurrentSurfaceMode() const noexcept;

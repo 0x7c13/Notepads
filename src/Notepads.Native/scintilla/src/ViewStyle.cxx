@@ -233,7 +233,6 @@ ViewStyle::ViewStyle(size_t stylesSize_) :
 	ms[2] = MarginStyle(MarginType::Symbol);
 	marginInside = true;
 	CalculateMarginWidthAndMask();
-	textStart = marginInside ? fixedColumnWidth : leftMarginWidth;
 	zoomLevel = 0;
 	viewWhitespace = WhiteSpace::Invisible;
 	tabDrawMode = TabDrawMode::LongArrow;
@@ -307,7 +306,6 @@ ViewStyle::ViewStyle(const ViewStyle &source) : ViewStyle(source.styles.size()) 
 	maskDrawWrapped = source.maskDrawWrapped;
 	fixedColumnWidth = source.fixedColumnWidth;
 	marginInside = source.marginInside;
-	textStart = source.textStart;
 	zoomLevel = source.zoomLevel;
 	viewWhitespace = source.viewWhitespace;
 	tabDrawMode = source.tabDrawMode;
@@ -443,7 +441,6 @@ void ViewStyle::Refresh(Surface &surface, int tabInChars) {
 	}
 
 	CalculateMarginWidthAndMask();
-	textStart = marginInside ? fixedColumnWidth : leftMarginWidth;
 }
 
 void ViewStyle::ReleaseAllExtendedStyles() noexcept {
@@ -497,12 +494,45 @@ int ViewStyle::ExternalMarginWidth() const noexcept {
 	return marginInside ? 0 : fixedColumnWidth;
 }
 
-int ViewStyle::MarginFromLocation(Point pt) const noexcept {
-	XYPOSITION x = marginInside ? 0 : -fixedColumnWidth;
+int ViewStyle::GutterWidth() const noexcept {
+	return fixedColumnWidth - (marginInside ? leftMarginWidth : 0);
+}
+
+bool ViewStyle::MarginsOnRight(bool rightToLeft) const noexcept {
+	return marginInside && rightToLeft;
+}
+
+int ViewStyle::TextStart(bool rightToLeft) const noexcept {
+	return marginInside && !rightToLeft ? fixedColumnWidth : leftMarginWidth;
+}
+
+int ViewStyle::RightInset(bool rightToLeft) const noexcept {
+	return rightMarginWidth + (MarginsOnRight(rightToLeft) ? GutterWidth() : 0);
+}
+
+PRectangle ViewStyle::TextRectangle(PRectangle client, bool rightToLeft) const noexcept {
+	client.left += TextStart(rightToLeft);
+	client.right -= RightInset(rightToLeft);
+	return client;
+}
+
+// Number/symbol columns only. Physical spacing margins belong to the text view.
+PRectangle ViewStyle::MarginRectangle(PRectangle client, bool rightToLeft) const noexcept {
+	if (MarginsOnRight(rightToLeft))
+		client.left = client.right - GutterWidth();
+	else
+		client.right = client.left + GutterWidth();
+	return client;
+}
+
+int ViewStyle::MarginFromLocation(Point pt, PRectangle client, bool rightToLeft) const noexcept {
+	const bool onRight = MarginsOnRight(rightToLeft);
+	XYPOSITION x = marginInside ? (onRight ? client.right : client.left) : -fixedColumnWidth;
 	for (size_t i = 0; i < ms.size(); i++) {
-		if ((pt.x >= x) && (pt.x < x + ms[i].width))
+		const XYPOSITION left = onRight ? x - ms[i].width : x;
+		if ((pt.x >= left) && (pt.x < left + ms[i].width))
 			return static_cast<int>(i);
-		x += ms[i].width;
+		x += onRight ? -ms[i].width : ms[i].width;
 	}
 	return -1;
 }

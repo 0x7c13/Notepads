@@ -346,15 +346,20 @@ internal static class AutomationNavigationTests
             for (var edit = 0; edit < 2; ++edit)
             {
                 string immediate = null;
+                string pending = null;
                 if (edit != 0) text = "999-" + text;
                 await AfterPaintAsync(native, () =>
                 {
                     if (edit == 0) native.SetText(text);
                     else native.InsertText(0, "999-");
-                    Check(native.EndStyled < native.Length, "syntax fixture has pending styling after load/edit");
-                    var range = At(provider, 0);
-                    range.ExpandToEnclosingUnit(TextUnit.Line);
-                    immediate = range.GetText(-1); // No paint/yield before the query.
+                    // Query directly after the edit, before any paint/yield or
+                    // lexer reset. TSF may already have styled this line while
+                    // processing the edit; both notification orders are valid.
+                    immediate = FirstLine();
+
+                    // Separately exercise explicitly pending tokenization.
+                    native.SetLexerLanguage(profile.Lexer, profile.Keywords, profile.PropertyNames, profile.PropertyValues);
+                    pending = FirstLine();
                 });
 
                 var y = native.PointYFromPosition(0);
@@ -362,9 +367,19 @@ internal static class AutomationNavigationTests
                 while (end < native.Length && native.PointYFromPosition(end) == y)
                     end = native.PositionAfter(end);
                 var bytes = Encoding.UTF8.GetBytes(text);
-                Equal(Encoding.UTF8.GetString(bytes, 0, (int)end), immediate,
+                var rendered = Encoding.UTF8.GetString(bytes, 0, (int)end);
+                Equal(rendered, immediate,
                     "synchronous lexer-enabled line query agrees with subsequent painting after load/edit");
+                Equal(rendered, pending,
+                    "synchronous line query with pending tokenization agrees with subsequent painting");
                 Check(native.GetStyleAt(0) != native.GetStyleAt(3), "syntax fixture contains different token styles");
+            }
+
+            string FirstLine()
+            {
+                var range = At(provider, 0);
+                range.ExpandToEnclosingUnit(TextUnit.Line);
+                return range.GetText(-1);
             }
         }
         finally

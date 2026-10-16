@@ -70,6 +70,8 @@
 #include "PlatWin.h"
 #if defined(USE_D2D)
 #include "SurfaceD2D.h"
+#include "DirectWriteParagraph.h"
+#include "DirectWriteRenderer.h"
 #endif
 
 #include "Wrapper.h"
@@ -358,6 +360,11 @@ public:
 	void Copy(PRectangle rc, Point from, Surface &surfaceSource) override;
 
 	std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) override;
+	bool NeedsParagraphLayout(std::string_view text) const override;
+	std::shared_ptr<IParagraphLayout> LayoutParagraph(const IScreenLine *line, bool rightToLeft, Wrap wrap,
+		XYPOSITION leadingPadding, XYPOSITION trailingPadding) override;
+	void DrawParagraph(IParagraphLayout &paragraph, size_t line, const Font *font, Point origin, PRectangle clip,
+		const std::vector<ParagraphColourRun> &colours) override;
 
 	void DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, int codePageOverride, UINT fuOptions);
 
@@ -1302,8 +1309,111 @@ std::vector<Interval> ScreenLineLayout::FindRangeIntervals(size_t start, size_t 
 	return ret;
 }
 
+class ParagraphScreenLineLayout final : public IScreenLineLayout {
+	std::shared_ptr<IParagraphLayout> paragraph;
+	size_t start;
+	ParagraphLine line;
+public:
+	explicit ParagraphScreenLineLayout(const IScreenLine *screenLine) :
+		paragraph(screenLine->Paragraph()), start(screenLine->ParagraphStart()),
+		line(paragraph->Lines()[screenLine->ParagraphLine()]) {}
+	size_t PositionFromX(XYPOSITION x, bool charPosition) override {
+		const auto hit = paragraph->HitTest(static_cast<float>(x), line.top + line.height / 2, charPosition);
+		return std::clamp(hit.position, start, start + line.length) - start;
+	}
+	XYPOSITION XFromPosition(size_t position) override {
+		return paragraph->CaretPoint({ start + position, position == line.length && position != 0 }).x;
+	}
+	std::vector<Interval> FindRangeIntervals(size_t first, size_t last) override {
+		std::vector<Interval> result;
+		for (const auto &rect : paragraph->RangeRectangles(start + first, start + last))
+			if (std::abs(rect.top - line.top) < 0.5f)
+				result.emplace_back(rect.left, rect.left + rect.width);
+		return result;
+	}
+};
+
 std::unique_ptr<IScreenLineLayout> SurfaceD2D::Layout(const IScreenLine *screenLine) {
+	if (screenLine->Paragraph())
+		return std::make_unique<ParagraphScreenLineLayout>(screenLine);
 	return std::make_unique<ScreenLineLayout>(screenLine);
+}
+
+bool SurfaceD2D::NeedsParagraphLayout(std::string_view text) const {
+	return DirectWriteParagraph::NeedsLayout(text);
+}
+
+std::shared_ptr<IParagraphLayout> SurfaceD2D::LayoutParagraph(const IScreenLine *line, bool rightToLeft, Wrap wrap,
+	XYPOSITION leadingPadding, XYPOSITION trailingPadding) {
+	std::vector<ParagraphFontRun> fonts;
+	std::vector<ParagraphRepresentation> representations;
+	const auto text = line->Text();
+	for (size_t start = 0; start < text.size();) {
+		const Font *font = line->FontOfPosition(start);
+		size_t end = start + UTF8DrawBytes(text.data() + start, static_cast<int>(text.size() - start));
+		while (end < text.size() && line->FontOfPosition(end) == font)
+			end += UTF8DrawBytes(text.data() + end, static_cast<int>(text.size() - end));
+		fonts.push_back({ start, end - start, FontDirectWrite::Cast(font)->pTextFormat.get() });
+		start = end;
+	}
+	for (size_t i = 0; i < text.size();) {
+		const size_t count = UTF8DrawBytes(text.data() + i, static_cast<int>(text.size() - i));
+		if (const auto width = line->RepresentationWidth(i); width > 0 && text[i] != '\t')
+			representations.push_back({ i, count, static_cast<float>(width) });
+		i += count;
+	}
+	const ParagraphOptions options{ static_cast<float>(line->Width()), static_cast<float>(line->Height()),
+		static_cast<float>(line->Baseline()), static_cast<float>(line->TabWidth()), rightToLeft,
+		wrap == Wrap::None ? ParagraphWrap::None : wrap == Wrap::Char ? ParagraphWrap::Character : ParagraphWrap::Word,
+		static_cast<float>(leadingPadding), static_cast<float>(trailingPadding) };
+	auto paragraph = std::make_shared<DirectWriteParagraph>(pIDWriteFactory, text,
+		FontDirectWrite::Cast(line->FontOfPosition(0))->pTextFormat.get(), fonts, representations, options);
+	winrt::check_hresult(paragraph->Status());
+	return paragraph;
+}
+
+void SurfaceD2D::DrawParagraph(IParagraphLayout &paragraphLayout, size_t line, const Font *font, Point origin, PRectangle clip,
+	const std::vector<ParagraphColourRun> &colours) {
+	if (!pRenderTarget || colours.empty()) return;
+	// Surface::LayoutParagraph creates this backend's immutable layout.
+	auto &paragraph = static_cast<DirectWriteParagraph &>(paragraphLayout);
+	if (line >= paragraph.Lines().size()) winrt::throw_hresult(E_INVALIDARG);
+	const auto &paragraphLine = paragraph.Lines()[line];
+	const UINT32 rowStart = paragraph.Utf16Position(paragraphLine.start);
+	const DWRITE_TEXT_RANGE row{rowStart,
+		paragraph.Utf16Position(paragraphLine.start + paragraphLine.length) - rowStart};
+	SetFontQuality(FontDirectWrite::Cast(font)->extraFontFlag);
+	auto *layout = paragraph.Layout();
+	origin.x += paragraph.DrawOriginX();
+	if (colours.size() == 1) {
+		// The renderer filters to this display row. A single foreground needs no
+		// range effects: changing effects invalidates DirectWrite's cached runs
+		// even when the shaping and the actual colour remain unchanged.
+		D2DPenColourAlpha(colours.front().colour);
+		winrt::check_hresult(DrawParagraphTextClipped(pIDWriteFactory, pRenderTarget.get(), layout,
+			DPointFromPoint(origin), RectangleFromPRectangle(clip), pBrush.get(), d2dDrawTextOptions, &row));
+		return;
+	}
+	// Brushes and their UTF-16 spans live only for this draw. Keeping the cached
+	// layout immutable preserves shaping and avoids a full reanalysis per colour
+	// change, including selection changes inside ligatures and emoji sequences.
+	std::map<int, winrt::com_ptr<ID2D1SolidColorBrush>> brushes;
+	std::vector<ParagraphBrushRun> foreground;
+	foreground.reserve(colours.size());
+	for (const auto &run : colours) {
+		const auto start = paragraph.Utf16Position(run.start);
+		const auto end = paragraph.Utf16Position(run.start + run.length);
+		// Byte-based styles can split a UTF-8 scalar. Only a segment reaching
+		// its next boundary covers a UTF-16 character, just as with range effects.
+		if (start == end) continue;
+		auto &brush = brushes[run.colour.AsInteger()];
+		if (!brush)
+			winrt::check_hresult(pRenderTarget->CreateSolidColorBrush(ColorFromColourAlpha(run.colour), brush.put()));
+		foreground.push_back({{start, end - start}, brush.get()});
+	}
+	if (foreground.empty()) return;
+	winrt::check_hresult(DrawParagraphTextClipped(pIDWriteFactory, pRenderTarget.get(), layout,
+		DPointFromPoint(origin), RectangleFromPRectangle(clip), foreground.front().brush, d2dDrawTextOptions, &row, foreground));
 }
 
 void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, int codePageOverride, UINT fuOptions) {

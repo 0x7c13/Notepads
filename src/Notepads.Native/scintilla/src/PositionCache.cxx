@@ -55,12 +55,12 @@
 #include "DBCS.h"
 #include "Selection.h"
 #include "PositionCache.h"
+#include "ParagraphLayout.h"
 
 using namespace Scintilla;
 using namespace Scintilla::Internal;
 
 void BidiData::Resize(size_t maxLineLength_) {
-	stylesFonts.resize(maxLineLength_ + 1);
 	widthReprs.resize(maxLineLength_ + 1);
 }
 
@@ -79,6 +79,7 @@ void LineLayout::Resize(int maxLineLength_) {
 		positions = std::make_unique<XYPOSITION []>(lineAllocation + 1);
 		lineStarts.reset();
 		bidiData.reset();
+		paragraph.reset();
 		lenLineStarts = 0;
 		maxLineLength = maxLineLength_;
 	}
@@ -103,8 +104,15 @@ void LineLayout::ClearPositions() {
 }
 
 void LineLayout::Invalidate(ValidLevel validity_) noexcept {
+	// A style-clock change asks LayoutLine to compare the cached bytes and
+	// styles. Keep an already validated paragraph until that comparison finds
+	// a real change; hard invalidation must still discard its geometry.
+	const bool checkParagraph = validity_ == ValidLevel::checkTextAndStyle &&
+		(validity == ValidLevel::lines || validity == ValidLevel::checkTextAndStyle);
 	if (validity > validity_)
 		validity = validity_;
+	if (validity_ < ValidLevel::lines && !checkParagraph)
+		paragraph.reset();
 }
 
 Sci::Line LineLayout::LineNumber() const noexcept {
@@ -375,6 +383,22 @@ void LineLayout::WrapLine(const Document *pdoc, Sci::Position posLineStart, Wrap
 	lines++;
 }
 
+void LineLayout::SetParagraphLines(const IParagraphLayout &candidate) {
+	const auto rows = candidate.Lines();
+	const int lineCount = static_cast<int>(rows.size());
+	// Reserve before changing either the existing row map or its count. Once
+	// allocation succeeds, publishing the candidate and cache key cannot fail.
+	if (lineCount > 1 && lineCount > lenLineStarts) {
+		auto starts = std::make_unique<int[]>(lineCount);
+		lineStarts = std::move(starts);
+		lenLineStarts = lineCount;
+	}
+	for (int i = 1; i < lineCount; ++i)
+		lineStarts[i] = static_cast<int>(rows[i].start);
+	lines = lineCount;
+	wrapIndent = 0;
+}
+
 ScreenLine::ScreenLine(
 	const LineLayout *ll_,
 	int subLine,
@@ -382,10 +406,13 @@ ScreenLine::ScreenLine(
 	XYPOSITION width_,
 	int tabWidthMinimumPixels_) :
 	ll(ll_),
-	start(ll->LineStart(subLine)),
-	len(ll->LineLength(subLine)),
+	viewStyle(vs),
+	start(subLine < 0 ? 0 : ll->LineStart(subLine)),
+	len(subLine < 0 ? ll->numCharsBeforeEOL : ll->LineLength(subLine)),
 	width(width_),
 	height(static_cast<float>(vs.lineHeight)),
+	baseline(vs.maxAscent),
+	paragraphLine(subLine),
 	ctrlCharPadding(vs.ctrlCharPadding),
 	tabWidth(vs.tabWidth),
 	tabWidthMinimumPixels(tabWidthMinimumPixels_) {
@@ -424,7 +451,7 @@ XYPOSITION ScreenLine::TabWidthMinimumPixels() const {
 }
 
 const Font *ScreenLine::FontOfPosition(size_t position) const {
-	return ll->bidiData->stylesFonts[start + position].get();
+	return viewStyle.styles[ll->styles[start + position]].font.get();
 }
 
 XYPOSITION ScreenLine::RepresentationWidth(size_t position) const {
@@ -566,6 +593,44 @@ void LineLayoutCache::SetLevel(LineCache level_) noexcept {
 	}
 }
 
+void LineLayoutCache::MakeRoomForPageLayout(size_t requestedSlot, int maxChars,
+	Sci::Line lineNumber, Sci::Line lineCaret) noexcept {
+	// Bound retained source capacity, not the graphics backend's opaque heap.
+	// Existing page slots also bound per-line overhead. Allow one oversized
+	// current line, so every query does not rebuild that same paragraph.
+	constexpr uint64_t pageSourceCapacityBudget = 256 * 1024;
+	const uint64_t requestedCapacity = static_cast<uint64_t>(maxChars) + 1;
+	const uint64_t budget = std::max(pageSourceCapacityBudget, requestedCapacity);
+	uint64_t retainedCapacity = requestedCapacity;
+	for (size_t index = 0; index < cache.size(); ++index) {
+		if (index != requestedSlot && cache[index])
+			retainedCapacity += static_cast<uint64_t>(cache[index]->maxLineLength) + 1;
+	}
+	while (retainedCapacity > budget) {
+		size_t victim = cache.size();
+		Sci::Line farthest = -1;
+		bool victimIsCaret = true;
+		for (size_t index = 0; index < cache.size(); ++index) {
+			if (index == requestedSlot || !cache[index]) continue;
+			const Sci::Line candidateLine = cache[index]->LineNumber();
+			const bool isCaret = candidateLine == lineCaret;
+			const Sci::Line distance = candidateLine > lineNumber ? candidateLine - lineNumber : lineNumber - candidateLine;
+			if (victim == cache.size() || (victimIsCaret && !isCaret) ||
+				(victimIsCaret == isCaret && distance > farthest)) {
+				victim = index;
+				farthest = distance;
+				victimIsCaret = isCaret;
+			}
+		}
+		PLATFORM_ASSERT(victim < cache.size());
+		if (victim == cache.size()) break;
+		retainedCapacity -= static_cast<uint64_t>(cache[victim]->maxLineLength) + 1;
+		// Release only the cache reference. An in-flight paint or wrap keeps
+		// its shared layout alive until it has finished using that object.
+		cache[victim].reset();
+	}
+}
+
 std::shared_ptr<LineLayout> LineLayoutCache::Retrieve(Sci::Line lineNumber, Sci::Line lineCaret, int maxChars, int styleClock_,
                                       Sci::Line linesOnScreen, Sci::Line linesInDoc) {
 	AllocateForLevel(linesOnScreen, linesInDoc);
@@ -608,6 +673,8 @@ std::shared_ptr<LineLayout> LineLayoutCache::Retrieve(Sci::Line lineNumber, Sci:
 			cache[pos].reset();
 		}
 		if (!cache[pos]) {
+			if (level == LineCache::Page)
+				MakeRoomForPageLayout(pos, maxChars, lineNumber, lineCaret);
 			cache[pos] = std::make_shared<LineLayout>(lineNumber, maxChars);
 		}
 #ifdef CHECK_LLC

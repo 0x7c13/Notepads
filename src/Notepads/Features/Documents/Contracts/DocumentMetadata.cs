@@ -34,8 +34,11 @@ public sealed class DocumentMetadata
 
     public bool WrapWord { get; set; }
 
+    public bool RightToLeftReadingOrder { get; set; }
+
     public double FontZoomFactor { get; set; }
 
+    // DIPs from the document's reading-order leading edge, independent of its measured canvas width.
     public double ScrollViewerHorizontalOffset { get; set; }
 
     public double ScrollViewerVerticalOffset { get; set; }

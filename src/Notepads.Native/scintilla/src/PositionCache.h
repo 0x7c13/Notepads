@@ -39,7 +39,6 @@ enum class PointEnd {
 
 class BidiData {
 public:
-	std::vector<std::shared_ptr<Font>> stylesFonts;
 	std::vector<XYPOSITION> widthReprs;
 	void Resize(size_t maxLineLength_);
 };
@@ -70,6 +69,12 @@ public:
 	std::unique_ptr<XYPOSITION[]> positions;
 
 	std::unique_ptr<BidiData> bidiData;
+	std::shared_ptr<IParagraphLayout> paragraph;
+	XYPOSITION paragraphWidth = 0;
+	XYPOSITION paragraphLeadingPadding = 0;
+	XYPOSITION paragraphTrailingPadding = 0;
+	bool paragraphRightToLeft = false;
+	bool requiresParagraph = false;
 
 	// Wrapped line support
 	int widthLine = wrapWidthInfinite;
@@ -104,14 +109,18 @@ public:
 	int EndLineStyle() const noexcept;
 	[[nodiscard]] int LastStyle() const noexcept;
 	void WrapLine(const Document *pdoc, Sci::Position posLineStart, Wrap wrapState, XYPOSITION wrapWidth);
+	void SetParagraphLines(const IParagraphLayout &candidate);
 };
 
 struct ScreenLine : public IScreenLine {
 	const LineLayout *ll;
+	const ViewStyle &viewStyle;
 	size_t start;
 	size_t len;
 	XYPOSITION width;
 	XYPOSITION height;
+	XYPOSITION baseline;
+	int paragraphLine;
 	int ctrlCharPadding;
 	XYPOSITION tabWidth;
 	int tabWidthMinimumPixels;
@@ -129,6 +138,10 @@ struct ScreenLine : public IScreenLine {
 	size_t RepresentationCount() const override;
 	XYPOSITION Width() const override;
 	XYPOSITION Height() const override;
+	XYPOSITION Baseline() const override { return baseline; }
+	std::shared_ptr<IParagraphLayout> Paragraph() const override { return ll->paragraph; }
+	size_t ParagraphStart() const override { return start; }
+	int ParagraphLine() const override { return paragraphLine; }
 	XYPOSITION TabWidth() const override;
 	XYPOSITION TabWidthMinimumPixels() const override;
 	const Font *FontOfPosition(size_t position) const override;
@@ -155,6 +168,7 @@ private:
 	int styleClock;
 	size_t EntryForLine(Sci::Line line) const noexcept;
 	void AllocateForLevel(Sci::Line linesOnScreen, Sci::Line linesInDoc);
+	void MakeRoomForPageLayout(size_t requestedSlot, int maxChars, Sci::Line lineNumber, Sci::Line lineCaret) noexcept;
 public:
 	LineLayoutCache();
 	// Deleted so LineLayoutCache objects can not be copied.

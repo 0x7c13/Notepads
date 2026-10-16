@@ -120,14 +120,14 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	TextRangeProvider::TextRangeProvider(IRawElementProviderSimple const &peer, WinUIEditor::Editor const &editor, int64_t rangeStart, int64_t rangeEnd, Rect const &bounds)
-		: _peer{ peer }, _editor{ editor }, _rangeStart{ rangeStart }, _rangeEnd{ rangeEnd }, _bounds{ bounds }
+	TextRangeProvider::TextRangeProvider(IRawElementProviderSimple const &peer, WinUIEditor::Editor const &editor, int64_t rangeStart, int64_t rangeEnd)
+		: _peer{ peer }, _editor{ editor }, _rangeStart{ rangeStart }, _rangeEnd{ rangeEnd }
 	{
 	}
 
 	ITextRangeProvider TextRangeProvider::Clone()
 	{
-		return make<TextRangeProvider>(_peer, _editor.get(), _rangeStart, _rangeEnd, _bounds);
+		return make<TextRangeProvider>(_peer, _editor.get(), _rangeStart, _rangeEnd);
 	}
 
 	bool TextRangeProvider::Compare(ITextRangeProvider const &textRangeProvider)
@@ -212,75 +212,17 @@ namespace winrt::WinUIEditor::implementation
 
 	void TextRangeProvider::GetBoundingRectangles(com_array<double> &returnValue)
 	{
-		// Structure: https://github.com/microsoft/terminal/blob/main/src/types/UiaTextRangeBase.cpp#L836
-
 		const auto editor{ _editor.get() };
 		if (!editor)
-		{
 			throw hresult_error{ E_POINTER };
-		}
-
-		// Todo: see EditorBaseControlAutomationPeer::GetVisibleRanges for caveats
-		// Todo: Does not account for horizontal scrolling
-		// Todo: Does not account for ranges that do not start and end at line starts/ends
-
-		const auto firstDisplayLine{ editor.FirstVisibleLine() };
-		const auto maxLine{ editor.LineCount() - 1 };
-		const auto firstVisibleLine{ std::clamp(editor.DocLineFromVisible(firstDisplayLine), int64_t{0}, maxLine) };
-		const auto lastVisibleLine{ std::clamp(editor.DocLineFromVisible(firstDisplayLine + editor.LinesOnScreen()), firstVisibleLine, maxLine) };
-
-		const auto startLine{ editor.LineFromPosition(_rangeStart) };
-		const auto endLine{ editor.LineFromPosition(_rangeEnd) };
-
-		const auto top{ std::max(startLine, firstVisibleLine) };
-		const auto end{ std::min(endLine, lastVisibleLine) };
-		const auto count{ end - top + 1 };
-
-		if (count < 1)
-		{
-			returnValue = {};
-			return;
-		}
-
-		auto margins{ editor.MarginLeft() };
-		const auto nMargins{ editor.Margins() };
-		for (auto i{ 0 }; i < nMargins; i++)
-		{
-			margins += editor.GetMarginWidthN(i);
-		}
-		const auto maxTextWidth{ static_cast<int>(_bounds.Width) - editor.MarginRight() };
-
+		// The native layout owns wrapping and bidi visual fragments. Convert its
+		// clipped geometry with the live XAML transform, including current DPI
+		// and window location, instead of the bounds captured with this range.
+		const auto visual = get_self<implementation::Editor>(editor)->AutomationRangeRectangles(_rangeStart, _rangeEnd);
 		std::vector<double> rectangles;
-		rectangles.reserve(static_cast<size_t>(count) * 4);
-		// Todo: This code pretends that TextHeight gets the correct height including sublines (wrapping). It does not
-		for (int64_t i = 0; i < count; i++)
-		{
-			const auto line{ top + i };
-			const auto displayRow = editor.VisibleFromDocLine(line);
-			if (displayRow > firstDisplayLine + editor.LinesOnScreen() || displayRow + editor.WrapCount(line) <= firstDisplayLine) continue;
-			const auto j = rectangles.size();
-			rectangles.resize(j + 4);
-			const auto pos{ editor.PositionFromLine(line) };
-			const auto xStart{ editor.PointXFromPosition(line == startLine ? _rangeStart : pos) };
-			const auto xEnd{ editor.PointXFromPosition((line == endLine ? _rangeEnd : editor.GetLineEndPosition(line))) };
-			const auto textStart{ std::max(margins, xStart) };
-			rectangles[j + 0] = _bounds.X + textStart; // Left
-			rectangles[j + 1] = _bounds.Y + editor.PointYFromPosition(pos); // Top
-			rectangles[j + 2] = std::min(maxTextWidth, xEnd) - textStart; // Width
-			rectangles[j + 3] = editor.TextHeight(line); // Height
-
-			// Todo: Reconsider how off screen text is handled
-			if (xEnd < margins)
-			{
-				rectangles[j + 0] = _bounds.X + margins;
-				rectangles[j + 2] = 0;
-			}
-			if (xStart > maxTextWidth)
-			{
-				rectangles[j + 0] = _bounds.X + maxTextWidth;
-				rectangles[j + 2] = 0;
-			}
-		}
+		rectangles.reserve(visual.size() * 4);
+		for (const auto &rectangle : visual)
+			rectangles.insert(rectangles.end(), { rectangle.left, rectangle.top, rectangle.Width(), rectangle.Height() });
 		returnValue = com_array<double>(rectangles.begin(), rectangles.end());
 	}
 

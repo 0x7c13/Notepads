@@ -45,6 +45,11 @@ namespace winrt::WinUIEditor::implementation
 
 		Loaded({ this, &EditorBaseControl::OnLoaded });
 		Unloaded({ this, &EditorBaseControl::OnUnloaded });
+		LayoutUpdated([this](IInspectable const &, IInspectable const &) {
+			if (!_viewportGeometryDirty || IsFinalized()) return;
+			_viewportGeometryDirty = false;
+			_viewportGeometryChanged(*this, nullptr);
+		});
 		LosingFocus({ this, &EditorBaseControl::OnLosingFocus });
 
 		if (!_hasXamlRoot)
@@ -295,8 +300,16 @@ namespace winrt::WinUIEditor::implementation
 		{
 			_wrapper->LogicalDpi(dpiScale * 96);
 			_dpiScale = dpiScale;
+			_viewportGeometryDirty = true;
 			_scintilla->DpiChanged();
 			_dpiChangedEvent(*this, dpiScale);
+			// A DPI change need not change the target's DIP dimensions or raise
+			// SizeChanged. Refresh its backing pixels and schedule the geometry event.
+			if (const auto target{ GetTemplateChild(L"ImageTarget").try_as<FrameworkElement>() })
+			{
+				UpdateSurfaceSize({ static_cast<float>(target.ActualWidth()), static_cast<float>(target.ActualHeight()) });
+			}
+			InvalidateArrange();
 		}
 	}
 
@@ -422,7 +435,17 @@ namespace winrt::WinUIEditor::implementation
 
 	Scintilla::sptr_t EditorBaseControl::PublicWndProc(Scintilla::Message iMessage, Scintilla::uptr_t wParam, Scintilla::sptr_t lParam)
 	{
-		return _scintilla->WndProc(iMessage, wParam, lParam);
+		const auto result = _scintilla->WndProc(iMessage, wParam, lParam);
+		switch (iMessage) {
+		case Scintilla::Message::SetBidirectional:
+		case Scintilla::Message::SetMarginWidthN:
+		case Scintilla::Message::SetMarginLeft:
+		case Scintilla::Message::SetMarginRight:
+			_viewportGeometryDirty = true;
+			break;
+		default: break;
+		}
+		return result;
 	}
 
 	int64_t EditorBaseControl::SendMessage(ScintillaMessage const &message, uint64_t wParam, int64_t lParam)
@@ -474,20 +497,15 @@ namespace winrt::WinUIEditor::implementation
 	{
 		__super::OnApplyTemplate();
 
-		if (_hasXamlRoot)
-		{
-			UpdateDpi(XamlRoot().RasterizationScale());
-		}
-		else
-		{
-			UpdateDpi(_displayInformation.RawPixelsPerViewPixel());
-		}
-
 		const VirtualSurfaceImageSource virtualSurfaceImageSource{ 0, 0, false };
 
 		_vsisNative = virtualSurfaceImageSource.as<::IVirtualSurfaceImageSourceNative>();
 
 		_wrapper->VsisNative(_vsisNative);
+		// This is a new, empty surface even when a reapplied template has the
+		// same dimensions as its predecessor.
+		_wrapper->Width(0);
+		_wrapper->Height(0);
 		_wrapper->CreateGraphicsDevices();
 		_vsisNative->RegisterForUpdatesNeeded(_scintilla.as<::IVirtualSurfaceUpdatesCallbackNative>().get());
 
@@ -527,6 +545,12 @@ namespace winrt::WinUIEditor::implementation
 			const ImageBrush brush{};
 			brush.ImageSource(virtualSurfaceImageSource);
 			imageTarget.Background(brush);
+		}
+
+		UpdateDpi(_hasXamlRoot ? XamlRoot().RasterizationScale() : _displayInformation.RawPixelsPerViewPixel());
+		if (const auto target{ GetTemplateChild(L"ImageTarget").try_as<FrameworkElement>() })
+		{
+			UpdateSurfaceSize({ static_cast<float>(target.ActualWidth()), static_cast<float>(target.ActualHeight()) });
 		}
 
 		// Todo: Evaluate if this is an appropriate place to add this event (and other code in this method)
@@ -686,15 +710,44 @@ namespace winrt::WinUIEditor::implementation
 
 	void EditorBaseControl::ImageTarget_SizeChanged(IInspectable const &sender, SizeChangedEventArgs const &args)
 	{
-		if (_vsisNative)
+		UpdateSurfaceSize(args.NewSize());
+	}
+
+	void EditorBaseControl::UpdateSurfaceSize(Size size)
+	{
+		if (!_vsisNative) return;
+		_viewportGeometryDirty = true;
+		const auto width{ ConvertFromDipToPixelUnit(size.Width, _dpiScale) };
+		const auto height{ ConvertFromDipToPixelUnit(size.Height, _dpiScale) };
+		if (width != _wrapper->Width() || height != _wrapper->Height())
 		{
-			auto width{ ConvertFromDipToPixelUnit(args.NewSize().Width, _dpiScale) };
-			auto height{ ConvertFromDipToPixelUnit(args.NewSize().Height, _dpiScale) };
+			check_hresult(_vsisNative->Resize(width, height));
 			_wrapper->Width(width);
 			_wrapper->Height(height);
-			_vsisNative->Resize(width, height);
 			_scintilla->SizeChanged();
 		}
+	}
+
+	Rect EditorBaseControl::GutterBounds()
+	{
+		if (IsFinalized()) return {};
+		const auto imageTarget{ GetTemplateChild(L"ImageTarget").try_as<FrameworkElement>() };
+		if (!imageTarget) return {};
+		const auto bounds = _scintilla->GutterRectangle();
+		const Rect dips{ static_cast<float>(bounds.left / _dpiScale), static_cast<float>(bounds.top / _dpiScale),
+			static_cast<float>(bounds.Width() / _dpiScale), static_cast<float>(bounds.Height() / _dpiScale) };
+		return imageTarget.TransformToVisual(*this).TransformBounds(dips);
+	}
+
+	bool EditorBaseControl::AutomationPointFromRoot(Point &point) const
+	{
+		if (IsFinalized()) return false;
+		// The XAML UIA adapter has already converted screen to root physical pixels.
+		float x = point.X / _dpiScale;
+		float y = point.Y / _dpiScale;
+		if (!_wrapper->TransformFromRoot(x, y)) return false;
+		point = { x * _dpiScale, y * _dpiScale };
+		return true;
 	}
 
 	void EditorBaseControl::ImageTarget_PointerWheelChanged(IInspectable const &sender, PointerRoutedEventArgs const &e)

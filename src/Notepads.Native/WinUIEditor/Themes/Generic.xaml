@@ -25,6 +25,7 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -32,19 +33,19 @@
                         <Border
                             x:Name="ImageTarget"
                             Grid.Row="0"
-                            Grid.Column="0"
+                            Grid.Column="1"
                             AllowDrop="True" />
                         <ScrollBar
                             x:Name="VerticalScrollBar"
                             Grid.Row="0"
-                            Grid.Column="1"
+                            Grid.Column="2"
                             IndicatorMode="MouseIndicator"
                             IsTabStop="False"
                             Orientation="Vertical" />
                         <ScrollBar
                             x:Name="HorizontalScrollBar"
                             Grid.Row="1"
-                            Grid.Column="0"
+                            Grid.Column="1"
                             Visibility="Collapsed"
                             IndicatorMode="MouseIndicator"
                             IsTabStop="False"

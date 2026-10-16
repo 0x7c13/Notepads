@@ -44,6 +44,7 @@ public sealed partial class ContinuationPageFormat : Page
             FooterTextBlock.FontSize = textEditorFontSize;
         }
 
+        ContinuationPageLinkedContainer.FlowDirection = textLinkContainer.FlowDirection;
         textLinkContainer.OverflowContentTarget = ContinuationPageLinkedContainer;
     }
 }

@@ -29,8 +29,12 @@ $groups = [ordered]@{
     Architecture = @{ Profile = 'Product'; Default = $true }
     Localization = @{ Profile = 'Source'; Default = $true }
     NativeDiff = @{ Profile = 'NativeDiff'; Default = $true }
+    NativeBidi = @{ Profile = 'NativeBidi'; Default = $true }
     RegexText = @{ Profile = 'RegexText'; Default = $true }
     Editor = @{ Profile = 'App'; Arguments = @('--editor'); Default = $true }
+    Bidi = @{ Profile = 'App'; Arguments = @('--bidi'); Default = $true }
+    BidiPerformance = @{ Profile = 'App'; Arguments = @('--bidi-performance'); Default = $false; Performance = $true }
+    ReadingOrder = @{ Profile = 'App'; Arguments = @('--reading-order'); Default = $true }
     Documents = @{ Profile = 'App'; Arguments = @('--documents'); Default = $true }
     Activation = @{ Profile = 'App'; Arguments = @('--activation'); Default = $true }
     OpenPicker = @{ Profile = 'App'; Arguments = @('--open-picker'); Default = $true }
@@ -64,6 +68,8 @@ $groups = [ordered]@{
     ScrollRestoration = @{ Profile = 'App'; Arguments = @('--scroll-restoration'); Default = $true }
     AutomationNavigation = @{ Profile = 'App'; Arguments = @('--automation-navigation'); Default = $false }
     UIAutomation = @{ Profile = 'Desktop'; Default = $false }
+    DpiLayout = @{ Profile = 'Desktop'; Default = $false }
+    DisplayDpi = @{ Profile = 'Desktop'; Default = $false }
     DragDrop = @{ Profile = 'Desktop'; Default = $false }
     RegexMemory = @{ Profile = 'App'; Arguments = @('--regex-memory'); Default = $false; Performance = $true }
     Performance = @{ Profile = 'App'; Arguments = @('--performance'); Default = $false; Performance = $true }
@@ -108,7 +114,7 @@ function Get-TestMSBuild {
 function Ensure-TestBuild([string] $Profile, [string] $BuildConfiguration = $Configuration) {
     $cacheKey = "$Profile/$BuildConfiguration"
     if ($built.ContainsKey($cacheKey)) { return }
-    $buildPlatform = if ($Profile -in @('Unit', 'Headless')) { 'AnyCPU' } elseif ($Profile -in @('NativeDiff', 'RegexText')) { 'x64' } else { $Platform }
+    $buildPlatform = if ($Profile -in @('Unit', 'Headless')) { 'AnyCPU' } elseif ($Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) { 'x64' } else { $Platform }
     if ($NoBuild) { $null = Assert-TestBuildIdentity $Profile $BuildConfiguration $buildPlatform }
     else {
         $before = Get-TestSourceHashes $Profile
@@ -129,7 +135,7 @@ function Ensure-TestBuild([string] $Profile, [string] $BuildConfiguration = $Con
             $solutionDirectory = [IO.Path]::GetFullPath((Join-Path $repo 'src/'))
             $buildArguments = @('/restore', "/p:Configuration=$BuildConfiguration", "/p:Platform=$buildPlatform", "/p:SolutionDir=$solutionDirectory", '/v:minimal', '/nologo')
             $project = if ($Profile -eq 'Product') { Join-Path $repo 'src/Notepads/Notepads.csproj' }
-                elseif ($Profile -in @('NativeDiff', 'RegexText')) { Join-Path $repo "tests/IntegrationTests/Support/$Profile.Tests/$Profile.Tests.vcxproj" }
+                elseif ($Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) { Join-Path $repo "tests/IntegrationTests/Support/$Profile.Tests/$Profile.Tests.vcxproj" }
                 else { $integration }
             if ($Profile -eq 'App') {
                 $buildArguments += @('/p:IntegrationHost=App', '/p:AppxBundle=Never', '/p:AppxPackageSigningEnabled=false', $(if ($BuildConfiguration -eq 'Debug') { '/t:Build' } else { '/t:Publish' }))
@@ -202,9 +208,12 @@ try {
                     if ($spec.Lease) { $parameters.LeaseProbe = $true } else { $parameters.TestArguments = @($spec.Arguments) }
                     & (Join-Path $PSScriptRoot 'Test-IsolatedUwp.ps1') @parameters
                 }
-                elseif ($spec.Profile -in @('NativeDiff', 'RegexText')) {
+                elseif ($spec.Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) {
                     Ensure-TestBuild $spec.Profile
-                    & (Join-Path $repo "tests/IntegrationTests/Support/$name.Tests/bin/x64/$Configuration/$name.Tests.exe")
+                    $nativeArguments = if ($name -eq 'NativeBidi') {
+                        @('--report', (Join-Path $reportRoot 'native-bidi.json'))
+                    } else { @() }
+                    & (Join-Path $repo "tests/IntegrationTests/Support/$name.Tests/bin/x64/$Configuration/$name.Tests.exe") @nativeArguments
                     if ($LASTEXITCODE -ne 0) { throw "Native x64 helper failed: $name" }
                 }
                 elseif ($name -eq 'Runner') {
@@ -221,11 +230,14 @@ try {
                     & (Join-Path $PSScriptRoot 'Test-PackagedApp.ps1') -PackagePath $PackagePath
                 }
                 elseif ($spec.Profile -eq 'Desktop') {
-                    if ($Configuration -ne 'Release') { throw 'External UIA/drag probes require the Release AOT app.' }
+                    if ($Configuration -ne 'Release') { throw 'Desktop probes require the Release AOT app.' }
                     Ensure-TestBuild App
                     if ($name -eq 'DragDrop') {
                         Ensure-TestBuild DragPeer
                         & (Join-Path $PSScriptRoot 'Test-EditorDragDrop.ps1') -Platform $Platform
+                    }
+                    elseif ($name -in @('DpiLayout', 'DisplayDpi')) {
+                        & (Join-Path $PSScriptRoot 'Test-EditorDpi.ps1') -Platform $Platform -CurrentScaleOnly:($name -eq 'DpiLayout')
                     }
                     else { & (Join-Path $PSScriptRoot 'Test-EditorAutomation.ps1') -Platform $Platform }
                 }

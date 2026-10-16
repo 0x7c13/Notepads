@@ -25,8 +25,10 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
     private MenuFlyoutItem _selectAll;
     private MenuFlyoutItem _webSearch;
     private MenuFlyoutItem _wordWrap;
+    private MenuFlyoutItem _rightToLeftReadingOrder;
     private MenuFlyoutItem _previewToggle;
     private MenuFlyoutItem _share;
+    private Control _presenter;
 
     private readonly ITextEditor _textEditor;
     private readonly TextEditorCore _textEditorCore;
@@ -46,6 +48,7 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
         Items.Add(SelectAll);
         Items.Add(new MenuFlyoutSeparator());
         Items.Add(WordWrap);
+        Items.Add(RightToLeftReadingOrder);
         Items.Add(WebSearch);
         Items.Add(PreviewToggle);
         Items.Add(Share);
@@ -56,10 +59,25 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
     public void Dispose()
     {
         Opening -= TextEditorContextFlyout_Opening;
+        _presenter = null;
+    }
+
+    protected override Control CreatePresenter()
+    {
+        _presenter = base.CreatePresenter();
+        return _presenter;
     }
 
     private void TextEditorContextFlyout_Opening(object sender, object e)
     {
+        // XAML copies the LTR native target's direction as a local presenter
+        // value before Opening, so a style setter cannot override it. Keep the
+        // framework's presenter and apply the owning editor's chrome direction.
+        if (_presenter != null && _textEditor is FrameworkElement owner)
+        {
+            _presenter.FlowDirection = owner.FlowDirection;
+        }
+
         if (!_textEditorCore.HasSelection)
         {
             PrepareForInsertionMode();
@@ -77,6 +95,8 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
 
         PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType) ? Visibility.Visible : Visibility.Collapsed;
         WordWrap.Icon.Visibility = (_textEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;
+        RightToLeftReadingOrder.IsEnabled = _textEditorCore.IsEnabled;
+        RightToLeftReadingOrder.Icon.Visibility = _textEditorCore.RightToLeftReadingOrder ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public void PrepareForInsertionMode()
@@ -267,6 +287,31 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
                 _wordWrap.Icon.Visibility = _textEditorCore.TextWrapping == TextWrapping.Wrap ? Visibility.Visible : Visibility.Collapsed;
             };
             return _wordWrap;
+        }
+    }
+
+    public MenuFlyoutItem RightToLeftReadingOrder
+    {
+        get
+        {
+            if (_rightToLeftReadingOrder != null) return _rightToLeftReadingOrder;
+            _rightToLeftReadingOrder = new MenuFlyoutItem
+            {
+                Text = _resourceLoader.GetString("TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText"),
+                Icon = new FontIcon
+                {
+                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    Glyph = "\uE73E",
+                    Visibility = _textEditorCore.RightToLeftReadingOrder ? Visibility.Visible : Visibility.Collapsed
+                }
+            };
+            _rightToLeftReadingOrder.Click += (_, _) =>
+            {
+                if (!_textEditorCore.IsEnabled) return;
+                _textEditorCore.RightToLeftReadingOrder = !_textEditorCore.RightToLeftReadingOrder;
+                _rightToLeftReadingOrder.Icon.Visibility = _textEditorCore.RightToLeftReadingOrder ? Visibility.Visible : Visibility.Collapsed;
+            };
+            return _rightToLeftReadingOrder;
         }
     }
 

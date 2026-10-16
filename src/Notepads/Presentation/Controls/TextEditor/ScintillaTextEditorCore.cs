@@ -90,6 +90,20 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     public long ContentVersion { get; private set; }
     internal ulong DocumentSequence => Native.DocumentSequence;
 
+    // Reading order belongs to this document. Keep the XAML/native canvas LTR
+    // so the bitmap, gutter, and input coordinates are never mirrored.
+    public bool RightToLeftReadingOrder
+    {
+        get => Native.Bidirectional == Bidirectional.R2l;
+        set
+        {
+            if (RightToLeftReadingOrder == value) return;
+            Native.Bidirectional = value ? Bidirectional.R2l : Bidirectional.L2r;
+            UpdateLineNumberMargin();
+            HideLineNumberGlow();
+        }
+    }
+
     public TextWrapping TextWrapping
     {
         get => _textWrapping;
@@ -141,7 +155,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     public TextEditorCore()
     {
         // XAML RTL mirrors the native bitmap, including glyphs and line numbers.
-        // Native BiDi handles text direction while chrome stays unmirrored.
+        // Native BiDi places text and the gutter without reflecting their glyphs.
         FlowDirection = FlowDirection.LeftToRight;
         _view = new EditorBaseControl();
         _view.MouseWheelZoomEnabled = false;
@@ -170,12 +184,13 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         // UserControl. Pass the app flyout to the native control explicitly.
         RegisterPropertyChangedCallback(ContextFlyoutProperty, (_, __) => _view.ContextFlyout = ContextFlyout);
         _view.DpiChanged += OnNativeDpiChanged;
+        _view.ViewportGeometryChanged += OnNativeViewportGeometryChanged;
         Native.CodePage = (int)EditorConstants.ScCpUtf8;
         // Reuse visible line measurements across viewport restoration and paint tiles.
-        // Native layout falls back to a single-line cache if it encounters a long line.
+        // Native layout bounds retained source capacity, allowing one oversized active line.
         Native.LayoutCache = LineCache.Page;
-        // DirectWrite supports mixed RTL/LTR text with an LTR paragraph base.
-        // This does not request the unimplemented default-RTL paragraph mode.
+        // New documents start with an LTR paragraph base, independently of the
+        // app language. A saved or explicitly chosen reading order overrides it.
         Native.Bidirectional = Bidirectional.L2r;
         Native.SelectionLayer = Layer.UnderText;
         // One CR is also the old RichEdit/session representation. Import/export
@@ -327,15 +342,31 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         _lineNumberDigits = LineNumberDigits();
         var width = _displayLineNumbers ? Native.TextWidth((int)StylesCommon.LineNumber, new string('9', _lineNumberDigits)) + (int)Math.Round(12 * _dpiScale) : 0;
         Native.SetMarginWidthN(0, width);
-        Native.MarginLeft = (int)Math.Round(6 * _dpiScale);
+        var rtl = RightToLeftReadingOrder;
+        var gap = (int)Math.Round(6 * _dpiScale);
+        Native.MarginLeft = rtl ? 1 : gap;
+        Native.MarginRight = rtl ? gap : 1;
         _lineNumberReveal.Width = width / _dpiScale;
-        // Place the reveal halfway into the gap between the number margin and the text.
-        _lineNumberReveal.Margin = new Thickness(Native.MarginLeft / (2 * _dpiScale), 0, 0, 0);
+        UpdateLineNumberRevealLayout();
         _lineNumberReveal.Visibility = _displayLineNumbers ? Visibility.Visible : Visibility.Collapsed;
         if (!_displayLineNumbers) HideLineNumberGlow();
     }
 
     private int LineNumberDigits() => Math.Max(2, Native.LineCount.ToString().Length);
+
+    private void OnNativeViewportGeometryChanged(object sender, object args) => UpdateLineNumberRevealLayout();
+
+    private void UpdateLineNumberRevealLayout()
+    {
+        var bounds = _view.GutterBounds;
+        var rtl = RightToLeftReadingOrder;
+        // The native viewport excludes the vertical scrollbar. Keep the reveal
+        // halfway into the physical gap at the gutter's text-facing edge.
+        var gap = (rtl ? Native.MarginRight : Native.MarginLeft) / (2 * _dpiScale);
+        var left = rtl ? bounds.Left - gap : bounds.Left + gap;
+        var margin = new Thickness(left, 0, 0, 0);
+        if (_lineNumberReveal.Margin != margin) _lineNumberReveal.Margin = margin;
+    }
 
     private void OnEditorPointerMoved(object sender, PointerRoutedEventArgs args)
     {
@@ -349,7 +380,9 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     {
         const double radius = 80;
         var height = _view.ActualHeight;
-        var distance = Math.Abs(x - (_lineNumberReveal.Margin.Left + _lineNumberReveal.Width));
+        var rtl = RightToLeftReadingOrder;
+        var edge = _lineNumberReveal.Margin.Left + (rtl ? 0 : _lineNumberReveal.Width);
+        var distance = Math.Abs(x - edge);
         if (!_displayLineNumbers || _accessibility.HighContrast || x < 0 || y < 0 || y >= height || distance >= radius)
         {
             HideLineNumberGlow();
@@ -366,8 +399,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         var alpha = (byte)Math.Round(150 * (1 - distance / radius));
         var glow = _palette[EditorColorRole.Foreground];
         _lineNumberGlowCenter.Color = Color.FromArgb(alpha, glow.R, glow.G, glow.B);
-        if (_lineNumberReveal.BorderThickness.Right == 0)
-            _lineNumberReveal.BorderThickness = new Thickness(0, 0, 1, 0);
+        var border = rtl ? new Thickness(1, 0, 0, 0) : new Thickness(0, 0, 1, 0);
+        if (_lineNumberReveal.BorderThickness != border) _lineNumberReveal.BorderThickness = border;
     }
 
     private void HideLineNumberGlow() => _lineNumberReveal.BorderThickness = new Thickness(0);
@@ -456,10 +489,17 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
             await loadAsync();
             if (_disposed) return;
             InstallSyntaxProfile();
-            Native.SetSel(0, 0);
+            Native.SetEmptySelection(0);
             ContentVersion++;
             ResetDetectedIndentation();
             UpdateLineNumberMargin();
+            // Reveal only after the final metrics are installed. A detached
+            // editor must wait for its real DPI and viewport before shaping.
+            if (!_view.IsViewportRestorePending)
+            {
+                if (_view.IsLoaded) Native.ScrollCaret();
+                else if (!_diffPreview) SetScrollViewerInitPosition(0, 0);
+            }
         }
         finally
         {
@@ -544,6 +584,16 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     public void SetTextSelectionPosition(int startPosition, int endPosition) => Native.SetSel(FromUtf16(startPosition), FromUtf16(endPosition));
 
+    internal void RestoreTextSelectionPosition(int startPosition, int endPosition)
+    {
+        // The saved viewport is applied at first paint. Reset selection mode
+        // and notify the text store without measuring a temporary viewport.
+        var start = FromUtf16(startPosition);
+        var end = FromUtf16(endPosition);
+        Native.SetEmptySelection(end);
+        Native.Anchor = start;
+    }
+
     public void GetLineColumnSelection(out int startLineIndex, out int endLineIndex,
         out int startColumnIndex, out int endColumnIndex, out int selectedCount,
         out int lineCount, LineEnding lineEnding = LineEnding.Crlf)
@@ -601,7 +651,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
             verticalOffset = _verticalOffset;
             return;
         }
-        horizontalOffset = Native.XOffset / _dpiScale;
+        horizontalOffset = _view.DisplayHorizontalOffset;
         verticalOffset = Native.FirstVisibleLine * GetSingleLineHeight() / _dpiScale;
     }
 
@@ -619,14 +669,14 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     }
 
     public void SetScrollViewerInitPosition(double horizontalOffset, double verticalOffset,
-        int? documentLine = null, int subLine = 0)
+        int? documentLine = null, int subLine = 0, bool preservePreferredColumn = false)
     {
         _horizontalOffset = horizontalOffset; _verticalOffset = verticalOffset;
         // A missing anchor follows the caret: V1 import has only RichEdit pixel
         // offsets, and automatic .LOG insertion must show the new entry.
         _firstVisibleDocumentLine = documentLine;
         _firstVisibleSubLine = subLine;
-        _view.RestoreViewport(horizontalOffset, documentLine ?? -1, subLine);
+        _view.RestoreViewport(horizontalOffset, documentLine ?? -1, subLine, preservePreferredColumn);
     }
 
     public new bool Focus(FocusState state) => _view.Focus(state);
@@ -717,6 +767,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         RemoveHandler(PointerMovedEvent, new PointerEventHandler(OnEditorPointerMoved));
         RemoveHandler(PointerExitedEvent, new PointerEventHandler(OnEditorPointerExited));
         _view.DpiChanged -= OnNativeDpiChanged;
+        _view.ViewportGeometryChanged -= OnNativeViewportGeometryChanged;
         Loading -= OnLoading;
         ActualThemeChanged -= OnActualThemeChanged;
         ThemeSettingsService.OnThemeChanged -= OnAppThemeChanged;

@@ -60,6 +60,16 @@ mouse-down currently lacks the actual-cursor recheck used for mouse-up, so this
 does not guarantee safe injection during concurrent physical mouse input. A
 different hosting model fails setup rather than relaxing ownership checks.
 
+Before the first physical case, both drivers acquire their owned test windows'
+foreground. The drag driver initializes both editor and peer and verifies that
+ordinary activation can switch between them. If normal activation is denied, a
+shared helper clicks a verified
+non-client caption, temporarily raising only that window when necessary. It
+restores temporary window/input state before returning; unrelated windows are
+not minimized. Ownership, idle input and the existing per-gesture foreground
+and hit-target checks remain required. This bootstrap does not recover a test
+that loses foreground during a gesture.
+
 ## Isolation and the meaning of a pass
 
 Local App/desktop tests register only `Notepads.Editor.Tests`. The runner restores the
@@ -130,10 +140,12 @@ and `artifacts/test-overhaul`; those local artifacts are not checked into Git.
 | Command-line/protocol, picker, recent-file menu, web search, printing | `ShellWorkflowTests` |
 | Session restore, backup, close/save, import/transfer and recovery | Existing controller/storage/recovery tests plus actual MainPage phases |
 | Cold/warm external activation ordering, selected startup tab, close during activation | `WorkspaceActivationTests`, `SessionControllerFileLookupTests`; hosted `PackagedApp` OS activation |
-| Restored viewport on the first paint, wrapping, focus, tab reattachment and long `.LOG` append | `ScrollRestoration` App group |
+| Restored viewport on the first paint, RTL historical canvas/panning, wrapping, focus, tab reattachment and long `.LOG` append | `ScrollRestoration` App group |
 | Process leases and abrupt exit | Two packaged processes in the Leases group |
 | Installed Production startup, OS activation, window preference, shutdown, suspension and V1 import | Hosted-only `PackagedApp` external driver |
 | Native indentation, syntax, diff geometry, regex | Editor suite and native C++ helpers; Debug-only fault lane |
+| RTL/LTR paragraph shaping, visual navigation, mixed selections and wrapping | `NativeBidi` independent DirectWrite geometry/raster; real-control `Bidi` App group |
+| Per-document reading direction, commands and persisted view state | `ReadingOrder` App group; external UIAutomation physical input |
 | Accessibility/input/drag | Native UIA navigation; separate desktop UI Automation and drag groups |
 | Localization, package content, dependency architecture | Dedicated integration groups and architecture negative probes |
 | Source copyright headers and third-party notices | `Headers` source group and private Git rejection fixtures |
@@ -142,6 +154,141 @@ Tests should protect observable contracts with independent expected results.
 Add a reproducer before changing product logic. Avoid duplicate getter checks,
 arbitrary sleeps, tests that simply restate an implementation, and performance
 thresholds tied to one developer's current machine load.
+
+`NativeBidi` builds the production DirectWrite paragraph implementation in a
+headless x64 executable. Its separate whole-paragraph DirectWrite oracle checks
+UTF-8/UTF-16 mapping, hit positions, wrapping and offscreen WIC pixels on the same
+machine; fixed Hebrew/combining/emoji cases check exact visual caret traversal.
+Color/font segmentation, disjoint selection rectangles, direction controls,
+uniform fallback-font rows and fixed caret/EOL gutters have dedicated cases.
+The production clipped renderer is also compared directly with Windows
+`DrawTextLayout` pixels for colour glyphs, drawing effects, italic overhang,
+wrapped rows, transformed clips and adjacent tiles. COLRv1 coverage requires
+real paint-tree glyphs and chromatic pixels; unavailable OS/font capabilities
+are explicitly reported as skipped. A failing inline object verifies error
+propagation without retrying a partially drawn paragraph.
+The runner saves `native-bidi.json` beside the aggregate test report, with the
+assertion count and each optional capability marked `verified`, `skipped` (with
+a reason), or `not_run`. Unsupported capabilities do not imply verified coverage.
+Optional capability skips are recorded in this artifact; they do not fail the
+Native Tests job or CI Gate. Failed assertions still fail the native executable.
+All Unicode noncharacters and malformed UTF-8 fixtures also check that font,
+representation and caret mappings agree with Scintilla's drawing byte boundaries.
+Real Document undo/redo notifications verify restoration edges through insertion,
+deletion, coalesced deletes and container actions. The AOT editor tests separately
+check actual mixed-boundary caret geometry and subsequent arrow navigation.
+Row-specific rendering rejects adjacent Arabic overhang and processes no off-row
+drawing effects. A test-only capability facade forces the Context4 branch;
+original, privately loaded COLRv0, SVG and PNG fonts verify actual colour pixels,
+foreground, opacity, DPI and bitmap snapping against Windows rendering. This
+tests the legacy branch on the current OS, not an older Windows installation.
+Foreground changes use an immutable layout. Independent Windows pixel references
+verify partial Arabic ligatures, combining characters and emoji sequences without
+moving glyphs or changing wrapping. The matrix includes affine transforms, GDI
+measurement, overlapping translucent colour glyphs, wrapped rows and clipped
+italic ink. Same-layout redraws and invalid brush spans cover resource lifetime
+and error boundaries; no renderer observer or test switch is compiled into the app.
+The small checked-in fonts never require installation or Python to run tests;
+regenerate them with `uv run --no-project --with fonttools==4.60.1 python
+tests/IntegrationTests/Support/NativeBidi.Tests/GenerateFonts.py`.
+The App group checks actual editing, rectangular selection, undo, scrolling and
+UIA geometry. First-paint checks cover detached loads, restored selections and
+distant diff hunks; synchronous font/zoom changes must also preserve rectangle
+collapse corners before any intervening paint can repair the geometry.
+Live RTL viewport checks start with unmeasured distant long rows and verify
+each painted frame through width growth, panning, resize, gutter and font changes.
+They reject geometry queries that repair an already-painted frame, and separately
+cover immediate offscreen queries, explicit physical offsets and LTR controls.
+Close-hit APIs reject gutters on both the ASCII LTR fast path and mixed-direction
+paragraphs; vertical arrows preserve their column across cold canvas growth.
+Immediate editing/query checks run before any paint or lexer reset; separate
+pending-tokenization fixtures check the same observable results. Actual-control
+byte-boundary tests also paint noncharacters, truncated UTF-8 and styles split
+inside scalars without altering the original bytes.
+Command regressions pair plain and mixed paragraphs to preserve newline and word
+stops in both reading directions, and cover subword stops in LTR text.
+Rectangle Tab checks one insertion
+per visual row across logical islands, reversed selections and wrapping, with
+tabs/spaces, read-only mode, subsequent typing and exact undo/redo results.
+Read-only Tab preserves text, every oriented selection and the rectangle corners;
+the empty undo/redo history is checked after restoring write access.
+Plain LTR soft-wrap checks retain the insertion's caret state while verifying
+UIA geometry, single-row scrolling, rectangle extension and exact undo/redo.
+External UIAutomation drives real keys and clicks, then compares
+screen pixels for Latin orientation, Arabic joining and selection islands. Its
+regular CI cases verify that UIA point hits return an empty range at the exact
+character, including line-interior hits with either gutter position.
+Physical command cases also cover cross-line Ctrl+Right/Shift and rectangle
+Tab/Undo, plus overwrite input across selected rows, empty tab rows and mixed
+islands. Repeated input checks that overwrite resumes after selection replacement;
+exact row carets before EOF also reject stale text-store selection corrections.
+Physical soft-wrap controls compare typed affinity with an explicitly placed caret.
+The App fixtures' `TypeText` uses native paste, bypassing `InsertCharacter` and
+TSF `SetText`. Physical typing supplies the direct bridge regressions; NativeBidi
+does not compile the text-store bridge and cannot provide that coverage.
+Mid-case child focus requires owned foreground and idle input before
+any mutation; runner contracts reject interrupted focus without desktop input.
+Keyboard helpers also reject held input before typing or dismissing a context
+menu. Only menu dismissal permits focus outside the editor; owned foreground
+is still required. Inert runner fixtures verify rejection without sending keys.
+The right-click cases check both visual homes of wrapped and mixed-direction caret
+boundaries, as well as preserving an existing selection. The drag matrix also
+moves/copies a selected Hebrew glyph to a separate process and checks actual
+insertion-caret pixels when a held drag moves between the two visual homes of
+one byte position, followed by exact insertion and single-step undo.
+Optional long-paragraph timings are available by running the built helper with
+`--performance`; normal correctness tests have no performance pass/fail thresholds.
+DPI verification has two independent layers. NativeBidi compares the production
+renderer with Windows at 120/144/192 DPI and changes DPI on the same targets and
+layouts through 96 -> 120 -> 144 -> 192 -> 96. Returning to 96 DPI must reproduce
+the exact original pixels. This validates rendering, not XAML/system events.
+
+The optional `DpiLayout` desktop group runs six Release AOT fixtures at the current
+system scale: LTR/RTL, wrapped/unwrapped editing and actual Diff panes. It checks
+native gutter/reveal geometry, scrollbar side, retained viewport/selection/text,
+and external UIA range geometry and hit testing. It changes no display setting.
+`DisplayDpi` runs those fixtures while changing the Windows Settings scale combo
+through 100/125/150/200% and back to the original. It requires exactly one active
+display and enabled standard scaling; custom scaling is rejected before mutation.
+The runner waits for system/native scale agreement, DPI/geometry events and paint,
+keeps UIA ranges alive across transitions, and restores the original scale in
+`finally`. Original settings, binary hashes and observations are saved with the
+isolated session. An interrupted/killed runner may require manual restoration
+using `display-settings.json`; cleanup failure is always a test failure.
+Discovery failures close only a Settings window opened by the run; pre-existing
+windows are preserved. Runner contracts exercise this cleanup and require held
+input to be rejected before the DPI driver changes keyboard focus.
+
+```powershell
+./scripts/Test.ps1 -Suite Integration -Group DpiLayout -Platform ARM64
+./scripts/Test-EditorDpi.ps1 -PreflightOnly
+# Explicitly changes the desktop scale; excluded from defaults and hosted CI.
+./scripts/Test.ps1 -Suite Integration -Group DisplayDpi -Platform ARM64
+```
+
+Neither a current-scale pass nor a native DPI pass claims a real Windows scale
+transition. Single-display scale changes also do not cover monitor-origin or
+topology changes; that requires a separate multi-monitor environment.
+
+The optional `BidiPerformance` App group records five open/close cycles for ASCII,
+CJK and mixed-direction documents, including 32K paragraphs and 30 long RTL
+lines that exercise the visible-page cache. A separately labelled 256K stress
+case runs last, with one cycle and fewer actions. `RTL-PERF` CSV
+lines contain construction, native load, first paint, first/repeated arrow call time,
+insert/undo, selection/clear-selection in wrapped and unwrapped views,
+scroll/wrap/resize/direction measurements and private/working-set/
+managed/app memory, including observations after disposal and collection.
+The selection fixture explicitly sets contrasting active/inactive text colours
+before first paint and verifies them afterwards, so machine theme defaults cannot
+accidentally bypass the multicolour drawing path.
+The probe source also compiles on the pre-RTL baseline; explicit R2L scenarios
+measure feature cost, since that baseline does not implement equivalent behavior.
+Call times are synchronous elapsed time, not CPU accounting or physical input
+latency; native paint completion is distinct from compositor presentation.
+The first wrapped selection also includes any pending rewrap caused by XAML
+arranging a newly visible scrollbar. Its cost remains recorded; a second
+selection/clear pair separately measures the already painted viewport.
+Use matched architecture/configuration and interleaved runs for comparisons.
 
 Startup presentation tests observe the native document at its first paint and
 the tab headers at their first three XAML frames after Loaded. Native surface

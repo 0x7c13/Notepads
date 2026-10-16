@@ -5,6 +5,9 @@
 // Copyright 1998-2001 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+// See LICENSE.txt in the project root for the Notepads modifications.
+
 #ifndef VIEWSTYLE_H
 #define VIEWSTYLE_H
 
@@ -147,7 +150,6 @@ public:
 	std::vector<MarginStyle> ms;
 	int fixedColumnWidth = 0;	///< Total width of margins
 	bool marginInside;	///< true: margin included in text view, false: separate views
-	int textStart;	///< Starting x position of text within the view
 	int zoomLevel;
 	Scintilla::WhiteSpace viewWhitespace;
 	Scintilla::TabDrawMode tabDrawMode;
@@ -208,7 +210,13 @@ public:
 	void SetFontLocaleName(const char *name);
 	bool ProtectionActive() const noexcept;
 	int ExternalMarginWidth() const noexcept;
-	int MarginFromLocation(Point pt) const noexcept;
+	int GutterWidth() const noexcept;
+	bool MarginsOnRight(bool rightToLeft) const noexcept;
+	int TextStart(bool rightToLeft) const noexcept;
+	int RightInset(bool rightToLeft) const noexcept;
+	PRectangle TextRectangle(PRectangle client, bool rightToLeft) const noexcept;
+	PRectangle MarginRectangle(PRectangle client, bool rightToLeft) const noexcept;
+	int MarginFromLocation(Point pt, PRectangle client, bool rightToLeft) const noexcept;
 	bool ValidStyle(size_t styleIndex) const noexcept;
 	void CalcLargestMarkerHeight() noexcept;
 	int GetFrameWidth() const noexcept;

@@ -336,6 +336,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             SelectionEndPosition = textSelectionEndPosition,
             WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap ||
                        TextEditorCore.TextWrapping == TextWrapping.WrapWholeWords,
+            RightToLeftReadingOrder = TextEditorCore.RightToLeftReadingOrder,
             ScrollViewerHorizontalOffset = horizontalOffset,
             ScrollViewerVerticalOffset = verticalOffset,
             FirstVisibleDocumentLine = documentLine,

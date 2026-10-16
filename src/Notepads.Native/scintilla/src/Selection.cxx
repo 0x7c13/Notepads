@@ -52,6 +52,11 @@ SelectionPosition::SelectionPosition(std::string_view &sv) : position(0) {
 }
 
 void SelectionPosition::MoveForInsertDelete(bool insertion, Sci::Position startChange, Sci::Position length, bool moveForEqual) noexcept {
+	// Editing at this edge changes the adjacent cluster. An affinity inherited
+	// from the deleted text must not place the next caret on an unrelated run.
+	if (insertion ? position == startChange :
+		(position >= startChange && position <= startChange + length))
+		trailingEdge = false;
 	if (insertion) {
 		if (position == startChange) {
 			// Always consume virtual space
@@ -401,6 +406,10 @@ SelectionRange &Selection::RangeMain() noexcept {
 
 const SelectionRange &Selection::RangeMain() const noexcept {
 	return ranges[mainRange];
+}
+
+SelectionPosition Selection::CaretForDisplay() const noexcept {
+	return selType == SelTypes::rectangle ? rangeRectangular.caret : ranges[mainRange].caret;
 }
 
 SelectionPosition Selection::Start() const noexcept {

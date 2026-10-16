@@ -7,9 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.Storage;
 using Notepads.Presentation.Controls.TextEditor;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
@@ -23,8 +27,16 @@ internal static class ScrollRestorationTests
     internal static async Task RunAsync(StringBuilder log)
     {
         await LineLayoutCacheTests.RunAsync(log);
+        await CheckDetachedDocumentLoadAsync(log);
+        await CheckLeadingRtlLoadAsync(log);
+        await CheckLoadedReplacementAsync(log);
+        await CheckRtlHistoricalCanvasAsync(log, panned: false);
+        await CheckRtlHistoricalCanvasAsync(log, panned: true);
         foreach (var wrapping in new[] { TextWrapping.NoWrap, TextWrapping.Wrap })
+        {
             await CheckFirstPaintAsync(log, wrapping);
+            await CheckFirstPaintAsync(log, wrapping, rightToLeft: true);
+        }
         await CheckFirstPaintAsync(log, TextWrapping.NoWrap, atEnd: true);
         await CheckFirstPaintAsync(log, TextWrapping.NoWrap, shortTarget: true);
         await CheckFirstPaintAsync(log, TextWrapping.Wrap, atEnd: true, singleLine: true);
@@ -62,20 +74,311 @@ internal static class ScrollRestorationTests
     private static Task WaitForWrapAsync(WinUIEditor.Editor native) => UntilFrameAsync(
         () => native.VisibleFromDocLine(native.LineCount) == native.LineCount * native.WrapCount(0));
 
-    private static async Task CheckFirstPaintAsync(StringBuilder log, TextWrapping wrapping,
-        bool atEnd = false, bool shortTarget = false, bool singleLine = false)
+    private static async Task CheckDetachedDocumentLoadAsync(StringBuilder log)
     {
-        var scenario = $"{wrapping}, {(atEnd ? "EOF" : shortTarget ? "short visible lines" : "middle")} document anchor";
-        var text = singleLine ? new string('x', 4000) : string.Join('\r', Enumerable.Range(0, LineCount)
-            .Select(line => new string('x', shortTarget && line > 0 ? 8 : 120)));
+        foreach (var rtl in new[] { false, true })
+        {
+            var text = new string(rtl ? 'א' : 'x', 1200) + '\r' +
+                string.Join('\r', Enumerable.Repeat(new string(rtl ? 'א' : 'x', 9), 120));
+            var owner = Guid.NewGuid();
+            using var baseline = await DocumentBaseline.FromTextAsync(text, owner);
+            using var journal = await DocumentJournal.CreateAsync(owner);
+            using var source = Create(TextWrapping.NoWrap);
+            await source.LoadBaselineAsync(baseline, preserveUndo: false);
+            source.StartJournal(journal);
+            try
+            {
+                View(source).Editor.SetEmptySelection(View(source).Editor.Length);
+                source.TypeText("\rjournal 😀");
+                using var checkpoint = source.AcquireJournalCheckpoint();
+                await checkpoint.FlushAsync();
+                foreach (var replay in new[] { false, true })
+                {
+                    using var core = Create(TextWrapping.NoWrap);
+                    core.RightToLeftReadingOrder = rtl;
+                    core.SetText("old\rselection");
+                    var view = View(core);
+                    var native = view.Editor;
+                    if (replay)
+                    {
+                        native.SelectionMode = WinUIEditor.SelectionMode.Rectangle;
+                        native.RectangularSelectionAnchor = 1;
+                        native.RectangularSelectionCaret = 6;
+                    }
+                    else
+                    {
+                        native.SetSelection(2, 1);
+                        native.AddSelection(5, 4);
+                    }
+                    if (replay) await core.RestoreBaselineAsync(baseline, checkpoint, CancellationToken.None);
+                    else await core.LoadBaselineAsync(baseline, preserveUndo: false);
+                    Check(!view.IsLoaded && view.IsViewportRestorePending,
+                        "Detached baseline/journal load queues caret-follow until its first layout");
+                    Check(native.Selections == 1 && !native.SelectionIsRectangle &&
+                        native.SelectionMode == WinUIEditor.SelectionMode.Stream && native.CurrentPos == 0 && native.Anchor == 0,
+                        "Document publication resets rectangle/multiple selections to one empty stream selection");
+                    Check(core.GetText() == text + (replay ? "\rjournal 😀" : string.Empty),
+                        "The baseline or committed journal supplies the exact document bytes");
+                    var paints = new List<bool>();
+                    void Painted(WinUIEditor.Editor sender, WinUIEditor.PaintedEventArgs args) =>
+                        paints.Add(sender.CurrentPos == 0 && sender.Anchor == 0 && CaretVisible(core));
+                    native.Painted += Painted;
+                    try
+                    {
+                        await EditorTestLayout.AfterPaintAsync(native, () => Window.Current.Content = core);
+                        await UntilFrameAsync(() => !view.IsViewportRestorePending);
+                        Check(paints.Count > 0 && paints.All(visible => visible),
+                            $"Detached {(replay ? "journal" : "baseline")} {(rtl ? "RTL" : "LTR")} load shows caret zero from its first paint");
+                        native.Painted -= Painted;
+                        // A restored caret has no prior user-chosen X. The
+                        // first arrow must use its actual document origin.
+                        native.LineDown();
+                        var secondRow = rtl ? 2401 : 1201;
+                        Check(native.CurrentPos == secondRow && native.Anchor == secondRow,
+                            "The first Down after baseline/journal restore retains logical column zero");
+                        native.LineUp();
+                        Check(native.CurrentPos == 0 && native.Anchor == 0,
+                            "Up returns to the restored document origin without an explicit column reset");
+                    }
+                    finally
+                    {
+                        native.Painted -= Painted;
+                        Window.Current.Content = null;
+                    }
+                }
+            }
+            finally { await source.StopJournalAsync(); }
+        }
+
+        log.AppendLine("PASS: detached baseline/journal loads reset selections, paint restored carets and retain the first vertical column.");
+    }
+
+    private static async Task CheckLeadingRtlLoadAsync(StringBuilder log)
+    {
+        using var core = Create(TextWrapping.NoWrap);
+        await core.LoadTextAsync(new string('א', 1600) + " ABC");
+        var view = View(core);
+        var native = view.Editor;
+        Check(!core.RightToLeftReadingOrder && !view.IsLoaded && view.IsViewportRestorePending,
+            "A detached LTR-base document with a long RTL prefix needs initial caret-follow");
+        var paints = new List<bool>();
+        void Painted(WinUIEditor.Editor sender, WinUIEditor.PaintedEventArgs args) => paints.Add(
+            sender.CurrentPos == 0 && sender.Anchor == 0 && sender.XOffset > 0 && CaretVisible(core));
+        native.Painted += Painted;
+        try
+        {
+            await EditorTestLayout.AfterPaintAsync(native, () => Window.Current.Content = core);
+            await UntilFrameAsync(() => !view.IsViewportRestorePending);
+            Check(paints.Count > 0 && paints.All(valid => valid) && native.PointXFromPosition(0) > native.PointXFromPosition(2),
+                "LTR base direction must still follow the nonzero visual origin of a leading RTL run from its first paint");
+        }
+        finally
+        {
+            native.Painted -= Painted;
+            Window.Current.Content = null;
+        }
+        log.AppendLine("PASS: an LTR document with a long RTL prefix follows its real leading caret before first paint.");
+    }
+
+    private static async Task CheckLoadedReplacementAsync(StringBuilder log)
+    {
+        using var core = Create(TextWrapping.NoWrap);
+        core.RightToLeftReadingOrder = true;
+        var before = new string('א', 1200) + '\r' + string.Join('\r', Enumerable.Repeat("old row", 120));
+        var replacement = new string('ב', 1200) + '\r' + string.Join('\r', Enumerable.Repeat(new string('ב', 9), 120));
+        await core.LoadTextAsync(before);
+        var native = View(core).Editor;
+        try
+        {
+            await EditorTestLayout.AfterPaintAsync(native, () => Window.Current.Content = core);
+            await UntilFrameAsync(() => !View(core).IsViewportRestorePending);
+            native.SetEmptySelection(native.Length);
+            core.TypeText(" unsaved 😀");
+            native.FirstVisibleLine = 80;
+            native.XOffset = 100;
+            Check(native.FirstVisibleLine == 80, "Reload starts away from document zero");
+            using var baseline = await DocumentBaseline.FromTextAsync(replacement, Guid.NewGuid());
+            await core.LoadBaselineAsync(baseline, preserveUndo: true);
+            // Inspect immediately: a future paint must not be needed to follow the new caret.
+            Check(!View(core).IsViewportRestorePending && native.CurrentPos == 0 && native.Anchor == 0 && CaretVisible(core),
+                "A loaded replacement immediately shows its reset RTL caret after final margin/profile updates");
+            Check(core.GetText() == replacement && core.CanUndo, "Undo-preserving load publishes the replacement");
+            native.LineDown();
+            Check(native.CurrentPos == 2401 && native.Anchor == 2401,
+                "The first Down after loaded replacement uses the new caret instead of the old document's chosen column");
+            core.Undo();
+            Check(core.GetText() == before + " unsaved 😀", "One undo restores the complete pre-reload edited document");
+            core.Redo();
+            Check(core.GetText() == replacement, "Redo restores the exact replacement document");
+        }
+        finally { Window.Current.Content = null; }
+        log.AppendLine("PASS: loaded RTL replacement follows caret zero immediately and retains exact reload undo/redo.");
+    }
+
+    private static double RightTextEdge(TextEditorCore core)
+    {
+        var native = View(core).Editor;
+        var surface = FindNamed<Border>(View(core), "ImageTarget");
+        var scale = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+        double gutter = 0;
+        for (var margin = 0; margin < native.Margins; margin++) gutter += native.GetMarginWidthN(margin);
+        return surface.ActualWidth * scale - gutter - native.MarginRight;
+    }
+
+    private static async Task CheckRtlHistoricalCanvasAsync(StringBuilder log, bool panned)
+    {
+        const int targetLine = 80;
+        const int caretWidth = 2;
+        var scale = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+        var target = panned ? new string('א', 120) + " ABC" : "אבג ABC";
+        var first = new string('א', 1200);
+        var text = first + '\r' + string.Join('\r', Enumerable.Repeat(target, 130));
+        var targetByte = Encoding.UTF8.GetByteCount(first + '\r') +
+            (targetLine - 1) * Encoding.UTF8.GetByteCount(target + '\r');
+        var selectedUtf16 = panned ? 1 : first.Length + 1 + (targetLine - 1) * (target.Length + 1) + 1;
+        var selectedByte = Encoding.UTF8.GetByteCount(text.AsSpan(0, selectedUtf16));
+        var samples = new[] { targetByte + (panned ? 32 : 2), targetByte + (panned ? 40 : 4) };
+        var expectedGeometry = new (double FromRight, long Y)[samples.Length];
+        var expectedLeading = panned ? 60 : 0;
+        var scenario = panned ? "RTL panned viewport, narrower restore and offscreen selection" :
+            "RTL right-edge viewport after a previously visited long line";
+        double horizontal, vertical;
+        int? documentLine;
+        int subLine;
+        long historicalX;
+        using (var original = Create(TextWrapping.NoWrap))
+        {
+            original.DisplayLineNumbers = true;
+            original.RightToLeftReadingOrder = true;
+            await original.LoadTextAsync(text);
+            var native = View(original).Editor;
+            native.CaretWidth = caretWidth;
+            try
+            {
+                // The first paint measures the very long row. Later visible rows
+                // retain that historical canvas even though their text is short.
+                await EditorTestLayout.AfterPaintAsync(native, () => Window.Current.Content = original);
+                await UntilFrameAsync(() => !View(original).IsViewportRestorePending);
+                await EditorTestLayout.AfterPaintAsync(native, () =>
+                {
+                    native.SetEmptySelection(targetByte);
+                    native.ScrollCaret();
+                    native.FirstVisibleLine = targetLine;
+                });
+                await EditorTestLayout.AfterPaintAsync(native, () =>
+                {
+                    var desired = RightTextEdge(original) - caretWidth + expectedLeading * scale;
+                    native.XOffset += checked((int)Math.Round(native.PointXFromPosition(targetByte) - desired));
+                    native.SetSelection(targetByte, targetByte);
+                });
+                Check(Math.Abs(native.PointXFromPosition(targetByte) -
+                    (RightTextEdge(original) - caretWidth + expectedLeading * scale)) <= 1,
+                    scenario + ": source leading edge is positioned independently of the caret-scroll policy");
+                historicalX = native.XOffset;
+                Check(historicalX > original.Width * scale * 4 && native.FirstVisibleLine == targetLine,
+                    scenario + ": the saved viewport retains the offscreen long line's much wider canvas");
+                for (var i = 0; i < samples.Length; i++)
+                {
+                    var x = native.PointXFromPosition(samples[i]);
+                    Check(x >= native.MarginLeft && x < RightTextEdge(original),
+                        scenario + ": source sample text is visible inside the gutter boundary");
+                    expectedGeometry[i] = ((RightTextEdge(original) - x) / scale,
+                        native.PointYFromPosition(samples[i]));
+                }
+                // Selection metadata must not pull an explicitly saved viewport
+                // toward its caret, including a caret outside the visible rows.
+                original.RestoreTextSelectionPosition(selectedUtf16, selectedUtf16);
+                original.GetScrollViewerPosition(out horizontal, out vertical);
+                original.GetViewportAnchor(out documentLine, out subLine);
+                Check(documentLine == targetLine && subLine == 0 && native.CurrentPos == selectedByte,
+                    scenario + ": exact document anchor and independent selection are captured");
+            }
+            finally { Window.Current.Content = null; }
+        }
+
+        using var restored = Create(TextWrapping.NoWrap);
+        restored.Width = panned ? 480 : 600;
+        restored.DisplayLineNumbers = true;
+        await restored.LoadTextAsync(text);
+        restored.RightToLeftReadingOrder = true;
+        restored.RestoreTextSelectionPosition(selectedUtf16, selectedUtf16);
+        restored.SetScrollViewerInitPosition(horizontal, vertical, documentLine, subLine);
+        restored.GetScrollViewerPosition(out var pendingX, out var pendingY);
+        Check(pendingX == horizontal && pendingY == vertical,
+            scenario + ": a never-presented editor retains its pending session coordinates");
+        var editor = View(restored).Editor;
+        editor.CaretWidth = caretWidth;
+        var observations = new List<(long Line, long X, double FirstFromRight, bool Valid)>();
+        void Painted(WinUIEditor.Editor sender, WinUIEditor.PaintedEventArgs args)
+        {
+            var right = RightTextEdge(restored);
+            var valid = sender.FirstVisibleLine == targetLine && sender.CurrentPos == selectedByte &&
+                sender.Anchor == selectedByte && sender.Selections == 1 &&
+                sender.Bidirectional == WinUIEditor.Bidirectional.R2l;
+            for (var i = 0; i < samples.Length; i++)
+            {
+                var x = sender.PointXFromPosition(samples[i]);
+                valid &= x >= sender.MarginLeft && x < right &&
+                    Math.Abs((right - x) / scale - expectedGeometry[i].FromRight) <= 1 / scale &&
+                    sender.PointYFromPosition(samples[i]) == expectedGeometry[i].Y;
+            }
+            observations.Add((sender.FirstVisibleLine, sender.XOffset,
+                (right - sender.PointXFromPosition(samples[0])) / scale, valid));
+        }
+        editor.Painted += Painted;
+        try
+        {
+            await EditorTestLayout.AfterPaintAsync(editor, () => Window.Current.Content = restored);
+            await UntilFrameAsync(() => !View(restored).IsViewportRestorePending);
+            if (panned)
+            {
+                var provider = FrameworkElementAutomationPeer.CreatePeerForElement(View(restored))
+                    ?.GetPattern(PatternInterface.Text) as ITextProvider2;
+                Check(provider != null, scenario + ": the restored editor exposes its accessibility text provider");
+                provider.GetCaretRange(out _).GetBoundingRectangles(out var bounds);
+                Check(bounds is not { Length: > 0 },
+                    scenario + ": accessibility clips the offscreen caret without measuring the old long line");
+            }
+            // Include the delayed widen tick: it must not replay the obsolete
+            // historical extent after the first correctly positioned paint.
+            await Task.Delay(100);
+            await EditorTestLayout.AfterPaintAsync(editor, () => editor.SetSelection(selectedByte, selectedByte));
+            editor.Painted -= Painted;
+            Check(observations.Count > 0 && observations.All(item => item.Valid),
+                $"{scenario}: every restored paint must retain visible text geometry; " +
+                $"expected right distance {expectedGeometry[0].FromRight:F2}, observed {string.Join(", ", observations.Take(8))}");
+            restored.GetScrollViewerPosition(out var restoredX, out _);
+            Check(Math.Abs(horizontal - expectedLeading) <= 1 / scale &&
+                Math.Abs(restoredX - horizontal) <= 1 / scale,
+                scenario + ": session offsets describe distance from the reading-order leading edge");
+            Check(editor.XOffset < historicalX / 2 && restored.GetText() == text,
+                scenario + ": a fresh lazy canvas does not need the old offscreen extent or alter document text");
+        }
+        finally
+        {
+            editor.Painted -= Painted;
+            Window.Current.Content = null;
+        }
+        log.AppendLine($"PASS: {scenario} restores visible text from its first paint without measuring historical offscreen lines.");
+    }
+
+    private static async Task CheckFirstPaintAsync(StringBuilder log, TextWrapping wrapping,
+        bool atEnd = false, bool shortTarget = false, bool singleLine = false, bool rightToLeft = false)
+    {
+        var scenario = $"{(rightToLeft ? "RTL " : string.Empty)}{wrapping}, {(atEnd ? "EOF" : shortTarget ? "short visible lines" : "middle")} document anchor";
+        var character = rightToLeft ? 'א' : 'x';
+        var text = singleLine ? new string(character, 4000) : string.Join('\r', Enumerable.Range(0, LineCount)
+            .Select(line => new string(character, shortTarget && line > 0 ? 8 : 120)));
         double horizontal, vertical;
         int? documentLine;
         int subLine;
         (long Line, long SubLine, long X) expected;
         using (var original = Create(wrapping))
         {
+            original.RightToLeftReadingOrder = rightToLeft;
             await original.LoadTextAsync(text);
             original.SetFontZoomFactor(150);
+            if (rightToLeft) original.SetTextSelectionPosition(100, 100);
             var native = View(original).Editor;
             await EditorTestLayout.AfterPaintAsync(native, () =>
             {
@@ -106,8 +409,11 @@ internal static class ScrollRestorationTests
             Window.Current.Content = null;
         }
 
-        using var restored = Create(wrapping);
+        using var restored = Create(rightToLeft ? TextWrapping.NoWrap : wrapping);
         await restored.LoadTextAsync(text);
+        // Match session restore: direction precedes wrap, font, selection and viewport.
+        restored.RightToLeftReadingOrder = rightToLeft;
+        restored.TextWrapping = wrapping;
         restored.SetFontZoomFactor(150); // Same order as production ResetEditorState.
         restored.SetTextSelectionPosition(100, 100); // Deliberately outside the saved viewport.
         restored.SetScrollViewerInitPosition(horizontal, vertical, documentLine, subLine);
@@ -116,8 +422,16 @@ internal static class ScrollRestorationTests
         Check(pendingX == horizontal && pendingY == vertical && pendingLine == documentLine &&
             pendingSubLine == subLine, scenario + ": never-presented metadata preserved");
         var editor = View(restored).Editor;
+        var expectedCaret = editor.PositionRelativeCodeUnits(0, 100);
+        var expectedDirection = rightToLeft ? WinUIEditor.Bidirectional.R2l : WinUIEditor.Bidirectional.L2r;
         var observed = new List<(long Line, long SubLine, long X)>();
-        void Painted(WinUIEditor.Editor sender, WinUIEditor.PaintedEventArgs args) => observed.Add(Position(sender));
+        var observedState = new List<bool>();
+        void Painted(WinUIEditor.Editor sender, WinUIEditor.PaintedEventArgs args)
+        {
+            observed.Add(Position(sender));
+            observedState.Add(sender.Bidirectional == expectedDirection &&
+                sender.CurrentPos == expectedCaret && sender.Anchor == expectedCaret);
+        }
         void Loaded(object sender, RoutedEventArgs args) => restored.Focus(FocusState.Programmatic);
         editor.Painted += Painted;
         restored.Loaded += Loaded;
@@ -135,7 +449,7 @@ internal static class ScrollRestorationTests
             }
             Check(observed.Count > 0 && observed.All(position => position == expected),
                 $"{scenario}: every paint must show {expected}; observed {string.Join(", ", observed.Take(12))}");
-            Check(editor.CurrentPos == 100 && editor.Anchor == 100, scenario + ": selection preserved");
+            Check(observedState.All(valid => valid), scenario + ": direction and logical selection preserved from first paint");
 
             // Once restored, later tab switches must use the user's new viewport.
             editor.Painted -= Painted;
@@ -146,10 +460,12 @@ internal static class ScrollRestorationTests
             restored.GetViewportAnchor(out var unloadedLine, out var unloadedSubLine);
             Check(unloadedLine == moved.Line && unloadedSubLine == moved.SubLine, scenario + ": unloaded metadata is current");
             observed.Clear();
+            observedState.Clear();
             editor.Painted += Painted;
             await EditorTestLayout.AfterPaintAsync(editor, () => Window.Current.Content = restored);
             await UntilFrameAsync(() => restored.IsLoaded);
             Check(observed.Count > 0 && observed.All(position => position == moved), scenario + ": tab reattach does not replay restore");
+            Check(observedState.All(valid => valid), scenario + ": tab reattach preserves direction and selection");
         }
         finally
         {

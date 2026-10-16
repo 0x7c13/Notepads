@@ -8,14 +8,25 @@
 # Omitting -Case runs the full matrix. Run from a 64-bit interactive PowerShell.
 param(
     [ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64',
-    [Alias('CaseFilter')] [string[]] $Case = @('*')
+    [Alias('CaseFilter')] [string[]] $Case = @('*'),
+    [string] $SourceLayout = ''
 )
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'EditorTestSession.ps1')
 . (Join-Path $PSScriptRoot 'TestBuildIdentity.ps1')
-$null = Assert-TestBuildIdentity App Release $Platform
+if (!$SourceLayout) { $null = Assert-TestBuildIdentity App Release $Platform }
 $null = Assert-TestBuildIdentity DragPeer Release $Platform
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+Add-Type -AssemblyName System.Drawing
 if (!('EditorDragInput' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'EditorDragInput.cs') }
+if (!('OwnedWindowActivation' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'OwnedWindowActivation.cs') }
+if (!('EditorAutomationInput' -as [type])) {
+    $drawingReferences = @([System.Drawing.Bitmap].Assembly.Location, [System.Drawing.Point].Assembly.Location)
+    $drawingReferences += @([System.Drawing.Bitmap].Assembly.GetReferencedAssemblies() |
+        Where-Object Name -Like 'System.Private.Windows.*' | ForEach-Object { [Reflection.Assembly]::Load($_).Location })
+    Add-Type -Path (Join-Path $PSScriptRoot 'EditorAutomationInput.cs') -ReferencedAssemblies $drawingReferences
+}
 
 $script:session = $null
 $script:peer = $null
@@ -80,7 +91,7 @@ function Wait-PeerIdentity {
         catch { $lastReadError = $_.ToString() }
         if (![string]::IsNullOrWhiteSpace($actualPath)) {
             if (![string]::Equals([IO.Path]::GetFullPath($actualPath), $script:peer.Path, [StringComparison]::OrdinalIgnoreCase)) {
-                throw 'The launched desktop peer executable does not match the requested apphost.'
+                throw "The launched desktop peer executable does not match the requested apphost. Expected '$($script:peer.Path)', actual '$actualPath'."
             }
             $script:peer.StartTicks = $script:peerProcess.StartTime.ToUniversalTime().Ticks
             $script:peer.IdentityReady = $true
@@ -217,6 +228,11 @@ function Get-DragPoints($Fixture) {
     $geometry = Editor-Command "geometry|$position"
     $peerState = Invoke-PeerCommand 'state'
     $editorPoint = @{ X = [int][Math]::Round([double]$geometry.pointX) + 3; Y = [int][Math]::Round([double]$geometry.pointY) + 5 }
+    if ($incoming -and $Fixture.ContainsKey('TargetPoint')) { $editorPoint = $Fixture.TargetPoint }
+    if ($Fixture.ContainsKey('SourceGlyphEnd')) {
+        $otherEdge = Editor-Command "geometry|$($Fixture.SourceGlyphEnd)"
+        $editorPoint.X = [int][Math]::Round(([double]$geometry.pointX + [double]$otherEdge.pointX) / 2)
+    }
     $panel = if ($incoming) { 'source' } else { 'target' }
     $peerPoint = @{ X = [int]$peerState["${panel}X"] + [int]([int]$peerState["${panel}Width"] / 2); Y = [int]$peerState["${panel}Y"] + [int]([int]$peerState["${panel}Height"] / 2) }
     $script:inputDriver.RequirePoint($editorPoint.X, $editorPoint.Y, [uint32]$script:session.ProcessId)
@@ -269,7 +285,73 @@ function Wait-PeerTargetReady($Points, [bool] $Copy) {
     }
     throw 'Desktop receiver did not acknowledge and provisionally accept the held drag within five seconds; no mouse-up was issued.'
 }
-function Start-RealDrag($Fixture, [bool] $Copy, [bool] $Cancel) {
+function Focus-OwnedDragEditor([switch] $InitialActivation) {
+    if ($InitialActivation -and $script:activeCase) {
+        throw 'Initial foreground acquisition is only allowed before the first drag case.'
+    }
+    $checkBeforeActivation = {
+        if ($InitialActivation) {
+            # Bootstrap establishes foreground before any input. Ownership and
+            # idle checks still apply; mid-case focus loss remains fail-closed.
+            Assert-EditorTestAlive $script:session
+            Assert-PeerAlive
+            $script:inputDriver.ValidateWindows()
+        } else { Assert-DragAlive }
+    }
+    & $checkBeforeActivation
+    if ($script:inputDriver.HasPressedInput) { throw 'Cannot change UIA focus while driver-owned input is held.' }
+    $script:inputDriver.AssertIdleInput()
+    # Scope discovery to the exact owned CoreWindow, not the desktop or its
+    # frame-host process. Focus the editor without clicking its selection.
+    $anchor = [Windows.Automation.AutomationElement]::FromHandle($script:inputDriver.EditorAnchor)
+    if ($anchor.Current.ProcessId -ne $script:session.ProcessId) { throw 'The UIA anchor does not belong to the owned editor process.' }
+    $condition = [Windows.Automation.AndCondition]::new(
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ProcessIdProperty, [int]$script:session.ProcessId),
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, 'InteractiveEditor'))
+    $focusTargets = $anchor.FindAll([Windows.Automation.TreeScope]::Descendants, $condition)
+    if ($focusTargets.Count -ne 1) { throw "Expected one editor UIA focus target inside the owned HWND; found $($focusTargets.Count)." }
+    $target = $focusTargets[0]
+    & $checkBeforeActivation
+    $script:inputDriver.AssertIdleInput()
+    if ($target.Current.ProcessId -ne $script:session.ProcessId -or !$target.Current.IsEnabled -or $target.Current.IsOffscreen) {
+        throw 'The owned editor UIA focus target is unavailable.'
+    }
+    $target.SetFocus()
+    & $checkBeforeActivation
+    $script:inputDriver.AssertIdleInput()
+    if ($InitialActivation) {
+        $method = [OwnedWindowActivation]::Acquire([uint32]$script:session.ProcessId,
+            $script:inputDriver.EditorWindow, $script:inputDriver.EditorAnchor)
+        # Foreground acquisition gives the driver permission to raise the
+        # inactive peer too; both windows must be exposed before the first case.
+        $script:inputDriver.Arrange()
+        Write-DragTrace 'initial-foreground-acquired' @{ method = $method; root = $script:inputDriver.EditorWindow.ToInt64() }
+        $peerMethod = [OwnedWindowActivation]::Acquire([uint32]$script:peer.ProcessId,
+            $script:inputDriver.PeerWindow, $script:inputDriver.PeerAnchor)
+        Write-DragTrace 'initial-peer-foreground-acquired' @{ method = $peerMethod; root = $script:inputDriver.PeerWindow.ToInt64() }
+        $returnMethod = [OwnedWindowActivation]::Acquire([uint32]$script:session.ProcessId,
+            $script:inputDriver.EditorWindow, $script:inputDriver.EditorAnchor)
+        # A successful caption click alone does not prove the later Begin
+        # calls can switch roots through their unchanged foreground API.
+        $script:inputDriver.Activate([uint32]$script:peer.ProcessId)
+        $script:inputDriver.Activate([uint32]$script:session.ProcessId)
+        $target.SetFocus()
+        Write-DragTrace 'initial-foreground-switches-verified' @{ editorReturnMethod = $returnMethod }
+    }
+    $script:inputDriver.Activate([uint32]$script:session.ProcessId)
+    $deadline = [DateTime]::UtcNow.AddSeconds(2)
+    while (!$target.Current.HasKeyboardFocus) {
+        Assert-DragAlive
+        $script:inputDriver.AssertIdleInput()
+        if ([DateTime]::UtcNow -ge $deadline) { throw 'The owned editor did not acquire UIA keyboard focus before the drag.' }
+        Start-Sleep -Milliseconds 15
+    }
+    Assert-DragAlive
+    $script:inputDriver.AssertIdleInput()
+    Write-DragTrace 'owned-editor-focused-before-drag' @{ pid = $script:session.ProcessId; anchor = $script:inputDriver.EditorAnchor.ToInt64() }
+}
+function Start-RealDrag($Fixture, [bool] $Copy, [bool] $Cancel, [bool] $Hold = $false) {
+    if ($Fixture.Direction -eq 'outgoing') { Focus-OwnedDragEditor }
     $points = Get-DragPoints $Fixture
     Assert-DragAlive
     $script:inputDriver.Begin([uint32]$points.SourcePid, $points.Source.X, $points.Source.Y, $Copy)
@@ -279,6 +361,7 @@ function Start-RealDrag($Fixture, [bool] $Copy, [bool] $Cancel) {
     else { $null = Wait-DragEvent 'editor' 'editor-drag-started' }
     $script:inputDriver.MoveTo($points.Target.X, $points.Target.Y, 30)
     if ($Fixture.Direction -eq 'outgoing') { Wait-PeerTargetReady $points $Copy }
+    if ($Hold) { return $points }
     if ($Cancel) {
         $script:inputDriver.Escape()
         # Wait for the real drag loop to observe Escape before releasing the
@@ -353,12 +436,13 @@ function Mutate-PendingEditor([string] $Mutation, $Fixture) {
         'unchanged' { $state = Editor-Command 'state' }
         'failure' { $state = Editor-Command 'state' }
         'replace-same' {
-            $state = Editor-Command "replace|$(Encode-Text $Fixture.EditorText)"
+            # Restore the selection in the same fixture operation as publication
+            # to isolate document identity while the receiver still holds Drop.
+            $selection = if ($Fixture.Direction -eq 'outgoing') { "|0|$(Text-Length (Normalize-Text $script:payload))" } else { '' }
+            $state = Editor-Command "replace|$(Encode-Text $Fixture.EditorText)$selection"
             Assert-DragTrue (State-Bool $state.documentReplaced) 'Replacement publishes a distinct native document while the drag is gated'
+            Assert-DragEqual (Decode-Text $state.text64) $Fixture.EditorText 'Replacement preserves the exact fixture text'
             if ($Fixture.Direction -eq 'outgoing') {
-                # Loading a new native document collapses selection. Restore it
-                # so this case isolates document identity/revision invalidation.
-                $state = Editor-Command "select|0|$(Text-Length (Normalize-Text $script:payload))"
                 Assert-DragEqual $state.anchor $Fixture.Editor.anchor 'Replacement source restores the original selection anchor'
                 Assert-DragEqual $state.caret $Fixture.Editor.caret 'Replacement source restores the original selection caret'
             }
@@ -405,6 +489,114 @@ function Test-Immediate([string] $Name, [string] $Direction, [string] $Operation
     Assert-Immediate $fixture $state $effect
     if ($cancel) { Test-Recovery $Name }
 }
+function Test-RtlOutgoing([string] $Name, [string] $Operation) {
+    $previousPayload = $script:payload
+    $previousSuffix = $script:sourceSuffix
+    try {
+        $script:payload = 'א'
+        $script:sourceSuffix = 'בג'
+        $fixture = New-DragCase $Name 'outgoing' 'normal' 'normal'
+        $null = Editor-Command 'direction|True'
+        # Logical offset zero is the glyph's right edge. Initiate the actual
+        # drag from inside aleph rather than assuming an LTR x+3 hit target.
+        $fixture.SourceGlyphEnd = 2
+        Start-RealDrag $fixture ($Operation -eq 'copy') $false
+        $state = Complete-RealDrag $fixture
+        Assert-Immediate $fixture $state $(if ($Operation -eq 'copy') { 1 } else { 2 })
+    }
+    finally {
+        $script:payload = $previousPayload
+        $script:sourceSuffix = $previousSuffix
+    }
+}
+function Wait-DragCaret($Element, $Glyph, [bool] $RightEdge, [int] $LineHeight, [string] $Name) {
+    $bounds = $Element.Current.BoundingRectangle
+    $left = [int] [Math]::Ceiling($bounds.Left)
+    $top = [int] [Math]::Ceiling($bounds.Top)
+    $expectedX = $(if ($RightEdge) { $Glyph.Right } else { $Glyph.Left }) - $left
+    $expectedY = $Glyph.Top - $top
+    $deadline = [DateTime]::UtcNow.AddSeconds(5)
+    do {
+        Assert-DragAlive
+        $script:inputDriver.RequireHeldMouse()
+        $ink = [EditorAutomationInput]::Capture([uint32] $script:session.ProcessId, $left, $top,
+            [int] [Math]::Floor($bounds.Width), [int] [Math]::Min($bounds.Height, 2 * $LineHeight + 2),
+            (Join-Path $script:session.Root "$($script:activeCase)-$Name.png"), $script:inputDriver.PeerWindow)
+        $matching = 0
+        $elsewhere = 0
+        for ($y = 0; $y -lt 2 * $LineHeight; $y++) {
+            for ($x = 0; $x -lt [int] [Math]::Floor($bounds.Width); $x++) {
+                if ($ink.PixelRgb($x, $y) -eq 0xff00ff) {
+                    if ([Math]::Abs($x - $expectedX) -le 2 -and $y -ge $expectedY - 1 -and $y -lt $expectedY + $LineHeight + 1) {
+                        $matching++
+                    } else { $elsewhere++ }
+                }
+            }
+        }
+        if ($matching -ge 10 -and $elsewhere -eq 0) {
+            $script:checks++
+            return
+        }
+        Start-Sleep -Milliseconds 25
+    } while ([DateTime]::UtcNow -lt $deadline)
+    throw "$Name`: drag caret pixels did not reach the requested visual home (matching=$matching, elsewhere=$elsewhere)."
+}
+
+function Test-DragAffinity([string] $Name, [bool] $Rtl) {
+    $fixture = New-DragCase $Name 'incoming' 'normal' 'normal'
+    $text = 'א' * 64
+    $fixture.EditorText = $text
+    $null = Editor-Command "reset|$(Encode-Text $text)|True|260|200|24"
+    $null = Editor-Command "direction|$Rtl"
+    $null = Editor-Command 'raster|False'
+    $state = Editor-Command 'caret-visible|True'
+    $rows = @($state.positionY.Split(',') | ForEach-Object {
+        $sample = $_.Split(':'); @{ Position = [int] $sample[0]; Y = [int] $sample[1] }
+    })
+    $boundary = [int] ($rows | Where-Object Y -GT $rows[0].Y | Select-Object -First 1).Position
+    Assert-DragTrue ($boundary -ge 4 -and $boundary -lt [int] $state.length) 'The drag fixture has a wrapped boundary'
+    $anchor = [Windows.Automation.AutomationElement]::FromHandle($script:inputDriver.EditorAnchor)
+    $condition = [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, 'InteractiveEditor')
+    $element = $anchor.FindFirst([Windows.Automation.TreeScope]::Descendants, $condition)
+    Assert-DragTrue ($null -ne $element -and $element.Current.ProcessId -eq $script:session.ProcessId) 'The raster target belongs to the owned editor'
+    $pattern = [Windows.Automation.TextPattern] $element.GetCurrentPattern([Windows.Automation.TextPattern]::Pattern)
+    $start = [Windows.Automation.Text.TextPatternRangeEndpoint]::Start
+    $end = [Windows.Automation.Text.TextPatternRangeEndpoint]::End
+    $character = [Windows.Automation.Text.TextUnit]::Character
+    $boxes = foreach ($index in @(($boundary / 2 - 1), ($boundary / 2))) {
+        $range = $pattern.DocumentRange.Clone()
+        $range.MoveEndpointByRange($end, $range, $start)
+        Assert-DragEqual $range.MoveEndpointByUnit($start, $character, $index) $index 'Locate the boundary glyph'
+        Assert-DragEqual $range.MoveEndpointByUnit($end, $character, 1) 1 'Select one boundary glyph'
+        $rectangles = @($range.GetBoundingRectangles())
+        Assert-DragEqual $rectangles.Count 1 'Each boundary glyph has one visible rectangle'
+        $rectangles[0]
+    }
+    Assert-DragTrue ($boxes[1].Top -gt $boxes[0].Top) 'The same byte has two distinct visual rows'
+    $trailing = @{ X = [int] [Math]::Round($boxes[0].Left + 2); Y = [int] [Math]::Round($boxes[0].Top + $boxes[0].Height / 2) }
+    $leading = @{ X = [int] [Math]::Round($boxes[1].Right - 2); Y = [int] [Math]::Round($boxes[1].Top + $boxes[1].Height / 2) }
+    $fixture.TargetPoint = $trailing
+    $points = Start-RealDrag $fixture $true $false $true
+    Wait-DragCaret $element $boxes[0] $false ([int] $state.lineHeight) 'trailing-before'
+    # A single physical move avoids intermediate logical positions masking an
+    # affinity-only update. Verify both directions before releasing the drop.
+    foreach ($step in @(@{ Point = $leading; Box = $boxes[1]; Right = $true; Name = 'leading' },
+                        @{ Point = $trailing; Box = $boxes[0]; Right = $false; Name = 'trailing-after' })) {
+        $script:inputDriver.RequireCursorAt([uint32] $points.TargetPid, $fixture.TargetPoint.X, $fixture.TargetPoint.Y)
+        $script:inputDriver.RequirePoint($step.Point.X, $step.Point.Y, [uint32] $points.TargetPid)
+        $script:inputDriver.MoveTo($step.Point.X, $step.Point.Y, 1)
+        $fixture.TargetPoint = $step.Point
+        Wait-DragCaret $element $step.Box $step.Right ([int] $state.lineHeight) $step.Name
+    }
+    $script:inputDriver.End([uint32] $points.TargetPid, $trailing.X, $trailing.Y)
+    $result = Complete-RealDrag $fixture
+    Assert-DragEqual (Decode-Text $result.Editor.text64) ($text.Insert($boundary / 2, (Normalize-Text $script:payload))) 'Drop inserts exactly at the previewed logical boundary'
+    Assert-DragEqual ([int] $result.Peer.sourceEffect) 1 'The affinity gesture finishes as Copy'
+    Assert-DragEqual (Decode-Text $result.Peer.source64) $script:payload 'Copy preserves the peer source'
+    Assert-DragTrue ([int] $result.Editor.dropStarted -gt 0) 'The native editor received the drop'
+    Assert-EditorUndo $text $result.Editor $true
+}
+
 function Prepare-ReplacementFixture($Fixture) {
     $prepared = Editor-Command "prepare-replace|$(Encode-Text $Fixture.EditorText)" 15
     Assert-DragEqual $prepared.replacementCase $script:activeCase 'Replacement fixture belongs to this exact drag case'
@@ -505,6 +697,12 @@ function Stop-PressedDragSource {
 
 $matrix = @(
     @{ Name = 'outgoing-readonly-copy'; Kind = 'readonly-copy' }
+    foreach ($rtl in @($false, $true)) {
+        @{ Name = "incoming-wrap-affinity-rtl-$rtl"; Kind = 'affinity'; Value = $rtl }
+    }
+    foreach ($operation in @('move', 'copy')) {
+        @{ Name = "outgoing-rtl-$operation"; Kind = 'rtl-outgoing'; Value = $operation }
+    }
     foreach ($direction in @('incoming', 'outgoing')) {
         foreach ($operation in @('move', 'copy', 'cancel')) {
             @{ Name = "$direction-immediate-$operation"; Kind = 'immediate'; Direction = $direction; Value = $operation }
@@ -526,7 +724,7 @@ try {
     $runtime = 'win-' + $Platform.ToLowerInvariant()
     $peerExe = [IO.Path]::GetFullPath((Join-Path $repo "tests\IntegrationTests\Support\DragDrop.Peer\bin\Release\net10.0-windows\$runtime\DragDrop.Peer.exe"))
     if (!(Test-Path -LiteralPath $peerExe)) { throw "Publish DragDrop.Peer for $runtime first. Missing $peerExe" }
-    $script:session = Start-EditorTestSession -Platform $Platform
+    $script:session = Start-EditorTestSession -Platform $Platform -SourceLayout $SourceLayout
     Write-Output "Evidence: $($script:session.Root)"
     $script:editorProcess = [IsolatedTestProcess]::new($script:session.ProcessId)
     if ($script:editorProcess.HasExited -or
@@ -535,10 +733,15 @@ try {
         throw 'The retained editor handle does not match the owned session process.'
     }
     $nativeBuild = Join-Path $repo "src\_buildUwp\$Platform\Release\WinUIEditor\bin\WinUIEditor\WinUIEditor.dll"
+    if ($SourceLayout) {
+        $sourceNative = @(Get-ChildItem -LiteralPath ([IO.Path]::GetFullPath($SourceLayout)) -Filter WinUIEditor.dll -File -Recurse)
+        Assert-DragEqual $sourceNative.Count 1 'The explicit source layout contains exactly one native editor'
+        $nativeBuild = $sourceNative[0].FullName
+    }
     $nativeLayout = @(Get-ChildItem -LiteralPath $script:session.Layout -Filter WinUIEditor.dll -File -Recurse)
     Assert-DragEqual $nativeLayout.Count 1 'The owned layout contains exactly one native editor'
     $buildHash = (Get-FileHash -LiteralPath $nativeBuild -Algorithm SHA256).Hash
-    Assert-DragEqual (Get-FileHash -LiteralPath $nativeLayout[0].FullName -Algorithm SHA256).Hash $buildHash 'Deployed native editor matches the current build'
+    Assert-DragEqual (Get-FileHash -LiteralPath $nativeLayout[0].FullName -Algorithm SHA256).Hash $buildHash 'Deployed native editor matches the selected source build'
     @($nativeBuild, $nativeLayout[0].FullName, $peerExe, [IO.Path]::ChangeExtension($peerExe, '.dll')) |
         ForEach-Object { Get-FileHash -LiteralPath $_ -Algorithm SHA256 } |
         Select-Object Path, Hash | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $script:session.Root 'binary-hashes.json') -Encoding UTF8
@@ -572,7 +775,7 @@ try {
     }
     $script:inputDriver = [EditorDragInput]::new([uint32]$script:session.ProcessId, [uint32]$script:peer.ProcessId)
     $script:inputDriver.Arrange()
-    $script:inputDriver.Activate([uint32]$script:session.ProcessId)
+    Focus-OwnedDragEditor -InitialActivation
     Write-DragTrace 'owned-windows' @{ editorPid = $script:session.ProcessId; peerPid = $script:peer.ProcessId; editorHwnd = $script:inputDriver.EditorWindow.ToInt64(); peerHwnd = $script:inputDriver.PeerWindow.ToInt64(); editorAnchor = $script:inputDriver.EditorAnchor.ToInt64(); peerAnchor = $script:inputDriver.PeerAnchor.ToInt64(); physicalWorkArea = $script:inputDriver.WorkArea; selected = $selected.Name; totalMatrix = $matrix.Count }
     foreach ($scenario in $selected) {
         $started = [DateTime]::UtcNow
@@ -588,6 +791,8 @@ try {
                     Assert-Immediate $fixture $state 1
                 }
                 'immediate' { Test-Immediate $scenario.Name $scenario.Direction $scenario.Value }
+                'rtl-outgoing' { Test-RtlOutgoing $scenario.Name $scenario.Value }
+                'affinity' { Test-DragAffinity $scenario.Name $scenario.Value }
                 'incoming' { Test-IncomingDelayed $scenario.Name $scenario.Value }
                 'outgoing' { Test-OutgoingDelayed $scenario.Name $scenario.Value }
             }

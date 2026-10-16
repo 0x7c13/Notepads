@@ -16,6 +16,7 @@ function Get-TestSourceFiles {
         'App' { @('src', 'tests/IntegrationTests/App', 'tests/Shared') }
         'Product' { @('src') }
         'NativeDiff' { @('tests/IntegrationTests/Support/NativeDiff.Tests', 'src/Notepads.Native') }
+        'NativeBidi' { @('tests/IntegrationTests/Support/NativeBidi.Tests', 'src/Notepads.Native') }
         'RegexText' { @('tests/IntegrationTests/Support/RegexText.Tests', 'src/Notepads.Native') }
         'DragPeer' { @('tests/IntegrationTests/Support/DragDrop.Peer') }
         default { throw "Unknown build profile: $Profile" }
@@ -76,6 +77,7 @@ function Get-TestArtifactFiles {
         'App' { Join-Path $repo "tests/IntegrationTests/bin/App/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
         'Product' { Join-Path $repo "src/Notepads/obj/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
         'NativeDiff' { Join-Path $repo "tests/IntegrationTests/Support/NativeDiff.Tests/bin/x64/$Configuration" }
+        'NativeBidi' { Join-Path $repo "tests/IntegrationTests/Support/NativeBidi.Tests/bin/x64/$Configuration" }
         'RegexText' { Join-Path $repo "tests/IntegrationTests/Support/RegexText.Tests/bin/x64/$Configuration" }
         'DragPeer' { Join-Path $repo "tests/IntegrationTests/Support/DragDrop.Peer/bin/$Configuration/net10.0-windows/$runtime" }
         default { throw "Unknown artifact profile: $Profile" }

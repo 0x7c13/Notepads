@@ -14,7 +14,7 @@ PR/ref. There are no path filters that could leave a required check pending.
 | Job | What must pass |
 | --- | --- |
 | Managed Tests | actionlint; all pure unit tests; runner/header/localization checks; real-storage recovery tests; isolated metrics-failure processes; architecture guard negative fixtures |
-| Native Tests | NativeDiff and RegexText C++ executables, Release x64 |
+| Native Tests | NativeDiff, NativeBidi and RegexText C++ executables, Release x64 |
 | Native AOT / x86, x64, ARM64 | Solution restore; Production AOT publish; compiled managed-assembly dependency guard; unsigned bundle/upload-package validation; x64 also installs and exercises the Production package |
 | E2E Tests | x64 Release AOT App tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
 | Resilience Tests | Dedicated Debug host: optional style/lexer allocation failures, editing/undo recovery and journal integrity |
@@ -209,7 +209,7 @@ Run from the repository root in PowerShell 7.4+:
 ```powershell
 ./scripts/Test-Workflows.ps1
 ./scripts/Test.ps1 -Suite All -Configuration Release -Group Runner,Headers,Localization,Storage,MetricsInitialization,MetricsCounter,MetricsDuration,ArchitectureSelfTest
-./scripts/Test.ps1 -Suite Integration -Configuration Release -Group NativeDiff,RegexText -Platform x64
+./scripts/Test.ps1 -Suite Integration -Configuration Release -Group NativeDiff,NativeBidi,RegexText -Platform x64
 
 # Production AOT, unsigned upload bundle and symbol/package checks. No deployment.
 ./scripts/Build-CI.ps1 -Platform ARM64

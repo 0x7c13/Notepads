@@ -13,6 +13,8 @@ namespace Scintilla::Internal {
 class SelectionPosition {
 	Sci::Position position = Sci::invalidPosition;
 	Sci::Position virtualSpace = 0;
+	// Visual edge is independent of logical range equality and ordering.
+	bool trailingEdge = false;
 public:
 	constexpr SelectionPosition() noexcept = default;
 	constexpr explicit SelectionPosition(Sci::Position position_, Sci::Position virtualSpace_=0) noexcept : position(position_), virtualSpace(virtualSpace_) {
@@ -24,6 +26,7 @@ public:
 	void Reset() noexcept {
 		position = 0;
 		virtualSpace = 0;
+		trailingEdge = false;
 	}
 	void MoveForInsertDelete(bool insertion, Sci::Position startChange, Sci::Position length, bool moveForEqual) noexcept;
 	[[nodiscard]] constexpr bool operator ==(const SelectionPosition &other) const noexcept {
@@ -46,7 +49,10 @@ public:
 	void SetPosition(Sci::Position position_) noexcept {
 		position = position_;
 		virtualSpace = 0;
+		trailingEdge = false;
 	}
+	bool TrailingEdge() const noexcept { return trailingEdge; }
+	void SetTrailingEdge(bool value) noexcept { trailingEdge = value; }
 	Sci::Position VirtualSpace() const noexcept {
 		return virtualSpace;
 	}
@@ -58,6 +64,7 @@ public:
 	}
 	void Add(Sci::Position increment) noexcept {
 		position = position + increment;
+		trailingEdge = false;
 	}
 	void AddVirtualSpace(Sci::Position increment) noexcept {
 		SetVirtualSpace(virtualSpace + increment);
@@ -186,6 +193,9 @@ public:
 
 	bool IsRectangular() const noexcept;
 	Sci::Position MainCaret() const noexcept;
+	// Rectangle painting/navigation follows its physical corner, which can be
+	// inside a logical selection island. Logical range getters stay unchanged.
+	SelectionPosition CaretForDisplay() const noexcept;
 	Sci::Position MainAnchor() const noexcept;
 	SelectionRange &Rectangular() noexcept;
 	SelectionRange RectangularCopy() const noexcept;

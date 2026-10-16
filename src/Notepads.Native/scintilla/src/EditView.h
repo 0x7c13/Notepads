@@ -13,6 +13,17 @@
 
 namespace Scintilla::Internal {
 
+// A text-area coordinate retained across paragraph layout. Right-aligned
+// geometry moves when its layout width changes, so retain its offset from
+// that right edge. Margins and horizontal scrolling are not part of this value.
+struct TextPositionX {
+	XYPOSITION offset = 0;
+	bool fromRight = false;
+	XYPOSITION Resolve(XYPOSITION canvasWidth) const noexcept {
+		return offset + (fromRight ? canvasWidth : 0);
+	}
+};
+
 struct PrintParameters {
 	int magnification;
 	Scintilla::PrintOption colourMode;
@@ -131,11 +142,15 @@ public:
 
 	Point LocationFromPosition(Surface *surface, const EditModel &model, SelectionPosition pos, Sci::Line topLine,
 		const ViewStyle &vs, PointEnd pe, const PRectangle rcClient);
+	static XYPOSITION TextLayoutWidth(const EditModel &model);
+	static TextPositionX CaptureTextX(const EditModel &model, const ViewStyle &vs, XYPOSITION x);
 	Range RangeDisplayLine(Surface *surface, const EditModel &model, Sci::Line lineVisible, const ViewStyle &vs);
 	SelectionPosition SPositionFromLocation(Surface *surface, const EditModel &model, PointDocument pt, bool canReturnInvalid,
 		bool charPosition, bool virtualSpace, const ViewStyle &vs, const PRectangle rcClient);
-	SelectionPosition SPositionFromLineX(Surface *surface, const EditModel &model, Sci::Line lineDoc, int x, const ViewStyle &vs);
-	Sci::Line DisplayFromPosition(Surface *surface, const EditModel &model, Sci::Position pos, const ViewStyle &vs);
+	SelectionPosition SPositionFromTextLocation(Surface *surface, const EditModel &model, TextPositionX x, double y,
+		bool canReturnInvalid, bool charPosition, bool virtualSpace, const ViewStyle &vs, const PRectangle rcClient);
+	SelectionPosition SPositionFromLineX(Surface *surface, const EditModel &model, Sci::Line lineDoc, TextPositionX x, const ViewStyle &vs);
+	Sci::Line DisplayFromPosition(Surface *surface, const EditModel &model, SelectionPosition pos, const ViewStyle &vs);
 	Sci::Position StartEndDisplayLine(Surface *surface, const EditModel &model, Sci::Position pos, bool start, const ViewStyle &vs);
 
 private:
@@ -151,10 +166,14 @@ private:
 	void DrawAnnotation(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 		Sci::Line line, int xOrigin, PRectangle rcLine, int subLine, DrawPhase phase);
 	void DrawCarets(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
-		Sci::Line lineDoc, int xOrigin, PRectangle rcLine, int subLine) const;
+		Sci::Line lineDoc, int xOrigin, PRectangle rcLine, int subLine,
+		const std::optional<SelectionRange> &rectangleCaret, bool mainRectangleRow) const;
 	void DrawIndentGuide(Surface *surface, XYPOSITION start, PRectangle rcSegment, bool highlight, bool offset) const;
 	void DrawForeground(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 		int xStart, PRectangle rcLine, int subLine, Sci::Line lineVisible, Range lineRange, Sci::Position posLineStart,
+		ColourOptional background);
+	void DrawParagraphForeground(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
+		int xStart, PRectangle rcLine, int subLine, Range lineRange, Sci::Position posLineStart,
 		ColourOptional background);
 	void DrawIndentGuidesOverEmpty(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
 		Sci::Line line, int xStart, PRectangle rcLine, int subLine, Sci::Line lineVisible);

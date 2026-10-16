@@ -671,9 +671,11 @@ public:
 	Sci::Line annotationLinesAdded;
 	Sci::Position token;
 	Sci::Position newPos = -1;	/**< Reasonable new caret position after undo or redo. */
+	bool newPosAtInsertionEnd = false; /**< The restore position follows reinserted text, including coalesced removals. */
 
 	DocModification(Scintilla::ModificationFlags modificationType_, Sci::Position position_=0, Sci::Position length_=0,
-		Sci::Line linesAdded_=0, const char *text_=nullptr, Sci::Line line_=0, Sci::Position newPos_=-1) noexcept :
+		Sci::Line linesAdded_=0, const char *text_=nullptr, Sci::Line line_=0, Sci::Position newPos_=-1,
+		bool newPosAtInsertionEnd_=false) noexcept :
 		modificationType(modificationType_),
 		position(position_),
 		length(length_),
@@ -684,7 +686,8 @@ public:
 		foldLevelPrev(Scintilla::FoldLevel::None),
 		annotationLinesAdded(0),
 		token(0),
-		newPos(newPos_) {}
+		newPos(newPos_),
+		newPosAtInsertionEnd(newPosAtInsertionEnd_) {}
 
 	DocModification(Scintilla::ModificationFlags modificationType_, const Action &act, Sci::Line linesAdded_=0) noexcept :
 		modificationType(modificationType_),

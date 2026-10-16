@@ -34,8 +34,9 @@ function Read-EditorTestFile {
 }
 
 function Start-EditorTestSession {
-    param([ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64', [int] $TimeoutSeconds = 40)
-    $session = Start-IsolatedTestPackage -Platform $Platform -Configuration Release
+    param([ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64', [int] $TimeoutSeconds = 40,
+        [string] $SourceLayout = '')
+    $session = Start-IsolatedTestPackage -Platform $Platform -Configuration Release -SourceLayout $SourceLayout
     try {
         $session.Sequence = 0
         $session.Channel = Join-Path $session.RunRoot "InteractiveTests\$($session.RunId)"

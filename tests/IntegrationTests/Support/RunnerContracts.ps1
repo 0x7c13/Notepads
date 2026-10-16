@@ -341,6 +341,120 @@ finally {
     }
 }
 
+& {
+    # Load only helper functions, never the automation script's desktop setup.
+    # The inert UIA method throws before any fallback input can be reached if a
+    # regression moves the entry guard after SetFocus. Native types stay unloaded.
+    $tokens = $null
+    $parseErrors = $null
+    $automation = [Management.Automation.Language.Parser]::ParseFile(
+        (Join-Path $repo 'scripts/Test-EditorAutomation.ps1'), [ref] $tokens, [ref] $parseErrors)
+    if ($parseErrors.Count) { throw "Automation script did not parse: $parseErrors" }
+    $focus = @($automation.FindAll({
+        param($node)
+        $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Focus-Editor'
+    }, $false))
+    if ($focus.Count -ne 1) { throw 'Expected one production Focus-Editor function.' }
+    . ([scriptblock]::Create($focus[0].Extent.Text))
+    function Assert-EditorForeground {
+        if (!$interruption.Foreground) { throw 'Fixture foreground was interrupted.' }
+        if (!$interruption.Idle) { throw 'Fixture physical input is held.' }
+    }
+    function Invoke-EditorTestCommand { throw 'The interrupted focus fixture reached a command.' }
+    $element = [pscustomobject]@{ FocusCalls = 0 }
+    $element | Add-Member ScriptMethod SetFocus {
+        $this.FocusCalls++
+        throw 'The interrupted focus fixture reached UIA SetFocus.'
+    }
+    foreach ($interruption in @(
+        @{ Foreground = $false; Idle = $true; Name = 'Lost foreground rejects child focus'; Error = '*Fixture foreground was interrupted*' },
+        @{ Foreground = $true; Idle = $false; Name = 'Held physical input rejects child focus'; Error = '*Fixture physical input is held*' }
+    )) {
+        Expect-Rejection $interruption.Name $interruption.Error { Focus-Editor }
+        if ($element.FocusCalls -ne 0) { throw 'Focus was mutated before interruption was rejected.' }
+    }
+
+    # Exercise the actual keyboard helpers with inert input endpoints. No native
+    # driver is loaded: a regression can record an attempted injection, but cannot
+    # send Ctrl+Escape (or any other key) to the desktop running these contracts.
+    $keyboardBoundary = [pscustomobject]@{
+        Alive = $true; Idle = $true; Foreground = $true
+        Inputs = [Collections.Generic.List[string]]::new()
+    }
+    $keyboardBoundary | Add-Member ScriptMethod RequireIdle {
+        if (!$this.Idle) { throw 'Fixture physical input is held.' }
+    }
+    $keyboardBoundary | Add-Member ScriptMethod Key {
+        param($ProcessId, $Key, $Control, $Shift)
+        if (!$this.Foreground) { throw 'Fixture foreground was interrupted.' }
+        $this.Inputs.Add("key|$ProcessId|$Key|$Control|$Shift")
+    }
+    $keyboardBoundary | Add-Member ScriptMethod Type {
+        param($ProcessId, $Text)
+        if (!$this.Foreground) { throw 'Fixture foreground was interrupted.' }
+        $this.Inputs.Add("text|$ProcessId|$Text")
+    }
+    function Assert-EditorTestAlive {
+        param($Session)
+        if (!$keyboardBoundary.Alive) { throw 'Fixture editor exited.' }
+    }
+    $session = @{ ProcessId = 42 }
+    $element = [pscustomobject]@{ Current = [pscustomobject]@{ HasKeyboardFocus = $true } }
+    foreach ($name in @('Assert-EditorKeyboardTarget', 'Send-EditorKey', 'Send-EditorText', 'Close-EditorContextMenu')) {
+        $functions = @($automation.FindAll({
+            param($node)
+            $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
+        }, $false))
+        if ($functions.Count -ne 1) { throw "Expected one production $name function." }
+        $body = $functions[0].Extent.Text.Replace('[EditorAutomationInput]::', '$keyboardBoundary.').
+            Replace('[PackagedAppDriver]::', '$keyboardBoundary.')
+        . ([scriptblock]::Create($body))
+    }
+    foreach ($case in @(
+        @{ Name = 'Editor key'; Action = { Send-EditorKey 0x27 $true $true }; Expected = 'key|42|39|True|True'; EditorFocus = $true },
+        @{ Name = 'Editor text'; Action = { Send-EditorText 'אX' }; Expected = 'text|42|אX'; EditorFocus = $true },
+        @{ Name = 'Menu Escape'; Action = { Close-EditorContextMenu }; Expected = 'key|42|27|False|False'; EditorFocus = $false }
+    )) {
+        $element.Current.HasKeyboardFocus = $case.EditorFocus
+        $keyboardBoundary.Idle = $false
+        Expect-Rejection "$($case.Name) rejects held physical input" '*Fixture physical input is held*' $case.Action
+        $keyboardBoundary.Idle = $true
+        $keyboardBoundary.Foreground = $false
+        Expect-Rejection "$($case.Name) rejects lost foreground" '*Fixture foreground was interrupted*' $case.Action
+        $keyboardBoundary.Foreground = $true
+        $keyboardBoundary.Alive = $false
+        Expect-Rejection "$($case.Name) rejects an exited editor" '*Fixture editor exited*' $case.Action
+        $keyboardBoundary.Alive = $true
+        if ($case.EditorFocus) {
+            $element.Current.HasKeyboardFocus = $false
+            Expect-Rejection "$($case.Name) rejects lost child focus" '*Editor focus changed*' $case.Action
+            $element.Current.HasKeyboardFocus = $true
+        }
+        if ($keyboardBoundary.Inputs.Count) { throw "$($case.Name) injected input before rejecting interruption." }
+        & $case.Action
+        if ($keyboardBoundary.Inputs.Count -ne 1 -or $keyboardBoundary.Inputs[0] -cne $case.Expected) {
+            throw "$($case.Name) did not forward exactly the requested input to the owned target."
+        }
+        $checks.Add("$($case.Name) forwards guarded input with the appropriate child focus")
+        $keyboardBoundary.Inputs.Clear()
+    }
+
+    # Prevent a new test case or finally block from bypassing these boundaries.
+    foreach ($call in $automation.FindAll({
+        param($node)
+        $node -is [Management.Automation.Language.InvokeMemberExpressionAst] -and
+        $node.Expression -is [Management.Automation.Language.TypeExpressionAst] -and
+        $node.Expression.TypeName.FullName -eq 'PackagedAppDriver' -and $node.Member.Value -in @('Key', 'Type')
+    }, $true)) {
+        $owner = $call.Parent
+        while ($owner -and $owner -isnot [Management.Automation.Language.FunctionDefinitionAst]) { $owner = $owner.Parent }
+        if (!$owner -or $owner.Name -notin @('Send-EditorKey', 'Send-EditorText', 'Close-EditorContextMenu')) {
+            throw "Keyboard injection bypasses the guarded helpers at line $($call.Extent.StartLineNumber)."
+        }
+    }
+    $checks.Add('All physical keyboard call sites use the guarded helpers, including menu cleanup')
+}
+
 $manifestSource = Join-Path $repo 'tests/IntegrationTests/Package.appxmanifest'
 if ($manifestSource -notin @(Get-TestSourceFiles App)) { throw 'App build discovery omits Package.appxmanifest.' }
 $checks.Add('App source discovery includes its package manifest')
@@ -401,6 +515,140 @@ $checks.Add('App source discovery includes its package manifest')
     }
     [IO.File]::WriteAllText($inputManifest, '<Package Identity="after" />')
     Expect-Rejection 'Manifest-only source edit invalidates NoBuild' '*Source changed since build:*Package.appxmanifest*' { Assert-TestBuildIdentity App Release ARM64 }
+}
+
+& {
+    # Exercise DPI readiness and disabled-settings guards without loading UIA,
+    # launching Settings, changing a scale or waiting for a real desktop event.
+    . (Join-Path $repo 'scripts/DisplayScaleSettings.ps1')
+    foreach ($label in @(@('100%', 100), @('125% (Recommended)', 125), @('300％', 300))) {
+        if ((Read-DisplayScalePercent $label[0]) -ne $label[1]) { throw 'Incorrect display scale parsing.' }
+        $checks.Add('Display scale label: ' + $label[0])
+    }
+    Expect-Rejection 'Invalid display scale label' '*Unrecognized display scale*' { Read-DisplayScalePercent 'Custom' }
+    function Get-DisplayScaleCombo { param($Settings); [pscustomobject]@{ Current = [pscustomobject]@{ IsEnabled = $false } } }
+    Expect-Rejection 'Disabled custom scaling cannot be changed' '*disabled standard display scaling*No setting was changed*' {
+        Set-DisplayScalePercent @{} 125
+    }
+    $errors = $null
+    $ast = [Management.Automation.Language.Parser]::ParseFile((Join-Path $repo 'scripts/Test-EditorDpi.ps1'), [ref]$null, [ref]$errors)
+    if ($errors.Count) { throw 'The DPI runner has parse errors.' }
+    $helper = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Test-DpiReady' }, $true)
+    if (!$helper) { throw 'The DPI readiness helper is missing.' }
+    . ([scriptblock]::Create($helper.Extent.Text))
+    $before = @{ panes = '1'; windowsScale = '1'; '0_scale' = '1'; '0_pending' = 'False'; '0_dpiEvents' = '2'; '0_geometryEvents' = '3'; '0_paints' = '4' }
+    $after = @{ panes = '1'; windowsScale = '1.5'; '0_scale' = '1.5'; '0_pending' = 'False'; '0_dpiEvents' = '3'; '0_geometryEvents' = '4'; '0_paints' = '5' }
+    $before['0_paintScale'] = $before['0_geometryScale'] = '1'
+    $after['0_paintScale'] = $after['0_geometryScale'] = '1.5'
+    if (!(Test-DpiReady $after $before 1.5)) { throw 'Completed DPI transition was rejected.' }
+    $checks.Add('DPI completion requires the actual system and native transition')
+    foreach ($key in @('windowsScale', '0_scale', '0_paintScale', '0_geometryScale', '0_dpiEvents', '0_geometryEvents', '0_paints')) {
+        $incomplete = $after.Clone()
+        $incomplete[$key] = $before[$key]
+        if (Test-DpiReady $incomplete $before 1.5) { throw "DPI readiness ignored stale $key." }
+        $checks.Add('DPI readiness rejects stale ' + $key)
+    }
+    $pending = $after.Clone()
+    $pending['0_pending'] = 'True'
+    if (Test-DpiReady $pending $before 1.5) { throw 'DPI readiness accepted a pending viewport.' }
+    $checks.Add('DPI readiness waits for viewport restoration')
+    $empty = @{ panes = '0'; windowsScale = '1.5' }
+    if (Test-DpiReady $empty $empty 1.5) { throw 'No editor cannot count as DPI coverage.' }
+    $checks.Add('An empty DPI fixture is rejected')
+}
+
+& {
+    # Run the actual DPI setup block with inert OS boundaries. A held key must
+    # be rejected before even UIA SetFocus, not just before caption injection.
+    $ast = [Management.Automation.Language.Parser]::ParseFile((Join-Path $repo 'scripts/Test-EditorDpi.ps1'), [ref]$null, [ref]$null)
+    $setup = $ast.Find({ param($node)
+        $node -is [Management.Automation.Language.IfStatementAst] -and $node.Extent.Text.StartsWith('if (!$foregroundAcquired)')
+    }, $true)
+    if (!$setup) { throw 'DPI foreground setup is missing.' }
+    $body = $setup.Extent.Text.Replace('[OwnedWindowActivation]::', '$focusBoundary.').Replace('[PackagedAppDriver]::', '$focusBoundary.')
+    $focusBoundary = [pscustomobject]@{ Held = $false; Calls = [Collections.Generic.List[string]]::new() }
+    $focusBoundary | Add-Member ScriptMethod RequireIdle {
+        $this.Calls.Add('Idle')
+        if ($this.Held) { throw 'Fixture input is held.' }
+    }
+    $focusBoundary | Add-Member ScriptMethod Window { param($ProcessId); return [IntPtr]42 }
+    $focusBoundary | Add-Member ScriptMethod Acquire {
+        param($ProcessId, $Window)
+        $this.Calls.Add('Acquire')
+        if ($this.Held) { throw 'Fixture input is held.' }
+    }
+    $element = [pscustomobject]@{ Calls = $focusBoundary.Calls }
+    $element | Add-Member ScriptMethod SetFocus { $this.Calls.Add('Focus') }
+    function Find-DpiEditor { param($Index); return $element }
+    $session = @{ ProcessId = 42 }
+    $foregroundAcquired = $false
+    $focusBoundary.Held = $true
+    Expect-Rejection 'DPI setup rejects held input before changing focus' '*Fixture input is held*' { & ([scriptblock]::Create($body)) }
+    if (($focusBoundary.Calls -join ',') -ne 'Idle') { throw 'Held input reached a focus or foreground mutation.' }
+    $focusBoundary.Held = $false
+    $focusBoundary.Calls.Clear()
+    & ([scriptblock]::Create($body))
+    if (($focusBoundary.Calls -join ',') -ne 'Idle,Focus,Acquire') { throw 'Idle DPI setup did not execute its guarded focus path.' }
+    $checks.Add('Idle DPI setup acquires focus after its input guard')
+}
+
+& {
+    # Keep discovery/ownership/cleanup control flow real; replace only Settings
+    # launch, process/UIA boundaries and sleep. Timeout zero still attempts one
+    # discovery, so failures require no wall-clock wait or desktop mutation.
+    . (Join-Path $repo 'scripts/DisplayScaleSettings.ps1')
+    $settingsAst = [Management.Automation.Language.Parser]::ParseFile((Join-Path $repo 'scripts/DisplayScaleSettings.ps1'), [ref]$null, [ref]$null)
+    foreach ($name in @('Open-DisplayScaleSettings', 'Close-DisplayScaleSettings')) {
+        $function = $settingsAst.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name }, $true)
+        $body = $function.Extent.Text.Replace('[PackagedAppDriver]::', '$settingsBoundary.').
+            Replace('[Windows.Automation.AutomationElement]::FromHandle', '$settingsBoundary.FromHandle').
+            Replace('([Windows.Automation.WindowPattern] $root.GetCurrentPattern([Windows.Automation.WindowPattern]::Pattern)).Close()', '$settingsBoundary.Close($root)')
+        . ([scriptblock]::Create($body))
+    }
+    function Start-Process { param($FilePath); $settingsBoundary.Launched = $true }
+    function Get-Process {
+        param($Name, $ErrorAction)
+        if ($settingsBoundary.Existing -or $settingsBoundary.Launched) { return $settingsProcess }
+    }
+    function Start-Sleep { param($Milliseconds) }
+    function Get-DisplayScalePercent {
+        param($Settings)
+        if ($settingsBoundary.ChangedIdentity) { $settingsProcess.StartTime = $settingsProcess.StartTime.AddSeconds(1) }
+        if ($settingsBoundary.ReadFailure) { throw 'Fixture scale discovery failed.' }
+        return 125
+    }
+    foreach ($case in @(
+        @{ Name = 'Failed discovery closes its newly opened Settings window'; ReadFailure = $true; Closes = 1; Error = '*did not become ready*Fixture scale discovery failed*' },
+        @{ Name = 'Failed discovery preserves a pre-existing Settings window'; ReadFailure = $true; Existing = $true; Closes = 0; Error = '*did not become ready*Fixture scale discovery failed*' },
+        @{ Name = 'Successful discovery transfers cleanup to the caller'; Closes = 1 },
+        @{ Name = 'Settings cleanup failure preserves the discovery error'; ReadFailure = $true; CloseFailure = $true; Closes = 1; Error = '*Fixture scale discovery failed*Closing the owned Settings window failed*Fixture close failed*' },
+        @{ Name = 'Settings cleanup rejects a replacement process'; ReadFailure = $true; ChangedIdentity = $true; Closes = 0; Error = '*Fixture scale discovery failed*refusing to close a different process*' }
+    )) {
+        $settingsBoundary = [pscustomobject]@{
+            Existing = [bool] $case.Existing; Launched = $false; ReadFailure = [bool] $case.ReadFailure
+            CloseFailure = [bool] $case.CloseFailure; ChangedIdentity = [bool] $case.ChangedIdentity; Closes = 0
+        }
+        $settingsBoundary | Add-Member ScriptMethod Window { param($ProcessId); return [IntPtr]42 }
+        $settingsBoundary | Add-Member ScriptMethod FromHandle { param($Window); return $Window }
+        $settingsBoundary | Add-Member ScriptMethod Close {
+            param($Window)
+            ++$this.Closes
+            if ($this.CloseFailure) { throw 'Fixture close failed.' }
+        }
+        $settingsProcess = [pscustomobject]@{
+            Id = 42; HasExited = $false; StartTime = [DateTime]::UtcNow
+            Path = Join-Path $env:SystemRoot 'ImmersiveControlPanel/SystemSettings.exe'
+        }
+        $settingsProcess | Add-Member ScriptMethod Refresh { }
+        if ($case.Error) { Expect-Rejection $case.Name $case.Error { Open-DisplayScaleSettings -TimeoutSeconds 0 } }
+        else {
+            $opened = Open-DisplayScaleSettings -TimeoutSeconds 0
+            if (!$opened.Opened -or $opened.Original -ne 125 -or $settingsBoundary.Closes) { throw 'Discovery lost ownership or closed the successful window.' }
+            Close-DisplayScaleSettings $opened
+            $checks.Add($case.Name)
+        }
+        if ($settingsBoundary.Closes -ne $case.Closes) { throw "Incorrect Settings window cleanup: $($case.Name)" }
+    }
 }
 
 # Build manifests use actual hashing/serialization/validation against one private

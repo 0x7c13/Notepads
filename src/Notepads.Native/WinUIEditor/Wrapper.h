@@ -40,6 +40,8 @@ namespace WinUIEditor
 		void AdjustCallTipPadding(Scintilla::Internal::CallTip &callTip);
 
 		bool TransformToRoot(float &x, float &y) const;
+		bool TransformFromRoot(float &x, float &y) const;
+		bool TransformToRoot(Scintilla::Internal::PRectangle &rectangle) const noexcept;
 		bool TransformToScreen(Scintilla::Internal::PRectangle &rectangle) const noexcept;
 
 		void ReleaseAutocompletePopup();
@@ -50,6 +52,7 @@ namespace WinUIEditor
 		Scintilla::Internal::XYPOSITION chevronFontSize{ -1.0 };
 
 	protected:
+		virtual winrt::DUX::UIElement CoordinateElement() const { return _control.get(); }
 		Wrapper(winrt::DUXC::Control const &control);
 		~Wrapper();
 		winrt::weak_ref<winrt::DUXC::Control> _control{ nullptr };

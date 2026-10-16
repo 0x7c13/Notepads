@@ -89,7 +89,7 @@ namespace winrt::WinUIEditor::implementation
 	{
 		// Todo: Look at how WinUI 2 handles GetImpl in automation peers
 		const auto editor{ Owner().as<WinUIEditor::EditorBaseControl>().Editor() };
-		return make<TextRangeProvider>(ProviderFromPeer(*this), editor, 0, editor.Length(), GetBoundingRectangle());
+		return make<TextRangeProvider>(ProviderFromPeer(*this), editor, 0, editor.Length());
 	}
 
 	SupportedTextSelection EditorBaseControlAutomationPeer::SupportedTextSelection()
@@ -103,12 +103,11 @@ namespace winrt::WinUIEditor::implementation
 		const auto editor{ Owner().as<WinUIEditor::EditorBaseControl>().Editor() };
 		const auto n{ static_cast<uint32_t>(editor.Selections()) };
 		com_array<ITextRangeProvider> arr(n, nullptr);
-		const auto topLeft{ GetBoundingRectangle() };
 		for (uint32_t i{ 0 }; i < n; i++)
 		{
 			const auto start{ editor.GetSelectionNStart(i) };
 			const auto end{ editor.GetSelectionNEnd(i) };
-			arr[i] = make<TextRangeProvider>(ProviderFromPeer(*this), editor, start, end, topLeft);
+			arr[i] = make<TextRangeProvider>(ProviderFromPeer(*this), editor, start, end);
 		}
 		return arr; // Todo: Trying to retrieve the value of a selection n >= 1 crashes Accessibility Insights
 	}
@@ -131,7 +130,6 @@ namespace winrt::WinUIEditor::implementation
 
 		std::vector<ITextRangeProvider> ranges;
 		ranges.reserve(static_cast<size_t>(count));
-		const auto topLeft{ GetBoundingRectangle() };
 		for (int64_t i{ 0 }; i < count; i++)
 		{
 			const auto line{ firstVisibleLine + i };
@@ -139,7 +137,7 @@ namespace winrt::WinUIEditor::implementation
 			if (displayRow > firstDisplayLine + editor.LinesOnScreen() || displayRow + editor.WrapCount(line) <= firstDisplayLine) continue;
 			const auto start{ editor.PositionFromLine(line) };
 			const auto end{ editor.GetLineEndPosition(line) };
-			ranges.push_back(make<TextRangeProvider>(ProviderFromPeer(*this), editor, start, end, topLeft));
+			ranges.push_back(make<TextRangeProvider>(ProviderFromPeer(*this), editor, start, end));
 		}
 		return com_array<ITextRangeProvider>(ranges.begin(), ranges.end());
 	}
@@ -152,18 +150,13 @@ namespace winrt::WinUIEditor::implementation
 
 	ITextRangeProvider EditorBaseControlAutomationPeer::RangeFromPoint(Point const &screenLocation)
 	{
-		const auto rect{ GetBoundingRectangle() };
-		const Point point{
-			screenLocation.X - rect.X,
-			screenLocation.Y - rect.Y };
-
-		const auto editor{ Owner().as<WinUIEditor::EditorBaseControl>().Editor() };
+		const auto owner = Owner().as<WinUIEditor::EditorBaseControl>();
+		Point point = screenLocation;
+		if (!get_self<EditorBaseControl>(owner)->AutomationPointFromRoot(point)) return nullptr;
+		const auto editor = owner.Editor();
 		const auto pos{ editor.PositionFromPoint(point.X, point.Y) };
-		const auto line{ editor.LineFromPosition(pos) };
-		const auto start{ editor.PositionFromLine(line) };
-		const auto end{ editor.GetLineEndPosition(line) };
 
-		return make<TextRangeProvider>(ProviderFromPeer(*this), editor, start, end, rect);
+		return make<TextRangeProvider>(ProviderFromPeer(*this), editor, pos, pos);
 	}
 
 	ITextRangeProvider EditorBaseControlAutomationPeer::GetActiveComposition()
@@ -190,9 +183,11 @@ namespace winrt::WinUIEditor::implementation
 
 		isActive = editor.Focus();
 
-		const auto pos{ editor.GetSelectionNCaret(editor.MainSelection()) };
+		// A rectangle's visible corner may lie inside a merged logical island.
+		const auto pos{ editor.SelectionMode() == WinUIEditor::SelectionMode::Rectangle ?
+			editor.RectangularSelectionCaret() : editor.GetSelectionNCaret(editor.MainSelection()) };
 
-		return make<TextRangeProvider>(ProviderFromPeer(*this), editor, pos, pos, GetBoundingRectangle());
+		return make<TextRangeProvider>(ProviderFromPeer(*this), editor, pos, pos);
 	}
 
 	bool EditorBaseControlAutomationPeer::IsReadOnly()

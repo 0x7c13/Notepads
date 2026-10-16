@@ -22,7 +22,7 @@ internal static class LineLayoutCacheTests
         var native = ((WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0]).Editor;
         try
         {
-            // Exactly 4 KiB including CR: ordinary page caching should still apply.
+            // Exercise cache reuse, then grow the same line through a real edit.
             var text = new string('x', 4095) + "\rshort 中文😀";
             await core.LoadTextAsync(text);
             await EditorTestLayout.AfterPaintAsync(native, () =>
@@ -36,31 +36,31 @@ internal static class LineLayoutCacheTests
             var zoomedWidth = native.PointXFromPosition(10) - native.PointXFromPosition(0);
             Check(zoomedWidth > width * 1.8, "Font changes invalidate cached character positions.");
 
-            // Grow an already cached line beyond the boundary through a real edit.
             native.EmptyUndoBuffer();
             await EditorTestLayout.AfterPaintAsync(native, () => native.InsertText(4095, "x"));
-            Check(native.LayoutCache == WinUIEditor.LineCache.Caret &&
+            Check(native.LayoutCache == WinUIEditor.LineCache.Page &&
                 core.GetText() == new string('x', 4096) + "\rshort 中文😀",
-                "Editing a line past 4 KiB falls back before retaining page-sized long-line layouts.");
+                "Growing a cached line preserves the configured page cache and edited document.");
             await EditorTestLayout.AfterPaintAsync(native, native.Undo);
-            Check(core.GetText() == text && native.LayoutCache == WinUIEditor.LineCache.Caret,
-                "Undo preserves text and does not repeatedly switch cache policies.");
+            Check(core.GetText() == text && native.LayoutCache == WinUIEditor.LineCache.Page,
+                "Undo preserves text and the page-cache policy.");
 
-            // Loading multiple long lines must use the same fallback, including away from the caret.
+            // Total visible source exceeds the native retained-capacity budget.
+            // Eviction must remain transparent to loading and scrolling.
             using var loaded = new TextEditorCore { Width = 600, Height = 320, TextWrapping = TextWrapping.NoWrap };
             var loadedNative = ((WinUIEditor.EditorBaseControl)((Grid)loaded.Content).Children[0]).Editor;
             var longText = "short\r" + string.Concat(Enumerable.Repeat(new string('x', 65536) + "\r", 40));
             await loaded.LoadTextAsync(longText);
             await EditorTestLayout.AfterPaintAsync(loadedNative, () => Window.Current.Content = loaded);
-            Check(loadedNative.LayoutCache == WinUIEditor.LineCache.Caret && loaded.GetText() == longText,
-                "Long lines outside the caret trigger single-line caching without changing document contents.");
+            Check(loadedNative.LayoutCache == WinUIEditor.LineCache.Page && loaded.GetText() == longText,
+                "Long lines outside the caret retain page mode without changing document contents.");
             await EditorTestLayout.AfterPaintAsync(loadedNative, () => loadedNative.FirstVisibleLine = 20);
             Check(loadedNative.FirstVisibleLine == 20 && loadedNative.CurrentPos == 0,
                 "Scrolling long lines retains an independently positioned caret.");
         }
         finally { Window.Current.Content = previousContent; }
-        log.AppendLine("PASS: page layouts refresh on zoom; long-line load/edit falls back to one cached line.");
-        log.AppendLine("PASS: cache fallback preserves Unicode text, undo and independent viewport/caret positions.");
+        log.AppendLine("PASS: page layouts refresh on zoom and remain enabled after long-line load/edit.");
+        log.AppendLine("PASS: bounded cache eviction preserves Unicode text, undo and independent viewport/caret positions.");
     }
 
     private static void Check(bool condition, string message)

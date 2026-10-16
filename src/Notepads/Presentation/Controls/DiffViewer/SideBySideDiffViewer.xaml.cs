@@ -34,6 +34,7 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
     private bool _synchronizing;
     private bool _disposed;
     private int _currentHunk = -1;
+    private double _horizontalOffset;
     internal bool HasChanges => _changeRows.Length != 0;
     public event EventHandler CloseRequested;
     public event EventHandler<double> ZoomChanged;
@@ -89,6 +90,8 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
             savedLines = await CanonicalLineCounter.CountAsync(savedText, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
         if (!source.CanPrepareDiff(baseline.ByteLength, savedLines)) return false;
+        OldEditor.RightToLeftReadingOrder = source.RightToLeftReadingOrder;
+        NewEditor.RightToLeftReadingOrder = source.RightToLeftReadingOrder;
         OldEditor.SetSyntaxLanguage(language, fileName);
         NewEditor.SetSyntaxLanguage(language, fileName);
         OldEditor.SetFontZoomFactor(source.GetFontZoomFactor());
@@ -139,12 +142,33 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
 
     private void OnViewportChanged(object sender, EventArgs args)
     {
-        if (_disposed || _synchronizing) return;
+        if (_disposed || _synchronizing || _currentHunk < 0) return;
         var source = (TextEditorCore)sender;
-        var target = ReferenceEquals(source, OldEditor) ? NewEditor : OldEditor;
+        if (source.IsDiffViewportPending) return;
+        var horizontalOffset = ReadHorizontalOffset(source);
         _synchronizing = true;
-        try { target.SetDiffViewport(source.FirstVisibleRow, source.HorizontalScrollOffset); }
+        try { SetViewport(source.DiffFirstVisibleRow, horizontalOffset); }
         finally { _synchronizing = false; }
+    }
+
+    private double ReadHorizontalOffset(TextEditorCore source)
+    {
+        // Physical scrolling is immediate, while UpdateUI arrives later. An
+        // unchanged peer must not overwrite the pane that has just scrolled.
+        var oldOffset = OldEditor.DiffHorizontalOffset;
+        var newOffset = NewEditor.DiffHorizontalOffset;
+        if (oldOffset == _horizontalOffset) return newOffset;
+        if (newOffset == _horizontalOffset) return oldOffset;
+        // If both changed before notification, retain the notifying pane's
+        // intent; the getters alone cannot establish input order.
+        return ReferenceEquals(source, OldEditor) ? oldOffset : newOffset;
+    }
+
+    private void SetViewport(long row, double horizontalOffset)
+    {
+        _horizontalOffset = horizontalOffset;
+        OldEditor.SetDiffViewport(row, horizontalOffset);
+        NewEditor.SetDiffViewport(row, horizontalOffset);
     }
 
     private void OnZoomChanged(object sender, double zoom)
@@ -165,6 +189,10 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
     private void Navigate(int direction)
     {
         if (_disposed || _changeRows.Length == 0) return;
+        // The first navigation can run before layout, so start at the leading
+        // edge. Later navigations retain the shared intent even if one pane
+        // has clamped its physical scroll position.
+        var horizontalOffset = _currentHunk < 0 ? 0 : ReadHorizontalOffset(NewEditor);
         _currentHunk = (_currentHunk + direction + _changeRows.Length) % _changeRows.Length;
         var row = _changeRows[_currentHunk];
         _synchronizing = true;
@@ -172,8 +200,7 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         {
             OldEditor.HighlightDiffChange(row, _changeRowCounts[_currentHunk]);
             NewEditor.HighlightDiffChange(row, _changeRowCounts[_currentHunk]);
-            OldEditor.SetDiffViewport(Math.Max(0, row - 2), 0);
-            NewEditor.SetDiffViewport(Math.Max(0, row - 2), 0);
+            SetViewport(Math.Max(0, row - 2), horizontalOffset);
         }
         finally { _synchronizing = false; }
         SetSummary(string.Format(CultureInfo.CurrentCulture,

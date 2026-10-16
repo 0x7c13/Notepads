@@ -148,6 +148,8 @@ public:
 	static std::shared_ptr<Font> Allocate(const FontParameters &fp);
 };
 
+class IParagraphLayout;
+
 class IScreenLine {
 public:
 	virtual std::string_view Text() const = 0;
@@ -155,6 +157,10 @@ public:
 	virtual size_t RepresentationCount() const = 0;
 	virtual XYPOSITION Width() const = 0;
 	virtual XYPOSITION Height() const = 0;
+	virtual XYPOSITION Baseline() const = 0;
+	virtual std::shared_ptr<IParagraphLayout> Paragraph() const = 0;
+	virtual size_t ParagraphStart() const = 0;
+	virtual int ParagraphLine() const = 0;
 	virtual XYPOSITION TabWidth() const = 0;
 	virtual XYPOSITION TabWidthMinimumPixels() const = 0;
 	virtual const Font *FontOfPosition(size_t position) const = 0;
@@ -168,6 +174,12 @@ public:
 	virtual size_t PositionFromX(XYPOSITION xDistance, bool charPosition) = 0;
 	virtual XYPOSITION XFromPosition(size_t caretPosition) = 0;
 	virtual std::vector<Interval> FindRangeIntervals(size_t start, size_t end) = 0;
+};
+
+struct ParagraphColourRun {
+	size_t start;
+	size_t length;
+	ColourRGBA colour;
 };
 
 /**
@@ -232,6 +244,17 @@ public:
 	virtual void Copy(PRectangle rc, Point from, Surface &surfaceSource)=0;
 
 	virtual std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) = 0;
+	virtual bool NeedsParagraphLayout(std::string_view text) const = 0;
+	// Return a complete, non-null layout; report creation failure by exception.
+	virtual std::shared_ptr<IParagraphLayout> LayoutParagraph(const IScreenLine *line, bool rightToLeft, Scintilla::Wrap wrap,
+		XYPOSITION leadingPadding, XYPOSITION trailingPadding) = 0;
+	// Layout and drawing use the same platform backend. Cached layouts own no
+	// drawing-target resources and survive replacement of the paint surface.
+	// The caller has installed clip in surface coordinates; the backend may use
+	// it to skip invisible ink without changing the paragraph's shaping context.
+	// Draw only this display row's glyphs, including when clip is a block caret.
+	virtual void DrawParagraph(IParagraphLayout &paragraph, size_t line, const Font *font, Point origin, PRectangle clip,
+		const std::vector<ParagraphColourRun> &colours) = 0;
 
 	virtual void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
 	virtual void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) = 0;

@@ -222,6 +222,14 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	int scrollWidth;
 	/// Tracked width awaits a measurement of the visible lines; metrics also clamp xOffset.
 	enum class WidthMeasure { none, content, metrics } pendingWidthMeasure = WidthMeasure::none;
+	// Paragraph alignment is content-derived. Scrollbar slop/offsets must never
+	// feed back into it, or repeatedly revealing an RTL caret widens its canvas.
+	int bidiContentWidth = 0;
+	bool bidiWidthsInvalid = true;
+	bool bidiVisibleDirty = true;
+	bool bidiCanvasPreparing = false;
+	Sci::Line bidiMeasuredTopLine = -1;
+	Point bidiMeasuredViewport;
 	/// Every style measures as StyleDefault, so restyling text cannot change a line's width.
 	bool uniformStyleMetrics = false;
 	bool verticalScrollBarVisible;
@@ -233,7 +241,6 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool additionalSelectionTyping;
 	Scintilla::MultiPaste multiPasteMode;
 
-	Scintilla::VirtualSpace virtualSpaceOptions;
 
 	KeyMap kmap;
 
@@ -256,7 +263,9 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool dropWentOutside;
 	SelectionPosition posDrop;
 	Sci::Position hotSpotClickPos;
-	int lastXChosen;
+	// A newly published/restored document chooses its column on the first
+	// vertical move, after its final direction and layout are available.
+	std::optional<TextPositionX> lastXChosen;
 	Sci::Position lineAnchorPos;
 	Sci::Position originalAnchorPos;
 	Sci::Position wordSelectAnchorStartPos;
@@ -319,7 +328,10 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void InvalidateStyleData() noexcept;
 	void InvalidateTrackedScrollWidth(bool metrics = false) noexcept;
 	void ResetTrackedScrollWidth() noexcept;
-	int MeasureVisibleLineWidth();
+	int MeasureVisibleLineWidth(); // -1 when a measurement surface is unavailable.
+	void PrepareBidiCanvas();
+	int PublishBidiCanvas(XYPOSITION previousWidth);
+	virtual void ReconcileHorizontalViewport() {}
 	void InvalidateStyleRedraw(bool invalidateWidth = true);
 	void RefreshStyleData();
 	void SetRepresentations();
@@ -335,6 +347,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	virtual PRectangle GetClientRectangle() const;
 	virtual PRectangle GetClientDrawingRectangle();
 	PRectangle GetTextRectangle() const;
+	XYPOSITION BidiLayoutWidth() const override;
 
 	Sci::Line LinesOnScreen() const override;
 	Sci::Line LinesToScroll() const;
@@ -342,11 +355,13 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	SelectionPosition ClampPositionIntoDocument(SelectionPosition sp) const;
 	Point LocationFromPosition(SelectionPosition pos, PointEnd pe=PointEnd::start);
 	Point LocationFromPosition(Sci::Position pos, PointEnd pe=PointEnd::start);
-	int XFromPosition(SelectionPosition sp);
+	TextPositionX TextXFromPosition(SelectionPosition sp);
+	TextPositionX CapturePreferredTextX(XYPOSITION x) const;
+	TextPositionX PreferredTextXFromPoint(Point pt) const;
 	SelectionPosition SPositionFromLocation(Point pt, bool canReturnInvalid=false, bool charPosition=false, bool virtualSpace=true);
+	SelectionPosition SPositionFromTextLocation(TextPositionX x, int y, bool virtualSpace);
 	Sci::Position PositionFromLocation(Point pt, bool canReturnInvalid = false, bool charPosition = false);
-	SelectionPosition SPositionFromLineX(Sci::Line lineDoc, int x);
-	Sci::Position PositionFromLineX(Sci::Line lineDoc, int x);
+	SelectionPosition SPositionFromLineX(Sci::Line lineDoc, TextPositionX x);
 	Sci::Line LineFromLocation(Point pt) const noexcept;
 	void SetTopLine(Sci::Line topLineNew);
 
@@ -366,6 +381,8 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	SelectionPosition SelectionStart() noexcept;
 	SelectionPosition SelectionEnd() noexcept;
 	void SetRectangularRange();
+	enum class RectangularReplacement { unchanged, prepared, unavailable };
+	RectangularReplacement PrepareRectangularReplacement(std::vector<bool> *replacedSelections = nullptr);
 	void ThinRectangularRange();
 	void InvalidateSelection(SelectionRange newMain, bool invalidateWholeSelection=false);
 	void InvalidateWholeSelection();
@@ -391,6 +408,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	SelectionPosition MovePositionSoVisible(Sci::Position pos, int moveDir);
 	Point PointMainCaret();
 	void SetLastXChosen();
+	TextPositionX GetLastXChosen(Point sourcePoint);
 	void RememberSelectionForUndo(int index);
 	void RememberSelectionOntoStack(int index);
 	void RememberCurrentSelectionForRedoOntoStack();
@@ -404,6 +422,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void MoveSelectedLinesDown();
 	void MoveCaretInsideView(bool ensureVisible=true);
 	Sci::Line DisplayFromPosition(Sci::Position pos);
+	Sci::Line DisplayFromPosition(SelectionPosition pos);
 
 	struct XYScrollPosition {
 		int xOffset;
@@ -460,7 +479,9 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	enum class PasteShape { stream=0, rectangular = 1, line = 2 };
 	void InsertPasteShape(std::string_view text, PasteShape shape);
 	[[deprecated]] void InsertPasteShape(const char *text, Sci::Position len, PasteShape shape);
-	void ClearSelection(bool retainMultipleSelections = false);
+	// False means rectangular geometry was unavailable; callers must stop any
+	// dependent insertion rather than treating the selection as cleared.
+	bool ClearSelection(bool retainMultipleSelections = false);
 	void ClearAll();
 	void ClearDocumentStyle();
 	virtual void Cut();
@@ -473,7 +494,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	virtual void Paste() = 0;
 	void Clear();
 	virtual void SelectAll();
-	void RestoreSelection(Sci::Position newPos, UndoRedo history);
+	void RestoreSelection(SelectionPosition newPos, UndoRedo history);
 	virtual void Undo();
 	virtual void Redo();
 	void DelCharBack(bool allowLineStartDeletion);
@@ -523,7 +544,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void Duplicate(bool forLine);
 	virtual void CancelModes();
 	void NewLine();
-	SelectionPosition PositionUpOrDown(SelectionPosition spStart, int direction, int lastX);
+	SelectionPosition PositionUpOrDown(SelectionPosition spStart, int direction, bool usePreferredX);
 	void CursorUpOrDown(int direction, Selection::SelTypes selt);
 	void ParaUpOrDown(int direction, Selection::SelTypes selt);
 	Range RangeDisplayLine(Sci::Line lineVisible);
@@ -532,8 +553,11 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	Sci::Position VCHomeDisplayPosition(Sci::Position position);
 	Sci::Position VCHomeWrapPosition(Sci::Position position);
 	Sci::Position LineEndWrapPosition(Sci::Position position);
+	Sci::Position WordPositionMove(Scintilla::Message message, Sci::Position position, int direction) const;
 	SelectionPosition PositionMove(Scintilla::Message iMessage, SelectionPosition spCaretNow);
+	std::optional<SelectionPosition> BidiPositionMove(Scintilla::Message iMessage, SelectionPosition caret);
 	SelectionRange SelectionMove(Scintilla::Message iMessage, size_t r);
+	SelectionPosition VisualSelectionEdge(SelectionRange range, bool left);
 	int HorizontalMove(Scintilla::Message iMessage);
 	int DelWordOrLine(Scintilla::Message iMessage);
 	virtual int KeyCommand(Scintilla::Message iMessage);
@@ -568,7 +592,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool PointInSelection(Point pt);
 	ptrdiff_t SelectionFromPoint(Point pt);
 	bool PointInSelMargin(Point pt) const;
-	Window::Cursor GetMarginCursor(Point pt) const noexcept;
+	Window::Cursor GetMarginCursor(Point pt) const;
 	void DropSelection(size_t part);
 	void TrimAndSetSelection(Sci::Position currentPos_, Sci::Position anchor_);
 	void LineSelection(Sci::Position lineCurrentPos_, Sci::Position lineAnchorPos_, bool wholeLine);

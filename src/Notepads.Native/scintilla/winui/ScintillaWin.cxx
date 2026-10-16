@@ -99,6 +99,7 @@
 #include "DBCS.h"
 #include "Selection.h"
 #include "PositionCache.h"
+#include "ParagraphLayout.h"
 #include "EditModel.h"
 #include "MarginView.h"
 #include "EditView.h"
@@ -112,6 +113,7 @@
 #include "PlatWin.h"
 #if defined(USE_D2D)
 #include "SurfaceD2D.h"
+#include "SurfaceDrawSession.h"
 #endif
 #include "ScintillaWin.h"
 
@@ -1066,6 +1068,8 @@ namespace Scintilla::Internal {
 	void ScintillaWinUI::FinalizeAfterApartmentClosed() noexcept
 	{
 		_viewportRestore.reset();
+		_displayViewport.reset();
+		_horizontalViewport.reset();
 		_compositionCount = 0;
 		_idleFinalized = true;
 		_idleSuspended = true;
@@ -1168,19 +1172,18 @@ namespace Scintilla::Internal {
 		auto start{ args.NewSelection().StartCaretPosition };
 		auto end{ args.NewSelection().EndCaretPosition };
 
-		if (start == _multiInsert)
+		if (_multiCorrect != 0 && start == _multiInsert)
 		{
 			start += _multiCorrect;
 			end += _multiCorrect;
-
-			_multiInsert = 0;
-			_multiCorrect = 0;
 
 			// Todo: Figure out which parts actually changed instead of doing the WHOLE document
 			// Notify selection instead does not work
 			sender.NotifyTextChanged({ 0, static_cast<int>(DocPositionToAcp(pdoc->Length())) }, 0, { start, end });
 		}
-		__super::SetSelection(AcpToDocPosition(start), AcpToDocPosition(end));
+		_multiInsert = 0;
+		_multiCorrect = 0;
+		SetTextStoreSelection(AcpToDocPosition(start), AcpToDocPosition(end));
 
 		args.Result(SUCCEEDED(hr)
 			? winrt::Windows::UI::Text::Core::CoreTextTextUpdatingResult::Succeeded
@@ -1265,7 +1268,14 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::OnWidenTimerTick(winrt::Windows::Foundation::IInspectable const &sender, winrt::Windows::Foundation::IInspectable const &args)
 	{
-		TickFor(TickReason::widen);
+		if (_displayViewport || (BidirectionalR2L() && !Wrapping())) {
+			// RTL and diff viewports project retained intent after measuring. The
+			// ordinary width tick clamps first, which would look like user input.
+			FineTickerCancel(TickReason::widen);
+			Redraw();
+		} else {
+			TickFor(TickReason::widen);
+		}
 	}
 
 	void ScintillaWinUI::OnDwellTimerTick(winrt::Windows::Foundation::IInspectable const &sender, winrt::Windows::Foundation::IInspectable const &args)
@@ -1464,25 +1474,17 @@ namespace Scintilla::Internal {
 		if (_lock == NONE)
 			return TS_E_NOLOCK;
 
-		if ((acpTestStart < 0) || (acpTestStart > acpTestEnd) || (acpTestEnd > pdoc->Length()))
+		if ((acpTestStart < 0) || (acpTestStart > acpTestEnd) ||
+			(acpTestEnd > DocPositionToAcp(pdoc->Length())))
 		{
 			return E_INVALIDARG;
 		}
 
-		/*if (MainHWND()) // WinUI Todo
-		{*/
-		// Set the start point to the given start point.
-		// Todo: Convert ACP to doc pos
-		*pacpResultStart = pdoc->MovePositionOutsideChar(acpTestStart, 1, true);
-		// Set the end point to the given end point.
-		*pacpResultEnd = pdoc->MovePositionOutsideChar(acpTestEnd, -1, true);
-		/*}
-		else
-		{
-			// No window - don't insert.
-			*pacpResultStart = -1;
-			*pacpResultEnd = -1;
-		}*/
+		// ACP offsets count UTF-16 units, while the document stores UTF-8 bytes.
+		// A surrogate midpoint snaps forward to the next character boundary;
+		// rounding both endpoints in the same direction keeps the range ordered.
+		*pacpResultStart = static_cast<LONG>(DocPositionToAcp(AcpToDocPosition(acpTestStart)));
+		*pacpResultEnd = static_cast<LONG>(DocPositionToAcp(AcpToDocPosition(acpTestEnd)));
 
 		return S_OK;
 	}
@@ -1527,6 +1529,24 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
+	void ScintillaWinUI::SetTextStoreSelection(Sci::Position caretPosition, Sci::Position anchorPosition)
+	{
+		// TSF selections contain logical positions, without a bidi visual edge.
+		// An echoed selection must keep the edge chosen by navigation or typing.
+		SelectionPosition nextCaret(caretPosition);
+		SelectionPosition nextAnchor(anchorPosition);
+		const auto &current = sel.RangeMain();
+		// An exact echo carries no new visual information. In particular, do
+		// not reproject completed rectangle edits away from their row carets.
+		if (caretPosition == current.caret.Position() && anchorPosition == current.anchor.Position())
+			return;
+		if (caretPosition == current.caret.Position())
+			nextCaret.SetTrailingEdge(current.caret.TrailingEdge());
+		if (anchorPosition == current.anchor.Position())
+			nextAnchor.SetTrailingEdge(current.anchor.TrailingEdge());
+		__super::SetSelection(nextCaret, nextAnchor);
+	}
+
 	IFACEMETHODIMP ScintillaWinUI::SetSelection(ULONG ulCount, const TS_SELECTION_ACP *pSelection)
 	{
 		// UTF-16 idea
@@ -1556,7 +1576,7 @@ namespace Scintilla::Internal {
 		auto start{ pSelection->acpStart };
 		auto end{ pSelection->acpEnd };
 
-		if (start == _multiInsert)
+		if (_multiCorrect != 0 && start == _multiInsert)
 		{
 			start += _multiCorrect;
 			end += _multiCorrect;
@@ -1565,13 +1585,13 @@ namespace Scintilla::Internal {
 		switch (pSelection->style.ase)
 		{
 		case TsActiveSelEnd::TS_AE_START:
-			__super::SetSelection(AcpToDocPosition(start), AcpToDocPosition(end));
+			SetTextStoreSelection(AcpToDocPosition(start), AcpToDocPosition(end));
 			break;
 		case TsActiveSelEnd::TS_AE_NONE:
 			//DropCaret();
 			//[[fallthrough]];
 		case TsActiveSelEnd::TS_AE_END:
-			__super::SetSelection(AcpToDocPosition(end), AcpToDocPosition(start));
+			SetTextStoreSelection(AcpToDocPosition(end), AcpToDocPosition(start));
 			break;
 		}
 #ifdef EnableTsfDebugMessages
@@ -1805,8 +1825,9 @@ namespace Scintilla::Internal {
 		const auto endPos{ AcpToDocPosition(acpEnd) };
 
 		const auto utf16Len{ pdoc->CountUTF16(startPos, endPos) };
-		LONG multiBefore{ 0 };
-		Scintilla::Position multiBeforeUtf8{ 0 };
+		LONG newAcpStart{ acpStart };
+		_multiInsert = 0;
+		_multiCorrect = 0;
 		if (cch == 0)
 		{
 			pdoc->DeleteChars(startPos, endPos - startPos);
@@ -1814,20 +1835,11 @@ namespace Scintilla::Internal {
 		else
 		{
 			const auto text{ EncodeWString({ pchText, cch }) };
-			const auto cchText{ static_cast<Sci::Position>(text.size()) };
-
-			for (size_t r = 0; r < sel.Count(); r++)
-			{
-				// Todo: What if selections overlap?
-				const auto &range{ sel.Range(r) };
-				if (range.End().Position() < startPos)
-				{
-					// Todo: Try not to have to count both UTF-8 and UTF-16
-					multiBefore += cch - pdoc->CountUTF16(range.Start().Position(), range.End().Position());
-					multiBeforeUtf8 += cchText - range.Length();
-				}
-			}
-			__super::SetSelection(startPos, endPos); // Todo: Fix multi-caret support
+			// A replacement interval has no caret orientation. Keep existing
+			// row anchors when it describes the main selection we already own.
+			const auto &current = sel.RangeMain();
+			if (startPos != current.Start().Position() || endPos != current.End().Position())
+				SetTextStoreSelection(startPos, endPos);
 			try
 			{
 				InsertCharacter(text, Scintilla::CharacterSource::DirectInput);
@@ -1837,16 +1849,17 @@ namespace Scintilla::Internal {
 				// Todo: this catches in error in trying to convert some longer strings into UTF-32
 				// This is not ideal and InsertCharacter should probably be replaced with a custom method based off it
 			}
+			// Rectangle islands coalesce into one insertion per row, and
+			// overtype also deletes at empty row carets. Use the completed edit,
+			// not a forecast based on how many selection ranges it started with.
+			const auto actualEnd{ DocPositionToAcp(sel.MainCaret()) };
+			newAcpStart = actualEnd - cch;
+			_multiInsert = acpStart + cch;
+			_multiCorrect = actualEnd - _multiInsert;
 		}
 
 		if (pChange)
 		{
-			const auto newAcpStart{ DocPositionToAcp(startPos + multiBeforeUtf8) };
-			if (multiBefore)
-			{
-				_multiInsert = newAcpStart - multiBefore + cch;
-				_multiCorrect = multiBefore;
-			}
 			pChange->acpStart = newAcpStart;
 			pChange->acpOldEnd = newAcpStart + utf16Len;
 			pChange->acpNewEnd = newAcpStart + cch;
@@ -1940,7 +1953,10 @@ namespace Scintilla::Internal {
 		{
 			*pacpStart = pChange->acpStart;
 			*pacpEnd = pChange->acpNewEnd;
-			SetEmptySelection(pChange->acpNewEnd);
+			SelectionPosition position(AcpToDocPosition(pChange->acpNewEnd));
+			if (position.Position() == sel.MainCaret())
+				position.SetTrailingEdge(sel.RangeMain().caret.TrailingEdge());
+			SetEmptySelection(position);
 		}
 		return hr;
 	}
@@ -1985,7 +2001,7 @@ namespace Scintilla::Internal {
 		{
 			return TS_E_NOLOCK;
 		}
-		*pacp = pdoc->Length();
+		*pacp = static_cast<LONG>(DocPositionToAcp(pdoc->Length()));
 		return S_OK;
 	}
 
@@ -2052,17 +2068,32 @@ namespace Scintilla::Internal {
 			return TS_E_NOLOCK;
 		}
 
-		// Todo: Original note: What about offscreen positions? I really don't think this works here.
-		auto pr{ RectangleFromRange(Range{ AcpToDocPosition(acpStart), AcpToDocPosition(acpEnd) }, 0) };
-		if (!_mainWrapper->TransformToScreen(pr)) return TS_E_NOLAYOUT;
-		prc->left = pr.left;
-		prc->top = pr.top;
-		prc->right = pr.right;
-		prc->bottom = pr.bottom;
-
-		*pfClipped = 0; // Todo: Not sure what this needs to be
-
-		return S_OK;
+		*prc = {};
+		*pfClipped = FALSE;
+		if (acpStart < 0 || acpEnd < acpStart || acpEnd > DocPositionToAcp(pdoc->Length()))
+			return TS_E_INVALIDPOS;
+		try {
+			bool clipped = false;
+			const auto rectangles = AutomationRangeRectangles(AcpToDocPosition(acpStart), AcpToDocPosition(acpEnd), &clipped);
+			*pfClipped = clipped;
+			if (rectangles.empty()) return TS_E_NOLAYOUT;
+			// TSF accepts a single enclosing box; UIA exposes each visual island.
+			auto bounds = rectangles.front();
+			for (const auto &rectangle : rectangles) {
+				bounds.left = std::min(bounds.left, rectangle.left);
+				bounds.top = std::min(bounds.top, rectangle.top);
+				bounds.right = std::max(bounds.right, rectangle.right);
+				bounds.bottom = std::max(bounds.bottom, rectangle.bottom);
+			}
+			if (!_mainWrapper->TransformToScreen(bounds)) return TS_E_NOLAYOUT;
+			prc->left = static_cast<LONG>(std::floor(bounds.left));
+			prc->top = static_cast<LONG>(std::floor(bounds.top));
+			prc->right = static_cast<LONG>(std::ceil(bounds.right));
+			prc->bottom = static_cast<LONG>(std::ceil(bounds.bottom));
+			return S_OK;
+		} catch (...) {
+			return winrt::to_hresult();
+		}
 	}
 
 	IFACEMETHODIMP ScintillaWinUI::GetScreenExt(TsViewCookie vcView, RECT *prc)
@@ -2198,6 +2229,7 @@ namespace Scintilla::Internal {
 	}
 
 	void ScintillaWinUI::SetHorizontalScrollPos() {
+		if (!_applyingHorizontalViewport) CaptureHorizontalViewport();
 		ChangeScrollPos(SB_HORZ, xOffset);
 	}
 
@@ -2215,14 +2247,63 @@ namespace Scintilla::Internal {
 		return { pageWidth, horizEndPreferred };
 	}
 
-	void ScintillaWinUI::UpdateHorizontalScrollBarInset()
+	double ScintillaWinUI::HorizontalRightOrigin() const {
+		return std::max(0.0, static_cast<double>(BidiLayoutWidth() - GetTextRectangle().Width()));
+	}
+
+	int ScintillaWinUI::ProjectHorizontalOffset(double leadingOffset) const {
+		const double pixels = leadingOffset * (_mainWrapper->LogicalDpi() / 96.0);
+		const double desired = BidirectionalR2L() ? HorizontalRightOrigin() - pixels : pixels;
+		const auto range = GetHorizontalScrollRange();
+		return static_cast<int>(std::clamp(std::round(desired), 0.0,
+			static_cast<double>(std::max(0, range.documentWidth - range.pageWidth + 1))));
+	}
+
+	void ScintillaWinUI::CaptureHorizontalViewport() {
+		if (_viewportRestore || _displayViewport || !BidirectionalR2L() || Wrapping())
+			return;
+		if (bidiWidthsInvalid) {
+			// Input can arrive between metric invalidation and measurement. Its
+			// pixels still refer to the last displayed origin and DPI scale.
+			if (_horizontalViewport) _horizontalViewport->appliedX = xOffset;
+			return;
+		}
+		_horizontalViewport = { HorizontalRightOrigin(), _mainWrapper->LogicalDpi() / 96.0, xOffset };
+	}
+
+	void ScintillaWinUI::ReconcileHorizontalViewport() {
+		if (_applyingHorizontalViewport || _viewportRestore || _displayViewport ||
+			!BidirectionalR2L() || Wrapping() || bidiWidthsInvalid || GetTextRectangle().Empty()) return;
+		if (!_horizontalViewport) {
+			CaptureHorizontalViewport();
+		}
+		const auto previous = *_horizontalViewport;
+		if (previous.rightOrigin == HorizontalRightOrigin() &&
+			previous.scale == _mainWrapper->LogicalDpi() / 96.0 &&
+			previous.appliedX == xOffset &&
+			pendingWidthMeasure == WidthMeasure::none) return;
+		_applyingHorizontalViewport = true;
+		struct Reset { bool &flag; ~Reset() { flag = false; } } reset{_applyingHorizontalViewport};
+		// Publish the measured extent before moving the thumb. Neither automatic
+		// range clamps nor this projection are new horizontal scrolling intent.
+		if (trackLineWidth) {
+			const int measured = std::max({bidiContentWidth, view.lineWidthMaxSeen, 1});
+			scrollWidth = pendingWidthMeasure == WidthMeasure::none ? std::max(scrollWidth, measured) : measured;
+		}
+		pendingWidthMeasure = WidthMeasure::none;
+		SetScrollBars();
+		HorizontalScrollTo(ProjectHorizontalOffset(previous.LeadingOffset()));
+		CaptureHorizontalViewport();
+	}
+
+	void ScintillaWinUI::UpdateScrollBarLayout()
 	{
 		// The fixed margins do not scroll. Keep the scrollbar under the text
 		// rather than under the gutter, with pixel-to-DIP conversion in XAML.
 		int marginWidth = 0;
 		for (const MarginStyle &margin : vs.ms)
 			marginWidth += margin.width;
-		_mainWrapper->HorizontalScrollBarInset(marginWidth);
+		_mainWrapper->UpdateScrollBarLayout(marginWidth, vs.MarginsOnRight(BidirectionalR2L()));
 	}
 
 	bool ScintillaWinUI::ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) {
@@ -2231,7 +2312,7 @@ namespace Scintilla::Internal {
 		}*/
 
 		bool modified = false;
-		UpdateHorizontalScrollBarInset();
+		UpdateScrollBarLayout();
 		const Sci::Line vertEndPreferred = nMax;
 		if (!verticalScrollBarVisible)
 			nPage = vertEndPreferred + 1;
@@ -2241,12 +2322,42 @@ namespace Scintilla::Internal {
 		const HorizontalScrollRange range = GetHorizontalScrollRange();
 		if (ChangeScrollRange(SB_HORZ, 0, range.documentWidth, range.pageWidth)) {
 			modified = true;
-			if (scrollWidth < range.pageWidth) {
+			if (scrollWidth < range.pageWidth && !_horizontalViewport) {
 				HorizontalScrollTo(0);
 			}
 		}
 
 		return modified;
+	}
+
+	void ScintillaWinUI::SetScrollBars()
+	{
+		if (!_displayViewport) {
+			if (_applyingHorizontalViewport) { __super::SetScrollBars(); return; }
+			// SetXYScroll can change X before publishing its larger range.
+			// Adopt that intentional movement before suppressing automatic clamps.
+			if (_horizontalViewport && xOffset != _horizontalViewport->appliedX)
+				CaptureHorizontalViewport();
+			{
+				_applyingHorizontalViewport = true;
+				struct Reset { bool &flag; ~Reset() { flag = false; } } reset{_applyingHorizontalViewport};
+				__super::SetScrollBars();
+			}
+			ReconcileHorizontalViewport();
+			return;
+		}
+		// Layout may clamp either axis. Retain the logical request through
+		// ChangeScrollBars, including its vertical clamp after ModifyScrollBars.
+		const auto revision = _displayViewportRevision;
+		const auto row = DisplayFirstVisibleRow();
+		const auto offset = DisplayHorizontalOffset();
+		__super::SetScrollBars();
+		if (_displayViewport && revision == _displayViewportRevision) {
+			_displayViewport->row = row;
+			_displayViewport->leadingOffset = offset;
+			_displayViewport->appliedTop = topLine;
+			_displayViewport->appliedX = xOffset;
+		}
 	}
 
 	bool ScintillaWinUI::ChangeScrollRange(int nBar, int nMin, int nMax, UINT nPage) noexcept {
@@ -2509,7 +2620,7 @@ namespace Scintilla::Internal {
 			return;
 		auto str{ EncodeWString(text) };
 		UndoGroup ug(pdoc);
-		ClearSelection(multiPasteMode == MultiPaste::Each);
+		if (!ClearSelection(multiPasteMode == MultiPaste::Each)) return;
 
 		const auto initialSel{ sel.RangeMain() }; // Intentional copy
 
@@ -2766,7 +2877,7 @@ namespace Scintilla::Internal {
 		if (!PointInSelection(pt))
 		{
 			CancelModes();
-			SetEmptySelection(PositionFromLocation(pt));
+			SetEmptySelection(SPositionFromLocation(pt, false, false, false));
 		}
 
 		RightButtonDownWithModifiers(pt, timestamp, WindowsModifiers(modifiers));
@@ -2956,62 +3067,165 @@ namespace Scintilla::Internal {
 
 	IFACEMETHODIMP ScintillaWinUI::UpdatesNeeded()
 	{
-		if (!PrepareViewportRestore()) return S_OK;
+		try {
+			struct ResetPaintState {
+				PaintState &state;
+				bool &allText;
+				~ResetPaintState() { state = PaintState::notPainting; allText = false; }
+			} reset{ paintState, paintingAllText };
 
-		ULONG drawingBoundsCount = 0;
-		HRESULT hr = _mainWrapper->VsisNative()->GetUpdateRectCount(&drawingBoundsCount);
-		if (FAILED(hr))
-			return hr;
+			if (!PrepareViewportRestore()) return S_OK;
+			// Prepare before collecting dirty tiles: a later wide row must repaint
+			// untouched tiles containing shorter paragraphs at the previous edge.
+			if (_displayViewport) {
+				if (!PrepareDisplayViewport()) return S_OK;
+			} else {
+				PrepareBidiCanvas();
+				if (BidirectionalR2L() && !Wrapping() &&
+					(bidiWidthsInvalid || _mainWrapper->ScrollBarVisibility() != _layoutScrollBars)) return S_OK;
+			}
 
-		std::unique_ptr<RECT[]> drawingBounds{ std::make_unique<RECT[]>(drawingBoundsCount) };
-		hr = _mainWrapper->VsisNative()->GetUpdateRects(drawingBounds.get(), drawingBoundsCount);
-		if (FAILED(hr))
-			return hr;
+			ULONG drawingBoundsCount = 0;
+			winrt::check_hresult(_mainWrapper->VsisNative()->GetUpdateRectCount(&drawingBoundsCount));
+			std::unique_ptr<RECT[]> drawingBounds{ std::make_unique<RECT[]>(drawingBoundsCount) };
+			winrt::check_hresult(_mainWrapper->VsisNative()->GetUpdateRects(drawingBounds.get(), drawingBoundsCount));
+			paintState = PaintState::painting;
 
-		// Todo: Make sure paintState is being used correctly in this method
-		paintState = PaintState::painting;
+			// Use the compositor's non-overlapping uniform tiles directly. Coalescing
+			// them forces extra compositor copies and increases surface memory.
+			for (ULONG i = 0; i < drawingBoundsCount; i++)
+			{
+				paintingAllText = RECTContains(drawingBounds[i], GetClientRectangle());
+				DrawBit(drawingBounds[i]);
 
-		// This code doesn't try to coalesce multiple drawing bounds into one. Although that
-		// extra process will reduce the number of draw calls, it requires the virtual surface
-		// image source to manage non-uniform tile size, which requires it to make extra copy
-		// operations to the compositor. By using the drawing bounds it directly returns, which are
-		// of non-overlapping uniform tile size, the compositor is able to use these tiles directly,
-		// which can greatly reduce the amount of memory needed by the virtual surface image source.
-		// It will result in more draw calls though, but Direct2D will be able to accommodate that
-		// without significant impact on presentation frame rate.
-		for (ULONG i = 0; i < drawingBoundsCount; i++)
-		{
-			paintingAllText = RECTContains(drawingBounds[i], GetClientRectangle());
-			DrawBit(drawingBounds[i]);
+				if (paintState == PaintState::abandoned)
+					break;
+			}
 
 			if (paintState == PaintState::abandoned)
 			{
-				break;
+				// Styling or brace highlights need more area than the original tile.
+				paintState = PaintState::painting;
+				paintingAllText = true;
+				DrawBit(RECT{ 0, 0, _mainWrapper->Width(), _mainWrapper->Height() });
 			}
+			return S_OK;
+		} catch (...) {
+			const HRESULT result = winrt::to_hresult();
+			// Buffered line surfaces can still own clips from an interrupted paint.
+			// Drop them after DrawBit has closed its local surface and both draws.
+			DropGraphics();
+			redrawPendingText = redrawPendingMargin = false;
+			try { Redraw(); } catch (...) { /* Preserve the original paint failure. */ }
+			return result;
 		}
-
-		if (paintState == PaintState::abandoned)
-		{
-			// Painting area was insufficient to cover new styling or brace highlight positions
-
-			paintState = PaintState::painting;
-			paintingAllText = true;
-			// Todo: This is in contradiction with the above paragraph about drawing size. But invalidation results in flickering
-			DrawBit(RECT{ 0, 0, _mainWrapper->Width(), _mainWrapper->Height() });
-		}
-
-		paintState = PaintState::notPainting;
-
-		return hr;
 	}
 
-	void ScintillaWinUI::RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine)
+	void ScintillaWinUI::RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, bool preservePreferredColumn)
 	{
 		if (!std::isfinite(horizontalOffset) || horizontalOffset < 0 ||
 			documentLine < -1 || subLine < 0)
 			throw winrt::hresult_invalid_argument();
+		_displayViewport.reset();
+		_horizontalViewport.reset();
 		_viewportRestore = { horizontalOffset, documentLine, subLine };
+		if (!preservePreferredColumn) lastXChosen.reset();
 		Redraw();
+	}
+
+	double ScintillaWinUI::DisplayHorizontalOffset() const noexcept
+	{
+		if (!_displayViewport) {
+			if (_viewportRestore) return _viewportRestore->horizontalOffset;
+			if (Wrapping()) return 0;
+			if (_horizontalViewport) return std::max(0.0, _horizontalViewport->LeadingOffset());
+			// The RTL canvas depends on previously measured lines. Persist the
+			// distance from its leading edge, without measuring more text here.
+			const double offset = BidirectionalR2L() ?
+				BidiLayoutWidth() - GetTextRectangle().Width() - xOffset : xOffset;
+			return std::max(0.0, offset) / (_mainWrapper->LogicalDpi() / 96.0);
+		}
+		const auto &viewport = *_displayViewport;
+		if (xOffset == viewport.appliedX) return viewport.leadingOffset;
+		// A physical scroll is interpreted against the last displayed geometry,
+		// not new metrics that have not yet been projected onto the viewport.
+		return std::max(0.0, (BidirectionalR2L() ? viewport.rightOrigin - xOffset : xOffset) / viewport.scale);
+	}
+
+	int64_t ScintillaWinUI::DisplayFirstVisibleRow() const noexcept
+	{
+		return _displayViewport && topLine == _displayViewport->appliedTop ? _displayViewport->row : topLine;
+	}
+
+	void ScintillaWinUI::SetDisplayViewport(int64_t row, double leadingOffset)
+	{
+		if (row < 0 || !std::isfinite(leadingOffset) || leadingOffset < 0 || Wrapping())
+			throw winrt::hresult_invalid_argument();
+		if (_displayViewport && row == DisplayFirstVisibleRow() &&
+			leadingOffset == DisplayHorizontalOffset()) return;
+		_viewportRestore.reset();
+		_horizontalViewport.reset();
+		auto viewport = _displayViewport.value_or(DisplayViewport{});
+		if (!_displayViewport) viewport.scale = _mainWrapper->LogicalDpi() / 96.0;
+		viewport.row = row;
+		viewport.leadingOffset = leadingOffset;
+		viewport.appliedX = xOffset;
+		viewport.appliedTop = topLine;
+		viewport.pending = true;
+		_displayViewport = viewport;
+		++_displayViewportRevision;
+		Redraw();
+	}
+
+	bool ScintillaWinUI::PrepareDisplayViewport()
+	{
+		if (_mainWrapper->ScrollBarVisibility() != _layoutScrollBars ||
+			_mainWrapper->Width() <= 0 || _mainWrapper->Height() <= 0) return false;
+		const auto revision = _displayViewportRevision;
+		auto viewport = *_displayViewport;
+		viewport.row = DisplayFirstVisibleRow();
+		viewport.leadingOffset = DisplayHorizontalOffset();
+		viewport.appliedX = xOffset;
+		viewport.appliedTop = topLine;
+		_displayViewport = viewport;
+		ResumeIdleWork();
+		RefreshStyleData();
+		WrapLines(WrapScope::wsVisible);
+		if (!_displayViewport || revision != _displayViewportRevision) return false;
+		SetTopLine(static_cast<Sci::Line>(std::min<int64_t>(viewport.row, MaxScrollPos())));
+		viewport.appliedTop = topLine;
+		viewport.appliedX = xOffset;
+		_displayViewport = viewport;
+		scrollToAfterWrap.reset();
+		PrepareBidiCanvas();
+		if (trackLineWidth) {
+			const int measured = BidirectionalR2L() ? std::max(bidiContentWidth, view.lineWidthMaxSeen) : MeasureVisibleLineWidth();
+			if (measured < 0 || (BidirectionalR2L() && bidiWidthsInvalid)) return false;
+			// A font/DPI change replaces old measurements; edits retain the
+			// established extent. Clamp only when projecting below, after saving
+			// the logical viewport, so this is never interpreted as scrolling.
+			scrollWidth = pendingWidthMeasure == WidthMeasure::metrics ?
+				std::max({measured, view.lineWidthMaxSeen, 1}) : std::max(scrollWidth, measured);
+		}
+		pendingWidthMeasure = WidthMeasure::none;
+		SetScrollBars();
+		if (!_displayViewport || revision != _displayViewportRevision ||
+			_mainWrapper->ScrollBarVisibility() != _layoutScrollBars) return false;
+		const double scale = _mainWrapper->LogicalDpi() / 96.0;
+		const double rightOrigin = std::max(0.0, static_cast<double>(BidiLayoutWidth() - GetTextRectangle().Width()));
+		const int x = ProjectHorizontalOffset(viewport.leadingOffset);
+		HorizontalScrollTo(x);
+		SetVerticalScrollPos();
+		if (!_displayViewport || revision != _displayViewportRevision) return false;
+		// Even a fully clamped request has a new logical viewport for its peer.
+		if (viewport.pending) ContainerNeedsUpdate(Update::VScroll | Update::HScroll);
+		viewport.pending = false;
+		viewport.appliedX = xOffset;
+		viewport.appliedTop = topLine;
+		viewport.rightOrigin = rightOrigin;
+		viewport.scale = scale;
+		_displayViewport = viewport;
+		return true;
 	}
 
 	bool ScintillaWinUI::PrepareViewportRestore()
@@ -3060,14 +3274,33 @@ namespace Scintilla::Internal {
 		}
 		SetTopLine(pcs->DisplayFromDocSub(line, subLine));
 		scrollToAfterWrap.reset();
-		// Without a document anchor, make the current caret visible on both axes.
-		const int x = Wrapping() ? 0 : request.documentLine < 0 ?
-			XYScrollToMakeVisible(SelectionRange(sel.RangeMain().caret), XYScrollOptions::horizontal, caretPolicies).xOffset :
-			static_cast<int>(std::min<double>(INT_MAX / 2, std::round(request.horizontalOffset * scale)));
-		// Initialization starts with an unknown text width. Keep the restored
-		// horizontal position while the visible lines establish that extent.
+		// Establish the shared canvas before following the caret. A wider later
+		// visible line must not move an RTL caret offscreen after X is calculated.
+		PrepareBidiCanvas();
+		if (BidirectionalR2L() && !Wrapping() && bidiWidthsInvalid) return false;
 		if (trackLineWidth && !Wrapping()) {
-			scrollWidth = std::max(scrollWidth, MeasureVisibleLineWidth());
+			const auto measured = BidirectionalR2L() ? std::max(bidiContentWidth, view.lineWidthMaxSeen) : MeasureVisibleLineWidth();
+			if (measured < 0) return false;
+			scrollWidth = std::max(scrollWidth, measured);
+		}
+		// Without a document anchor, make the current caret visible on both axes.
+		int x = 0;
+		if (!Wrapping()) {
+			if (request.documentLine < 0) {
+				x = XYScrollToMakeVisible(SelectionRange(sel.CaretForDisplay()), XYScrollOptions::horizontal, caretPolicies).xOffset;
+			} else if (BidirectionalR2L()) {
+				// A fresh editor may have a much narrower canvas than the previous
+				// session. Project the saved leading offset onto the current text.
+				const double rightOrigin = std::max(0.0, static_cast<double>(BidiLayoutWidth() - GetTextRectangle().Width()));
+				x = static_cast<int>(std::clamp(std::round(rightOrigin - request.horizontalOffset * scale),
+					0.0, std::min<double>(INT_MAX / 2, rightOrigin)));
+			} else {
+				x = static_cast<int>(std::min<double>(INT_MAX / 2, std::round(request.horizontalOffset * scale)));
+			}
+		}
+		// LTR positions remain absolute while lazy measurement discovers the
+		// extent. An anchored RTL restore instead clamps to its current canvas.
+		if (trackLineWidth && !Wrapping() && (request.documentLine < 0 || !BidirectionalR2L())) {
 			if (x > 0) scrollWidth = std::max(scrollWidth, x + GetHorizontalScrollRange().pageWidth);
 		}
 		// This explicit saved offset supersedes the pre-load font/DPI width
@@ -3081,13 +3314,18 @@ namespace Scintilla::Internal {
 		HorizontalScrollTo(x);
 		SetVerticalScrollPos();
 		_viewportRestore.reset();
+		CaptureHorizontalViewport();
 		Redraw();
 		return true;
 	}
 
 	void ScintillaWinUI::DrawBit(RECT const &drawingBounds)
 	{
-		const auto &sisNativeWithD2D{ _mainWrapper->SisNativeWithD2D() };
+		const auto sisNativeWithD2D{ _mainWrapper->SisNativeWithD2D() };
+		const auto deviceLost = [](HRESULT result) noexcept {
+			return result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET ||
+				result == E_SURFACE_CONTENTS_LOST || result == D2DERR_RECREATE_TARGET;
+		};
 
 		winrt::com_ptr<IDXGISurface> surface;
 		POINT surfaceOffset = { 0 };
@@ -3099,13 +3337,13 @@ namespace Scintilla::Internal {
 		//This method returns the point (x,y) offset of the updated target rectangle in the offset
 		//parameter. You use this offset to determine where to draw into inside the IDXGISurface.
 		HRESULT beginDrawHR = sisNativeWithD2D->BeginDraw(drawingBounds, __uuidof(::IDXGISurface), surface.put_void(), &surfaceOffset);
-		if (FAILED(beginDrawHR) && beginDrawHR != DXGI_ERROR_DEVICE_REMOVED && beginDrawHR != DXGI_ERROR_DEVICE_RESET && beginDrawHR != E_SURFACE_CONTENTS_LOST)
+		if (FAILED(beginDrawHR) && !deviceLost(beginDrawHR))
 		{
 			// A failed BeginDraw provides no surface and has no matching EndDraw.
 			Redraw();
 			return;
 		}
-		if (beginDrawHR == DXGI_ERROR_DEVICE_REMOVED || beginDrawHR == DXGI_ERROR_DEVICE_RESET || beginDrawHR == E_SURFACE_CONTENTS_LOST)
+		if (deviceLost(beginDrawHR))
 		{
 			// For surface lost:
 			// Handles what seems to be a XAML-specific issue https://github.com/Microsoft/Win2D/blob/master/winrt/lib/xaml/CanvasControl.cpp#L199
@@ -3121,20 +3359,14 @@ namespace Scintilla::Internal {
 			InvalidateStyleRedraw(); // just Redraw() does not work
 			return;
 		}
-		else
+		SurfaceDrawSession draw{ sisNativeWithD2D.get() };
 		{
-			const auto &d2dDeviceContext{ _mainWrapper->D2dDeviceContext() };
+			const auto d2dDeviceContext{ _mainWrapper->D2dDeviceContext() };
 
 			winrt::com_ptr<ID2D1Bitmap1> bitmap;
-			// surface can be null if E_FAIL (got while debugging)
-			// Todo: handle general fail case for above
-			HRESULT hrBitMap = d2dDeviceContext->CreateBitmapFromDxgiSurface(
-				surface.get(), nullptr, bitmap.put());
-			if (FAILED(hrBitMap))
-			{
-				winrt::throw_hresult(hrBitMap);
-			}
-			d2dDeviceContext->BeginDraw();
+			winrt::check_hresult(d2dDeviceContext->CreateBitmapFromDxgiSurface(
+				surface.get(), nullptr, bitmap.put()));
+			draw.BeginD2D(d2dDeviceContext.get());
 			d2dDeviceContext->SetTarget(bitmap.get());
 
 			surfaceOffset.x -= drawingBounds.left;
@@ -3145,12 +3377,8 @@ namespace Scintilla::Internal {
 			d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Translation(offsetX, offsetY));
 
 			// Constrain the drawing only to the designated portion of the surface
-			d2dDeviceContext->PushAxisAlignedClip(
-				D2D1::RectF(
-					drawingBounds.left, drawingBounds.top, drawingBounds.right, drawingBounds.bottom
-				),
-				D2D1_ANTIALIAS_MODE_ALIASED
-			);
+			draw.PushClip(D2D1::RectF(
+				drawingBounds.left, drawingBounds.top, drawingBounds.right, drawingBounds.bottom));
 			// Clear only the invalidated tile. Alpha backgrounds must replace
 			// previous text/highlights instead of blending over stale pixels.
 			d2dDeviceContext->Clear(D2D1::ColorF(0, 0.0f));
@@ -3177,13 +3405,17 @@ namespace Scintilla::Internal {
 						FillStroke(ColourRGBA(0, 0, 0, 0), ColourRGBA(highlight.colour), scale));
 			}
 
-			surf->Release();
-			d2dDeviceContext->PopAxisAlignedClip();
-
-			d2dDeviceContext->EndDraw();
+			// Destroy the local Surface before the session removes its outer clip.
 		}
 
-		sisNativeWithD2D->EndDraw();
+		const HRESULT result = draw.Finish();
+		if (deviceLost(result))
+		{
+			_mainWrapper->CreateGraphicsDevices();
+			InvalidateStyleRedraw();
+			return;
+		}
+		winrt::check_hresult(result);
 	}
 
 	UINT ScintillaWinUI::CodePageOfDocument() const noexcept {
@@ -3568,6 +3800,8 @@ namespace Scintilla::Internal {
 		}
 		previous->ReleaseLineCharacterIndex(LineCharacterIndexType::Utf16);
 		_viewportRestore.reset();
+		_displayViewport.reset();
+		_horizontalViewport.reset();
 		_syntaxState.reset();
 		_syntaxMemoryPaused = false;
 		++_documentRevision;
@@ -3693,22 +3927,56 @@ namespace Scintilla::Internal {
 
 		case Scintilla::Message::SetBidirectional:
 		{
-			if (static_cast<Bidirectional>(wParam) <= Bidirectional::R2L)
-			{
-				bidirectional = static_cast<Bidirectional>(wParam);
-			}
-			// Invalidate all cached information including layout.
-			InvalidateStyleRedraw();
+			if (wParam > static_cast<uptr_t>(Bidirectional::R2L) ||
+				bidirectional == static_cast<Bidirectional>(wParam)) return 0;
+			_displayViewport.reset();
+			_horizontalViewport.reset();
+			bidirectional = static_cast<Bidirectional>(wParam);
+			lastXChosen.reset();
+			InvalidateStyleRedraw(false);
+			ResetTrackedScrollWidth();
+			HorizontalScrollTo(0);
+			// Resolve alignment and the caret against the final viewport size.
+			// Preserve an explicit restore already waiting for its first paint.
+			if (!_viewportRestore) _viewportRestore = { 0, -1, 0 };
+			SetScrollBars();
 		}
 		return 0;
 
 		case Message::SetDocPointer:
 			return OnSetDocPointer(wParam, lParam);
 
+		case Message::SetWrapMode:
+			if (wParam != static_cast<uptr_t>(Wrap::None)) {
+				_displayViewport.reset();
+				_horizontalViewport.reset();
+			} else if (Wrapping() && BidirectionalR2L() && !_viewportRestore && !_displayViewport) {
+				// Wrapped rows have no horizontal pan. Start the unwrapped canvas
+				// at its leading edge once the new measurements are available.
+				_horizontalViewport = { 0, _mainWrapper->LogicalDpi() / 96.0, 0 };
+			}
+			return __super::WndProc(iMessage, wParam, lParam);
+
+		case Message::SetXOffset:
+		{
+			// This API specifies absolute pixels, even when its value is unchanged.
+			// Resolve a newly scrolled-to canvas before recording that intention.
+			PrepareBidiCanvas();
+			const auto result = __super::WndProc(iMessage, wParam, lParam);
+			CaptureHorizontalViewport();
+			return result;
+		}
+
+		case Message::ClearAll:
+		case Message::SetText:
+			if (!pdoc->IsReadOnly() && (iMessage == Message::ClearAll || lParam != 0))
+				_horizontalViewport.reset();
+			return __super::WndProc(iMessage, wParam, lParam);
+
 		case Message::SetMarginWidthN:
 		{
 			const auto result{ __super::WndProc(iMessage, wParam, lParam) };
-			UpdateHorizontalScrollBarInset();
+			UpdateScrollBarLayout();
 			return result;
 		}
 
@@ -3727,6 +3995,113 @@ namespace Scintilla::Internal {
 			pdoc->SetReadOnly(true);
 			pdoc->SetReadLease(true);
 		}
+	}
+
+	std::vector<PRectangle> ScintillaWinUI::AutomationRangeRectangles(
+		Sci::Position start, Sci::Position end, bool *clipped) {
+		if (clipped) *clipped = false;
+		auto markClipped = [&] { if (clipped) *clipped = true; };
+		std::vector<PRectangle> rectangles;
+		const auto length = pdoc->Length();
+		start = pdoc->MovePositionOutsideChar(std::clamp(start, Sci::Position{0}, length), -1, false);
+		end = pdoc->MovePositionOutsideChar(std::clamp(end, start, length), 1, false);
+		RefreshStyleData();
+		WrapLines(WrapScope::wsVisible);
+		PrepareBidiCanvas();
+		const PRectangle viewport = GetTextRectangle();
+		if (viewport.Empty() || vs.lineHeight <= 0 || pcs->LinesDisplayed() <= 0) {
+			markClipped();
+			return rectangles;
+		}
+		const Sci::Line lastDisplay = std::min(topLine + LinesOnScreen(), pcs->LinesDisplayed() - 1);
+		const Sci::Line firstVisible = pcs->DocFromDisplay(topLine);
+		const Sci::Line lastVisible = pcs->DocFromDisplay(lastDisplay);
+		const Sci::Line startLine = pdoc->SciLineFromPosition(start);
+		const Sci::Line endLine = pdoc->SciLineFromPosition(end > start ? end - 1 : end);
+		if (startLine < firstVisible || endLine > lastVisible) markClipped();
+		const Sci::Line first = std::max(startLine, firstVisible);
+		const Sci::Line last = std::min(endLine, lastVisible);
+		if (first > last) return rectangles;
+		pdoc->EnsureStyledTo(pdoc->LineStart(last + 1));
+		RefreshStyleData();
+		AutoSurface surface(this);
+		if (!surface) return rectangles;
+		auto append = [&](PRectangle rectangle) {
+			const PRectangle visible{
+				std::max(rectangle.left, viewport.left), std::max(rectangle.top, viewport.top),
+				std::min(rectangle.right, viewport.right), std::min(rectangle.bottom, viewport.bottom) };
+			if (visible != rectangle) markClipped();
+			if (!visible.Empty()) rectangles.push_back(visible);
+		};
+		auto appendCaret = [&](Point point) {
+			// A caret at the right alignment edge still occupies one visible pixel.
+			if (point.x >= viewport.left && point.x <= viewport.right)
+				point.x = std::min(point.x, viewport.right - 1);
+			append(PRectangle{point.x, point.y, point.x + 1, point.y + vs.lineHeight});
+		};
+		Sci::Line previousLine = first - 1;
+		for (Sci::Line display = topLine; display <= lastDisplay;) {
+			if (pcs->IsDisplayGap(display)) { ++display; continue; }
+			const Sci::Line line = pcs->DocFromDisplay(display);
+			display = std::max(display + 1, pcs->DisplayLastFromDoc(line) + 1);
+			if (line < first || line > last) continue;
+			if (line > previousLine + 1) markClipped(); // Folded document rows.
+			previousLine = line;
+			const auto ll = view.RetrieveLineLayout(line, *this);
+			if (!ll) { markClipped(); continue; }
+			view.LayoutLine(*this, surface, vs, ll.get(), wrapWidth);
+			const Sci::Position lineStart = pdoc->LineStart(line);
+			const auto localStart = static_cast<int>(std::clamp<Sci::Position>(start - lineStart, 0, ll->numCharsBeforeEOL));
+			const auto localEnd = static_cast<int>(std::clamp<Sci::Position>(end - lineStart, 0, ll->numCharsBeforeEOL));
+			const XYPOSITION originX = vs.TextStart(BidirectionalR2L()) - xOffset;
+			const XYPOSITION originY = static_cast<XYPOSITION>((pcs->DisplayFromDoc(line) - topLine) * vs.lineHeight);
+			if (ll->paragraph) {
+				if (localStart == localEnd) {
+					const auto displayCaret = sel.CaretForDisplay();
+					const bool trailing = start == end && start == displayCaret.Position() && displayCaret.TrailingEdge();
+					const auto point = ll->paragraph->CaretPoint({static_cast<size_t>(localStart), trailing});
+					appendCaret(Point{originX + point.x, originY + point.y});
+				} else {
+					// Bound a whole-document query to the visible paragraph rows,
+					// even when one long physical line wraps thousands of times.
+					const auto rows = ll->paragraph->Lines();
+					const auto finalRow = static_cast<Sci::Line>(rows.size()) - 1;
+					const auto firstRow = std::clamp<Sci::Line>(topLine - pcs->DisplayFromDoc(line), 0, finalRow);
+					const auto lastRow = std::clamp<Sci::Line>(lastDisplay - pcs->DisplayFromDoc(line), firstRow, finalRow);
+					const auto visibleStart = std::max<size_t>(localStart, rows[firstRow].start);
+					const auto visibleEnd = std::min<size_t>(localEnd, rows[lastRow].start + rows[lastRow].length);
+					if (visibleStart != localStart || visibleEnd != localEnd) markClipped();
+					if (visibleStart >= visibleEnd) continue;
+					for (const auto &fragment : ll->paragraph->RangeRectangles(visibleStart, visibleEnd))
+						append(PRectangle{originX + fragment.left, originY + fragment.top,
+							originX + fragment.left + fragment.width, originY + fragment.top + fragment.height});
+				}
+				continue;
+			}
+			if (localStart == localEnd) {
+				const auto point = ll->PointFromPosition(localStart, vs.lineHeight, PointEnd::start);
+				appendCaret(Point{originX + point.x, originY + point.y});
+				continue;
+			}
+			// The fast LTR path still needs one clipped rectangle for each wrapped
+			// row, with endpoints relative to that row rather than the whole line.
+			const int firstSubLine = static_cast<int>(std::clamp<Sci::Line>(topLine - pcs->DisplayFromDoc(line), 0, ll->lines - 1));
+			const int lastSubLine = static_cast<int>(std::clamp<Sci::Line>(lastDisplay - pcs->DisplayFromDoc(line), firstSubLine, ll->lines - 1));
+			if (localStart < ll->LineStart(firstSubLine) || localEnd > ll->LineLastVisible(lastSubLine, LineLayout::Scope::includeEnd)) markClipped();
+			for (int subLine = firstSubLine; subLine <= lastSubLine; ++subLine) {
+				const auto row = ll->SubLineRange(subLine, LineLayout::Scope::includeEnd);
+				const auto from = std::max<Sci::Position>(localStart, row.start);
+				const auto to = std::min<Sci::Position>(localEnd, row.end);
+				if (from >= to) continue;
+				const auto indent = subLine > 0 ? ll->wrapIndent : 0;
+				const auto left = originX + indent + ll->positions[from] - ll->positions[row.start];
+				const auto right = originX + indent + ll->positions[to] - ll->positions[row.start];
+				const auto top = originY + subLine * vs.lineHeight;
+				append(PRectangle{left, top, right, top + vs.lineHeight});
+			}
+		}
+		if (previousLine < last) markClipped();
+		return rectangles;
 	}
 
 	Range ScintillaWinUI::AutomationUnitRange(Sci::Position position, bool word) {
@@ -3771,9 +4146,7 @@ namespace Scintilla::Internal {
 		const auto lineStart = pdoc->LineStart(line);
 		int queryWidth = LineLayout::wrapWidthInfinite;
 		if (Wrapping()) {
-			auto textArea = GetClientRectangle();
-			textArea.left = static_cast<XYPOSITION>(vs.textStart);
-			textArea.right -= vs.rightMarginWidth;
+			const auto textArea = GetTextRectangle();
 			queryWidth = static_cast<int>(textArea.Width());
 		}
 		// Wrapping normally catches up during paint/idle. A synchronous UIA
@@ -3879,6 +4252,7 @@ namespace Scintilla::Internal {
 		const auto previousTopLine = topLine;
 		const auto previousTopPosition = posTopLine;
 		const auto previousXOffset = xOffset;
+		const auto previousHorizontalViewport = _horizontalViewport;
 		const auto previousScrollWidth = scrollWidth;
 		const auto previousMaximumLineWidth = view.lineWidthMaxSeen;
 		const auto previousWrapPending = wrapPending;
@@ -3896,6 +4270,7 @@ namespace Scintilla::Internal {
 			topLine = previousTopLine;
 			posTopLine = previousTopPosition;
 			xOffset = previousXOffset;
+			_horizontalViewport = previousHorizontalViewport;
 			scrollWidth = previousScrollWidth;
 			view.lineWidthMaxSeen = previousMaximumLineWidth;
 			wrapPending = previousWrapPending;
@@ -3903,12 +4278,15 @@ namespace Scintilla::Internal {
 			view.llc.Deallocate();
 			// Refresh restored layout without replacing the publication failure
 			// with a secondary dispatcher/allocation error during cleanup.
-			try { NeedWrapping(); SetScrollBars(); Redraw(); } catch (...) {}
+			try { InvalidateTrackedScrollWidth(); NeedWrapping(); SetScrollBars(); Redraw(); } catch (...) {}
 			throw;
 		}
 		// Logical publication has completed. Presentation failures cannot turn
 		// committed content into a reported rejected/canceled transaction.
+		lastXChosen.reset();
 		_viewportRestore.reset();
+		_displayViewport.reset();
+		_horizontalViewport.reset();
 		try
 		{
 			view.llc.Deallocate();

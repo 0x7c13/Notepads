@@ -14,12 +14,19 @@ public sealed partial class PrintPageFormat : Page
 {
     public RichTextBlock TextContentBlock { get; set; }
 
-    public PrintPageFormat(string textEditorText, FontFamily textEditorFontFamily, double textEditorFontSize, string headerText, string footerText)
+    public PrintPageFormat(string textEditorText, FontFamily textEditorFontFamily, double textEditorFontSize,
+        string headerText, string footerText, bool rightToLeftReadingOrder = false)
     {
         InitializeComponent();
 
         TextContent.FontFamily = textEditorFontFamily;
         TextContent.FontSize = textEditorFontSize;
+        // Document direction is independent of the app's print-preview chrome.
+        TextContent.FlowDirection = rightToLeftReadingOrder ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+        TextContent.TextReadingOrder = TextReadingOrder.UseFlowDirection;
+        TextContent.TextAlignment = rightToLeftReadingOrder ? TextAlignment.Right : TextAlignment.Left;
+        TextContent.HorizontalAlignment = HorizontalAlignment.Stretch;
+        ContinuationPageLinkedContainer.FlowDirection = TextContent.FlowDirection;
 
         if (!string.IsNullOrEmpty(headerText))
         {

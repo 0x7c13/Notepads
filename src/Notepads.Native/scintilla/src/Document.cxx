@@ -1662,6 +1662,7 @@ void *SCI_METHOD Document::ConvertToDocument() {
 Sci::Position Document::Undo() {
 	if (cb.IsReadLeaseActive()) return -1;
 	Sci::Position newPos = -1;
+	bool newPosAtInsertionEnd = false;
 	CheckReadOnly();
 	if ((enteredModification == 0) && (cb.IsCollectingUndo())) {
 		enteredModification++;
@@ -1692,6 +1693,7 @@ Sci::Position Document::Undo() {
 					else
 						ModifiedAt(action.position);
 					newPos = action.position;
+					newPosAtInsertionEnd = action.at == ActionType::remove;
 				}
 
 				ModificationFlags modFlags = ModificationFlags::Undo;
@@ -1720,7 +1722,7 @@ Sci::Position Document::Undo() {
 						modFlags |= ModificationFlags::MultilineUndoRedo;
 				}
 				NotifyModified(DocModification(modFlags, action.position, action.lenData,
-											   linesAdded, action.data, 0, newPos));
+										   linesAdded, action.data, 0, newPos, newPosAtInsertionEnd));
 			}
 
 			const bool endSavePoint = cb.IsSavePoint();
@@ -1735,6 +1737,7 @@ Sci::Position Document::Undo() {
 Sci::Position Document::Redo() {
 	if (cb.IsReadLeaseActive()) return -1;
 	Sci::Position newPos = -1;
+	bool newPosAtInsertionEnd = false;
 	CheckReadOnly();
 	if ((enteredModification == 0) && (cb.IsCollectingUndo())) {
 		enteredModification++;
@@ -1760,6 +1763,7 @@ Sci::Position Document::Redo() {
 				if (action.at != ActionType::container) {
 					ModifiedAt(action.position);
 					newPos = action.position;
+					newPosAtInsertionEnd = action.at == ActionType::insert;
 				}
 
 				ModificationFlags modFlags = ModificationFlags::Redo;
@@ -1781,7 +1785,7 @@ Sci::Position Document::Redo() {
 				}
 				NotifyModified(
 					DocModification(modFlags, action.position, action.lenData,
-									linesAdded, action.data, 0, newPos));
+									linesAdded, action.data, 0, newPos, newPosAtInsertionEnd));
 			}
 
 			const bool endSavePoint = cb.IsSavePoint();

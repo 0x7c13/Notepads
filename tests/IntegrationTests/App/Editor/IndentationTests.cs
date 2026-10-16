@@ -192,9 +192,19 @@ internal static class IndentationTests
         Load(core, "csharp", "void F() ^");
         native.Colourise(0, -1);
         native.AddText(1, "{");
-        Check(native.EndStyled < native.Length, "typing leaves the brace unstyled");
         core.TestEnter();
-        Expect(core, native, "void F() {\r    ^", "Enter right after typing styles the line first");
+        Expect(core, native, "void F() {\r    ^", "Enter immediately after typing works before a paint");
+
+        Load(core, "csharp", "void F() ^");
+        native.Colourise(0, -1);
+        native.AddText(1, "{");
+        // A synchronous TSF layout request may already style the edit. Reset
+        // the lexer in this separate fixture to exercise Enter with pending
+        // tokenization independently of notification ordering.
+        var profile = SyntaxLanguageProfile.Create("csharp", "pending.cs");
+        native.SetLexerLanguage(profile.Lexer, profile.Keywords, profile.PropertyNames, profile.PropertyValues);
+        core.TestEnter();
+        Expect(core, native, "void F() {\r    ^", "Enter with pending tokenization styles the line first");
 
         Enter(core, native, "csharp", "// {^", "// {\r^", "C# brace in a comment");
         Enter(core, native, "csharp", "s = \"{^\";", "s = \"{\r^\";", "C# brace in a string");

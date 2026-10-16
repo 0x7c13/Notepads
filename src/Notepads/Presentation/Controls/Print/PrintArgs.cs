@@ -102,7 +102,8 @@ public static class PrintArgs
                     new FontFamily(ApplicationPreferences.EditorFontFamily),
                     ApplicationPreferences.EditorFontSize,
                     _headerText,
-                    _footerText);
+                    _footerText,
+                    textEditor.GetTextEditorStateMetaData().RightToLeftReadingOrder);
 
                 _firstPage.Add(page);
 

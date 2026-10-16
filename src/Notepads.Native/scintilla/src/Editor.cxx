@@ -70,6 +70,7 @@
 #include "EditModel.h"
 #include "MarginView.h"
 #include "EditView.h"
+#include "ParagraphLayout.h"
 #include "Editor.h"
 #include "ElapsedPeriod.h"
 
@@ -123,6 +124,31 @@ sptr_t SPtrFromPtr(const void *ptr) noexcept {
 	return reinterpret_cast<sptr_t>(ptr);
 }
 
+struct SelectedParagraphEdge {
+	ParagraphCaret caret;
+	XYPOSITION x;
+};
+
+std::optional<SelectedParagraphEdge> ParagraphSelectionEdge(const IParagraphLayout &paragraph,
+	size_t start, size_t end, size_t row, bool right) {
+	std::optional<SelectedParagraphEdge> edge;
+	for (const auto &rect : paragraph.RangeRectangles(start, end)) {
+		if (rect.top != paragraph.Lines()[row].top) continue;
+		const XYPOSITION x = right ? rect.left + rect.width : rect.left;
+		if (edge && (right ? x <= edge->x : x >= edge->x)) continue;
+		// Each range rectangle is a directional interval. Its own logical ends
+		// retain selection ownership at a shared bidi boundary, unlike HitTest,
+		// which may choose an adjacent, unselected run at the same physical X.
+		const ParagraphCaret first{rect.start, false};
+		const ParagraphCaret last{rect.start + rect.length, true};
+		const auto firstPoint = paragraph.CaretPoint(first);
+		const auto lastPoint = paragraph.CaretPoint(last);
+		edge = SelectedParagraphEdge{
+			std::abs(firstPoint.x - x) <= std::abs(lastPoint.x - x) ? first : last, x};
+	}
+	return edge;
+}
+
 }
 
 Timer::Timer() noexcept :
@@ -158,7 +184,6 @@ Editor::Editor() : durationWrapOneByte(0.000001, 0.00000001, 0.00001) {
 	hotSpotClickPos = Sci::invalidPosition;
 	selectionUnit = TextUnit::character;
 
-	lastXChosen = 0;
 	lineAnchorPos = 0;
 	originalAnchorPos = 0;
 	wordSelectAnchorStartPos = 0;
@@ -183,7 +208,6 @@ Editor::Editor() : durationWrapOneByte(0.000001, 0.00000001, 0.00001) {
 	multipleSelection = false;
 	additionalSelectionTyping = false;
 	multiPasteMode = MultiPaste::Once;
-	virtualSpaceOptions = VirtualSpace::None;
 
 	targetRange = SelectionSegment();
 	searchFlags = FindOption::None;
@@ -237,6 +261,11 @@ void Editor::DropGraphics() noexcept {
 }
 
 void Editor::InvalidateTrackedScrollWidth(bool metrics) noexcept {
+	// Retain the established canvas until replacement measurements are ready.
+	// Widths measured by navigation outside the viewport are valid evidence too.
+	bidiContentWidth = std::max(bidiContentWidth, view.lineWidthMaxSeen);
+	bidiWidthsInvalid = true;
+	bidiVisibleDirty = true;
 	if (trackLineWidth) {
 		// Keep the published width until the widen tick measures the visible lines,
 		// so deletes and restyles never collapse the scrollbar or reset the view.
@@ -253,6 +282,10 @@ void Editor::InvalidateTrackedScrollWidth(bool metrics) noexcept {
 }
 
 void Editor::ResetTrackedScrollWidth() noexcept {
+	bidiContentWidth = 0;
+	bidiWidthsInvalid = true;
+	bidiVisibleDirty = true;
+	if (BidirectionalR2L()) view.lineWidthMaxSeen = 0;
 	if (trackLineWidth) {
 		// Nothing measured for a previous document or width policy applies.
 		view.lineWidthMaxSeen = 0;
@@ -266,7 +299,7 @@ int Editor::MeasureVisibleLineWidth() {
 	RefreshStyleData();
 	AutoSurface surface(this);
 	if (!surface)
-		return 0;
+		return -1;
 	int width = 0;
 	const Sci::Line end = std::min(topLine + LinesOnScreen() + 1, pcs->LinesDisplayed());
 	for (Sci::Line visible = topLine; visible < end; visible++) {
@@ -276,12 +309,60 @@ int Editor::MeasureVisibleLineWidth() {
 		if (!ll)
 			continue;
 		view.LayoutLine(*this, surface, vs, ll.get(), wrapWidth);
-		width = std::max(width, static_cast<int>(ll->positions[ll->numCharsInLine]));
+		const auto measured = ll->paragraph ? ll->paragraph->WidthIncludingPadding() : ll->positions[ll->numCharsInLine];
+		width = std::max(width, static_cast<int>(std::ceil(measured)));
 	}
 	return width;
 }
 
+void Editor::PrepareBidiCanvas() {
+	if (!BidirectionalR2L() || Wrapping() || bidiCanvasPreparing || pcs->LinesDisplayed() <= 0)
+		return;
+	const auto text = GetTextRectangle();
+	if (text.Empty()) return;
+	const Point viewport(text.Width(), text.Height());
+	if (!bidiVisibleDirty && bidiMeasuredTopLine == topLine && bidiMeasuredViewport == viewport) {
+		ReconcileHorizontalViewport();
+		return;
+	}
+	// Refreshing styles can rebuild a rectangle selection and query positions.
+	// Those nested queries use the established canvas until publication below.
+	bidiCanvasPreparing = true;
+	struct RestoreFlag {
+		bool &flag;
+		~RestoreFlag() { flag = false; }
+	} restore{bidiCanvasPreparing};
+	RefreshStyleData();
+	const auto lastDisplay = std::min(topLine + LinesOnScreen(), pcs->LinesDisplayed() - 1);
+	const auto lastLine = std::clamp<Sci::Line>(pcs->DocFromDisplay(lastDisplay), 0, pdoc->LinesTotal() - 1);
+	pdoc->EnsureStyledTo(pdoc->LineStart(lastLine + 1));
+	const auto previousWidth = BidiLayoutWidth();
+	const bool replaceWidths = bidiWidthsInvalid;
+	if (replaceWidths) {
+		bidiContentWidth = std::max(bidiContentWidth, view.lineWidthMaxSeen);
+		view.lineWidthMaxSeen = 0;
+	}
+	const int measured = MeasureVisibleLineWidth();
+	if (measured < 0) return;
+	bidiContentWidth = replaceWidths ? measured : std::max({bidiContentWidth, view.lineWidthMaxSeen, measured});
+	bidiWidthsInvalid = false;
+	bidiVisibleDirty = false;
+	bidiMeasuredTopLine = topLine;
+	const auto measuredText = GetTextRectangle();
+	bidiMeasuredViewport = Point(measuredText.Width(), measuredText.Height());
+	PublishBidiCanvas(previousWidth);
+}
+
+int Editor::PublishBidiCanvas(XYPOSITION previousWidth) {
+	if (!BidirectionalR2L() || Wrapping()) return 0;
+	if (BidiLayoutWidth() != previousWidth) Redraw();
+	const int previousOffset = xOffset;
+	ReconcileHorizontalViewport();
+	return previousOffset - xOffset;
+}
+
 void Editor::InvalidateStyleData() noexcept {
+	bidiVisibleDirty = true;
 	stylesValid = false;
 	vs.technology = technology;
 	DropGraphics();
@@ -351,11 +432,15 @@ PRectangle Editor::GetClientDrawingRectangle() {
 	return GetClientRectangle();
 }
 
+XYPOSITION Editor::BidiLayoutWidth() const {
+	const XYPOSITION viewport = GetTextRectangle().Width();
+	const XYPOSITION width = Wrapping() ? viewport : std::max<XYPOSITION>(viewport, std::max(bidiContentWidth, view.lineWidthMaxSeen));
+	// Logical position queries may run before XAML supplies a usable viewport.
+	return std::max<XYPOSITION>(1, width);
+}
+
 PRectangle Editor::GetTextRectangle() const {
-	PRectangle rc = GetClientRectangle();
-	rc.left += vs.textStart;
-	rc.right -= vs.rightMarginWidth;
-	return rc;
+	return vs.TextRectangle(GetClientRectangle(), BidirectionalR2L());
 }
 
 Sci::Line Editor::LinesOnScreen() const {
@@ -401,22 +486,42 @@ SelectionPosition Editor::ClampPositionIntoDocument(SelectionPosition sp) const 
 }
 
 Point Editor::LocationFromPosition(SelectionPosition pos, PointEnd pe) {
+	PrepareBidiCanvas();
 	const PRectangle rcClient = GetTextRectangle();
 	RefreshStyleData();
 	AutoSurface surface(this);
-	return view.LocationFromPosition(surface, *this, pos, topLine, vs, pe, rcClient);
+	const XYPOSITION previousWidth = BidiLayoutWidth();
+	Point result = view.LocationFromPosition(surface, *this, pos, topLine, vs, pe, rcClient);
+	// An offscreen position may discover a wider canvas. Return its coordinates
+	// in the published viewport, just like subsequent caret and UIA queries.
+	result.x += PublishBidiCanvas(previousWidth);
+	return result;
 }
 
 Point Editor::LocationFromPosition(Sci::Position pos, PointEnd pe) {
 	return LocationFromPosition(SelectionPosition(pos), pe);
 }
 
-int Editor::XFromPosition(SelectionPosition sp) {
+TextPositionX Editor::TextXFromPosition(SelectionPosition sp) {
 	const Point pt = LocationFromPosition(sp);
-	return static_cast<int>(pt.x) - vs.textStart + xOffset;
+	return EditView::CaptureTextX(*this, vs, pt.x - vs.TextStart(BidirectionalR2L()) + xOffset);
+}
+
+TextPositionX Editor::CapturePreferredTextX(XYPOSITION x) const {
+	// Wrapped RTL rows also align to their right edge. Unlike a rectangle's
+	// transient coordinates, a preferred column survives viewport changes.
+	const bool fromRight = BidirectionalR2L();
+	return {x - (fromRight ? EditView::TextLayoutWidth(*this) : 0), fromRight};
+}
+
+TextPositionX Editor::PreferredTextXFromPoint(Point pt) const {
+	// Preserve the existing pixel quantization without retaining margins or an
+	// absolute RTL canvas coordinate across subsequent layout changes.
+	return CapturePreferredTextX(static_cast<int>(pt.x) + xOffset - vs.TextStart(BidirectionalR2L()));
 }
 
 SelectionPosition Editor::SPositionFromLocation(Point pt, bool canReturnInvalid, bool charPosition, bool virtualSpace) {
+	PrepareBidiCanvas();
 	RefreshStyleData();
 	AutoSurface surface(this);
 
@@ -428,14 +533,38 @@ SelectionPosition Editor::SPositionFromLocation(Point pt, bool canReturnInvalid,
 	if (canReturnInvalid) {
 		if (!rcClient.Contains(pt))
 			return SelectionPosition(Sci::invalidPosition);
-		if (pt.x < vs.textStart)
-			return SelectionPosition(Sci::invalidPosition);
 		if (pt.y < 0)
 			return SelectionPosition(Sci::invalidPosition);
 	}
 	const PointDocument ptdoc = DocumentPointFromView(pt);
-	return view.SPositionFromLocation(surface, *this, ptdoc, canReturnInvalid,
+	const XYPOSITION previousWidth = BidiLayoutWidth();
+	auto result = view.SPositionFromLocation(surface, *this, ptdoc, canReturnInvalid,
 		charPosition, virtualSpace, vs, rcClient);
+	if (PublishBidiCanvas(previousWidth)) {
+		// Physical input stays at the same screen point when its target layout
+		// changes the canvas; repeat only the now-cached hit calculation.
+		result = view.SPositionFromLocation(surface, *this, DocumentPointFromView(pt), canReturnInvalid,
+			charPosition, virtualSpace, vs, rcClient);
+	}
+	return result;
+}
+
+SelectionPosition Editor::SPositionFromTextLocation(TextPositionX x, int y, bool virtualSpace) {
+	PrepareBidiCanvas();
+	RefreshStyleData();
+	AutoSurface surface(this);
+	PRectangle rcClient = GetTextRectangle();
+	const Point ptOrigin = GetVisibleOriginInMain();
+	rcClient.Move(-ptOrigin.x, -ptOrigin.y);
+	const PointDocument ptdoc = DocumentPointFromView(Point::FromInts(0, y));
+	// Separate margin windows use their scroll-view origin in place of xOffset.
+	// Preserve that conversion while normal editor coordinates need no change.
+	x.offset += ptdoc.x - xOffset;
+	const XYPOSITION previousWidth = BidiLayoutWidth();
+	const auto result = view.SPositionFromTextLocation(surface, *this, x, ptdoc.y,
+		false, false, virtualSpace, vs, rcClient);
+	PublishBidiCanvas(previousWidth);
+	return result;
 }
 
 Sci::Position Editor::PositionFromLocation(Point pt, bool canReturnInvalid, bool charPosition) {
@@ -447,17 +576,17 @@ Sci::Position Editor::PositionFromLocation(Point pt, bool canReturnInvalid, bool
 * Ensure is between whole characters when document is in multi-byte or UTF-8 mode.
 * This method is used for rectangular selections and does not work on wrapped lines.
 */
-SelectionPosition Editor::SPositionFromLineX(Sci::Line lineDoc, int x) {
+SelectionPosition Editor::SPositionFromLineX(Sci::Line lineDoc, TextPositionX x) {
+	PrepareBidiCanvas();
 	RefreshStyleData();
 	if (lineDoc >= pdoc->LinesTotal())
 		return SelectionPosition(pdoc->Length());
 	//Platform::DebugPrintf("Position of (%d,%d) line = %d top=%d\n", pt.x, pt.y, line, topLine);
 	AutoSurface surface(this);
-	return view.SPositionFromLineX(surface, *this, lineDoc, x, vs);
-}
-
-Sci::Position Editor::PositionFromLineX(Sci::Line lineDoc, int x) {
-	return SPositionFromLineX(lineDoc, x).Position();
+	const XYPOSITION previousWidth = BidiLayoutWidth();
+	const auto result = view.SPositionFromLineX(surface, *this, lineDoc, x, vs);
+	PublishBidiCanvas(previousWidth);
+	return result;
 }
 
 Sci::Line Editor::LineFromLocation(Point pt) const noexcept {
@@ -537,7 +666,7 @@ void Editor::RedrawSelMargin(Sci::Line line, bool allAfter) {
 	PRectangle rcMarkers = GetClientRectangle();
 	if (!markersInText) {
 		// Normal case: just draw the margin
-		rcMarkers.right = rcMarkers.left + vs.fixedColumnWidth;
+		rcMarkers = vs.MarginRectangle(rcMarkers, BidirectionalR2L());
 	}
 	const PRectangle rcMarkersFull = rcMarkers;
 	if (line != -1) {
@@ -584,12 +713,12 @@ PRectangle Editor::RectangleFromRange(Range r, int overlap) {
 	const PRectangle rcClientDrawing = GetClientDrawingRectangle();
 	PRectangle rc;
 	const int leftTextOverlap = ((xOffset == 0) && (vs.leftMarginWidth > 0)) ? 1 : 0;
-	rc.left = static_cast<XYPOSITION>(vs.textStart - leftTextOverlap);
+	rc.left = static_cast<XYPOSITION>(vs.TextStart(BidirectionalR2L()) - leftTextOverlap);
 	rc.top = static_cast<XYPOSITION>((minLine - TopLineOfMain()) * vs.lineHeight - overlap);
 	if (rc.top < rcClientDrawing.top)
 		rc.top = rcClientDrawing.top;
 	// Extend to right of prepared area if any to prevent artifacts from caret line highlight
-	rc.right = rcClientDrawing.right;
+	rc.right = rcClientDrawing.right - (vs.MarginsOnRight(BidirectionalR2L()) ? vs.GutterWidth() : 0);
 	rc.bottom = static_cast<XYPOSITION>((maxLine - TopLineOfMain() + 1) * vs.lineHeight + overlap);
 
 	return rc;
@@ -620,29 +749,156 @@ SelectionPosition Editor::SelectionEnd() noexcept {
 
 void Editor::SetRectangularRange() {
 	if (sel.IsRectangular()) {
-		const int xAnchor = XFromPosition(sel.Rectangular().anchor);
-		int xCaret = XFromPosition(sel.Rectangular().caret);
+		AutoSurface surface(this);
+		if (!surface) return;
+		PrepareBidiCanvas();
+		const XYPOSITION previousWidth = BidiLayoutWidth();
+		const TextPositionX xAnchor = TextXFromPosition(sel.Rectangular().anchor);
+		TextPositionX xCaret = TextXFromPosition(sel.Rectangular().caret);
 		if (sel.selType == Selection::SelTypes::thin) {
 			xCaret = xAnchor;
 		}
-		const Sci::Line lineAnchorRect =
-			pdoc->SciLineFromPosition(sel.Rectangular().anchor.Position());
-		const Sci::Line lineCaret =
-			pdoc->SciLineFromPosition(sel.Rectangular().caret.Position());
-		const int increment = (lineCaret > lineAnchorRect) ? 1 : -1;
-		AutoSurface surface(this);
-		for (Sci::Line line=lineAnchorRect; line != lineCaret+increment; line += increment) {
+		const Sci::Line rowAnchor = DisplayFromPosition(sel.Rectangular().anchor);
+		const Sci::Line rowCaret = DisplayFromPosition(sel.Rectangular().caret);
+		const int increment = rowCaret > rowAnchor ? 1 : -1;
+		bool first = true;
+		auto append = [&](SelectionRange range) {
+			if (first) sel.SetSelection(range);
+			else sel.AddSelectionWithoutTrim(range);
+			first = false;
+		};
+		for (Sci::Line row = rowAnchor; row != rowCaret + increment; row += increment) {
+			if (pcs->IsDisplayGap(row)) continue;
+			const Sci::Line line = pcs->DocFromDisplay(row);
+			auto layout = view.RetrieveLineLayout(line, *this);
+			view.LayoutLine(*this, surface, vs, layout.get(), wrapWidth);
+			const Sci::Line subLine = row - pcs->DisplayFromDoc(line);
+			if (subLine < 0 || subLine >= layout->lines) continue;
+			const Sci::Position lineStart = pdoc->LineStart(line);
+			const XYPOSITION layoutWidth = layout->paragraph ? layout->paragraphWidth : EditView::TextLayoutWidth(*this);
+			const XYPOSITION rowAnchorX = xAnchor.Resolve(layoutWidth);
+			const XYPOSITION rowCaretX = xCaret.Resolve(layoutWidth);
+			if (layout->paragraph && rowAnchorX != rowCaretX) {
+				const auto intervals = layout->paragraph->VisualRanges(static_cast<size_t>(subLine),
+					static_cast<float>(rowAnchorX), static_cast<float>(rowCaretX));
+				if (!intervals.empty()) {
+					for (const auto &interval : intervals) {
+						SelectionPosition start(lineStart + static_cast<Sci::Position>(interval.start));
+						SelectionPosition end(lineStart + static_cast<Sci::Position>(interval.start + interval.length));
+						end.SetTrailingEdge(true);
+						const auto a = layout->paragraph->CaretPoint({interval.start, false});
+						const auto b = layout->paragraph->CaretPoint({interval.start + interval.length, true});
+						append(std::abs(rowCaretX - b.x) < std::abs(rowCaretX - a.x) ?
+							SelectionRange(end, start) : SelectionRange(start, end));
+					}
+					continue;
+				}
+			}
+			const double y = static_cast<double>(row) * vs.lineHeight + vs.lineHeight / 2.0;
+			const bool virtualSpace = FlagSet(virtualSpaceOptions, VirtualSpace::RectangularSelection);
 			SelectionRange range(
-				view.SPositionFromLineX(surface, *this, line, xCaret, vs),
-				view.SPositionFromLineX(surface, *this, line, xAnchor, vs));
-			if (!FlagSet(virtualSpaceOptions, VirtualSpace::RectangularSelection))
-				range.ClearVirtualSpace();
-			if (line == lineAnchorRect)
-				sel.SetSelection(range);
-			else
-				sel.AddSelectionWithoutTrim(range);
+				view.SPositionFromTextLocation(surface, *this, xCaret, y,
+					false, false, virtualSpace, vs, GetTextRectangle()),
+				view.SPositionFromTextLocation(surface, *this, xAnchor, y,
+					false, false, virtualSpace, vs, GetTextRectangle()));
+			// A bidi span with no cluster centres selected must remain empty.
+			if (layout->paragraph) range = SelectionRange(range.caret);
+			append(range);
+		}
+		if (first) sel.SetSelection(SelectionRange(sel.Rectangular().caret));
+		PublishBidiCanvas(previousWidth);
+	}
+}
+
+Editor::RectangularReplacement Editor::PrepareRectangularReplacement(std::vector<bool> *replacedSelections) {
+	if (replacedSelections) replacedSelections->clear();
+	if (!sel.IsRectangular() || sel.Empty() || pdoc->IsReadOnly() || SelectionContainsProtected())
+		return RectangularReplacement::unchanged;
+	AutoSurface surface(this);
+	if (!surface) {
+		errorStatus = Status::Failure;
+		return RectangularReplacement::unavailable;
+	}
+	const TextPositionX xAnchor = TextXFromPosition(sel.Rectangular().anchor);
+	const TextPositionX xCaret = TextXFromPosition(sel.Rectangular().caret);
+	const TextPositionX xInsert = ((xAnchor.offset > xCaret.offset) == BidirectionalR2L()) ? xAnchor : xCaret;
+	const Sci::Line mainRow = DisplayFromPosition(sel.Rectangular().caret);
+	struct RowInsertion {
+		SelectionPosition position;
+		std::optional<TextPositionX> selectedEdge;
+		bool hadSelection = false;
+	};
+	std::map<Sci::Line, RowInsertion> insertions;
+	std::vector<SelectionRange> ranges = sel.RangesCopy();
+	for (const auto &range : ranges) {
+		const Sci::Line row = DisplayFromPosition(range.Start());
+		auto &insertion = insertions[row];
+		insertion.hadSelection |= !range.Empty();
+		if (range.Length()) {
+			const Sci::Line line = pcs->DocFromDisplay(row);
+			auto layout = view.RetrieveLineLayout(line, *this);
+			view.LayoutLine(*this, surface, vs, layout.get(), wrapWidth);
+			const Sci::Line subLine = row - pcs->DisplayFromDoc(line);
+			if (layout->paragraph && subLine >= 0 && subLine < layout->lines) {
+				const Sci::Position lineStart = pdoc->LineStart(line);
+				const auto edge = ParagraphSelectionEdge(*layout->paragraph,
+					static_cast<size_t>(range.Start().Position() - lineStart),
+					static_cast<size_t>(range.End().Position() - lineStart), static_cast<size_t>(subLine), BidirectionalR2L());
+				if (edge) {
+					const TextPositionX selectedX = EditView::CaptureTextX(*this, vs, edge->x);
+					if (!insertion.selectedEdge || (BidirectionalR2L() ? selectedX.offset > insertion.selectedEdge->offset :
+						selectedX.offset < insertion.selectedEdge->offset)) {
+						insertion.position = SelectionPosition(lineStart + static_cast<Sci::Position>(edge->caret.position));
+						insertion.position.SetTrailingEdge(edge->caret.trailing);
+						insertion.selectedEdge = selectedX;
+					}
+				}
+			}
 		}
 	}
+	for (auto &[row, insertion] : insertions) {
+		if (!insertion.selectedEdge) {
+			const double y = static_cast<double>(row) * vs.lineHeight + vs.lineHeight / 2.0;
+			insertion.position = view.SPositionFromTextLocation(surface, *this,
+				xInsert, y, false, false, FlagSet(virtualSpaceOptions, VirtualSpace::RectangularSelection), vs, GetTextRectangle());
+		}
+	}
+	// Delete only the selected logical islands, before inserting once per row.
+	// Local insertion anchors follow the same mutations as Scintilla selections.
+	if (replacedSelections) replacedSelections->reserve(insertions.size());
+	std::sort(ranges.begin(), ranges.end(), [](const SelectionRange &a, const SelectionRange &b) {
+		return a.Start() > b.Start();
+	});
+	for (const auto &range : ranges) {
+		const Sci::Position start = range.Start().Position();
+		const Sci::Position length = range.Length();
+		if (length && pdoc->DeleteChars(start, length)) {
+			for (auto &[row, insertion] : insertions) {
+				(void)row;
+				insertion.position.MoveForInsertDelete(false, start, length, true);
+			}
+		}
+	}
+	bool first = true;
+	auto append = [&](const RowInsertion &insertion) {
+		if (first) sel.SetSelection(SelectionRange(insertion.position));
+		else sel.AddSelectionWithoutTrim(SelectionRange(insertion.position));
+		// Only the current input command consumes these flags, in published
+		// selection order. A selected virtual span also suppresses overtype.
+		if (replacedSelections) replacedSelections->push_back(insertion.hadSelection);
+		first = false;
+	};
+	if (mainRow == insertions.begin()->first) {
+		for (auto i = insertions.rbegin(); i != insertions.rend(); ++i) append(i->second);
+	} else {
+		for (const auto &[row, insertion] : insertions) {
+			(void)row;
+			append(insertion);
+		}
+	}
+	sel.selType = Selection::SelTypes::thin;
+	sel.Rectangular() = SelectionRange(sel.RangeMain().caret, sel.Range(0).caret);
+	return RectangularReplacement::prepared;
 }
 
 void Editor::ThinRectangularRange() {
@@ -653,7 +909,9 @@ void Editor::ThinRectangularRange() {
 		} else {
 			sel.Rectangular() = SelectionRange(sel.Range(sel.Count()-1).anchor, sel.Range(0).caret);
 		}
-		SetRectangularRange();
+		// Completed edits own their logical per-row carets. Reproject only a
+		// remaining range (for example whole-line indentation) into a thin column.
+		if (!sel.Empty()) SetRectangularRange();
 	}
 }
 
@@ -702,7 +960,9 @@ void Editor::SetSelection(SelectionPosition currentPos_, SelectionPosition ancho
 	if (sel.selType == Selection::SelTypes::lines) {
 		rangeNew = LineSelectionRange(currentPos_, anchor_);
 	}
-	if (sel.Count() > 1 || !(sel.RangeMain() == rangeNew)) {
+	if (sel.Count() > 1 || !(sel.RangeMain() == rangeNew) ||
+		sel.RangeMain().caret.TrailingEdge() != rangeNew.caret.TrailingEdge() ||
+		sel.RangeMain().anchor.TrailingEdge() != rangeNew.anchor.TrailingEdge()) {
 		InvalidateSelection(rangeNew);
 	}
 	sel.RangeMain() = rangeNew;
@@ -724,7 +984,8 @@ void Editor::SetSelection(Sci::Position currentPos_, Sci::Position anchor_) {
 void Editor::SetSelection(SelectionPosition currentPos_) {
 	currentPos_ = ClampPositionIntoDocument(currentPos_);
 	const Sci::Line currentLine = pdoc->SciLineFromPosition(currentPos_.Position());
-	if (sel.Count() > 1 || !(sel.RangeMain().caret == currentPos_)) {
+	if (sel.Count() > 1 || !(sel.RangeMain().caret == currentPos_) ||
+		sel.RangeMain().caret.TrailingEdge() != currentPos_.TrailingEdge()) {
 		InvalidateSelection(SelectionRange(currentPos_));
 	}
 	if (sel.IsRectangular()) {
@@ -749,7 +1010,9 @@ void Editor::SetSelection(SelectionPosition currentPos_) {
 void Editor::SetEmptySelection(SelectionPosition currentPos_) {
 	const Sci::Line currentLine = pdoc->SciLineFromPosition(currentPos_.Position());
 	SelectionRange rangeNew(ClampPositionIntoDocument(currentPos_));
-	if (sel.Count() > 1 || !(sel.RangeMain() == rangeNew)) {
+	if (sel.Count() > 1 || !(sel.RangeMain() == rangeNew) ||
+		sel.RangeMain().caret.TrailingEdge() != rangeNew.caret.TrailingEdge() ||
+		sel.RangeMain().anchor.TrailingEdge() != rangeNew.anchor.TrailingEdge()) {
 		InvalidateSelection(rangeNew);
 	}
 	sel.Clear();
@@ -979,7 +1242,7 @@ SelectionPosition Editor::MovePositionSoVisible(Sci::Position pos, int moveDir) 
 }
 
 Point Editor::PointMainCaret() {
-	return LocationFromPosition(sel.RangeMain().caret);
+	return LocationFromPosition(sel.CaretForDisplay());
 }
 
 /**
@@ -987,8 +1250,13 @@ Point Editor::PointMainCaret() {
  * as it moves up and down.
  */
 void Editor::SetLastXChosen() {
-	const Point pt = PointMainCaret();
-	lastXChosen = static_cast<int>(pt.x) + xOffset;
+	lastXChosen = PreferredTextXFromPoint(PointMainCaret());
+}
+
+TextPositionX Editor::GetLastXChosen(Point sourcePoint) {
+	if (!lastXChosen)
+		lastXChosen = PreferredTextXFromPoint(sourcePoint);
+	return *lastXChosen;
 }
 
 void Editor::RememberSelectionForUndo(int index) {
@@ -1125,7 +1393,7 @@ void Editor::MoveSelectedLines(int lineDelta) {
 
 	if (lineDelta > 0 && selectionEnd == pdoc->LineStart(pdoc->LinesTotal() - 1)) {
 		SetSelection(pdoc->MovePositionOutsideChar(selectionEnd - 1, -1), selectionEnd);
-		ClearSelection();
+		if (!ClearSelection()) return;
 		selectionEnd = CurrentPosition();
 	}
 	SetSelection(selectionStart, selectionEnd);
@@ -1137,7 +1405,7 @@ void Editor::MoveSelectedLines(int lineDelta) {
 
 	if (appendEol)
 		SetSelection(pdoc->MovePositionOutsideChar(selectionStart - 1, -1), selectionEnd);
-	ClearSelection();
+	if (!ClearSelection()) return;
 
 	const std::string_view eol = pdoc->EOLString();
 	if (currentLine + lineDelta >= pdoc->LinesTotal())
@@ -1164,20 +1432,22 @@ void Editor::MoveCaretInsideView(bool ensureVisible) {
 	const PRectangle rcClient = GetTextRectangle();
 	const Point pt = PointMainCaret();
 	if (pt.y < rcClient.top) {
-		MovePositionTo(SPositionFromLocation(
-		            Point::FromInts(lastXChosen - xOffset, static_cast<int>(rcClient.top)),
-					false, false, UserVirtualSpace()),
+		MovePositionTo(SPositionFromTextLocation(GetLastXChosen(pt),
+					static_cast<int>(rcClient.top), UserVirtualSpace()),
 					Selection::SelTypes::none, ensureVisible);
 	} else if ((pt.y + vs.lineHeight - 1) > rcClient.bottom) {
 		const ptrdiff_t yOfLastLineFullyDisplayed = static_cast<ptrdiff_t>(rcClient.top) + ((LinesOnScreen() - 1) * vs.lineHeight);
-		MovePositionTo(SPositionFromLocation(
-		            Point::FromInts(lastXChosen - xOffset, static_cast<int>(rcClient.top + static_cast<XYPOSITION>(yOfLastLineFullyDisplayed))),
-					false, false, UserVirtualSpace()),
+		MovePositionTo(SPositionFromTextLocation(GetLastXChosen(pt),
+					static_cast<int>(rcClient.top + static_cast<XYPOSITION>(yOfLastLineFullyDisplayed)), UserVirtualSpace()),
 		        Selection::SelTypes::none, ensureVisible);
 	}
 }
 
 Sci::Line Editor::DisplayFromPosition(Sci::Position pos) {
+	return DisplayFromPosition(SelectionPosition(pos));
+}
+
+Sci::Line Editor::DisplayFromPosition(SelectionPosition pos) {
 	AutoSurface surface(this);
 	return view.DisplayFromPosition(surface, *this, pos, vs);
 }
@@ -1244,7 +1514,7 @@ Editor::XYScrollPosition Editor::XYScrollToMakeVisible(const SelectionRange &ran
 	// Vertical positioning
 	if (FlagSet(options, XYScrollOptions::vertical) &&
 		(pt.y < rcClient.top || ptBottomCaret.y >= rcClient.bottom || FlagSet(policies.y.policy, CaretPolicy::Strict))) {
-		const Sci::Line lineCaret = DisplayFromPosition(range.caret.Position());
+		const Sci::Line lineCaret = DisplayFromPosition(range.caret);
 		const Sci::Line linesOnScreen = LinesOnScreen();
 		const Sci::Line halfScreen = std::max(linesOnScreen - 1, static_cast<Sci::Line>(2)) / 2;
 		const bool bSlop = FlagSet(policies.y.policy, CaretPolicy::Slop);
@@ -1331,7 +1601,7 @@ Editor::XYScrollPosition Editor::XYScrollToMakeVisible(const SelectionRange &ran
 			}
 		}
 		if (!(range.caret == range.anchor)) {
-			const Sci::Line lineAnchor = DisplayFromPosition(range.anchor.Position());
+			const Sci::Line lineAnchor = DisplayFromPosition(range.anchor);
 			if (lineAnchor < lineCaret) {
 				// Shift up to show anchor or as much of range as possible
 				newXY.topLine = std::min(newXY.topLine, lineAnchor);
@@ -1500,7 +1770,7 @@ void Editor::ScrollRange(SelectionRange range) {
 }
 
 void Editor::EnsureCaretVisible(bool useMargin, bool vert, bool horiz) {
-	SetXYScroll(XYScrollToMakeVisible(SelectionRange(posDrag.IsValid() ? posDrag : sel.RangeMain().caret),
+	SetXYScroll(XYScrollToMakeVisible(SelectionRange(posDrag.IsValid() ? posDrag : sel.CaretForDisplay()),
 		(useMargin?XYScrollOptions::useMargin:XYScrollOptions::none)|
 		(vert?XYScrollOptions::vertical:XYScrollOptions::none)|
 		(horiz?XYScrollOptions::horizontal:XYScrollOptions::none),
@@ -1542,6 +1812,10 @@ void Editor::CaretSetPeriod(int period) {
 void Editor::InvalidateCaret() {
 	if (posDrag.IsValid()) {
 		InvalidateRange(posDrag.Position(), posDrag.Position() + 1);
+	} else if (sel.selType == Selection::SelTypes::rectangle) {
+		// Every displayed rectangle row has a projected caret, including rows
+		// whose logical islands do not end at the physical rectangle corner.
+		InvalidateRange(sel.Rectangular().Start().Position(), sel.Rectangular().End().Position() + 1);
 	} else {
 		for (size_t r=0; r<sel.Count(); r++) {
 			InvalidateRange(sel.Range(r).caret.Position(), sel.Range(r).caret.Position() + 1);
@@ -1787,9 +2061,7 @@ bool Editor::WrapLines(WrapScope ws) {
 
 		if (lineToWrap < lineToWrapEnd) {
 
-			PRectangle rcTextArea = GetClientRectangle();
-			rcTextArea.left = static_cast<XYPOSITION>(vs.textStart);
-			rcTextArea.right -= vs.rightMarginWidth;
+			const PRectangle rcTextArea = GetTextRectangle();
 			wrapWidth = static_cast<int>(rcTextArea.Width());
 			RefreshStyleData();
 			AutoSurface surface(this);
@@ -1881,11 +2153,9 @@ void Editor::PaintSelMargin(Surface *surfaceWindow, const PRectangle &rc) {
 		return;
 	}
 
-	PRectangle rcMargin = GetClientRectangle();
+	PRectangle rcMargin = vs.MarginRectangle(GetClientRectangle(), BidirectionalR2L());
 	const Point ptOrigin = GetVisibleOriginInMain();
 	rcMargin.Move(0, -ptOrigin.y);
-	rcMargin.left = 0;
-	rcMargin.right = static_cast<XYPOSITION>(vs.fixedColumnWidth);
 
 	if (!rc.Intersects(rcMargin))
 		return;
@@ -1904,11 +2174,18 @@ void Editor::PaintSelMargin(Surface *surfaceWindow, const PRectangle &rc) {
 	if (rcMargin.top < rc.top)
 		rcMargin.top = rc.top;
 
-	marginView.PaintMargin(surface, topLine, rc, rcMargin, *this, vs);
+	// A buffered margin surface has local coordinates, independent of its side.
+	PRectangle rcBuffer = rcMargin;
+	PRectangle rcPaintMargin = rc;
+	if (view.bufferedDraw) {
+		rcBuffer.Move(-rcMargin.left, 0);
+		rcPaintMargin.Move(-rcMargin.left, 0);
+	}
+	marginView.PaintMargin(surface, topLine, rcPaintMargin, rcBuffer, *this, vs);
 
 	if (view.bufferedDraw) {
 		marginView.pixmapSelMargin->FlushDrawing();
-		surfaceWindow->Copy(rcMargin, Point(rcMargin.left, rcMargin.top), *marginView.pixmapSelMargin);
+		surfaceWindow->Copy(rcMargin, Point(0, rcMargin.top), *marginView.pixmapSelMargin);
 	}
 }
 
@@ -1918,7 +2195,7 @@ void Editor::RefreshPixMaps(Surface *surfaceWindow) {
 	if (view.bufferedDraw && !(view.pixmapLine && marginView.pixmapSelMargin)) {
 		const PRectangle rcClient = GetClientRectangle();
 		view.pixmapLine = surfaceWindow->AllocatePixMap(static_cast<int>(rcClient.Width()), vs.lineHeight);
-		marginView.pixmapSelMargin = surfaceWindow->AllocatePixMap(vs.fixedColumnWidth,
+		marginView.pixmapSelMargin = surfaceWindow->AllocatePixMap(std::max(1, vs.GutterWidth()),
 			static_cast<int>(rcClient.Height()));
 	}
 }
@@ -1970,10 +2247,19 @@ void Editor::Paint(Surface *surfaceWindow, PRectangle rcArea) {
 	if (paintState != PaintState::abandoned) {
 		if (vs.marginInside) {
 			PaintSelMargin(surfaceWindow, rcArea);
+			const PRectangle rcText = GetTextRectangle();
+			const PRectangle rcGutter = vs.MarginRectangle(rcClient, BidirectionalR2L());
 			PRectangle rcRightMargin = rcClient;
-			rcRightMargin.left = rcRightMargin.right - vs.rightMarginWidth;
+			rcRightMargin.left = rcText.right;
+			if (vs.MarginsOnRight(BidirectionalR2L())) rcRightMargin.right = rcGutter.left;
 			if (rcArea.Intersects(rcRightMargin)) {
 				surfaceWindow->FillRectangle(rcRightMargin, vs.styles[StyleDefault].back);
+			}
+			PRectangle rcLeftMargin = rcClient;
+			rcLeftMargin.right = rcText.left;
+			if (!vs.MarginsOnRight(BidirectionalR2L())) rcLeftMargin.left = rcGutter.right;
+			if (rcArea.Intersects(rcLeftMargin)) {
+				surfaceWindow->FillRectangle(rcLeftMargin, vs.styles[StyleDefault].back);
 			}
 		} else { // Else separate view so separate paint event but leftMargin included to allow overlap
 			PRectangle rcLeftMargin = rcArea;
@@ -2096,9 +2382,7 @@ void Editor::ChangeSize() {
 	DropGraphics();
 	SetScrollBars();
 	if (Wrapping()) {
-		PRectangle rcTextArea = GetClientRectangle();
-		rcTextArea.left = static_cast<XYPOSITION>(vs.textStart);
-		rcTextArea.right -= vs.rightMarginWidth;
+		const PRectangle rcTextArea = GetTextRectangle();
 		if (wrapWidth != rcTextArea.Width()) {
 			NeedWrapping();
 			Redraw();
@@ -2131,7 +2415,7 @@ void Editor::AddChar(char ch) {
 }
 
 void Editor::FilterSelections() {
-	if (!additionalSelectionTyping && (sel.Count() > 1)) {
+	if (!additionalSelectionTyping && !sel.IsRectangular() && (sel.Count() > 1)) {
 		InvalidateWholeSelection();
 		sel.DropAdditionalRanges();
 	}
@@ -2146,25 +2430,27 @@ void Editor::InsertCharacter(std::string_view sv, CharacterSource charSource) {
 	bool wrapOccurred = false;
 	{
 		UndoGroup ug(pdoc, (sel.Count() > 1) || !sel.Empty() || inOverstrike);
+		std::vector<bool> replacedSelections;
+		if (PrepareRectangularReplacement(inOverstrike ? &replacedSelections : nullptr) == RectangularReplacement::unavailable) return;
 
-		// Vector elements point into selection in order to change selection.
-		std::vector<SelectionRange *> selPtrs;
+		// Keep each selection's replacement status attached to its index while
+		// visiting ranges in document order. No metadata survives this command.
+		std::vector<size_t> selectionOrder;
 		for (size_t r = 0; r < sel.Count(); r++) {
-			selPtrs.push_back(&sel.Range(r));
+			selectionOrder.push_back(r);
 		}
 		// Order selections by position in document.
-		std::sort(selPtrs.begin(), selPtrs.end(),
-			[](const SelectionRange *a, const SelectionRange *b) noexcept {return *a < *b;});
+		std::sort(selectionOrder.begin(), selectionOrder.end(),
+			[this](size_t a, size_t b) noexcept { return sel.Range(a) < sel.Range(b); });
 
 		// Loop in reverse to avoid disturbing positions of selections yet to be processed.
-		for (std::vector<SelectionRange *>::reverse_iterator rit = selPtrs.rbegin();
-			rit != selPtrs.rend(); ++rit) {
-			SelectionRange *currentSel = *rit;
+		for (auto rit = selectionOrder.rbegin(); rit != selectionOrder.rend(); ++rit) {
+			SelectionRange *currentSel = &sel.Range(*rit);
 			if (!RangeContainsProtected(*currentSel)) {
 				Sci::Position positionInsert = currentSel->Start().Position();
 				if (!currentSel->Empty()) {
 					ClearSelectionRange(*currentSel);
-				} else if (inOverstrike) {
+				} else if (inOverstrike && (replacedSelections.empty() || !replacedSelections[*rit])) {
 					if (positionInsert < pdoc->Length()) {
 						if (!pdoc->IsPositionInLineEnd(positionInsert)) {
 							pdoc->DelChar(positionInsert);
@@ -2175,7 +2461,9 @@ void Editor::InsertCharacter(std::string_view sv, CharacterSource charSource) {
 				positionInsert = RealizeVirtualSpace(positionInsert, currentSel->caret.VirtualSpace());
 				const Sci::Position lengthInserted = pdoc->InsertString(positionInsert, sv);
 				if (lengthInserted > 0) {
-					*currentSel = SelectionRange(positionInsert + lengthInserted);
+					SelectionPosition after(positionInsert + lengthInserted);
+					after.SetTrailingEdge(true);
+					*currentSel = SelectionRange(after);
 				}
 				currentSel->ClearVirtualSpace();
 				// If in wrap mode rewrap current line so EnsureCaretVisible has accurate information
@@ -2247,6 +2535,7 @@ void Editor::ClearBeforeTentativeStart() {
 	// Make positions for the first composition string.
 	FilterSelections();
 	UndoGroup ug(pdoc, (sel.Count() > 1) || !sel.Empty() || inOverstrike);
+	if (PrepareRectangularReplacement() == RectangularReplacement::unavailable) return;
 	for (size_t r = 0; r<sel.Count(); r++) {
 		if (!RangeContainsProtected(sel.Range(r))) {
 			ClearSelectionRange(sel.Range(r));
@@ -2257,12 +2546,15 @@ void Editor::ClearBeforeTentativeStart() {
 }
 
 void Editor::InsertPaste(std::string_view text) {
+	if (PrepareRectangularReplacement() == RectangularReplacement::unavailable) return;
 	if (multiPasteMode == MultiPaste::Once) {
 		SelectionPosition selStart = sel.Start();
 		selStart = RealizeVirtualSpace(selStart);
 		const Sci::Position lengthInserted = pdoc->InsertString(selStart.Position(), text);
 		if (lengthInserted > 0) {
-			SetEmptySelection(selStart.Position() + lengthInserted);
+			SelectionPosition after(selStart.Position() + lengthInserted);
+			after.SetTrailingEdge(true);
+			SetEmptySelection(after);
 		}
 	} else {
 		// MultiPaste::Each
@@ -2273,7 +2565,9 @@ void Editor::InsertPaste(std::string_view text) {
 				positionInsert = RealizeVirtualSpace(positionInsert, sel.Range(r).caret.VirtualSpace());
 				const Sci::Position lengthInserted = pdoc->InsertString(positionInsert, text);
 				if (lengthInserted > 0) {
-					sel.Range(r) = SelectionRange(positionInsert + lengthInserted);
+					SelectionPosition after(positionInsert + lengthInserted);
+					after.SetTrailingEdge(true);
+					sel.Range(r) = SelectionRange(after);
 				}
 				sel.Range(r).ClearVirtualSpace();
 			}
@@ -2316,10 +2610,12 @@ void Editor::InsertPasteShape(const char *text, Sci::Position len, PasteShape sh
 	InsertPasteShape(std::string_view(text, len), shape);
 }
 
-void Editor::ClearSelection(bool retainMultipleSelections) {
+bool Editor::ClearSelection(bool retainMultipleSelections) {
 	if (!sel.IsRectangular() && !retainMultipleSelections)
 		FilterSelections();
 	UndoGroup ug(pdoc);
+	const RectangularReplacement preparation = PrepareRectangularReplacement();
+	if (preparation == RectangularReplacement::unavailable) return false;
 	for (size_t r=0; r<sel.Count(); r++) {
 		if (!sel.Range(r).Empty()) {
 			if (!RangeContainsProtected(sel.Range(r))) {
@@ -2329,10 +2625,13 @@ void Editor::ClearSelection(bool retainMultipleSelections) {
 			}
 		}
 	}
-	ThinRectangularRange();
+	// Prepared insertion anchors already followed the deletions. Reprojecting
+	// a thin rectangle here could move them across newly adjacent bidi runs.
+	if (preparation != RectangularReplacement::prepared) ThinRectangularRange();
 	sel.RemoveDuplicates();
 	ClaimSelection();
 	SetHoverIndicatorPosition(sel.MainCaret());
+	return true;
 }
 
 void Editor::ClearAll() {
@@ -2350,6 +2649,10 @@ void Editor::ClearAll() {
 	}
 
 	view.ClearAllTabstops();
+	if (BidirectionalR2L() && !pdoc->IsReadOnly()) {
+		bidiContentWidth = 0;
+		view.lineWidthMaxSeen = 0;
+	}
 
 	sel.Clear();
 	SetTopLine(0);
@@ -2404,8 +2707,7 @@ void Editor::PasteRectangular(SelectionPosition pos, std::string_view text) {
 	Sci::Line line = pdoc->SciLineFromPosition(sel.MainCaret());
 	UndoGroup ug(pdoc);
 	sel.RangeMain().caret = RealizeVirtualSpace(sel.RangeMain().caret);
-	const int xInsert = XFromPosition(sel.RangeMain().caret);
-	bool prevCr = false;
+	const TextPositionX xInsert = TextXFromPosition(sel.RangeMain().caret);
 	constexpr Sci::Position maxBatchSpaces = 8192;
 	XYPOSITION maxSpaceWidth = 0;
 	for (const Style &style : vs.styles) {
@@ -2414,45 +2716,52 @@ void Editor::PasteRectangular(SelectionPosition pos, std::string_view text) {
 	while ((!text.empty()) && IsEOLCharacter(text.back())) {
 		text.remove_suffix(1);
 	}
-	for (size_t i = 0; i < text.length(); i++) {
-		if (IsEOLCharacter(text[i])) {
-			if ((text[i] == '\r') || (!prevCr))
-				line++;
+	for (size_t i = 0; i < text.length();) {
+		const size_t end = text.find_first_of("\r\n", i);
+		const size_t rowEnd = end == std::string_view::npos ? text.size() : end;
+		const Sci::Position inserted = pdoc->InsertString(sel.MainCaret(), text.substr(i, rowEnd - i));
+		sel.RangeMain().caret.Add(inserted);
+		sel.RangeMain().caret.SetTrailingEdge(true);
+		if (rowEnd == text.size()) break;
+		i = rowEnd + ((text[rowEnd] == '\r' && rowEnd + 1 < text.size() && text[rowEnd + 1] == '\n') ? 2 : 1);
+		if (i < text.size()) {
+			line++;
 			if (line >= pdoc->LinesTotal()) {
 				const std::string_view eol = pdoc->EOLString();
 				pdoc->InsertString(pdoc->LengthNoExcept(), eol);
 			}
 			// Pad the end of lines with spaces if required
-			sel.RangeMain().caret.SetPosition(PositionFromLineX(line, xInsert));
-			const int xCurrent = XFromPosition(sel.RangeMain().caret);
-			if ((xCurrent < xInsert) && (i + 1 < text.length())) {
-				if (pdoc->IsLineEndPosition(sel.MainCaret())) {
-					int xAfterBatch = xCurrent;
-					while ((xAfterBatch < xInsert) && (maxSpaceWidth > 0)) {
-						const int missing = xInsert - xAfterBatch;
-						const Sci::Position spacesEstimate = static_cast<Sci::Position>(missing / maxSpaceWidth);
-						if (spacesEstimate <= 2) {
-							break;
-						}
-						const Sci::Position batchSpaces = std::min(spacesEstimate - 1, maxBatchSpaces);
-						const std::string pad(static_cast<size_t>(batchSpaces), ' ');
-						const Sci::Position lengthInserted = pdoc->InsertString(sel.MainCaret(), pad);
-						sel.RangeMain().caret.Add(lengthInserted);
-						xAfterBatch = XFromPosition(sel.RangeMain().caret);
+			sel.RangeMain().caret = SPositionFromLineX(line, xInsert);
+			sel.RangeMain().caret.SetVirtualSpace(0);
+			const XYPOSITION xCurrent = TextXFromPosition(sel.RangeMain().caret).offset;
+			const int direction = BidirectionalR2L() ? -1 : 1;
+			if ((xInsert.offset - xCurrent) * direction > 0 && pdoc->IsLineEndPosition(sel.MainCaret())) {
+				XYPOSITION xAfterBatch = xCurrent;
+				while (((xInsert.offset - xAfterBatch) * direction > 0) && (maxSpaceWidth > 0)) {
+					const XYPOSITION missing = (xInsert.offset - xAfterBatch) * direction;
+					const Sci::Position spacesEstimate = static_cast<Sci::Position>(missing / maxSpaceWidth);
+					if (spacesEstimate <= 2) {
+						break;
 					}
+					const Sci::Position batchSpaces = std::min(spacesEstimate - 1, maxBatchSpaces);
+					const std::string pad(static_cast<size_t>(batchSpaces), ' ');
+					const Sci::Position lengthInserted = pdoc->InsertString(sel.MainCaret(), pad);
+					sel.RangeMain().caret.Add(lengthInserted);
+					const XYPOSITION nextX = TextXFromPosition(sel.RangeMain().caret).offset;
+					if ((nextX - xAfterBatch) * direction <= 0) break;
+					xAfterBatch = nextX;
 				}
 
-				while (XFromPosition(sel.RangeMain().caret) < xInsert) {
+				XYPOSITION xBefore = TextXFromPosition(sel.RangeMain().caret).offset;
+				while ((xInsert.offset - xBefore) * direction > 0) {
 					assert(pdoc);
 					const Sci::Position lengthInserted = pdoc->InsertString(sel.MainCaret(), " ", 1);
 					sel.RangeMain().caret.Add(lengthInserted);
+					const XYPOSITION xAfter = TextXFromPosition(sel.RangeMain().caret).offset;
+					if ((xAfter - xBefore) * direction <= 0) break;
+					xBefore = xAfter;
 				}
 			}
-			prevCr = text[i] == '\r';
-		} else {
-			const Sci::Position lengthInserted = pdoc->InsertString(sel.MainCaret(), text.substr(i, 1));
-			sel.RangeMain().caret.Add(lengthInserted);
-			prevCr = false;
 		}
 	}
 	SetEmptySelection(pos);
@@ -2493,7 +2802,7 @@ void Editor::Clear() {
 			}
 		}
 	} else {
-		ClearSelection();
+		if (!ClearSelection()) return;
 	}
 	sel.RemoveDuplicates();
 	ShowCaretAtCurrentPosition();		// Avoid blinking
@@ -2505,7 +2814,7 @@ void Editor::SelectAll() {
 	Redraw();
 }
 
-void Editor::RestoreSelection(Sci::Position newPos, UndoRedo history) {
+void Editor::RestoreSelection(SelectionPosition newPos, UndoRedo history) {
 	EnsureModelState();
 	if (FlagSet(undoSelectionHistoryOption, UndoSelectionHistoryOption::Enabled) && modelState) {
 		// Undo wants the element after the current as it just undid it
@@ -2525,11 +2834,11 @@ void Editor::RestoreSelection(Sci::Position newPos, UndoRedo history) {
 					sel.SetMain(mainForRectangular);
 				}
 			}
-			newPos = -1; // Used selection from stack so don't use position returned from undo/redo.
+			newPos = SelectionPosition(); // Used selection from stack so don't use position returned from undo/redo.
 			Redraw();
 		}
 	}
-	if (newPos >= 0)
+	if (newPos.IsValid())
 		SetEmptySelection(newPos);
 	EnsureCaretVisible();
 }
@@ -2586,7 +2895,7 @@ void Editor::DelCharBack(bool allowLineStartDeletion) {
 		}
 		ThinRectangularRange();
 	} else {
-		ClearSelection();
+		if (!ClearSelection()) return;
 	}
 	sel.RemoveDuplicates();
 	ContainerNeedsUpdate(Update::Selection);
@@ -2721,7 +3030,7 @@ void Editor::NotifyIndicatorClick(bool click, Sci::Position position, KeyMod mod
 }
 
 bool Editor::NotifyMarginClick(Point pt, KeyMod modifiers) {
-	const int marginClicked = vs.MarginFromLocation(pt);
+	const int marginClicked = vs.MarginFromLocation(pt, GetClientRectangle(), BidirectionalR2L());
 	if ((marginClicked >= 0) && vs.ms[marginClicked].sensitive) {
 		const Sci::Position position = pdoc->LineStart(LineFromLocation(pt));
 		if ((vs.ms[marginClicked].mask & MaskFolders) && (FlagSet(foldAutomatic, AutomaticFold::Click))) {
@@ -2758,7 +3067,7 @@ bool Editor::NotifyMarginClick(Point pt, KeyMod modifiers) {
 }
 
 bool Editor::NotifyMarginRightClick(Point pt, KeyMod modifiers) {
-	const int marginRightClicked = vs.MarginFromLocation(pt);
+	const int marginRightClicked = vs.MarginFromLocation(pt, GetClientRectangle(), BidirectionalR2L());
 	if ((marginRightClicked >= 0) && vs.ms[marginRightClicked].sensitive) {
 		const Sci::Position position = pdoc->LineStart(LineFromLocation(pt));
 		NotificationData scn = {};
@@ -2852,10 +3161,14 @@ constexpr Sci::Position MovePositionForDeletion(Sci::Position position, Sci::Pos
 }
 
 void Editor::NotifyModified(Document *, DocModification mh, void *) {
+	const bool inserted = FlagSet(mh.modificationType, ModificationFlags::InsertText);
+	if (inserted) bidiVisibleDirty = true;
 	// Restyling keeps widths while every style measures alike, as colour-only palettes do.
 	const ModificationFlags widthFlags = ModificationFlags::DeleteText | ModificationFlags::ChangeTabStops |
 		(stylesValid && uniformStyleMetrics ? ModificationFlags::None : ModificationFlags::ChangeStyle);
-	if (trackLineWidth && FlagSet(mh.modificationType, widthFlags)) InvalidateTrackedScrollWidth();
+	// Splitting the widest RTL line can shrink its alignment canvas without deleting text.
+	if (FlagSet(mh.modificationType, widthFlags) || (BidirectionalR2L() && inserted && mh.linesAdded > 0))
+		InvalidateTrackedScrollWidth();
 	ContainerNeedsUpdate(Update::Content);
 	if (paintState == PaintState::painting) {
 		CheckForChangeOutsidePaint(Range(mh.position, mh.position + mh.length));
@@ -3023,7 +3336,9 @@ void Editor::NotifyModified(Document *, DocModification mh, void *) {
 		&& FlagSet(mh.modificationType, ModificationFlags::LastStepInUndoRedo)
 		&& !pdoc->TentativeActive()) {
 		// Update selection and scroll
-		RestoreSelection(mh.newPos,
+		SelectionPosition restored(mh.newPos);
+		restored.SetTrailingEdge(mh.newPosAtInsertionEnd);
+		RestoreSelection(restored,
 			FlagSet(mh.modificationType, ModificationFlags::Undo) ? UndoRedo::undo : UndoRedo::redo);
 	}
 
@@ -3206,7 +3521,8 @@ void Editor::PageMove(int direction, Selection::SelTypes selt, bool stuttered) {
 	Sci::Line topLineNew;
 	SelectionPosition newPos;
 
-	const Point pt = LocationFromPosition(sel.MainCaret());
+	const Point pt = LocationFromPosition(sel.CaretForDisplay());
+	const TextPositionX targetX = GetLastXChosen(pt);
 	const Sci::Line currentLine = topLine + static_cast<Sci::Line>(pt.y) / vs.lineHeight;
 	const Sci::Line topStutterLine = topLine + caretPolicies.y.slop;
 	const Sci::Line bottomStutterLine = topLine + LinesToScroll() - caretPolicies.y.slop - 1;
@@ -3215,7 +3531,7 @@ void Editor::PageMove(int direction, Selection::SelTypes selt, bool stuttered) {
 		const Sci::Line targetRow = pcs->NextTextDisplayLine(row, direction);
 		if (targetRow != row)
 			y = static_cast<int>((targetRow - topLine) * vs.lineHeight);
-		return SPositionFromLocation(Point::FromInts(lastXChosen - xOffset, y), false, false, UserVirtualSpace());
+		return SPositionFromTextLocation(targetX, y, UserVirtualSpace());
 	};
 
 	if (stuttered && (direction < 0 && currentLine > topStutterLine)) {
@@ -3398,7 +3714,7 @@ void Editor::NewLine() {
 
 	// Clear each range
 	if (!sel.Empty()) {
-		ClearSelection();
+		if (!ClearSelection()) return;
 	}
 
 	// Insert each line end
@@ -3433,8 +3749,9 @@ void Editor::NewLine() {
 	ShowCaretAtCurrentPosition();
 }
 
-SelectionPosition Editor::PositionUpOrDown(SelectionPosition spStart, int direction, int lastX) {
+SelectionPosition Editor::PositionUpOrDown(SelectionPosition spStart, int direction, bool usePreferredX) {
 	const Point pt = LocationFromPosition(spStart);
+	const TextPositionX targetX = usePreferredX ? GetLastXChosen(pt) : PreferredTextXFromPoint(pt);
 	int skipLines = 0;
 
 	if (vs.annotationVisible != AnnotationVisible::Hidden) {
@@ -3456,29 +3773,26 @@ SelectionPosition Editor::PositionUpOrDown(SelectionPosition spStart, int direct
 	const Sci::Line requestedRow = topLine + newY / vs.lineHeight;
 	const Sci::Line targetRow = pcs->NextTextDisplayLine(requestedRow, direction);
 	const Sci::Line targetY = targetRow == requestedRow ? newY : (targetRow - topLine) * vs.lineHeight;
-	if (lastX < 0) {
-		lastX = static_cast<int>(pt.x) + xOffset;
-	}
-	SelectionPosition posNew = SPositionFromLocation(
-		Point::FromInts(lastX - xOffset, static_cast<int>(targetY)), false, false, UserVirtualSpace());
+	SelectionPosition posNew = SPositionFromTextLocation(
+		targetX, static_cast<int>(targetY), UserVirtualSpace());
 
 	if (direction < 0) {
 		// Line wrapping may lead to a location on the same line, so
 		// seek back if that is the case.
-		Point ptNew = LocationFromPosition(posNew.Position());
+		Point ptNew = LocationFromPosition(posNew);
 		while ((posNew.Position() > 0) && (pt.y == ptNew.y)) {
 			posNew.Add(-1);
 			posNew.SetVirtualSpace(0);
-			ptNew = LocationFromPosition(posNew.Position());
+			ptNew = LocationFromPosition(posNew);
 		}
 	} else if (direction > 0 && posNew.Position() != pdoc->Length()) {
 		// There is an equivalent case when moving down which skips
 		// over a line.
-		Point ptNew = LocationFromPosition(posNew.Position());
+		Point ptNew = LocationFromPosition(posNew);
 		while ((posNew.Position() > spStart.Position()) && (ptNew.y > static_cast<XYPOSITION>(targetY))) {
 			posNew.Add(-1);
 			posNew.SetVirtualSpace(0);
-			ptNew = LocationFromPosition(posNew.Position());
+			ptNew = LocationFromPosition(posNew);
 		}
 	}
 	return posNew;
@@ -3488,14 +3802,9 @@ void Editor::CursorUpOrDown(int direction, Selection::SelTypes selt) {
 	if ((selt == Selection::SelTypes::none) && sel.MoveExtends()) {
 		selt = !sel.IsRectangular() ? Selection::SelTypes::stream : Selection::SelTypes::rectangle;
 	}
-	SelectionPosition caretToUse = sel.RangeMain().caret;
-	if (sel.IsRectangular()) {
-		if (selt ==  Selection::SelTypes::none) {
-			caretToUse = (direction > 0) ? sel.Limits().end : sel.Limits().start;
-		} else {
-			caretToUse = sel.Rectangular().caret;
-		}
-	}
+	SelectionPosition caretToUse = sel.CaretForDisplay();
+	if (sel.IsRectangular() && selt != Selection::SelTypes::none)
+		caretToUse = sel.Rectangular().caret;
 	if (selt == Selection::SelTypes::rectangle) {
 		const SelectionRange rangeBase = sel.IsRectangular() ? sel.Rectangular() : sel.RangeMain();
 		if (!sel.IsRectangular()) {
@@ -3503,7 +3812,7 @@ void Editor::CursorUpOrDown(int direction, Selection::SelTypes selt) {
 			sel.DropAdditionalRanges();
 		}
 		const SelectionPosition posNew = MovePositionSoVisible(
-			PositionUpOrDown(caretToUse, direction, lastXChosen), direction);
+			PositionUpOrDown(caretToUse, direction, true), direction);
 		sel.selType = Selection::SelTypes::rectangle;
 		sel.Rectangular() = SelectionRange(posNew, rangeBase.anchor);
 		SetRectangularRange();
@@ -3511,19 +3820,20 @@ void Editor::CursorUpOrDown(int direction, Selection::SelTypes selt) {
 	} else if (sel.selType == Selection::SelTypes::lines && sel.MoveExtends()) {
 		// Calculate new caret position and call SetSelection(), which will ensure whole lines are selected.
 		const SelectionPosition posNew = MovePositionSoVisible(
-			PositionUpOrDown(caretToUse, direction, -1), direction);
+			PositionUpOrDown(caretToUse, direction, false), direction);
 		SetSelection(posNew, sel.RangeMain().anchor);
 	} else {
 		InvalidateWholeSelection();
 		if (!additionalSelectionTyping || (sel.IsRectangular())) {
 			sel.DropAdditionalRanges();
 		}
+		if (sel.IsRectangular() && selt == Selection::SelTypes::none)
+			sel.SetSelection(SelectionRange(caretToUse));
 		sel.selType = Selection::SelTypes::stream;
 		for (size_t r = 0; r < sel.Count(); r++) {
-			const int lastX = (r == sel.Main()) ? lastXChosen : -1;
 			const SelectionPosition spCaretNow = sel.Range(r).caret;
 			const SelectionPosition posNew = MovePositionSoVisible(
-				PositionUpOrDown(spCaretNow, direction, lastX), direction);
+				PositionUpOrDown(spCaretNow, direction, r == sel.Main()), direction);
 			sel.Range(r) = selt == Selection::SelTypes::stream ?
 				SelectionRange(posNew, sel.Range(r).anchor) : SelectionRange(posNew);
 		}
@@ -3698,7 +4008,128 @@ Sci::Position Editor::LineEndWrapPosition(Sci::Position position) {
 	return endPos;
 }
 
+Sci::Position Editor::WordPositionMove(Message message, Sci::Position position, int direction) const {
+	if (AnyOf(message, Message::WordPartLeft, Message::WordPartLeftExtend,
+		Message::WordPartRight, Message::WordPartRightExtend))
+		return direction > 0 ? pdoc->WordPartRight(position) : pdoc->WordPartLeft(position);
+	if (AnyOf(message, Message::WordLeftEnd, Message::WordLeftEndExtend,
+		Message::WordRightEnd, Message::WordRightEndExtend))
+		return pdoc->NextWordEnd(position, direction);
+	return pdoc->NextWordStart(position, direction);
+}
+
+std::optional<SelectionPosition> Editor::BidiPositionMove(Message message, SelectionPosition caretPosition) {
+	if (!BidirectionalEnabled() || caretPosition.VirtualSpace()) return std::nullopt;
+	const bool left = AnyOf(message, Message::CharLeft, Message::CharLeftExtend,
+		Message::WordLeft, Message::WordLeftExtend, Message::WordLeftEnd, Message::WordLeftEndExtend,
+		Message::WordPartLeft, Message::WordPartLeftExtend);
+	const bool right = AnyOf(message, Message::CharRight, Message::CharRightExtend,
+		Message::WordRight, Message::WordRightExtend, Message::WordRightEnd, Message::WordRightEndExtend,
+		Message::WordPartRight, Message::WordPartRightExtend);
+	const bool home = AnyOf(message, Message::Home, Message::HomeExtend, Message::HomeDisplay, Message::HomeDisplayExtend,
+		Message::HomeWrap, Message::HomeWrapExtend, Message::VCHome, Message::VCHomeExtend,
+		Message::VCHomeDisplay, Message::VCHomeDisplayExtend, Message::VCHomeWrap, Message::VCHomeWrapExtend);
+	const bool end = AnyOf(message, Message::LineEnd, Message::LineEndExtend,
+		Message::LineEndDisplay, Message::LineEndDisplayExtend, Message::LineEndWrap, Message::LineEndWrapExtend);
+	if (!left && !right && !home && !end) return std::nullopt;
+	const bool character = AnyOf(message, Message::CharLeft, Message::CharLeftExtend,
+		Message::CharRight, Message::CharRightExtend);
+	const bool wordEnd = AnyOf(message, Message::WordLeftEnd, Message::WordLeftEndExtend,
+		Message::WordRightEnd, Message::WordRightEndExtend);
+	const bool wordPart = AnyOf(message, Message::WordPartLeft, Message::WordPartLeftExtend,
+		Message::WordPartRight, Message::WordPartRightExtend);
+	const int direction = right ? 1 : -1;
+	RefreshStyleData();
+	Sci::Line line = pdoc->SciLineFromPosition(caretPosition.Position());
+	auto layout = view.RetrieveLineLayout(line, *this);
+	const bool crossesLine = (left && caretPosition.Position() == pdoc->LineStart(line) && line > 0) ||
+		(right && caretPosition.Position() == pdoc->LineEnd(line) && line + 1 < pdoc->LinesTotal());
+	if (!BidirectionalR2L() && !layout->requiresParagraph &&
+		layout->validity >= LineLayout::ValidLevel::positions && (!character || !crossesLine)) return std::nullopt;
+	AutoSurface surface(this);
+	if (!surface) return std::nullopt;
+	const XYPOSITION previousWidth = BidiLayoutWidth();
+	view.LayoutLine(*this, surface, vs, layout.get(), wrapWidth);
+	PublishBidiCanvas(previousWidth);
+	const bool sourceParagraph = layout->paragraph != nullptr;
+	if (!sourceParagraph && (!character || !crossesLine)) return std::nullopt;
+	const Sci::Position start = pdoc->LineStart(line);
+	ParagraphCaret visualCaret{static_cast<size_t>(caretPosition.Position() - start), caretPosition.TrailingEdge()};
+	auto selectionAt = [](Sci::Position lineStart, ParagraphCaret position) {
+		SelectionPosition result(lineStart + static_cast<Sci::Position>(position.position));
+		result.SetTrailingEdge(position.trailing);
+		return result;
+	};
+	if (home || end) {
+		// Keep Scintilla's physical-line, display-line and two-stage wrap
+		// commands distinct. Only display edges are visual ordering decisions.
+		if (AnyOf(message, Message::Home, Message::HomeExtend))
+			return selectionAt(start, {0, false});
+		if (AnyOf(message, Message::LineEnd, Message::LineEndExtend))
+			return selectionAt(start, {layout->paragraph->Length(), true});
+		if (AnyOf(message, Message::VCHome, Message::VCHomeExtend))
+			return SelectionPosition(pdoc->VCHomePosition(caretPosition.Position()));
+		const size_t row = layout->paragraph->CaretLine(visualCaret);
+		const auto edge = layout->paragraph->VisualEdge(row, home == BidirectionalR2L());
+		const bool wrapCommand = AnyOf(message, Message::HomeWrap, Message::HomeWrapExtend,
+			Message::VCHomeWrap, Message::VCHomeWrapExtend, Message::LineEndWrap, Message::LineEndWrapExtend);
+		const bool indentCommand = AnyOf(message, Message::VCHomeDisplay, Message::VCHomeDisplayExtend,
+			Message::VCHomeWrap, Message::VCHomeWrapExtend);
+		if (indentCommand && (row == 0 || (wrapCommand && visualCaret == edge)))
+			return SelectionPosition(pdoc->VCHomePosition(caretPosition.Position()));
+		if (wrapCommand && visualCaret == edge)
+			return selectionAt(start, home ? ParagraphCaret{0, false} : ParagraphCaret{layout->paragraph->Length(), true});
+		return selectionAt(start, edge);
+	}
+	std::optional<Sci::Position> partTarget;
+	int partDirection = 0;
+	while (layout->paragraph) {
+		const auto next = layout->paragraph->VisualNeighbor(visualCaret, direction);
+		if (!next) break;
+		const Sci::Position previous = start + static_cast<Sci::Position>(visualCaret.position);
+		visualCaret = *next;
+		const Sci::Position position = start + static_cast<Sci::Position>(visualCaret.position);
+		if (wordPart && position != previous) {
+			const int logicalDirection = position > previous ? 1 : -1;
+			if (!partTarget || logicalDirection != partDirection) {
+				partDirection = logicalDirection;
+				partTarget = WordPositionMove(message, previous, logicalDirection);
+			}
+			if (logicalDirection > 0 ? position >= *partTarget : position <= *partTarget)
+				return selectionAt(start, visualCaret);
+		}
+		if (character || (!wordPart && (wordEnd ? pdoc->IsWordEndAt(position) : pdoc->IsWordStartAt(position))))
+			return selectionAt(start, visualCaret);
+	}
+	if (!character && (visualCaret.position != static_cast<size_t>(caretPosition.Position() - start) ||
+		visualCaret.trailing != caretPosition.TrailingEdge())) return selectionAt(start, visualCaret);
+	// Physical Left exits an RTL paragraph toward the following logical line.
+	const int lineDirection = BidirectionalR2L() ? -direction : direction;
+	if (!character) {
+		if (line + lineDirection < 0 || line + lineDirection >= pdoc->LinesTotal()) return selectionAt(start, visualCaret);
+		// Word commands own logical newline/indentation semantics. Starting at a
+		// visual paragraph edge delegates them to the same path as plain text.
+		const Sci::Position boundary = lineDirection > 0 ? pdoc->LineEnd(line) : pdoc->LineStart(line);
+		return SelectionPosition(WordPositionMove(message, boundary, lineDirection));
+	}
+	do { line += lineDirection; }
+	while (line >= 0 && line < pdoc->LinesTotal() && !pcs->GetVisible(line));
+	if (line < 0 || line >= pdoc->LinesTotal()) return sourceParagraph ?
+		std::optional<SelectionPosition>(selectionAt(start, visualCaret)) : std::nullopt;
+	layout = view.RetrieveLineLayout(line, *this);
+	const XYPOSITION previousTargetWidth = BidiLayoutWidth();
+	view.LayoutLine(*this, surface, vs, layout.get(), wrapWidth);
+	PublishBidiCanvas(previousTargetWidth);
+	if (layout->paragraph) {
+		const size_t row = lineDirection > 0 ? 0 : layout->paragraph->Lines().size() - 1;
+		return selectionAt(pdoc->LineStart(line), layout->paragraph->VisualEdge(row, direction < 0));
+	}
+	if (!sourceParagraph) return std::nullopt;
+	return SelectionPosition(lineDirection > 0 ? pdoc->LineStart(line) : pdoc->LineEnd(line));
+}
+
 SelectionPosition Editor::PositionMove(Message iMessage, SelectionPosition spCaret) {
+	if (const auto visual = BidiPositionMove(iMessage, spCaret)) return *visual;
 	switch (iMessage) {
 	case Message::CharLeft:
 	case Message::CharLeftExtend:
@@ -3718,22 +4149,18 @@ SelectionPosition Editor::PositionMove(Message iMessage, SelectionPosition spCar
 		return spCaret;
 	case Message::WordLeft:
 	case Message::WordLeftExtend:
-		return SelectionPosition(pdoc->NextWordStart(spCaret.Position(), -1));
-	case Message::WordRight:
-	case Message::WordRightExtend:
-		return SelectionPosition(pdoc->NextWordStart(spCaret.Position(), 1));
 	case Message::WordLeftEnd:
 	case Message::WordLeftEndExtend:
-		return SelectionPosition(pdoc->NextWordEnd(spCaret.Position(), -1));
-	case Message::WordRightEnd:
-	case Message::WordRightEndExtend:
-		return SelectionPosition(pdoc->NextWordEnd(spCaret.Position(), 1));
 	case Message::WordPartLeft:
 	case Message::WordPartLeftExtend:
-		return SelectionPosition(pdoc->WordPartLeft(spCaret.Position()));
+		return SelectionPosition(WordPositionMove(iMessage, spCaret.Position(), -1));
+	case Message::WordRight:
+	case Message::WordRightExtend:
+	case Message::WordRightEnd:
+	case Message::WordRightEndExtend:
 	case Message::WordPartRight:
 	case Message::WordPartRightExtend:
-		return SelectionPosition(pdoc->WordPartRight(spCaret.Position()));
+		return SelectionPosition(WordPositionMove(iMessage, spCaret.Position(), 1));
 	case Message::Home:
 	case Message::HomeExtend:
 		return SelectionPosition(pdoc->LineStartPosition(spCaret.Position()));
@@ -3771,25 +4198,76 @@ SelectionPosition Editor::PositionMove(Message iMessage, SelectionPosition spCar
 	return spCaret;
 }
 
+SelectionPosition Editor::VisualSelectionEdge(SelectionRange range, bool left) {
+	const Point caretPoint = LocationFromPosition(range.caret);
+	const TextPositionX caretX = EditView::CaptureTextX(*this, vs, caretPoint.x - vs.TextStart(BidirectionalR2L()) + xOffset);
+	const Point anchorPoint = LocationFromPosition(range.anchor);
+	const TextPositionX anchorX = EditView::CaptureTextX(*this, vs, anchorPoint.x - vs.TextStart(BidirectionalR2L()) + xOffset);
+	const bool caretAtEdge = caretPoint.y == anchorPoint.y ?
+		((caretX.offset < anchorX.offset) == left) :
+		((caretPoint.y < anchorPoint.y) == (left != BidirectionalR2L()));
+	const SelectionPosition fallback = caretAtEdge ? range.caret : range.anchor;
+	const XYPOSITION edgeY = caretAtEdge ? caretPoint.y : anchorPoint.y;
+	const Sci::Line displayRow = static_cast<Sci::Line>(DocumentPointFromView(Point(0, edgeY)).y / vs.lineHeight);
+	if (pcs->IsDisplayGap(displayRow)) return fallback;
+	AutoSurface surface(this);
+	if (!surface) return fallback;
+	const Sci::Line line = pcs->DocFromDisplay(displayRow);
+	auto layout = view.RetrieveLineLayout(line, *this);
+	view.LayoutLine(*this, surface, vs, layout.get(), wrapWidth);
+	const Sci::Line subLine = displayRow - pcs->DisplayFromDoc(line);
+	if (!layout->paragraph || subLine < 0 || subLine >= layout->lines) return fallback;
+	const auto &row = layout->paragraph->Lines()[static_cast<size_t>(subLine)];
+	const Sci::Position lineStart = pdoc->LineStart(line);
+	const Sci::Position rowStart = static_cast<Sci::Position>(row.start);
+	const Sci::Position rowEnd = rowStart + static_cast<Sci::Position>(row.length);
+	const Sci::Position start = std::clamp(range.Start().Position() - lineStart, rowStart, rowEnd);
+	const Sci::Position end = std::clamp(range.End().Position() - lineStart, rowStart, rowEnd);
+	const auto paragraphEdge = ParagraphSelectionEdge(*layout->paragraph,
+		static_cast<size_t>(start), static_cast<size_t>(end), static_cast<size_t>(subLine), !left);
+	std::optional<XYPOSITION> edge;
+	if (paragraphEdge) edge = paragraphEdge->x;
+	const auto include = [&](XYPOSITION x) {
+		if (!edge || (left ? x < *edge : x > *edge)) edge = x;
+	};
+	const XYPOSITION currentCaretX = caretX.Resolve(layout->paragraphWidth);
+	const XYPOSITION currentAnchorX = anchorX.Resolve(layout->paragraphWidth);
+	if (range.caret.VirtualSpace() || range.anchor.VirtualSpace()) {
+		const Sci::Position eol = lineStart + layout->numCharsBeforeEOL;
+		if (caretPoint.y == edgeY && range.caret.Position() == eol) include(currentCaretX);
+		if (anchorPoint.y == edgeY && range.anchor.Position() == eol) include(currentAnchorX);
+	}
+	// Newline-only and empty-row selections have no paragraph ink.
+	if (!edge) return fallback;
+	if (caretPoint.y == edgeY && currentCaretX == *edge) return range.caret;
+	if (anchorPoint.y == edgeY && currentAnchorX == *edge) return range.anchor;
+	const auto hit = paragraphEdge && paragraphEdge->x == *edge ? paragraphEdge->caret :
+		layout->paragraph->HitTest(static_cast<float>(*edge), row.top + row.height / 2);
+	SelectionPosition position(lineStart + static_cast<Sci::Position>(hit.position));
+	position.SetTrailingEdge(hit.trailing);
+	return position;
+}
+
 SelectionRange Editor::SelectionMove(Scintilla::Message iMessage, size_t r) {
+	if (AnyOf(iMessage, Message::CharLeft, Message::CharRight) && !sel.Range(r).Empty()) {
+		if (BidirectionalEnabled()) {
+			return SelectionRange(VisualSelectionEdge(sel.Range(r), iMessage == Message::CharLeft));
+		}
+		if (iMessage == Message::CharLeft) {
+			return SelectionRange(sel.Range(r).Start());
+		}
+		return SelectionRange(sel.Range(r).End());
+	}
 	const SelectionPosition spCaretStart = sel.Range(r).caret;
 	const SelectionPosition spCaretMoved = PositionMove(iMessage, spCaretStart);
 
 	const int directionMove = (spCaretMoved < spCaretStart) ? -1 : 1;
 	const SelectionPosition spCaret = MovePositionSoVisible(spCaretMoved, directionMove);
 
-	// Handle move versus extend, and special behaviour for non-empty left/right
+	// Handle move versus extend.
 	switch (iMessage) {
 	case Message::CharLeft:
 	case Message::CharRight:
-		if (sel.Range(r).Empty()) {
-			return SelectionRange(spCaret);
-		}
-		if (iMessage == Message::CharLeft) {
-			return SelectionRange(sel.Range(r).Start());
-		}
-		return SelectionRange(sel.Range(r).End());
-
 	case Message::WordLeft:
 	case Message::WordRight:
 	case Message::WordLeftEnd:
@@ -3872,6 +4350,16 @@ int Editor::HorizontalMove(Message iMessage) {
 		default:
 			break;
 		}
+		Message visualCommand = iMessage;
+		switch (iMessage) {
+		case Message::CharLeftRectExtend: visualCommand = Message::CharLeft; break;
+		case Message::CharRightRectExtend: visualCommand = Message::CharRight; break;
+		case Message::HomeRectExtend: visualCommand = Message::Home; break;
+		case Message::VCHomeRectExtend: visualCommand = Message::VCHome; break;
+		case Message::LineEndRectExtend: visualCommand = Message::LineEnd; break;
+		default: break;
+		}
+		if (const auto visual = BidiPositionMove(visualCommand, rangeBase.caret)) spCaret = *visual;
 		const int directionMove = (spCaret < rangeBase.caret) ? -1 : 1;
 		spCaret = MovePositionSoVisible(spCaret, directionMove);
 		sel.selType = Selection::SelTypes::rectangle;
@@ -3880,6 +4368,32 @@ int Editor::HorizontalMove(Message iMessage) {
 	} else if (sel.IsRectangular()) {
 		// Not a rectangular extension so switch to stream.
 		SelectionPosition selAtLimit = (NaturalDirection(iMessage) > 0) ? sel.Limits().end : sel.Limits().start;
+		if (BidirectionalEnabled() && AnyOf(iMessage,
+			Message::CharLeft, Message::CharLeftExtend, Message::CharRight, Message::CharRightExtend,
+			Message::WordLeft, Message::WordLeftExtend, Message::WordRight, Message::WordRightExtend,
+			Message::WordLeftEnd, Message::WordLeftEndExtend, Message::WordRightEnd, Message::WordRightEndExtend,
+			Message::WordPartLeft, Message::WordPartLeftExtend, Message::WordPartRight, Message::WordPartRightExtend)) {
+			const bool left = NaturalDirection(iMessage) < 0;
+			const Point anchor = LocationFromPosition(sel.Rectangular().anchor);
+			const TextPositionX anchorX = EditView::CaptureTextX(*this, vs, anchor.x - vs.TextStart(BidirectionalR2L()) + xOffset);
+			const Point caretPoint = LocationFromPosition(sel.Rectangular().caret);
+			const TextPositionX originalCaretX = EditView::CaptureTextX(*this, vs, caretPoint.x - vs.TextStart(BidirectionalR2L()) + xOffset);
+			const TextPositionX caretX = sel.selType == Selection::SelTypes::thin ? anchorX : originalCaretX;
+			const TextPositionX edgeX = ((anchorX.offset < caretX.offset) == left) ? anchorX : caretX;
+			const XYPOSITION edgeY = (left != BidirectionalR2L()) ?
+				std::min(anchor.y, caretPoint.y) : std::max(anchor.y, caretPoint.y);
+			// A logical island can cross direction boundaries, so its byte ends
+			// need not be the rectangle's visual edges. Use the requested corner;
+			// retain an original corner's affinity rather than hit-testing it again.
+			if (edgeX.offset == anchorX.offset && edgeY == anchor.y) selAtLimit = sel.Rectangular().anchor;
+			else if (edgeX.offset == originalCaretX.offset && edgeY == caretPoint.y) selAtLimit = sel.Rectangular().caret;
+			else {
+				AutoSurface surface(this);
+				const double y = DocumentPointFromView(Point(0, edgeY + vs.lineHeight / 2.0)).y;
+				selAtLimit = view.SPositionFromTextLocation(surface, *this, edgeX, y,
+					false, false, FlagSet(virtualSpaceOptions, VirtualSpace::RectangularSelection), vs, GetTextRectangle());
+			}
+		}
 		switch (iMessage) {
 		case Message::Home:
 			selAtLimit = SelectionPosition(pdoc->LineStartPosition(selAtLimit.Position()));
@@ -3907,7 +4421,7 @@ int Editor::HorizontalMove(Message iMessage) {
 
 	sel.RemoveDuplicates();
 
-	MovedCaret(sel.RangeMain().caret, SelectionPosition(Sci::invalidPosition), true, caretPolicies);
+	MovedCaret(sel.CaretForDisplay(), SelectionPosition(Sci::invalidPosition), true, caretPolicies);
 
 	// Invalidate the new state of the selection
 	InvalidateWholeSelection();
@@ -4261,6 +4775,10 @@ int Editor::KeyDownWithModifiers(Keys key, KeyMod modifiers, bool *consumed) {
 
 void Editor::Indent(bool forwards, bool lineIndent) {
 	UndoGroup ug(pdoc);
+	if (forwards && !lineIndent && sel.IsRectangular()) {
+		if (pdoc->IsReadOnly() || SelectionContainsProtected()) return;
+		if (PrepareRectangularReplacement() == RectangularReplacement::unavailable) return;
+	}
 	// Avoid problems with recalculating rectangular range multiple times by temporarily
 	// treating rectangular selection as multiple stream selection.
 	const Selection::SelTypes selType = sel.selType;
@@ -4283,17 +4801,16 @@ void Editor::Indent(bool forwards, bool lineIndent) {
 					// Inside initial whitespace
 					const Sci::Position posSelect = pdoc->SetLineIndentation(
 						lineCurrentPos, indentation + indentationStep - (indentation % indentationStep));
-					sel.Range(r) = SelectionRange(posSelect);
+					SelectionPosition after(posSelect);
+					after.SetTrailingEdge(posSelect > pdoc->LineStart(lineCurrentPos));
+					sel.Range(r) = SelectionRange(after);
 				} else {
-					if (pdoc->useTabs) {
-						const Sci::Position lengthInserted = pdoc->InsertString(caretPosition, "\t");
-						sel.Range(r) = SelectionRange(caretPosition + lengthInserted);
-					} else {
-						const Sci::Position numSpaces = pdoc->tabInChars - (column % pdoc->tabInChars);
-						const std::string spaceText(numSpaces, ' ');
-						const Sci::Position lengthInserted = pdoc->InsertString(caretPosition, spaceText);
-						sel.Range(r) = SelectionRange(caretPosition + lengthInserted);
-					}
+					const std::string indentationText = pdoc->useTabs ? "\t" :
+						std::string(pdoc->tabInChars - (column % pdoc->tabInChars), ' ');
+					const Sci::Position lengthInserted = pdoc->InsertString(caretPosition, indentationText);
+					SelectionPosition after(caretPosition + lengthInserted);
+					after.SetTrailingEdge(lengthInserted > 0);
+					sel.Range(r) = SelectionRange(after);
 				}
 			} else {
 				const int indentation = pdoc->GetLineIndentation(lineCurrentPos);
@@ -4565,10 +5082,17 @@ void Editor::CopySelectionRange(SelectionText *ss, bool allowLineCopy) {
 		std::vector<SelectionRange> rangesInOrder = sel.RangesCopy();
 		if (sel.selType == Selection::SelTypes::rectangle)
 			std::sort(rangesInOrder.begin(), rangesInOrder.end());
-		const std::string_view separator = (sel.selType == Selection::SelTypes::rectangle) ? pdoc->EOLString() : copySeparator;
+		const bool rectangular = sel.selType == Selection::SelTypes::rectangle;
+		const std::string_view separator = rectangular ? pdoc->EOLString() : copySeparator;
 		for (size_t part = 0; part < rangesInOrder.size(); part++) {
 			text.append(RangeText(rangesInOrder[part].Start().Position(), rangesInOrder[part].End().Position()));
-			if ((sel.selType == Selection::SelTypes::rectangle) || (part < rangesInOrder.size() - 1)) {
+			bool nextRow = true;
+			if (rectangular && part + 1 < rangesInOrder.size()) {
+				const auto current = DisplayFromPosition(rangesInOrder[part].Start());
+				const auto next = DisplayFromPosition(rangesInOrder[part + 1].Start());
+				nextRow = current != next;
+			}
+			if ((rectangular && nextRow) || (!rectangular && part < rangesInOrder.size() - 1)) {
 				// Append unless simple selection or last part of multiple selection
 				text.append(separator);
 			}
@@ -4600,7 +5124,8 @@ void Editor::SetDragPosition(SelectionPosition newPos) {
 		newPos = MovePositionOutsideChar(newPos, 1);
 		posDrop = newPos;
 	}
-	if (!(posDrag == newPos)) {
+	// One logical boundary can have two visual homes, including wrapped rows.
+	if (posDrag != newPos || posDrag.TrailingEdge() != newPos.TrailingEdge()) {
 		const CaretPolicies dragCaretPolicies = {
 			CaretPolicySlop(CaretPolicy::Slop | CaretPolicy::Strict | CaretPolicy::Even, 50),
 			CaretPolicySlop(CaretPolicy::Slop | CaretPolicy::Strict | CaretPolicy::Even, 2)
@@ -4670,7 +5195,7 @@ void Editor::DropAt(SelectionPosition position, std::string_view value, bool mov
 					positionAfterDeletion.Add(-SelectionRange(selEnd, selStart).Length());
 				}
 			}
-			ClearSelection();
+			if (!ClearSelection()) return;
 		}
 		position = positionAfterDeletion;
 
@@ -4717,29 +5242,9 @@ bool Editor::PositionInSelection(Sci::Position pos) {
 }
 
 bool Editor::PointInSelection(Point pt) {
-	const SelectionPosition pos = SPositionFromLocation(pt, false, true);
-	const Point ptPos = LocationFromPosition(pos);
-	for (size_t r=0; r<sel.Count(); r++) {
-		const SelectionRange &range = sel.Range(r);
-		if (range.Contains(pos)) {
-			bool hit = true;
-			if (pos == range.Start()) {
-				// see if just before selection
-				if (pt.x < ptPos.x) {
-					hit = false;
-				}
-			}
-			if (pos == range.End()) {
-				// see if just after selection
-				if (pt.x > ptPos.x) {
-					hit = false;
-				}
-			}
-			if (hit)
-				return true;
-		}
-	}
-	return false;
+	// Use the same visual character hits as drag initiation. Logical start/end
+	// X values cannot bound a selection containing bidirectional runs.
+	return SelectionFromPoint(pt) >= 0;
 }
 
 ptrdiff_t Editor::SelectionFromPoint(Point pt) {
@@ -4755,8 +5260,13 @@ ptrdiff_t Editor::SelectionFromPoint(Point pt) {
 	const SelectionPosition pos = SPositionFromLocation(pt, true, false);
 	for (size_t r = 0; r < sel.Count(); r++) {
 		const SelectionRange &range = sel.Range(r);
-		if ((range.Empty()) && (pos == range.caret)) {
-			return r;
+		if (range.Empty() && pos == range.caret) {
+			// Adjacent cluster edges can share a screen position inside a run,
+			// but split into distinct homes at bidi and wrapped boundaries.
+			if (pos.TrailingEdge() == range.caret.TrailingEdge() ||
+				LocationFromPosition(pos) == LocationFromPosition(range.caret)) {
+				return r;
+			}
 		}
 	}
 
@@ -4767,9 +5277,11 @@ ptrdiff_t Editor::SelectionFromPoint(Point pt) {
 bool Editor::PointInSelMargin(Point pt) const {
 	// Really means: "Point in a margin"
 	if (vs.fixedColumnWidth > 0) {	// There is a margin
-		PRectangle rcSelMargin = GetClientRectangle();
-		rcSelMargin.right = static_cast<XYPOSITION>(vs.textStart - vs.leftMarginWidth);
-		rcSelMargin.left = static_cast<XYPOSITION>(vs.textStart - vs.fixedColumnWidth);
+		PRectangle rcSelMargin = vs.MarginRectangle(GetClientRectangle(), BidirectionalR2L());
+		if (!vs.marginInside) {
+			rcSelMargin.right = 0;
+			rcSelMargin.left = static_cast<XYPOSITION>(vs.leftMarginWidth - vs.fixedColumnWidth);
+		}
 		const Point ptOrigin = GetVisibleOriginInMain();
 		rcSelMargin.Move(0, -ptOrigin.y);
 		return rcSelMargin.ContainsWholePixel(pt);
@@ -4777,12 +5289,12 @@ bool Editor::PointInSelMargin(Point pt) const {
 	return false;
 }
 
-Window::Cursor Editor::GetMarginCursor(Point pt) const noexcept {
-	int x = 0;
-	for (const MarginStyle &m : vs.ms) {
-		if ((pt.x >= x) && (pt.x < x + m.width))
-			return static_cast<Window::Cursor>(m.cursor);
-		x += m.width;
+Window::Cursor Editor::GetMarginCursor(Point pt) const {
+	const int margin = vs.MarginFromLocation(pt, GetClientRectangle(), BidirectionalR2L());
+	if (margin >= 0) {
+		const auto cursor = static_cast<Window::Cursor>(vs.ms[margin].cursor);
+		return vs.MarginsOnRight(BidirectionalR2L()) && cursor == Window::Cursor::reverseArrow ?
+			Window::Cursor::arrow : cursor;
 	}
 	return Window::Cursor::reverseArrow;
 }
@@ -5063,7 +5575,7 @@ void Editor::ButtonDownWithModifiers(Point pt, unsigned int curTime, KeyMod modi
 			}
 		}
 	}
-	lastXChosen = static_cast<int>(pt.x) + xOffset;
+	lastXChosen = PreferredTextXFromPoint(pt);
 	ShowCaretAtCurrentPosition();
 }
 
@@ -5214,7 +5726,7 @@ void Editor::ButtonMoveWithModifiers(Point pt, unsigned int, KeyMod modifiers) {
 		}
 
 		// Autoscroll
-		const Sci::Line lineMove = DisplayFromPosition(movePos.Position());
+		const Sci::Line lineMove = DisplayFromPosition(movePos);
 		if (pt.y >= rcClient.bottom) {
 			ScrollTo(lineMove - LinesOnScreen() + 1);
 			Redraw();
@@ -5341,7 +5853,7 @@ void Editor::ButtonUpWithModifiers(Point pt, unsigned int curTime, KeyMod modifi
 		SetRectangularRange();
 		lastClickTime = curTime;
 		lastClick = pt;
-		lastXChosen = static_cast<int>(pt.x) + xOffset;
+		lastXChosen = PreferredTextXFromPoint(pt);
 		if (sel.selType == Selection::SelTypes::stream) {
 			SetLastXChosen();
 		}
@@ -5392,13 +5904,18 @@ void Editor::TickFor(TickReason reason) {
 			}
 			break;
 		case TickReason::widen:
+		{
+			PrepareBidiCanvas();
+			const XYPOSITION previousWidth = BidiLayoutWidth();
 			if (pendingWidthMeasure != WidthMeasure::none) {
 				// Publish what the visible lines measure now; this may shrink the width.
 				const bool metrics = pendingWidthMeasure == WidthMeasure::metrics;
 				pendingWidthMeasure = WidthMeasure::none;
 				int measured = scrollWidth;
 				try {
-					measured = MeasureVisibleLineWidth();
+					const int visibleWidth = BidirectionalR2L() && !Wrapping() ?
+						std::max(bidiContentWidth, view.lineWidthMaxSeen) : MeasureVisibleLineWidth();
+					if (visibleWidth >= 0) measured = visibleWidth;
 				} catch (...) {
 					// Keep the published width when layout fails.
 				}
@@ -5415,8 +5932,10 @@ void Editor::TickFor(TickReason reason) {
 				}
 			}
 			SetScrollBars();
+			PublishBidiCanvas(previousWidth);
 			FineTickerCancel(TickReason::widen);
 			break;
+		}
 		case TickReason::dwell:
 			if ((!HaveMouseCapture()) &&
 				(ptMouseLast.y >= 0)) {
@@ -5598,8 +6117,7 @@ bool Editor::PaintContainsMargin() {
 		// never contains margin.
 		return false;
 	}
-	PRectangle rcSelMargin = GetClientRectangle();
-	rcSelMargin.right = static_cast<XYPOSITION>(vs.textStart);
+	const PRectangle rcSelMargin = vs.MarginRectangle(GetClientRectangle(), BidirectionalR2L());
 	return PaintContains(rcSelMargin);
 }
 
@@ -5696,6 +6214,7 @@ void Editor::SetDocPointer(Document *document) {
 	pdoc->RemoveWatcher(this, nullptr);
 	pdoc->Release();
 	pdoc = document;
+	lastXChosen.reset();
 	modelState.reset();
 	pcs = std::move(preparedContraction);
 	// Preview-only pattern resources retire with their document/map, without
@@ -6498,7 +7017,7 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 	case Message::ReplaceRectangular: {
 		UndoGroup ug(pdoc);
 		if (!sel.Empty()) {
-			ClearSelection(); // want to replace rectangular selection contents
+			if (!ClearSelection()) return 0;
 		}
 		InsertPasteShape(std::string_view(ConstCharPtrFromSPtr(lParam), PositionFromUPtr(wParam)), PasteShape::rectangular);
 		break;
@@ -6613,7 +7132,7 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 			if (lParam == 0)
 				return 0;
 			UndoGroup ug(pdoc);
-			ClearSelection();
+			if (!ClearSelection()) return 0;
 			const char *replacement = ConstCharPtrFromSPtr(lParam);
 			const Sci::Position lengthInserted = pdoc->InsertString(
 				sel.MainCaret(), replacement, strlen(replacement));
@@ -6763,7 +7282,7 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 		} else {
 			const Point pt = LocationFromPosition(lParam);
 			// Convert to view-relative
-			return static_cast<int>(pt.x) - vs.textStart + vs.fixedColumnWidth;
+			return static_cast<int>(pt.x) + (vs.marginInside ? 0 : vs.fixedColumnWidth - vs.leftMarginWidth);
 		}
 
 	case Message::PointYFromPosition:
@@ -6812,8 +7331,8 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 		return vs.rightMarginWidth;
 
 	case Message::SetMarginLeft:
-		lastXChosen += static_cast<int>(lParam) - vs.leftMarginWidth;
 		vs.leftMarginWidth = static_cast<int>(lParam);
+		vs.CalculateMarginWidthAndMask();
 		InvalidateStyleRedraw();
 		break;
 
@@ -7447,6 +7966,7 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 		if (wParam > 0)
 			pendingWidthMeasure = WidthMeasure::none;
 		if ((wParam > 0) && (wParam != static_cast<unsigned int>(scrollWidth))) {
+			bidiContentWidth = std::max(bidiContentWidth, view.lineWidthMaxSeen);
 			view.lineWidthMaxSeen = 0;
 			scrollWidth = static_cast<int>(wParam);
 			SetScrollBars();
@@ -7771,8 +8291,8 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 		if (ValidMargin(wParam)) {
 			// Short-circuit if the width is unchanged, to avoid unnecessary redraw.
 			if (vs.ms[wParam].width != lParam) {
-				lastXChosen += static_cast<int>(lParam) - vs.ms[wParam].width;
 				vs.ms[wParam].width = static_cast<int>(lParam);
+				vs.CalculateMarginWidthAndMask();
 				InvalidateStyleRedraw();
 			}
 		}

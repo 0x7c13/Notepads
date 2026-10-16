@@ -112,6 +112,9 @@ public sealed partial class App : Application
         "--zoom-language" => AppearanceFeatureTests.RunZoomAndLanguageAsync(log),
         "--view-modes" => AppearanceFeatureTests.RunViewModeAsync(log),
         "--editor" => EditorSuite.RunAsync("", log),
+        "--bidi" => BidiTests.RunAsync(log),
+        "--bidi-performance" => BidiPerformanceTests.RunAsync(log),
+        "--reading-order" => ReadingOrderFeatureTests.RunAsync(log),
         "--scroll-restoration" => ScrollRestorationTests.RunAsync(log),
         "--persistence" or "--session-resilience" or "--syntax" or "--diff" or "--search" or
         "--automation-navigation" or "--native-storage" or "--native-faults" or "--regex-memory" or "--performance" or

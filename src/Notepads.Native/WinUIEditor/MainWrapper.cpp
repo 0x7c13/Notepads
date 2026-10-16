@@ -83,12 +83,17 @@ namespace WinUIEditor
 		return _horizontalScrollBar && _verticalScrollBar;
 	}
 
-	void MainWrapper::HorizontalScrollBarInset(int pixels)
+	void MainWrapper::UpdateScrollBarLayout(int gutterPixels, bool rightToLeft)
 	{
+		if (_verticalScrollBar) {
+			const int column = rightToLeft ? 0 : 2;
+			if (winrt::DUXC::Grid::GetColumn(_verticalScrollBar) != column)
+				winrt::DUXC::Grid::SetColumn(_verticalScrollBar, column);
+		}
 		if (!_horizontalScrollBar)
 			return;
-		const double inset{ pixels * 96.0 / LogicalDpi() };
-		const winrt::DUX::Thickness margin{ inset, 0, 0, 0 };
+		const double inset{ gutterPixels * 96.0 / LogicalDpi() };
+		const winrt::DUX::Thickness margin{ rightToLeft ? 0 : inset, 0, rightToLeft ? inset : 0, 0 };
 		if (_horizontalScrollBar.Margin() != margin)
 			_horizontalScrollBar.Margin(margin);
 	}

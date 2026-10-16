@@ -165,16 +165,19 @@ public sealed class PackagedAppDriver : IDisposable
     public static void Key(uint pid, ushort key, bool control, bool shift)
     {
         RequireFocus(pid);
+        // Navigation keys on the dedicated cluster carry E0. Omitting this flag
+        // describes the numeric keypad, whose Shift handling differs on Windows.
+        uint flags = key >= 0x21 && key <= 0x28 || key == 0x2d || key == 0x2e ? 1u : 0u;
         bool ctrlDown = false, shiftDown = false, keyDown = false;
         try
         {
             if (control) { Send(0x11, 0, 0); ctrlDown = true; }
             if (shift) { Send(0x10, 0, 0); shiftDown = true; }
-            Send(key, 0, 0); keyDown = true;
+            Send(key, 0, flags); keyDown = true;
         }
         finally
         {
-            if (keyDown) Send(key, 0, 2);
+            if (keyDown) Send(key, 0, flags | 2);
             if (shiftDown) Send(0x10, 0, 2);
             if (ctrlDown) Send(0x11, 0, 2);
         }

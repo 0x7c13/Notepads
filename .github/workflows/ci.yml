@@ -68,8 +68,8 @@ jobs:
           global-json-file: global.json
       - name: Verify native toolchain
         run: ./scripts/Initialize-BuildTools.ps1 -InstallMissing
-      - name: Run native comparison and regex tests
-        run: ./scripts/Test.ps1 -Suite Integration -Group NativeDiff,RegexText -Configuration Release -Platform x64
+      - name: Run native comparison, paragraph and regex tests
+        run: ./scripts/Test.ps1 -Suite Integration -Group NativeDiff,NativeBidi,RegexText -Configuration Release -Platform x64
       - name: Preserve native test evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -211,6 +211,7 @@ jobs:
             artifacts/isolated-uwp/*/*.json
             artifacts/isolated-uwp/*/*.jsonl
             artifacts/isolated-uwp/*/*.txt
+            artifacts/isolated-uwp/*/*.png
             artifacts/isolated-uwp/*/commands/
             artifacts/isolated-uwp/*/lease-protocol/
             artifacts/isolated-uwp/*/peer/

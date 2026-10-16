@@ -26,14 +26,23 @@ public sealed partial class TextEditor
         public SideBySideDiffViewer Viewer { get; } = new();
         public bool Preparing { get; set; } = true;
         public bool PreviousEnabled { get; }
-        public long SourceRow { get; }
-        public long SourceHorizontalOffset { get; }
+        public int? SourceDocumentLine { get; }
+        public int SourceSubLine { get; }
+        public double SourceHorizontalOffset { get; }
+        public double SourceVerticalOffset { get; }
         public DiffGeneration(TextEditorCore source, CancellationToken lifetime)
         {
             Cancellation = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
             PreviousEnabled = source.IsEnabled;
-            SourceRow = source.FirstVisibleRow;
-            SourceHorizontalOffset = source.HorizontalScrollOffset;
+            // Diff zoom changes the hidden source's metrics. Retain the same
+            // document anchor and leading-edge DIPs used by session restoration,
+            // rather than display rows and physical pixels from the old layout.
+            source.GetViewportAnchor(out var line, out var subLine);
+            source.GetScrollViewerPosition(out var horizontal, out var vertical);
+            SourceDocumentLine = line;
+            SourceSubLine = subLine;
+            SourceHorizontalOffset = horizontal;
+            SourceVerticalOffset = vertical;
         }
         public void Dispose()
         {
@@ -140,7 +149,9 @@ public sealed partial class TextEditor
 
     private void RestoreDiffSourceViewport(DiffGeneration generation)
     {
-        TextEditorCore.SetDiffViewport(generation.SourceRow, generation.SourceHorizontalOffset);
+        TextEditorCore.SetScrollViewerInitPosition(generation.SourceHorizontalOffset,
+            generation.SourceVerticalOffset, generation.SourceDocumentLine, generation.SourceSubLine,
+            preservePreferredColumn: true);
         TextEditorCore.Focus(FocusState.Programmatic);
     }
 

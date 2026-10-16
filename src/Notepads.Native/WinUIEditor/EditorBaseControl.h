@@ -29,9 +29,18 @@ namespace winrt::WinUIEditor::implementation
 		bool MouseWheelZoomEnabled() const noexcept { return _mouseWheelZoomEnabled; }
 		void MouseWheelZoomEnabled(bool value) noexcept { _mouseWheelZoomEnabled = value; }
 		void SetBackgroundColor(Windows::UI::Color const &color);
-		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine)
-		{ _scintilla->RestoreViewport(horizontalOffset, documentLine, subLine); }
+		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, bool preservePreferredColumn)
+		{ _scintilla->RestoreViewport(horizontalOffset, documentLine, subLine, preservePreferredColumn); }
+		void SetDisplayViewport(int64_t row, double leadingOffset)
+		{ _scintilla->SetDisplayViewport(row, leadingOffset); }
+		double DisplayHorizontalOffset() const noexcept { return _scintilla->DisplayHorizontalOffset(); }
+		int64_t DisplayFirstVisibleRow() const noexcept { return _scintilla->DisplayFirstVisibleRow(); }
 		bool IsViewportRestorePending() const noexcept { return _scintilla->IsViewportRestorePending(); }
+		Windows::Foundation::Rect GutterBounds();
+		bool AutomationPointFromRoot(Windows::Foundation::Point &point) const;
+		event_token ViewportGeometryChanged(Windows::Foundation::EventHandler<Windows::Foundation::IInspectable> const &handler)
+		{ return _viewportGeometryChanged.add(handler); }
+		void ViewportGeometryChanged(event_token const &token) noexcept { _viewportGeometryChanged.remove(token); }
 		void PasteText(hstring const &text);
 		void SetSyntaxLexer(hstring const &name, array_view<hstring const> keywords,
 			array_view<hstring const> propertyNames, array_view<hstring const> propertyValues)
@@ -55,6 +64,16 @@ namespace winrt::WinUIEditor::implementation
 		uint64_t SelectionRevision() const noexcept;
 		Scintilla::Internal::Range AutomationUnitRange(int64_t position, bool word)
 		{ return _scintilla->AutomationUnitRange(static_cast<Sci::Position>(position), word); }
+		std::vector<Scintilla::Internal::PRectangle> AutomationRangeRectangles(int64_t start, int64_t end)
+		{
+			if (!IsLoadedCompat() || Visibility() != DUX::Visibility::Visible) return {};
+			auto rectangles = _scintilla->AutomationRangeRectangles(
+				static_cast<Sci::Position>(start), static_cast<Sci::Position>(end));
+			for (auto &rectangle : rectangles)
+				// XAML's UIA adapter adds the window's screen origin to root-relative pixels.
+				if (!_wrapper->TransformToRoot(rectangle)) return {};
+			return rectangles;
+		}
 		bool HasJournal() const noexcept;
 		Windows::Foundation::IAsyncAction WaitForTextStoreUnlockAsync();
 		void StartJournal(std::shared_ptr<::WinUIEditor::NativeJournalFile> file, uint64_t sequence, bool rotate);
@@ -94,6 +113,8 @@ namespace winrt::WinUIEditor::implementation
 		event<Windows::Foundation::EventHandler<int64_t>> InternalNotifyMessageReceived;
 
 	private:
+		bool _viewportGeometryDirty{ true };
+		event<Windows::Foundation::EventHandler<Windows::Foundation::IInspectable>> _viewportGeometryChanged;
 		winrt::apartment_context _owningApartment;
 		DWORD _owningThreadId{ ::GetCurrentThreadId() };
 		std::atomic<bool> _uiResourcesFinalized{ false };
@@ -151,6 +172,7 @@ namespace winrt::WinUIEditor::implementation
 		DUX::XamlRoot::Changed_revoker _xamlRootChangedRevoker{};
 		void XamlRoot_Changed(DUX::XamlRoot const &sender, DUX::XamlRootChangedEventArgs const &args);
 		void UpdateDpi(float dpiScale);
+		void UpdateSurfaceSize(Windows::Foundation::Size size);
 		void AddContextMenuItems(DUX::Controls::MenuFlyout const &menu);
 		bool ShowContextMenu(DUX::UIElement const &targetElement, Windows::Foundation::Point const &point);
 		bool ShowContextMenuAtCurrentPosition();
