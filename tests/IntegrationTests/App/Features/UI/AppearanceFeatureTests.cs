@@ -264,9 +264,12 @@ internal static class AppearanceFeatureTests
             else
             {
                 await UntilAsync(() => host.Page.TestFeatureControl("ExitCompactOverlayButton").Visibility == Visibility.Visible &&
+                    host.Page.TestFeatureControl("ExitCompactOverlayButton").IsLoaded &&
+                    host.Page.TestFeatureControl("ExitCompactOverlayButton").ActualWidth > 0 &&
                     host.Page.TestFeatureControl("MainMenuButton").Visibility == Visibility.Collapsed &&
                     !host.Page.TestFeatureStatusVisible,
                     "Accepted overlay entry shows Exit and hides normal menu/status chrome.");
+                AccessibilityFeatureTests.CheckExitOverlay(Named<Button>(host.Page, "ExitCompactOverlayButton"));
                 Invoke(host.Page.TestFeatureControl("ExitCompactOverlayButton"));
                 await UntilAsync(() => view.ViewMode == ApplicationViewMode.Default || rejected != null,
                     "The real Exit Overlay button completes its normal-mode request.");

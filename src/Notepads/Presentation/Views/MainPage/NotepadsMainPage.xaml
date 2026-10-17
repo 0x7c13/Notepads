@@ -274,7 +274,44 @@
         <Grid Grid.Row="1" x:Name="StatusBar" Height="25" x:Load="false">
             <Grid.Resources>
                 <SolidColorBrush x:Key="StatusIndicatorPointerOverBrush" Color="{ThemeResource SystemRevealListLowColor}" />
-                <SolidColorBrush x:Key="StatusIndicatorBackgroundBrush" Color="Transparent" />
+                <Style TargetType="Button" x:Key="StatusBarButtonStyle">
+                    <Setter Property="Height" Value="25"/>
+                    <Setter Property="MinHeight" Value="0"/>
+                    <Setter Property="MinWidth" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="UseSystemFocusVisuals" Value="True"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <ContentPresenter x:Name="Presenter"
+                                                  Content="{TemplateBinding Content}"
+                                                  Padding="{TemplateBinding Padding}"
+                                                  Background="{TemplateBinding Background}"
+                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Target="Presenter.Background" Value="{StaticResource StatusIndicatorPointerOverBrush}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Target="Presenter.Background" Value="{StaticResource StatusIndicatorPointerOverBrush}"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Disabled"/>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </ContentPresenter>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
                 <Style TargetType="TextBlock" x:Key="StatusBarTextBlockStyle">
                     <Setter Property="Height" Value="25"/>
                     <Setter Property="Padding" Value="8,4,8,4"/>
@@ -297,20 +334,20 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
-                <Grid x:Name="FileModificationStateIndicator"
+                <Button x:Name="FileModificationStateIndicator"
                       Padding="8,5,6,5"
-                      IsTapEnabled="True" 
+                      Style="{StaticResource StatusBarButtonStyle}"
                       ui:FrameworkElementExtensions.Cursor ="Hand"
-                      Tapped="StatusBarComponent_OnTapped" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
+                      Click="StatusBarComponent_OnClick">
 
                     <Viewbox>
                         <FontIcon x:Name="FileModificationStateIndicatorIcon" Foreground="{StaticResource SystemControlForegroundAccentBrush}"/>
                     </Viewbox>
-                    <Grid.ContextFlyout>
+                    <Button.ContextFlyout>
                         <MenuFlyout x:Name="FileModifiedOutsideFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyoutItem x:Name="FileModifiedOutsideFlyoutReloadFileFromDiskFlyoutItem" 
-                                            x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
-                                            Tag="ReloadFileFromDisk" 
+                            <MenuFlyoutItem x:Name="FileModifiedOutsideFlyoutReloadFileFromDiskFlyoutItem"
+                                            x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk"
+                                            Tag="ReloadFileFromDisk"
                                             Click="ReloadFileFromDiskAsync">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE72C;"/>
@@ -325,279 +362,286 @@
                                 </Style>
                             </MenuFlyout.MenuFlyoutPresenterStyle>
                         </MenuFlyout>
-                    </Grid.ContextFlyout>
-                </Grid>
+                    </Button.ContextFlyout>
+                </Button>
             </Grid>
-            <Grid Column="1"
-                  ui:FrameworkElementExtensions.Cursor="Hand">
-                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
+            <Button Grid.Column="1" x:Name="PathIndicatorButton"
+                    Style="{StaticResource StatusBarButtonStyle}"
+                    AutomationProperties.Name="{Binding Text, ElementName=PathIndicator}"
+                    Visibility="{Binding Visibility, ElementName=PathIndicator}"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Click="StatusBarComponent_OnClick">
+                <TextBlock x:Name="PathIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            Padding ="4,4,8,4"
-                           IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
-
-
-                    <TextBlock.ContextFlyout>
-                        <MenuFlyout x:Name="PathIndicatorFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutReloadFileFromDiskFlyoutItem" 
-                                            x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk" 
-                                            Tag="ReloadFileFromDisk" 
-                                            Click="ReloadFileFromDiskAsync">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE72C;"/>
-                                </MenuFlyoutItem.Icon>
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutCopyFullPathFlyoutItem"
-                                            Tag="CopyFullPath" 
-                                            Click="CopyFullPath">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE8C8;"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutOpenContainingFolderFlyoutItem" 
-                                            Tag="OpenContainingFolder" 
-                                            Click="OpenContainingFolderAsync">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xED25;"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem x:Name="PathIndicatorFlyoutFileRenameFlyoutItem" 
-                                            Tag="Rename" 
-                                            Click="RenameFileAsync">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE8AC;"/>
-                                </MenuFlyoutItem.Icon>
-                                <MenuFlyoutItem.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="F2" IsEnabled="False"/>
-                                </MenuFlyoutItem.KeyboardAccelerators>
-                            </MenuFlyoutItem>
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                        </MenuFlyout>
-                    </TextBlock.ContextFlyout>
-                </TextBlock>
-            </Grid>
-            <Grid Column="2"
-                  ui:FrameworkElementExtensions.Cursor="Hand" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
-
+                           AutomationProperties.AccessibilityView="Raw"/>
+                <Button.ContextFlyout>
+                    <MenuFlyout x:Name="PathIndicatorFlyout" Placement="TopEdgeAlignedLeft" Closing="StatusBarFlyout_OnClosing">
+                        <MenuFlyoutItem x:Name="PathIndicatorFlyoutReloadFileFromDiskFlyoutItem"
+                                        x:Uid="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk"
+                                        Tag="ReloadFileFromDisk"
+                                        Click="ReloadFileFromDiskAsync">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE72C;"/>
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="R" Modifiers="Control,Shift" IsEnabled="False"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem x:Name="PathIndicatorFlyoutCopyFullPathFlyoutItem"
+                                        Tag="CopyFullPath"
+                                        Click="CopyFullPath">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Name="PathIndicatorFlyoutOpenContainingFolderFlyoutItem"
+                                        Tag="OpenContainingFolder"
+                                        Click="OpenContainingFolderAsync">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xED25;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem x:Name="PathIndicatorFlyoutFileRenameFlyoutItem"
+                                        Tag="Rename"
+                                        Click="RenameFileAsync">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8AC;"/>
+                            </MenuFlyoutItem.Icon>
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="F2" IsEnabled="False"/>
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
+                        <MenuFlyout.MenuFlyoutPresenterStyle>
+                            <Style TargetType="MenuFlyoutPresenter">
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Style>
+                        </MenuFlyout.MenuFlyoutPresenterStyle>
+                    </MenuFlyout>
+                </Button.ContextFlyout>
+            </Button>
+            <Button Grid.Column="2" x:Name="ModificationIndicatorButton"
+                    Style="{StaticResource StatusBarButtonStyle}"
+                    AutomationProperties.Name="{Binding Text, ElementName=ModificationIndicator}"
+                    Visibility="{Binding Visibility, ElementName=ModificationIndicator}"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Click="StatusBarComponent_OnClick">
 
                 <TextBlock x:Name="ModificationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
                            Foreground="{StaticResource SystemControlForegroundAccentBrush}"
                            ToolTipService.ToolTip="Alt+D"
-                           IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped"
-                           >
-                    <TextBlock.ContextFlyout>
-                        <MenuFlyout x:Name="ModificationFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem" 
-                                            KeyboardAcceleratorTextOverride="Alt+D"
-                                            x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges" 
-                                            Tag="PreviewTextChanges" Click="ModificationFlyoutSelection_OnClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE89A;"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges" 
-                                            Tag="RevertAllChanges" 
-                                            Click="ModificationFlyoutSelection_OnClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
+                           AutomationProperties.AccessibilityView="Raw"
+                           />
+                <Button.ContextFlyout>
+                    <MenuFlyout x:Name="ModificationFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                        <MenuFlyoutItem x:Name="PreviewTextChangesFlyoutItem"
+                                        KeyboardAcceleratorTextOverride="Alt+D"
+                                        x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges"
+                                        Tag="PreviewTextChanges" Click="ModificationFlyoutSelection_OnClick">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE89A;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges"
+                                        Tag="RevertAllChanges"
+                                        Click="ModificationFlyoutSelection_OnClick">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
 
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                        </MenuFlyout>
-                    </TextBlock.ContextFlyout>
-                </TextBlock>
-            </Grid>
-            <Grid Column="3" x:Name="LineColumnIndicatorButton"
-                  ui:FrameworkElementExtensions.Cursor="Hand" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
+                        <MenuFlyout.MenuFlyoutPresenterStyle>
+                            <Style TargetType="MenuFlyoutPresenter">
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Style>
+                        </MenuFlyout.MenuFlyoutPresenterStyle>
+                    </MenuFlyout>
+                </Button.ContextFlyout>
+            </Button>
+            <Button Grid.Column="3" x:Name="LineColumnIndicatorButton"
+                    Style="{StaticResource StatusBarButtonStyle}"
+                    AutomationProperties.Name="{Binding Text, ElementName=LineColumnIndicator}"
+                    Visibility="{Binding Visibility, ElementName=LineColumnIndicator}"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Click="StatusBarComponent_OnClick">
 
                 <TextBlock x:Name="LineColumnIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
-                           IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped">
-                </TextBlock>
-            </Grid>
-            <Grid Column="4"
-                  ui:FrameworkElementExtensions.Cursor="Hand" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
-
+                           AutomationProperties.AccessibilityView="Raw"/>
+            </Button>
+            <Button Grid.Column="4" x:Name="FontZoomIndicatorButton"
+                    Style="{StaticResource StatusBarButtonStyle}"
+                    AutomationProperties.Name="{Binding Text, ElementName=FontZoomIndicator}"
+                    Visibility="{Binding Visibility, ElementName=FontZoomIndicator}"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Click="StatusBarComponent_OnClick">
 
                 <TextBlock x:Name="FontZoomIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
-                           IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped">
-                    <TextBlock.ContextFlyout>
-                        <Flyout x:Name="FontZoomIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
-                            <StackPanel Width="224">
-                                <Grid Height="34">
-                                    <Grid.Resources>
-                                        <!-- Fit the command-bar template to these 32px buttons and center the icons on the slider. -->
-                                        <x:Double x:Key="AppBarThemeCompactHeight">32</x:Double>
-                                        <x:Double x:Key="AppBarButtonContentHeight">16</x:Double>
-                                        <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,8,0,8</Thickness>
-                                        <Thickness x:Key="AppBarButtonInnerBorderMargin">0</Thickness>
-                                    </Grid.Resources>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="32"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="32"/>
-                                    </Grid.ColumnDefinitions>
-                                    <AppBarButton x:Name="ZoomOut" 
-                                                  x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
-                                                  LabelPosition="Collapsed"
-                                                  Grid.Column="0"
-                                                  VerticalAlignment="Center"
-                                                  Width="32" MinWidth="0" Height="32"
-                                                  CornerRadius="6"
-                                                  KeyboardAcceleratorTextOverride="Ctrl+Minus" 
-                                                  Click="FontZoomIndicatorFlyoutSelection_OnClick">
-                                        <AppBarButton.Icon>
-                                            <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets"/>
-                                        </AppBarButton.Icon>
-                                        <AppBarButton.KeyboardAccelerators>
-                                            <KeyboardAccelerator Key="Subtract" Modifiers="Control" IsEnabled="False"/>
-                                        </AppBarButton.KeyboardAccelerators>
-                                    </AppBarButton>
-                                    <Slider x:Name="FontZoomSlider"
-                                            Style="{StaticResource CustomSliderStyle}"
-                                            Minimum="10" Maximum="500" Value="100"
-                                            Grid.Column="1"
-                                            VerticalAlignment="Center"
-                                            Margin="4,0"
-                                            ValueChanged="FontZoomSlider_ValueChanged"/>
-                                    <AppBarButton x:Name="ZoomIn"
-                                                  x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn"
-                                                  LabelPosition="Collapsed" 
-                                                  Grid.Column="2"
-                                                  VerticalAlignment="Center"
-                                                  Width="32" MinWidth="0" Height="32"
-                                                  CornerRadius="6"
-                                                  KeyboardAcceleratorTextOverride="Ctrl+Plus" 
-                                                  Click="FontZoomIndicatorFlyoutSelection_OnClick">
-                                        <AppBarButton.Icon>
-                                            <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets"/>
-                                        </AppBarButton.Icon>
-                                        <AppBarButton.KeyboardAccelerators>
-                                            <KeyboardAccelerator Key="Add" Modifiers="Control" IsEnabled="False"/>
-                                        </AppBarButton.KeyboardAccelerators>
-                                    </AppBarButton>
-                                </Grid>
-                                <Grid Margin="40,2,40,0" Height="22">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock x:Name="MinZoom" Grid.Column="0" Text="10%" FontSize="11" Opacity="0.65" VerticalAlignment="Center"/>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Bind FontZoomSlider.Value,Mode=OneWay}" FontSize="14"/>
-                                        <TextBlock Text="%" FontSize="14"/>
-                                    </StackPanel>
-                                    <TextBlock x:Name="MaxZoom" Grid.Column="2" Text="500%" FontSize="11" Opacity="0.65" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                                </Grid>
-                                <AppBarButton x:Name="RestoreDefaultZoom"
-                                              x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom" 
-                                              Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
-                                              HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="224" Height="32" Margin="0,8,0,0"
+                           AutomationProperties.AccessibilityView="Raw"/>
+                <Button.ContextFlyout>
+                    <Flyout x:Name="FontZoomIndicatorFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                        <StackPanel Width="224">
+                            <Grid Height="34">
+                                <Grid.Resources>
+                                    <!-- Fit the command-bar template to these 32px buttons and center the icons on the slider. -->
+                                    <x:Double x:Key="AppBarThemeCompactHeight">32</x:Double>
+                                    <x:Double x:Key="AppBarButtonContentHeight">16</x:Double>
+                                    <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,8,0,8</Thickness>
+                                    <Thickness x:Key="AppBarButtonInnerBorderMargin">0</Thickness>
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="32"/>
+                                </Grid.ColumnDefinitions>
+                                <AppBarButton x:Name="ZoomOut"
+                                              x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut"
+                                              LabelPosition="Collapsed"
+                                              Grid.Column="0"
+                                              VerticalAlignment="Center"
+                                              Width="32" MinWidth="0" Height="32"
+                                              CornerRadius="6"
+                                              KeyboardAcceleratorTextOverride="Ctrl+Minus"
                                               Click="FontZoomIndicatorFlyoutSelection_OnClick">
                                     <AppBarButton.Icon>
-                                        <FontIcon Glyph="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                                        <FontIcon Glyph="&#xE108;" FontFamily="Segoe MDL2 Assets"/>
                                     </AppBarButton.Icon>
                                     <AppBarButton.KeyboardAccelerators>
-                                        <KeyboardAccelerator Key="Number0" Modifiers="Control" IsEnabled="False"/>
+                                        <KeyboardAccelerator Key="Subtract" Modifiers="Control" IsEnabled="False"/>
                                     </AppBarButton.KeyboardAccelerators>
                                 </AppBarButton>
-                            </StackPanel>
-                            <Flyout.FlyoutPresenterStyle>
-                                <Style TargetType="FlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="CornerRadius" Value="8"/>
-                                </Style>
-                            </Flyout.FlyoutPresenterStyle>
-                        </Flyout>
-                    </TextBlock.ContextFlyout>
-                </TextBlock>
-            </Grid>
-            <Grid Column="5"
-                  ui:FrameworkElementExtensions.Cursor="Hand" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
+                                <Slider x:Name="FontZoomSlider"
+                                        Style="{StaticResource CustomSliderStyle}"
+                                        Minimum="10" Maximum="500" Value="100"
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Margin="4,0"
+                                        ValueChanged="FontZoomSlider_ValueChanged"/>
+                                <AppBarButton x:Name="ZoomIn"
+                                              x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn"
+                                              LabelPosition="Collapsed"
+                                              Grid.Column="2"
+                                              VerticalAlignment="Center"
+                                              Width="32" MinWidth="0" Height="32"
+                                              CornerRadius="6"
+                                              KeyboardAcceleratorTextOverride="Ctrl+Plus"
+                                              Click="FontZoomIndicatorFlyoutSelection_OnClick">
+                                    <AppBarButton.Icon>
+                                        <FontIcon Glyph="&#xE109;" FontFamily="Segoe MDL2 Assets"/>
+                                    </AppBarButton.Icon>
+                                    <AppBarButton.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="Add" Modifiers="Control" IsEnabled="False"/>
+                                    </AppBarButton.KeyboardAccelerators>
+                                </AppBarButton>
+                            </Grid>
+                            <Grid Margin="40,2,40,0" Height="22">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="MinZoom" Grid.Column="0" Text="10%" FontSize="11" Opacity="0.65" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind FontZoomSlider.Value,Mode=OneWay}" FontSize="14"/>
+                                    <TextBlock Text="%" FontSize="14"/>
+                                </StackPanel>
+                                <TextBlock x:Name="MaxZoom" Grid.Column="2" Text="500%" FontSize="11" Opacity="0.65" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
+                            <AppBarButton x:Name="RestoreDefaultZoom"
+                                          x:Uid="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom"
+                                          Style="{StaticResource CustomAppBarButtonLabelToRightStyle}"
+                                          HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="224" Height="32" Margin="0,8,0,0"
+                                          Click="FontZoomIndicatorFlyoutSelection_OnClick">
+                                <AppBarButton.Icon>
+                                    <FontIcon Glyph="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="16"/>
+                                </AppBarButton.Icon>
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="Number0" Modifiers="Control" IsEnabled="False"/>
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                        </StackPanel>
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
+                    </Flyout>
+                </Button.ContextFlyout>
+            </Button>
+            <Button Grid.Column="5" x:Name="LineEndingIndicatorButton"
+                    Style="{StaticResource StatusBarButtonStyle}"
+                    AutomationProperties.Name="{Binding Text, ElementName=LineEndingIndicator}"
+                    Visibility="{Binding Visibility, ElementName=LineEndingIndicator}"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Click="StatusBarComponent_OnClick">
 
+                <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           AutomationProperties.AccessibilityView="Raw"/>
+                <Button.ContextFlyout>
+                    <MenuFlyout x:Name="LineEndingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
+                        <MenuFlyoutItem Text="Windows (CRLF)" Tag="CRLF" Click="LineEndingSelection_OnClick"/>
+                        <MenuFlyoutItem Text="Macintosh (CR)" Tag="CR" Click="LineEndingSelection_OnClick"/>
+                        <MenuFlyoutItem Text="Unix (LF)" Tag="LF" Click="LineEndingSelection_OnClick"/>
+                        <MenuFlyout.MenuFlyoutPresenterStyle>
+                            <Style TargetType="MenuFlyoutPresenter">
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Style>
+                        </MenuFlyout.MenuFlyoutPresenterStyle>
+                    </MenuFlyout>
+                </Button.ContextFlyout>
+            </Button>
+            <Button Grid.Column="6" x:Name="EncodingIndicatorButton"
+                    Style="{StaticResource StatusBarButtonStyle}"
+                    AutomationProperties.Name="{Binding Text, ElementName=EncodingIndicator}"
+                    Visibility="{Binding Visibility, ElementName=EncodingIndicator}"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Click="StatusBarComponent_OnClick">
 
-                <TextBlock x:Name="LineEndingIndicator" Style="{StaticResource StatusBarTextBlockStyle}" 
-                           IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped">
-                    <TextBlock.ContextFlyout>
-                        <MenuFlyout x:Name="LineEndingSelectionFlyout" Placement="TopEdgeAlignedRight" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyoutItem Text="Windows (CRLF)" Tag="CRLF" Click="LineEndingSelection_OnClick"/>
-                            <MenuFlyoutItem Text="Macintosh (CR)" Tag="CR" Click="LineEndingSelection_OnClick"/>
-                            <MenuFlyoutItem Text="Unix (LF)" Tag="LF" Click="LineEndingSelection_OnClick"/>
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                        </MenuFlyout>
-                    </TextBlock.ContextFlyout>
-                </TextBlock>
-            </Grid>
-            <Grid Column="6"
-                  ui:FrameworkElementExtensions.Cursor="Hand" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
-
-
-                <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"  
-                           IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped">
-                    <TextBlock.ContextFlyout>
-                        <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight"
-                                    Opening="EncodingSelectionFlyout_OnOpening" Closing="StatusBarFlyout_OnClosing">
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                        </MenuFlyout>
-                    </TextBlock.ContextFlyout>
-                </TextBlock>
-            </Grid>
-            <Grid Column="7"
-                  ui:FrameworkElementExtensions.Cursor="Hand" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
+                <TextBlock x:Name="EncodingIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           AutomationProperties.AccessibilityView="Raw"/>
+                <Button.ContextFlyout>
+                    <MenuFlyout x:Name="EncodingSelectionFlyout" Placement="TopEdgeAlignedRight"
+                                Opening="EncodingSelectionFlyout_OnOpening" Closing="StatusBarFlyout_OnClosing">
+                        <MenuFlyout.MenuFlyoutPresenterStyle>
+                            <Style TargetType="MenuFlyoutPresenter">
+                                <Setter Property="BorderThickness" Value="0" />
+                            </Style>
+                        </MenuFlyout.MenuFlyoutPresenterStyle>
+                    </MenuFlyout>
+                </Button.ContextFlyout>
+            </Button>
+            <Button Grid.Column="7" x:Name="LanguageIndicatorButton"
+                    Style="{StaticResource StatusBarButtonStyle}"
+                    AutomationProperties.Name="{Binding (AutomationProperties.Name), ElementName=LanguageIndicator}"
+                    Visibility="{Binding Visibility, ElementName=LanguageIndicator}"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Click="StatusBarComponent_OnClick" ContextRequested="LanguageIndicator_OnContextRequested">
                 <TextBlock x:Name="LanguageIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
-                           MaxWidth="100" TextTrimming="CharacterEllipsis" IsTapEnabled="True"
-                           Tapped="StatusBarComponent_OnTapped" ContextRequested="LanguageIndicator_OnContextRequested">
-                    <FlyoutBase.AttachedFlyout>
-                        <MenuFlyout x:Name="LanguageSelectionFlyout" Placement="TopEdgeAlignedRight" Opening="LanguageSelectionFlyout_OnOpening" Closing="StatusBarFlyout_OnClosing" Closed="LanguageSelectionFlyout_OnClosed">
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="MaxHeight" Value="420"/>
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                        </MenuFlyout>
-                    </FlyoutBase.AttachedFlyout>
-                </TextBlock>
-            </Grid>
+                           MaxWidth="100" TextTrimming="CharacterEllipsis" AutomationProperties.AccessibilityView="Raw"/>
+                <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout x:Name="LanguageSelectionFlyout" Placement="TopEdgeAlignedRight" Opening="LanguageSelectionFlyout_OnOpening" Closing="StatusBarFlyout_OnClosing" Closed="LanguageSelectionFlyout_OnClosed">
+                        <MenuFlyout.MenuFlyoutPresenterStyle>
+                            <Style TargetType="MenuFlyoutPresenter">
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="MaxHeight" Value="420"/>
+                            </Style>
+                        </MenuFlyout.MenuFlyoutPresenterStyle>
+                    </MenuFlyout>
+                </FlyoutBase.AttachedFlyout>
+            </Button>
             <Grid Column="8"
-                  ui:FrameworkElementExtensions.Cursor="Hand" PointerEntered="StatusIndicator_PointerEntered" PointerExited="StatusIndicator_PointerExited">
+                  ui:FrameworkElementExtensions.Cursor="Hand">
 
-
-                <Grid x:Name="ShadowWindowIndicator"
+                <Button x:Name="ShadowWindowIndicator"
                       Visibility="Collapsed"
                       Padding="6,6,6,6"
-                      IsTapEnabled="True"
-                      Tapped="StatusBarComponent_OnTapped">
+                      Style="{StaticResource StatusBarButtonStyle}"
+                      Click="StatusBarComponent_OnClick">
                     <Viewbox>
                         <FontIcon Glyph="&#xE737;" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
                     </Viewbox>
-                </Grid>
+                </Button>
             </Grid>
         </Grid>
 

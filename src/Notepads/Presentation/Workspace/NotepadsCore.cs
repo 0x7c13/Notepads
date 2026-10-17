@@ -556,6 +556,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         var item = new SetsViewItem
         {
             Tag = tab,
+            CloseButtonAutomationName = _resourceLoader.GetString("Tab_ContextFlyout_CloseButtonDisplayText"),
             Header = tab.Title,
             Content = new ContentControl
             {

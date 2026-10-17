@@ -299,4 +299,7 @@
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>尚未加载“{0}”。关闭前加载并保存，还是丢弃其恢复副本？</value></data>
   <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>退出前保存吗？部分文档尚未加载。丢弃将删除它们的恢复副本。</value></data>
   <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>未加载的文档</value></data>
+  <data name="MainMenu_AutomationName" xml:space="preserve"><value>菜单</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>向前滚动标签栏</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>向后滚动标签栏</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
 </root>

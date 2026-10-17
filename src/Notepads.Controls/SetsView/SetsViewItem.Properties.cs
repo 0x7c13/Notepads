@@ -14,6 +14,17 @@ namespace Notepads.Controls;
 /// </summary>
 public partial class SetsViewItem
 {
+    /// <summary>Gets or sets the localized name of the tab close action.</summary>
+    public string CloseButtonAutomationName
+    {
+        get => (string)GetValue(CloseButtonAutomationNameProperty);
+        set => SetValue(CloseButtonAutomationNameProperty, value);
+    }
+
+    /// <summary>Identifies the <see cref="CloseButtonAutomationName"/> dependency property.</summary>
+    public static readonly DependencyProperty CloseButtonAutomationNameProperty =
+        DependencyProperty.Register(nameof(CloseButtonAutomationName), typeof(string), typeof(SetsViewItem), new PropertyMetadata(string.Empty));
+
     /// <summary>
     /// Gets or sets the header content for the set.
     /// </summary>

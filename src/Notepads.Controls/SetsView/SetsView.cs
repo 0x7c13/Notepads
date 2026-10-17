@@ -8,6 +8,7 @@ using System.Linq;
 using CommunityToolkit.WinUI;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -179,10 +180,20 @@ public partial class SetsView : ListViewBase
             _setsScrollForwardButton.Click += ScrollSetForwardButton_Click;
         }
 
+        UpdateScrollButtonNames();
+
         // Tab headers finish sizing during their own Loaded handlers. Applying
         // an offset here would clamp it against an extent that can still be zero.
         _setsScroller.LayoutUpdated -= SetsScrollViewer_PendingScrollLayoutUpdated;
         _setsScroller.LayoutUpdated += SetsScrollViewer_PendingScrollLayoutUpdated;
+    }
+
+    private void UpdateScrollButtonNames()
+    {
+        if (_setsScrollBackButton != null)
+            AutomationProperties.SetName(_setsScrollBackButton, ScrollBackButtonAutomationName);
+        if (_setsScrollForwardButton != null)
+            AutomationProperties.SetName(_setsScrollForwardButton, ScrollForwardButtonAutomationName);
     }
 
     private void SetsScrollViewer_PendingScrollLayoutUpdated(object sender, object e)

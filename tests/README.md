@@ -133,6 +133,7 @@ and `artifacts/test-overhaul`; those local artifacts are not checked into Git.
 | Open/save/save-as/save-all, metadata-only changes, failure preservation | `DocumentWorkflowsTests` with fixed byte oracles |
 | Reload/revert/undo, rename/share, external modification/deletion/move | `DocumentWorkflowsTests` |
 | Find/replace, Go To, focus, query options | `EditingUiTests`, existing editor search tests |
+| Accessible icon names, real status actions and availability | `EditingUI`: UIA names/Invoke, status recreation, menu/focus and modified-file reload; `WorkspaceCommands`: pending-tab actions disabled |
 | Copy/cut/paste, smart copy and failures | `ClipboardContractTests` |
 | Tab/menu/context commands, pending-state admission | `WorkspaceCommandFeatureTests`, actual workspace lifecycle tests |
 | Preferences, settings navigation, persisted restart | `PreferenceFeatureTests` |

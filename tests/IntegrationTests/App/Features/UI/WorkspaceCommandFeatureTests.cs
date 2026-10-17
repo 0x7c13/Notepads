@@ -125,6 +125,10 @@ internal static class WorkspaceCommandFeatureTests
             Check(page.TestStatusPath == "pending.txt" && page.TestStatusModified &&
                 Named<TextBlock>(page, "FontZoomIndicator").Visibility == Visibility.Collapsed,
                 "Pending status shows its recovery title/dirty marker and hides ready-editor zoom.");
+            foreach (var name in new[] { "PathIndicatorButton", "ModificationIndicatorButton", "LineColumnIndicatorButton",
+                "FontZoomIndicatorButton", "LineEndingIndicatorButton", "EncodingIndicatorButton", "LanguageIndicatorButton" })
+                Check(!Named<Button>(page, name).IsEnabled,
+                    "Pending status disables keyboard and UIA actions as well as pointer input: " + name);
             context = (TabContextFlyout)page.TestContainer(pending).ContextFlyout;
             context.TestFeatureRefresh();
             Check(!context.TestFeatureCommand("Rename").IsEnabled, "A pending tab cannot rename an absent editor.");

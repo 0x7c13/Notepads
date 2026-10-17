@@ -453,7 +453,7 @@
                                 Background="{TemplateBinding Background}"
                                 Visibility="Collapsed">
                             <Button x:Name="CloseButton"
-                                    x:Uid="/SetsView/Resources/SetsView_CloseButton"
+                                    AutomationProperties.Name="{TemplateBinding CloseButtonAutomationName}"
                                     Style="{StaticResource SetsViewItemCloseButtonStyle}">
                                 &#xE711;
                             </Button>

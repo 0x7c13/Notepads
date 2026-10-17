@@ -299,4 +299,7 @@
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>“{0}” लोड नहीं हुआ है। बंद करने से पहले इसे लोड करके सहेजें, या इसकी पुनर्प्राप्ति प्रति हटा दें?</value></data>
   <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>बाहर निकलने से पहले सहेजें? कुछ दस्तावेज़ लोड नहीं हुए हैं। छोड़ने पर उनकी पुनर्प्राप्ति प्रतियाँ हट जाएँगी।</value></data>
   <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>लोड नहीं हुए दस्तावेज़</value></data>
+  <data name="MainMenu_AutomationName" xml:space="preserve"><value>मेनू</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>टैब पीछे स्क्रॉल करें</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>टैब आगे स्क्रॉल करें</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
 </root>

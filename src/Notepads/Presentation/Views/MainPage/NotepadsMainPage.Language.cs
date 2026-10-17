@@ -20,7 +20,7 @@ public sealed partial class NotepadsMainPage
     {
         args.Handled = true;
         if (NotepadsCore.GetSelectedReadyEditor()?.CanChangeLanguage == true)
-            LanguageSelectionFlyout.ShowAt(LanguageIndicator);
+            LanguageSelectionFlyout.ShowAt(LanguageIndicatorButton);
     }
 
     private void LanguageSelectionFlyout_OnOpening(object sender, object args)

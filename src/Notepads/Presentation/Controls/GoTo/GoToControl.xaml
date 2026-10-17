@@ -38,6 +38,7 @@
         </Grid>
 
         <Button x:Name="SearchButton"
+                AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                 x:Uid="GoTo_SearchButton"
                 Width="40"
                 Height="32"
@@ -54,6 +55,7 @@
         </Button>
 
         <Button x:Name="DismissButton"
+                AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                 x:Uid="FindAndReplace_DismissButton"
                 IsTabStop="False"
                 Width="40"

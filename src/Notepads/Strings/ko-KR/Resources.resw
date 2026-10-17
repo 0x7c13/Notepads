@@ -299,4 +299,7 @@
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>“{0}” 문서를 불러오지 않았습니다. 닫기 전에 불러와서 저장하거나 복구 사본을 삭제하시겠습니까?</value></data>
   <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>종료하기 전에 저장하시겠습니까? 일부 문서를 불러오지 않았습니다. 버리기를 선택하면 복구 사본이 삭제됩니다.</value></data>
   <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>불러오지 않은 문서</value></data>
+  <data name="MainMenu_AutomationName" xml:space="preserve"><value>메뉴</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>탭을 이전 방향으로 스크롤</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>탭을 다음 방향으로 스크롤</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
 </root>

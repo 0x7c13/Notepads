@@ -22,27 +22,23 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Notepads.Presentation.Views.MainPage;
 
 public sealed partial class NotepadsMainPage
 {
-    private void StatusIndicator_PointerEntered(object sender, PointerRoutedEventArgs args)
+    private void SetStatusBarInteractive(bool enabled)
     {
-        if (sender is Grid indicator)
-            indicator.Background = (Brush)StatusBar.Resources["StatusIndicatorPointerOverBrush"];
-        else if (sender is TextBlock text) text.Opacity = 0.7;
-    }
-
-    private void StatusIndicator_PointerExited(object sender, PointerRoutedEventArgs args)
-    {
-        if (sender is Grid indicator)
-            indicator.Background = (Brush)StatusBar.Resources["StatusIndicatorBackgroundBrush"];
-        else if (sender is TextBlock text) text.Opacity = 1.0;
+        StatusBar.IsHitTestVisible = enabled;
+        FileModificationStateIndicator.IsEnabled = PathIndicatorButton.IsEnabled =
+            ModificationIndicatorButton.IsEnabled = LineColumnIndicatorButton.IsEnabled =
+            FontZoomIndicatorButton.IsEnabled = LineEndingIndicatorButton.IsEnabled =
+            EncodingIndicatorButton.IsEnabled = LanguageIndicatorButton.IsEnabled =
+            ShadowWindowIndicator.IsEnabled = enabled;
     }
 
     private void InitializeStatusBar()
@@ -55,7 +51,7 @@ public sealed partial class NotepadsMainPage
         if (textEditor == null) return;
         if (StatusBar != null)
         {
-            StatusBar.IsHitTestVisible = true;
+            SetStatusBarInteractive(true);
             FontZoomIndicator.Visibility = LineEndingIndicator.Visibility =
                 EncodingIndicator.Visibility = LanguageIndicator.Visibility = Visibility.Visible;
         }
@@ -81,7 +77,7 @@ public sealed partial class NotepadsMainPage
         }
         ApplicationView.GetForCurrentView().Title = tab?.Title ?? string.Empty;
         if (StatusBar == null) return;
-        StatusBar.IsHitTestVisible = false;
+        SetStatusBarInteractive(false);
         PathIndicator.Text = tab?.EditingFilePath ?? tab?.Title ?? string.Empty;
         ToolTipService.SetToolTip(PathIndicator, PathIndicator.Text);
         FileModificationStateIndicator.Visibility = Visibility.Collapsed;
@@ -137,12 +133,14 @@ public sealed partial class NotepadsMainPage
         {
             FileModificationStateIndicatorIcon.Glyph = "\uE7BA"; // Warning Icon
             ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
+            AutomationProperties.SetName(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
             FileModificationStateIndicator.Visibility = Visibility.Visible;
         }
         else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
         {
             FileModificationStateIndicatorIcon.Glyph = "\uE9CE"; // Unknown Icon
             ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
+            AutomationProperties.SetName(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
             FileModificationStateIndicator.Visibility = Visibility.Visible;
         }
     }
@@ -173,13 +171,11 @@ public sealed partial class NotepadsMainPage
         {
             ModificationIndicator.Text = _resourceLoader.GetString("TextEditor_ModificationIndicator_Text");
             ModificationIndicator.Visibility = Visibility.Visible;
-            ModificationIndicator.IsTapEnabled = true;
         }
         else
         {
             ModificationIndicator.Text = string.Empty;
             ModificationIndicator.Visibility = Visibility.Collapsed;
-            ModificationIndicator.IsTapEnabled = false;
         }
     }
 
@@ -225,6 +221,7 @@ public sealed partial class NotepadsMainPage
         if (ShadowWindowIndicator.Visibility == Visibility.Visible)
         {
             ToolTipService.SetToolTip(ShadowWindowIndicator, _resourceLoader.GetString("App_ShadowWindowIndicator_Description"));
+            AutomationProperties.SetName(ShadowWindowIndicator, _resourceLoader.GetString("App_ShadowWindowIndicator_Description"));
         }
     }
 
@@ -378,7 +375,7 @@ public sealed partial class NotepadsMainPage
         }
     }
 
-    private void StatusBarComponent_OnTapped(object sender, TappedRoutedEventArgs e)
+    private void StatusBarComponent_OnClick(object sender, RoutedEventArgs e)
     {
         var selectedEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedEditor == null) return;
@@ -387,27 +384,27 @@ public sealed partial class NotepadsMainPage
         {
             FileModificationStateIndicatorClicked(selectedEditor);
         }
-        else if (ReferenceEquals(sender, PathIndicator) && !string.IsNullOrEmpty(PathIndicator.Text))
+        else if (ReferenceEquals(sender, PathIndicatorButton) && !string.IsNullOrEmpty(PathIndicator.Text))
         {
             PathIndicatorClicked(selectedEditor);
         }
-        else if (ReferenceEquals(sender, ModificationIndicator))
+        else if (ReferenceEquals(sender, ModificationIndicatorButton))
         {
             ModificationIndicatorClicked(selectedEditor);
         }
-        else if (ReferenceEquals(sender, LineColumnIndicator))
+        else if (ReferenceEquals(sender, LineColumnIndicatorButton))
         {
             LineColumnIndicatorClicked(selectedEditor);
         }
-        else if (ReferenceEquals(sender, FontZoomIndicator))
+        else if (ReferenceEquals(sender, FontZoomIndicatorButton))
         {
             FontZoomIndicatorClicked(selectedEditor);
         }
-        else if (ReferenceEquals(sender, LineEndingIndicator))
+        else if (ReferenceEquals(sender, LineEndingIndicatorButton))
         {
             LineEndingIndicatorClicked(selectedEditor);
         }
-        else if (ReferenceEquals(sender, EncodingIndicator))
+        else if (ReferenceEquals(sender, EncodingIndicatorButton))
         {
             EncodingIndicatorClicked();
         }
@@ -415,9 +412,9 @@ public sealed partial class NotepadsMainPage
         {
             ShadowWindowIndicatorClicked();
         }
-        else if (ReferenceEquals(sender, LanguageIndicator) && selectedEditor.CanChangeLanguage)
+        else if (ReferenceEquals(sender, LanguageIndicatorButton) && selectedEditor.CanChangeLanguage)
         {
-            LanguageSelectionFlyout.ShowAt(LanguageIndicator);
+            LanguageSelectionFlyout.ShowAt(LanguageIndicatorButton);
         }
     }
 
@@ -455,7 +452,7 @@ public sealed partial class NotepadsMainPage
         {
             if (selectedEditor.EditingFile != null)
             {
-                PathIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+                PathIndicatorButton.ContextFlyout.ShowAt(PathIndicatorButton);
             }
             else
             {
@@ -464,7 +461,7 @@ public sealed partial class NotepadsMainPage
         }
         else if (selectedEditor.FileModificationState == FileModificationState.Modified)
         {
-            PathIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
+            PathIndicatorButton.ContextFlyout.ShowAt(PathIndicatorButton);
         }
         else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
         {
@@ -475,7 +472,7 @@ public sealed partial class NotepadsMainPage
     private void ModificationIndicatorClicked(ITextEditor selectedEditor)
     {
         PreviewTextChangesFlyoutItem.IsEnabled = selectedEditor.Mode != TextEditorMode.DiffPreview;
-        ModificationIndicator?.ContextFlyout.ShowAt(ModificationIndicator);
+        ModificationIndicatorButton?.ContextFlyout.ShowAt(ModificationIndicatorButton);
     }
 
     private async void DiffPreviewAccelerator_OnInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
@@ -498,18 +495,18 @@ public sealed partial class NotepadsMainPage
 
     private void FontZoomIndicatorClicked(ITextEditor _)
     {
-        FontZoomIndicator?.ContextFlyout.ShowAt(FontZoomIndicator);
+        FontZoomIndicatorButton?.ContextFlyout.ShowAt(FontZoomIndicatorButton);
         FontZoomIndicatorFlyout.Opened += (sflyout, eflyout) => ToolTipService.SetToolTip(RestoreDefaultZoom, null);
     }
 
     private void LineEndingIndicatorClicked(ITextEditor _)
     {
-        LineEndingIndicator?.ContextFlyout.ShowAt(LineEndingIndicator);
+        LineEndingIndicatorButton?.ContextFlyout.ShowAt(LineEndingIndicatorButton);
     }
 
     private void EncodingIndicatorClicked()
     {
-        EncodingIndicator?.ContextFlyout.ShowAt(EncodingIndicator);
+        EncodingIndicatorButton?.ContextFlyout.ShowAt(EncodingIndicatorButton);
     }
 
     private void EncodingSelectionFlyout_OnOpening(object sender, object args)

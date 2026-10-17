@@ -24,6 +24,7 @@
 
         <Grid Grid.Row="0" Grid.Column="0" Padding="1, 1, 1, 1" Height="34" x:Name="ToggleReplaceModeButtonGrid">
             <Button x:Name="ToggleReplaceModeButton"
+                    AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                     x:Uid="FindAndReplace_ToggleReplaceModeButton"
                     Grid.Column="0"
                     IsTabStop="False"
@@ -68,6 +69,7 @@
                         Margin="9"
                         Visibility="Collapsed"/>
                 <Button x:Name="OptionButton"
+                        AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                         x:Uid="FindAndReplace_SearchOptionButton"
                         IsTabStop="False"
                         Width="40"
@@ -129,6 +131,7 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="SearchBackwardButton"
+                    AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                     x:Uid="FindAndReplace_SearchBackwardButton"
                     Width="40"
                     Height="32"
@@ -148,6 +151,7 @@
             </Button>
 
             <Button x:Name="SearchForwardButton"
+                    AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                     x:Uid="FindAndReplace_SearchForwardButton"
                     Width="40"
                     Height="32"
@@ -167,6 +171,7 @@
             </Button>
 
             <Button x:Name="DismissButton"
+                    AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                     x:Uid="FindAndReplace_DismissButton"
                     IsTabStop="False"
                     Width="40"
@@ -191,6 +196,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Button x:Name="ReplaceButton"
+                        AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                         x:Uid="FindAndReplace_ReplaceButton"
                         IsEnabled="False"
                         IsTabStop="False"
@@ -210,6 +216,7 @@
                 </Button>
 
                 <Button x:Name="ReplaceAllButton"
+                        AutomationProperties.Name="{Binding Path=(ToolTipService.ToolTip), RelativeSource={RelativeSource Self}}"
                         x:Uid="FindAndReplace_ReplaceAllButton"
                         IsEnabled="False"
                         IsTabStop="False"

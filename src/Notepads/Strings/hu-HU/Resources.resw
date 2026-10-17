@@ -299,4 +299,7 @@
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>A(z) „{0}” nincs betöltve. Betölti és menti bezárás előtt, vagy elveti a helyreállítási másolatát?</value></data>
   <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Mentés kilépés előtt? Néhány dokumentum nincs betöltve. Az elvetés törli a helyreállítási másolataikat.</value></data>
   <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Be nem töltött dokumentumok</value></data>
+  <data name="MainMenu_AutomationName" xml:space="preserve"><value>Menü</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>Lapok görgetése visszafelé</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Lapok görgetése előre</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
 </root>

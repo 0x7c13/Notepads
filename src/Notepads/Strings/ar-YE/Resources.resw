@@ -299,4 +299,7 @@
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>لم يتم تحميل «{0}». هل تريد تحميله وحفظه قبل الإغلاق، أم تجاهل نسخة الاسترداد؟</value></data>
   <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>هل تريد الحفظ قبل الخروج؟ لم يتم تحميل بعض المستندات. سيؤدي تجاهلها إلى حذف نسخ الاسترداد الخاصة بها.</value></data>
   <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>مستندات غير محمّلة</value></data>
+  <data name="MainMenu_AutomationName" xml:space="preserve"><value>القائمة</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>تمرير علامات التبويب للخلف</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>تمرير علامات التبويب للأمام</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
 </root>

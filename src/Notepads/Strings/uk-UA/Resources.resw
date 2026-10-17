@@ -299,4 +299,7 @@
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>Документ «{0}» не завантажено. Завантажити й зберегти його перед закриттям чи видалити його копію для відновлення?</value></data>
   <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Зберегти перед виходом? Деякі документи не завантажено. Відмова від збереження видалить їхні копії для відновлення.</value></data>
   <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Незавантажені документи</value></data>
+  <data name="MainMenu_AutomationName" xml:space="preserve"><value>Меню</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>Прокрутити вкладки назад</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Прокрутити вкладки вперед</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
 </root>

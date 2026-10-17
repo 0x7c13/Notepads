@@ -299,4 +299,7 @@
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>« {0} » n’est pas chargé. Le charger et l’enregistrer avant de fermer, ou supprimer sa copie de récupération ?</value></data>
   <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>Enregistrer avant de quitter ? Certains documents ne sont pas chargés. Les ignorer supprime leurs copies de récupération.</value></data>
   <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Documents non chargés</value></data>
+  <data name="MainMenu_AutomationName" xml:space="preserve"><value>Menu</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>Faire défiler les onglets vers l’arrière</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Faire défiler les onglets vers l’avant</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
 </root>

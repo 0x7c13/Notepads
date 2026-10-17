@@ -26,6 +26,7 @@ internal static class EditingUiTests
         await using var host = await FeatureTestHost.CreateAsync();
         const string original = "cat Cat scatter cat\rsecond line\rthird";
         var editor = await OpenAsync(host, "find.txt", Encoding.UTF8.GetBytes(original));
+        await AccessibilityFeatureTests.CheckPageAsync(host, log);
         editor.TestNativeCore.SetTextSelectionPosition(0, 3);
         Selection(editor, 0, 3, "The cold Find fixture must begin with the intended native selection");
         Check(editor.TestNativeCore.GetSearchString() == "cat", "The native selection must provide cat before opening Find.");
@@ -76,6 +77,7 @@ internal static class EditingUiTests
         await UntilUiAsync(() => find.TestFindInput.Text == "cat" && find.TestReplaceVisible &&
             find.TestReplaceButton.IsEnabled && find.TestReplaceAllButton.IsEnabled,
             "The actual replace toggle must show and enable replacement controls for a nonempty query.", () => find.TestInputState);
+        AccessibilityFeatureTests.CheckFindIcons(find);
         find.TestReplaceInput.Text = "dog";
         var routed = 0;
         FindAndReplaceEventArgs lastRequest = null;
@@ -120,6 +122,7 @@ internal static class EditingUiTests
             goTo.TestInput.Text == "2" && goTo.TestInput.SelectionStart == 0 && goTo.TestInput.SelectionLength == 1,
             "Go To must prefill, focus and select the current one-based line.",
             () => $"text=[{goTo.TestInput.Text}], selection=[{goTo.TestInput.SelectionStart},{goTo.TestInput.SelectionLength}], focus={goTo.TestInput.FocusState}");
+        AccessibilityFeatureTests.CheckGoToIcons(goTo);
         foreach (var rejected in new[] { "0", "4", "-1", "2 0", "no", "2147483648" })
         {
             var validation = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

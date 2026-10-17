@@ -31,6 +31,7 @@ using Windows.Storage;
 using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
@@ -190,6 +191,11 @@ public sealed partial class NotepadsMainPage : Page
 
     private void InitializeControls()
     {
+        AutomationProperties.SetName(MainMenuButton, _resourceLoader.GetString("MainMenu_AutomationName"));
+        AutomationProperties.SetName(NewSetButton, MenuCreateNewButton.Text);
+        AutomationProperties.SetName(ExitCompactOverlayButton, _resourceLoader.GetString("App_ExitCompactOverlayMode_Text"));
+        Sets.ScrollBackButtonAutomationName = _resourceLoader.GetString("Tabs_ScrollBack_AutomationName");
+        Sets.ScrollForwardButtonAutomationName = _resourceLoader.GetString("Tabs_ScrollForward_AutomationName");
         ToolTipService.SetToolTip(ExitCompactOverlayButton, _resourceLoader.GetString("App_ExitCompactOverlayMode_Text"));
         RootSplitView.PaneOpening += delegate { SettingsFrame.Navigate(typeof(SettingsPage), _settingsContext, new SuppressNavigationTransitionInfo()); };
         RootSplitView.PaneClosed += delegate { NotepadsCore.FocusOnSelectedTextEditor(); };

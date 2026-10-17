@@ -299,4 +299,7 @@
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>«{0}» no está cargado. ¿Cargarlo y guardarlo antes de cerrar o descartar su copia de recuperación?</value></data>
   <data name="WorkspaceTab_WindowCloseUnloaded" xml:space="preserve"><value>¿Guardar antes de salir? Algunos documentos no están cargados. Descartarlos elimina sus copias de recuperación.</value></data>
   <data name="WorkspaceTab_CloseUnloadedTitle" xml:space="preserve"><value>Documentos sin cargar</value></data>
+  <data name="MainMenu_AutomationName" xml:space="preserve"><value>Menú</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>Desplazar pestañas hacia atrás</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Desplazar pestañas hacia delante</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
 </root>

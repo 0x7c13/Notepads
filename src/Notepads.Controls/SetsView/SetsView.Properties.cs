@@ -13,6 +13,30 @@ namespace Notepads.Controls;
 /// </summary>
 public partial class SetsView
 {
+    /// <summary>Gets or sets the localized name of the backward tab-strip scroll action.</summary>
+    public string ScrollBackButtonAutomationName
+    {
+        get => (string)GetValue(ScrollBackButtonAutomationNameProperty);
+        set => SetValue(ScrollBackButtonAutomationNameProperty, value);
+    }
+
+    /// <summary>Identifies the <see cref="ScrollBackButtonAutomationName"/> dependency property.</summary>
+    public static readonly DependencyProperty ScrollBackButtonAutomationNameProperty =
+        DependencyProperty.Register(nameof(ScrollBackButtonAutomationName), typeof(string), typeof(SetsView),
+            new PropertyMetadata(string.Empty, (sender, _) => ((SetsView)sender).UpdateScrollButtonNames()));
+
+    /// <summary>Gets or sets the localized name of the forward tab-strip scroll action.</summary>
+    public string ScrollForwardButtonAutomationName
+    {
+        get => (string)GetValue(ScrollForwardButtonAutomationNameProperty);
+        set => SetValue(ScrollForwardButtonAutomationNameProperty, value);
+    }
+
+    /// <summary>Identifies the <see cref="ScrollForwardButtonAutomationName"/> dependency property.</summary>
+    public static readonly DependencyProperty ScrollForwardButtonAutomationNameProperty =
+        DependencyProperty.Register(nameof(ScrollForwardButtonAutomationName), typeof(string), typeof(SetsView),
+            new PropertyMetadata(string.Empty, (sender, _) => ((SetsView)sender).UpdateScrollButtonNames()));
+
     /// <summary>
     /// Gets or sets the content to appear to the left or above the set strip.
     /// </summary>
