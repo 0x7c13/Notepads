@@ -80,17 +80,25 @@ function New-ExitedProcessFixture([int] $ExitCode) {
     $start.UseShellExecute = $false
     $start.CreateNoWindow = $true
     $start.WindowStyle = [Diagnostics.ProcessWindowStyle]::Hidden
-    foreach ($argument in @('/d', '/c', 'exit', [string]$ExitCode)) { $start.ArgumentList.Add($argument) }
+    $start.RedirectStandardInput = $true
+    # Keep the child alive until the limited handle has captured its identity.
+    # Windows can no longer query its image once an immediate exit has finished.
+    foreach ($argument in @('/d', '/q', '/c', "set /p fixtureReady= & exit $ExitCode")) { $start.ArgumentList.Add($argument) }
     $process = [Diagnostics.Process]::Start($start)
     $retained = $null
     try {
         $retained = [IsolatedTestProcess]::new($process.Id)
         $identity = @{ Id = $process.Id; Path = $retained.Path; StartTicks = $retained.StartTime.Ticks; Verified = $true; ExpectedTermination = $false; Process = $retained }
+        $process.StandardInput.WriteLine('ready')
+        $process.StandardInput.Close()
         if (!$process.WaitForExit(5000)) { $process.Kill(); throw 'Private exit-code fixture timed out.' }
         return $identity
     }
     catch { if ($retained) { $retained.Dispose() }; throw }
-    finally { $process.Dispose() }
+    finally {
+        if (!$process.HasExited) { $process.Kill(); $null = $process.WaitForExit(5000) }
+        $process.Dispose()
+    }
 }
 
 # A live private child verifies wait, identity and termination through the same
@@ -378,8 +386,9 @@ finally {
     # driver is loaded: a regression can record an attempted injection, but cannot
     # send Ctrl+Escape (or any other key) to the desktop running these contracts.
     $keyboardBoundary = [pscustomobject]@{
-        Alive = $true; Idle = $true; Foreground = $true
+        Alive = $true; Idle = $true; Foreground = $true; PopupCount = 1
         Inputs = [Collections.Generic.List[string]]::new()
+        PopupObservations = [Collections.Generic.List[int]]::new()
     }
     $keyboardBoundary | Add-Member ScriptMethod RequireIdle {
         if (!$this.Idle) { throw 'Fixture physical input is held.' }
@@ -388,6 +397,7 @@ finally {
         param($ProcessId, $Key, $Control, $Shift)
         if (!$this.Foreground) { throw 'Fixture foreground was interrupted.' }
         $this.Inputs.Add("key|$ProcessId|$Key|$Control|$Shift")
+        if ($Key -eq 0x1b) { $this.PopupCount = 0 }
     }
     $keyboardBoundary | Add-Member ScriptMethod Type {
         param($ProcessId, $Text)
@@ -397,6 +407,14 @@ finally {
     function Assert-EditorTestAlive {
         param($Session)
         if (!$keyboardBoundary.Alive) { throw 'Fixture editor exited.' }
+    }
+    function Wait-EditorState {
+        param([scriptblock] $Condition, [string] $Label)
+        Assert-EditorTestAlive $session
+        $state = @{ openPopups = [string] $keyboardBoundary.PopupCount }
+        $keyboardBoundary.PopupObservations.Add($keyboardBoundary.PopupCount)
+        if (!(& $Condition $state)) { throw "Fixture popup state does not satisfy: $Label" }
+        return $state
     }
     $session = @{ ProcessId = 42 }
     $element = [pscustomobject]@{ Current = [pscustomobject]@{ HasKeyboardFocus = $true } }
@@ -431,9 +449,17 @@ finally {
             $element.Current.HasKeyboardFocus = $true
         }
         if ($keyboardBoundary.Inputs.Count) { throw "$($case.Name) injected input before rejecting interruption." }
+        $keyboardBoundary.PopupObservations.Clear()
         & $case.Action
         if ($keyboardBoundary.Inputs.Count -ne 1 -or $keyboardBoundary.Inputs[0] -cne $case.Expected) {
             throw "$($case.Name) did not forward exactly the requested input to the owned target."
+        }
+        if ($case.Name -eq 'Menu Escape') {
+            if ($keyboardBoundary.PopupObservations.Count -ne 2 -or
+                $keyboardBoundary.PopupObservations[0] -ne 1 -or $keyboardBoundary.PopupObservations[1] -ne 0) {
+                throw 'Menu dismissal must observe an open popup before Escape and its removal afterward.'
+            }
+            $checks.Add('Menu dismissal observes popup opening and visual-tree removal around guarded Escape')
         }
         $checks.Add("$($case.Name) forwards guarded input with the appropriate child focus")
         $keyboardBoundary.Inputs.Clear()

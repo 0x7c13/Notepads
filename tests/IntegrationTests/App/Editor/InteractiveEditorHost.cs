@@ -46,6 +46,7 @@ internal static class InteractiveEditorHost
     private static DocumentBaseline _preparedReplacement;
     private static string _preparedReplacementCase;
     private static string _preparedReplacementText;
+    private static (long Anchor, long Caret)? _selectionOnKey;
 
     private static WinUIEditor.Editor Native => _view.Editor;
 
@@ -204,11 +205,13 @@ internal static class InteractiveEditorHost
                 _dropStarted = _dragStarted = _dragCompleted = _dragResult = 0;
                 break;
             case "select" when command.Length == 3:
+            case "select-on-key" when command.Length == 3:
                 var anchor = long.Parse(command[1], CultureInfo.InvariantCulture);
                 var caret = long.Parse(command[2], CultureInfo.InvariantCulture);
                 if (anchor < 0 || caret < 0 || anchor > Native.Length || caret > Native.Length)
                     throw new ArgumentOutOfRangeException(nameof(command));
-                Native.SetSelection(caret, anchor);
+                if (command[0] == "select-on-key") _selectionOnKey = (anchor, caret);
+                else Native.SetSelection(caret, anchor);
                 break;
             case "geometry" when command.Length == 2:
                 var position = long.Parse(command[1], CultureInfo.InvariantCulture);
@@ -446,6 +449,15 @@ internal static class InteractiveEditorHost
         _view = (WinUIEditor.EditorBaseControl)((Grid)_editor.Content).Children[0];
         AutomationProperties.SetAutomationId(_view, "InteractiveEditor");
         AutomationProperties.SetName(_view, "Isolated editor automation test");
+        _view.PreviewKeyDown += (_, args) =>
+        {
+            // Consume a selection shortcut immediately before a queued text
+            // key. Changing selection during that text key would cancel it.
+            if (args.Key != Windows.System.VirtualKey.F15 || _selectionOnKey is not { } selection) return;
+            _selectionOnKey = null;
+            Native.SetSelection(selection.Caret, selection.Anchor);
+            args.Handled = true;
+        };
         _panel.Children.Add(_editor);
         _disposed = false;
     }
@@ -534,6 +546,7 @@ internal static class InteractiveEditorHost
         if (width < 120 || width > 700 || height < 100 || height > 440 || fontSize < 10 || fontSize > 40)
             throw new ArgumentOutOfRangeException(nameof(width), "Invalid fixture dimensions.");
         await DiscardPreparedReplacementAsync();
+        _selectionOnKey = null;
         if (_disposed)
         {
             _panel.Children.Remove(_editor);
@@ -588,6 +601,7 @@ internal static class InteractiveEditorHost
             "\ndragDropEnabled=" + Native.DragDropEnabled + "\ncanUndo=" + Native.CanUndo() +
             "\nrtl=" + _editor.RightToLeftReadingOrder + "\nrevision=" + Native.DocumentRevision +
             "\novertype=" + Native.Overtype + "\nnativeFocus=" + Native.Focus +
+            "\nopenPopups=" + VisualTreeHelper.GetOpenPopups(Window.Current).Count +
             "\nisComposing=" + _view.IsComposing +
             "\nrectangleCaret=" + Native.RectangularSelectionCaret + "\nxOffset=" + Native.XOffset +
             "\ndropStarted=" + _dropStarted + "\ndragStarted=" + _dragStarted +

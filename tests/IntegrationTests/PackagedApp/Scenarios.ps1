@@ -109,6 +109,10 @@ function Focus-Editor($App) {
     [PackagedAppDriver]::Focus($App.Id)
     $editor = Wait-Until { Get-Editor $App } 'visible editor'
     $editor.SetFocus()
+    $null = Wait-Until {
+        $current = (Get-Editor $App).Current
+        $current.HasKeyboardFocus -and $current.IsEnabled
+    } 'editor has keyboard focus and accepts input'
 }
 
 function Key($App, [int] $Key, [bool] $Control = $false, [bool] $Shift = $false) {
@@ -118,7 +122,20 @@ function Key($App, [int] $Key, [bool] $Control = $false, [bool] $Shift = $false)
 
 function Set-Text($App, [string] $Text) {
     Focus-Editor $App
-    Key $App 0x41 $true
+    $editor = Get-Editor $App
+    $pattern = $editor.GetCurrentPattern([Windows.Automation.TextPattern]::Pattern)
+    if ($pattern.DocumentRange.GetText(-1).Length -gt 0) {
+        Key $App 0x41 $true
+        $null = Wait-Until {
+            $document = $pattern.DocumentRange
+            $selection = @($pattern.GetSelection())
+            $selection.Count -eq 1 -and
+                $selection[0].CompareEndpoints([Windows.Automation.Text.TextPatternRangeEndpoint]::Start,
+                    $document, [Windows.Automation.Text.TextPatternRangeEndpoint]::Start) -eq 0 -and
+                $selection[0].CompareEndpoints([Windows.Automation.Text.TextPatternRangeEndpoint]::End,
+                    $document, [Windows.Automation.Text.TextPatternRangeEndpoint]::End) -eq 0
+        } 'entire document is selected before replacement input'
+    }
     [PackagedAppDriver]::Type($App.Id, $Text)
     Expect-Text $App $Text
 }
@@ -128,15 +145,28 @@ function Get-Tabs($App) {
     # ListViewItem peers are exposed directly beneath the app window.
     $root = Get-Root $App
     if (!$root) { return @() }
+    # Count the logical header roster, including tabs clipped by horizontal
+    # scrolling. Match the tab headers' peer class as well as their ListItem role.
     $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::ListItem)
-    return @($root.FindAll($descendants, $condition) | Where-Object { $_.Current.ProcessId -eq $App.Id -and !$_.Current.IsOffscreen })
+    return @($root.FindAll($descendants, $condition) | Where-Object {
+        $_.Current.ProcessId -eq $App.Id -and $_.Current.ClassName -eq 'ListViewItem'
+    })
+}
+
+function Expect-TabCount($App, [int] $Count) {
+    $null = Wait-Until { @(Get-Tabs $App).Count -eq $Count } "exactly $Count tab headers"
+    Check (@(Get-Tabs $App).Count -eq $Count) "Expected exactly $Count tabs."
+}
+
+function Get-TabTitle($Tab) {
+    $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Text)
+    return $Tab.FindFirst($descendants, $condition).Current.Name
 }
 
 function Select-Tab($App, [int] $Index) {
     $tabs = @(Get-Tabs $App)
     Check ($Index -ge 0 -and $Index -lt $tabs.Count -and $Index -lt 9) 'Tab index is outside the shortcut fixture range.'
-    $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Text)
-    $title = $tabs[$Index].FindFirst($descendants, $condition).Current.Name
+    $title = Get-TabTitle $tabs[$Index]
     Check (![string]::IsNullOrWhiteSpace($title)) 'The tab must expose a readable title.'
     # SetsView uses its own selection model; its ListViewItem peers do not
     # implement SelectionItemPattern. Drive the real Ctrl+number shortcut.
@@ -207,15 +237,72 @@ try {
     [IO.File]::WriteAllText($firstFile, 'first file Ω', [Text.UTF8Encoding]::new($false))
     [IO.File]::WriteAllText($secondFile, 'second file 世界', [Text.UTF8Encoding]::new($false))
 
+    Run-Case 'Normal close restores dirty text, tab membership and selected tab' {
+        $closeFile = Join-Path $fixtures 'close-recovery.txt'
+        $diskText = 'original close-recovery file'
+        [IO.File]::WriteAllText($closeFile, $diskText, [Text.UTF8Encoding]::new($false))
+        $null = $Driver.OpenFile($closeFile)
+        Wait-Windows 1
+        Expect-Text $main $diskText
+        # Build a known two-document workspace before the multiwindow cases.
+        # Expected membership/content must not come from a partial startup tree.
+        $script:tabCount = 2
+        $script:tabTexts = @('unsaved startup Ω 世界 😀', 'close recovery é العربية 😀')
+        Expect-TabCount $main $tabCount
+        Set-Text $main $tabTexts[1]
+        for ($index = 0; $index -lt $tabCount; $index++) {
+            Select-Tab $main $index
+            Expect-Text $main $tabTexts[$index]
+        }
+        Check ([IO.File]::ReadAllText($closeFile) -ceq $diskText) 'The close fixture must retain unsaved edits instead of saving them to disk.'
+        [ordered]@{ Count = $tabCount; Texts = $tabTexts } |
+            ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'normal-close-tabs.json')
+        Expect-Text $main 'close recovery é العربية 😀'
+        Close-All
+        Check ([IO.File]::ReadAllText($closeFile) -ceq $diskText) 'Normal close must checkpoint dirty text without saving the file.'
+        $script:main = Launch-One
+        Expect-Text $main 'close recovery é العربية 😀'
+        Expect-TabCount $main $tabCount
+        for ($index = 0; $index -lt $tabCount; $index++) {
+            Select-Tab $main $index
+            Expect-Text $main $tabTexts[$index]
+        }
+    }
+
+    Run-Case 'OS suspend/resume preserves live edits and accepts further input' {
+        Set-Text $main 'suspend recovery Ω😀'
+        $Driver.Suspend()
+        $null = Wait-Until { $Driver.State -eq 3 } 'OS package suspended'
+        Check ($Driver.State -eq 3) 'Package never entered the suspended state.'
+        $Driver.Resume()
+        $null = Wait-Until { $Driver.State -eq 1 } 'OS package resumed'
+        Expect-Text $main 'suspend recovery Ω😀'
+        Set-Text $main 'resumed edit 世界'
+    }
+
+    Run-Case 'Termination after OS suspension restores the completed suspension checkpoint' {
+        $Driver.Suspend()
+        $null = Wait-Until { $Driver.State -eq 3 } 'second OS suspension'
+        Stop-PackagedAppProcesses -Processes $owned -Completed $completedExits `
+            -EvidencePath $exitEvidence -Reason 'Termination after OS suspension'
+        $script:main = Launch-One
+        Expect-Text $main 'resumed edit 世界'
+        Expect-TabCount $main $tabCount
+        Close-All
+    }
+
     Run-Case 'Warm Windows file activation, duplicate reuse and real file save' {
+        $script:main = Launch-One
+        Expect-Text $main 'resumed edit 世界'
+        Expect-TabCount $main $tabCount
         $null = $Driver.OpenFile($firstFile)
         Wait-Windows 1
         Expect-Text $main 'first file Ω'
-        Check (@(Get-Tabs $main).Count -eq 2) 'File activation did not add exactly one tab.'
+        Expect-TabCount $main 3
         $null = $Driver.OpenFile($firstFile)
         Wait-Windows 1
         Expect-Text $main 'first file Ω'
-        Check (@(Get-Tabs $main).Count -eq 2) 'Repeated file activation created a duplicate tab.'
+        Expect-TabCount $main 3
         Set-Text $main 'saved through packaged app 😀'
         Key $main 0x53 $true
         $null = Wait-Until { [IO.File]::ReadAllText($firstFile) -ceq 'saved through packaged app 😀' } 'file save bytes'
@@ -251,50 +338,6 @@ try {
         Wait-Windows 2
         Expect-Text $second 'saved through packaged app 😀'
         Check (@(Get-Tabs $second).Count -eq $tabsBefore + 1) 'Redirected file did not reach the last active window.'
-        Close-All
-    }
-
-    Run-Case 'Normal close restores dirty text, tab membership and selected tab' {
-        $script:main = Launch-One
-        Focus-Editor $main
-        Key $main 0x54 $true
-        Expect-Text $main ''
-        Set-Text $main 'close recovery é العربية 😀'
-        $script:tabCount = @(Get-Tabs $main).Count
-        $script:tabTexts = @(for ($index = 0; $index -lt $tabCount; $index++) {
-            Select-Tab $main $index
-            Get-Text $main
-        })
-        Expect-Text $main 'close recovery é العربية 😀'
-        Close-All
-        $script:main = Launch-One
-        Expect-Text $main 'close recovery é العربية 😀'
-        Check (@(Get-Tabs $main).Count -eq $tabCount) 'Normal close changed tab membership.'
-        for ($index = 0; $index -lt $tabCount; $index++) {
-            Select-Tab $main $index
-            Expect-Text $main $tabTexts[$index]
-        }
-    }
-
-    Run-Case 'OS suspend/resume preserves live edits and accepts further input' {
-        Set-Text $main 'suspend recovery Ω😀'
-        $Driver.Suspend()
-        $null = Wait-Until { $Driver.State -eq 3 } 'OS package suspended'
-        Check ($Driver.State -eq 3) 'Package never entered the suspended state.'
-        $Driver.Resume()
-        $null = Wait-Until { $Driver.State -eq 1 } 'OS package resumed'
-        Expect-Text $main 'suspend recovery Ω😀'
-        Set-Text $main 'resumed edit 世界'
-    }
-
-    Run-Case 'Termination after OS suspension restores the completed suspension checkpoint' {
-        $Driver.Suspend()
-        $null = Wait-Until { $Driver.State -eq 3 } 'second OS suspension'
-        Stop-PackagedAppProcesses -Processes $owned -Completed $completedExits `
-            -EvidencePath $exitEvidence -Reason 'Termination after OS suspension'
-        $script:main = Launch-One
-        Expect-Text $main 'resumed edit 世界'
-        Check (@(Get-Tabs $main).Count -eq $tabCount) 'Suspension checkpoint lost tabs.'
         Close-All
     }
 

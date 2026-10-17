@@ -7,8 +7,9 @@ temporary certificate on their disposable VM; no publishing credentials are used
 
 ## Automatic checks
 
-[ci.yml](.github/workflows/ci.yml) runs on pull requests, pushes to `v2`/`master`,
-merge queues and manual dispatch. New runs cancel superseded runs on the same
+[ci.yml](.github/workflows/ci.yml) runs on pull request updates, pushes to `master`,
+merge queues and manual dispatch. Feature branch pushes are checked through their
+PR instead of starting a duplicate run. New runs cancel superseded runs on the same
 PR/ref. There are no path filters that could leave a required check pending.
 
 | Job | What must pass |
@@ -238,7 +239,7 @@ together after verifying the upstream release.
 
 The repository's default branch is currently `master`. GitHub requires the
 manual workflow and Dependabot configuration on the default branch before those
-features are enabled. Shipping these files only to `v2` enables its push/PR CI,
+features are enabled. Shipping these files only to `v2` enables CI for its PR,
 but does not complete that repository setup. When V2 becomes the default branch,
 revisit Dependabot's explicit target and the allowed branch lists.
 

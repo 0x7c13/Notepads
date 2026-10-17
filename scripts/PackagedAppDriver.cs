@@ -193,6 +193,42 @@ public sealed class PackagedAppDriver : IDisposable
         }
     }
 
+    public static void KeyThenCharacter(uint pid, ushort key, char character) =>
+        KeyThenCharacter(pid, key, character, false);
+
+    public static void KeyThenCharacter(uint pid, ushort key, char character, bool control)
+    {
+        RequireFocus(pid);
+        // Queue both keys together instead of letting driver round trips
+        // conceal a missing selection notification between them.
+        var input = control ? new[] {
+            new Input { Type = 1, Key = 0x11 },
+            new Input { Type = 1, Key = key },
+            new Input { Type = 1, Key = key, Flags = 2 },
+            new Input { Type = 1, Key = 0x11, Flags = 2 },
+            new Input { Type = 1, Scan = character, Flags = 4 },
+            new Input { Type = 1, Scan = character, Flags = 6 }
+        } : new[] {
+            new Input { Type = 1, Key = key },
+            new Input { Type = 1, Key = key, Flags = 2 },
+            new Input { Type = 1, Scan = character, Flags = 4 },
+            new Input { Type = 1, Scan = character, Flags = 6 }
+        };
+        var sent = SendInput((uint)input.Length, input, 40);
+        if (sent == input.Length) return;
+        var error = Marshal.GetLastWin32Error();
+        // Release a down event if Windows accepted only part of the batch.
+        if (control)
+        {
+            if (sent == 2) Send(key, 0, 2);
+            else if (sent == 5) Send(0, character, 6);
+            if (sent > 0 && sent < 4) Send(0x11, 0, 2);
+        }
+        else if (sent == 1) Send(key, 0, 2);
+        else if (sent == 3) Send(0, character, 6);
+        throw new Win32Exception(error, "Batched key and character injection failed.");
+    }
+
     public static void Close(uint pid)
     {
         IntPtr window = Window(pid);

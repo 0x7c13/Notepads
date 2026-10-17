@@ -349,8 +349,12 @@ function Send-EditorText([string] $Text) {
 }
 
 function Close-EditorContextMenu {
+    $null = Wait-EditorState { param($state) [int] $state.openPopups -gt 0 } 'The editor context menu opens before dismissal'
     Assert-EditorKeyboardTarget -AllowMenuFocus
     [PackagedAppDriver]::Key([uint32] $session.ProcessId, 0x1b, $false, $false)
+    # Escape dispatch and restored focus do not prove that the popup has left
+    # the visual tree. A following raster assertion must not capture its ink.
+    $null = Wait-EditorState { param($state) [int] $state.openPopups -eq 0 } 'The editor context menu leaves the visual tree'
 }
 
 function Read-StableInk([string] $Name, [int] $Rows = 1) {
@@ -862,6 +866,54 @@ try {
                 Send-EditorKey 0x5a $true
                 $state = Wait-EditorText $text "$label`: one more Undo restores every original island"
                 Assert-Equal $state.canUndo 'False' "$label`: each typed rectangle edit has one undo group"
+            }
+        }
+    }
+
+    Test-Case 'Physical Ctrl+A followed immediately by typing replaces the complete document' {
+        foreach ($wrap in @($false, $true)) {
+            foreach ($text in @('whole document selection', 'ABC אבג 中文 😀 tail')) {
+                $null = Reset-Document $text -Wrap $wrap -Width 260 -FontSize 20
+                Focus-Editor
+                Assert-EditorKeyboardTarget
+                [PackagedAppDriver]::KeyThenCharacter([uint32] $session.ProcessId, 0x41, [char] '|', $true)
+                $typed = Wait-EditorText '|' 'Queued Ctrl+A and character replace the complete document'
+                Assert-Equal $typed.caret '1' 'Immediate replacement leaves the caret after the character'
+                Assert-Equal $typed.anchor '1' 'Immediate replacement collapses the selection'
+                Send-EditorKey 0x5a $true
+                $state = Wait-EditorText $text 'One Undo restores the complete document after immediate Ctrl+A typing'
+                Assert-Equal $state.canUndo 'False' 'Immediate select-all replacement creates one undo action'
+            }
+        }
+    }
+
+    Test-Case 'Physical typing immediately after programmatic selection uses the new insertion range' {
+        # Distinct characters expose a stale TSF insertion range even when the
+        # document length is correct. Do not wait for a paint after selecting.
+        $text = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        foreach ($selectionCommand in @('select', 'select-on-key')) {
+            foreach ($wrap in @($false, $true)) {
+                foreach ($position in @(7, 22)) {
+                    foreach ($replaceLength in @(0, 3)) {
+                        $null = Reset-Document $text -Wrap $wrap -Width 260 -FontSize 20
+                        Focus-Editor
+                        $end = $position + $replaceLength
+                        $label = "$selectionCommand wrap=$wrap range=$position..$end"
+                        $null = Invoke-EditorTestCommand $session "$selectionCommand|$position|$end"
+                        if ($selectionCommand -eq 'select-on-key') {
+                            Assert-EditorKeyboardTarget
+                            [PackagedAppDriver]::KeyThenCharacter([uint32] $session.ProcessId, 0x7e, [char] '|')
+                        }
+                        else { Send-EditorText '|' }
+                        $expected = $text.Substring(0, $position) + '|' + $text.Substring($end)
+                        $typed = Wait-EditorText $expected "$label`: physical typing uses the selected interval before paint"
+                        Assert-Equal ([int] $typed.caret) ($position + 1) "$label`: caret follows the inserted character"
+                        Assert-Equal ([int] $typed.anchor) ($position + 1) "$label`: selection collapses after insertion"
+                        Send-EditorKey 0x5a $true
+                        $state = Wait-EditorText $text "$label`: one Undo restores the exact original text"
+                        Assert-Equal $state.canUndo 'False' "$label`: typing creates one undo action"
+                    }
+                }
             }
         }
     }

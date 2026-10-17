@@ -71,6 +71,8 @@ first paint, restore, rectangles, language, accessibility and focus. External te
 add physical input and independent UIA/pixel observations. These layers complement
 each other: NativeBidi does not compile `Editor.cxx` or the TSF bridge; App `TypeText`
 uses native paste, so neither is proof of TSF keyboard handling.
+Physical typing also queues a selection shortcut and character together, checking
+exact text, caret and one-step undo without relying on paint/idle to synchronize TSF.
 
 ## Isolation and the meaning of a pass
 

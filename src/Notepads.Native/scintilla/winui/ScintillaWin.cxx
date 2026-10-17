@@ -3946,6 +3946,37 @@ namespace Scintilla::Internal {
 		case Message::SetDocPointer:
 			return OnSetDocPointer(wParam, lParam);
 
+		case Message::ClearSelections:
+		case Message::SetSelection:
+		case Message::AddSelection:
+		case Message::DropSelectionN:
+		case Message::SetMainSelection:
+		case Message::SetSelectionNCaret:
+		case Message::SetSelectionNAnchor:
+		case Message::SetSelectionNCaretVirtualSpace:
+		case Message::SetSelectionNAnchorVirtualSpace:
+		case Message::SetSelectionNStart:
+		case Message::SetSelectionNEnd:
+		case Message::SetRectangularSelectionCaret:
+		case Message::SetRectangularSelectionAnchor:
+		case Message::SetRectangularSelectionCaretVirtualSpace:
+		case Message::SetRectangularSelectionAnchorVirtualSpace:
+		case Message::RotateSelection:
+		case Message::SwapMainAnchorCaret:
+		case Message::SetSelectionSerialized:
+		{
+			// These APIs change sel directly, bypassing Editor::SetSelection.
+			// Publish the completed main range before another key reaches TSF;
+			// waiting for UpdateUI lets it insert at the previous caret instead.
+			const auto previous = sel.RangeMain();
+			const auto result = __super::WndProc(iMessage, wParam, lParam);
+			const auto &current = sel.RangeMain();
+			if (current.caret.Position() != previous.caret.Position() ||
+				current.anchor.Position() != previous.anchor.Position())
+				ClaimSelection();
+			return result;
+		}
+
 		case Message::SetWrapMode:
 			if (wParam != static_cast<uptr_t>(Wrap::None)) {
 				_displayViewport.reset();
