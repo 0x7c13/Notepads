@@ -1334,9 +1334,10 @@ internal static partial class BidiTests
             .GetPattern(PatternInterface.Text);
         try
         {
-            core.FontSize = 23.25;
+            foreach (var fontSize in new[] { 7.75, 11.625, 23.25 })
             foreach (var rtl in new[] { false, true })
             {
+                core.FontSize = fontSize;
                 const string source = "   \r ";
                 await LoadAsync(core, native, source, rtl);
                 var spaces = provider.DocumentRange.Clone();
@@ -1355,7 +1356,8 @@ internal static partial class BidiTests
                 // additional spaces reach column three. Fractional X rounding
                 // must not add a third space after the first row widens.
                 Check(core.GetText() == "   " + wideInsert + "\r   X",
-                    $"Rectangular paste pads the fractional EOL column by exactly two spaces: rtl={rtl}");
+                    $"Rectangular paste pads the fractional EOL column by exactly two spaces: " +
+                    $"rtl={rtl}, font={fontSize}, lastRow=[{core.GetText().Split('\r')[^1].Replace(" ", "·")}]");
                 core.Undo();
                 Check(core.GetText() == source && !core.CanUndo,
                     "The wide insertion and exact EOL padding share one undo action");

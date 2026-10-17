@@ -143,7 +143,7 @@ function Select-Tab($App, [int] $Index) {
     Focus-Editor $App
     Key $App (0x31 + $Index) $true
     $null = Wait-Until {
-        $path = Find-UI $App 'PathIndicator'
+        $path = Find-UI $App 'PathIndicatorButton'
         $path -and $path.Current.Name.EndsWith($title, [StringComparison]::Ordinal) -and (Get-Editor $App)
     } 'selected tab path and editor'
 }

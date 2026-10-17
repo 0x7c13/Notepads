@@ -2708,6 +2708,17 @@ void Editor::PasteRectangular(SelectionPosition pos, std::string_view text) {
 	UndoGroup ug(pdoc);
 	sel.RangeMain().caret = RealizeVirtualSpace(sel.RangeMain().caret);
 	const TextPositionX xInsert = TextXFromPosition(sel.RangeMain().caret);
+	const auto remainingPadding = [this, xInsert](XYPOSITION x) {
+		XYPOSITION distance = xInsert.offset - x;
+		if (xInsert.fromRight) {
+			// Canvas growth changes the precision of right-relative offsets.
+			// Compare on the paragraph's float coordinate grid, as hit testing
+			// does: a sub-ULP discrepancy must not insert another whole space.
+			const XYPOSITION canvasWidth = EditView::TextLayoutWidth(*this);
+			distance = static_cast<float>(xInsert.Resolve(canvasWidth)) - static_cast<float>(x + canvasWidth);
+		}
+		return distance * (BidirectionalR2L() ? -1 : 1);
+	};
 	constexpr Sci::Position maxBatchSpaces = 8192;
 	XYPOSITION maxSpaceWidth = 0;
 	for (const Style &style : vs.styles) {
@@ -2735,10 +2746,10 @@ void Editor::PasteRectangular(SelectionPosition pos, std::string_view text) {
 			sel.RangeMain().caret.SetVirtualSpace(0);
 			const XYPOSITION xCurrent = TextXFromPosition(sel.RangeMain().caret).offset;
 			const int direction = BidirectionalR2L() ? -1 : 1;
-			if ((xInsert.offset - xCurrent) * direction > 0 && pdoc->IsLineEndPosition(sel.MainCaret())) {
+			if (remainingPadding(xCurrent) > 0 && pdoc->IsLineEndPosition(sel.MainCaret())) {
 				XYPOSITION xAfterBatch = xCurrent;
-				while (((xInsert.offset - xAfterBatch) * direction > 0) && (maxSpaceWidth > 0)) {
-					const XYPOSITION missing = (xInsert.offset - xAfterBatch) * direction;
+				while ((remainingPadding(xAfterBatch) > 0) && (maxSpaceWidth > 0)) {
+					const XYPOSITION missing = remainingPadding(xAfterBatch);
 					const Sci::Position spacesEstimate = static_cast<Sci::Position>(missing / maxSpaceWidth);
 					if (spacesEstimate <= 2) {
 						break;
@@ -2753,7 +2764,7 @@ void Editor::PasteRectangular(SelectionPosition pos, std::string_view text) {
 				}
 
 				XYPOSITION xBefore = TextXFromPosition(sel.RangeMain().caret).offset;
-				while ((xInsert.offset - xBefore) * direction > 0) {
+				while (remainingPadding(xBefore) > 0) {
 					assert(pdoc);
 					const Sci::Position lengthInserted = pdoc->InsertString(sel.MainCaret(), " ", 1);
 					sel.RangeMain().caret.Add(lengthInserted);
