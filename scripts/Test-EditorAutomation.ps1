@@ -425,6 +425,20 @@ try {
     $pattern = [Windows.Automation.TextPattern] $element.GetCurrentPattern([Windows.Automation.TextPattern]::Pattern)
     $events = [EditorNavigationEventObserver]::new([int] $session.ProcessId, 'InteractiveEditor')
 
+    Test-Case 'Repeated reading-order setup completes without requiring an unrelated paint' {
+        $text = 'idle אבג editor'
+        $null = Reset-Document $text
+        # Suppress caret animation so it cannot accidentally satisfy an incorrect
+        # paint wait after an unchanged direction. Real changes still await paint.
+        $null = Invoke-EditorTestCommand $session 'raster|False'
+        foreach ($rtl in @($false, $false, $true, $true, $true, $false, $false)) {
+            $state = Invoke-EditorTestCommand $session "direction|$rtl"
+            Assert-Equal $state.rtl $rtl.ToString() 'Requested direction was applied'
+            Assert-Equal ([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($state.text64))) $text 'Direction setup preserves actual document'
+            Assert-Equal $pattern.DocumentRange.GetText(-1) $text 'Independent UIA confirms unchanged content'
+        }
+    }
+
     Test-Case 'External UIA event observer detects real selection and content changes' {
         $null = Reset-Document 'event listener control'
         Wait-EditorEventsQuiet
@@ -1145,6 +1159,33 @@ try {
             param($state)
             [int] $state.caret -eq ($hebrewEnd - 2) -and $state.anchor -eq $state.caret
         } 'Right enters the Hebrew run from the preserved visual edge'
+    }
+
+    Test-Case 'Long mixed paragraph physical typing and undo retain distant UIA selections' {
+        $unit = 'abc אבג def '
+        $text = $unit * 2000
+        $character = $unit.Length * 1800 + 4
+        $expected = $text.Remove($character, 3).Insert($character, 'X')
+        foreach ($rtl in @($false, $true)) {
+            $null = Reset-Document $text -Width 620 -FontSize 24
+            Focus-Editor
+            $null = Invoke-EditorTestCommand $session "direction|$rtl"
+            $range = New-Caret $character
+            Assert-Equal $range.MoveEndpointByUnit($endEndpoint, $characterUnit, 3) 3 'Distant selection reaches three characters'
+            Assert-Equal $range.GetText(-1) 'אבג' 'Distant selection contains only the intended Hebrew word'
+            $range.Select()
+            $null = Invoke-EditorTestCommand $session 'scroll-caret'
+            Assert-True (@($range.GetBoundingRectangles()).Count -gt 0) 'Distant selected text is physically visible'
+            Send-EditorText 'X'
+            $null = Wait-EditorText $expected "Long paragraph RTL=$rtl replaces exactly one distant word through physical input"
+            Send-EditorKey 0x5a $true
+            $state = Wait-EditorText $text "Long paragraph RTL=$rtl restores all text in one physical undo"
+            Assert-Equal $state.canUndo 'False' 'Distant physical replacement has exactly one undo action'
+            Send-EditorKey 0x59 $true
+            $null = Wait-EditorText $expected "Long paragraph RTL=$rtl physical redo restores the same replacement"
+            Send-EditorKey 0x5a $true
+            $null = Wait-EditorText $text "Long paragraph RTL=$rtl final undo restores the exact original"
+        }
     }
 
     Test-Case 'Partial emoji selection preserves neighboring glyph pixels and geometry' {

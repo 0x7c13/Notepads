@@ -77,6 +77,7 @@
     <ClCompile Include="..\scintilla\winui\ScintillaWin.cxx" />
     <ClCompile Include="..\scintilla\winui\SurfaceD2D.cxx" />
     <ClCompile Include="..\scintilla\winui\DirectWriteParagraph.cpp" />
+    <ClCompile Include="..\scintilla\winui\DirectWriteRunLayout.cpp" />
     <ClCompile Include="..\scintilla\winui\DirectWriteRenderer.cpp" />
     <ClCompile Include="..\scintilla\src\AutoComplete.cxx">
       <Filter>Scintilla</Filter>
@@ -209,6 +210,7 @@
     <ClInclude Include="..\scintilla\winui\ScintillaWin.h" />
     <ClInclude Include="..\scintilla\winui\SurfaceD2D.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteParagraph.h" />
+    <ClInclude Include="..\scintilla\winui\DirectWriteRunLayout.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteRenderer.h" />
     <ClInclude Include="..\scintilla\winui\SurfaceDrawSession.h" />
     <ClInclude Include="..\scintilla\winui\WinTypes.h" />

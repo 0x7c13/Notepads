@@ -188,6 +188,18 @@ moving glyphs or changing wrapping. The matrix includes affine transforms, GDI
 measurement, overlapping translucent colour glyphs, wrapped rows and clipped
 italic ink. Same-layout redraws and invalid brush spans cover resource lifetime
 and error boundaries; no renderer observer or test switch is compiled into the app.
+The long unwrapped backend admits dense LTR-base paragraphs of at least 16K
+UTF-16 units with bounded complete script/BiDi contexts. RTL runs within those
+paragraphs remain supported; explicit RTL-base, sparse/homogeneous, wrapped,
+unsupported control/font contexts and zero-width ownership retain native layout.
+Unicode contexts are embedded in genuinely eligible dense paragraphs, with
+independent caret/hit/range/panned-pixel oracles and reversed-callback negative
+controls for overlapping ink. A five-size Consolas matrix (including fractional
+sizes), both directions and narrow/wide canvases also verifies dispatch and every
+eligible glyph callback's origin, face, indices, advances, offsets and cluster map.
+Long Hebrew/ASCII, sparse mixed islands and unsupported tails have explicit native
+fallback regressions. Tests distinguish `S_FALSE` from failures and never bypass
+production admission. Pixel comparisons retain the per-channel tolerance of 2.
 The small checked-in fonts never require installation or Python to run tests;
 regenerate them with `uv run --no-project --with fonttools==4.60.1 python
 tests/IntegrationTests/Support/NativeBidi.Tests/GenerateFonts.py`.
@@ -223,6 +235,8 @@ Tab/Undo, plus overwrite input across selected rows, empty tab rows and mixed
 islands. Repeated input checks that overwrite resumes after selection replacement;
 exact row carets before EOF also reject stale text-store selection corrections.
 Physical soft-wrap controls compare typed affinity with an explicitly placed caret.
+Long mixed paragraphs also exercise distant external UIA selection, physical
+replacement and single-step undo/redo under both paragraph directions.
 The App fixtures' `TypeText` uses native paste, bypassing `InsertCharacter` and
 TSF `SetText`. Physical typing supplies the direct bridge regressions; NativeBidi
 does not compile the text-store bridge and cannot provide that coverage.
@@ -236,8 +250,13 @@ boundaries, as well as preserving an existing selection. The drag matrix also
 moves/copies a selected Hebrew glyph to a separate process and checks actual
 insertion-caret pixels when a held drag moves between the two visual homes of
 one byte position, followed by exact insertion and single-step undo.
-Optional long-paragraph timings are available by running the built helper with
-`--performance`; normal correctness tests have no performance pass/fail thresholds.
+Normal NativeBidi CI includes an exactly 256K UTF-16 dense LTR-base paragraph that
+must select the analyzed backend. Beginning/middle/end samples compare visual
+navigation, selection spans and scrolled pixels with independent Windows results;
+navigation builds the complete lazy index. One native reference is reused and
+samples are bounded. Running the helper with `--performance` adds the broader
+256K caret/raster matrix in both directions and scaling observations. No
+correctness test has a timing pass/fail threshold.
 DPI verification has two independent layers. NativeBidi compares the production
 renderer with Windows at 120/144/192 DPI and changes DPI on the same targets and
 layouts through 96 -> 120 -> 144 -> 192 -> 96. Returning to 96 DPI must reproduce

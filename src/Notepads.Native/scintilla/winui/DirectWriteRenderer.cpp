@@ -7,6 +7,7 @@
 #define NOMINMAX
 #endif
 #include "DirectWriteRenderer.h"
+#include "DirectWriteRunLayout.h"
 
 #include <d2d1_3.h>
 #include <dwrite_3.h>
@@ -45,6 +46,30 @@ bool Finite(D2D1_MATRIX_3X2_F transform) noexcept {
 	return std::isfinite(transform._11) && std::isfinite(transform._12) &&
 		std::isfinite(transform._21) && std::isfinite(transform._22) &&
 		std::isfinite(transform._31) && std::isfinite(transform._32);
+}
+
+// Retained runs bypass IDWriteTextLayout::Draw, which normally snaps the
+// common baseline. Match its paint-only adjustment without rounding natural X
+// positions or changing immutable caret geometry. DirectWrite applies DPI before
+// the renderer transform; translation is therefore not scaled a second time.
+float SnapBaseline(float y, D2D1_MATRIX_3X2_F transform, float pixelsPerDip) noexcept {
+	float scale, translation;
+	if (transform._12 == 0 && transform._21 == 0) {
+		scale = transform._22;
+		translation = transform._32;
+	} else if (transform._11 == 0 && transform._22 == 0) {
+		scale = transform._21;
+		translation = transform._31;
+	} else {
+		// A non-axis-aligned baseline is not snapped by DirectWrite.
+		return y;
+	}
+	if (scale == 0) return y;
+	const float snapped = std::floor((y * pixelsPerDip) * scale + translation + 0.5f);
+	D2D1_MATRIX_3X2_F inverse = transform;
+	if (!D2D1InvertMatrix(&inverse)) return y;
+	return (transform._12 == 0 && transform._21 == 0 ?
+		snapped * inverse._22 + inverse._32 : snapped * inverse._12 + inverse._32) / pixelsPerDip;
 }
 
 class ClippedTextRenderer final : public IDWriteTextRenderer {
@@ -455,11 +480,15 @@ public:
 
 }
 
-HRESULT DrawParagraphTextClipped(IDWriteFactory *factory, ID2D1RenderTarget *target,
-	IDWriteTextLayout *layout, D2D1_POINT_2F origin, D2D1_RECT_F clip, ID2D1Brush *brush,
+namespace {
+
+HRESULT DrawParagraph(IDWriteFactory *factory, ID2D1RenderTarget *target, IDWriteTextLayout *layout,
+	std::span<const ParagraphGlyphRun> runs, float baseline,
+	D2D1_POINT_2F origin, D2D1_RECT_F clip, ID2D1Brush *brush,
 	D2D1_DRAW_TEXT_OPTIONS options, const DWRITE_TEXT_RANGE *row, std::span<const ParagraphBrushRun> foreground) noexcept {
-	if (!factory || !target || !layout || !brush) return E_POINTER;
+	if (!factory || !target || !brush) return E_POINTER;
 	if (!Finite(clip) || !std::isfinite(origin.x) || !std::isfinite(origin.y)) return E_INVALIDARG;
+	if (!std::isfinite(baseline)) return E_INVALIDARG;
 	if (row && uint64_t{row->startPosition} + row->length > UINT32_MAX) return E_INVALIDARG;
 	uint64_t previousEnd = 0;
 	for (const auto &range : foreground) {
@@ -476,11 +505,11 @@ HRESULT DrawParagraphTextClipped(IDWriteFactory *factory, ID2D1RenderTarget *tar
 		};
 		// Only an unfiltered request may delegate to DrawTextLayout. Doing so
 		// for a row would silently reintroduce neighbouring-row ink and colours.
-		const auto unsupported = [&](HRESULT result) noexcept { return row || !foreground.empty() ? result : systemDraw(); };
+		const auto unsupported = [&](HRESULT result) noexcept { return !layout || row || !foreground.empty() ? result : systemDraw(); };
 		constexpr unsigned supportedOptions = D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT |
 			D2D1_DRAW_TEXT_OPTIONS_NO_SNAP | D2D1_DRAW_TEXT_OPTIONS_DISABLE_COLOR_BITMAP_SNAPPING;
 		if (options & ~supportedOptions) return unsupported(E_NOTIMPL);
-		if (!row && foreground.empty() && !(options & D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT)) return systemDraw();
+		if (layout && !row && foreground.empty() && !(options & D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT)) return systemDraw();
 		ComPtr<ID2D1DeviceContext4> context;
 		ComPtr<ID2D1DeviceContext7> modern;
 		ComPtr<IDWriteFactory4> placement;
@@ -497,15 +526,25 @@ HRESULT DrawParagraphTextClipped(IDWriteFactory *factory, ID2D1RenderTarget *tar
 		if (!Finite(transform)) return E_INVALIDARG;
 		if (context->GetUnitMode() != D2D1_UNIT_MODE_DIPS ||
 			!std::isfinite(dpiX) || dpiX <= 0 || dpiX != dpiY ||
-			layout->GetFlowDirection() != DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM ||
+			(layout && (layout->GetFlowDirection() != DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM ||
 			(layout->GetReadingDirection() != DWRITE_READING_DIRECTION_LEFT_TO_RIGHT &&
-				layout->GetReadingDirection() != DWRITE_READING_DIRECTION_RIGHT_TO_LEFT)) return unsupported(E_NOTIMPL);
-		if (!row && foreground.empty() && !Translation(transform)) return systemDraw();
+				layout->GetReadingDirection() != DWRITE_READING_DIRECTION_RIGHT_TO_LEFT)))) return unsupported(E_NOTIMPL);
+		if (layout && !row && foreground.empty() && !Translation(transform)) return systemDraw();
 
 		ComPtr<ClippedTextRenderer> renderer;
 		renderer.Attach(new ClippedTextRenderer(placement.Get(), context.Get(), modern.Get(), brush,
 			transform, clip, dpiX, options, row, foreground));
-		const HRESULT result = layout->Draw(nullptr, renderer.Get(), origin.x, origin.y);
+		float paintBaseline = origin.y + baseline;
+		if (!layout && !(options & D2D1_DRAW_TEXT_OPTIONS_NO_SNAP))
+			paintBaseline = SnapBaseline(paintBaseline, transform, dpiX / 96);
+		if (!layout && !std::isfinite(paintBaseline)) return E_INVALIDARG;
+		HRESULT result = S_OK;
+		if (layout) result = layout->Draw(nullptr, renderer.Get(), origin.x, origin.y);
+		else for (const auto &run : runs) {
+			result = renderer->DrawGlyphRun(nullptr, origin.x + run.originX, paintBaseline,
+				DWRITE_MEASURING_MODE_NATURAL, &run.glyphs, &run.text, nullptr);
+			if (FAILED(result)) break;
+		}
 		// Some DirectWrite versions keep drawing and return S_OK after a failed
 		// callback. Preserve its first failure and never repaint a partial draw.
 		return FAILED(renderer->Status()) ? renderer->Status() : result;
@@ -514,6 +553,22 @@ HRESULT DrawParagraphTextClipped(IDWriteFactory *factory, ID2D1RenderTarget *tar
 	} catch (...) {
 		return E_FAIL;
 	}
+}
+
+}
+
+HRESULT DrawParagraphTextClipped(IDWriteFactory *factory, ID2D1RenderTarget *target,
+	IDWriteTextLayout *layout, D2D1_POINT_2F origin, D2D1_RECT_F clip, ID2D1Brush *brush,
+	D2D1_DRAW_TEXT_OPTIONS options, const DWRITE_TEXT_RANGE *row, std::span<const ParagraphBrushRun> foreground) noexcept {
+	if (!layout) return E_POINTER;
+	return DrawParagraph(factory, target, layout, {}, 0, origin, clip, brush, options, row, foreground);
+}
+
+HRESULT DrawParagraphGlyphRunsClipped(IDWriteFactory *factory, ID2D1RenderTarget *target,
+	std::span<const ParagraphGlyphRun> runs, float baseline, D2D1_POINT_2F origin,
+	D2D1_RECT_F clip, ID2D1Brush *brush, D2D1_DRAW_TEXT_OPTIONS options,
+	std::span<const ParagraphBrushRun> foreground) noexcept {
+	return DrawParagraph(factory, target, nullptr, runs, baseline, origin, clip, brush, options, nullptr, foreground);
 }
 
 }

@@ -12,6 +12,8 @@
 
 namespace Scintilla::Internal {
 
+struct ParagraphGlyphRun;
+
 struct ParagraphBrushRun {
 	// Sorted, nonoverlapping UTF-16 ranges in the complete layout. Brushes are
 	// borrowed until the synchronous draw returns; the layout never retains them.
@@ -38,6 +40,13 @@ struct ParagraphBrushRun {
 [[nodiscard]] HRESULT DrawParagraphTextClipped(IDWriteFactory *factory, ID2D1RenderTarget *target,
 	IDWriteTextLayout *layout, D2D1_POINT_2F origin, D2D1_RECT_F clip, ID2D1Brush *brush,
 	D2D1_DRAW_TEXT_OPTIONS options, const DWRITE_TEXT_RANGE *row = nullptr,
+	std::span<const ParagraphBrushRun> foreground = {}) noexcept;
+
+// The analyzed single-row backend supplies immutable, already positioned runs.
+// It shares the same colour-font, clipping and cluster-foreground renderer.
+[[nodiscard]] HRESULT DrawParagraphGlyphRunsClipped(IDWriteFactory *factory, ID2D1RenderTarget *target,
+	std::span<const ParagraphGlyphRun> runs, float baseline, D2D1_POINT_2F origin,
+	D2D1_RECT_F clip, ID2D1Brush *brush, D2D1_DRAW_TEXT_OPTIONS options,
 	std::span<const ParagraphBrushRun> foreground = {}) noexcept;
 
 }

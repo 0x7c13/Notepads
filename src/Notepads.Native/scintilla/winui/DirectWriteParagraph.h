@@ -22,6 +22,8 @@ struct IDWriteTextLayout;
 
 namespace Scintilla::Internal {
 
+struct ParagraphGlyphRun;
+
 enum class ParagraphWrap { None, Word, Character };
 
 struct ParagraphOptions {
@@ -66,7 +68,10 @@ public:
 
 	[[nodiscard]] int32_t Status() const noexcept;
 	[[nodiscard]] bool IsValid() const noexcept;
+	// Rendering uses either the native layout or prepared glyph runs. A valid
+	// analyzed paragraph has no IDWriteTextLayout; both views remain immutable.
 	[[nodiscard]] IDWriteTextLayout *Layout() const noexcept;
+	[[nodiscard]] std::span<const ParagraphGlyphRun> GlyphRuns() const noexcept;
 	[[nodiscard]] float DrawOriginX() const noexcept;
 	[[nodiscard]] std::span<const ParagraphLine> Lines() const noexcept override;
 	[[nodiscard]] float WidthIncludingTrailingWhitespace() const noexcept override;

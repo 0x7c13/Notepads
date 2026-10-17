@@ -1385,13 +1385,18 @@ void SurfaceD2D::DrawParagraph(IParagraphLayout &paragraphLayout, size_t line, c
 	SetFontQuality(FontDirectWrite::Cast(font)->extraFontFlag);
 	auto *layout = paragraph.Layout();
 	origin.x += paragraph.DrawOriginX();
+	const auto draw = [&](ID2D1Brush *brush, std::span<const ParagraphBrushRun> foreground = {}) {
+		if (layout) return DrawParagraphTextClipped(pIDWriteFactory, pRenderTarget.get(), layout,
+			DPointFromPoint(origin), RectangleFromPRectangle(clip), brush, d2dDrawTextOptions, &row, foreground);
+		return DrawParagraphGlyphRunsClipped(pIDWriteFactory, pRenderTarget.get(), paragraph.GlyphRuns(),
+			paragraphLine.baseline, DPointFromPoint(origin), RectangleFromPRectangle(clip), brush, d2dDrawTextOptions, foreground);
+	};
 	if (colours.size() == 1) {
 		// The renderer filters to this display row. A single foreground needs no
 		// range effects: changing effects invalidates DirectWrite's cached runs
 		// even when the shaping and the actual colour remain unchanged.
 		D2DPenColourAlpha(colours.front().colour);
-		winrt::check_hresult(DrawParagraphTextClipped(pIDWriteFactory, pRenderTarget.get(), layout,
-			DPointFromPoint(origin), RectangleFromPRectangle(clip), pBrush.get(), d2dDrawTextOptions, &row));
+		winrt::check_hresult(draw(pBrush.get()));
 		return;
 	}
 	// Brushes and their UTF-16 spans live only for this draw. Keeping the cached
@@ -1412,8 +1417,7 @@ void SurfaceD2D::DrawParagraph(IParagraphLayout &paragraphLayout, size_t line, c
 		foreground.push_back({{start, end - start}, brush.get()});
 	}
 	if (foreground.empty()) return;
-	winrt::check_hresult(DrawParagraphTextClipped(pIDWriteFactory, pRenderTarget.get(), layout,
-		DPointFromPoint(origin), RectangleFromPRectangle(clip), foreground.front().brush, d2dDrawTextOptions, &row, foreground));
+	winrt::check_hresult(draw(foreground.front().brush, foreground));
 }
 
 void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, int codePageOverride, UINT fuOptions) {

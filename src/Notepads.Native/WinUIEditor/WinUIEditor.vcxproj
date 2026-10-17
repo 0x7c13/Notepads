@@ -189,6 +189,7 @@
     <ClInclude Include="..\scintilla\winui\ScintillaWin.h" />
     <ClInclude Include="..\scintilla\winui\SurfaceD2D.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteParagraph.h" />
+    <ClInclude Include="..\scintilla\winui\DirectWriteRunLayout.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteRenderer.h" />
     <ClInclude Include="..\scintilla\winui\SurfaceDrawSession.h" />
     <ClInclude Include="..\scintilla\src\ParagraphLayout.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="EditorDiffResult.cpp" />
     <ClCompile Include="NativeDiff.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
     <ClCompile Include="..\scintilla\winui\DirectWriteParagraph.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
+    <ClCompile Include="..\scintilla\winui\DirectWriteRunLayout.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
     <ClCompile Include="..\scintilla\winui\DirectWriteRenderer.cpp"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
     <ClCompile Include="..\scintilla\src\DisplayLineMap.cxx"><PrecompiledHeader>NotUsing</PrecompiledHeader></ClCompile>
     <ClCompile Include="EditorUtf8Reader.cpp" />

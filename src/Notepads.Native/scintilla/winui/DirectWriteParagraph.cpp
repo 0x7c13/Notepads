@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 #include "DirectWriteParagraph.h"
+#include "DirectWriteRunLayout.h"
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -167,6 +168,7 @@ public:
 	std::wstring wide;
 	std::vector<Boundary> boundaries;
 	ComPtr<IDWriteTextLayout> layout;
+	std::unique_ptr<DirectWriteRunLayout> analyzed;
 	ParagraphOptions options;
 	std::vector<ParagraphLine> lines;
 	std::vector<std::vector<Stop>> stops;
@@ -223,6 +225,27 @@ public:
 			i += character.length;
 		}
 		boundaries.push_back({text.size(), static_cast<UINT32>(wide.size())});
+		// The high-level layout repeatedly moves its span vector on dense long
+		// paragraphs. Keep its exact general path for wrapping/representations;
+		// the specialized path analyzes the complete paragraph into flat arrays.
+		if (!options.rtl && wide.size() >= DirectWriteRunLayout::MinimumLength && representations.empty() && options.wrap == ParagraphWrap::None) {
+			std::vector<ParagraphFormatRange> ranges;
+			ranges.reserve(fonts.size());
+			for (const auto &font : fonts) {
+				if (!font.format || !ValidSpan(font.start, font.length)) return E_INVALIDARG;
+				const UINT32 start = WidePosition(font.start);
+				ranges.push_back({start, WidePosition(font.start + font.length) - start, font.format});
+			}
+			const HRESULT result = DirectWriteRunLayout::TryCreate(factory, wide, defaultFormat, ranges, options, analyzed);
+			if (FAILED(result)) return result;
+			if (result == S_OK) {
+				textWidth = analyzed->Width();
+				if (!std::isfinite(textWidth + options.leadingPadding + options.trailingPadding)) return E_INVALIDARG;
+				lines.push_back({0, text.size(), 0, options.lineHeight, options.baseline,
+					text.size() - BytePosition(static_cast<UINT32>(wide.size()) - analyzed->TrailingWhitespace())});
+				return S_OK;
+			}
+		}
 		const float textWidthAvailable = std::max(1.0f, options.width - options.leadingPadding - options.trailingPadding);
 		HRESULT result = factory->CreateTextLayout(wide.data(), static_cast<UINT32>(wide.size()),
 			defaultFormat, textWidthAvailable, std::numeric_limits<float>::max(), &layout);
@@ -302,7 +325,7 @@ public:
 	}
 
 	ParagraphPoint Point(ParagraphCaret caret) const {
-		if (!layout) return {};
+		if (!layout && !analyzed) return {};
 		UINT32 position = WidePosition(std::min(caret.position, text.size()));
 		BOOL trailing = FALSE;
 		if (caret.trailing && position) {
@@ -313,7 +336,8 @@ public:
 		}
 		FLOAT x = 0, y = 0;
 		DWRITE_HIT_TEST_METRICS metrics{};
-		if (FAILED(layout->HitTestTextPosition(position, trailing, &x, &y, &metrics))) return {};
+		if (analyzed) x = analyzed->TextPosition(position, trailing != FALSE);
+		else if (FAILED(layout->HitTestTextPosition(position, trailing, &x, &y, &metrics))) return {};
 		// DirectWrite's hit box follows font metrics and may start above the
 		// uniform row, particularly with fallback fonts or a small baseline.
 		// Scintilla's caret and selection use the display row's bounds instead.
@@ -323,13 +347,23 @@ public:
 
 	std::vector<ParagraphRect> Rectangles(size_t start, size_t end) const {
 		std::vector<ParagraphRect> rectangles;
-		if (!layout) return rectangles;
+		if (!layout && !analyzed) return rectangles;
 		if (start > end) std::swap(start, end);
 		start = std::min(start, text.size());
 		end = std::min(end, text.size());
 		const UINT32 first = WidePosition(start);
 		const UINT32 length = WidePosition(end) - first;
 		if (!length) return rectangles;
+		if (analyzed) {
+			const auto metrics = analyzed->Range(first, length);
+			rectangles.reserve(metrics.size());
+			for (const auto &metric : metrics) {
+				const size_t startByte = BytePosition(metric.textPosition);
+				rectangles.push_back({metric.left + DrawOriginX(), 0, metric.width, options.lineHeight,
+					startByte, BytePosition(metric.textPosition + metric.length) - startByte});
+			}
+			return rectangles;
+		}
 		std::array<DWRITE_HIT_TEST_METRICS, 8> localMetrics{};
 		UINT32 count = 0;
 		HRESULT result = layout->HitTestTextRange(first, length, 0, 0, localMetrics.data(),
@@ -357,50 +391,64 @@ public:
 		stops.assign(lines.size(), {});
 		visualClusters.assign(lines.size(), {});
 		logicalStops.clear();
-		UINT32 count = 0;
-		HRESULT result = layout->GetClusterMetrics(nullptr, 0, &count);
-		if (FAILED(result) && result != E_NOT_SUFFICIENT_BUFFER) return result;
-		std::vector<DWRITE_CLUSTER_METRICS> clusters(count);
-		if (count) {
-			result = layout->GetClusterMetrics(clusters.data(), count, &count);
-			if (FAILED(result)) return result;
-		}
-		std::vector<UINT32> clusterStarts;
-		clusterStarts.reserve(clusters.size() + 1);
-		UINT32 position = 0;
-		for (const auto &cluster : clusters) {
-			clusterStarts.push_back(position);
-			position += cluster.length;
-		}
-		clusterStarts.push_back(position);
-		UINT32 runCount = 0;
-		result = layout->HitTestTextRange(0, static_cast<UINT32>(wide.size()), 0, 0, nullptr, 0, &runCount);
-		if (FAILED(result) && result != E_NOT_SUFFICIENT_BUFFER) return result;
-		std::vector<DWRITE_HIT_TEST_METRICS> runs(runCount);
-		if (runCount) {
-			result = layout->HitTestTextRange(0, static_cast<UINT32>(wide.size()), 0, 0, runs.data(), runCount, &runCount);
-			if (FAILED(result)) return result;
-		}
-		for (const auto &run : runs) {
-			const bool rtl = (run.bidiLevel & 1) != 0;
-			float edge = run.left + DrawOriginX() + (rtl ? run.width : 0);
-			const auto first = std::lower_bound(clusterStarts.begin(), clusterStarts.end(), run.textPosition);
-			const size_t rowIndex = CaretLine({BytePosition(run.textPosition), false});
+		const auto appendCluster = [&](UINT32 start, UINT32 end, float leading, float trailing, bool rtl, size_t rowIndex) {
+			const size_t startByte = BytePosition(start);
+			const size_t endByte = BytePosition(end);
 			auto &row = stops[rowIndex];
-			for (size_t i = static_cast<size_t>(first - clusterStarts.begin());
-				i < clusters.size() && clusterStarts[i] < run.textPosition + run.length; ++i) {
-				const auto &cluster = clusters[i];
-				const float next = edge + (rtl ? -cluster.width : cluster.width);
-				// The full-range rectangles already carry resolved bidi levels and
-				// origins. Cluster advances avoid a quadratic hit-test per glyph.
-				if (cluster.width > 0.001f) {
-					const size_t startByte = BytePosition(clusterStarts[i]);
-					const size_t endByte = BytePosition(clusterStarts[i + 1]);
-					row.push_back({{startByte, false}, edge, rtl ? 1 : -1, rowIndex});
-					row.push_back({{endByte, true}, next, rtl ? -1 : 1, rowIndex});
-					visualClusters[rowIndex].push_back({{startByte, endByte - startByte}, (edge + next) / 2});
+			row.push_back({{startByte, false}, leading, rtl ? 1 : -1, rowIndex});
+			row.push_back({{endByte, true}, trailing, rtl ? -1 : 1, rowIndex});
+			visualClusters[rowIndex].push_back({{startByte, endByte - startByte}, (leading + trailing) / 2});
+		};
+		if (analyzed) {
+			const auto runs = analyzed->GlyphRuns();
+			for (const auto &cluster : analyzed->GlyphClusters()) {
+				if (std::abs(cluster.right - cluster.left) <= 0.001f) continue;
+				const bool rtl = (runs[cluster.run].glyphs.bidiLevel & 1) != 0;
+				appendCluster(cluster.start, cluster.start + cluster.length,
+					(rtl ? cluster.right : cluster.left) + DrawOriginX(),
+					(rtl ? cluster.left : cluster.right) + DrawOriginX(), rtl, 0);
+			}
+		} else {
+			UINT32 count = 0;
+			HRESULT result = layout->GetClusterMetrics(nullptr, 0, &count);
+			if (FAILED(result) && result != E_NOT_SUFFICIENT_BUFFER) return result;
+			std::vector<DWRITE_CLUSTER_METRICS> clusters(count);
+			if (count) {
+				result = layout->GetClusterMetrics(clusters.data(), count, &count);
+				if (FAILED(result)) return result;
+			}
+			std::vector<UINT32> clusterStarts;
+			clusterStarts.reserve(clusters.size() + 1);
+			UINT32 position = 0;
+			for (const auto &cluster : clusters) {
+				clusterStarts.push_back(position);
+				position += cluster.length;
+			}
+			clusterStarts.push_back(position);
+			UINT32 runCount = 0;
+			result = layout->HitTestTextRange(0, static_cast<UINT32>(wide.size()), 0, 0, nullptr, 0, &runCount);
+			if (FAILED(result) && result != E_NOT_SUFFICIENT_BUFFER) return result;
+			std::vector<DWRITE_HIT_TEST_METRICS> runs(runCount);
+			if (runCount) {
+				result = layout->HitTestTextRange(0, static_cast<UINT32>(wide.size()), 0, 0, runs.data(), runCount, &runCount);
+				if (FAILED(result)) return result;
+			}
+			for (const auto &run : runs) {
+				const bool rtl = (run.bidiLevel & 1) != 0;
+				float edge = run.left + DrawOriginX() + (rtl ? run.width : 0);
+				const auto first = std::lower_bound(clusterStarts.begin(), clusterStarts.end(), run.textPosition);
+				const size_t rowIndex = CaretLine({BytePosition(run.textPosition), false});
+				for (size_t i = static_cast<size_t>(first - clusterStarts.begin());
+					i < clusters.size() && clusterStarts[i] < run.textPosition + run.length; ++i) {
+					const auto &cluster = clusters[i];
+					const float next = edge + (rtl ? -cluster.width : cluster.width);
+					// The full-range rectangles already carry resolved bidi levels and
+					// origins. Cluster advances avoid a quadratic hit-test per glyph.
+					if (cluster.width > 0.001f) {
+						appendCluster(clusterStarts[i], clusterStarts[i + 1], edge, next, rtl, rowIndex);
+					}
+					edge = next;
 				}
-				edge = next;
 			}
 		}
 		for (size_t i = 0; i < stops.size(); ++i) {
@@ -457,6 +505,7 @@ DirectWriteParagraph::DirectWriteParagraph(IDWriteFactory *factory, std::string_
 	impl->status = impl->Create(factory, text, defaultFormat, fonts, representations, options);
 	if (FAILED(impl->status)) {
 		impl->layout.Reset();
+		impl->analyzed.reset();
 		impl->lines.clear();
 		impl->stops.clear();
 	}
@@ -498,6 +547,9 @@ bool DirectWriteParagraph::NeedsLayout(std::string_view text) {
 int32_t DirectWriteParagraph::Status() const noexcept { return impl->status; }
 bool DirectWriteParagraph::IsValid() const noexcept { return SUCCEEDED(impl->status); }
 IDWriteTextLayout *DirectWriteParagraph::Layout() const noexcept { return impl->layout.Get(); }
+std::span<const ParagraphGlyphRun> DirectWriteParagraph::GlyphRuns() const noexcept {
+	return impl->analyzed ? impl->analyzed->GlyphRuns() : std::span<const ParagraphGlyphRun>{};
+}
 float DirectWriteParagraph::DrawOriginX() const noexcept { return impl->DrawOriginX(); }
 std::span<const ParagraphLine> DirectWriteParagraph::Lines() const noexcept { return impl->lines; }
 float DirectWriteParagraph::WidthIncludingTrailingWhitespace() const noexcept { return impl->textWidth; }
@@ -514,7 +566,11 @@ ParagraphCaret DirectWriteParagraph::HitTest(float x, float y, bool charPosition
 	if (!IsValid()) return {};
 	BOOL trailing = FALSE, inside = FALSE;
 	DWRITE_HIT_TEST_METRICS metrics{};
-	if (FAILED(impl->layout->HitTestPoint(x - impl->DrawOriginX(), y, &trailing, &inside, &metrics))) return {};
+	if (impl->analyzed) {
+		bool hitTrailing = false;
+		metrics = impl->analyzed->HitPoint(x - impl->DrawOriginX(), hitTrailing);
+		trailing = hitTrailing;
+	} else if (FAILED(impl->layout->HitTestPoint(x - impl->DrawOriginX(), y, &trailing, &inside, &metrics))) return {};
 	if (charPosition) return {impl->BytePosition(metrics.textPosition), false};
 	return {impl->BytePosition(metrics.textPosition + (trailing ? metrics.length : 0)), trailing != FALSE};
 }

@@ -245,7 +245,9 @@ internal static class InteractiveEditorHost
                 });
                 break;
             case "direction" when command.Length == 2:
-                await EditorTestLayout.AfterPaintAsync(Native, () => _editor.RightToLeftReadingOrder = bool.Parse(command[1]));
+                var rightToLeft = bool.Parse(command[1]);
+                if (_editor.RightToLeftReadingOrder != rightToLeft)
+                    await EditorTestLayout.AfterPaintAsync(Native, () => _editor.RightToLeftReadingOrder = rightToLeft);
                 break;
             case "line-numbers" when command.Length == 2:
                 await EditorTestLayout.AfterPaintAsync(Native, () => _editor.DisplayLineNumbers = bool.Parse(command[1]));

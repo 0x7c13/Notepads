@@ -104,7 +104,6 @@ function Invoke-IsolatedTestPhase {
     $identity = $null
     try {
         $identity = Start-IsolatedTestProcess $Session $Argument
-        $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
         while (!(Test-Path -LiteralPath $resultPath)) {
             if (!(Get-IsolatedTestProcess $identity)) {
                 # Atomic publication can complete after the first file check
@@ -113,7 +112,7 @@ function Invoke-IsolatedTestPhase {
                 if (Test-Path -LiteralPath $resultPath) { break }
                 throw "Test exited without a result: $Argument; $($Session.RunRoot)"
             }
-            if ([DateTime]::UtcNow -ge $deadline) { throw "Test phase timed out: $Argument; $($Session.RunRoot)" }
+            if ($watch.Elapsed.TotalSeconds -ge $TimeoutSeconds) { throw "Test phase timed out: $Argument; $($Session.RunRoot)" }
             Start-Sleep -Milliseconds 100
         }
         $process = $identity.Process

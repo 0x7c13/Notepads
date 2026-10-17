@@ -94,6 +94,8 @@ internal static partial class BidiTests
             log.AppendLine("PASS: mixed-direction click positions, styled runs and logical replacement remain aligned.");
             await CheckDrawingByteBoundariesAsync();
             log.AppendLine("PASS: byte-split styles, noncharacters and truncated UTF-8 retain their bytes and complete real-control layout and paint.");
+            await CheckLongParagraphAsync(core, native, view);
+            log.AppendLine("PASS: long mixed paragraphs retain distant UIA ranges, replacement/undo geometry and wrap transitions in both directions.");
             await CheckStreamSelectionEdgesAsync(core, native, view);
             log.AppendLine("PASS: mixed stream selections collapse to their outer visual edge in either direction.");
             Progress("rectangle editing");

@@ -25,6 +25,7 @@
 #include <string_view>
 #include <vector>
 #include "DirectWriteParagraph.h"
+#include "DirectWriteRunLayout.h"
 #include "DirectWriteRenderer.h"
 #include "SurfaceDrawSession.h"
 #include "UniConversion.h"
@@ -1114,7 +1115,7 @@ void ReportScaling(Environment &env) {
         for (size_t index = 0; index < characters; ++index) text += letter;
         const auto start = Clock::now();
         DirectWriteParagraph paragraph(env.factory.Get(), text, env.format.Get(), {}, {}, Options(true));
-        Require(paragraph.IsValid(), "Long RTL paragraph remains valid");
+        CheckHR(paragraph.Status(), "Long RTL paragraph layout");
         const auto shaped = Clock::now();
         auto caret = paragraph.VisualNeighbor({0, false}, -1);
         const auto firstArrow = Clock::now();
@@ -1135,6 +1136,7 @@ void ReportScaling(Environment &env) {
 #include "UnwrappedWidthTests.h"
 #include "ForegroundRenderingTests.h"
 #include "InputBoundaryTests.h"
+#include "RunLayoutTests.h"
 }
 
 int wmain(int argc, wchar_t **argv) {
@@ -1149,9 +1151,12 @@ int wmain(int argc, wchar_t **argv) {
             throw std::runtime_error("Usage: NativeBidi.Tests [--performance | --report <path>]");
         Environment env;
         if (performance) {
+            CheckAnalyzedStress();
             ReportScaling(env);
             std::cout << "PASS: RTL scaling observations (no machine-dependent timing threshold).\n";
         } else {
+        CheckRunLayout(env);
+        std::cout << "PASS: analyzed paragraph geometry and glyphs match independent whole-paragraph DirectWrite.\n";
         for (const auto fixture : {u8"אבג", u8"ABC אבג 123 DEF", u8"مرحبا بالعالم 123 ABC",
             u8"السَّلَامُ عَلَيْكُمْ", u8"אב😀ג e\u0301", u8"(אבג) [123] ABC", u8"אבג  ", u8"אבג\tABC\t12"}) {
             const auto text = Bytes(fixture);

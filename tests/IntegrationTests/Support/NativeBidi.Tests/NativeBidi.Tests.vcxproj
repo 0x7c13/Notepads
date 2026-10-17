@@ -40,6 +40,7 @@
     <ClInclude Include="ForegroundRenderingTests.h" />
     <ClInclude Include="UnwrappedWidthTests.h" />
     <ClInclude Include="InputBoundaryTests.h" />
+    <ClInclude Include="RunLayoutTests.h" />
     <None Include="GenerateFonts.py" />
     <FontFixture Include="Fonts\*.ttf" />
     <ClCompile Include="LineLayoutCacheTests.cpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\XPM.cxx" />
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\PositionCache.cxx" />
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteParagraph.cpp" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteRunLayout.cpp" />
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteRenderer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
