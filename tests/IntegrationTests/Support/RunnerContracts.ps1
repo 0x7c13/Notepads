@@ -714,3 +714,4 @@ $checks | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $fixtureRoot 'che
 Write-Output "PASS: Runner contracts ($($checks.Count) checks); private evidence: $fixtureRoot"
 & (Join-Path $PSScriptRoot 'CIContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'ci')
 & (Join-Path $PSScriptRoot 'PackagedAppProcessContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'packaged-processes')
+& (Join-Path $PSScriptRoot 'PackagedAppInputContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'packaged-input')

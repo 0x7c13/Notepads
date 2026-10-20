@@ -83,7 +83,15 @@ internal static class EditorSuite
             await CheckColdNativeFactoryAsync();
             log.AppendLine("PASS: journal static factory activates from packaged metadata before any native editor exists.");
             WriteDiagnostic("Constructing native control");
-            var core = new TextEditorCore();
+            // Keep fit/overflow assertions independent of the remembered UWP
+            // window bounds and the developer's display resolution.
+            var core = new TextEditorCore
+            {
+                Width = 620, Height = 400,
+                HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top
+            };
+            Windows.UI.Xaml.Automation.AutomationProperties.SetAutomationId(
+                (WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0], "SuiteEditor");
             WriteDiagnostic("Editor adapter constructed");
             var lineNumberReveal = (Border)((Grid)core.Content).Children[1];
             Check(lineNumberReveal.BorderThickness.Right == 0, "line-number hover border hidden by default");

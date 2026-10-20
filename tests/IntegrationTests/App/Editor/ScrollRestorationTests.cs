@@ -26,6 +26,7 @@ internal static class ScrollRestorationTests
 
     internal static async Task RunAsync(StringBuilder log)
     {
+        await SmoothScrollingTests.RunAsync(log);
         await LineLayoutCacheTests.RunAsync(log);
         await CheckDetachedDocumentLoadAsync(log);
         await CheckLeadingRtlLoadAsync(log);

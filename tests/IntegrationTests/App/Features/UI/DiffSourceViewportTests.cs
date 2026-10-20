@@ -33,7 +33,7 @@ internal static class DiffSourceViewportTests
         {
             var label = $"Diff return RTL={rtl}, wrap={wrap}, leading={offset}";
             var line = string.Concat(Enumerable.Repeat(rtl ? "שלום אבג " : "plain text ", 40));
-            var text = string.Join('\r', Enumerable.Range(0, 90).Select(index => line + index));
+            var text = string.Join('\r', Enumerable.Range(0, 200).Select(index => line + index));
             var editor = await DocumentFeatureAssertions.OpenAsync(host,
                 $"diff-return-{rtl}-{wrap}-{offset}.txt", Encoding.UTF8.GetBytes(text));
             var core = editor.TestNativeCore;
@@ -78,7 +78,10 @@ internal static class DiffSourceViewportTests
                 Math.Abs(state.Offset - offset) <= 1 / scale && state.Geometry &&
                 native.CurrentPos == caret && native.Anchor == caret;
 
-            Check(Valid(Observe()) && (!wrap || native.WrapCount(targetLine) > 2), label + ": source fixture has the requested visible geometry.");
+            Check(Valid(Observe()) && (!wrap || native.WrapCount(targetLine) > 2), label +
+                $": source fixture has the requested visible geometry: observed={Observe()}, pending={view.IsViewportRestorePending}, " +
+                $"row={native.FirstVisibleLine}, x={native.XOffset}, glyphX={native.PointXFromPosition(native.PositionFromLine(targetLine))}, " +
+                $"width={surface.ActualWidth * scale}, caret={native.CurrentPos}/{native.Anchor}, expectedCaret={caret}.");
             await editor.OpenSideBySideDiffViewerAsync();
             try
             {

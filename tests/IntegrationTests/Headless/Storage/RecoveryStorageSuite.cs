@@ -203,11 +203,16 @@ internal static class RecoveryStorageSuite
         invalid.Session.TextEditors[0].Journal.CommittedSequence = 1;
         invalid.Session.TextEditors[0].Journal.BaselineSequence = 2;
         Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(invalid, Address(fixture.Area, invalid)), "invalid committed prefix ranges are rejected");
-        foreach (var (line, subLine) in new (int?, int)[] { (-1, 0), (0, -1), (null, 1) })
+        foreach (var (line, subLine, offset) in new (int?, int, double)[]
+        {
+            (-1, 0, 0), (0, -1, 0), (null, 1, 0), (null, 0, 0.5),
+            (0, 0, -0.5), (0, 0, double.NaN), (0, 0, double.PositiveInfinity)
+        })
         {
             var invalidView = fixture.Checkpoint();
             invalidView.Session.TextEditors[0].StateMetaData.FirstVisibleDocumentLine = line;
             invalidView.Session.TextEditors[0].StateMetaData.FirstVisibleSubLine = subLine;
+            invalidView.Session.TextEditors[0].StateMetaData.FirstVisibleRowOffset = offset;
             Throws<InvalidDataException>(() => RecoveryRecordCodec.Encode(invalidView, Address(fixture.Area, invalidView)),
                 "invalid viewport anchors are rejected before native restore");
         }

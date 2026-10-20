@@ -591,6 +591,181 @@ try {
         Assert-Equal $pattern.DocumentRange.GetText(-1) $text 'Scrolling and selection preserve document'
     }
 
+    Test-Case 'Visible UIA ranges include both fractional viewport edges' {
+        $lines = @(0..79 | ForEach-Object { 'row{0:D3} alpha' -f $_ })
+        $text = $lines -join "`r"
+        foreach ($rtl in @($false, $true)) {
+            $state = Reset-Document $text
+            # Keep both viewport edges partial at every desktop DPI.
+            $height = [int] $state.lineHeight
+            $fixtureHeight = [int] ($height / [double] $state.scale * 15.5)
+            $state = Reset-Document $text $false 520 18 $fixtureHeight
+            $null = Invoke-EditorTestCommand $session "direction|$rtl"
+            $surface = Invoke-EditorTestCommand $session 'gutter-state'
+            foreach ($pixelOffset in @(0.0, ($height * 0.95), ($height - 0.25))) {
+                $offset = ($pixelOffset / [double] $state.scale).ToString('R', [Globalization.CultureInfo]::InvariantCulture)
+                $state = Invoke-EditorTestCommand $session "vertical-viewport|20|$offset"
+                $pixels = [Math]::Round($pixelOffset, [MidpointRounding]::AwayFromZero)
+                # Independent physical row boxes; no provider row-count query.
+                $visible = @(0..79 | Where-Object {
+                    $top = ($_ - 20) * $height - $pixels
+                    $top -lt [double] $surface.surfaceHeight -and $top + $height -gt 0
+                })
+                $expected = @($visible | ForEach-Object { $lines[$_] })
+                $actual = @($pattern.GetVisibleRanges() | ForEach-Object { $_.GetText(-1).TrimEnd("`r", "`n") })
+                Assert-Equal ($actual -join '|') ($expected -join '|') 'UIA lists exactly the physically visible document lines'
+                $glyph = New-Caret ($visible[-1] * ($lines[0].Length + 1))
+                Assert-Equal $glyph.MoveEndpointByUnit($endEndpoint, $characterUnit, 1) 1 'The last visible row has a glyph sample'
+                Assert-True ($glyph.GetBoundingRectangles().Count -gt 0) 'The last UIA row also has visible glyph geometry'
+            }
+        }
+    }
+
+    Test-Case 'Horizontal fine wheel and Shift wheel preserve pixels and both axis targets' {
+        if ([EditorAutomationInput]::WheelCharacters() -eq 0) {
+            Write-Output 'SKIP: Windows disables horizontal wheel scrolling.'
+            return
+        }
+        foreach ($rtl in @($false, $true)) {
+            $line = 'alpha 中文 אבג 123 ' * 40
+            $text = ((1..40 | ForEach-Object { $line }) -join "`r")
+            $null = Reset-Document $text $false
+            $null = Invoke-EditorTestCommand $session "direction|$rtl"
+            Focus-Editor
+            $null = Invoke-EditorTestCommand $session 'raster|False'
+            $null = Invoke-EditorTestCommand $session 'vertical-viewport|10|0'
+            $state = Invoke-EditorTestCommand $session 'x-offset|200'
+            $bounds = $element.Current.BoundingRectangle
+            $height = [int] $state.lineHeight
+            $x = [int] ($bounds.Left + $bounds.Width / 2)
+            $y = [int] ($bounds.Top + 2 * $height)
+            Assert-EditorForeground
+            [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, 120, $true)
+            $detent = Wait-EditorState {
+                param($s) [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
+            } 'A physical horizontal wheel detent finishes'
+            $step = [int] $detent.xOffset - 200
+            $null = Invoke-EditorTestCommand $session 'x-offset|200'
+            $before = Read-StableInk "horizontal-$rtl-before" 4
+            for ($wheelEvent = 0; $wheelEvent -lt 12; $wheelEvent++) {
+                [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, 1, $true)
+            }
+            $fine = Wait-EditorState {
+                param($s) [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
+            } 'Sub-detent horizontal events move without accumulating to 120'
+            $pixels = [int] $fine.xOffset - 200
+            Assert-True ([Math]::Abs($pixels - $step / 10.0) -le 1) 'Fine horizontal input retains the same displacement per wheel unit'
+            Assert-Equal $fine.firstVisible 10 'Horizontal input leaves the vertical row unchanged'
+            Assert-Equal $fine.verticalOffset 0 'Horizontal input leaves the vertical fraction unchanged'
+            $after = Read-StableInk "horizontal-$rtl-after" 4
+            $ink = 0; $different = 0; $unshifted = 0
+            $left = [int] [Math]::Ceiling($bounds.Width * 0.2)
+            $right = [int] [Math]::Floor($bounds.Width * 0.8) - $pixels
+            for ($py = $height; $py -lt 3 * $height; $py += 2) {
+                for ($px = $left; $px -lt $right; $px += 2) {
+                    $old = $before.PixelRgb($px + $pixels, $py)
+                    $now = $after.PixelRgb($px, $py)
+                    if ($old -ne 0xffffff -or $now -ne 0xffffff) {
+                        $ink++
+                        if ($old -ne $now) { $different++ }
+                        if ($before.PixelRgb($px, $py) -ne $now) { $unshifted++ }
+                    }
+                }
+            }
+            Assert-True ($ink -gt 100) 'The horizontal raster reference contains real glyph ink'
+            Assert-True ($different -le $ink * 0.03) 'Horizontal wheel pixels translate exactly with the native viewport'
+            Assert-True ($unshifted -gt $ink * 0.25) 'The unchanged-image control rejects a missing horizontal scroll'
+            $null = Invoke-EditorTestCommand $session 'x-offset|200'
+            [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, -120, $false, $true)
+            $shifted = Wait-EditorState {
+                param($s) [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
+            } 'Shift wheel uses the same smooth horizontal path'
+            Assert-True ([Math]::Abs([int] $shifted.xOffset - 200 - $step) -le 1) 'Shift wheel preserves horizontal direction and full detent distance'
+            Assert-Equal $shifted.firstVisible 10 'Shift wheel does not leak into vertical scrolling'
+            Assert-Equal $pattern.DocumentRange.GetText(-1) $text 'Horizontal wheel preserves document content'
+        }
+    }
+
+    Test-Case 'Smooth pixel scrolling preserves raster geometry and consumes physical fine wheel input' {
+        foreach ($rtl in @($false, $true)) {
+            foreach ($wrap in @($false, $true)) {
+                $line = 'alpha 中文 אבג 123 ' * 10
+                $text = ((1..80 | ForEach-Object { $line }) -join "`r")
+                $null = Reset-Document $text $wrap
+                $null = Invoke-EditorTestCommand $session "direction|$rtl"
+                Focus-Editor
+                $null = Invoke-EditorTestCommand $session 'raster|False'
+                $state = Wait-EditorState {
+                    param($s)
+                    [int] $s.displayRows -eq [int] $s.documentLines * [int] $s.firstLineRows
+                } 'The uniform pixel-scroll fixture finishes its actual native wrap map'
+                $null = Invoke-EditorTestCommand $session 'vertical-viewport|20|0'
+                $before = Read-StableInk "smooth-$rtl-$wrap-before" 4
+                $state = Invoke-EditorTestCommand $session 'state'
+                $height = [int] $state.lineHeight
+                $half = $height / (2 * [double] $state.scale)
+                $halfText = $half.ToString('R', [Globalization.CultureInfo]::InvariantCulture)
+                $null = Invoke-EditorTestCommand $session "vertical-viewport|20|$halfText"
+                $after = Read-StableInk "smooth-$rtl-$wrap-after" 4
+                $pixels = [int] [Math]::Round($half * [double] $state.scale, [MidpointRounding]::AwayFromZero)
+                $bounds = $element.Current.BoundingRectangle
+                $left = [int] [Math]::Ceiling($bounds.Width * 0.2)
+                $right = [int] [Math]::Floor($bounds.Width * 0.8)
+                $ink = 0; $different = 0; $unshifted = 0
+                for ($y = $height; $y -lt 3 * $height; $y += 2) {
+                    for ($x = $left; $x -lt $right; $x += 2) {
+                        $old = $before.PixelRgb($x, $y + $pixels)
+                        $now = $after.PixelRgb($x, $y)
+                        if ($old -ne 0xffffff -or $now -ne 0xffffff) {
+                            $ink++
+                            if ($old -ne $now) { $different++ }
+                            if ($before.PixelRgb($x, $y) -ne $now) { $unshifted++ }
+                        }
+                    }
+                }
+                Assert-True ($ink -gt 100) 'The independent raster oracle contains real text ink'
+                Assert-True ($different -le $ink * 0.03) 'Painted ink translates by the same exact device-pixel offset as native geometry'
+                Assert-True ($unshifted -gt $ink * 0.25) 'The unshifted negative control rejects an unchanged bitmap'
+                $null = Invoke-EditorTestCommand $session 'vertical-viewport|20|0'
+                $units = [EditorAutomationInput]::WheelLines()
+                if ($units -eq 0) {
+                    Write-Output 'SKIP: physical fine-wheel subcase; Windows disables wheel scrolling. Raster contract was verified.'
+                    continue
+                }
+                if ($units -eq [uint32]::MaxValue) { $units = [Math]::Max(1, [int] $state.linesOnScreen - 1) }
+                $expected = $units * $height / (120 * [double] $state.scale)
+                Assert-EditorForeground
+                $bounds = $element.Current.BoundingRectangle
+                [EditorAutomationInput]::Wheel([uint32] $session.ProcessId,
+                    [int] ($bounds.Left + $bounds.Width / 2), [int] ($bounds.Top + 2 * $height), -1)
+                $moved = Wait-EditorState {
+                    param($s)
+                    $distance = ([int] $s.firstVisible - 20) * $height / [double] $s.scale + [double] $s.verticalOffset
+                    $distance -gt 0 -and $s.scrollAnimating -eq 'False'
+                } 'A physical sub-detent wheel event moves the pixel viewport'
+                $distance = ([int] $moved.firstVisible - 20) * $height / [double] $moved.scale + [double] $moved.verticalOffset
+                Assert-True ([Math]::Abs($distance - $expected) -lt 1e-8) 'Fine wheel input preserves its complete unrounded displacement'
+                Assert-Equal $pattern.DocumentRange.GetText(-1) $text 'Scrolling preserves document content'
+                if (!$wrap -and [EditorAutomationInput]::WheelCharacters() -ne 0) {
+                    $null = Invoke-EditorTestCommand $session 'x-offset|100'
+                    $null = Invoke-EditorTestCommand $session 'vertical-viewport|20|0'
+                    $start = Invoke-EditorTestCommand $session 'state'
+                    [EditorAutomationInput]::Wheel([uint32] $session.ProcessId,
+                        [int] ($bounds.Left + $bounds.Width / 2), [int] ($bounds.Top + 2 * $height), -120)
+                    [EditorAutomationInput]::Wheel([uint32] $session.ProcessId,
+                        [int] ($bounds.Left + $bounds.Width / 2), [int] ($bounds.Top + 2 * $height), 120, $true)
+                    $diagonal = Wait-EditorState {
+                        param($s)
+                        [int] $s.scrollStarts -ge [int] $start.scrollStarts + 2 -and $s.scrollAnimating -eq 'False' -and
+                            [int] $s.xOffset -ne [int] $start.xOffset
+                    } 'Horizontal wheel input signals ownership and pans the real editor'
+                    $distance = ([int] $diagonal.firstVisible - 20) * $height / [double] $diagonal.scale + [double] $diagonal.verticalOffset
+                    Assert-True ([Math]::Abs($distance - 120 * $expected) -lt 1e-8) 'Diagonal input preserves the complete pending vertical displacement'
+                }
+            }
+        }
+    }
+
     Test-Case 'Physical Ctrl+R/L, Hebrew arrows, selection, replacement and undo' {
         $initial = Reset-Document 'אבג'
         Focus-Editor

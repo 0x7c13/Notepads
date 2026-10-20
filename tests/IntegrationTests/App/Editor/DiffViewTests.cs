@@ -269,7 +269,11 @@ internal static class DiffViewTests
 
     private static async Task CheckOrdinaryPageNavigationAsync()
     {
-        using var editor = new TextEditorCore();
+        using var editor = new TextEditorCore
+        {
+            Width = 620, Height = 400,
+            HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top
+        };
         Window.Current.Content = editor;
         await Task.Delay(100);
         editor.TextWrapping = TextWrapping.Wrap;

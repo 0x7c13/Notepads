@@ -340,7 +340,7 @@ public sealed partial class TextEditor
         TextEditorCore.FontSize = metadata.FontZoomFactor * ApplicationPreferences.EditorFontSize;
         TextEditorCore.RestoreTextSelectionPosition(metadata.SelectionStartPosition, metadata.SelectionEndPosition);
         TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset,
-            metadata.FirstVisibleDocumentLine, metadata.FirstVisibleSubLine);
+            metadata.FirstVisibleDocumentLine, metadata.FirstVisibleSubLine, rowOffset: metadata.FirstVisibleRowOffset);
         TextEditorCore.ClearUndoQueue();
         IsModified = !NoChangesSinceLastSaved();
     }

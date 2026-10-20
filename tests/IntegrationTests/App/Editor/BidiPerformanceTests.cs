@@ -29,6 +29,7 @@ internal static class BidiPerformanceTests
 {
     internal static async Task RunAsync(StringBuilder log)
     {
+        await PerformanceTestWindow.WaitForForegroundAsync("--bidi-performance");
         var previousContent = Window.Current.Content;
         var host = new Grid();
         Window.Current.Content = host;
@@ -85,7 +86,9 @@ internal static class BidiPerformanceTests
             Width = 620, Height = 400, FontSize = 18, TextWrapping = TextWrapping.NoWrap,
             HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top
         };
-        var native = ((EditorBaseControl)((Grid)core.Content).Children[0]).Editor;
+        var view = (EditorBaseControl)((Grid)core.Content).Children[0];
+        Windows.UI.Xaml.Automation.AutomationProperties.SetAutomationId(view, "PerformanceEditor");
+        var native = view.Editor;
         native.Bidirectional = rtl ? Bidirectional.R2l : Bidirectional.L2r;
         Record(log, name, cycle, "construct", watch.Elapsed.TotalMilliseconds);
         try

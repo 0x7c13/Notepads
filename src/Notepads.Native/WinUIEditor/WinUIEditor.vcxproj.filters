@@ -328,6 +328,10 @@
     <ClInclude Include="..\scintilla\src\PositionCache.h">
       <Filter>Scintilla</Filter>
     </ClInclude>
+    <ClInclude Include="..\scintilla\src\VerticalScroll.h">
+      <Filter>Scintilla</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scintilla\winui\SmoothScrollAnimation.h" />
     <ClInclude Include="..\scintilla\src\RESearch.h">
       <Filter>Scintilla</Filter>
     </ClInclude>

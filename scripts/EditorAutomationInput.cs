@@ -18,7 +18,10 @@ public static class EditorAutomationInput
         [FieldOffset(0)] public uint Type;
         [FieldOffset(8)] public int X;
         [FieldOffset(12)] public int Y;
+        [FieldOffset(16)] public uint MouseData;
         [FieldOffset(20)] public uint MouseFlags;
+        [FieldOffset(8)] public ushort VirtualKey;
+        [FieldOffset(12)] public uint KeyFlags;
     }
     [DllImport("user32.dll")] private static extern IntPtr WindowFromPoint(Point point);
     [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr window, out uint process);
@@ -29,6 +32,17 @@ public static class EditorAutomationInput
     [DllImport("user32.dll")] private static extern int GetSystemMetrics(int index);
     [DllImport("user32.dll")] private static extern IntPtr SetThreadDpiAwarenessContext(IntPtr context);
     [DllImport("user32.dll", SetLastError = true)] private static extern uint SendInput(uint count, Input[] input, int size);
+    [DllImport("user32.dll", SetLastError = true)] private static extern bool SystemParametersInfoW(uint action, uint parameter, out uint value, uint flags);
+
+    public static uint WheelLines() => WheelUnits(0x0068);
+    public static uint WheelCharacters() => WheelUnits(0x006c);
+
+    private static uint WheelUnits(uint action)
+    {
+        if (!SystemParametersInfoW(action, 0, out uint lines, 0))
+            throw new InvalidOperationException("Could not read the system wheel preference.");
+        return lines;
+    }
 
     private static void RequirePoint(uint process, int x, int y)
     {
@@ -60,6 +74,36 @@ public static class EditorAutomationInput
 
     public static void Click(uint process, int x, int y) => ClickButton(process, x, y, false);
     public static void RightClick(uint process, int x, int y) => ClickButton(process, x, y, true);
+
+    public static void Wheel(uint process, int x, int y, int delta, bool horizontal = false, bool shift = false)
+    {
+        Move(process, x, y);
+        RequireIdle();
+        var dpi = SetThreadDpiAwarenessContext(new IntPtr(-4));
+        if (dpi == IntPtr.Zero) throw new InvalidOperationException("Could not establish physical-coordinate DPI awareness.");
+        try
+        {
+            RequirePoint(process, x, y);
+            if (!GetCursorPos(out var point) || Math.Abs(point.X - x) > 1 || Math.Abs(point.Y - y) > 1)
+                throw new InvalidOperationException("The pointer left the owned wheel target.");
+            var input = new Input { MouseData = unchecked((uint)delta), MouseFlags = horizontal ? 0x1000u : 0x0800u };
+            var release = new Input { Type = 1, VirtualKey = 0x10, KeyFlags = 2 };
+            var inputs = shift ? new[] { new Input { Type = 1, VirtualKey = 0x10 }, input, release } : new[] { input };
+            bool releaseShift = shift;
+            try
+            {
+                if (SendInput((uint)inputs.Length, inputs, 40) != inputs.Length)
+                    throw new InvalidOperationException("Mouse-wheel injection failed.");
+                releaseShift = false;
+            }
+            finally
+            {
+                if (releaseShift && SendInput(1, new[] { release }, 40) != 1)
+                    throw new InvalidOperationException("Shift cleanup after mouse-wheel injection failed.");
+            }
+        }
+        finally { SetThreadDpiAwarenessContext(dpi); }
+    }
 
     public static void Move(uint process, int x, int y)
     {

@@ -354,7 +354,8 @@ internal static partial class RecoveryRecordCodec
             !double.IsFinite(state.ScrollViewerHorizontalOffset) || state.ScrollViewerHorizontalOffset < 0 ||
             !double.IsFinite(state.ScrollViewerVerticalOffset) || state.ScrollViewerVerticalOffset < 0 ||
             state.FirstVisibleDocumentLine < 0 || state.FirstVisibleSubLine < 0 ||
-            (state.FirstVisibleDocumentLine == null && state.FirstVisibleSubLine != 0))
+            !double.IsFinite(state.FirstVisibleRowOffset) || state.FirstVisibleRowOffset < 0 ||
+            (state.FirstVisibleDocumentLine == null && (state.FirstVisibleSubLine != 0 || state.FirstVisibleRowOffset != 0)))
         {
             throw new InvalidDataException("Invalid recovery editor view ranges.");
         }

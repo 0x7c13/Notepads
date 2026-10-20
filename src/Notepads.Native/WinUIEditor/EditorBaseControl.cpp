@@ -216,6 +216,9 @@ namespace winrt::WinUIEditor::implementation
 			return;
 		}
 		_scintilla->ResumeIdleWork();
+		_wrapper->SetScrollStarted([weak = get_weak()] {
+			if (auto self = weak.get()) self->_scrollStarted(*self, nullptr);
+		});
 
 		if (_hasXamlRoot)
 		{
@@ -248,6 +251,7 @@ namespace winrt::WinUIEditor::implementation
 		}
 
 		_scintilla->StopTimers();
+		_wrapper->SetScrollStarted({});
 
 		_wrapper->ReleaseAutocompletePopup();
 	}
@@ -846,7 +850,7 @@ namespace winrt::WinUIEditor::implementation
 
 	void EditorBaseControl::VerticalScrollBar_Scroll(IInspectable const &sender, ScrollEventArgs const &e)
 	{
-		_scintilla->Scroll(static_cast<Scintilla::Internal::ScrollEventType>(e.ScrollEventType()), static_cast<int>(e.NewValue()));
+		_scintilla->Scroll(static_cast<Scintilla::Internal::ScrollEventType>(e.ScrollEventType()), e.NewValue());
 	}
 
 	LRESULT EditorBaseControl::WndProc(IInspectable const &tag, UINT msg, WPARAM wParam, LPARAM lParam)

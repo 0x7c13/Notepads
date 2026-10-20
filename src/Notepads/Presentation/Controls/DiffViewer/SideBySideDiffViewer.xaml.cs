@@ -35,6 +35,8 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
     private bool _disposed;
     private int _currentHunk = -1;
     private double _horizontalOffset;
+    private long _verticalRow;
+    private double _verticalOffset;
     internal bool HasChanges => _changeRows.Length != 0;
     public event EventHandler CloseRequested;
     public event EventHandler<double> ZoomChanged;
@@ -46,6 +48,8 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         NewEditor.ConfigureDiffPreview();
         OldEditor.ViewportChanged += OnViewportChanged;
         NewEditor.ViewportChanged += OnViewportChanged;
+        OldEditor.ScrollStarted += OnScrollStarted;
+        NewEditor.ScrollStarted += OnScrollStarted;
         OldEditor.FontZoomFactorChanged += OnZoomChanged;
         NewEditor.FontZoomFactorChanged += OnZoomChanged;
         OldEditor.AppearanceChanged += OnAppearanceChanged;
@@ -140,14 +144,38 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
 
     private void OnAppearanceChanged(object sender, EventArgs args) => ApplyPalette();
 
+    // A shared viewport admits one driver. Any input that starts scrolling in
+    // either pane retires the peer's animation, including horizontal-only input:
+    // the panes share one scroll position, so an older vertical target must not
+    // keep moving the view under the pane the user is actually driving. This
+    // pane's own diagonal input is unaffected; it retargets instead.
+    private void OnScrollStarted(object sender, EventArgs args)
+    {
+        if (_disposed) return;
+        var peer = ReferenceEquals(sender, OldEditor) ? NewEditor : OldEditor;
+        peer.CancelScrollAnimation();
+    }
+
     private void OnViewportChanged(object sender, EventArgs args)
     {
         if (_disposed || _synchronizing || _currentHunk < 0) return;
         var source = (TextEditorCore)sender;
         if (source.IsDiffViewportPending) return;
         var horizontalOffset = ReadHorizontalOffset(source);
+        var row = source.DiffFirstVisibleRow;
+        var offset = source.FirstVisibleRowOffset;
+        // A mirrored paint acknowledges the shared viewport. It is not a new
+        // interaction and must not feed back into the pane driving animation.
+        if (row == _verticalRow && offset == _verticalOffset && horizontalOffset == _horizontalOffset) return;
         _synchronizing = true;
-        try { SetViewport(source.DiffFirstVisibleRow, horizontalOffset); }
+        try
+        {
+            _horizontalOffset = horizontalOffset;
+            _verticalRow = row;
+            _verticalOffset = offset;
+            var peer = ReferenceEquals(source, OldEditor) ? NewEditor : OldEditor;
+            peer.SetDiffViewport(row, horizontalOffset, offset);
+        }
         finally { _synchronizing = false; }
     }
 
@@ -164,11 +192,13 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         return ReferenceEquals(source, OldEditor) ? oldOffset : newOffset;
     }
 
-    private void SetViewport(long row, double horizontalOffset)
+    private void SetViewport(long row, double horizontalOffset, double rowOffset = 0)
     {
         _horizontalOffset = horizontalOffset;
-        OldEditor.SetDiffViewport(row, horizontalOffset);
-        NewEditor.SetDiffViewport(row, horizontalOffset);
+        _verticalRow = row;
+        _verticalOffset = rowOffset;
+        OldEditor.SetDiffViewport(row, horizontalOffset, rowOffset);
+        NewEditor.SetDiffViewport(row, horizontalOffset, rowOffset);
     }
 
     private void OnZoomChanged(object sender, double zoom)
@@ -243,6 +273,8 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         PreviewKeyDown -= OnPreviewKeyDown;
         OldEditor.ViewportChanged -= OnViewportChanged;
         NewEditor.ViewportChanged -= OnViewportChanged;
+        OldEditor.ScrollStarted -= OnScrollStarted;
+        NewEditor.ScrollStarted -= OnScrollStarted;
         OldEditor.FontZoomFactorChanged -= OnZoomChanged;
         NewEditor.FontZoomFactorChanged -= OnZoomChanged;
         OldEditor.AppearanceChanged -= OnAppearanceChanged;

@@ -34,6 +34,7 @@ size_t CheckLineLayoutCache(IDWriteFactory *factory, IDWriteTextFormat *format);
 size_t CheckSelectionDisplayCaret();
 size_t CheckGutterGeometry();
 size_t CheckUndoCaretRestoration();
+size_t CheckVerticalScrollGeometry();
 
 namespace {
 using Microsoft::WRL::ComPtr;
@@ -1196,6 +1197,7 @@ int wmain(int argc, wchar_t **argv) {
         checks += CheckGutterGeometry();
         std::cout << "PASS: bounded page cache, oversized active layout ownership and paragraph revalidation.\n";
         checks += CheckUndoCaretRestoration();
+        checks += CheckVerticalScrollGeometry();
         std::cout << "PASS: undo/redo caret edges survive grouped replacements, coalesced deletion and container actions.\n";
         CheckDrawSession(env);
         CheckRenderer(env);

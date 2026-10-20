@@ -132,6 +132,27 @@ EditModel::~EditModel() {
 	pdoc = nullptr;
 }
 
+int EditModel::VerticalOffsetPixels() const noexcept {
+	return static_cast<int>(std::round(verticalOffset * viewportScale));
+}
+
+XYPOSITION EditModel::DisplayRowY(Sci::Line row, int lineHeight) const noexcept {
+	return static_cast<XYPOSITION>(static_cast<double>(row - TopLineOfMain()) * lineHeight - VerticalOffsetPixels());
+}
+
+Sci::Line EditModel::DisplayRowFromY(double y, int lineHeight) const noexcept {
+	return TopLineOfMain() + static_cast<Sci::Line>(std::floor((y + VerticalOffsetPixels()) / lineHeight));
+}
+
+std::pair<Sci::Line, Sci::Line> EditModel::VisibleDisplayRows(PRectangle viewport, int lineHeight) const noexcept {
+	if (viewport.Empty() || lineHeight <= 0) return {};
+	const auto rows = pcs->LinesDisplayed();
+	const auto first = std::clamp(DisplayRowFromY(viewport.top, lineHeight), Sci::Line{0}, rows);
+	if (first == rows) return {rows, rows};
+	const auto last = std::clamp(DisplayRowFromY(viewport.bottom - 1, lineHeight), first, rows - 1);
+	return {first, last + 1};
+}
+
 bool EditModel::BidirectionalEnabled() const noexcept {
 	return (bidirectional != Bidirectional::Disabled) &&
 		(CpUtf8 == pdoc->dbcsCodePage);

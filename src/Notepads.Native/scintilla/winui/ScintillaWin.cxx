@@ -125,7 +125,7 @@ namespace Scintilla::Internal {
 		base->InsertLines(0, pdoc->LinesTotal() - 1);
 		auto prepared = DisplayLineMapCreate(std::move(base), std::move(gaps), std::move(tints));
 		pcs = std::move(prepared);
-		SetTopLine(0);
+		SetTopLine(0, 0);
 		SetScrollBars();
 		Redraw();
 	}
@@ -653,6 +653,7 @@ namespace Scintilla::Internal {
 	{
 		if (FlagSet(modification.modificationType, ModificationFlags::InsertText | ModificationFlags::DeleteText))
 		{
+			CancelSmoothScroll();
 			++_documentRevision;
 			if (_syntaxState)
 			{
@@ -833,6 +834,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::ProcessKeyDownMessage(winrt::Windows::System::VirtualKey key, winrt::Windows::System::VirtualKeyModifiers modifiers, bool const isExtendedKey, bool *handled)
 	{
+		CancelSmoothScroll();
 		lastKeyDownConsumed = false;
 		if (handled
 			&& (static_cast<int>(modifiers) & static_cast<int>(winrt::Windows::System::VirtualKeyModifiers::Menu))
@@ -1027,6 +1029,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::StopTimers()
 	{
+		CancelSmoothScroll();
 		_idleSuspended = true;
 		// Pending drags belong to this attachment, even if it is reloaded
 		// before the other process finishes providing or accepting text.
@@ -1067,6 +1070,8 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::FinalizeAfterApartmentClosed() noexcept
 	{
+		CancelSmoothScroll();
+		_mainWrapper->SetScrollStarted({});
 		_viewportRestore.reset();
 		_displayViewport.reset();
 		_horizontalViewport.reset();
@@ -1540,6 +1545,7 @@ namespace Scintilla::Internal {
 		// not reproject completed rectangle edits away from their row carets.
 		if (caretPosition == current.caret.Position() && anchorPosition == current.anchor.Position())
 			return;
+		CancelSmoothScroll();
 		if (caretPosition == current.caret.Position())
 			nextCaret.SetTrailingEdge(current.caret.TrailingEdge());
 		if (anchorPosition == current.anchor.Position())
@@ -2225,7 +2231,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::SetVerticalScrollPos() {
 		Editor::SetVerticalScrollPos();
-		ChangeScrollPos(SB_VERT, topLine);
+		ChangeScrollPos(SB_VERT, topLine + verticalOffset / ScrollGeometry().RowHeight());
 	}
 
 	void ScintillaWinUI::SetHorizontalScrollPos() {
@@ -2313,14 +2319,24 @@ namespace Scintilla::Internal {
 
 		bool modified = false;
 		UpdateScrollBarLayout();
-		const Sci::Line vertEndPreferred = nMax;
-		if (!verticalScrollBarVisible)
-			nPage = vertEndPreferred + 1;
-		if (ChangeScrollRange(SB_VERT, 0, static_cast<int>(vertEndPreferred), static_cast<unsigned int>(nPage))) {
-			modified = true;
+		(void)nMax;
+		(void)nPage;
+		if (_mainWrapper->HasScrollBars()) {
+			const auto geometry = ScrollGeometry();
+			const auto maximum = geometry.Maximum();
+			const double end = verticalScrollBarVisible ? maximum.row + maximum.offset / geometry.RowHeight() : 0;
+			const double page = std::max(0.0, GetTextRectangle().Height() / vs.lineHeight);
+			if (_mainWrapper->VerticalScrollBarMaximum() != end || _mainWrapper->VerticalScrollBarViewportSize() != page ||
+				_mainWrapper->VerticalScrollBarMinimum() != 0) {
+				_mainWrapper->VerticalScrollBarViewportSize(page);
+				_mainWrapper->VerticalScrollBarMinimum(0);
+				_mainWrapper->VerticalScrollBarMaximum(end);
+				_mainWrapper->VerticalScrollBarVisible(end > 0);
+				modified = true;
+			}
 		}
 		const HorizontalScrollRange range = GetHorizontalScrollRange();
-		if (ChangeScrollRange(SB_HORZ, 0, range.documentWidth, range.pageWidth)) {
+		if (ChangeHorizontalScrollRange(0, range.documentWidth, range.pageWidth)) {
 			modified = true;
 			if (scrollWidth < range.pageWidth && !_horizontalViewport) {
 				HorizontalScrollTo(0);
@@ -2351,16 +2367,19 @@ namespace Scintilla::Internal {
 		const auto revision = _displayViewportRevision;
 		const auto row = DisplayFirstVisibleRow();
 		const auto offset = DisplayHorizontalOffset();
+		const auto vertical = DisplayVerticalOffset();
 		__super::SetScrollBars();
 		if (_displayViewport && revision == _displayViewportRevision) {
 			_displayViewport->row = row;
 			_displayViewport->leadingOffset = offset;
+			_displayViewport->verticalOffset = vertical;
 			_displayViewport->appliedTop = topLine;
+			_displayViewport->appliedOffset = verticalOffset;
 			_displayViewport->appliedX = xOffset;
 		}
 	}
 
-	bool ScintillaWinUI::ChangeScrollRange(int nBar, int nMin, int nMax, UINT nPage) noexcept {
+	bool ScintillaWinUI::ChangeHorizontalScrollRange(int nMin, int nMax, UINT nPage) noexcept {
 		if (!_mainWrapper->HasScrollBars())
 		{
 			return false;
@@ -2370,40 +2389,28 @@ namespace Scintilla::Internal {
 
 		// ViewportSize must be set first or this causes an issue where the bars are the wrong length after a window resize
 
-		if (nBar == SB_HORZ)
+		if (static_cast<int>(_mainWrapper->HorizontalScrollBarMinimum()) != nMin ||
+			static_cast<int>(_mainWrapper->HorizontalScrollBarMaximum()) != max ||
+			static_cast<UINT>(_mainWrapper->HorizontalScrollBarViewportSize()) != nPage)
 		{
-			if (static_cast<int>(_mainWrapper->HorizontalScrollBarMinimum()) != nMin || static_cast<int>(_mainWrapper->HorizontalScrollBarMaximum()) != max || static_cast<UINT>(_mainWrapper->HorizontalScrollBarViewportSize()) != nPage)
-			{
-				_mainWrapper->HorizontalScrollBarViewportSize(nPage);
-				_mainWrapper->HorizontalScrollBarMinimum(nMin);
-				_mainWrapper->HorizontalScrollBarMaximum(max);
-				_mainWrapper->HorizontalScrollBarVisible(max != 0);
-				return true;
-			}
-		}
-		else
-		{
-			if (static_cast<int>(_mainWrapper->VerticalScrollBarMinimum()) != nMin || static_cast<int>(_mainWrapper->VerticalScrollBarMaximum()) != max || static_cast<UINT>(_mainWrapper->VerticalScrollBarViewportSize()) != nPage)
-			{
-				_mainWrapper->VerticalScrollBarViewportSize(nPage);
-				_mainWrapper->VerticalScrollBarMinimum(nMin);
-				_mainWrapper->VerticalScrollBarMaximum(max);
-				_mainWrapper->VerticalScrollBarVisible(max != 0);
-				return true;
-			}
+			_mainWrapper->HorizontalScrollBarViewportSize(nPage);
+			_mainWrapper->HorizontalScrollBarMinimum(nMin);
+			_mainWrapper->HorizontalScrollBarMaximum(max);
+			_mainWrapper->HorizontalScrollBarVisible(max != 0);
+			return true;
 		}
 		return false;
 	}
 
 	// Change the scroll position but avoid repaint if changing to same value
-	void ScintillaWinUI::ChangeScrollPos(int barType, Sci::Position pos) {
+	void ScintillaWinUI::ChangeScrollPos(int barType, double pos) {
 		// Text can be populated before XAML creates the template's scroll bars.
 		// Layout synchronizes their position once the bars exist.
 		if (!_mainWrapper->HasScrollBars()) {
 			return;
 		}
 
-		const auto value{ static_cast<int>(barType == SB_HORZ ? _mainWrapper->HorizontalScrollBarValue() : _mainWrapper->VerticalScrollBarValue()) };
+		const auto value{ barType == SB_HORZ ? _mainWrapper->HorizontalScrollBarValue() : _mainWrapper->VerticalScrollBarValue() };
 		if (value != pos) {
 			DwellEnd(true);
 			if (barType == SB_HORZ)
@@ -2799,6 +2806,8 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::DpiChanged()
 	{
+		CancelSmoothScroll();
+		viewportScale = _mainWrapper->LogicalDpi() / 96.0;
 		_mainWrapper->AdjustCallTipPadding(ct);
 
 		InvalidateStyleRedraw();
@@ -2806,6 +2815,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::SizeChanged()
 	{
+		CancelSmoothScroll();
 		_layoutScrollBars = _mainWrapper->ScrollBarVisibility();
 		ChangeSize();
 		if (_viewportRestore) Redraw();
@@ -2813,11 +2823,13 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::FocusChanged(bool focused)
 	{
+		if (!focused) CancelSmoothScroll();
 		SetFocusState(focused);
 	}
 
 	void ScintillaWinUI::PointerPressed(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers)
 	{
+		CancelSmoothScroll();
 		if (_lock != NONE)
 		{
 			msgq.push(std::make_unique<PointerMessage>(PointerMessage::PointerEventType::PointerPressed, point, timestamp, modifiers));
@@ -2830,6 +2842,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::RightPointerPressed(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers)
 	{
+		CancelSmoothScroll();
 		if (_lock != NONE)
 		{
 			msgq.push(std::make_unique<PointerMessage>(PointerMessage::PointerEventType::RightPointerPressed, point, timestamp, modifiers));
@@ -2899,6 +2912,114 @@ namespace Scintilla::Internal {
 		ButtonUpWithModifiers(Point{ point.X, point.Y }, timestamp, WindowsModifiers(modifiers));
 	}
 
+	namespace {
+		double ScrollTime() noexcept {
+			return std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count();
+		}
+	}
+
+	void ScintillaWinUI::CancelSmoothScroll() noexcept
+	{
+		++_scrollAnimationRevision;
+		_verticalScrollAnimation.Cancel();
+		_horizontalScrollAnimation.Cancel();
+		_scrollRenderingRevoker.revoke();
+	}
+
+	HorizontalScrollGeometry ScintillaWinUI::HorizontalGeometry() const
+	{
+		const auto range = GetHorizontalScrollRange();
+		return {range.documentWidth - range.pageWidth + 1, viewportScale, BidirectionalR2L(), HorizontalRightOrigin()};
+	}
+
+	void ScintillaWinUI::ScrollBy(double horizontalDelta, double verticalDelta, bool animated)
+	{
+		if (!std::isfinite(horizontalDelta) || !std::isfinite(verticalDelta)) throw winrt::hresult_invalid_argument();
+		if (_idleFinalized) return;
+		if (Wrapping()) horizontalDelta = 0;
+		if (horizontalDelta == 0 && verticalDelta == 0) return;
+		if (!BeginScrollInteraction(horizontalDelta != 0, verticalDelta != 0)) return;
+		const auto revision = ++_scrollAnimationRevision;
+		RefreshStyleData();
+		if (horizontalDelta != 0) PrepareBidiCanvas();
+		if (revision != _scrollAnimationRevision) return;
+		if (animated && !_idleSuspended && _mainWrapper->Height() > 0) {
+			if (!_scrollSettings) _scrollSettings = winrt::Windows::UI::ViewManagement::UISettings{};
+			animated = _scrollSettings.AnimationsEnabled();
+		} else {
+			animated = false;
+		}
+		const auto now = ScrollTime();
+		if (verticalDelta != 0 || !animated)
+			_verticalScrollAnimation.Retarget(ScrollGeometry(), {topLine, verticalOffset}, verticalDelta, now, animated);
+		if (horizontalDelta != 0 || !animated) {
+			const auto horizontal = HorizontalGeometry();
+			_horizontalScrollAnimation.Retarget(horizontal, horizontal.FromPixels(xOffset),
+				BidirectionalR2L() ? -horizontalDelta : horizontalDelta, now, animated);
+		}
+		if (!animated) { AdvanceSmoothScroll(true); return; }
+		if (!IsScrollAnimating()) { _scrollRenderingRevoker.revoke(); return; }
+		if (!_scrollRenderingRevoker) {
+			_scrollRenderingRevoker = winrt::DUX::Media::CompositionTarget::Rendering(winrt::auto_revoke,
+				[weak = get_weak()](auto const &, auto const &) {
+					if (auto self = weak.get()) self->AdvanceSmoothScroll();
+				});
+		}
+	}
+
+	void ScintillaWinUI::AdvanceSmoothScroll(bool finish)
+	{
+		if (_idleFinalized || (_idleSuspended && !finish)) { CancelSmoothScroll(); return; }
+		const auto revision = _scrollAnimationRevision;
+		const auto geometry = ScrollGeometry();
+		const bool animated = !finish && _scrollSettings && _scrollSettings.AnimationsEnabled();
+		const auto now = ScrollTime();
+		const auto position = animated ?
+			_verticalScrollAnimation.Advance(geometry, {topLine, verticalOffset}, now, viewportScale) :
+			_verticalScrollAnimation.Finish(geometry, {topLine, verticalOffset});
+		ScrollToPosition(position);
+		if (revision != _scrollAnimationRevision) return;
+		// Vertical styling may grow the RTL canvas and reconcile its physical
+		// origin. Resolve X afterwards, against the unchanged leading distance.
+		const auto horizontalGeometry = HorizontalGeometry();
+		const auto horizontal = animated ?
+			_horizontalScrollAnimation.Advance(horizontalGeometry, horizontalGeometry.FromPixels(xOffset), now, viewportScale) :
+			_horizontalScrollAnimation.Finish(horizontalGeometry, horizontalGeometry.FromPixels(xOffset));
+		HorizontalScrollToClamped(horizontalGeometry.PixelOffset(horizontal));
+		if (revision != _scrollAnimationRevision) return;
+		NotifyUpdateUI();
+		if (revision == _scrollAnimationRevision && !IsScrollAnimating()) _scrollRenderingRevoker.revoke();
+	}
+
+	bool ScintillaWinUI::BeginScrollInteraction(bool horizontal, bool vertical)
+	{
+		const auto revision = _scrollAnimationRevision;
+		_mainWrapper->NotifyScrollStarted();
+		if (revision != _scrollAnimationRevision || _idleFinalized) return false;
+		_viewportRestore.reset();
+		if (_displayViewport) {
+			// User input takes ownership from what was actually displayed, even
+			// if an older peer request has not painted yet. Keep the other axis's
+			// logical intent, including a deliberately clamped horizontal pan.
+			const bool pending = _displayViewport->pending;
+			if (horizontal) {
+				_displayViewport->leadingOffset = std::max(0.0,
+					(BidirectionalR2L() ? _displayViewport->rightOrigin - xOffset : xOffset) / _displayViewport->scale);
+			}
+			if (vertical) {
+				_displayViewport->row = topLine;
+				_displayViewport->verticalOffset = verticalOffset;
+			}
+			_displayViewport->pending = false;
+			++_displayViewportRevision;
+			if (pending) {
+				ContainerNeedsUpdate(Update::VScroll | Update::HScroll);
+				NotifyUpdateUI();
+			}
+		}
+		return revision == _scrollAnimationRevision && !_idleFinalized;
+	}
+
 	void ScintillaWinUI::PointerWheelChanged(int delta, bool horizontal, winrt::Windows::System::VirtualKeyModifiers modifiers)
 	{
 		/*if (!mouseWheelCaptures) {
@@ -2924,40 +3045,25 @@ namespace Scintilla::Internal {
 			if (vs.wrap.state != Wrap::None || charsPerScroll == 0) {
 				return;
 			}
-
-			MouseWheelDelta &wheelDelta = horizontal ? horizontalWheelDelta : verticalWheelDelta;
-			if (wheelDelta.Accumulate(delta)) {
-				const double widthPerStep = charsPerScroll == WHEEL_PAGESCROLL
-					? GetTextRectangle().Width() : charsPerScroll * vs.aveCharWidth;
-				const double widthToScroll = std::round(widthPerStep * wheelDelta.Actions() * (horizontal ? -1 : 1));
-
-				// signChanged and uniformWheel prevent bumping at the edges on touchpads
-				auto uniformWheel{ std::abs(_lastHorizontalScrollDelta) == std::abs(delta) };
-				auto signChanged{ _lastHorizontalScrollDelta < 0 && delta > 0 || _lastHorizontalScrollDelta > 0 && delta < 0 };
-				_lastHorizontalScrollDelta = delta;
-
-				if (!uniformWheel && signChanged)
-				{
-					return;
-				}
-
-				HorizontalScrollToClamped(static_cast<int>(std::clamp(xOffset + widthToScroll, 0.0, static_cast<double>(INT_MAX))));
-			}
+			const double widthPerStep = charsPerScroll == WHEEL_PAGESCROLL
+				? GetTextRectangle().Width() : charsPerScroll * vs.aveCharWidth;
+			ScrollBy(static_cast<double>(delta) / WHEEL_DELTA * widthPerStep * (horizontal ? 1 : -1) / viewportScale, 0, true);
 			return;
 		}
 
-		// Either SCROLL vertically or ZOOM. We handle the wheel steppings calculation
+		// Zoom remains discrete; scrolling consumes every high-resolution delta.
 		const auto linesPerScroll = WinUIEditor::WheelScrollUnits(false);
-		if (linesPerScroll != 0 && verticalWheelDelta.Accumulate(delta)) {
+		if (linesPerScroll != 0) {
 			Sci::Line linesToScroll = linesPerScroll;
 			if (linesPerScroll == WHEEL_PAGESCROLL)
 				linesToScroll = std::max<Sci::Line>(1, LinesOnScreen() - 1);
 			if (linesToScroll == 0) {
 				linesToScroll = 1;
 			}
-			linesToScroll *= verticalWheelDelta.Actions();
-
 			if (static_cast<int>(modifiers) & static_cast<int>(winrt::Windows::System::VirtualKeyModifiers::Control)) {
+				CancelSmoothScroll();
+				if (!zoomWheelDelta.Accumulate(delta)) return;
+				linesToScroll *= zoomWheelDelta.Actions();
 				// Zoom! We play with the font sizes in the styles.
 				// Number of steps/line is ignored, we just care if sizing up or down
 				if (linesToScroll < 0) {
@@ -2968,18 +3074,7 @@ namespace Scintilla::Internal {
 				}
 			}
 			else {
-				// Scroll
-
-				// signChanged and uniformWheel prevent bumping at the edges on touchpads
-				auto uniformWheel{ std::abs(_lastVerticalScrollDelta) == std::abs(delta) };
-				auto signChanged{ _lastVerticalScrollDelta < 0 && delta > 0 || _lastVerticalScrollDelta > 0 && delta < 0 };
-				_lastVerticalScrollDelta = delta;
-				if (!uniformWheel && signChanged)
-				{
-					return;
-				}
-
-				ScrollTo(topLine + linesToScroll);
+				ScrollBy(0, -static_cast<double>(delta) / WHEEL_DELTA * linesToScroll * vs.lineHeight / viewportScale, true);
 			}
 		}
 	}
@@ -2990,6 +3085,8 @@ namespace Scintilla::Internal {
 	}
 
 	void ScintillaWinUI::HorizontalScroll(ScrollEventType event, int value) {
+		CancelSmoothScroll();
+		if (!BeginScrollInteraction(true, false)) return;
 		int xPos = xOffset;
 		const PRectangle rcText = GetTextRectangle();
 		const int pageWidth = static_cast<int>(rcText.Width() * 2 / 3);
@@ -3022,29 +3119,44 @@ namespace Scintilla::Internal {
 		HorizontalScrollToClamped(xPos);
 	}
 
-	void ScintillaWinUI::Scroll(ScrollEventType event, int value) {
+	void ScintillaWinUI::Scroll(ScrollEventType event, double value) {
+		CancelSmoothScroll();
+		if (!BeginScrollInteraction()) return;
 		//DWORD dwStart = timeGetTime();
 		//Platform::DebugPrintf("Scroll %x %d\n", wParam, lParam);
 
 		//Platform::DebugPrintf("ScrollInfo %d mask=%x min=%d max=%d page=%d pos=%d track=%d\n", b,sci.fMask,
 		//sci.nMin, sci.nMax, sci.nPage, sci.nPos, sci.nTrackPos);
-		Sci::Line topLineNew = topLine;
+		const auto geometry = ScrollGeometry();
+		auto position = VerticalScrollPosition{topLine, verticalOffset};
 		switch (event) {
 		case ScrollEventType::SmallDecrement:
-			topLineNew -= 1;
+			position.offset -= geometry.RowHeight();
 			break;
 		case ScrollEventType::SmallIncrement:
-			topLineNew += 1;
+			position.offset += geometry.RowHeight();
 			break;
 		case ScrollEventType::LargeDecrement:
-			topLineNew -= LinesToScroll(); break;
-		case ScrollEventType::LargeIncrement: topLineNew += LinesToScroll(); break;
-		case ScrollEventType::First: topLineNew = 0; break;
-		case ScrollEventType::Last: topLineNew = MaxScrollPos(); break;
-		case ScrollEventType::ThumbPosition: topLineNew = value; break;
-		case ScrollEventType::ThumbTrack: topLineNew = value; break;
+			position.offset -= LinesToScroll() * geometry.RowHeight(); break;
+		case ScrollEventType::LargeIncrement: position.offset += LinesToScroll() * geometry.RowHeight(); break;
+		case ScrollEventType::First: position = {}; break;
+		case ScrollEventType::Last: position = geometry.Maximum(); break;
+		case ScrollEventType::ThumbPosition:
+		case ScrollEventType::ThumbTrack: {
+			const auto maximum = geometry.Maximum();
+			value = std::clamp(value, 0.0, maximum.row + maximum.offset / geometry.RowHeight());
+			if (value >= static_cast<double>(maximum.row)) {
+				position = {maximum.row, (value - maximum.row) * geometry.RowHeight()};
+			} else {
+				const auto row = static_cast<Sci::Line>(value);
+				position = {row, (value - row) * geometry.RowHeight()};
+			}
+			break;
 		}
-		ScrollTo(topLineNew);
+		default: return;
+		}
+		ScrollToPosition(position);
+		NotifyUpdateUI();
 	}
 
 	void ScintillaWinUI::KeyDown(winrt::Windows::System::VirtualKey key, winrt::Windows::System::VirtualKeyModifiers modifiers, bool const isExtendedKey, bool *handled)
@@ -3121,14 +3233,15 @@ namespace Scintilla::Internal {
 		}
 	}
 
-	void ScintillaWinUI::RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, bool preservePreferredColumn)
+	void ScintillaWinUI::RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, double offset, bool preservePreferredColumn)
 	{
 		if (!std::isfinite(horizontalOffset) || horizontalOffset < 0 ||
-			documentLine < -1 || subLine < 0)
+			documentLine < -1 || subLine < 0 || !std::isfinite(offset) || offset < 0)
 			throw winrt::hresult_invalid_argument();
+		CancelSmoothScroll();
 		_displayViewport.reset();
 		_horizontalViewport.reset();
-		_viewportRestore = { horizontalOffset, documentLine, subLine };
+		_viewportRestore = { horizontalOffset, documentLine, subLine, offset };
 		if (!preservePreferredColumn) lastXChosen.reset();
 		Redraw();
 	}
@@ -3154,23 +3267,43 @@ namespace Scintilla::Internal {
 
 	int64_t ScintillaWinUI::DisplayFirstVisibleRow() const noexcept
 	{
-		return _displayViewport && topLine == _displayViewport->appliedTop ? _displayViewport->row : topLine;
+		return _displayViewport && topLine == _displayViewport->appliedTop && verticalOffset == _displayViewport->appliedOffset ? _displayViewport->row : topLine;
 	}
 
-	void ScintillaWinUI::SetDisplayViewport(int64_t row, double leadingOffset)
+	double ScintillaWinUI::DisplayVerticalOffset() const noexcept
 	{
-		if (row < 0 || !std::isfinite(leadingOffset) || leadingOffset < 0 || Wrapping())
+		if (_viewportRestore) return _viewportRestore->verticalOffset;
+		return _displayViewport && topLine == _displayViewport->appliedTop && verticalOffset == _displayViewport->appliedOffset ?
+			_displayViewport->verticalOffset : verticalOffset;
+	}
+
+	void ScintillaWinUI::SetVerticalViewport(int64_t row, double offset)
+	{
+		if (row < 0 || !std::isfinite(offset) || offset < 0) throw winrt::hresult_invalid_argument();
+		CancelSmoothScroll();
+		if (!BeginScrollInteraction()) return;
+		RefreshStyleData();
+		ScrollToPosition({static_cast<Sci::Line>(std::min<int64_t>(row, std::numeric_limits<Sci::Line>::max())), offset});
+		NotifyUpdateUI();
+	}
+
+	void ScintillaWinUI::SetDisplayViewport(int64_t row, double leadingOffset, double offset)
+	{
+		if (row < 0 || !std::isfinite(leadingOffset) || leadingOffset < 0 || !std::isfinite(offset) || offset < 0 || Wrapping())
 			throw winrt::hresult_invalid_argument();
+		CancelSmoothScroll();
 		if (_displayViewport && row == DisplayFirstVisibleRow() &&
-			leadingOffset == DisplayHorizontalOffset()) return;
+			leadingOffset == DisplayHorizontalOffset() && offset == DisplayVerticalOffset()) return;
 		_viewportRestore.reset();
 		_horizontalViewport.reset();
 		auto viewport = _displayViewport.value_or(DisplayViewport{});
 		if (!_displayViewport) viewport.scale = _mainWrapper->LogicalDpi() / 96.0;
 		viewport.row = row;
 		viewport.leadingOffset = leadingOffset;
+		viewport.verticalOffset = offset;
 		viewport.appliedX = xOffset;
 		viewport.appliedTop = topLine;
+		viewport.appliedOffset = verticalOffset;
 		viewport.pending = true;
 		_displayViewport = viewport;
 		++_displayViewportRevision;
@@ -3185,15 +3318,19 @@ namespace Scintilla::Internal {
 		auto viewport = *_displayViewport;
 		viewport.row = DisplayFirstVisibleRow();
 		viewport.leadingOffset = DisplayHorizontalOffset();
+		viewport.verticalOffset = DisplayVerticalOffset();
 		viewport.appliedX = xOffset;
 		viewport.appliedTop = topLine;
+		viewport.appliedOffset = verticalOffset;
 		_displayViewport = viewport;
 		ResumeIdleWork();
 		RefreshStyleData();
 		WrapLines(WrapScope::wsVisible);
 		if (!_displayViewport || revision != _displayViewportRevision) return false;
-		SetTopLine(static_cast<Sci::Line>(std::min<int64_t>(viewport.row, MaxScrollPos())));
+		const auto position = ScrollGeometry().Clamp({static_cast<Sci::Line>(std::min<int64_t>(viewport.row, MaxScrollPos())), viewport.verticalOffset});
+		SetTopLine(position.row, position.offset);
 		viewport.appliedTop = topLine;
+		viewport.appliedOffset = verticalOffset;
 		viewport.appliedX = xOffset;
 		_displayViewport = viewport;
 		scrollToAfterWrap.reset();
@@ -3222,6 +3359,7 @@ namespace Scintilla::Internal {
 		viewport.pending = false;
 		viewport.appliedX = xOffset;
 		viewport.appliedTop = topLine;
+		viewport.appliedOffset = verticalOffset;
 		viewport.rightOrigin = rightOrigin;
 		viewport.scale = scale;
 		_displayViewport = viewport;
@@ -3252,7 +3390,7 @@ namespace Scintilla::Internal {
 			pdoc->EnsureStyledTo(pdoc->LineStart(line + 1));
 			WrapOneLine(surface, line);
 			if (request.documentLine < 0) {
-				SetTopLine(pcs->DisplayFromDoc(line));
+				SetTopLine(pcs->DisplayFromDoc(line), 0);
 				subLine = static_cast<Sci::Line>(PointMainCaret().y / vs.lineHeight);
 			}
 			subLine = std::clamp<Sci::Line>(subLine, 0, pcs->GetHeight(line) - 1);
@@ -3272,7 +3410,7 @@ namespace Scintilla::Internal {
 			// A previously wrapped control may still have wrapped display heights.
 			WrapLines(WrapScope::wsVisible);
 		}
-		SetTopLine(pcs->DisplayFromDocSub(line, subLine));
+		SetTopLine(pcs->DisplayFromDocSub(line, subLine), 0);
 		scrollToAfterWrap.reset();
 		// Establish the shared canvas before following the caret. A wider later
 		// visible line must not move an RTL caret offscreen after X is calculated.
@@ -3310,7 +3448,8 @@ namespace Scintilla::Internal {
 		// Scrollbars occupy an Auto row/column. Wait for their layout before
 		// wrapping or clamping against the final text width and height.
 		if (_mainWrapper->ScrollBarVisibility() != _layoutScrollBars) return false;
-		SetTopLine(std::clamp<Sci::Line>(pcs->DisplayFromDocSub(line, subLine), 0, MaxScrollPos()));
+		const auto position = ScrollGeometry().Clamp({pcs->DisplayFromDocSub(line, subLine), request.documentLine < 0 ? 0 : request.verticalOffset});
+		SetTopLine(position.row, position.offset);
 		HorizontalScrollTo(x);
 		SetVerticalScrollPos();
 		_viewportRestore.reset();
@@ -3398,7 +3537,7 @@ namespace Scintilla::Internal {
 				const XYPOSITION scale = _mainWrapper->LogicalDpi() / 96.0;
 				PRectangle frame = GetTextRectangle();
 				frame.left = std::max<XYPOSITION>(0, frame.left - 2 * scale);
-				frame.top = static_cast<XYPOSITION>(highlight.start - topLine) * vs.lineHeight;
+				frame.top = DisplayRowY(highlight.start, vs.lineHeight);
 				frame.bottom = frame.top + static_cast<XYPOSITION>(highlight.count) * vs.lineHeight;
 				if (frame.Width() > 2 * scale && frame.Intersects(rcPaint))
 					surf->AlphaRectangle(frame, std::min<XYPOSITION>(4 * scale, frame.Height() / 2),
@@ -3609,6 +3748,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::DragOver(winrt::Windows::Foundation::Point const &point, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation const &allowedOperations, winrt::Windows::ApplicationModel::DataTransfer::DragDrop::DragDropModifiers const &modifiers, winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation &operation)
 	{
+		CancelSmoothScroll();
 		operation = winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None;
 		try
 		{
@@ -3835,6 +3975,41 @@ namespace Scintilla::Internal {
 
 	sptr_t ScintillaWinUI::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam)
 	{
+		// Getters leave motion untouched. Explicit navigation and metric changes
+		// supersede it, including requests that happen to keep the current row.
+		switch (iMessage) {
+		case Message::SetFirstVisibleLine:
+		case Message::SetXOffset:
+		case Message::LineScroll:
+		case Message::ScrollVertical:
+		case Message::ScrollCaret:
+		case Message::VerticalCentreCaret:
+		case Message::ScrollRange:
+		case Message::ScrollToStart:
+		case Message::ScrollToEnd:
+		case Message::LineScrollUp:
+		case Message::LineScrollDown:
+		case Message::GotoPos:
+		case Message::GotoLine:
+		case Message::SetDocPointer:
+		case Message::SetZoom:
+		case Message::ZoomIn:
+		case Message::ZoomOut:
+		case Message::SetWrapMode:
+		case Message::SetBidirectional:
+		case Message::StyleSetSize:
+		case Message::StyleSetSizeFractional:
+		case Message::StyleSetFont:
+		case Message::SetSel:
+		case Message::SetEmptySelection:
+		case Message::SetSelectionStart:
+		case Message::SetSelectionEnd:
+		case Message::SetCurrentPos:
+		case Message::SetAnchor:
+			CancelSmoothScroll();
+			break;
+		default: break;
+		}
 		const bool atomicReplacement = pdoc->InAtomicReplacement();
 		const bool modifying = pdoc->ModificationInProgress();
 		if (_readLeases != 0 || modifying)
@@ -3965,6 +4140,7 @@ namespace Scintilla::Internal {
 		case Message::SwapMainAnchorCaret:
 		case Message::SetSelectionSerialized:
 		{
+			CancelSmoothScroll();
 			// These APIs change sel directly, bypassing Editor::SetSelection.
 			// Publish the completed main range before another key reaches TSF;
 			// waiting for UpdateUI lets it insert at the previous caret instead.
@@ -4028,6 +4204,15 @@ namespace Scintilla::Internal {
 		}
 	}
 
+	std::pair<Sci::Line, Sci::Line> ScintillaWinUI::AutomationVisibleDisplayRows() {
+		// Resolve pending layout just like range geometry does. Reflow can change
+		// display row numbers, but preserves the logical top-line anchor. Never
+		// cache the last paint: synchronous edits/resize may already supersede it.
+		RefreshStyleData();
+		WrapLines(WrapScope::wsVisible);
+		return VisibleDisplayRows(GetTextRectangle(), vs.lineHeight);
+	}
+
 	std::vector<PRectangle> ScintillaWinUI::AutomationRangeRectangles(
 		Sci::Position start, Sci::Position end, bool *clipped) {
 		if (clipped) *clipped = false;
@@ -4044,9 +4229,10 @@ namespace Scintilla::Internal {
 			markClipped();
 			return rectangles;
 		}
-		const Sci::Line lastDisplay = std::min(topLine + LinesOnScreen(), pcs->LinesDisplayed() - 1);
-		const Sci::Line firstVisible = pcs->DocFromDisplay(topLine);
-		const Sci::Line lastVisible = pcs->DocFromDisplay(lastDisplay);
+		const auto [firstDisplay, endDisplay] = VisibleDisplayRows(viewport, vs.lineHeight);
+		if (firstDisplay == endDisplay) return rectangles;
+		const Sci::Line firstVisible = pcs->DocFromDisplay(firstDisplay);
+		const Sci::Line lastVisible = pcs->DocFromDisplay(endDisplay - 1);
 		const Sci::Line startLine = pdoc->SciLineFromPosition(start);
 		const Sci::Line endLine = pdoc->SciLineFromPosition(end > start ? end - 1 : end);
 		if (startLine < firstVisible || endLine > lastVisible) markClipped();
@@ -4071,7 +4257,7 @@ namespace Scintilla::Internal {
 			append(PRectangle{point.x, point.y, point.x + 1, point.y + vs.lineHeight});
 		};
 		Sci::Line previousLine = first - 1;
-		for (Sci::Line display = topLine; display <= lastDisplay;) {
+		for (Sci::Line display = firstDisplay; display < endDisplay;) {
 			if (pcs->IsDisplayGap(display)) { ++display; continue; }
 			const Sci::Line line = pcs->DocFromDisplay(display);
 			display = std::max(display + 1, pcs->DisplayLastFromDoc(line) + 1);
@@ -4085,7 +4271,7 @@ namespace Scintilla::Internal {
 			const auto localStart = static_cast<int>(std::clamp<Sci::Position>(start - lineStart, 0, ll->numCharsBeforeEOL));
 			const auto localEnd = static_cast<int>(std::clamp<Sci::Position>(end - lineStart, 0, ll->numCharsBeforeEOL));
 			const XYPOSITION originX = vs.TextStart(BidirectionalR2L()) - xOffset;
-			const XYPOSITION originY = static_cast<XYPOSITION>((pcs->DisplayFromDoc(line) - topLine) * vs.lineHeight);
+			const XYPOSITION originY = DisplayRowY(pcs->DisplayFromDoc(line), vs.lineHeight);
 			if (ll->paragraph) {
 				if (localStart == localEnd) {
 					const auto displayCaret = sel.CaretForDisplay();
@@ -4097,8 +4283,8 @@ namespace Scintilla::Internal {
 					// even when one long physical line wraps thousands of times.
 					const auto rows = ll->paragraph->Lines();
 					const auto finalRow = static_cast<Sci::Line>(rows.size()) - 1;
-					const auto firstRow = std::clamp<Sci::Line>(topLine - pcs->DisplayFromDoc(line), 0, finalRow);
-					const auto lastRow = std::clamp<Sci::Line>(lastDisplay - pcs->DisplayFromDoc(line), firstRow, finalRow);
+					const auto firstRow = std::clamp<Sci::Line>(firstDisplay - pcs->DisplayFromDoc(line), 0, finalRow);
+					const auto lastRow = std::clamp<Sci::Line>(endDisplay - 1 - pcs->DisplayFromDoc(line), firstRow, finalRow);
 					const auto visibleStart = std::max<size_t>(localStart, rows[firstRow].start);
 					const auto visibleEnd = std::min<size_t>(localEnd, rows[lastRow].start + rows[lastRow].length);
 					if (visibleStart != localStart || visibleEnd != localEnd) markClipped();
@@ -4116,8 +4302,8 @@ namespace Scintilla::Internal {
 			}
 			// The fast LTR path still needs one clipped rectangle for each wrapped
 			// row, with endpoints relative to that row rather than the whole line.
-			const int firstSubLine = static_cast<int>(std::clamp<Sci::Line>(topLine - pcs->DisplayFromDoc(line), 0, ll->lines - 1));
-			const int lastSubLine = static_cast<int>(std::clamp<Sci::Line>(lastDisplay - pcs->DisplayFromDoc(line), firstSubLine, ll->lines - 1));
+			const int firstSubLine = static_cast<int>(std::clamp<Sci::Line>(firstDisplay - pcs->DisplayFromDoc(line), 0, ll->lines - 1));
+			const int lastSubLine = static_cast<int>(std::clamp<Sci::Line>(endDisplay - 1 - pcs->DisplayFromDoc(line), firstSubLine, ll->lines - 1));
 			if (localStart < ll->LineStart(firstSubLine) || localEnd > ll->LineLastVisible(lastSubLine, LineLayout::Scope::includeEnd)) markClipped();
 			for (int subLine = firstSubLine; subLine <= lastSubLine; ++subLine) {
 				const auto row = ll->SubLineRange(subLine, LineLayout::Scope::includeEnd);
@@ -4274,6 +4460,7 @@ namespace Scintilla::Internal {
 	void ScintillaWinUI::PublishPreparedReplacement(Document &replacement, const char *previousText,
 		std::unique_ptr<IContractionState> preparedContraction, bool leased)
 	{
+		CancelSmoothScroll();
 		if (leased ? _readLeases != 1 || _readOnlyBeforeLease : _readLeases || pdoc->IsReadOnly())
 			winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
 		// Keep the candidate read-only through notifications and journal
@@ -4281,6 +4468,7 @@ namespace Scintilla::Internal {
 		if (leased) replacement.SetReadOnly(true);
 		auto previousSelection = sel;
 		const auto previousTopLine = topLine;
+		const auto previousVerticalOffset = verticalOffset;
 		const auto previousTopPosition = posTopLine;
 		const auto previousXOffset = xOffset;
 		const auto previousHorizontalViewport = _horizontalViewport;
@@ -4299,6 +4487,7 @@ namespace Scintilla::Internal {
 			pcs.swap(preparedContraction);
 			sel = std::move(previousSelection);
 			topLine = previousTopLine;
+			verticalOffset = previousVerticalOffset;
 			posTopLine = previousTopPosition;
 			xOffset = previousXOffset;
 			_horizontalViewport = previousHorizontalViewport;

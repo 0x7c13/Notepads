@@ -185,6 +185,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         RegisterPropertyChangedCallback(ContextFlyoutProperty, (_, __) => _view.ContextFlyout = ContextFlyout);
         _view.DpiChanged += OnNativeDpiChanged;
         _view.ViewportGeometryChanged += OnNativeViewportGeometryChanged;
+        _view.ScrollStarted += OnNativeScrollStarted;
         Native.CodePage = (int)EditorConstants.ScCpUtf8;
         // Reuse visible line measurements across viewport restoration and paint tiles.
         // Native layout bounds retained source capacity, allowing one oversized active line.
@@ -355,6 +356,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     private int LineNumberDigits() => Math.Max(2, Native.LineCount.ToString().Length);
 
     private void OnNativeViewportGeometryChanged(object sender, object args) => UpdateLineNumberRevealLayout();
+    private void OnNativeScrollStarted(object sender, object args) => ScrollStarted?.Invoke(this, EventArgs.Empty);
 
     private void UpdateLineNumberRevealLayout()
     {
@@ -652,7 +654,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
             return;
         }
         horizontalOffset = _view.DisplayHorizontalOffset;
-        verticalOffset = Native.FirstVisibleLine * GetSingleLineHeight() / _dpiScale;
+        verticalOffset = Native.FirstVisibleLine * GetSingleLineHeight() / _dpiScale + _view.DisplayVerticalOffset;
     }
 
     public void GetViewportAnchor(out int? documentLine, out int subLine)
@@ -669,15 +671,17 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     }
 
     public void SetScrollViewerInitPosition(double horizontalOffset, double verticalOffset,
-        int? documentLine = null, int subLine = 0, bool preservePreferredColumn = false)
+        int? documentLine = null, int subLine = 0, bool preservePreferredColumn = false, double rowOffset = 0)
     {
         _horizontalOffset = horizontalOffset; _verticalOffset = verticalOffset;
         // A missing anchor follows the caret: V1 import has only RichEdit pixel
         // offsets, and automatic .LOG insertion must show the new entry.
         _firstVisibleDocumentLine = documentLine;
         _firstVisibleSubLine = subLine;
-        _view.RestoreViewport(horizontalOffset, documentLine ?? -1, subLine, preservePreferredColumn);
+        _view.RestoreViewport(horizontalOffset, documentLine ?? -1, subLine, rowOffset, preservePreferredColumn);
     }
+
+    internal double FirstVisibleRowOffset => _view.DisplayVerticalOffset;
 
     public new bool Focus(FocusState state) => _view.Focus(state);
     public void ResetFocusAndScrollToPreviousPosition() => _view.Focus(FocusState.Programmatic);
@@ -768,6 +772,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         RemoveHandler(PointerExitedEvent, new PointerEventHandler(OnEditorPointerExited));
         _view.DpiChanged -= OnNativeDpiChanged;
         _view.ViewportGeometryChanged -= OnNativeViewportGeometryChanged;
+        _view.ScrollStarted -= OnNativeScrollStarted;
         Loading -= OnLoading;
         ActualThemeChanged -= OnActualThemeChanged;
         ThemeSettingsService.OnThemeChanged -= OnAppThemeChanged;

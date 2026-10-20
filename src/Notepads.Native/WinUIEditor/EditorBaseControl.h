@@ -29,10 +29,19 @@ namespace winrt::WinUIEditor::implementation
 		bool MouseWheelZoomEnabled() const noexcept { return _mouseWheelZoomEnabled; }
 		void MouseWheelZoomEnabled(bool value) noexcept { _mouseWheelZoomEnabled = value; }
 		void SetBackgroundColor(Windows::UI::Color const &color);
-		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, bool preservePreferredColumn)
-		{ _scintilla->RestoreViewport(horizontalOffset, documentLine, subLine, preservePreferredColumn); }
-		void SetDisplayViewport(int64_t row, double leadingOffset)
-		{ _scintilla->SetDisplayViewport(row, leadingOffset); }
+		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, double verticalOffset, bool preservePreferredColumn)
+		{ _scintilla->RestoreViewport(horizontalOffset, documentLine, subLine, verticalOffset, preservePreferredColumn); }
+		void SetDisplayViewport(int64_t row, double leadingOffset, double verticalOffset)
+		{ _scintilla->SetDisplayViewport(row, leadingOffset, verticalOffset); }
+		void SetVerticalViewport(int64_t row, double offset) { _scintilla->SetVerticalViewport(row, offset); }
+		double DisplayVerticalOffset() const noexcept { return _scintilla->DisplayVerticalOffset(); }
+		void ScrollBy(double horizontalDelta, double verticalDelta, bool animated)
+		{ _scintilla->ScrollBy(horizontalDelta, verticalDelta, animated); }
+		bool IsScrollAnimating() const noexcept { return _scintilla->IsScrollAnimating(); }
+		void CancelScrollAnimation() noexcept { _scintilla->CancelScrollAnimation(); }
+		event_token ScrollStarted(Windows::Foundation::EventHandler<Windows::Foundation::IInspectable> const &handler)
+		{ return _scrollStarted.add(handler); }
+		void ScrollStarted(event_token const &token) noexcept { _scrollStarted.remove(token); }
 		double DisplayHorizontalOffset() const noexcept { return _scintilla->DisplayHorizontalOffset(); }
 		int64_t DisplayFirstVisibleRow() const noexcept { return _scintilla->DisplayFirstVisibleRow(); }
 		bool IsViewportRestorePending() const noexcept { return _scintilla->IsViewportRestorePending(); }
@@ -64,6 +73,11 @@ namespace winrt::WinUIEditor::implementation
 		uint64_t SelectionRevision() const noexcept;
 		Scintilla::Internal::Range AutomationUnitRange(int64_t position, bool word)
 		{ return _scintilla->AutomationUnitRange(static_cast<Sci::Position>(position), word); }
+		std::pair<int64_t, int64_t> AutomationVisibleDisplayRows()
+		{
+			if (!IsLoadedCompat() || Visibility() != DUX::Visibility::Visible) return {};
+			return _scintilla->AutomationVisibleDisplayRows();
+		}
 		std::vector<Scintilla::Internal::PRectangle> AutomationRangeRectangles(int64_t start, int64_t end)
 		{
 			if (!IsLoadedCompat() || Visibility() != DUX::Visibility::Visible) return {};
@@ -115,6 +129,7 @@ namespace winrt::WinUIEditor::implementation
 	private:
 		bool _viewportGeometryDirty{ true };
 		event<Windows::Foundation::EventHandler<Windows::Foundation::IInspectable>> _viewportGeometryChanged;
+		event<Windows::Foundation::EventHandler<Windows::Foundation::IInspectable>> _scrollStarted;
 		winrt::apartment_context _owningApartment;
 		DWORD _owningThreadId{ ::GetCurrentThreadId() };
 		std::atomic<bool> _uiResourcesFinalized{ false };

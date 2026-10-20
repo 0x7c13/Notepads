@@ -301,8 +301,8 @@ int Editor::MeasureVisibleLineWidth() {
 	if (!surface)
 		return -1;
 	int width = 0;
-	const Sci::Line end = std::min(topLine + LinesOnScreen() + 1, pcs->LinesDisplayed());
-	for (Sci::Line visible = topLine; visible < end; visible++) {
+	const auto [first, end] = VisibleDisplayRows(GetTextRectangle(), vs.lineHeight);
+	for (Sci::Line visible = first; visible < end; visible++) {
 		if (pcs->IsDisplayGap(visible))
 			continue;
 		std::shared_ptr<LineLayout> ll = view.RetrieveLineLayout(pcs->DocFromDisplay(visible), *this);
@@ -321,7 +321,8 @@ void Editor::PrepareBidiCanvas() {
 	const auto text = GetTextRectangle();
 	if (text.Empty()) return;
 	const Point viewport(text.Width(), text.Height());
-	if (!bidiVisibleDirty && bidiMeasuredTopLine == topLine && bidiMeasuredViewport == viewport) {
+	const auto lastRow = VisibleDisplayRows(text, vs.lineHeight).second - 1;
+	if (!bidiVisibleDirty && bidiMeasuredTopLine == topLine && bidiMeasuredLastLine == lastRow && bidiMeasuredViewport == viewport) {
 		ReconcileHorizontalViewport();
 		return;
 	}
@@ -333,7 +334,7 @@ void Editor::PrepareBidiCanvas() {
 		~RestoreFlag() { flag = false; }
 	} restore{bidiCanvasPreparing};
 	RefreshStyleData();
-	const auto lastDisplay = std::min(topLine + LinesOnScreen(), pcs->LinesDisplayed() - 1);
+	const auto lastDisplay = VisibleDisplayRows(text, vs.lineHeight).second - 1;
 	const auto lastLine = std::clamp<Sci::Line>(pcs->DocFromDisplay(lastDisplay), 0, pdoc->LinesTotal() - 1);
 	pdoc->EnsureStyledTo(pdoc->LineStart(lastLine + 1));
 	const auto previousWidth = BidiLayoutWidth();
@@ -348,6 +349,7 @@ void Editor::PrepareBidiCanvas() {
 	bidiWidthsInvalid = false;
 	bidiVisibleDirty = false;
 	bidiMeasuredTopLine = topLine;
+	bidiMeasuredLastLine = VisibleDisplayRows(GetTextRectangle(), vs.lineHeight).second - 1;
 	const auto measuredText = GetTextRectangle();
 	bidiMeasuredViewport = Point(measuredText.Width(), measuredText.Height());
 	PublishBidiCanvas(previousWidth);
@@ -408,7 +410,7 @@ PointDocument Editor::DocumentPointFromView(Point ptView) const {
 		ptDocument.y += ptOrigin.y;
 	} else {
 		ptDocument.x += xOffset;
-		ptDocument.y += static_cast<double>(topLine * vs.lineHeight);
+		ptDocument.y += static_cast<double>(topLine) * vs.lineHeight + VerticalOffsetPixels();
 	}
 	return ptDocument;
 }
@@ -458,18 +460,12 @@ Sci::Line Editor::LinesToScroll() const {
 }
 
 Sci::Line Editor::MaxScrollPos() const {
-	//Platform::DebugPrintf("Lines %d screen = %d maxScroll = %d\n",
-	//LinesTotal(), LinesOnScreen(), LinesTotal() - LinesOnScreen() + 1);
-	Sci::Line retVal = pcs->LinesDisplayed();
-	if (endAtLastLine) {
-		retVal -= LinesOnScreen();
-	} else {
-		retVal--;
-	}
-	if (retVal < 0) {
-		return 0;
-	}
-	return retVal;
+	const auto maximum = ScrollGeometry().Maximum();
+	// Legacy line APIs address the ceiling of the precise pixel range: a partial
+	// trailing row counts as one more addressable first-visible line, while the
+	// exact pixel position is tightened by ScrollGeometry::Clamp afterwards.
+	// Returning the floor instead could leave a short last view unreachable.
+	return maximum.row + (maximum.offset > 0 ? 1 : 0);
 }
 
 SelectionPosition Editor::ClampPositionIntoDocument(SelectionPosition sp) const {
@@ -492,6 +488,7 @@ Point Editor::LocationFromPosition(SelectionPosition pos, PointEnd pe) {
 	AutoSurface surface(this);
 	const XYPOSITION previousWidth = BidiLayoutWidth();
 	Point result = view.LocationFromPosition(surface, *this, pos, topLine, vs, pe, rcClient);
+	result.y -= VerticalOffsetPixels();
 	// An offscreen position may discover a wider canvas. Return its coordinates
 	// in the published viewport, just like subsequent caret and UIA queries.
 	result.x += PublishBidiCanvas(previousWidth);
@@ -590,12 +587,13 @@ SelectionPosition Editor::SPositionFromLineX(Sci::Line lineDoc, TextPositionX x)
 }
 
 Sci::Line Editor::LineFromLocation(Point pt) const noexcept {
-	return pcs->DocFromDisplay(static_cast<int>(pt.y) / vs.lineHeight + topLine);
+	return pcs->DocFromDisplay(DisplayRowFromY(pt.y, vs.lineHeight));
 }
 
-void Editor::SetTopLine(Sci::Line topLineNew) {
-	if ((topLine != topLineNew) && (topLineNew >= 0)) {
+void Editor::SetTopLine(Sci::Line topLineNew, double offset) {
+	if ((topLine != topLineNew || verticalOffset != offset) && (topLineNew >= 0)) {
 		topLine = topLineNew;
+		verticalOffset = offset;
 		ContainerNeedsUpdate(Update::VScroll);
 	}
 	posTopLine = pdoc->LineStart(pcs->DocFromDisplay(topLine));
@@ -714,12 +712,12 @@ PRectangle Editor::RectangleFromRange(Range r, int overlap) {
 	PRectangle rc;
 	const int leftTextOverlap = ((xOffset == 0) && (vs.leftMarginWidth > 0)) ? 1 : 0;
 	rc.left = static_cast<XYPOSITION>(vs.TextStart(BidirectionalR2L()) - leftTextOverlap);
-	rc.top = static_cast<XYPOSITION>((minLine - TopLineOfMain()) * vs.lineHeight - overlap);
+	rc.top = DisplayRowY(minLine, vs.lineHeight) - overlap;
 	if (rc.top < rcClientDrawing.top)
 		rc.top = rcClientDrawing.top;
 	// Extend to right of prepared area if any to prevent artifacts from caret line highlight
 	rc.right = rcClientDrawing.right - (vs.MarginsOnRight(BidirectionalR2L()) ? vs.GutterWidth() : 0);
-	rc.bottom = static_cast<XYPOSITION>((maxLine - TopLineOfMain() + 1) * vs.lineHeight + overlap);
+	rc.bottom = DisplayRowY(maxLine + 1, vs.lineHeight) + overlap;
 
 	return rc;
 }
@@ -1163,7 +1161,7 @@ void Editor::MovedCaret(SelectionPosition newPos, SelectionPosition previousPos,
 			SelectionRange(posDrag.IsValid() ? posDrag : newPos), XYScrollOptions::all, policies);
 		if (previousPos.IsValid() && (newXY.xOffset == xOffset)) {
 			// simple vertical scroll then invalidate
-			ScrollTo(newXY.topLine);
+			if (newXY.topLine != topLine || newXY.verticalOffset != verticalOffset) ScrollTo(newXY.topLine);
 			InvalidateSelection(SelectionRange(previousPos), true);
 		} else {
 			SetXYScroll(newXY);
@@ -1291,15 +1289,29 @@ void Editor::RememberCurrentSelectionForRedoOntoStack() {
 }
 
 void Editor::ScrollTo(Sci::Line line, bool moveThumb) {
-	const Sci::Line topLineNew = std::clamp<Sci::Line>(line, 0, MaxScrollPos());
-	if (topLineNew != topLine) {
+	ScrollToPosition({line, 0}, moveThumb);
+}
+
+VerticalScrollGeometry Editor::ScrollGeometry() const {
+	return {vs.lineHeight, viewportScale, GetTextRectangle().Height(), pcs->LinesDisplayed(), endAtLastLine};
+}
+
+void Editor::ScrollToPosition(VerticalScrollPosition position, bool moveThumb) {
+	position = ScrollGeometry().Clamp(position);
+	if (position.row != topLine || position.offset != verticalOffset) {
+		if (position.row == topLine && ScrollGeometry().PixelOffset(position) == VerticalOffsetPixels()) {
+			SetTopLine(position.row, position.offset);
+			if (moveThumb) SetVerticalScrollPos();
+			return;
+		}
 		// Try to optimise small scrolls
 #ifndef UNDER_CE
-		const Sci::Line linesToMove = topLine - topLineNew;
-		const bool performBlit = (std::abs(linesToMove) <= 10) && (paintState == PaintState::notPainting);
+		const Sci::Line linesToMove = topLine - position.row;
+		const bool performBlit = verticalOffset == 0 && position.offset == 0 &&
+			(std::abs(linesToMove) <= 10) && (paintState == PaintState::notPainting);
 		willRedrawAll = !performBlit;
 #endif
-		SetTopLine(topLineNew);
+		SetTopLine(position.row, position.offset);
 		// Optimize by styling the view as this will invalidate any needed area
 		// which could abort the initial paint if discovered later.
 		StyleAreaBounded(GetClientRectangle(), true);
@@ -1341,12 +1353,7 @@ void Editor::VerticalCentreCaret() {
 	const Sci::Line lineDoc =
 		pdoc->SciLineFromPosition(sel.IsRectangular() ? sel.Rectangular().caret.Position() : sel.MainCaret());
 	const Sci::Line lineDisplay = pcs->DisplayFromDoc(lineDoc);
-	const Sci::Line newTop = lineDisplay - (LinesOnScreen() / 2);
-	if (topLine != newTop) {
-		SetTopLine(newTop > 0 ? newTop : 0);
-		SetVerticalScrollPos();
-		RedrawRect(GetClientRectangle());
-	}
+	ScrollTo(lineDisplay - (LinesOnScreen() / 2));
 }
 
 void Editor::MoveSelectedLines(int lineDelta) {
@@ -1432,13 +1439,15 @@ void Editor::MoveCaretInsideView(bool ensureVisible) {
 	const PRectangle rcClient = GetTextRectangle();
 	const Point pt = PointMainCaret();
 	if (pt.y < rcClient.top) {
+		const auto row = DisplayRowFromY(rcClient.top + vs.lineHeight - 1, vs.lineHeight);
 		MovePositionTo(SPositionFromTextLocation(GetLastXChosen(pt),
-					static_cast<int>(rcClient.top), UserVirtualSpace()),
+					static_cast<int>(std::max(rcClient.top, DisplayRowY(row, vs.lineHeight))), UserVirtualSpace()),
 					Selection::SelTypes::none, ensureVisible);
 	} else if ((pt.y + vs.lineHeight - 1) > rcClient.bottom) {
-		const ptrdiff_t yOfLastLineFullyDisplayed = static_cast<ptrdiff_t>(rcClient.top) + ((LinesOnScreen() - 1) * vs.lineHeight);
+		const auto row = DisplayRowFromY(rcClient.bottom - vs.lineHeight, vs.lineHeight);
+		const auto yOfLastLineFullyDisplayed = std::max(rcClient.top, DisplayRowY(row, vs.lineHeight));
 		MovePositionTo(SPositionFromTextLocation(GetLastXChosen(pt),
-					static_cast<int>(rcClient.top + static_cast<XYPOSITION>(yOfLastLineFullyDisplayed)), UserVirtualSpace()),
+					static_cast<int>(yOfLastLineFullyDisplayed), UserVirtualSpace()),
 		        Selection::SelTypes::none, ensureVisible);
 	}
 }
@@ -1506,7 +1515,7 @@ Editor::XYScrollPosition Editor::XYScrollToMakeVisible(const SelectionRange &ran
 	const Point ptAnchor = LocationFromPosition(range.anchor) + ptOrigin;
 	const Point ptBottomCaret(pt.x, pt.y + vs.lineHeight - 1);
 
-	XYScrollPosition newXY(xOffset, topLine);
+	XYScrollPosition newXY(xOffset, topLine, verticalOffset);
 	if (rcClient.Empty()) {
 		return newXY;
 	}
@@ -1613,6 +1622,9 @@ Editor::XYScrollPosition Editor::XYScrollToMakeVisible(const SelectionRange &ran
 			}
 		}
 		newXY.topLine = std::clamp<Sci::Line>(newXY.topLine, 0, MaxScrollPos());
+		// Reveal uses a complete row; queries and already-visible carets retain
+		// the partial viewport instead of introducing an unrelated snap.
+		newXY.verticalOffset = 0;
 	}
 
 	// Horizontal positioning
@@ -1742,9 +1754,10 @@ Editor::XYScrollPosition Editor::XYScrollToMakeVisible(const SelectionRange &ran
 }
 
 void Editor::SetXYScroll(XYScrollPosition newXY) {
-	if ((newXY.topLine != topLine) || (newXY.xOffset != xOffset)) {
-		if (newXY.topLine != topLine) {
-			SetTopLine(newXY.topLine);
+	if ((newXY.topLine != topLine) || (newXY.xOffset != xOffset) || (newXY.verticalOffset != verticalOffset)) {
+		if (newXY.topLine != topLine || newXY.verticalOffset != verticalOffset) {
+			const auto position = ScrollGeometry().Clamp({newXY.topLine, newXY.verticalOffset});
+			SetTopLine(position.row, position.offset);
 			SetVerticalScrollPos();
 		}
 		if (newXY.xOffset != xOffset) {
@@ -2084,7 +2097,8 @@ bool Editor::WrapLines(WrapScope ws) {
 	if (wrapOccurred) {
 		insideWrapScroll = true;
 		SetScrollBars();
-		SetTopLine(std::clamp<Sci::Line>(goodTopLine, 0, MaxScrollPos()));
+		const auto position = ScrollGeometry().Clamp({std::clamp<Sci::Line>(goodTopLine, 0, MaxScrollPos()), verticalOffset});
+		SetTopLine(position.row, position.offset);
 		SetVerticalScrollPos();
 		insideWrapScroll = false;
 	}
@@ -2181,7 +2195,7 @@ void Editor::PaintSelMargin(Surface *surfaceWindow, const PRectangle &rc) {
 		rcBuffer.Move(-rcMargin.left, 0);
 		rcPaintMargin.Move(-rcMargin.left, 0);
 	}
-	marginView.PaintMargin(surface, topLine, rcPaintMargin, rcBuffer, *this, vs);
+	marginView.PaintMargin(surface, rcPaintMargin, rcBuffer, *this, vs);
 
 	if (view.bufferedDraw) {
 		marginView.pixmapSelMargin->FlushDrawing();
@@ -2361,8 +2375,9 @@ void Editor::ChangeScrollBars() {
 
 	// TODO: ensure always showing as many lines as possible
 	// May not be, if, for example, window made larger
-	if (topLine > MaxScrollPos()) {
-		SetTopLine(std::clamp<Sci::Line>(topLine, 0, MaxScrollPos()));
+	const auto position = ScrollGeometry().Clamp({topLine, verticalOffset});
+	if (position.row != topLine || position.offset != verticalOffset) {
+		SetTopLine(position.row, position.offset);
 		SetVerticalScrollPos();
 		Redraw();
 	}
@@ -2655,7 +2670,7 @@ void Editor::ClearAll() {
 	}
 
 	sel.Clear();
-	SetTopLine(0);
+	SetTopLine(0, 0);
 	SetVerticalScrollPos();
 	InvalidateStyleRedraw();
 }
@@ -3295,7 +3310,8 @@ void Editor::NotifyModified(Document *, DocModification mh, void *) {
 			if (mh.position < posTopLine && !CanDeferToLastStep(mh)) {
 				const Sci::Line newTop = std::clamp<Sci::Line>(topLine + mh.linesAdded, 0, MaxScrollPos());
 				if (newTop != topLine) {
-					SetTopLine(newTop);
+					const auto position = ScrollGeometry().Clamp({newTop, verticalOffset});
+					SetTopLine(position.row, position.offset);
 					SetVerticalScrollPos();
 				}
 			}
@@ -3534,14 +3550,14 @@ void Editor::PageMove(int direction, Selection::SelTypes selt, bool stuttered) {
 
 	const Point pt = LocationFromPosition(sel.CaretForDisplay());
 	const TextPositionX targetX = GetLastXChosen(pt);
-	const Sci::Line currentLine = topLine + static_cast<Sci::Line>(pt.y) / vs.lineHeight;
+	const Sci::Line currentLine = DisplayRowFromY(pt.y, vs.lineHeight);
 	const Sci::Line topStutterLine = topLine + caretPolicies.y.slop;
 	const Sci::Line bottomStutterLine = topLine + LinesToScroll() - caretPolicies.y.slop - 1;
 	const auto positionAtY = [&](int y) {
-		const Sci::Line row = topLine + static_cast<Sci::Line>(std::floor(static_cast<double>(y) / vs.lineHeight));
+		const Sci::Line row = DisplayRowFromY(y, vs.lineHeight);
 		const Sci::Line targetRow = pcs->NextTextDisplayLine(row, direction);
 		if (targetRow != row)
-			y = static_cast<int>((targetRow - topLine) * vs.lineHeight);
+			y = static_cast<int>(DisplayRowY(targetRow, vs.lineHeight));
 		return SPositionFromTextLocation(targetX, y, UserVirtualSpace());
 	};
 
@@ -3559,11 +3575,9 @@ void Editor::PageMove(int direction, Selection::SelTypes selt, bool stuttered) {
 		newPos = positionAtY(static_cast<int>(pt.y) + direction * (vs.lineHeight * static_cast<int>(LinesToScroll())));
 	}
 
-	if (topLineNew != topLine) {
-		SetTopLine(topLineNew);
+	if (topLineNew != topLine || verticalOffset != 0) {
+		ScrollTo(topLineNew);
 		MovePositionTo(newPos, selt);
-		SetVerticalScrollPos();
-		Redraw();
 	} else {
 		MovePositionTo(newPos, selt);
 	}
@@ -3781,9 +3795,9 @@ SelectionPosition Editor::PositionUpOrDown(SelectionPosition spStart, int direct
 	}
 
 	const Sci::Line newY = static_cast<Sci::Line>(pt.y) + (1 + skipLines) * direction * vs.lineHeight;
-	const Sci::Line requestedRow = topLine + newY / vs.lineHeight;
+	const Sci::Line requestedRow = DisplayRowFromY(static_cast<double>(newY), vs.lineHeight);
 	const Sci::Line targetRow = pcs->NextTextDisplayLine(requestedRow, direction);
-	const Sci::Line targetY = targetRow == requestedRow ? newY : (targetRow - topLine) * vs.lineHeight;
+	const Sci::Line targetY = targetRow == requestedRow ? newY : static_cast<Sci::Line>(DisplayRowY(targetRow, vs.lineHeight));
 	SelectionPosition posNew = SPositionFromTextLocation(
 		targetX, static_cast<int>(targetY), UserVirtualSpace());
 
@@ -6011,7 +6025,7 @@ Sci::Position Editor::PositionAfterArea(PRectangle rcArea) const {
 	// The start of the document line after the display line after the area
 	// This often means that the line after a modification is restyled which helps
 	// detect multiline comment additions and heals single line comments
-	const Sci::Line lineAfter = TopLineOfMain() + static_cast<Sci::Line>(rcArea.bottom - 1) / vs.lineHeight + 1;
+	const Sci::Line lineAfter = DisplayRowFromY(rcArea.bottom - 1, vs.lineHeight) + 1;
 	if (lineAfter < pcs->LinesDisplayed()) {
 		return pdoc->LineStart(pcs->DocFromDisplay(lineAfter) + 1);
 	}
@@ -6431,20 +6445,14 @@ void Editor::EnsureLineVisible(Sci::Line lineDoc, bool enforcePolicy) {
 		const Sci::Line lineDisplay = pcs->DisplayFromDoc(lineDoc);
 		if (FlagSet(visiblePolicy.policy, VisiblePolicy::Slop)) {
 			if ((topLine > lineDisplay) || ((FlagSet(visiblePolicy.policy, VisiblePolicy::Strict)) && (topLine + visiblePolicy.slop > lineDisplay))) {
-				SetTopLine(std::clamp<Sci::Line>(lineDisplay - visiblePolicy.slop, 0, MaxScrollPos()));
-				SetVerticalScrollPos();
-				Redraw();
+				ScrollTo(lineDisplay - visiblePolicy.slop);
 			} else if ((lineDisplay > topLine + LinesOnScreen() - 1) ||
 			        ((FlagSet(visiblePolicy.policy, VisiblePolicy::Strict)) && (lineDisplay > topLine + LinesOnScreen() - 1 - visiblePolicy.slop))) {
-				SetTopLine(std::clamp<Sci::Line>(lineDisplay - LinesOnScreen() + 1 + visiblePolicy.slop, 0, MaxScrollPos()));
-				SetVerticalScrollPos();
-				Redraw();
+				ScrollTo(lineDisplay - LinesOnScreen() + 1 + visiblePolicy.slop);
 			}
 		} else {
 			if ((topLine > lineDisplay) || (lineDisplay > topLine + LinesOnScreen() - 1) || (FlagSet(visiblePolicy.policy, VisiblePolicy::Strict))) {
-				SetTopLine(std::clamp<Sci::Line>(lineDisplay - LinesOnScreen() / 2 + 1, 0, MaxScrollPos()));
-				SetVerticalScrollPos();
-				Redraw();
+				ScrollTo(lineDisplay - LinesOnScreen() / 2 + 1);
 			}
 		}
 	}

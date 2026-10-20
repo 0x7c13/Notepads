@@ -114,17 +114,15 @@ namespace winrt::WinUIEditor::implementation
 
 	com_array<ITextRangeProvider> EditorBaseControlAutomationPeer::GetVisibleRanges()
 	{
-		// Visual Studio implements this line by line
-		// Todo: Consider folding and line visible messages
-		// Todo: Not sure if this is the best method for top line
-		const auto editor{ Owner().as<WinUIEditor::EditorBaseControl>().Editor() };
-
-		const auto firstDisplayLine{ editor.FirstVisibleLine() };
+		const auto owner = Owner().as<WinUIEditor::EditorBaseControl>();
+		const auto [firstDisplayLine, endDisplayLine] = get_self<EditorBaseControl>(owner)->AutomationVisibleDisplayRows();
+		if (firstDisplayLine == endDisplayLine) return {};
+		const auto editor = owner.Editor();
 		const auto maxLine{ editor.LineCount() - 1 };
 		// Scintilla reports viewport rows in display lines, including wrapping.
 		// Map them back before using document-line APIs or allocating ranges.
 		const auto firstVisibleLine{ std::clamp(editor.DocLineFromVisible(firstDisplayLine), int64_t{ 0 }, maxLine) };
-		const auto lastVisibleLine{ std::clamp(editor.DocLineFromVisible(firstDisplayLine + editor.LinesOnScreen()), firstVisibleLine, maxLine) };
+		const auto lastVisibleLine{ std::clamp(editor.DocLineFromVisible(endDisplayLine - 1), firstVisibleLine, maxLine) };
 
 		const auto count{ lastVisibleLine - firstVisibleLine + 1 };
 
@@ -134,7 +132,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			const auto line{ firstVisibleLine + i };
 			const auto displayRow = editor.VisibleFromDocLine(line);
-			if (displayRow > firstDisplayLine + editor.LinesOnScreen() || displayRow + editor.WrapCount(line) <= firstDisplayLine) continue;
+			if (displayRow >= endDisplayLine || displayRow + editor.WrapCount(line) <= firstDisplayLine) continue;
 			const auto start{ editor.PositionFromLine(line) };
 			const auto end{ editor.GetLineEndPosition(line) };
 			ranges.push_back(make<TextRangeProvider>(ProviderFromPeer(*this), editor, start, end));

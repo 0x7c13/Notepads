@@ -383,6 +383,8 @@
     <ClInclude Include="..\scintilla\src\Platform.h" />
     <ClInclude Include="..\scintilla\src\Position.h" />
     <ClInclude Include="..\scintilla\src\PositionCache.h" />
+    <ClInclude Include="..\scintilla\src\VerticalScroll.h" />
+    <ClInclude Include="..\scintilla\winui\SmoothScrollAnimation.h" />
     <ClInclude Include="..\scintilla\src\RESearch.h" />
     <ClInclude Include="..\scintilla\src\RunStyles.h" />
     <ClInclude Include="..\scintilla\src\ScintillaBase.h" />

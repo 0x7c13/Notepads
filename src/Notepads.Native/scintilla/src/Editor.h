@@ -11,6 +11,8 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include "VerticalScroll.h"
+
 namespace Scintilla::Internal {
 
 /**
@@ -229,6 +231,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool bidiVisibleDirty = true;
 	bool bidiCanvasPreparing = false;
 	Sci::Line bidiMeasuredTopLine = -1;
+	Sci::Line bidiMeasuredLastLine = -1;
 	Point bidiMeasuredViewport;
 	/// Every style measures as StyleDefault, so restyling text cannot change a line's width.
 	bool uniformStyleMetrics = false;
@@ -363,7 +366,9 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	Sci::Position PositionFromLocation(Point pt, bool canReturnInvalid = false, bool charPosition = false);
 	SelectionPosition SPositionFromLineX(Sci::Line lineDoc, TextPositionX x);
 	Sci::Line LineFromLocation(Point pt) const noexcept;
-	void SetTopLine(Sci::Line topLineNew);
+	void SetTopLine(Sci::Line topLineNew, double offset);
+	VerticalScrollGeometry ScrollGeometry() const;
+	void ScrollToPosition(VerticalScrollPosition position, bool moveThumb = true);
 
 	virtual bool AbandonPaint();
 	virtual void RedrawRect(PRectangle rc);
@@ -427,9 +432,11 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	struct XYScrollPosition {
 		int xOffset;
 		Sci::Line topLine;
-		XYScrollPosition(int xOffset_, Sci::Line topLine_) noexcept : xOffset(xOffset_), topLine(topLine_) {}
+		double verticalOffset;
+		XYScrollPosition(int xOffset_, Sci::Line topLine_, double verticalOffset_) noexcept :
+			xOffset(xOffset_), topLine(topLine_), verticalOffset(verticalOffset_) {}
 		bool operator==(const XYScrollPosition &other) const noexcept {
-			return (xOffset == other.xOffset) && (topLine == other.topLine);
+			return (xOffset == other.xOffset) && (topLine == other.topLine) && (verticalOffset == other.verticalOffset);
 		}
 	};
 	XYScrollPosition XYScrollToMakeVisible(const SelectionRange &range,

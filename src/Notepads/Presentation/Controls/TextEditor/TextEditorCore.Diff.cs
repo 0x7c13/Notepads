@@ -23,6 +23,8 @@ public sealed partial class TextEditorCore
     private long _diffHighlightCount;
     private int _diffHighlightColor;
     internal event EventHandler ViewportChanged;
+    internal event EventHandler ScrollStarted;
+    internal void CancelScrollAnimation() => _view.CancelScrollAnimation();
     internal event EventHandler AppearanceChanged;
     internal long FirstVisibleRow => Native.FirstVisibleLine;
     internal double DiffHorizontalOffset => _view.DisplayHorizontalOffset;
@@ -94,7 +96,7 @@ public sealed partial class TextEditorCore
         _diffHighlightCount = count;
     }
 
-    internal void SetDiffViewport(long row, double leadingOffset) => _view.SetDisplayViewport(row, leadingOffset);
+    internal void SetDiffViewport(long row, double leadingOffset, double rowOffset = 0) => _view.SetDisplayViewport(row, leadingOffset, rowOffset);
 
     internal void CopyDiffSelection() => Native.Copy();
     internal void SelectDiffDocument() => Native.SelectAll();

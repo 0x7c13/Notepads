@@ -14,6 +14,7 @@
 #include "MainWrapper.h"
 #include "CallTipWrapper.h"
 #include "DisplayLineMap.h"
+#include "SmoothScrollAnimation.h"
 #include <winrt/WinUIEditor.h>
 
 namespace WinUIEditor { class NativeDocumentJournal; class NativeJournalFile; struct JournalPrefix; }
@@ -78,8 +79,13 @@ namespace Scintilla::Internal {
 		ScintillaWinUI &operator=(ScintillaWinUI &&) = delete;
 		void DpiChanged();
 		void SizeChanged();
-		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, bool preservePreferredColumn);
-		void SetDisplayViewport(int64_t row, double leadingOffset);
+		void RestoreViewport(double horizontalOffset, int64_t documentLine, int64_t subLine, double verticalOffset, bool preservePreferredColumn);
+		void SetDisplayViewport(int64_t row, double leadingOffset, double verticalOffset);
+		void SetVerticalViewport(int64_t row, double offset);
+		void ScrollBy(double horizontalDelta, double verticalDelta, bool animated);
+		bool IsScrollAnimating() const noexcept { return _verticalScrollAnimation.Active() || _horizontalScrollAnimation.Active(); }
+		void CancelScrollAnimation() noexcept { CancelSmoothScroll(); }
+		double DisplayVerticalOffset() const noexcept;
 		double DisplayHorizontalOffset() const noexcept;
 		int64_t DisplayFirstVisibleRow() const noexcept;
 		bool IsViewportRestorePending() const noexcept {
@@ -93,7 +99,7 @@ namespace Scintilla::Internal {
 		void PointerWheelChanged(int delta, bool horizontal, winrt::Windows::System::VirtualKeyModifiers modifiers);
 		void PointerExited();
 		void HorizontalScroll(ScrollEventType event, int value);
-		void Scroll(ScrollEventType event, int value);
+		void Scroll(ScrollEventType event, double value);
 		void KeyDown(winrt::Windows::System::VirtualKey key, winrt::Windows::System::VirtualKeyModifiers modifiers, bool const isExtendedKey, bool *handled);
 		void StopTimers();
 		void ResumeIdleWork();
@@ -115,6 +121,7 @@ namespace Scintilla::Internal {
 		uint64_t DocumentRevision() const noexcept { return _documentRevision; }
 		uint64_t SelectionRevision() const noexcept { return selectionRevision; }
 		Range AutomationUnitRange(Sci::Position position, bool word);
+		std::pair<Sci::Line, Sci::Line> AutomationVisibleDisplayRows();
 		std::vector<PRectangle> AutomationRangeRectangles(Sci::Position start, Sci::Position end, bool *clipped = nullptr);
 		PRectangle GutterRectangle() const { return vs.MarginRectangle(GetClientRectangle(), BidirectionalR2L()); }
 		bool HasJournal() const noexcept;
@@ -206,11 +213,17 @@ namespace Scintilla::Internal {
 		Sci::Position _multiInsert{ 0 };
 		Sci::Position _multiCorrect{ 0 };
 
-		// WinUI Todo: These two values should be updated to use the Windows setting
-		int _lastVerticalScrollDelta{ 0 };
-		int _lastHorizontalScrollDelta{ 0 };
-		MouseWheelDelta verticalWheelDelta{};
-		MouseWheelDelta horizontalWheelDelta{};
+		// Zoom alone retains a discrete wheel accumulator.
+		MouseWheelDelta zoomWheelDelta{};
+		SmoothScrollAnimation<VerticalScrollGeometry> _verticalScrollAnimation;
+		SmoothScrollAnimation<HorizontalScrollGeometry> _horizontalScrollAnimation;
+		uint64_t _scrollAnimationRevision{};
+		winrt::DUX::Media::CompositionTarget::Rendering_revoker _scrollRenderingRevoker{};
+		winrt::Windows::UI::ViewManagement::UISettings _scrollSettings{nullptr};
+		void CancelSmoothScroll() noexcept;
+		bool BeginScrollInteraction(bool horizontal = false, bool vertical = true);
+		HorizontalScrollGeometry HorizontalGeometry() const;
+		void AdvanceSmoothScroll(bool finish = false);
 
 		winrt::Windows::UI::Text::Core::CoreTextEditContext _editContext{ nullptr };
 		winrt::Windows::UI::Text::Core::CoreTextEditContext::TextRequested_revoker _textRequestedRevoker{};
@@ -297,6 +310,7 @@ namespace Scintilla::Internal {
 			double horizontalOffset;
 			int64_t documentLine;
 			int64_t subLine;
+			double verticalOffset;
 		};
 		std::optional<ViewportRestore> _viewportRestore;
 		// Ordinary RTL views retain their actual leading-edge distance across
@@ -318,8 +332,10 @@ namespace Scintilla::Internal {
 		struct DisplayViewport {
 			int64_t row;
 			double leadingOffset;
+			double verticalOffset;
 			int appliedX;
 			Sci::Line appliedTop;
+			double appliedOffset;
 			double rightOrigin;
 			double scale;
 			bool pending;
@@ -359,8 +375,8 @@ namespace Scintilla::Internal {
 		[[nodiscard]] HorizontalScrollRange GetHorizontalScrollRange() const;
 		virtual bool ModifyScrollBars(Sci::Line nMax, Sci::Line nPage) override;
 		void SetScrollBars() override;
-		bool ChangeScrollRange(int nBar, int nMin, int nMax, UINT nPage) noexcept;
-		void ChangeScrollPos(int barType, Sci::Position pos);
+		bool ChangeHorizontalScrollRange(int nMin, int nMax, UINT nPage) noexcept;
+		void ChangeScrollPos(int barType, double pos);
 		virtual std::unique_ptr<CaseFolder> CaseFolderForEncoding() override;
 		virtual std::string CaseMapString(const std::string &s, CaseMapping caseMapping) override;
 		virtual void Copy() override;

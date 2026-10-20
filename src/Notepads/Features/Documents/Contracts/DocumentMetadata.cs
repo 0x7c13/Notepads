@@ -50,6 +50,10 @@ public sealed class DocumentMetadata
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
     public int FirstVisibleSubLine { get; set; }
 
+    // DIPs hidden above the anchored display row; zero for V1 sessions.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public double FirstVisibleRowOffset { get; set; }
+
     public bool IsContentPreviewPanelOpened { get; set; }
 
     public bool IsInDiffPreviewMode { get; set; }

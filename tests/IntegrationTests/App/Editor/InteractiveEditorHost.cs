@@ -42,6 +42,7 @@ internal static class InteractiveEditorHost
     private static int _dragCompleted;
     private static int _dragResult;
     private static int _sequence;
+    private static int _scrollStarts;
     private static DateTime _lastCommand;
     private static DocumentBaseline _preparedReplacement;
     private static string _preparedReplacementCase;
@@ -238,6 +239,10 @@ internal static class InteractiveEditorHost
                 break;
             case "scroll-caret" when command.Length == 1:
                 Native.ScrollCaret();
+                break;
+            case "vertical-viewport" when command.Length == 3:
+                _view.SetVerticalViewport(long.Parse(command[1], CultureInfo.InvariantCulture),
+                    double.Parse(command[2], CultureInfo.InvariantCulture));
                 break;
             case "caret-visible" when command.Length == 2:
                 await EditorTestLayout.AfterPaintAsync(Native, () =>
@@ -447,6 +452,8 @@ internal static class InteractiveEditorHost
             RequestedTheme = ElementTheme.Light
         };
         _view = (WinUIEditor.EditorBaseControl)((Grid)_editor.Content).Children[0];
+        _scrollStarts = 0;
+        _view.ScrollStarted += (_, _) => ++_scrollStarts;
         AutomationProperties.SetAutomationId(_view, "InteractiveEditor");
         AutomationProperties.SetName(_view, "Isolated editor automation test");
         _view.PreviewKeyDown += (_, args) =>
@@ -596,7 +603,13 @@ internal static class InteractiveEditorHost
         return "text64=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(_editor.GetText())) +
             "\nanchor=" + Native.Anchor + "\ncaret=" + Native.CurrentPos +
             "\nlength=" + Native.Length + "\nfirstVisible=" + Native.FirstVisibleLine +
+            "\nverticalOffset=" + _view.DisplayVerticalOffset.ToString(CultureInfo.InvariantCulture) +
+            "\nscrollAnimating=" + _view.IsScrollAnimating +
+            "\nscrollStarts=" + _scrollStarts +
+            "\nscale=" + DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel.ToString(CultureInfo.InvariantCulture) +
             "\nlinesOnScreen=" + Native.LinesOnScreen + "\nlineHeight=" + Native.TextHeight(0) +
+            "\ndisplayRows=" + Native.VisibleFromDocLine(Native.LineCount) + "\ndocumentLines=" + Native.LineCount +
+            "\nfirstLineRows=" + Native.WrapCount(0) +
             "\nenabled=" + _editor.IsEnabled + "\nloaded=" + _view.IsLoaded + "\nreadOnly=" + Native.ReadOnly +
             "\ndragDropEnabled=" + Native.DragDropEnabled + "\ncanUndo=" + Native.CanUndo() +
             "\nrtl=" + _editor.RightToLeftReadingOrder + "\nrevision=" + Native.DocumentRevision +

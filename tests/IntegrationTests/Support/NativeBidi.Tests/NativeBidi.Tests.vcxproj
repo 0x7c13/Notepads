@@ -46,6 +46,7 @@
     <ClCompile Include="LineLayoutCacheTests.cpp" />
     <ClCompile Include="SelectionDisplayTests.cpp" />
     <ClCompile Include="UndoCaretTests.cpp" />
+    <ClCompile Include="VerticalScrollTests.cpp" />
     <ClCompile Include="GutterGeometryTests.cpp" />
     <ClCompile Include="HeadlessPlatform.cpp" />
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\CaseConvert.cxx" />

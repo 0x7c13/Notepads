@@ -8,6 +8,7 @@
 
 #include "Wrapper.h"
 #include <utility>
+#include <functional>
 
 namespace WinUIEditor
 {
@@ -20,6 +21,8 @@ namespace WinUIEditor
 		void SetMouseCapture(bool on);
 		bool HaveMouseCapture();
 		bool IsEnabled() const noexcept;
+		void SetScrollStarted(std::function<void()> callback) { _scrollStarted = std::move(callback); }
+		void NotifyScrollStarted() { if (_scrollStarted) _scrollStarted(); }
 
 		// Todo: Move to separate XAML class
 		void SetMouseCaptureElement(winrt::DUX::UIElement const &element);
@@ -64,5 +67,6 @@ namespace WinUIEditor
 		winrt::DUX::Controls::Primitives::ScrollBar _horizontalScrollBar{ nullptr };
 		winrt::DUX::Controls::Primitives::ScrollBar _verticalScrollBar{ nullptr };
 		bool _captured{ false };
+		std::function<void()> _scrollStarted;
 	};
 }

@@ -220,9 +220,15 @@ public sealed class PackagedAppDriver : IDisposable
         // Release a down event if Windows accepted only part of the batch.
         if (control)
         {
-            if (sent == 2) Send(key, 0, 2);
-            else if (sent == 5) Send(0, character, 6);
-            if (sent > 0 && sent < 4) Send(0x11, 0, 2);
+            try
+            {
+                if (sent == 2) Send(key, 0, 2);
+                else if (sent == 5) Send(0, character, 6);
+            }
+            finally
+            {
+                if (sent > 0 && sent < 4) Send(0x11, 0, 2);
+            }
         }
         else if (sent == 1) Send(key, 0, 2);
         else if (sent == 3) Send(0, character, 6);

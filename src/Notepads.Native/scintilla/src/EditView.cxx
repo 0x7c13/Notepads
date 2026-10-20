@@ -2836,7 +2836,8 @@ void EditView::PaintText(Surface *surfaceWindow, const EditModel &model, const V
 
 		const Point ptOrigin = model.GetVisibleOriginInMain();
 
-		const int screenLinePaintFirst = static_cast<int>(rcArea.top) / vsDraw.lineHeight;
+		const auto [firstRow, endRow] = model.VisibleDisplayRows(rcArea, vsDraw.lineHeight);
+		const int screenLinePaintFirst = static_cast<int>(firstRow - model.TopLineOfMain());
 		const int xOrigin = vsDraw.TextStart(model.BidirectionalR2L()) - model.xOffset + static_cast<int>(ptOrigin.x);
 
 		const SelectionPosition posCaret = model.posDrag.IsValid() ? model.posDrag : model.sel.CaretForDisplay();
@@ -2891,10 +2892,10 @@ void EditView::PaintText(Surface *surfaceWindow, const EditModel &model, const V
 			phase = DrawPhase::back;
 		}
 		for (;;) {
-			int yposScreen = screenLinePaintFirst * vsDraw.lineHeight;
+			int yposScreen = screenLinePaintFirst * vsDraw.lineHeight - model.VerticalOffsetPixels();
 			int ypos = bufferedDraw ? 0 : yposScreen;
 			Sci::Line lineVisible = model.TopLineOfMain() + screenLinePaintFirst;
-			while (lineVisible < model.pcs->LinesDisplayed() && yposScreen < rcArea.bottom) {
+			while (lineVisible < endRow && yposScreen < rcArea.bottom) {
 				if (model.pcs->IsDisplayGap(lineVisible)) {
 					PRectangle rcGap = rcTextArea;
 					rcGap.top = static_cast<XYPOSITION>(ypos);
@@ -3031,7 +3032,7 @@ void EditView::PaintText(Surface *surfaceWindow, const EditModel &model, const V
 		// Right column limit indicator
 		PRectangle rcBeyondEOF = (vsDraw.marginInside) ? textBounds : rcArea;
 		rcBeyondEOF.left = static_cast<XYPOSITION>(vsDraw.TextStart(model.BidirectionalR2L()));
-		rcBeyondEOF.top = static_cast<XYPOSITION>((model.pcs->LinesDisplayed() - model.TopLineOfMain()) * vsDraw.lineHeight);
+		rcBeyondEOF.top = model.DisplayRowY(model.pcs->LinesDisplayed(), vsDraw.lineHeight);
 		if (rcBeyondEOF.top < rcBeyondEOF.bottom) {
 			surfaceWindow->FillRectangleAligned(rcBeyondEOF, Fill(vsDraw.styles[StyleDefault].back));
 			if (vsDraw.edgeState == EdgeVisualStyle::Line) {

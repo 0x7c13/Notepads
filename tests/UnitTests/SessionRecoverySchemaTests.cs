@@ -34,6 +34,7 @@ public sealed class SessionRecoverySchemaTests
         Assert.Null(legacy.TextEditors[0].BackupEncoding);
         Assert.Equal(1.25, legacy.TextEditors[0].StateMetaData.FontZoomFactor);
         Assert.Null(legacy.TextEditors[0].StateMetaData.FirstVisibleDocumentLine);
+        Assert.Equal(0, legacy.TextEditors[0].StateMetaData.FirstVisibleRowOffset);
     }
 
     [Fact]
@@ -43,12 +44,15 @@ public sealed class SessionRecoverySchemaTests
         var metadata = session.TextEditors[0].StateMetaData;
         metadata.FirstVisibleDocumentLine = 800;
         metadata.FirstVisibleSubLine = 2;
+        metadata.FirstVisibleRowOffset = 3.125;
         var capture = metadata.Clone();
         metadata.FirstVisibleDocumentLine = 0;
+        metadata.FirstVisibleRowOffset = 0;
         session.TextEditors[0].StateMetaData = capture;
         var restored = JsonSerializer.Deserialize(Serialize(session), SessionJsonContext.Default.NotepadsSessionDataV2);
         Assert.Equal(800, restored.TextEditors[0].StateMetaData.FirstVisibleDocumentLine);
         Assert.Equal(2, restored.TextEditors[0].StateMetaData.FirstVisibleSubLine);
+        Assert.Equal(3.125, restored.TextEditors[0].StateMetaData.FirstVisibleRowOffset);
     }
 
     [Fact]

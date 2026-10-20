@@ -341,6 +341,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             ScrollViewerVerticalOffset = verticalOffset,
             FirstVisibleDocumentLine = documentLine,
             FirstVisibleSubLine = subLine,
+            FirstVisibleRowOffset = TextEditorCore.FirstVisibleRowOffset,
             FontZoomFactor = TextEditorCore.GetFontZoomFactor() / 100,
             IsContentPreviewPanelOpened = _isContentPreviewPanelOpened,
             IsInDiffPreviewMode = (Mode == TextEditorMode.DiffPreview)

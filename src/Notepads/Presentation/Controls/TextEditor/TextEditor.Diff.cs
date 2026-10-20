@@ -30,6 +30,7 @@ public sealed partial class TextEditor
         public int SourceSubLine { get; }
         public double SourceHorizontalOffset { get; }
         public double SourceVerticalOffset { get; }
+        public double SourceRowOffset { get; }
         public DiffGeneration(TextEditorCore source, CancellationToken lifetime)
         {
             Cancellation = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
@@ -43,6 +44,7 @@ public sealed partial class TextEditor
             SourceSubLine = subLine;
             SourceHorizontalOffset = horizontal;
             SourceVerticalOffset = vertical;
+            SourceRowOffset = source.FirstVisibleRowOffset;
         }
         public void Dispose()
         {
@@ -151,7 +153,7 @@ public sealed partial class TextEditor
     {
         TextEditorCore.SetScrollViewerInitPosition(generation.SourceHorizontalOffset,
             generation.SourceVerticalOffset, generation.SourceDocumentLine, generation.SourceSubLine,
-            preservePreferredColumn: true);
+            preservePreferredColumn: true, rowOffset: generation.SourceRowOffset);
         TextEditorCore.Focus(FocusState.Programmatic);
     }
 

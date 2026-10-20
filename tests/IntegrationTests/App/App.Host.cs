@@ -116,6 +116,7 @@ public sealed partial class App : Application
         "--bidi-performance" => BidiPerformanceTests.RunAsync(log),
         "--reading-order" => ReadingOrderFeatureTests.RunAsync(log),
         "--scroll-restoration" => ScrollRestorationTests.RunAsync(log),
+        "--smooth-scroll-performance" => ScrollPerformanceTests.RunAsync(log),
         "--persistence" or "--session-resilience" or "--syntax" or "--diff" or "--search" or
         "--automation-navigation" or "--native-storage" or "--native-faults" or "--regex-memory" or "--performance" or
         "--preview" or "--bidi-preview" => EditorSuite.RunAsync(phase, log),

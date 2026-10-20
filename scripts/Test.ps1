@@ -66,6 +66,7 @@ $groups = [ordered]@{
     Syntax = @{ Profile = 'App'; Arguments = @('--syntax'); Default = $false }
     Diff = @{ Profile = 'App'; Arguments = @('--diff'); Default = $false }
     ScrollRestoration = @{ Profile = 'App'; Arguments = @('--scroll-restoration'); Default = $true }
+    SmoothScrollPerformance = @{ Profile = 'App'; Arguments = @('--smooth-scroll-performance'); Default = $false; Performance = $true }
     AutomationNavigation = @{ Profile = 'App'; Arguments = @('--automation-navigation'); Default = $false }
     UIAutomation = @{ Profile = 'Desktop'; Default = $false }
     DpiLayout = @{ Profile = 'Desktop'; Default = $false }

@@ -8,6 +8,8 @@
 #ifndef EDITMODEL_H
 #define EDITMODEL_H
 
+#include <utility>
+
 namespace Scintilla::Internal {
 
 /**
@@ -55,6 +57,8 @@ class EditModel {
 public:
 	bool inOverstrike;
 	int xOffset;		///< Horizontal scrolled amount in pixels
+	double verticalOffset = 0; ///< DIPs hidden above the first display row.
+	double viewportScale = 1; ///< Device pixels per DIP, supplied by the platform.
 	bool trackLineWidth;
 
 	std::unique_ptr<SpecialRepresentations> reprs;
@@ -102,6 +106,11 @@ public:
 	virtual Sci::Line TopLineOfMain() const noexcept = 0;
 	virtual Point GetVisibleOriginInMain() const = 0;
 	virtual Sci::Line LinesOnScreen() const = 0;
+	int VerticalOffsetPixels() const noexcept;
+	XYPOSITION DisplayRowY(Sci::Line row, int lineHeight) const noexcept;
+	Sci::Line DisplayRowFromY(double y, int lineHeight) const noexcept;
+	// Half-open display-row range intersecting the actual projected viewport.
+	std::pair<Sci::Line, Sci::Line> VisibleDisplayRows(PRectangle viewport, int lineHeight) const noexcept;
 	virtual XYPOSITION BidiLayoutWidth() const = 0;
 	bool BidirectionalEnabled() const noexcept;
 	bool BidirectionalR2L() const noexcept;

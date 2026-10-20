@@ -48,7 +48,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Tabs, commands, pending-tab availability, activation ordering | `WorkspaceCommands`, `Activation`, `Workspace` |
 | Preferences, themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
 | Session restart/import/close, transfer, persistence, recovery and leases | `Workspace*`, `Persistence`, `Leases`, `SessionResilience` |
-| First-paint caret/viewport restore, wrap, tab reattachment and long .LOG append | `ScrollRestoration` |
+| First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
 | RTL/LTR shaping, geometry, navigation, selection, undo and direction persistence | `NativeBidi`, `Bidi`, `ReadingOrder`, `AutomationNavigation` |
 | Real keys/clicks, TSF typing, UIA ranges, raster and cross-process dragging | `UIAutomation`, `DragDrop` |
 | DPI geometry / actual Windows scale transitions | `DpiLayout` / opt-in `DisplayDpi` |
@@ -61,7 +61,7 @@ names from `-List`. Markdown preview is not implemented and has no completion cl
 NativeBidi uses production native code with independent whole-paragraph DirectWrite
 geometry and WIC pixel references. It covers Unicode byte/UTF-16 boundaries,
 shaping/fallback, wrapping, visual navigation, rectangles, immutable foregrounds,
-color glyphs, clipping/transforms, DPI, gutter geometry and undo notifications.
+color glyphs, clipping/transforms, DPI, gutter geometry, viewport bounds/animation clocks and undo notifications.
 Regular CI also requires an optimized **262,144 UTF-16-unit** dense LTR paragraph:
 bounded beginning/middle/end samples check navigation, selection and panned pixels.
 The complete lazy navigation index is built; native fallback remains separately tested.
@@ -114,10 +114,13 @@ exact text, caret and one-step undo without relying on paint/idle to synchronize
 ## Performance and test design
 
 `BidiPerformance` records load/first-paint, input, navigation, selection, scroll,
-wrap/resize and memory through disposal. NativeBidi `--performance` adds the broader
+wrap/resize and memory through disposal. `SmoothScrollPerformance` measures retained-row
+pixel paints, animation CPU and disposal memory. NativeBidi `--performance` adds the broader
 256K matrix and scaling observations. Compare matched builds with interleaved A/B
 runs. Prepared-document timings exclude activation/disk and are not key-to-photon
 latency; sampled memory is not an allocation profile or proof of leak freedom.
+External benchmark drivers can request `PerformanceTestWindow`'s isolated readiness
+handshake to acquire foreground before timers start; ordinary runs need no handshake.
 Correctness tests have no machine-dependent performance pass/fail threshold.
 
 Protect observable contracts with independent expectations and a reproducer for

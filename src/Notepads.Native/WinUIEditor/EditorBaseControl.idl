@@ -26,10 +26,22 @@ namespace WinUIEditor
 		// horizontalOffset is a DIP distance from the reading-order leading edge.
 		// documentLine -1 follows the current caret once layout is ready.
 		// Temporary view changes may preserve the existing vertical-navigation column.
-		void RestoreViewport(Double horizontalOffset, Int64 documentLine, Int64 subLine, Boolean preservePreferredColumn);
+		void RestoreViewport(Double horizontalOffset, Int64 documentLine, Int64 subLine, Double verticalOffset, Boolean preservePreferredColumn);
 		// Unwrapped display rows and a DIP offset from the reading-order leading edge.
 		// Applied before paint; retained across canvas growth, resize and DPI changes.
-		void SetDisplayViewport(Int64 row, Double leadingOffset);
+		void SetDisplayViewport(Int64 row, Double leadingOffset, Double verticalOffset);
+		// An immediate display-row anchor and a local DIP offset, clamped to the viewport.
+		void SetVerticalViewport(Int64 row, Double offset);
+		Double DisplayVerticalOffset { get; };
+		// Relative screen-axis DIPs: positive is right/down, also in RTL.
+		// Animated requests respect Windows animation settings; wrap suppresses X.
+		void ScrollBy(Double horizontalDelta, Double verticalDelta, Boolean animated);
+		Boolean IsScrollAnimating { get; };
+		void CancelScrollAnimation();
+		// Raised once per user scroll interaction, before the viewport moves.
+		// Horizontal-only input raises it too: observers that share a viewport
+		// should retire their own motion regardless of the axis.
+		event Windows.Foundation.EventHandler<Object> ScrollStarted;
 		// Current or pending DIP offset from the reading-order leading edge.
 		Double DisplayHorizontalOffset { get; };
 		Int64 DisplayFirstVisibleRow { get; };
