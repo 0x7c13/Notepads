@@ -18,6 +18,7 @@ using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Infrastructure.Settings;
+using Notepads.Presentation.Controls;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Views.MainPage;
 using Notepads.Presentation.Workspace;
@@ -25,6 +26,8 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Controls;
 using static NotepadsWorkspaceTests.WorkspaceTestUI;
 
 namespace NotepadsWorkspaceTests;
@@ -69,6 +72,7 @@ internal static class WorkspaceLifecycleTests
             if (!cleanOnly && (index is 0 or 1 or 2 or 3)) editor.TypeText("unsaved 世界😀\r");
             var metadata = editor.GetTextEditorStateMetaData();
             metadata.WrapWord = false;
+            metadata.RightToLeftReadingOrder = !cleanOnly && index == 2;
             metadata.SelectionStartPosition = 23;
             metadata.SelectionEndPosition = 29;
             metadata.ScrollViewerHorizontalOffset = index == 0 ? 30 : 0;
@@ -193,6 +197,17 @@ internal static class WorkspaceLifecycleTests
 
         core.SwitchTo(tabs[2]);
         var stableHost = page.TestContentHost(tabs[2]);
+        var skeleton = stableHost.Content as DocumentLoadingPlaceholder;
+        Check(skeleton != null && string.IsNullOrEmpty(page.TestStatusPosition),
+            "A pending selection shows a skeleton without loading text in the status bar.");
+        await UntilAsync(() => skeleton.IsLoaded && skeleton.ActualWidth > 0,
+            "The restored RTL skeleton is presented before its preparation gate opens.");
+        Check(skeleton.TestLines.Length > 0 && skeleton.TestLines.All(line =>
+            Math.Abs(line.Offset.X + line.Size.X - skeleton.ActualWidth) < 0.01),
+            "A real restored RTL document right-aligns its skeleton before loading the native editor.");
+        var positionButton = (Button)page.FindName("LineColumnIndicatorButton");
+        await UntilAsync(() => positionButton.Visibility == Visibility.Collapsed,
+            "A restored pending tab has no empty position button in the status bar.");
         page.TestRefreshMenu();
         Check(!page.TestSaveAsEnabled && !page.TestFindEnabled, "Pending content commands remained enabled.");
         Check(page.TestStatusPath == tabs[2].EditingFilePath && ApplicationView.GetForCurrentView().Title.Contains(Names[2], StringComparison.Ordinal),
@@ -226,6 +241,13 @@ internal static class WorkspaceLifecycleTests
         await UntilAsync(() => ((FrameworkElement)selectedEditor).ActualWidth > 0, "The selected pending editor never attached visibly.");
         Check(ReferenceEquals(stableHost, page.TestContentHost(tabs[2])) && ReferenceEquals(stableHost.Content, selectedEditor),
             "Materialization replaced the outer Sets content or left the selected host stale.");
+        await UntilAsync(() => !skeleton.IsLoaded && !skeleton.TestHasResources,
+            "Native editor promotion releases the old skeleton and its animation resources.");
+        Check(((TextEditor)selectedEditor).TestNativeCore.RightToLeftReadingOrder,
+            "Pending-to-ready promotion preserves the RTL direction shown by the skeleton.");
+        await UntilAsync(() => positionButton.Visibility == Visibility.Visible &&
+            AutomationProperties.GetName(positionButton) == page.TestStatusPosition,
+            "Native editor promotion restores the position button and its current UIA name.");
         page.TestRefreshMenu();
         Check(page.TestSaveAsEnabled && page.TestFindEnabled && page.TestStatusPath.Contains(Names[2], StringComparison.Ordinal) &&
             !string.IsNullOrEmpty(page.TestStatusPosition), "Pending-to-ready attachment did not refresh actual status/menu controls.");

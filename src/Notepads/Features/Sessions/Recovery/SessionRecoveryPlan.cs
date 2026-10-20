@@ -91,6 +91,7 @@ internal sealed class RecoveryDocumentSource
     public TextEditorSessionDataV2 Descriptor => _descriptor == null ? null : SessionRecoveryCatalog.CloneEditor(_descriptor);
     public TextEditorSessionDataV1 LegacyDescriptor => CloneLegacy(_legacy);
     public DocumentMetadata Metadata => (_descriptor?.StateMetaData ?? _legacy?.StateMetaData)?.Clone();
+    public long? DocumentByteLength => _descriptor?.Journal?.DocumentByteLength;
     public string EditingFileName => _descriptor?.EditingFileName ?? _legacy?.EditingFileName;
     public string EditingFilePath => _descriptor?.EditingFilePath ?? _legacy?.EditingFilePath;
     public string EditingFileFutureAccessToken => _descriptor?.EditingFileFutureAccessToken ?? _legacy?.EditingFileFutureAccessToken;

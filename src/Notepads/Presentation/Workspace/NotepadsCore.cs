@@ -16,6 +16,7 @@ using Notepads.Features.Preferences;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Infrastructure.Diagnostics;
+using Notepads.Presentation.Controls;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Helpers;
 using Notepads.Presentation.PreviewExtensions;
@@ -576,10 +577,11 @@ public sealed partial class NotepadsCore : INotepadsCore
         return item;
     }
 
-    private TextBlock CreatePendingContent(WorkspaceTab tab) => new()
+    private UIElement CreatePendingContent(WorkspaceTab tab) => tab.State != WorkspaceTabState.Failed ?
+        new DocumentLoadingPlaceholder(tab.RecoverySource?.DocumentByteLength,
+            tab.RecoverySource?.Metadata?.RightToLeftReadingOrder == true) : new TextBlock
     {
-        Text = _resourceLoader.GetString(tab.State == WorkspaceTabState.Failed ?
-            "WorkspaceTab_LoadFailed" : "WorkspaceTab_Loading"),
+        Text = _resourceLoader.GetString("WorkspaceTab_LoadFailed"),
         HorizontalAlignment = HorizontalAlignment.Center,
         VerticalAlignment = VerticalAlignment.Center,
         TextWrapping = TextWrapping.Wrap,
@@ -596,7 +598,9 @@ public sealed partial class NotepadsCore : INotepadsCore
         if (sender is not WorkspaceTab tab || GetTabSetsViewItem(tab) is not SetsViewItem item) return;
         item.Header = tab.Title;
         item.Icon.Visibility = tab.IsModified ? Visibility.Visible : Visibility.Collapsed;
-        if (tab.ReadyEditor == null && item.Content is ContentControl host) host.Content = CreatePendingContent(tab);
+        if (tab.ReadyEditor == null && item.Content is ContentControl host &&
+            (tab.State == WorkspaceTabState.Failed || host.Content is not DocumentLoadingPlaceholder))
+            host.Content = CreatePendingContent(tab);
         TabStateChanged?.Invoke(this, tab);
     }
 

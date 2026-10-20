@@ -9,13 +9,20 @@ using System.Text;
 using System.Threading.Tasks;
 using Notepads.Controls;
 using Notepads.Features.Documents.Contracts;
+using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Contracts.Legacy;
+using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Recovery;
+using Notepads.Presentation.Controls;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Workspace;
 using Windows.Graphics.Printing;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using static NotepadsIntegrationTests.FeatureUI;
 using static NotepadsWorkspaceTests.WorkspaceTestUI;
 
@@ -109,22 +116,38 @@ internal static class WorkspaceCommandFeatureTests
         // Pause the real scheduler while inspecting a logical recovery row. This
         // isolates presentation admission without loading the descriptor fixture.
         page.TestController.PauseRestoration();
-        var pending = new WorkspaceTab(new RecoveryDocumentSource(null, new TextEditorSessionDataV1
-        {
-            Id = Guid.NewGuid(), EditingFileName = "pending.txt",
-            StateMetaData = new DocumentMetadata { FileNamePlaceholder = "pending.txt", IsModified = true }
-        }, true, null, null, new RecoverySourceLifetime()));
+        var pending = CreatePendingTab();
         core.OpenTab(pending);
+        var unopened = (DocumentLoadingPlaceholder)page.TestContentHost(pending).Content;
+        Check(!unopened.IsLoaded && !unopened.TestHasResources,
+            "A pending tab allocates no compositor resources before its first layout.");
+        core.DeleteTab(pending);
+        Check(!core.ContainsTab(pending) && !unopened.TestHasResources,
+            "Closing before first layout removes the pending tab without creating animation resources.");
+        pending = CreatePendingTab();
+        core.OpenTab(pending);
+        var placeholder = page.TestContentHost(pending).Content as DocumentLoadingPlaceholder;
         try
         {
+            Check(placeholder != null, "Pending document uses a skeleton rather than a loading TextBlock.");
+            await UntilAsync(() => placeholder.IsLoaded && placeholder.ActualWidth > 0,
+                "The selected skeleton participates in the real workspace layout.");
+            await VerifyLoadingPlaceholderAsync(placeholder);
+            await VerifyLoadingSizeHintsAsync(host);
+            await VerifyLoadingDirectionAsync(host);
+            core.SwitchTo(pending);
+            var positionButton = Named<Button>(page, "LineColumnIndicatorButton");
+            await UntilAsync(() => positionButton.Visibility == Visibility.Collapsed,
+                "Pending status collapses the empty position button and its padding.");
             page.TestRefreshMenu();
             Check(core.GetSelectedReadyEditor() == null && !page.TestFeatureStatusInteractive &&
                 !Enabled("MenuSaveButton") && !Enabled("MenuSaveAsButton") && !Enabled("MenuFindButton") &&
                 !Enabled("MenuReplaceButton") && !Enabled("MenuPrintButton") && Enabled("MenuSaveAllButton"),
                 "Pending selection disables editor-only commands while Save All retains recovery admission.");
             Check(page.TestStatusPath == "pending.txt" && page.TestStatusModified &&
+                string.IsNullOrEmpty(page.TestStatusPosition) &&
                 Named<TextBlock>(page, "FontZoomIndicator").Visibility == Visibility.Collapsed,
-                "Pending status shows its recovery title/dirty marker and hides ready-editor zoom.");
+                "Pending status keeps recovery metadata without loading text or ready-editor zoom.");
             foreach (var name in new[] { "PathIndicatorButton", "ModificationIndicatorButton", "LineColumnIndicatorButton",
                 "FontZoomIndicatorButton", "LineEndingIndicatorButton", "EncodingIndicatorButton", "LanguageIndicatorButton" })
                 Check(!Named<Button>(page, name).IsEnabled,
@@ -132,21 +155,171 @@ internal static class WorkspaceCommandFeatureTests
             context = (TabContextFlyout)page.TestContainer(pending).ContextFlyout;
             context.TestFeatureRefresh();
             Check(!context.TestFeatureCommand("Rename").IsEnabled, "A pending tab cannot rename an absent editor.");
+            pending.FailLoading(new InvalidOperationException("Loading presentation fixture"));
+            await UntilAsync(() => positionButton.Visibility == Visibility.Visible &&
+                AutomationProperties.GetName(positionButton) == page.TestStatusPosition,
+                "Failed status restores the localized position message and its UIA name.");
+            Check(page.TestContentHost(pending).Content is TextBlock failed && !string.IsNullOrWhiteSpace(failed.Text) &&
+                !string.IsNullOrWhiteSpace(page.TestStatusPosition),
+                "A failed load replaces the skeleton with a visible failure message and status.");
         }
         finally
         {
             core.DeleteTab(pending);
             page.TestController.ResumeRestoration();
         }
-        Check(!core.ContainsTab(pending), "A pending tab can close before its first layout without remaining in the roster.");
+        Check(!core.ContainsTab(pending), "A failed tab closes without remaining in the roster.");
+        await UntilAsync(() => !placeholder.IsLoaded && !placeholder.TestHasResources,
+            "Closing the loading tab releases its animation and compositor resources.");
         core.SwitchTo(first);
+        await UntilAsync(() => Named<Button>(page, "LineColumnIndicatorButton").Visibility == Visibility.Visible &&
+            AutomationProperties.GetName(Named<Button>(page, "LineColumnIndicatorButton")) == page.TestStatusPosition &&
+            !string.IsNullOrWhiteSpace(page.TestStatusPosition),
+            "Returning to a ready tab restores the visible position button and its UIA name.");
         page.TestRefreshMenu();
         Check(Enabled("MenuFindButton") && page.TestFeatureStatusInteractive,
             "Returning to a ready tab restores search and status interaction.");
         log.AppendLine("PASS: WorkspaceCommands.Pending — real pending row has accurate menu, status and context guards.");
-        log.AppendLine("PASS: WorkspaceCommands.Pending — closing before first layout removes the pending tab safely.");
+        log.AppendLine("PASS: WorkspaceCommands.Pending — themed accessible skeleton, RTL alignment, failure and animation cleanup.");
 
         bool Enabled(string name) => ((Control)page.TestFeatureControl(name)).IsEnabled;
+    }
+
+    private static WorkspaceTab CreatePendingTab(long? byteLength = null, bool rightToLeft = false)
+    {
+        var id = Guid.NewGuid();
+        var metadata = new DocumentMetadata
+        {
+            FileNamePlaceholder = "pending.txt", IsModified = true, RightToLeftReadingOrder = rightToLeft
+        };
+        if (byteLength == null)
+            return new(new RecoveryDocumentSource(null, new TextEditorSessionDataV1
+            {
+                Id = id, EditingFileName = "pending.txt", StateMetaData = metadata
+            }, true, null, null, new RecoverySourceLifetime()));
+        var descriptor = new RecoveryDescriptor(new TextEditorSessionDataV2
+        {
+            Id = id, EditingFileName = "pending.txt", StateMetaData = metadata,
+            Journal = new DocumentJournalData { DocumentByteLength = byteLength.Value }
+        });
+        var decision = new RecoveryDocumentDecision(RecoveryMembership.Owned, descriptor, [], [], 0, null, null, false);
+        return new(new RecoveryDocumentSource(decision, null, true, null, null, new RecoverySourceLifetime()));
+    }
+
+    private static async Task VerifyLoadingSizeHintsAsync(FeatureTestHost host)
+    {
+        var smallHeight = 0d;
+        var largeHeight = 0d;
+        foreach (var bytes in new long[] { 0, 120, 65536, int.MaxValue })
+        {
+            var tab = CreatePendingTab(bytes);
+            host.Core.OpenTab(tab);
+            var placeholder = (DocumentLoadingPlaceholder)host.Page.TestContentHost(tab).Content;
+            try
+            {
+                await UntilAsync(() => placeholder.IsLoaded && placeholder.ActualHeight > 0,
+                    "Size-based skeleton participates in workspace layout.");
+                var lines = placeholder.TestLines;
+                if (bytes == 0)
+                    Check(lines.Length == 1, "An empty checkpoint shows only a minimal loading outline.");
+                else if (bytes == 120)
+                {
+                    smallHeight = placeholder.ActualHeight;
+                    Check(lines.Length is >= 1 and <= 3, "A tiny file does not imply a full document of text.");
+                }
+                else if (bytes == 65536)
+                {
+                    largeHeight = placeholder.ActualHeight;
+                    var bottom = lines.Max(line => line.Offset.Y + line.Size.Y);
+                    Check(lines.Length > 8 && largeHeight > smallHeight &&
+                        bottom <= largeHeight && largeHeight - bottom < 28,
+                        "A large file fills the available height instead of stopping after eight blocks.");
+                }
+                else
+                    Check(placeholder.ActualHeight == largeHeight && lines.Length <= 128,
+                        "Huge files use the same bounded visible outline without allocating per document line.");
+            }
+            finally { host.Core.DeleteTab(tab); }
+            await UntilAsync(() => !placeholder.IsLoaded && !placeholder.TestHasResources,
+                "Size-based skeleton releases resources when its tab closes.");
+        }
+    }
+
+    private static async Task VerifyLoadingDirectionAsync(FeatureTestHost host)
+    {
+        var originalDirection = host.Page.FlowDirection;
+        try
+        {
+            foreach (var chromeDirection in new[] { FlowDirection.LeftToRight, FlowDirection.RightToLeft })
+            {
+                host.Page.FlowDirection = chromeDirection;
+                foreach (var byteLength in new long?[] { null, 65536 })
+                foreach (var rightToLeft in new[] { false, true })
+                {
+                    var tab = CreatePendingTab(byteLength, rightToLeft);
+                    host.Core.OpenTab(tab);
+                    var placeholder = (DocumentLoadingPlaceholder)host.Page.TestContentHost(tab).Content;
+                    try
+                    {
+                        await UntilAsync(() => placeholder.IsLoaded && placeholder.ActualWidth > 0,
+                            "The saved document direction reaches a presented workspace skeleton.");
+                        Check(placeholder.FlowDirection == FlowDirection.LeftToRight && placeholder.TestLines.Length > 0 &&
+                            placeholder.TestLines.All(line => Math.Abs(line.Offset.X -
+                                (rightToLeft ? placeholder.ActualWidth - line.Size.X : 0)) < 0.01),
+                            "V1 and V2 skeletons follow saved document direction independently of application direction.");
+                        var transform = placeholder.TransformToVisual(null);
+                        var left = transform.TransformPoint(new Windows.Foundation.Point(0, 0));
+                        var right = transform.TransformPoint(new Windows.Foundation.Point(placeholder.ActualWidth, 0));
+                        Check(right.X > left.X, "RTL application chrome does not mirror the document skeleton canvas.");
+                    }
+                    finally { host.Core.DeleteTab(tab); }
+                    await UntilAsync(() => !placeholder.IsLoaded && !placeholder.TestHasResources,
+                        "Direction fixtures release their compositor resources.");
+                }
+            }
+        }
+        finally { host.Page.FlowDirection = originalDirection; }
+    }
+
+    private static async Task VerifyLoadingPlaceholderAsync(DocumentLoadingPlaceholder placeholder)
+    {
+        var peer = FrameworkElementAutomationPeer.CreatePeerForElement(placeholder);
+        Check(peer?.GetAutomationControlType() == AutomationControlType.ProgressBar &&
+            peer.GetName() == AutomationProperties.GetName(placeholder) && !string.IsNullOrWhiteSpace(peer.GetName()),
+            "A localized loading indicator remains available to UIA without visible loading text.");
+        var lines = placeholder.TestLines;
+        Check(lines.Length >= 4 && lines.All(line => line.Size.X > 0 && line.Size.X <= placeholder.ActualWidth &&
+            line.Offset.X == 0 && line.Offset.Y >= 0 && line.Offset.Y + line.Size.Y <= placeholder.ActualHeight) &&
+            lines.Select(line => line.Size.X).Distinct().Count() > 1,
+            "Skeleton has bounded, varied, leading-aligned document lines.");
+        placeholder.Height = 42;
+        await UntilAsync(() => placeholder.ActualHeight == 42, "The skeleton fits a short document viewport.");
+        var visual = ElementCompositionPreview.GetElementChildVisual(placeholder);
+        Check(visual.Clip != null && visual.Size.Y == 42, "Short viewports clip document blocks at their actual bounds.");
+        placeholder.Height = double.NaN;
+        await UntilAsync(() => placeholder.ActualHeight >= 200, "The skeleton restores its natural document height.");
+        if (!new AccessibilitySettings().HighContrast)
+        {
+            placeholder.RequestedTheme = ElementTheme.Light;
+            await UntilAsync(() => placeholder.ActualTheme == ElementTheme.Light && placeholder.TestBaseColor.R == 0,
+                "The light theme uses dark gray blocks.");
+            Check(placeholder.TestHighlightColor.A > placeholder.TestBaseColor.A &&
+                placeholder.TestHighlightColor.A <= 24 &&
+                placeholder.TestHighlightColor.A - placeholder.TestBaseColor.A <= 12,
+                "The light theme keeps blocks and the shimmer highlight subdued.");
+            placeholder.RequestedTheme = ElementTheme.Dark;
+            await UntilAsync(() => placeholder.ActualTheme == ElementTheme.Dark && placeholder.TestBaseColor.R == 255,
+                "The dark theme uses light gray blocks.");
+            Check(placeholder.TestHighlightColor.A <= 24 &&
+                placeholder.TestHighlightColor.A - placeholder.TestBaseColor.A <= 12,
+                "The dark theme keeps blocks and the shimmer highlight subdued.");
+        }
+        Check(placeholder.TestHasAnimation == (Window.Current.Visible && new UISettings().AnimationsEnabled &&
+            !new AccessibilitySettings().HighContrast), "Shimmer follows the live system motion and contrast preferences.");
+        placeholder.Visibility = Visibility.Collapsed;
+        Check(!placeholder.TestHasAnimation, "A collapsed skeleton stops its animation.");
+        placeholder.Visibility = Visibility.Visible;
+        placeholder.RequestedTheme = ElementTheme.Default;
     }
 
     private static async Task VerifyTabNavigationAndOrderAsync(FeatureTestHost host,

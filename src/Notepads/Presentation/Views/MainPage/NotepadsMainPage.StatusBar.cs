@@ -52,7 +52,7 @@ public sealed partial class NotepadsMainPage
         if (StatusBar != null)
         {
             SetStatusBarInteractive(true);
-            FontZoomIndicator.Visibility = LineEndingIndicator.Visibility =
+            LineColumnIndicator.Visibility = FontZoomIndicator.Visibility = LineEndingIndicator.Visibility =
                 EncodingIndicator.Visibility = LanguageIndicator.Visibility = Visibility.Visible;
         }
         UpdateApplicationTitle(textEditor);
@@ -83,8 +83,9 @@ public sealed partial class NotepadsMainPage
         FileModificationStateIndicator.Visibility = Visibility.Collapsed;
         ModificationIndicator.Text = tab?.IsModified == true ? _resourceLoader.GetString("TextEditor_ModificationIndicator_Text") : string.Empty;
         ModificationIndicator.Visibility = tab?.IsModified == true ? Visibility.Visible : Visibility.Collapsed;
-        LineColumnIndicator.Text = tab == null ? string.Empty : _resourceLoader.GetString(
-            tab.State == WorkspaceTabState.Failed ? "WorkspaceTab_LoadFailed" : "WorkspaceTab_Loading");
+        LineColumnIndicator.Text = tab?.State == WorkspaceTabState.Failed ?
+            _resourceLoader.GetString("WorkspaceTab_LoadFailed") : string.Empty;
+        LineColumnIndicator.Visibility = tab?.State == WorkspaceTabState.Failed ? Visibility.Visible : Visibility.Collapsed;
         FontZoomIndicator.Visibility = LineEndingIndicator.Visibility =
             EncodingIndicator.Visibility = LanguageIndicator.Visibility = Visibility.Collapsed;
         UpdateShadowWindowIndicator();
