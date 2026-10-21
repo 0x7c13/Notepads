@@ -48,6 +48,8 @@ public partial class SetsView : ListViewBase
     private DropShadowPanel _setsItemsScrollViewerRightSideShadow;
     private ButtonBase _setsScrollBackButton;
     private ButtonBase _setsScrollForwardButton;
+    private long _setsScrollBackVisibilityToken;
+    private long _setsScrollForwardVisibilityToken;
 
     private bool _hasLoaded;
     private bool _isDragging;
@@ -158,11 +160,13 @@ public partial class SetsView : ListViewBase
         if (_setsScrollBackButton != null)
         {
             _setsScrollBackButton.Click -= ScrollSetBackButton_Click;
+            _setsScrollBackButton.UnregisterPropertyChangedCallback(VisibilityProperty, _setsScrollBackVisibilityToken);
         }
 
         if (_setsScrollForwardButton != null)
         {
             _setsScrollForwardButton.Click -= ScrollSetForwardButton_Click;
+            _setsScrollForwardButton.UnregisterPropertyChangedCallback(VisibilityProperty, _setsScrollForwardVisibilityToken);
         }
 
         _setsScrollBackButton = _setsScroller.FindDescendant(SetsScrollBackButtonName) as ButtonBase;
@@ -173,14 +177,17 @@ public partial class SetsView : ListViewBase
         if (_setsScrollBackButton != null)
         {
             _setsScrollBackButton.Click += ScrollSetBackButton_Click;
+            _setsScrollBackVisibilityToken = _setsScrollBackButton.RegisterPropertyChangedCallback(VisibilityProperty, ScrollButton_VisibilityChanged);
         }
 
         if (_setsScrollForwardButton != null)
         {
             _setsScrollForwardButton.Click += ScrollSetForwardButton_Click;
+            _setsScrollForwardVisibilityToken = _setsScrollForwardButton.RegisterPropertyChangedCallback(VisibilityProperty, ScrollButton_VisibilityChanged);
         }
 
         UpdateScrollButtonNames();
+        UpdateSetSeparators();
 
         // Tab headers finish sizing during their own Loaded handlers. Applying
         // an offset here would clamp it against an extent that can still be zero.
@@ -264,26 +271,31 @@ public partial class SetsView : ListViewBase
 
     private void UpdateSetSeparators()
     {
-        if (SelectedIndex > 0)
-        {
-            (ContainerFromIndex(0) as SetsViewItem)?.ShowLeftSideSeparator();
-        }
-        else
-        {
-            (ContainerFromIndex(0) as SetsViewItem)?.HideLeftSideSeparator();
-        }
+        for (int i = 0; i < Items.Count; i++) UpdateSetSeparator(i);
+    }
 
-        for (int i = 0; i < Items?.Count; i++)
-        {
-            if (i != SelectedIndex && i != SelectedIndex - 1)
-            {
-                (ContainerFromIndex(i) as SetsViewItem)?.ShowRightSideSeparator();
-            }
-            else
-            {
-                (ContainerFromIndex(i) as SetsViewItem)?.HideRightSideSeparator();
-            }
-        }
+    private void ScrollButton_VisibilityChanged(DependencyObject sender, DependencyProperty property)
+    {
+        UpdateSetSeparator(0);
+        UpdateSetSeparator(Items.Count - 1);
+    }
+
+    private void UpdateSetSeparator(int index)
+    {
+        if (index < 0 || index >= Items.Count || ContainerFromIndex(index) is not SetsViewItem set) return;
+
+        // Overflow arrows replace the strip's outer separators, including when
+        // an arrow is disabled at the start/end of the scroll range.
+        if (index == 0 && SelectedIndex > 0 && _setsScrollBackButton?.Visibility != Visibility.Visible)
+            set.ShowLeftSideSeparator();
+        else
+            set.HideLeftSideSeparator();
+
+        if (index != SelectedIndex && index != SelectedIndex - 1 &&
+            (index != Items.Count - 1 || _setsScrollForwardButton?.Visibility != Visibility.Visible))
+            set.ShowRightSideSeparator();
+        else
+            set.HideRightSideSeparator();
     }
 
     private void SetsContentPresenter_Loaded(object sender, RoutedEventArgs e)
@@ -362,31 +374,8 @@ public partial class SetsView : ListViewBase
         if (sender is SetsViewItem set)
         {
             var index = IndexFromContainer(set);
-
-            if (index == 0 && SelectedIndex != index)
-            {
-                set.ShowLeftSideSeparator();
-            }
-
-            if (SelectedIndex == index - 1)
-            {
-                set.ShowRightSideSeparator();
-            }
-            else if (SelectedIndex == index + 1)
-            {
-                if (index > 0)
-                {
-                    (ContainerFromIndex(index - 1) as SetsViewItem)?.ShowRightSideSeparator();
-                }
-            }
-            else if (SelectedIndex != index)
-            {
-                set.ShowRightSideSeparator();
-                if (index > 0)
-                {
-                    (ContainerFromIndex(index - 1) as SetsViewItem)?.ShowRightSideSeparator();
-                }
-            }
+            UpdateSetSeparator(index);
+            UpdateSetSeparator(index - 1);
         }
     }
 

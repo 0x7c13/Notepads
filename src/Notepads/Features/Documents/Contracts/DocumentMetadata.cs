@@ -9,6 +9,14 @@ public sealed class DocumentMetadata
 {
     public string FileNamePlaceholder { get; set; }
 
+    // Null is the released V1 format: infer the default untitled name once.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public bool? UseContentBasedTitle { get; set; }
+
+    // The roster can display an unloaded tab without opening its snapshot.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string ContentTitle { get; set; }
+
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string LanguageOverride { get; set; }
 

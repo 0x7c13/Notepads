@@ -114,9 +114,9 @@
                                              NotEmptyValue="Visible" />
     <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
-    <!--  65 is the size of both scroll buttons + 1 for layout rounding.  -->
+    <!--  57 is the size of both 28-DIP scroll buttons + 1 for layout rounding.  -->
     <converters:DoubleToVisibilityConverter x:Key="GreaterThanToleranceVisibilityConverter"
-                                            GreaterThan="65.0" />
+                                            GreaterThan="57.0" />
 
     <converters:BoolToObjectConverter x:Key="CloseCollapsingSizeConverter"
                                       FalseValue="{StaticResource SetsViewItemHeaderCloseWidth}"
@@ -882,13 +882,17 @@
     </Style>
 
     <Style x:Key="SetsViewRepeatButtonStyle" TargetType="RepeatButton">
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="MinWidth" Value="0"/>
         <Setter Property="CornerRadius" Value="4"/>
         <Setter Property="Background" Value="{ThemeResource RepeatButtonRevealBackground}"/>
         <Setter Property="BackgroundSizing" Value="OuterBorderEdge"/>
         <Setter Property="Foreground" Value="{ThemeResource RepeatButtonForeground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource RepeatButtonRevealBorderBrush}"/>
         <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}"/>
-        <Setter Property="Padding" Value="{StaticResource ButtonPadding}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>

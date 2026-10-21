@@ -88,6 +88,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     public bool CanUndo => Native.CanUndo();
     public bool CanRedo => Native.CanRedo();
     public long ContentVersion { get; private set; }
+    internal long LeadingTextVersion { get; private set; }
     internal ulong DocumentSequence => Native.DocumentSequence;
 
     // Reading order belongs to this document. Keep the XAML/native canvas LTR
@@ -411,6 +412,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     {
         if ((args.ModificationType & (int)TextModifications) == 0) return;
         ContentVersion++;
+        if (args.Position <= DocumentTitle.SampleBytes) LeadingTextVersion++;
         _lastInsertionStart = (args.ModificationType & (int)ModificationFlags.InsertText) != 0 ? args.Position : -1;
         _lastInsertionEnd = args.Position + args.Length;
         if (_settingText) return;
@@ -493,6 +495,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
             InstallSyntaxProfile();
             Native.SetEmptySelection(0);
             ContentVersion++;
+            LeadingTextVersion++;
             ResetDetectedIndentation();
             UpdateLineNumberMargin();
             // Reveal only after the final metrics are installed. A detached

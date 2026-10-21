@@ -28,11 +28,15 @@ public sealed partial class FileRenameDialog : NotepadsDialog
 
     private readonly bool _fileExists;
 
-    public FileRenameDialog(string filename, bool fileExists, Action<string> confirmedAction)
+    private readonly bool _allowUnchangedName;
+
+    public FileRenameDialog(string filename, bool fileExists, Action<string> confirmedAction, bool allowUnchangedName = false)
     {
         _originalFilename = filename;
         _fileExists = fileExists;
         _confirmedAction = confirmedAction;
+        // Confirming an automatic draft's displayed title explicitly pins that name.
+        _allowUnchangedName = allowUnchangedName && !fileExists;
 
         _fileNameTextBox = new TextBox
         {
@@ -61,7 +65,7 @@ public sealed partial class FileRenameDialog : NotepadsDialog
         Content = contentStack;
         PrimaryButtonText = ResourceLoader.GetString("FileRenameDialog_PrimaryButtonText");
         CloseButtonText = ResourceLoader.GetString("FileRenameDialog_CloseButtonText");
-        IsPrimaryButtonEnabled = false;
+        UpdateValidation();
 
         _fileNameTextBox.TextChanging += OnTextChanging;
         _fileNameTextBox.KeyDown += OnKeyDown;
@@ -76,24 +80,9 @@ public sealed partial class FileRenameDialog : NotepadsDialog
 
     private bool TryRename()
     {
-        var newFileName = _fileNameTextBox.Text;
-
-        if (string.Compare(_originalFilename, newFileName, StringComparison.OrdinalIgnoreCase) == 0)
-        {
-            return false;
-        }
-
-        if (!FileNameRules.IsFilenameValid(newFileName, out var error))
-        {
-            return false;
-        }
-
-        if (_fileExists && !FileExtensionProvider.IsFileExtensionSupported(FileTypeUtility.GetFileExtension(newFileName)))
-        {
-            return false;
-        }
-
-        _confirmedAction(newFileName.Trim());
+        UpdateValidation();
+        if (!IsPrimaryButtonEnabled) return false;
+        _confirmedAction(_fileNameTextBox.Text.Trim());
         return true;
     }
 
@@ -110,11 +99,14 @@ public sealed partial class FileRenameDialog : NotepadsDialog
 
     private void OnTextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
     {
-        if (!args.IsContentChanging) return;
+        if (args.IsContentChanging) UpdateValidation();
+    }
 
-        var newFilename = sender.Text;
+    private void UpdateValidation()
+    {
+        var newFilename = _fileNameTextBox.Text;
         var isFilenameValid = FileNameRules.IsFilenameValid(newFilename, out var error);
-        var nameChanged = string.Compare(_originalFilename, newFilename, StringComparison.OrdinalIgnoreCase) != 0;
+        var nameChanged = _allowUnchangedName || string.Compare(_originalFilename, newFilename, StringComparison.OrdinalIgnoreCase) != 0;
         var isExtensionSupported = false;
         var fileExtension = FileTypeUtility.GetFileExtension(newFilename);
 

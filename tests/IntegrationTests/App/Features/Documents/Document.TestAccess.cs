@@ -44,6 +44,8 @@ namespace Notepads.Presentation.Views.MainPage
     {
         internal Task<bool> TestSaveDocumentAsync(ITextEditor editor, bool saveAs = false) => SaveAsync(editor, saveAs);
         internal Task<bool> TestSaveAllDocumentsAsync() => SaveAllAsync(NotepadsCore.GetTabs());
+        internal Task TestRenameDocumentAsync(ITextEditor editor) => RenameFileAsync(editor);
+        internal Task TestRevertAllChangesAsync() => ExecuteModificationCommandAsync("RevertAllChanges");
     }
 }
 

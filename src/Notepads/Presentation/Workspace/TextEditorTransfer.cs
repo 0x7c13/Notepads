@@ -136,6 +136,7 @@ internal sealed class TextEditorTransfer
             metadata.RequestedLineEnding == captured.RequestedLineEnding &&
             metadata.LanguageOverride == captured.LanguageOverride &&
             metadata.FileNamePlaceholder == captured.FileNamePlaceholder &&
+            metadata.UseContentBasedTitle == captured.UseContentBasedTitle &&
             metadata.RequiresSaveAs == captured.RequiresSaveAs &&
             metadata.HasEditingFile == captured.HasEditingFile &&
             (Editor.EditingFile == null ? _editingFile == null :

@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.Text;
 using Notepads.Features.Preferences;
@@ -228,22 +229,24 @@ public sealed partial class NotepadsMainPage
 
     private async void ModificationFlyoutSelection_OnClick(object sender, RoutedEventArgs e)
     {
-        if (sender is not MenuFlyoutItem item) return;
+        if (sender is MenuFlyoutItem item) await ExecuteModificationCommandAsync((string)item.Tag);
+    }
 
+    private async Task ExecuteModificationCommandAsync(string command)
+    {
         var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
         if (selectedTextEditor == null) return;
 
-        switch ((string)item.Tag)
+        switch (command)
         {
             case "PreviewTextChanges":
                 // The diff viewer reports its own failures.
                 await selectedTextEditor.OpenSideBySideDiffViewerAsync();
                 break;
             case "RevertAllChanges":
-                var fileName = selectedTextEditor.EditingFileName ?? selectedTextEditor.FileNamePlaceholder;
                 var confirmed = false;
                 var revertAllChangesConfirmationDialog = new RevertAllChangesConfirmationDialog(
-                    fileName,
+                    selectedTextEditor.DisplayTitle,
                     confirmedAction: () => confirmed = true);
                 await DialogManager.OpenDialogAsync(revertAllChangesConfirmationDialog, awaitPreviousDialog: true);
                 if (confirmed && NotepadsCore.GetTab(selectedTextEditor) != null)

@@ -16,6 +16,25 @@ namespace Notepads.UnitTests;
 public sealed class RecoverySelectorTests
 {
     [Fact]
+    public void ContentTitleMetadataMustBeBoundedNormalizedAndAutomatic()
+    {
+        var fixture = new Evidence();
+        var read = fixture.Rescue(fixture.Editor(12, 5));
+        var metadata = read.Record.Editor.StateMetaData;
+        metadata.UseContentBasedTitle = true;
+        metadata.ContentTitle = "draft 中文 😀";
+        _ = RecoveryRecordCodec.Encode(read.Record, read.Address);
+        foreach (var invalid in new[] { "", "title\nsecond line", "\u202etitle", " leading space", new string('a', 161) })
+        {
+            metadata.ContentTitle = invalid;
+            Assert.Throws<System.IO.InvalidDataException>(() => RecoveryRecordCodec.Encode(read.Record, read.Address));
+        }
+        metadata.ContentTitle = "valid text";
+        metadata.UseContentBasedTitle = false;
+        Assert.Throws<System.IO.InvalidDataException>(() => RecoveryRecordCodec.Encode(read.Record, read.Address));
+    }
+
+    [Fact]
     public void CheckpointAuthorityAndProtection()
     {
         var fixture = new Evidence();

@@ -47,8 +47,16 @@ public sealed class WorkspaceTab
     public Task<ITextEditor> LoadCompletion => _loadCompletion.Task;
     public CancellationToken LifetimeToken { get; }
     public Exception LoadError { get; private set; }
-    public string Title => ReadyEditor is ITextEditor editor ? editor.EditingFileName ?? editor.FileNamePlaceholder :
-        RecoverySource?.EditingFileName ?? RecoverySource?.Metadata?.FileNamePlaceholder;
+    public string Title
+    {
+        get
+        {
+            if (ReadyEditor is ITextEditor editor) return editor.DisplayTitle;
+            var metadata = RecoverySource?.Metadata;
+            return RecoverySource?.EditingFileName ??
+                (metadata?.UseContentBasedTitle == true ? metadata.ContentTitle : null) ?? metadata?.FileNamePlaceholder;
+        }
+    }
     public string EditingFilePath => ReadyEditor is ITextEditor editor ? editor.EditingFilePath : RecoverySource?.EditingFilePath;
     public bool IsModified => ReadyEditor?.IsModified ?? RecoverySource?.Metadata?.IsModified ?? false;
 

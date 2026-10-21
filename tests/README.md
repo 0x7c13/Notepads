@@ -46,7 +46,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Open/save/save-as/save-all, reload/revert, external file changes | `Documents`, `FileOpening` |
 | Find/replace, Go To, clipboard, native edit commands | `EditingUI`, `Clipboard`, `ClipboardRejectedCut`, `Editor`, `Search` |
 | Syntax, native Diff, ICU regex and failures | `Editor`; focused `Syntax`, `Diff`, `NativeDiff`, `RegexText`, `NativeFaults` |
-| Tabs, commands, pending-tab availability, activation ordering | `WorkspaceCommands`, `Activation`, `Workspace` |
+| Tabs, content-derived draft titles, pending availability and activation ordering | `WorkspaceCommands`, `Activation`, `Workspace`; Unit Unicode/title rules |
 | Prelaunch, first-paint restore, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
 | Preferences, themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
 | Session restart/import/close, transfer, persistence, recovery and leases | `Workspace*`, `Persistence`, `Leases`, `SessionResilience` |

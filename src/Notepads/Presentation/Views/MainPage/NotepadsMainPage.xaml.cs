@@ -83,6 +83,7 @@ public sealed partial class NotepadsMainPage : Page
             _notepadsCore.TextEditorSaved += OnTextEditorSaved;
             _notepadsCore.TextEditorMovedToAnotherAppInstance += OnTextEditorMovedToAnotherAppInstance;
             _notepadsCore.TextEditorRenamed += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) SetupStatusBar(editor); };
+            _notepadsCore.TextEditorTitleChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateApplicationTitle(editor); };
             _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateLineColumnIndicator(editor); };
             _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateFontZoomIndicator(editor); };
             _notepadsCore.TextEditorLanguageChanged += (sender, editor) => { if (ReferenceEquals(NotepadsCore.GetSelectedReadyEditor(), editor)) UpdateLanguageIndicator(editor); };
@@ -743,7 +744,7 @@ public sealed partial class NotepadsMainPage : Page
 
     private static void UpdateApplicationTitle(ITextEditor activeTextEditor)
     {
-        ApplicationView.GetForCurrentView().Title = activeTextEditor.EditingFileName ?? activeTextEditor.FileNamePlaceholder;
+        ApplicationView.GetForCurrentView().Title = activeTextEditor.DisplayTitle;
     }
 
     #endregion

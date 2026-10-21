@@ -292,9 +292,10 @@ public sealed partial class NotepadsMainPage
 
         var expectedFile = textEditor.EditingFile;
         string newFileName = null;
-        var fileRenameDialog = new FileRenameDialog(textEditor.EditingFileName ?? textEditor.FileNamePlaceholder,
+        var fileRenameDialog = new FileRenameDialog(textEditor.DisplayTitle,
             fileExists: textEditor.EditingFile != null,
-            confirmedAction: filename => { newFileName = filename; });
+            confirmedAction: filename => { newFileName = filename; },
+            allowUnchangedName: textEditor.UsesContentBasedTitle);
 
         var result = await DialogManager.OpenDialogAsync(fileRenameDialog, awaitPreviousDialog: false);
         if (result == null || fileRenameDialog.IsAborted || newFileName == null || _isAppClosing ||

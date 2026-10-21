@@ -197,7 +197,7 @@ internal static partial class SessionControllerTests
         public event EventHandler<WorkspaceTab> TabClosing, TabStateChanged;
         public event EventHandler<ITextEditor> TextEditorLoaded, TextEditorLanguageChanged,
             TextEditorEditorModificationStateChanged, TextEditorFileModificationStateChanged, TextEditorSaved,
-            TextEditorRenamed, TextEditorSelectionChanged, TextEditorFontZoomFactorChanged, TextEditorEncodingChanged,
+            TextEditorRenamed, TextEditorTitleChanged, TextEditorSelectionChanged, TextEditorFontZoomFactorChanged, TextEditorEncodingChanged,
             TextEditorLineEndingChanged, TextEditorMovedToAnotherAppInstance;
         public event EventHandler<IReadOnlyList<IStorageItem>> StorageItemsDropped;
         public event KeyEventHandler TextEditorKeyDown;
@@ -335,7 +335,7 @@ internal static partial class SessionControllerTests
         public event KeyEventHandler KeyDown;
         public event EventHandler ModificationStateChanged, FileModificationStateChanged, LineEndingChanged,
             EncodingChanged, SelectionChanged, FontZoomFactorChanged, TextChanging, ChangeReverted, FileSaved, FileReloaded,
-            FileRenamed, LanguageChanged, LanguageOverrideChanged;
+            FileRenamed, DisplayTitleChanged, LanguageChanged, LanguageOverrideChanged;
 #pragma warning restore CS0067
 
         public SessionTestDocument Document { get; private set; }
@@ -346,6 +346,8 @@ internal static partial class SessionControllerTests
         public Guid Id { get; set; }
         public StorageFile EditingFile { get; set; }
         public string EditingFileName => EditingFile?.Name;
+        public string DisplayTitle => EditingFileName ?? Document?.Metadata.FileNamePlaceholder;
+        public bool UsesContentBasedTitle => Document?.Metadata.UseContentBasedTitle == true;
         public string EditingFilePath => EditingFile?.Path;
         public Task DisposalCompletion => Task.CompletedTask;
 

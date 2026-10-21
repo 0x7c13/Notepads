@@ -28,6 +28,7 @@ using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -48,6 +49,7 @@ public sealed partial class NotepadsCore : INotepadsCore
     public event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
     public event EventHandler<ITextEditor> TextEditorSaved;
     public event EventHandler<ITextEditor> TextEditorRenamed;
+    public event EventHandler<ITextEditor> TextEditorTitleChanged;
     public event EventHandler<ITextEditor> TextEditorSelectionChanged;
     public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
     public event EventHandler<ITextEditor> TextEditorLanguageChanged;
@@ -391,6 +393,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         textEditor.LineEndingChanged += TextEditor_OnLineEndingChanged;
         textEditor.EncodingChanged += TextEditor_OnEncodingChanged;
         textEditor.FileRenamed += TextEditor_OnFileRenamed;
+        textEditor.DisplayTitleChanged += TextEditor_OnDisplayTitleChanged;
         _ownedEditors.Add(textEditor);
 
         return textEditor;
@@ -432,6 +435,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
         textEditor.EncodingChanged -= TextEditor_OnEncodingChanged;
         textEditor.FileRenamed -= TextEditor_OnFileRenamed;
+        textEditor.DisplayTitleChanged -= TextEditor_OnDisplayTitleChanged;
         textEditor.Dispose();
         _ownedEditors.Remove(textEditor);
         _ = TrackWorkAsync(textEditor.DisposalCompletion, requiresShutdownProof: true);
@@ -449,7 +453,7 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     public bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content)
     {
-        title = textEditor?.EditingFileName ?? textEditor?.FileNamePlaceholder;
+        title = textEditor?.DisplayTitle;
         content = textEditor?.GetContentForSharing();
         return !string.IsNullOrEmpty(content);
     }
@@ -558,7 +562,6 @@ public sealed partial class NotepadsCore : INotepadsCore
         {
             Tag = tab,
             CloseButtonAutomationName = _resourceLoader.GetString("Tab_ContextFlyout_CloseButtonDisplayText"),
-            Header = tab.Title,
             Content = new ContentControl
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -574,6 +577,7 @@ public sealed partial class NotepadsCore : INotepadsCore
             },
             ContextFlyout = new TabContextFlyout(this, tab, _renameTextEditorAsync)
         };
+        SetTabTitle(item, tab.Title);
         return item;
     }
 
@@ -596,7 +600,7 @@ public sealed partial class NotepadsCore : INotepadsCore
     private void OnTabStateChanged(object sender, EventArgs e)
     {
         if (sender is not WorkspaceTab tab || GetTabSetsViewItem(tab) is not SetsViewItem item) return;
-        item.Header = tab.Title;
+        SetTabTitle(item, tab.Title);
         item.Icon.Visibility = tab.IsModified ? Visibility.Visible : Visibility.Collapsed;
         if (tab.ReadyEditor == null && item.Content is ContentControl host &&
             (tab.State == WorkspaceTabState.Failed || host.Content is not DocumentLoadingPlaceholder))
@@ -625,7 +629,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         {
             if (textEditor.EditingFileName != null)
             {
-                item.Header = textEditor.EditingFileName;
+                SetTabTitle(item, textEditor.DisplayTitle);
             }
             item.Icon.Visibility = Visibility.Collapsed;
         }
@@ -709,8 +713,21 @@ public sealed partial class NotepadsCore : INotepadsCore
         if (sender is not ITextEditor textEditor) return;
         var item = GetTextEditorSetsViewItem(textEditor);
         if (item == null) return;
-        item.Header = textEditor.EditingFileName ?? textEditor.FileNamePlaceholder;
+        SetTabTitle(item, textEditor.DisplayTitle);
         TextEditorRenamed?.Invoke(this, textEditor);
+    }
+
+    private void TextEditor_OnDisplayTitleChanged(object sender, EventArgs e)
+    {
+        if (sender is not ITextEditor editor || GetTextEditorSetsViewItem(editor) is not SetsViewItem item) return;
+        SetTabTitle(item, editor.DisplayTitle);
+        TextEditorTitleChanged?.Invoke(this, editor);
+    }
+
+    private static void SetTabTitle(SetsViewItem item, string title)
+    {
+        item.Header = title;
+        AutomationProperties.SetName(item, title ?? string.Empty);
     }
 
     #region DragAndDrop

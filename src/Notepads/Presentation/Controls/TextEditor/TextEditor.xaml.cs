@@ -63,6 +63,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         set
         {
             _fileNamePlaceholder = value;
+            _useContentBasedTitle = EditingFile == null && IsDefaultUntitledName(value);
             UpdateDocumentInfo();
         }
     }
@@ -81,6 +82,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         private set
         {
             _editingFile = value;
+            if (value != null) _useContentBasedTitle = false;
             UpdateDocumentInfo();
         }
     }
@@ -101,6 +103,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         }
 
         RefreshDocumentLanguage();
+        RefreshDisplayTitle();
         // Hide content preview if current file type is not supported for previewing
         if (!FileTypeUtility.IsPreviewSupported(FileType))
         {
@@ -186,6 +189,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         InitializeComponent();
 
         TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
+        TextEditorCore.TextChanged += TextEditorCore_OnTitleTextChanged;
         TextEditorCore.LanguageDetectionRequested += OnLanguageDetectionRequested;
         TextEditorCore.SyntaxStatusChanged += OnSyntaxStatusChanged;
         TextEditorCore.ModificationStateChanged += TextEditorCore_OnModificationStateChanged;
@@ -259,6 +263,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         TextEditorCore.IsEnabled = false;
 
         TextEditorCore.TextChanging -= TextEditorCore_OnTextChanging;
+        TextEditorCore.TextChanged -= TextEditorCore_OnTitleTextChanged;
         TextEditorCore.LanguageDetectionRequested -= OnLanguageDetectionRequested;
         TextEditorCore.SyntaxStatusChanged -= OnSyntaxStatusChanged;
         TextEditorCore.ModificationStateChanged -= TextEditorCore_OnModificationStateChanged;
@@ -325,6 +330,8 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         var metaData = new DocumentMetadata
         {
             FileNamePlaceholder = FileNamePlaceholder,
+            UseContentBasedTitle = _useContentBasedTitle,
+            ContentTitle = EditingFile == null && _useContentBasedTitle ? GetContentTitle() : null,
             LanguageOverride = LanguageOverride,
             LastSavedEncoding = EncodingCatalog.GetEncodingName(LastSavedSnapshot.Encoding),
             LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),

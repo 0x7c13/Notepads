@@ -94,6 +94,7 @@ internal static class RecoveryRecordValidator
         // Viewport and preview flags are restored after attaching the target
         // tab. Their temporary differences cannot authorize losing save state.
         return string.Equals(left.FileNamePlaceholder, right.FileNamePlaceholder, StringComparison.Ordinal) &&
+            left.UseContentBasedTitle == right.UseContentBasedTitle &&
             string.Equals(left.LanguageOverride, right.LanguageOverride, StringComparison.Ordinal) &&
             string.Equals(left.LastSavedEncoding, right.LastSavedEncoding, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(left.LastSavedLineEnding, right.LastSavedLineEnding, StringComparison.OrdinalIgnoreCase) &&

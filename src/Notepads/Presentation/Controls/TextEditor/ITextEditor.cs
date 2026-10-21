@@ -36,6 +36,7 @@ public interface ITextEditor
     event EventHandler FileSaved;
     event EventHandler FileReloaded;
     event EventHandler FileRenamed;
+    event EventHandler DisplayTitleChanged;
     event EventHandler LanguageChanged;
     event EventHandler LanguageOverrideChanged;
 
@@ -59,6 +60,10 @@ public interface ITextEditor
     Encoding RequestedEncoding { get; }
 
     string FileNamePlaceholder { get; set; }
+
+    string DisplayTitle { get; }
+
+    bool UsesContentBasedTitle { get; }
 
     string EditingFileName { get; }
 

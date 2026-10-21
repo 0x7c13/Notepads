@@ -33,8 +33,11 @@ public sealed partial class TextEditorCore
     }
 
     internal string GetLanguageDetectionSample()
+        => GetTextPrefix(DocumentLanguages.DetectionSampleBytes);
+
+    internal string GetTextPrefix(int maximumBytes)
     {
-        var end = Math.Min(Native.Length, DocumentLanguages.DetectionSampleBytes);
+        var end = Math.Min(Native.Length, maximumBytes);
         while (end > 0 && end < Native.Length && (Native.GetCharAt(end) & 0xc0) == 0x80) end--;
         return ReadRange(0, end);
     }

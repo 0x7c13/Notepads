@@ -31,6 +31,7 @@ public interface INotepadsCore : IDisposable, IAsyncDisposable
     event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
     event EventHandler<ITextEditor> TextEditorSaved;
     event EventHandler<ITextEditor> TextEditorRenamed;
+    event EventHandler<ITextEditor> TextEditorTitleChanged;
     event EventHandler<ITextEditor> TextEditorSelectionChanged;
     event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
     event EventHandler<ITextEditor> TextEditorEncodingChanged;

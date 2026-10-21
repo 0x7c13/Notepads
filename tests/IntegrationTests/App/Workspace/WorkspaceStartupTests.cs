@@ -61,9 +61,17 @@ internal static class WorkspaceStartupTests
             foreach (var id in ids)
             {
                 var text = string.Concat(Enumerable.Range(0, 160).Select(line => $"{id:N} line {line} 中文😀\r"));
+                if (id == ids[0]) text = "Restored draft 中文😀\r" + text;
                 var document = await SessionTestDocument.CreateAsync(owner, text);
                 documents.Add(document);
                 document.Metadata.FileNamePlaceholder = id.ToString("N") + ".txt";
+                if (id == ids[0])
+                {
+                    document.Metadata.FileNamePlaceholder = Windows.ApplicationModel.Resources.ResourceLoader
+                        .GetForCurrentView().GetString("TextEditor_DefaultNewFileName");
+                    document.Metadata.UseContentBasedTitle = true;
+                    document.Metadata.ContentTitle = "Restored draft 中文😀";
+                }
                 document.Metadata.FirstVisibleDocumentLine = 80;
                 document.Metadata.FontZoomFactor = 1;
                 document.Metadata.WrapWord = false;
@@ -121,7 +129,8 @@ internal static class WorkspaceStartupTests
             var correct = Math.Abs(sets.ActualWidth - 600) < 1 &&
                 scroller.ViewportWidth > 0 && scroller.ViewportWidth <= sets.ActualWidth &&
                 scroller.ScrollableWidth >= 120 && Math.Abs(scroller.HorizontalOffset - 120) < 1 &&
-                core.GetSelectedTab()?.Id == ids[3];
+                core.GetSelectedTab()?.Id == ids[3] &&
+                page.TestContainer(tabs[0]).Header?.ToString() == "Restored draft 中文😀";
             presentedFrames++;
             if (!correct || presentedFrames == 3)
             {
@@ -183,6 +192,11 @@ internal static class WorkspaceStartupTests
                 "Explicit tab reveal did not replace the detached saved offset.");
             Check(core.GetSelectedTab()?.Id == ids[0], "Reattachment changed the explicitly selected tab.");
             await VerifySelectionDuringPendingScrollAsync(page, sets, scroll);
+            core.SwitchTo(core.GetTabs()[0]);
+            await UntilAsync(() => core.GetSelectedReadyEditor() != null, "The automatic-title tab materializes.");
+            Check(core.GetTabs()[0].Title == "Restored draft 中文😀" &&
+                page.TestContainer(core.GetTabs()[0]).Header?.ToString() == "Restored draft 中文😀",
+                "A restored content title agrees before and after native materialization.");
         }
         finally
         {

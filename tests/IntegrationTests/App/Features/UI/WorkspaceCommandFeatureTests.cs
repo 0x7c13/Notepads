@@ -32,6 +32,7 @@ internal static class WorkspaceCommandFeatureTests
 {
     internal static async Task RunAsync(StringBuilder log)
     {
+        await DocumentTitleFeatureTests.RunAsync(log);
         await using var host = await FeatureTestHost.CreateAsync();
         var page = host.Page;
         var core = host.Core;

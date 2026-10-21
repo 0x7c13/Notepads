@@ -100,7 +100,11 @@ public sealed partial class TextEditor
             if (file == null ? expectedFile != null : expectedFile == null || !file.IsEqual(expectedFile))
                 throw new InvalidOperationException("The document's file changed before it could be renamed.");
             cancellation.ThrowIfCancellationRequested();
-            if (file == null) FileNamePlaceholder = newFileName;
+            if (file == null)
+            {
+                _fileNamePlaceholder = newFileName;
+                _useContentBasedTitle = false;
+            }
             else await file.RenameAsync(newFileName);
             // Once storage commits, closing cannot undo a successful rename.
             // Publication and its UI events belong only to a live editor.
@@ -322,6 +326,9 @@ public sealed partial class TextEditor
 
     public void ResetEditorState(DocumentMetadata metadata)
     {
+        _useContentBasedTitle = EditingFile == null &&
+            (metadata.UseContentBasedTitle ?? (!metadata.HasEditingFile && IsDefaultUntitledName(FileNamePlaceholder)));
+        RefreshDisplayTitle();
         RestoreLanguageOverride(metadata.LanguageOverride);
         RefreshDocumentLanguage();
         _requiresSaveAs = EditingFile == null && (metadata.RequiresSaveAs || metadata.HasEditingFile);

@@ -9,6 +9,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Notepads.Features.Documents.Text;
 using Notepads.Features.Sessions.Contracts;
 
 namespace Notepads.Features.Sessions.Validation;
@@ -350,6 +351,9 @@ internal static partial class RecoveryRecordCodec
             }
         }
         var state = editor.StateMetaData;
+        if (state.ContentTitle is string title && (state.UseContentBasedTitle != true ||
+            title.Length > DocumentTitle.MaximumLength || title != DocumentTitle.FromPrefix(title)))
+            throw new InvalidDataException("Invalid recovery content title.");
         if (state.SelectionStartPosition < 0 || state.SelectionEndPosition < 0 || !double.IsFinite(state.FontZoomFactor) || state.FontZoomFactor < 0 ||
             !double.IsFinite(state.ScrollViewerHorizontalOffset) || state.ScrollViewerHorizontalOffset < 0 ||
             !double.IsFinite(state.ScrollViewerVerticalOffset) || state.ScrollViewerVerticalOffset < 0 ||

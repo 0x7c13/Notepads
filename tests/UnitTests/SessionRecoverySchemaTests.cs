@@ -35,6 +35,26 @@ public sealed class SessionRecoverySchemaTests
         Assert.Equal(1.25, legacy.TextEditors[0].StateMetaData.FontZoomFactor);
         Assert.Null(legacy.TextEditors[0].StateMetaData.FirstVisibleDocumentLine);
         Assert.Equal(0, legacy.TextEditors[0].StateMetaData.FirstVisibleRowOffset);
+        Assert.Null(legacy.TextEditors[0].StateMetaData.UseContentBasedTitle);
+        Assert.Null(legacy.TextEditors[0].StateMetaData.ContentTitle);
+    }
+
+    [Theory]
+    [InlineData(true, "draft 中文 😀")]
+    [InlineData(false, null)]
+    public void TitlePolicyAndCacheSurviveCaptureAndSourceGeneratedJson(bool automatic, string title)
+    {
+        var session = ValidSession();
+        var metadata = session.TextEditors[0].StateMetaData;
+        metadata.UseContentBasedTitle = automatic;
+        metadata.ContentTitle = title;
+        session.TextEditors[0].StateMetaData = metadata.Clone();
+        metadata.ContentTitle = "later edit";
+        var json = JsonSerializer.Serialize(session, SessionJsonContext.Default.NotepadsSessionDataV2);
+        var restored = JsonSerializer.Deserialize(json, SessionJsonContext.Default.NotepadsSessionDataV2).TextEditors[0].StateMetaData;
+        Assert.Equal(automatic, restored.UseContentBasedTitle);
+        Assert.Equal(title, restored.ContentTitle);
+        if (!automatic) Assert.Contains("\"UseContentBasedTitle\":false", json);
     }
 
     [Fact]
