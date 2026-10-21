@@ -353,7 +353,7 @@ public static class ApplicationPreferences
         }
         else
         {
-            _isSessionSnapshotEnabled = false;
+            _isSessionSnapshotEnabled = true;
         }
     }
 
@@ -490,7 +490,7 @@ public static class ApplicationPreferences
         }
         else
         {
-            _editorDefaultTabIndents = -1;
+            _editorDefaultTabIndents = 4;
         }
     }
 

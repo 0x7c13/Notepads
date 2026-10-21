@@ -185,7 +185,7 @@ internal static partial class PreferenceFeatureTests
             .Select(name => name + "=[" + string.Join(",", ((StackPanel)settings.FindName(name)).Children.OfType<RadioButton>()
                 .Where(button => button.IsChecked == true).Select(button => button.Name)) + "]");
 
-    internal static Task RunStoreAsync(StringBuilder log)
+    internal static async Task RunStoreAsync(StringBuilder log)
     {
         using var snapshot = new StoredPreferences(Keys);
         foreach (var key in Keys) ApplicationSettingsStore.Remove(key);
@@ -198,19 +198,29 @@ internal static partial class PreferenceFeatureTests
         Check(ApplicationPreferences.EditorDefaultEncoding.CodePage == 65001 &&
             ApplicationPreferences.EditorDefaultEncoding.GetPreamble().Length == 0 &&
             ApplicationPreferences.EditorDefaultDecoding == null && ApplicationPreferences.EditorDefaultLineEnding == LineEnding.Crlf &&
-            ApplicationPreferences.EditorDefaultTabIndents == -1 && !ApplicationPreferences.IsSessionSnapshotEnabled &&
+            ApplicationPreferences.EditorDefaultTabIndents == 4 && ApplicationPreferences.IsSessionSnapshotEnabled &&
             !ApplicationPreferences.IsSmartCopyEnabled && !ApplicationPreferences.ExitWhenLastTabClosed,
             "An empty settings container yields established document and lifecycle defaults.");
+        await using (var host = await FeatureTestHost.CreateAsync())
+        {
+            var draft = (TextEditor)host.Core.GetSelectedReadyEditor();
+            draft.TestNativeCore.TestIndentation(false);
+            Check(draft.GetText() == "    " && !draft.TestNativeCore.TestFeatureNative.UseTabs,
+                "A fresh plain-text draft inserts four spaces through the real Tab command with unset preferences.");
+        }
 
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, "WrapWholeWords");
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, 65001);
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool, true);
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, "Cr");
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, "DuckDuckGo");
+        ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, -1);
+        ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, false);
         ApplicationPreferences.Initialize();
         Check(ApplicationPreferences.EditorDefaultWordWrap && ApplicationPreferences.EditorDefaultLineEnding == LineEnding.Cr &&
             ApplicationPreferences.EditorDefaultEncoding.GetPreamble().SequenceEqual(new byte[] { 0xef, 0xbb, 0xbf }) &&
-            ApplicationPreferences.EditorDefaultSearchEngine == SearchEngine.DuckDuckGo,
+            ApplicationPreferences.EditorDefaultSearchEngine == SearchEngine.DuckDuckGo &&
+            ApplicationPreferences.EditorDefaultTabIndents == -1 && !ApplicationPreferences.IsSessionSnapshotEnabled,
             "Legacy wrapping and search-key values retain their original persisted semantics.");
 
         ApplicationSettingsStore.Write(SettingsKey.EditorFontSizeInt, "twenty");
@@ -221,14 +231,16 @@ internal static partial class PreferenceFeatureTests
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, "not-a-line-ending");
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, -12345);
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, "not-a-search-engine");
+        ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTabIndentsInt, "four");
+        ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, "false");
         ApplicationPreferences.Initialize();
         Check(ApplicationPreferences.EditorFontSize == 14 && ApplicationPreferences.EditorFontWeight == 400 &&
             ApplicationPreferences.EditorFontStyle == FontSlant.Normal && !ApplicationPreferences.EditorDefaultWordWrap &&
             ApplicationPreferences.EditorDisplayLineHighlighter && ApplicationPreferences.EditorDefaultLineEnding == LineEnding.Crlf &&
-            ApplicationPreferences.EditorDefaultDecoding == null && ApplicationPreferences.EditorDefaultSearchEngine == SearchEngine.Bing,
+            ApplicationPreferences.EditorDefaultDecoding == null && ApplicationPreferences.EditorDefaultSearchEngine == SearchEngine.Bing &&
+            ApplicationPreferences.EditorDefaultTabIndents == 4 && ApplicationPreferences.IsSessionSnapshotEnabled,
             "Wrong-type and malformed settings fall back predictably; invalid decoding selects automatic detection.");
         log.AppendLine("PASS: Preferences.Store — empty defaults, valid/legacy values and corrupt typed settings use independent expected values.");
-        return Task.CompletedTask;
     }
 
     internal static Task RunCorruptEncodingAsync(StringBuilder log)

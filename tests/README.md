@@ -25,8 +25,9 @@ configuration, runner setup, Production package checks and hosted reproduction.
 ```
 
 Release Native AOT is the normal App/E2E configuration; `NativeFaults` always
-uses Debug. App builds need Visual Studio 2026 UWP/native tools and the SDK in
-`global.json`. `tests/Tests.slnx` contains both projects; Headless and App outputs
+uses Debug. App builds need 2026 UWP/native build tools and the SDK in
+`global.json`; [source setup](../CONTRIBUTING.md#how-to-build-and-run-notepads-from-source)
+also supports Build Tools without the IDE. `tests/Tests.slnx` contains both projects; Headless and App outputs
 are separate. The runner selects matching product assemblies for architecture checks.
 
 Unknown groups and empty Unit filters fail. `-NoBuild` verifies source,
@@ -48,7 +49,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Syntax, native Diff, ICU regex and failures | `Editor`; focused `Syntax`, `Diff`, `NativeDiff`, `RegexText`, `NativeFaults` |
 | Tabs, content-derived draft titles, pending availability and activation ordering | `WorkspaceCommands`, `Activation`, `Workspace`; Unit Unicode/title rules |
 | Prelaunch, first-paint restore, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
-| Preferences, themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
+| Preferences (fresh defaults, preserved explicit values, real Tab), themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
 | Session restart/import/close, transfer, persistence, recovery and leases | `Workspace*`, `Persistence`, `Leases`, `SessionResilience` |
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
 | RTL/LTR shaping, geometry, navigation, selection, undo and direction persistence | `NativeBidi`, `Bidi`, `ReadingOrder`, `AutomationNavigation` |
@@ -56,6 +57,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | DPI geometry / actual Windows scale transitions | `DpiLayout` / opt-in `DisplayDpi` |
 | Installed Production launch, file association, windows, suspension and V1 data import | Hosted-only `PackagedApp` |
 | Localization, notices, package content and dependency boundaries | `Localization`, `Headers`, `Package`, `Architecture` |
+| Runner ownership, toolchain/offline integrity, CI export without rebuilding and registration boundaries | `Runner` (inert OS/install fixtures) |
 
 `*` denotes a family for orientation, not a selectable wildcard; use exact group
 names from `-List`. Markdown preview is not implemented and has no completion claim.

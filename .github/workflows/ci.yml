@@ -105,6 +105,7 @@ jobs:
       - name: Verify native toolchain
         run: ./scripts/Initialize-BuildTools.ps1 -InstallMissing
       - name: Publish and validate unsigned production package
+        id: build
         env:
           BUILD_PLATFORM: ${{ matrix.platform }}
         run: ./scripts/Build-CI.ps1 -Platform $env:BUILD_PLATFORM
@@ -117,6 +118,13 @@ jobs:
           $packages = @(Get-ChildItem artifacts/ci/x64 -Recurse -File -Filter *.msixupload)
           if ($packages.Count -ne 1) { throw 'Expected exactly one fresh Production upload package.' }
           ./scripts/Test.ps1 -Suite Integration -Group PackagedApp -Platform x64 -PackagePath $packages[0].FullName
+      - name: Upload installable offline preview
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: notepads-offline-${{ matrix.platform }}
+          path: ${{ steps.build.outputs.offline-path }}
+          retention-days: 14
+          if-no-files-found: error
       - name: Preserve build and package evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

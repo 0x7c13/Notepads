@@ -16,7 +16,7 @@ PR/ref. There are no path filters that could leave a required check pending.
 | --- | --- |
 | Managed Tests | actionlint; all pure unit tests; runner/header/localization checks; real-storage recovery tests; isolated metrics-failure processes; architecture guard negative fixtures |
 | Native Tests | NativeDiff, NativeBidi and RegexText C++ executables, Release x64 |
-| Native AOT / x86, x64, ARM64 | Solution restore; Production AOT publish; compiled managed-assembly dependency guard; unsigned bundle/upload-package validation; x64 also installs and exercises the Production package |
+| Native AOT / x86, x64, ARM64 | Production AOT publish; architecture/package guards; self-contained offline artifact and installer validation; x64 also installs and exercises the Production package |
 | E2E Tests | x64 Release AOT App tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
 | Resilience Tests | Dedicated Debug host: optional style/lexer allocation failures, editing/undo recovery and journal integrity |
 | CI Gate | Every job above succeeded, including every architecture; failure, cancellation or an unexpected skip fails the gate |
@@ -60,6 +60,16 @@ Artifacts are retained for 14 days, including available diagnostics after failur
 - `native-aot-<architecture>`: logs, publish binlog, source fingerprints,
   `results.json`, unsigned bundle/upload package and publishing symbols under
   `artifacts/ci/<architecture>/<run-id>`.
+- `notepads-offline-<architecture>`: ready-to-install Production AOT preview from
+  that job's exact build, including framework dependencies. Download from the run's
+  Artifacts, extract the whole ZIP to a permanent folder, then run `Start.cmd`.
+  No Visual Studio, .NET installation, certificate import or network download is
+  needed. Developer Mode is checked and, if disabled, enabling it requires UAC.
+  The display name is Notepads; the Production package identity is
+  `19282JackieLiu.Notepads-Beta`. It can update that identity and reuse its data.
+  Save/back up work first; the installer never uninstalls apps or resets data.
+  Offline output is part of every normal package job, with no second AOT build;
+  its failure fails CI Gate. `Install.ps1 -CheckOnly` validates without deployment.
 - `desktop-<architecture>-<attempt>`: desktop group reports, phase results,
   input-driver evidence, lease/peer protocol diagnostics (including crash reports),
   and package/data preservation reports. Copied application `layout/` directories

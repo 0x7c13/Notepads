@@ -39,8 +39,13 @@ try {
     # Solution restore also restores the native packages.config into src/packages.
     Invoke-BuildStep Restore $msbuild (@((Join-Path $repo 'src/Notepads.sln'), '/t:Restore', '/p:RestorePackagesConfig=true') + $common)
     Invoke-BuildStep Publish $msbuild (@((Join-Path $repo 'src/Notepads/Notepads.csproj'), '/restore', '/t:Publish',
+        "/p:CustomAfterMicrosoftCommonTargets=$(Join-Path $PSScriptRoot 'OfflinePackage.targets')",
+        "/p:OfflineFrameworkOutput=$packageRoot\Dependencies\",
         '/p:GenerateAppxPackageOnBuild=true', '/p:PublishAppxPackage=false',
         '/p:IncludePublishItemsOutputGroup=true', '/p:UapAppxPackageBuildMode=StoreUpload',
+        # Keep every scale/language resource in the application payload so the
+        # same package can also be registered as a complete offline layout.
+        '/p:AppxBundleAutoResourcePackageQualifiers=DXFeatureLevel',
         '/p:AppxBundle=Always', "/p:AppxBundlePlatforms=$Platform",
         '/p:AppxPackageSigningEnabled=false', '/p:AppxSymbolPackageEnabled=true',
         "/p:AppxPackageDir=$packageRoot\", "/bl:$(Join-Path $runRoot 'publish.binlog')") + $common)
@@ -58,6 +63,10 @@ try {
     $report.Packages = @($uploads | ForEach-Object {
         [ordered]@{ Name = $_.Name; Length = $_.Length; Sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
     })
+    $offline = & (Join-Path $PSScriptRoot 'New-OfflinePackage.ps1') -PackageRoot $packageRoot -Platform $Platform `
+        -OutputDirectory (Join-Path $runRoot 'offline') -AsDirectory
+    $report['OfflineDirectory'] = $offline
+    if ($env:GITHUB_OUTPUT) { "offline-path=$offline" | Add-Content -LiteralPath $env:GITHUB_OUTPUT }
     $report.Status = 'PASS'
 }
 catch { $report.Status = 'FAIL'; $report.Error = $_.ToString(); throw }
@@ -65,7 +74,7 @@ finally {
     $env:PATH = $priorPath
     $report | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $runRoot 'results.json')
     if ($env:GITHUB_STEP_SUMMARY) {
-        "Native AOT / ${Platform}: $($report.Status). Unsigned Production package; no deployment or publication." |
+        "Native AOT / ${Platform}: $($report.Status). Production upload package and ready-to-install offline artifact; no publication." |
             Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
     }
     Write-Host "Build report: $runRoot"

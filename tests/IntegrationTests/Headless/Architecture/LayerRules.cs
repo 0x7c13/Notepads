@@ -90,7 +90,10 @@ internal static class LayerRules
             "Documents.IO" => target is "Documents" or "Documents.Contracts" or "Documents.Text" or "Documents.Storage",
             "Documents.FileTypes" => target == "Documents.Contracts",
             "Sessions.Contracts" => target == "Documents.Contracts",
-            "Sessions.Validation" => target is "Sessions.Contracts" or "Documents.Contracts",
+            // Recovery validates cached titles using the same pure, bounded
+            // normalizer as the editor; other document implementations stay private.
+            "Sessions.Validation" => target is "Sessions.Contracts" or "Documents.Contracts" ||
+                targetType == "Notepads.Features.Documents.Text.DocumentTitle",
             "Sessions.Storage" => target is "Sessions.Contracts" or "Sessions.Validation" || target.StartsWith("Documents"),
             "Sessions.Recovery" => target is "Sessions.Contracts" or "Sessions.Validation" or "Sessions.Storage" || target.StartsWith("Documents"),
             "Sessions.Transfer" => target is "Sessions.Contracts" or "Sessions.Validation" or "Sessions.Storage" or "Sessions.Recovery" || target.StartsWith("Documents"),
