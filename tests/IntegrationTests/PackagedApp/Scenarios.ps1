@@ -158,24 +158,16 @@ function Expect-TabCount($App, [int] $Count) {
     Check (@(Get-Tabs $App).Count -eq $Count) "Expected exactly $Count tabs."
 }
 
-function Get-TabTitle($Tab) {
-    $condition = [Windows.Automation.PropertyCondition]::new($elementType::ControlTypeProperty, [Windows.Automation.ControlType]::Text)
-    return $Tab.FindFirst($descendants, $condition).Current.Name
-}
-
-function Select-Tab($App, [int] $Index) {
+function Select-Tab($App, [int] $Index, [string] $ExpectedText) {
     $tabs = @(Get-Tabs $App)
     Check ($Index -ge 0 -and $Index -lt $tabs.Count -and $Index -lt 9) 'Tab index is outside the shortcut fixture range.'
-    $title = Get-TabTitle $tabs[$Index]
-    Check (![string]::IsNullOrWhiteSpace($title)) 'The tab must expose a readable title.'
     # SetsView uses its own selection model; its ListViewItem peers do not
     # implement SelectionItemPattern. Drive the real Ctrl+number shortcut.
     Focus-Editor $App
     Key $App (0x31 + $Index) $true
-    $null = Wait-Until {
-        $path = Find-UI $App 'PathIndicatorButton'
-        $path -and $path.Current.Name.EndsWith($title, [StringComparison]::Ordinal) -and (Get-Editor $App)
-    } 'selected tab path and editor'
+    # Draft titles come from content, while the path indicator retains the
+    # placeholder. Await the fixture's independent text through the live editor.
+    Expect-Text $App $ExpectedText
 }
 
 function Invoke-UI($Element) {
@@ -251,8 +243,7 @@ try {
         Expect-TabCount $main $tabCount
         Set-Text $main $tabTexts[1]
         for ($index = 0; $index -lt $tabCount; $index++) {
-            Select-Tab $main $index
-            Expect-Text $main $tabTexts[$index]
+            Select-Tab $main $index $tabTexts[$index]
         }
         Check ([IO.File]::ReadAllText($closeFile) -ceq $diskText) 'The close fixture must retain unsaved edits instead of saving them to disk.'
         [ordered]@{ Count = $tabCount; Texts = $tabTexts } |
@@ -264,8 +255,7 @@ try {
         Expect-Text $main 'close recovery é العربية 😀'
         Expect-TabCount $main $tabCount
         for ($index = 0; $index -lt $tabCount; $index++) {
-            Select-Tab $main $index
-            Expect-Text $main $tabTexts[$index]
+            Select-Tab $main $index $tabTexts[$index]
         }
     }
 
@@ -510,12 +500,9 @@ try {
         $script:main = @(Get-AppWindows)[0]
         Expect-Text $main 'second file 世界'
         Check (@(Get-Tabs $main).Count -eq 3) 'Cold activations lost or duplicated a file/recovered tab.'
-        Select-Tab $main 0
-        Expect-Text $main $legacyTexts[0]
-        Select-Tab $main 1
-        Expect-Text $main 'saved through packaged app 😀'
-        Select-Tab $main 2
-        Expect-Text $main 'second file 世界'
+        Select-Tab $main 0 $legacyTexts[0]
+        Select-Tab $main 1 'saved through packaged app 😀'
+        Select-Tab $main 2 'second file 世界'
         Close-All
     }
 
