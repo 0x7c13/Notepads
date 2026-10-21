@@ -14,6 +14,7 @@ function Get-TestSourceFiles {
         'Headless' { @('tests/IntegrationTests/Headless', 'src/Notepads/Features/Documents', 'src/Notepads/Features/Sessions',
             'src/Notepads/Infrastructure/Diagnostics') }
         'App' { @('src', 'tests/IntegrationTests/App', 'tests/Shared') }
+        'Lifecycle' { @('src', 'tests/IntegrationTests/App', 'tests/IntegrationTests/Lifecycle', 'tests/Shared') }
         'Product' { @('src') }
         'NativeDiff' { @('tests/IntegrationTests/Support/NativeDiff.Tests', 'src/Notepads.Native') }
         'NativeBidi' { @('tests/IntegrationTests/Support/NativeBidi.Tests', 'src/Notepads.Native') }
@@ -36,8 +37,8 @@ function Get-TestSourceFiles {
     }
     $generatedNames = @('bin', 'obj', '.git', '.vs', 'packages', '__pycache__', 'TestResults',
         '_buildUwp', '_buildWinUI3', 'Generated Files', 'AppPackages', 'BundleArtifacts')
-    $projectInputs = if ($Profile -in @('Headless', 'App')) { @('tests/IntegrationTests/IntegrationTests.csproj', 'tests/IntegrationTests/Directory.Build.props') } else { @() }
-    if ($Profile -eq 'App') { $projectInputs += 'tests/IntegrationTests/Package.appxmanifest' }
+    $projectInputs = if ($Profile -in @('Headless', 'App', 'Lifecycle')) { @('tests/IntegrationTests/IntegrationTests.csproj', 'tests/IntegrationTests/Directory.Build.props') } else { @() }
+    if ($Profile -in @('App', 'Lifecycle')) { $projectInputs += 'tests/IntegrationTests/Package.appxmanifest' }
     foreach ($relative in (@('Directory.Packages.props', 'global.json', '.editorconfig') + $projectInputs)) {
         $path = Join-Path $repo $relative
         if (Test-Path -LiteralPath $path -PathType Leaf) { $null = $files.Add([IO.Path]::GetFullPath($path)) }
@@ -75,6 +76,7 @@ function Get-TestArtifactFiles {
         'Unit' { Join-Path $repo "tests/UnitTests/bin/$Configuration/net10.0" }
         'Headless' { Join-Path $repo "tests/IntegrationTests/bin/Headless/$Configuration/net10.0" }
         'App' { Join-Path $repo "tests/IntegrationTests/bin/App/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
+        'Lifecycle' { Join-Path $repo "tests/IntegrationTests/bin/Lifecycle/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
         'Product' { Join-Path $repo "src/Notepads/obj/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
         'NativeDiff' { Join-Path $repo "tests/IntegrationTests/Support/NativeDiff.Tests/bin/x64/$Configuration" }
         'NativeBidi' { Join-Path $repo "tests/IntegrationTests/Support/NativeBidi.Tests/bin/x64/$Configuration" }
@@ -87,7 +89,7 @@ function Get-TestArtifactFiles {
         if (!(Test-Path -LiteralPath $assembly)) { throw "Missing compiled product assembly: $assembly" }
         return @($assembly)
     }
-    if ($Profile -eq 'App') {
+    if ($Profile -in @('App', 'Lifecycle')) {
         $recipePath = Join-Path $root 'IntegrationTests.build.appxrecipe'
         if (!(Test-Path -LiteralPath $recipePath)) { throw "Missing app recipe: $recipePath" }
         [xml] $recipe = Get-Content -LiteralPath $recipePath
@@ -126,7 +128,7 @@ function Write-TestBuildIdentity {
     foreach ($file in Get-TestArtifactFiles $Profile $Configuration $Platform) {
         $artifacts[[IO.Path]::GetFullPath($file)] = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
     }
-    $runtime = if ($Profile -in @('App', 'Product', 'DragPeer')) { 'win-' + $Platform.ToLowerInvariant() } else { 'portable-or-x64-helper' }
+    $runtime = if ($Profile -in @('App', 'Lifecycle', 'Product', 'DragPeer')) { 'win-' + $Platform.ToLowerInvariant() } else { 'portable-or-x64-helper' }
     $document = [ordered]@{
         Schema = 1; Profile = $Profile; Configuration = $Configuration; Platform = $Platform; Runtime = $runtime
         Sdk = (& dotnet --version); CreatedUtc = [DateTime]::UtcNow.ToString('O'); Sources = $sources; Artifacts = $artifacts

@@ -37,6 +37,7 @@ $groups = [ordered]@{
     ReadingOrder = @{ Profile = 'App'; Arguments = @('--reading-order'); Default = $true }
     Documents = @{ Profile = 'App'; Arguments = @('--documents'); Default = $true }
     Activation = @{ Profile = 'App'; Arguments = @('--activation'); Default = $true }
+    AppLifecycle = @{ Profile = 'Lifecycle'; Default = $false }
     OpenPicker = @{ Profile = 'App'; Arguments = @('--open-picker'); Default = $true }
     Outbound = @{ Profile = 'App'; Arguments = @('--outbound'); Default = $true }
     Printing = @{ Profile = 'App'; Arguments = @('--printing'); Default = $true }
@@ -138,8 +139,8 @@ function Ensure-TestBuild([string] $Profile, [string] $BuildConfiguration = $Con
             $project = if ($Profile -eq 'Product') { Join-Path $repo 'src/Notepads/Notepads.csproj' }
                 elseif ($Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) { Join-Path $repo "tests/IntegrationTests/Support/$Profile.Tests/$Profile.Tests.vcxproj" }
                 else { $integration }
-            if ($Profile -eq 'App') {
-                $buildArguments += @('/p:IntegrationHost=App', '/p:AppxBundle=Never', '/p:AppxPackageSigningEnabled=false', $(if ($BuildConfiguration -eq 'Debug') { '/t:Build' } else { '/t:Publish' }))
+            if ($Profile -in @('App', 'Lifecycle')) {
+                $buildArguments += @("/p:IntegrationHost=$Profile", '/p:AppxBundle=Never', '/p:AppxPackageSigningEnabled=false', $(if ($BuildConfiguration -eq 'Debug') { '/t:Build' } else { '/t:Publish' }))
             }
             else { $buildArguments += '/t:Build' }
             $priorPath = $env:PATH
@@ -208,6 +209,10 @@ try {
                     $parameters = @{ Platform = $Platform; Configuration = $appConfiguration; TimeoutSeconds = $TimeoutSeconds }
                     if ($spec.Lease) { $parameters.LeaseProbe = $true } else { $parameters.TestArguments = @($spec.Arguments) }
                     & (Join-Path $PSScriptRoot 'Test-IsolatedUwp.ps1') @parameters
+                }
+                elseif ($spec.Profile -eq 'Lifecycle') {
+                    Ensure-TestBuild Lifecycle
+                    & (Join-Path $PSScriptRoot 'Test-AppLifecycle.ps1') -Platform $Platform -Configuration $Configuration -TimeoutSeconds $TimeoutSeconds
                 }
                 elseif ($spec.Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) {
                     Ensure-TestBuild $spec.Profile

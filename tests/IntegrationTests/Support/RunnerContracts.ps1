@@ -46,6 +46,9 @@ $session.Before[$sentinel] = (Get-FileHash -LiteralPath $sentinel -Algorithm SHA
 Assert-IsolatedTestRunOwnership $session
 Assert-IsolatedTestPreservation $session
 $checks.Add('Valid owned registration, sentinel and prior data are accepted')
+$session.Completed = $true
+Expect-Rejection 'Completed session cannot launch more work' '*already completed*' { Assert-IsolatedTestRunOwnership $session }
+$session.Completed = $false
 
 [IO.File]::WriteAllText($sentinel, 'changed')
 Expect-Rejection 'Changed sentinel' '*owned test sentinel changed*' { Assert-IsolatedTestRunOwnership $session }
@@ -74,6 +77,35 @@ $identity.Verified = $true
 $identity.StartTicks++
 Expect-Rejection 'Reused PID with different creation time' '*left untouched*' { Get-IsolatedTestProcess $identity }
 $currentProcess.Dispose()
+
+# Exit may occur after the retained-handle check but during the separate PID
+# metadata lookup. Only the verified handle may establish that the process ended;
+# live mismatches and live query failures must still be rejected.
+& {
+    function Get-Process { param($Id, $ErrorAction); return $observation }
+    foreach ($missingPath in @($false, $true)) {
+        foreach ($exitsDuringQuery in @($false, $true)) {
+            $retained = [pscustomobject]@{ HasExited = $false }
+            $observation = [pscustomobject]@{ Retained = $retained; Exits = $exitsDuringQuery; MissingPath = $missingPath; Disposed = $false }
+            $observation | Add-Member ScriptProperty Path {
+                $this.Retained.HasExited = $this.Exits
+                if ($this.MissingPath) { return $null }
+                return 'changed executable'
+            }
+            $observation | Add-Member ScriptMethod Dispose { $this.Disposed = $true }
+            $identity = @{ Id = 123; Path = 'owned executable'; StartTicks = 1L; Verified = $true; Process = $retained }
+            $name = "PID metadata race (path unavailable=$missingPath, process exits=$exitsDuringQuery)"
+            if ($exitsDuringQuery) {
+                if ($null -ne (Get-IsolatedTestProcess $identity)) { throw "$name returned an exited process." }
+                $checks.Add($name)
+            }
+            else {
+                Expect-Rejection $name '*left untouched*' { Get-IsolatedTestProcess $identity }
+            }
+            if (!$observation.Disposed) { throw "$name leaked its metadata probe." }
+        }
+    }
+}
 
 function New-ExitedProcessFixture([int] $ExitCode) {
     $start = [Diagnostics.ProcessStartInfo]::new((Join-Path $env:SystemRoot 'System32/cmd.exe'))
@@ -481,9 +513,116 @@ finally {
     $checks.Add('All physical keyboard call sites use the guarded helpers, including menu cleanup')
 }
 
+& {
+    # Execute the actual declined-prelaunch driver with inert activation/process
+    # boundaries. A receipt alone must never mask a live or failed process.
+    $ast = [Management.Automation.Language.Parser]::ParseFile(
+        (Join-Path $repo 'scripts/Test-AppLifecycle.ps1'), [ref]$null, [ref]$null)
+    foreach ($name in @('Check', 'Check-DeclinedPrelaunch', 'Send-Command')) {
+        $definition = $ast.Find({ param($node)
+            $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
+        }, $false)
+        $body = $definition.Extent.Text.Replace('[PreservingUwpTestLauncher]', '[LifecycleContractLauncher]')
+        . ([scriptblock]::Create($body.Replace('[IO.File]::Move(', '[LifecycleContractFiles]::Move(')))
+    }
+    $activationAst = [Management.Automation.Language.Parser]::ParseFile(
+        (Join-Path $repo 'scripts/IsolatedTestPackage.ps1'), [ref]$null, [ref]$null)
+    $startActivation = $activationAst.Find({ param($node)
+        $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Start-IsolatedTestActivation'
+    }, $false)
+    . ([scriptblock]::Create($startActivation.Extent.Text.Replace('[PreservingUwpTestLauncher]', '[LifecycleContractLauncher]')))
+    if (!('LifecycleContractLauncher' -as [type])) {
+        Add-Type @'
+public static class LifecycleContractLauncher {
+    public static string Root, Receipt;
+    public static bool Exiting;
+    public static System.Threading.Tasks.Task<uint> LaunchAsync(string app, string arguments, uint options) {
+        System.IO.File.WriteAllText(System.IO.Path.Combine(Root, "lifecycle-42-declined-0001.json"), Receipt);
+        if (Exiting) System.IO.File.WriteAllText(System.IO.Path.Combine(Root, "framework-exiting-42.txt"), "123");
+        return System.Threading.Tasks.Task.FromResult(42u);
+    }
+}
+public static class LifecycleContractFiles {
+    public static int Failures, Code, Moves;
+    public static void Move(string source, string target, bool overwrite) {
+        Moves++;
+        if (Failures-- > 0) throw new System.IO.IOException("Command publication rejected", unchecked((int)0x80070000) | Code);
+        System.IO.File.Move(source, target, overwrite);
+    }
+}
+'@
+    }
+    function Assert-IsolatedTestRunOwnership { param($Session) }
+    function Register-IsolatedTestProcess {
+        param($Session, $ProcessId, $ExpectedStartTicks)
+        $identity = @{ Id = $ProcessId; StartTicks = 123L; Verified = $true; Process = $observation; ExpectedTermination = $false }
+        $Session.Processes.Add($identity)
+        return $identity
+    }
+    foreach ($case in @(
+        @{ Name = 'Natural successful decline'; Exited = $true; Framework = $true; ExpectedCode = 0; Code = 0; Error = '' },
+        @{ Name = 'Framework-defined exit code'; Exited = $true; Framework = $true; ExpectedCode = 1; Code = 1; Error = '' },
+        @{ Name = 'Receipt with live process'; Exited = $false; Framework = $true; ExpectedCode = 0; Code = 0; Error = '*did not exit naturally*' },
+        @{ Name = 'Receipt with failed process'; Exited = $true; Framework = $true; ExpectedCode = 0; Code = 1; Error = '*differs from the framework control*' },
+        @{ Name = 'Receipt without framework shutdown'; Exited = $true; Framework = $false; ExpectedCode = 0; Code = 0; Error = '*did not acknowledge framework shutdown*' }
+    )) {
+        $root = Join-Path $fixtureRoot $case.Name
+        $null = New-Item -ItemType Directory -Path (Join-Path $root 'data') -Force
+        $session = @{ Root = $root; Layout = $root; RunRoot = (Join-Path $root 'data'); RunId = 'fixture';
+            Package = @{ PackageFamilyName = 'fixture' }; Processes = [Collections.Generic.List[object]]::new(); FrameworkExitCode = $case.ExpectedCode }
+        $observation = [pscustomobject]@{ HasExited = $case.Exited; Code = $case.Code; Disposed = $false }
+        $observation | Add-Member ScriptMethod WaitForExit { param($Timeout); return $this.HasExited }
+        $observation | Add-Member ScriptMethod get_ExitCode { return $this.Code }
+        $observation | Add-Member ScriptMethod Dispose { $this.Disposed = $true }
+        [LifecycleContractLauncher]::Root = $session.RunRoot
+        [LifecycleContractLauncher]::Exiting = $case.Framework
+        [LifecycleContractLauncher]::Receipt = @{ ProcessId = 42; StartTicks = 123L; HasWorkspace = $false;
+            Primary = $false; Visible = $false; ClipboardFlushes = 0; SettingsBefore = 'same'; SettingsAfter = 'same' } | ConvertTo-Json
+        if ($case.Error) {
+            Expect-Rejection $case.Name $case.Error { Check-DeclinedPrelaunch }
+            if ($session.Processes.Count -ne 1 -or $observation.Disposed) { throw 'A failed decline escaped owned process cleanup.' }
+        }
+        else {
+            Check-DeclinedPrelaunch
+            if ($session.Processes.Count -ne 0 -or !$observation.Disposed) { throw 'A successful decline retained its process handle.' }
+            $checks.Add($case.Name)
+        }
+    }
+    function Get-IsolatedTestProcess { param($Identity); return $Identity }
+    function Start-Sleep { param($Milliseconds) }
+    $session = @{ RunRoot = (Join-Path $fixtureRoot 'command-replacement') }
+    $null = New-Item -ItemType Directory -Path $session.RunRoot
+    $identity = @{ Id = 42 }
+    $command = Join-Path $session.RunRoot 'lifecycle-42-command.txt'
+    [IO.File]::WriteAllText($command, 'old')
+    [LifecycleContractFiles]::Failures = 1
+    [LifecycleContractFiles]::Code = 32
+    [LifecycleContractFiles]::Moves = 0
+    Send-Command $identity new-window
+    if ([IO.File]::ReadAllText($command) -ne '1:new-window' -or [LifecycleContractFiles]::Moves -ne 2) {
+        throw 'A transient reader lock did not publish exactly one complete command.'
+    }
+    $checks.Add('Atomic lifecycle command replacement retries transient reader locks')
+    [LifecycleContractFiles]::Failures = 1
+    [LifecycleContractFiles]::Code = 5
+    [LifecycleContractFiles]::Moves = 0
+    Expect-Rejection 'Non-sharing command I/O error' '*Command publication rejected*' { Send-Command $identity exit }
+    if ([IO.File]::ReadAllText($command) -ne '1:new-window' -or [LifecycleContractFiles]::Moves -ne 1) {
+        throw 'A non-sharing publication error was retried or changed the previous command.'
+    }
+}
+
 $manifestSource = Join-Path $repo 'tests/IntegrationTests/Package.appxmanifest'
 if ($manifestSource -notin @(Get-TestSourceFiles App)) { throw 'App build discovery omits Package.appxmanifest.' }
 $checks.Add('App source discovery includes its package manifest')
+foreach ($relative in @('tests/IntegrationTests/Package.appxmanifest', 'tests/IntegrationTests/IntegrationTests.csproj',
+    'tests/IntegrationTests/Directory.Build.props', 'src/Notepads/Composition/InstanceRouter.cs',
+    'src/Notepads/App.xaml.cs', 'tests/IntegrationTests/Lifecycle/LifecycleProgram.cs')) {
+    if ((Join-Path $repo $relative) -notin @(Get-TestSourceFiles Lifecycle)) {
+        throw "Lifecycle build discovery omits $relative."
+    }
+}
+$checks.Add('Lifecycle source discovery includes the real activation path and package/project inputs')
 & {
     $inputRepo = Join-Path $fixtureRoot 'manifest-inputs'
     foreach ($relative in @('scripts', 'src', 'tests/Shared', 'tests/IntegrationTests/App')) {
@@ -715,3 +854,5 @@ Write-Output "PASS: Runner contracts ($($checks.Count) checks); private evidence
 & (Join-Path $PSScriptRoot 'CIContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'ci')
 & (Join-Path $PSScriptRoot 'PackagedAppProcessContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'packaged-processes')
 & (Join-Path $PSScriptRoot 'PackagedAppInputContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'packaged-input')
+& (Join-Path $PSScriptRoot 'ActivationContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'activation')
+& (Join-Path $PSScriptRoot 'LifecycleSamplingContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'lifecycle-sampling')

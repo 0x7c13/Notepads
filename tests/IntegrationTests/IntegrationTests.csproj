@@ -6,7 +6,7 @@
     <LangVersion>14.0</LangVersion>
     <NotepadsSourceRoot Condition="'$(NotepadsSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\src\Notepads</NotepadsSourceRoot>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(IntegrationHost)' == 'App'">
+  <PropertyGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle')">
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <UseUwp>true</UseUwp>
@@ -42,10 +42,10 @@
     <NotepadsSourceRoot Condition="'$(NotepadsSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\src\Notepads</NotepadsSourceRoot>
     <Win32Resource>$(NotepadsSourceRoot)\Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(IntegrationHost)' == 'App' and ('$(Platform)' != '' and '$(Platform)' != 'AnyCPU')">
+  <PropertyGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle') and ('$(Platform)' != '' and '$(Platform)' != 'AnyCPU')">
     <RuntimeIdentifier>win-$([System.String]::Copy('$(Platform)').ToLowerInvariant())</RuntimeIdentifier>
   </PropertyGroup>
-  <ItemGroup Condition="'$(IntegrationHost)' == 'App'">
+  <ItemGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle')">
     <PackageReference Include="Microsoft.Windows.CsWinRT" />
     <PackageReference Include="Microsoft.UI.Xaml" />
     <PackageReference Include="UTF.Unknown" />
@@ -56,8 +56,8 @@
     <ProjectReference Include="..\..\src\Notepads.Native\Projection\Notepads.Native.Projection.csproj" />
     <ProjectReference Include="..\..\src\Notepads.Controls\Notepads.Controls.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(IntegrationHost)' == 'App'">
-    <Compile Include="$(NotepadsSourceRoot)\**\*.cs" Exclude="$(NotepadsSourceRoot)\bin\**;$(NotepadsSourceRoot)\obj\**;$(NotepadsSourceRoot)\App.xaml.cs;$(NotepadsSourceRoot)\Program.cs;$(NotepadsSourceRoot)\Composition\BootstrapContext.cs;$(NotepadsSourceRoot)\Composition\WindowContextFactory.cs;$(NotepadsSourceRoot)\Infrastructure\Shell\MRUService.cs;$(NotepadsSourceRoot)\Infrastructure\Diagnostics\AnalyticsService.cs;$(NotepadsSourceRoot)\Presentation\Controls\Markdown\**">
+  <ItemGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle')">
+    <Compile Include="$(NotepadsSourceRoot)\**\*.cs" Exclude="$(NotepadsSourceRoot)\bin\**;$(NotepadsSourceRoot)\obj\**;$(NotepadsSourceRoot)\App.xaml.cs;$(NotepadsSourceRoot)\Program.cs;$(NotepadsSourceRoot)\Composition\BootstrapContext.cs;$(NotepadsSourceRoot)\Composition\InstanceRouter.cs;$(NotepadsSourceRoot)\Composition\WindowContextFactory.cs;$(NotepadsSourceRoot)\Infrastructure\Shell\MRUService.cs;$(NotepadsSourceRoot)\Infrastructure\Diagnostics\AnalyticsService.cs;$(NotepadsSourceRoot)\Presentation\Controls\Markdown\**">
       <Link>Product\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
     <ApplicationDefinition Include="$(NotepadsSourceRoot)\App.xaml" Link="App.xaml" />
@@ -75,7 +75,7 @@
     </Content>
     <Content Include="$(NotepadsSourceRoot)\Resource\Text Document.txt" Link="Resource\Text Document.txt" />
   </ItemGroup>
-  <Import Project="..\Shared\TestStorageIsolation.targets" Condition="'$(IntegrationHost)' == 'App'" />
+  <Import Project="..\Shared\TestStorageIsolation.targets" Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle')" />
   <PropertyGroup Condition="'$(IntegrationHost)' == 'Headless'">
     <AssemblyName>NotepadsIntegrationTests.Headless</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -101,10 +101,18 @@
     <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryStoragePaths.cs" />
     <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryStorageFaults.cs" />
   </ItemGroup>
-  <ItemGroup Condition="'$(IntegrationHost)' == 'App'">
-    <Compile Include="App\**\*.cs" />
+  <ItemGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle')">
+    <Compile Include="App\**\*.cs" Exclude="App\App.Host.cs;App\Program.cs" />
+    <Compile Include="App\App.Host.cs;App\Program.cs" Condition="'$(IntegrationHost)' == 'App'" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(IntegrationHost)' == 'Lifecycle'">
+    <StartupObject>NotepadsIntegrationTests.LifecycleProgram</StartupObject>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IntegrationHost)' == 'Lifecycle'">
+    <Compile Include="Lifecycle\**\*.cs" />
+    <Compile Include="$(NotepadsSourceRoot)\App.xaml.cs;$(NotepadsSourceRoot)\Program.cs;$(NotepadsSourceRoot)\Composition\BootstrapContext.cs;$(NotepadsSourceRoot)\Composition\InstanceRouter.cs;$(NotepadsSourceRoot)\Composition\WindowContextFactory.cs" />
   </ItemGroup>
   <Target Name="ValidateIntegrationHost" BeforeTargets="PrepareForBuild">
-    <Error Condition="'$(IntegrationHost)' != 'App' and '$(IntegrationHost)' != 'Headless'" Text="IntegrationHost must be App or Headless." />
+    <Error Condition="'$(IntegrationHost)' != 'App' and '$(IntegrationHost)' != 'Headless' and '$(IntegrationHost)' != 'Lifecycle'" Text="IntegrationHost must be App, Lifecycle or Headless." />
   </Target>
 </Project>

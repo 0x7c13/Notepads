@@ -49,6 +49,7 @@ public sealed class PackagedAppDriver : IDisposable
     [DllImport("user32.dll")] private static extern bool EnumChildWindows(IntPtr root, EnumWindow callback, IntPtr parameter);
     [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(IntPtr window, out uint pid);
     [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr window);
+    [DllImport("dwmapi.dll")] private static extern int DwmGetWindowAttribute(IntPtr window, uint attribute, out uint value, uint size);
     [DllImport("user32.dll")] private static extern bool SetForegroundWindow(IntPtr window);
     [DllImport("user32.dll")] private static extern IntPtr GetForegroundWindow();
     [DllImport("user32.dll")] private static extern bool ShowWindowAsync(IntPtr window, int command);
@@ -108,7 +109,7 @@ public sealed class PackagedAppDriver : IDisposable
 
     private static bool ContainsProcess(IntPtr root, uint pid)
     {
-        if (root == IntPtr.Zero || !IsWindowVisible(root)) return false;
+        if (root == IntPtr.Zero || !IsPresented(root)) return false;
         GetWindowThreadProcessId(root, out uint rootPid);
         if (rootPid == pid) return true;
         bool found = false;
@@ -119,6 +120,14 @@ public sealed class PackagedAppDriver : IDisposable
             return !found;
         }, IntPtr.Zero);
         return found;
+    }
+
+    private static bool IsPresented(IntPtr window)
+    {
+        // Prelaunched UWP windows can retain WS_VISIBLE while DWM cloaks them.
+        // Such a window is not presented and must not count as a user window.
+        return IsWindowVisible(window) &&
+            DwmGetWindowAttribute(window, 14 /* DWMWA_CLOAKED */, out uint cloaked, sizeof(uint)) >= 0 && cloaked == 0;
     }
 
     public static IntPtr Window(uint pid)
@@ -148,6 +157,7 @@ public sealed class PackagedAppDriver : IDisposable
     }
 
     public static IntPtr ForegroundWindow() { return GetForegroundWindow(); }
+    public static bool IsForeground(uint pid) { return ContainsProcess(GetForegroundWindow(), pid); }
     public static uint ForegroundProcess() { uint pid; GetWindowThreadProcessId(GetForegroundWindow(), out pid); return pid; }
 
     private static void RequireFocus(uint pid)

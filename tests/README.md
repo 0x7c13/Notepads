@@ -8,6 +8,7 @@ configuration, runner setup, Production package checks and hosted reproduction.
 | `UnitTests` | Pure production logic; no files, native libraries, UI or services; independent xUnit fixtures parallelize. |
 | `IntegrationTests` / Headless | Real storage, process-isolated metrics faults and architecture checks. |
 | `IntegrationTests` / App | Actual production pages, resources, native editor and workspace workflows in an isolated Windows package. |
+| `IntegrationTests` / Lifecycle | Real instance router, App/bootstrap and OS prelaunch/suspend/activation; same isolated package and storage boundary. |
 | Integration `Support` and scripts | Native C++ oracles, external keyboard/UIA/drag drivers and the hosted installed-app driver. |
 
 ## Run the relevant checks
@@ -46,6 +47,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Find/replace, Go To, clipboard, native edit commands | `EditingUI`, `Clipboard`, `ClipboardRejectedCut`, `Editor`, `Search` |
 | Syntax, native Diff, ICU regex and failures | `Editor`; focused `Syntax`, `Diff`, `NativeDiff`, `RegexText`, `NativeFaults` |
 | Tabs, commands, pending-tab availability, activation ordering | `WorkspaceCommands`, `Activation`, `Workspace` |
+| Prelaunch, first-paint restore, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
 | Preferences, themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
 | Session restart/import/close, transfer, persistence, recovery and leases | `Workspace*`, `Persistence`, `Leases`, `SessionResilience` |
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
@@ -78,7 +80,12 @@ exact text, caret and one-step undo without relying on paint/idle to synchronize
 
 - Local App/desktop tests register only `Notepads.Editor.Tests`, use private GUID
   data/settings, restore prior registration, verify existing test data/grants and
-  validate process identity before cleanup. Production/Dev apps and user sessions
+  validate process identity before cleanup. Lifecycle decline additionally requires
+  the framework shutdown event and actual exit matching an independent framework
+  control; pending-presentation checks use owned windows and the real App helper.
+  Pending broker calls stay session-owned through cleanup. If one never settles,
+  its isolated registration stays fenced against replacement by later runs.
+  Production/Dev apps and user sessions
   stay outside this boundary. Ordinary hosts must exit cleanly; the drag peer is
   deliberately terminated by cleanup, so its natural exit is not verified.
 - Foreground bootstrap acts only on verified owned windows, with guarded caption
@@ -121,6 +128,11 @@ runs. Prepared-document timings exclude activation/disk and are not key-to-photo
 latency; sampled memory is not an allocation profile or proof of leak freedom.
 External benchmark drivers can request `PerformanceTestWindow`'s isolated readiness
 handshake to acquire foreground before timers start; ordinary runs need no handshake.
+`Test-AppLifecycle.ps1 -PerformanceRounds 4` alternates normal process startup and
+forced prelaunch/suspend/reuse on one Release AOT build. Preparation CPU/memory are
+reported separately. CPU admission reads language-independent CIM processor utility;
+provider errors or invalid samples fail explicitly. This measures native paint/next render, not GPU presentation,
+true cold disk caches or Windows' automatic prelaunch frequency.
 Correctness tests have no machine-dependent performance pass/fail threshold.
 
 Protect observable contracts with independent expectations and a reproducer for

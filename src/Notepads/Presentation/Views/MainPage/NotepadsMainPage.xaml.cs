@@ -450,7 +450,9 @@ public sealed partial class NotepadsMainPage : Page
                  args.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.CodeActivated)
         {
             LoggingService.LogInfo($"[{nameof(NotepadsMainPage)}] CoreWindow Activated.", consoleOnly: true);
-            Task.Run(() => ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, _context.InstanceId.ToString()));
+            // Publish on the activation thread: queued background writes can
+            // finish out of order after the user has already switched windows.
+            ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, _context.InstanceId.ToString());
             NotepadsCore.GetSelectedReadyEditor()?.StartCheckingFileStatusPeriodically();
             if (!_isAppClosing && !_isLastTabCloseInProgress)
             {

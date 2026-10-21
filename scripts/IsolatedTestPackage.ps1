@@ -5,6 +5,8 @@
 
 # One registration/desktop owner shared by ordinary, UIA and drag integration runs.
 if (!('IsolatedTestProcess' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'IsolatedTestProcess.cs') }
+# ACTIVATEOPTIONS::AO_PRELAUNCH from ShObjIdl_core.h. Ordinary activation is zero.
+$script:IsolatedPrelaunchActivationOption = [uint32] 0x02000000
 
 function Assert-IsolatedTestPreservation {
     param([hashtable] $Session)
@@ -21,6 +23,7 @@ function Assert-IsolatedTestPreservation {
 
 function Assert-IsolatedTestRunOwnership {
     param([hashtable] $Session)
+    if ($Session.Completed) { throw 'The isolated test session has already completed.' }
     $registered = Get-AppxPackage -Name Notepads.Editor.Tests
     if (!$registered -or $registered.PackageFullName -ne $Session.Package.PackageFullName -or
         [IO.Path]::GetFullPath($registered.InstallLocation) -ne $Session.Layout) {
@@ -42,6 +45,13 @@ function Get-IsolatedTestProcess {
                 throw 'The activated PID no longer has the verified executable and creation time; it was left untouched.'
             }
             return $Identity.Process
+        }
+        catch {
+            # The process can exit between the retained-handle check above and
+            # this PID lookup. Its exact handle still owns exit-code validation;
+            # a live mismatch must continue to fail without touching the process.
+            if ($Identity.Verified -and $Identity.Process -and $Identity.Process.HasExited) { return $null }
+            throw
         }
         finally { $process.Dispose() }
     }
@@ -66,18 +76,119 @@ function Close-IsolatedTestProcess {
 }
 
 function Start-IsolatedTestProcess {
-    param([hashtable] $Session, [string] $Argument, [switch] $ExpectedTermination)
+    param([hashtable] $Session, [string] $Argument, [switch] $ExpectedTermination,
+        [switch] $Prelaunch)
     Assert-IsolatedTestRunOwnership $Session
-    $id = [PreservingUwpTestLauncher]::Launch("$($Session.Package.PackageFamilyName)!App", "--test-run $($Session.RunId) $Argument")
-    $identity = @{ Id = $id; Path = $Session.Executable; StartTicks = 0L; Verified = $false; ExpectedTermination = [bool]$ExpectedTermination; Process = $null }
+    if ($Session.PendingActivation) { throw 'An unfinished activation still owns the isolated registration.' }
+    $options = if ($Prelaunch) { $script:IsolatedPrelaunchActivationOption } else { [uint32] 0 }
+    $id = [PreservingUwpTestLauncher]::Launch("$($Session.Package.PackageFamilyName)!App", "--test-run $($Session.RunId) $Argument", $options)
+    return Register-IsolatedTestProcess $Session $id -ExpectedTermination:$ExpectedTermination
+}
+
+function Start-IsolatedTestActivation {
+    param([hashtable] $Session, [string] $Argument, [string] $ReceiptPattern,
+        [switch] $Prelaunch)
+    Assert-IsolatedTestRunOwnership $Session
+    $marker = Join-Path $Session.Layout 'PendingTestActivation.txt'
+    if ($Session.PendingActivation -or (Test-Path -LiteralPath $marker)) {
+        throw 'An unfinished activation still owns the isolated registration.'
+    }
+    $activation = @{ Task = $null; Identity = $null; Receipt = $null; Marker = $marker; ReceiptPattern = $ReceiptPattern
+        PriorReceipts = @(Get-ChildItem -LiteralPath $Session.RunRoot -Filter $ReceiptPattern | ForEach-Object FullName) }
+    # Persist the fence before queuing work. If the broker never returns, a later
+    # runner must not replace the registration underneath that outstanding call.
+    [IO.File]::WriteAllText($marker, $Session.RunId)
+    $Session.PendingActivation = $activation
+    try {
+        $options = if ($Prelaunch) { $script:IsolatedPrelaunchActivationOption } else { [uint32] 0 }
+        $activation.Task = [PreservingUwpTestLauncher]::LaunchAsync("$($Session.Package.PackageFamilyName)!App",
+            "--test-run $($Session.RunId) $Argument", $options)
+    }
+    catch {
+        [IO.File]::Delete($marker)
+        $Session.PendingActivation = $null
+        throw
+    }
+    return $activation
+}
+
+function Complete-IsolatedTestActivation {
+    param([hashtable] $Session)
+    $activation = $Session.PendingActivation
+    if (!$activation -or !$activation.Task.IsCompleted) { return }
+    try {
+        $id = $activation.Task.GetAwaiter().GetResult()
+        if (!$activation.Identity) { $activation.Identity = Register-IsolatedTestProcess $Session $id }
+        if ($id -ne $activation.Identity.Id) {
+            # Retain both identities for guarded cleanup before rejecting a
+            # broker result that disagrees with the callback receipt.
+            $null = Register-IsolatedTestProcess $Session $id
+            throw 'The activation result and callback process differ.'
+        }
+    }
+    finally {
+        # A settled call cannot launch later. Retain its result even if receipt
+        # parsing/validation failed, then release the registration fence.
+        [IO.File]::Delete($activation.Marker)
+        $Session.PendingActivation = $null
+    }
+}
+
+function Wait-IsolatedTestActivation {
+    param([hashtable] $Session, [ValidateRange(0, 60000)] [int] $TimeoutMilliseconds = 15000)
+    $activation = $Session.PendingActivation
+    if (!$activation) { throw 'There is no pending isolated activation.' }
+    $watch = [Diagnostics.Stopwatch]::StartNew()
+    try {
+        do {
+            # The activation callback can hold the broker until its exact process
+            # is retained. Cleanup must continue this handshake after a timeout.
+            if (!$activation.Receipt) {
+                $receipts = @(Get-ChildItem -LiteralPath $Session.RunRoot -Filter $activation.ReceiptPattern |
+                    Where-Object FullName -NotIn $activation.PriorReceipts)
+                if ($receipts.Count -gt 1) { throw 'More than one process acknowledged the same isolated activation.' }
+                if ($receipts.Count) {
+                    $receipt = Get-Content -LiteralPath $receipts[0].FullName -Raw | ConvertFrom-Json
+                    if (!$activation.Identity) {
+                        $activation.Identity = Register-IsolatedTestProcess $Session $receipt.ProcessId -ExpectedStartTicks $receipt.StartTicks
+                    }
+                    if ($activation.Identity.Id -ne $receipt.ProcessId -or $activation.Identity.StartTicks -ne $receipt.StartTicks) {
+                        throw 'The activation receipt does not identify the retained process.'
+                    }
+                    $activation.Receipt = $receipts[0].FullName
+                }
+            }
+            if ($activation.Task.IsCompleted) {
+                Complete-IsolatedTestActivation $Session
+                if ($activation.Receipt) { return $activation.Identity }
+            }
+            if ($watch.Elapsed.TotalMilliseconds -ge $TimeoutMilliseconds) {
+                throw 'The isolated activation did not finish its broker/receipt handshake.'
+            }
+            Start-Sleep -Milliseconds 25
+        } while ($true)
+    }
+    finally {
+        Complete-IsolatedTestActivation $Session
+    }
+}
+
+function Register-IsolatedTestProcess {
+    param([hashtable] $Session, [uint32] $ProcessId, [long] $ExpectedStartTicks = 0, [switch] $ExpectedTermination)
+    # The caller verifies run ownership before activation. Retain the returned
+    # process before further package queries or I/O can race a short-lived host.
+    $identity = @{ Id = $ProcessId; Path = $Session.Executable; StartTicks = 0L; Verified = $false; ExpectedTermination = [bool]$ExpectedTermination; Process = $null }
     $Session.Processes.Add($identity)
-    $process = [IsolatedTestProcess]::new($id)
+    $process = [IsolatedTestProcess]::new($ProcessId)
     $identity.Process = $process
     # The wrapper retains an exact handle with limited rights. Metadata, waiting,
     # exit-code reads and termination all refer to that same process instance.
     if ($process.Path -ne $Session.Executable) { throw 'Activation returned an unowned executable.' }
     $identity.StartTicks = $process.StartTime.ToUniversalTime().Ticks
+    if ($ExpectedStartTicks -and $identity.StartTicks -ne $ExpectedStartTicks) { throw 'Activation process creation time does not match its receipt.' }
     $identity.Verified = $true
+    [IO.File]::WriteAllText((Join-Path $Session.RunRoot "retained-process-$ProcessId.txt"),
+        $identity.StartTicks.ToString([Globalization.CultureInfo]::InvariantCulture))
     return $identity
 }
 
@@ -214,6 +325,7 @@ function Start-IsolatedTestPackage {
     param(
         [ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64',
         [ValidateSet('Debug', 'Release')] [string] $Configuration = 'Release',
+        [ValidateSet('App', 'Lifecycle')] [string] $IntegrationHost = 'App',
         [string] $SourceLayout = '', [string] $ExpectedRegistration = ''
     )
     $repo = Split-Path $PSScriptRoot -Parent
@@ -229,7 +341,7 @@ function Start-IsolatedTestPackage {
     if (!$acquired) { $mutex.Dispose(); throw 'Another integration run owns the test registration or desktop. Nothing was changed.' }
     $session = @{
         RunId = $runId; Root = $root; Layout = $layout; Mutex = $mutex; MutexHeld = $true
-        Processes = [Collections.Generic.List[object]]::new(); Phase = 0; Before = @{}; PriorDirectories = @()
+        Processes = [Collections.Generic.List[object]]::new(); PendingActivation = $null; Phase = 0; Before = @{}; PriorDirectories = @()
         Prior = $null; Package = $null; RegisteredOwned = $false; UnregisteredPrior = $false
         RunRoot = $null; Executable = $null; CleanupStarted = $false; Completed = $false
     }
@@ -239,6 +351,9 @@ function Start-IsolatedTestPackage {
         }
         $prior = Get-AppxPackage -Name Notepads.Editor.Tests
         $session.Prior = $prior
+        if ($prior -and (Test-Path -LiteralPath (Join-Path $prior.InstallLocation 'PendingTestActivation.txt'))) {
+            throw "An unfinished activation owns the existing test registration: $($prior.InstallLocation). Nothing was replaced."
+        }
         if ($prior -and (!$prior.IsDevelopmentMode -or $prior.PackageFamilyName -ne $family -or
             !(Test-Path -LiteralPath (Join-Path $prior.InstallLocation 'AppxManifest.xml')))) {
             throw 'The existing test package is not a restorable loose registration.'
@@ -269,8 +384,8 @@ function Start-IsolatedTestPackage {
         }
         else {
             $runtime = 'win-' + $Platform.ToLowerInvariant()
-            $recipePath = Join-Path $repo "tests\IntegrationTests\bin\App\$Platform\$Configuration\net10.0-windows10.0.26100.0\$runtime\IntegrationTests.build.appxrecipe"
-            if (!(Test-Path -LiteralPath $recipePath)) { throw "Build the App integration profile first: $recipePath" }
+            $recipePath = Join-Path $repo "tests\IntegrationTests\bin\$IntegrationHost\$Platform\$Configuration\net10.0-windows10.0.26100.0\$runtime\IntegrationTests.build.appxrecipe"
+            if (!(Test-Path -LiteralPath $recipePath)) { throw "Build the $IntegrationHost integration profile first: $recipePath" }
             [xml] $recipe = Get-Content -LiteralPath $recipePath
             foreach ($group in $recipe.Project.ItemGroup) {
                 foreach ($file in $group.ChildNodes) {
@@ -309,11 +424,13 @@ interface IPreservingTestActivationManager {
     [PreserveSig] int ActivateForProtocol(IntPtr items, out uint processId);
 }
 public static class PreservingUwpTestLauncher {
-    public static uint Launch(string appId, string arguments) {
+    public static System.Threading.Tasks.Task<uint> LaunchAsync(string appId, string arguments, uint options) =>
+        System.Threading.Tasks.Task.Run(() => Launch(appId, arguments, options));
+    public static uint Launch(string appId, string arguments, uint options = 0) {
         var manager = (IPreservingTestActivationManager)Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("45ba127d-10a8-46ea-8ab7-56ea9078943c")));
         try {
             uint processId;
-            Marshal.ThrowExceptionForHR(manager.ActivateApplication(appId, arguments, 0, out processId));
+            Marshal.ThrowExceptionForHR(manager.ActivateApplication(appId, arguments, options, out processId));
             return processId;
         } finally { Marshal.ReleaseComObject(manager); }
     }
@@ -355,6 +472,10 @@ function Complete-IsolatedTestPackage {
     if (!$Session -or $Session.Completed) { return }
     $errors = [Collections.Generic.List[string]]::new()
     try {
+        if ($Session.PendingActivation) {
+            try { $null = Wait-IsolatedTestActivation $Session }
+            catch { $errors.Add($_.ToString()) }
+        }
         foreach ($identity in $Session.Processes.ToArray()) {
             try {
                 if ((Get-IsolatedTestProcess $identity) -and !$identity.ExpectedTermination) {
@@ -364,7 +485,7 @@ function Complete-IsolatedTestPackage {
             }
             catch { $errors.Add($_.ToString()) }
         }
-        if ($Session.Processes.Count -eq 0 -and $Session.RegisteredOwned -and !$SkipHostCleanup) {
+        if ($Session.Processes.Count -eq 0 -and !$Session.PendingActivation -and $Session.RegisteredOwned -and !$SkipHostCleanup) {
             try {
                 $Session.CleanupStarted = $true
                 Invoke-IsolatedTestPhase $Session '--test-cleanup' -TimeoutSeconds 60
@@ -383,7 +504,10 @@ function Complete-IsolatedTestPackage {
             try { Stop-IsolatedTestProcess $Session $identity -CleanupAfterFailure }
             catch { $errors.Add($_.ToString()) }
         }
-        if ($Session.Processes.Count -eq 0) {
+        if ($Session.PendingActivation) {
+            $errors.Add("An unfinished activation remains. The isolated registration was retained at $($Session.Layout); its pending marker blocks later runs.")
+        }
+        elseif ($Session.Processes.Count -eq 0) {
             try {
                 $current = Get-AppxPackage -Name Notepads.Editor.Tests
                 if ($current -and [IO.Path]::GetFullPath($current.InstallLocation) -eq $Session.Layout) {

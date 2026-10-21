@@ -24,6 +24,7 @@ using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -47,13 +48,6 @@ public sealed partial class App : Application
         TaskScheduler.UnobservedTaskException += OnUnobservedException;
 
         _bootstrap = bootstrap;
-        bootstrap.AcquireInstanceOwnership();
-        if (bootstrap.IsPrimaryInstance) ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, null);
-
-        LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {_bootstrap.InstanceId} IsPrimaryInstance: {_bootstrap.IsPrimaryInstance}.");
-
-        ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, _bootstrap.InstanceId.ToString());
-
         InitializeComponent();
 
         Suspending += OnSuspending;
@@ -84,11 +78,27 @@ public sealed partial class App : Application
 
     private async Task ActivateAsync(IActivatedEventArgs e)
     {
+        // Prelaunch prepares framework/resources only. Session ownership and all
+        // user-visible work belong to the subsequent real activation.
+        if (e is LaunchActivatedEventArgs { PrelaunchActivated: true })
+        {
+            if (_bootstrap.DiscardPrelaunch && _windowContext == null)
+            {
+                // Let the broker finish delivering activation before shutdown.
+                _ = Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Exit);
+            }
+            return;
+        }
+
+        ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, _bootstrap.InstanceId.ToString());
         bool rootFrameCreated = false;
 
         if (Window.Current.Content is not Frame rootFrame)
         {
-            rootFrame = CreateRootFrame(e);
+            _bootstrap.AcquireInstanceOwnership();
+            LoggingService.LogInfo($"[{nameof(App)}] Started: Instance = {_bootstrap.InstanceId} IsPrimaryInstance: {_bootstrap.IsPrimaryInstance}.");
+
+            rootFrame = CreateRootFrame();
             Window.Current.Content = rootFrame;
             rootFrameCreated = true;
 
@@ -137,7 +147,7 @@ public sealed partial class App : Application
         try
         {
             _windowContext = _windowContext ?? WindowContextFactory.Create(_bootstrap, _sessions, Window.Current.Dispatcher);
-            await ActivationService.ActivateAsync(rootFrame, e, _windowContext);
+            await PresentActivation(ActivationService.ActivateAsync(rootFrame, e, _windowContext), rootFrameCreated, PresentWindow);
         }
         catch (Exception ex)
         {
@@ -163,15 +173,23 @@ public sealed partial class App : Application
         {
             // Best efforts
         }
-
-        if (rootFrameCreated)
-        {
-            ExtendViewIntoTitleBar();
-            Window.Current.Activate();
-        }
     }
 
-    private Frame CreateRootFrame(IActivatedEventArgs e)
+    private static Task PresentActivation(Task activation, bool rootFrameCreated, Action<bool> present)
+    {
+        // Navigation starts synchronously; show its window before awaiting file
+        // work. Completion/cancellation must not reactivate a window the user left.
+        present(rootFrameCreated);
+        return activation;
+    }
+
+    private static void PresentWindow(bool rootFrameCreated)
+    {
+        if (rootFrameCreated) ExtendViewIntoTitleBar();
+        Window.Current.Activate();
+    }
+
+    private Frame CreateRootFrame()
     {
         Frame rootFrame = new Frame();
 
@@ -185,11 +203,6 @@ public sealed partial class App : Application
             rootFrame.FlowDirection = FlowDirection.LeftToRight;
         }
         rootFrame.NavigationFailed += OnNavigationFailed;
-
-        if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-        {
-            // TODO: Load state from previously suspended application
-        }
 
         return rootFrame;
     }
@@ -220,6 +233,10 @@ public sealed partial class App : Application
     /// <param name="args">Details about the suspend request.</param>
     private async void OnSuspending(object sender, SuspendingEventArgs args)
     {
+        // A prepared application has no workspace to save and must not flush
+        // clipboard contents on behalf of a user who never opened its window.
+        if (_windowContext == null) return;
+
         var deferral = args.SuspendingOperation.GetDeferral();
         // Reserved before the deadline so the deferral still completes in time.
         var margin = TimeSpan.FromMilliseconds(250);
@@ -227,7 +244,7 @@ public sealed partial class App : Application
         try
         {
             var remaining = args.SuspendingOperation.Deadline - DateTimeOffset.Now - margin;
-            using (var cancellation = new System.Threading.CancellationTokenSource())
+            using (var cancellation = new CancellationTokenSource())
             {
                 if (remaining <= TimeSpan.Zero) cancellation.Cancel();
                 else cancellation.CancelAfter(remaining);

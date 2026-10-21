@@ -30,7 +30,9 @@ one fails. Unit fixtures parallelize inside their runner; source and headless
 groups share one build.
 The desktop job matrix gives E2E and fault injection separate VMs and builds.
 E2E runs all default Release App groups from `Test.ps1 -Suite Integration -List`,
-plus `UIAutomation` and `DragDrop`. The Debug lane runs only the default fault
+plus `UIAutomation`, `DragDrop` and `AppLifecycle`. The latter builds a separate
+Release AOT host with the actual App/bootstrap/router for OS activation tests.
+The Debug lane runs only the default fault
 group, without repeating ordinary syntax or storage tests; those already run in
 the Release `Editor` group. Each desktop runs its groups sequentially. The matrix
 does not cancel one lane when the other fails, and CI Gate requires both.
@@ -148,7 +150,7 @@ to change a local or self-hosted machine. It also removes the foreground-lock de
 on its disposable desktop so the input driver can switch between verified test
 windows. An adequate newer framework is retained.
 `Test-CIUI.ps1 -Lane E2E` selects all default Release App groups plus the two
-external input groups. `-Lane Faults` selects the default Debug group on a separate
+external input groups and `AppLifecycle`. `-Lane Faults` selects the default Debug group on a separate
 VM. Unsupported configurations or an empty lane fail instead of silently reducing
 coverage. The dedicated `--native-faults` phase rejects Release execution because
 the native injection hooks are compiled only in Debug.
