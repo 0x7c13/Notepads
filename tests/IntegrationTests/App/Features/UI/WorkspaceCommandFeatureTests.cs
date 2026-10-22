@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Notepads.Controls;
 using Notepads.Features.Documents.Contracts;
@@ -13,6 +14,8 @@ using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Contracts.Legacy;
 using Notepads.Features.Sessions.Contracts.Recovery;
 using Notepads.Features.Sessions.Recovery;
+using Notepads.Features.Sessions.Storage;
+using Notepads.Features.Sessions.Transfer;
 using Notepads.Presentation.Controls;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Workspace;
@@ -46,6 +49,9 @@ internal static class WorkspaceCommandFeatureTests
         var third = await NewTabAsync(page, toolbar: true);
         Editor(first).TypeText("first Ω\rsecond 😀");
         await VerifyTabNavigationAndOrderAsync(host, first, second, third, log);
+        await TabDragContractsTests.RunAsync(host, log);
+        await VerifyUnverifiedMoveAsync(host);
+        await VerifyTransferCleanupAfterCloseAsync(host);
         core.SwitchTo(first);
         await UntilAsync(() => page.TestStatusModified, "Editing updates the selected status modification marker.");
         page.TestRefreshMenu();
@@ -184,6 +190,55 @@ internal static class WorkspaceCommandFeatureTests
         log.AppendLine("PASS: WorkspaceCommands.Pending — themed accessible skeleton, RTL alignment, failure and animation cleanup.");
 
         bool Enabled(string name) => ((Control)page.TestFeatureControl(name)).IsEnabled;
+    }
+
+    private static async Task VerifyUnverifiedMoveAsync(FeatureTestHost host)
+    {
+        var tab = await NewTabAsync(host.Page);
+        const string text = "A reported Move alone must not discard this draft Ω 😀";
+        Editor(tab).TypeText(text);
+        var core = (NotepadsCore)host.Core;
+        var operation = Guid.NewGuid();
+        var admission = core.TestBeginTabTransfer(operation, tab);
+        Check(!admission.Cancel, "Unverified move fixture admits its transfer.");
+        var serialized = (string)await admission.Data.GetView().GetDataAsync(TextEditorTransfer.DataFormat);
+        var token = JsonSerializer.Deserialize(serialized, SessionJsonContext.Default.TransferToken);
+        core.TestEndTabTransfer(operation, tab, Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move);
+        await UntilAsync(() => core.TestTabTransferOperation(tab) == null,
+            "A published Move completes without depending on a clipboard callback.");
+        Check(core.GetTabs().Contains(tab) && Editor(tab).GetText() == text,
+            "A reported Move without a durable receiver receipt retains the source text and tab.");
+        var offer = await RecoveryRootStore.ReadTransferAsync(token.TransferId, RecoveryRecordKind.TransferOffer);
+        Check(offer != null, "An unverified move retains its published recovery offer.");
+        await RecoveryRootStore.CreateStore().DeleteAsync(offer.Address); // Only this fixture's root.
+        core.DeleteTab(tab);
+    }
+
+    private static async Task VerifyTransferCleanupAfterCloseAsync(FeatureTestHost host)
+    {
+        var tab = await NewTabAsync(host.Page);
+        Editor(tab).TypeText("Retain my published recovery Ω 😀");
+        var core = (NotepadsCore)host.Core;
+        var operation = Guid.NewGuid();
+        var admission = core.TestBeginTabTransfer(operation, tab);
+        Check(!admission.Cancel, "Recovery retention fixture admits its transfer.");
+        var data = (string)await admission.Data.GetView().GetDataAsync(TextEditorTransfer.DataFormat);
+        var token = JsonSerializer.Deserialize(data, SessionJsonContext.Default.TransferToken);
+        Check(await RecoveryRootStore.ReadTransferAsync(token.TransferId, RecoveryRecordKind.TransferOffer) != null,
+            "The real data provider publishes a durable source offer before cancellation.");
+        var gate = core.TestTabTransferGate(tab);
+        await gate.WaitAsync();
+        try
+        {
+            core.TestEndTabTransfer(operation, tab);
+            core.DeleteTab(tab);
+        }
+        finally { gate.Release(); }
+        await UntilAsync(() => core.TestTabTransferOperation(tab) == null,
+            "Closing during paused cleanup still completes the admitted operation.");
+        Check(await RecoveryRootStore.ReadTransferAsync(token.TransferId, RecoveryRecordKind.TransferOffer) != null,
+            "Cancellation rechecks liveness after its gate and retains the closed source's recovery offer.");
+        await TransferRecoveryStore.DeleteSourceTransferAsync(token);
     }
 
     private static WorkspaceTab CreatePendingTab(long? byteLength = null, bool rightToLeft = false)
@@ -344,10 +399,7 @@ internal static class WorkspaceCommandFeatureTests
         var sets = Named<SetsView>(host.Page, "Sets");
         Check(sets.CanDragItems && sets.CanReorderItems, "The production tab strip enables same-window reordering.");
         var thirdContainer = host.Page.TestContainer(third);
-        // UWP owns the drag gesture. Exercise its actual item-collection boundary;
-        // this assertion covers workspace reaction, not physical pointer delivery.
-        sets.Items.RemoveAt(2);
-        sets.Items.Insert(0, thirdContainer);
+        Check(sets.MoveSet(thirdContainer, 0), "The strip commits an unselected tab reorder.");
         Check(core.GetTabs().SequenceEqual(new[] { third, first, second }) &&
             ReferenceEquals(core.GetSelectedTab(), second) && ReferenceEquals(core.GetSelectedReadyEditor(), secondEditor),
             "Reordering a tab around the selected document preserves selected identity and exposes the new order.");
@@ -358,11 +410,62 @@ internal static class WorkspaceCommandFeatureTests
         Check(ReferenceEquals(first.ReadyEditor, firstEditor) && ReferenceEquals(third.ReadyEditor, thirdEditor) &&
             firstEditor.GetText() == text && firstEditor.IsModified && Editor(first).TestNativeCore.CanUndo,
             "Collection reordering preserves native editor ownership, Unicode edits and undo availability.");
-        sets.Items.RemoveAt(0);
-        sets.Items.Insert(2, thirdContainer);
+        Check(sets.MoveSet(thirdContainer, 2), "The strip restores an unselected tab's order.");
         Check(core.GetTabs().SequenceEqual(new[] { first, second, third }) && ReferenceEquals(core.GetSelectedTab(), first),
             "Restoring strip order preserves the selected native document.");
-        log.AppendLine("PASS: WorkspaceCommands.TabNavigation — actual next/previous/index commands, wrap and invalid-index guards; collection-boundary reorder preserves identity/text/undo (physical drag not exercised).");
+        await TabDragTestHost.FrameAsync();
+        var selectedContainer = host.Page.TestContainer(first);
+        var content = host.Page.TestContentHost(first).Content;
+        var native = ((WinUIEditor.EditorBaseControl)((Grid)Editor(first).TestNativeCore.Content).Children[0]).Editor;
+        var document = native.DocPointer;
+        int selectionEvents = 0, unloads = 0;
+        void Selected(object sender, WorkspaceTab tab) => selectionEvents++;
+        void Unloaded(object sender, RoutedEventArgs args) => unloads++;
+        core.TabSelected += Selected;
+        ((FrameworkElement)firstEditor).Unloaded += Unloaded;
+        try
+        {
+            Check(sets.MoveSet(selectedContainer, 2), "The selected header can move to the end.");
+            await TabDragTestHost.FrameAsync();
+            Check(unloads == 0, "The selected editor remains attached through the committed reorder's layout.");
+            Check(sets.MoveSet(selectedContainer, 0), "The selected header can return to the beginning.");
+            await TabDragTestHost.FrameAsync();
+            Check(unloads == 0, "Returning the selected header keeps its editor loaded: " + unloads);
+            Check(selectionEvents == 0 && ReferenceEquals(core.GetSelectedTab(), first),
+                "Selected reorder preserves semantic selection: events=" + selectionEvents);
+            Check(ReferenceEquals(content, host.Page.TestContentHost(first).Content) && native.DocPointer == document &&
+                firstEditor.GetText() == text && Editor(first).TestNativeCore.CanUndo,
+                "Selected reorder retains native document identity, text and undo availability.");
+            Check(!sets.MoveSet(selectedContainer, -1) && !sets.MoveSet(selectedContainer, 3),
+                "Invalid destinations leave the roster intact.");
+        }
+        finally
+        {
+            core.TabSelected -= Selected;
+            ((FrameworkElement)firstEditor).Unloaded -= Unloaded;
+        }
+        var implementation = (NotepadsCore)core;
+        var operation = Guid.NewGuid();
+        Check(!implementation.TestBeginTabTransfer(operation, first).Cancel, "The first transfer is admitted.");
+        var rejected = Guid.NewGuid();
+        Check(implementation.TestBeginTabTransfer(rejected, first).Cancel, "Overlapping transfer admission is refused.");
+        implementation.TestEndTabTransfer(rejected, first);
+        Check(implementation.TestTabTransferOperation(first) == operation,
+            "A rejected operation's completion cannot retire an earlier admitted transfer.");
+        var gate = implementation.TestTabTransferGate(first);
+        await gate.WaitAsync();
+        try
+        {
+            implementation.TestEndTabTransfer(operation, first);
+            Check(implementation.TestTabTransferOperation(first) == operation &&
+                implementation.TestBeginTabTransfer(Guid.NewGuid(), first).Cancel,
+                "Admission remains reserved while real asynchronous cleanup is paused.");
+            implementation.TestEndTabTransfer(operation, first); // A duplicate callback must not start a second cleanup.
+        }
+        finally { gate.Release(); }
+        await UntilAsync(() => implementation.TestTabTransferOperation(first) == null,
+            "Only completed cleanup releases the admitted transfer reservation.");
+        log.AppendLine("PASS: WorkspaceCommands.TabNavigation — navigation and transactional reorder preserve attachment, identity/text/undo; transfer admission/completion has operation identity.");
     }
 
     internal static async Task RunPrintStateAsync(StringBuilder log)

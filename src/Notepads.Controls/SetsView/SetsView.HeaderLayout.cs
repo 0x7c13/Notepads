@@ -39,6 +39,8 @@ public partial class SetsView
 
     private void SetsView_SizeChanged(object sender, SizeChangedEventArgs e)
     {
+        if (e != null) StopHeaderSettlement();
+        InvalidateRailLayout();
         // We need to do this calculation here in Size Changed as the
         // Columns don't have their Actual Size calculated in Measure or Arrange.
         if (_hasLoaded && _setsViewContainer != null)

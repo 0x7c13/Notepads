@@ -25,9 +25,11 @@ public partial class SetsView
     {
         IVectorChangedEventArgs args = (IVectorChangedEventArgs)e;
 
+        if (!IsReordering) InvalidateTabDrag();
+
         base.OnItemsChanged(e);
 
-        if (args?.CollectionChange == CollectionChange.ItemRemoved && SelectedIndex == -1)
+        if (!IsReordering && args?.CollectionChange == CollectionChange.ItemRemoved && SelectedIndex == -1)
         {
             // If we remove the selected item we should select the previous item
             int startIndex = (int)args.Index + 1;
@@ -40,7 +42,7 @@ public partial class SetsView
         }
 
         // Update Sizing (in case there are less items now)
-        SetsView_SizeChanged(this, null);
+        if (!IsReordering) SetsView_SizeChanged(this, null);
     }
 
     private void ItemContainerGenerator_ItemsChanged(object sender, ItemsChangedEventArgs e)

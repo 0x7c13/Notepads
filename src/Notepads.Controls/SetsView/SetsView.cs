@@ -79,13 +79,8 @@ public partial class SetsView : ListViewBase
 
         // Selection Hook
         SelectionChanged += SetsView_SelectionChanged;
+        InitializeTabDragging();
     }
-
-    /// <summary>
-    /// Occurs when a set is dragged by the user outside of the <see cref="SetsView"/>.  Generally, this paradigm is used to create a new-window with the torn-off set.
-    /// The creation and handling of the new-window is left to the app's developer.
-    /// </summary>
-    public event EventHandler<SetDraggedOutsideEventArgs> SetDraggedOutside;
 
     /// <summary>
     /// Occurs when a set's Close button is clicked.  Set <see cref="SetClosingEventArgs.Cancel"/> to true to prevent automatic Set Closure.
@@ -122,6 +117,8 @@ public partial class SetsView : ListViewBase
     /// <inheritdoc/>
     protected override void OnApplyTemplate()
     {
+        InvalidateTabDrag();
+        _railViewport = null;
         _scrollerReady = false;
         base.OnApplyTemplate();
 
@@ -227,6 +224,7 @@ public partial class SetsView : ListViewBase
 
     private void SetsView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (_mouseDrag is { External: false } drag && !ReferenceEquals(SelectedItem, drag.Item)) ResetMouseDrag();
         if (_isDragging)
         {
             // Skip if we're dragging, we'll reset when we're done.
@@ -251,8 +249,12 @@ public partial class SetsView : ListViewBase
             {
                 if (ContainerFromItem(SelectedItem) is SetsViewItem container)
                 {
-                    _setsContentPresenter.Content = container.Content;
-                    _setsContentPresenter.ContentTemplate = container.ContentTemplate;
+                    // Reassigning even the same Content can rebuild UWP's
+                    // presentation on the next layout and unload the editor.
+                    if (!ReferenceEquals(_setsContentPresenter.Content, container.Content))
+                        _setsContentPresenter.Content = container.Content;
+                    if (!ReferenceEquals(_setsContentPresenter.ContentTemplate, container.ContentTemplate))
+                        _setsContentPresenter.ContentTemplate = container.ContentTemplate;
 
                     if (e != null) _setsContentPresenter.Loaded += SetsContentPresenter_Loaded;
                 }
@@ -440,53 +442,52 @@ public partial class SetsView : ListViewBase
 
     private void SetsView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
     {
+        // Admission can throw; keep the framework operation cancelled unless
+        // every subscriber accepted it and the control owns its completion.
+        e.Cancel = true;
+        e.Cancel = !BeginNativeDrag(e.Items.FirstOrDefault(), e.Data);
+    }
+
+    private bool BeginNativeDrag(object item, DataPackage data)
+    {
+        if (_mouseDrag != null || _nativeDrag != null) return false;
+        StopHeaderSettlement();
         // Keep track of drag so we don't modify content until done.
         _isDragging = true;
 
-        _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
-        _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
+        if (_setsItemsScrollViewerLeftSideShadow != null) _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
+        if (_setsItemsScrollViewerRightSideShadow != null) _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
+        var starting = new TabDragStartingEventArgs(Guid.NewGuid(), item, data);
+        _nativeDrag = starting;
+        bool accepted = false;
+        Exception error = null;
+        try
+        {
+            TabDragStarting?.Invoke(this, starting);
+            accepted = !starting.Cancel;
+            return accepted;
+        }
+        catch (Exception exception) { error = exception; throw; }
+        finally
+        {
+            // A previous subscriber may already own a transfer reservation.
+            // Refusal/exception must retire that operation as well as our latch.
+            if (!accepted) CompleteNativeDrag(DataPackageOperation.None, error);
+        }
     }
 
-    private void SetsView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+    private void SetsView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args) =>
+        CompleteNativeDrag(args.DropResult);
+
+    private void CompleteNativeDrag(DataPackageOperation result, Exception error = null)
     {
+        if (_nativeDrag is not { } drag) return;
+        _nativeDrag = null;
         _isDragging = false;
 
-        // args.DropResult == None when outside of area (e.g. create new window)
-        if (args.DropResult == DataPackageOperation.None)
-        {
-            var item = args.Items.FirstOrDefault();
-            var set = ContainerFromItem(item) as SetsViewItem;
-
-            if (set == null && item is FrameworkElement fe)
-            {
-                set = fe.FindParent<SetsViewItem>();
-            }
-
-            if (set == null)
-            {
-                // We still don't have a SetsViewItem, most likely is a static SetsViewItem in the template being dragged and not selected.
-                // This is a fallback scenario for static sets.
-                // Note: This can be wrong if two SetsViewItems share the exact same Content (i.e. a string), this should be unlikely in any practical scenario.
-                for (int i = 0; i < Items.Count; i++)
-                {
-                    var setItem = ContainerFromIndex(i) as SetsViewItem;
-                    if (ReferenceEquals(setItem.Content, item))
-                    {
-                        set = setItem;
-                        break;
-                    }
-                }
-            }
-
-            SetDraggedOutside?.Invoke(this, new SetDraggedOutsideEventArgs(item, set));
-
-            UpdateScrollViewerShadows();
-        }
-        else
-        {
-            // If dragging the active set, there's an issue with the CP blanking.
-            SetsView_SelectionChanged(this, null);
-        }
+        // None also means Escape or an invalid target; it never authorizes tear-off.
+        SetsView_SelectionChanged(this, null);
+        TabDragCompleted?.Invoke(this, new TabDragCompletedEventArgs(drag.OperationId, drag.Item, result, error));
     }
 
     private void SetsScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -494,6 +495,7 @@ public partial class SetsView : ListViewBase
         _scrollViewerHorizontalOffset = _setsScroller.HorizontalOffset;
         UpdateScrollViewerShadows();
         UpdateScrollViewerNavigateButtons();
+        if (_mouseDrag is { Preview: true } drag) UpdateRail(drag);
     }
 
     public void ScrollToLastSet()

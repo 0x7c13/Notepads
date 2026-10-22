@@ -60,13 +60,17 @@ internal sealed class TestApplicationData
 
     // Called on the entry thread before Application.Start and before any diagnostics.
     // A fresh process must explicitly reuse the same ID to reopen a prior fixture.
-    public static void InitializeFromActivation()
+    public static void InitializeFromActivation(string protocolArguments = null)
     {
         if (_current != null) throw new InvalidOperationException("Test storage is already initialized.");
-        if (AppInstance.GetActivatedEventArgs() is not LaunchActivatedEventArgs activation)
-            throw new InvalidOperationException("Only explicit test launch activation is supported.");
+        var activation = AppInstance.GetActivatedEventArgs();
+        var command = activation switch
+        {
+            LaunchActivatedEventArgs launch => launch.Arguments ?? "",
+            { Kind: ActivationKind.Protocol } when protocolArguments != null => protocolArguments,
+            _ => throw new InvalidOperationException("Only explicitly owned test activation is supported.")
+        };
         const string prefix = "--test-run ";
-        var command = activation.Arguments ?? "";
         if (!command.StartsWith(prefix, StringComparison.Ordinal))
             throw new ArgumentException("An explicit --test-run <GUID> is required; package-root storage is prohibited.");
         var remainder = command.Substring(prefix.Length);

@@ -41,8 +41,24 @@ internal static partial class LifecycleProgram
     private static void Run(string[] args)
     {
         EntryTicks = Stopwatch.GetTimestamp();
-        TestApplicationData.InitializeFromActivation();
+        var activation = Windows.ApplicationModel.AppInstance.GetActivatedEventArgs();
+        string protocolArguments = null;
+        if (activation.Kind == Windows.ApplicationModel.Activation.ActivationKind.Protocol)
+        {
+            // Direct protocol activation has no launch arguments. The exclusive
+            // runner must explicitly authorize this run in its copied layout.
+            var marker = Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, "ProtocolTestRun.txt");
+            var run = File.ReadAllText(marker);
+            if (!Guid.TryParseExact(run, "N", out var id) || id == Guid.Empty)
+                throw new InvalidDataException("Protocol activation requires an explicit test run.");
+            protocolArguments = "--test-run " + run + " --lifecycle-protocol";
+        }
+        TestApplicationData.InitializeFromActivation(protocolArguments);
         IsolationReadyTicks = Stopwatch.GetTimestamp();
+        if (protocolArguments != null)
+            File.WriteAllText(Path.Combine(ApplicationData.Current.LocalFolder.Path, $"protocol-entry-{Environment.ProcessId}.txt"),
+                "Kind=" + activation.Kind + "\nType=" + activation.GetType().FullName + "\nConcreteProtocol=" +
+                (activation is Windows.ApplicationModel.Activation.ProtocolActivatedEventArgs));
         SettingsBefore = LifecycleProbe.SettingsFingerprint();
         if (Phase == "--test-cleanup")
         {

@@ -89,6 +89,9 @@ your organization's license before use.
 For IDE debugging, install Visual Studio 2026 with the same components, open
 `src/Notepads.sln`, and choose Debug and x86/x64/ARM64. Validate changes to reflection,
 serialization, WinRT or XAML bindings in an actual Release Native AOT run as well.
+Use Ctrl+F5 to run Release/Production. These AOT packages do not start CoreCLR;
+the managed MSIX debugger may wait for it and report a missing CoreCLR event after
+the app exits. Use native-only attachment when debugging an AOT process.
 
 Run `./scripts/Test.ps1` for fast unit tests. Select the relevant integration groups
 with `./scripts/Test.ps1 -Suite Integration -List`; see the [test guide](tests/README.md)

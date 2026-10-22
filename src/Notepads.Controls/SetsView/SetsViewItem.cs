@@ -4,6 +4,7 @@
 
 
 using System;
+using CommunityToolkit.WinUI;
 using Windows.Devices.Input;
 using Windows.System;
 using Windows.UI;
@@ -25,6 +26,10 @@ namespace Notepads.Controls;
 [TemplatePart(Name = SetLeftSideSeparatorName, Type = typeof(Border))]
 [TemplatePart(Name = SetRightSideSeparatorName, Type = typeof(Border))]
 [TemplatePart(Name = SetSelectionIndicatorName, Type = typeof(Rectangle))]
+[TemplatePart(Name = "HeaderDragTranslation", Type = typeof(TranslateTransform))]
+[TemplatePart(Name = "HeaderLayoutTranslation", Type = typeof(TranslateTransform))]
+[TemplatePart(Name = "HeaderDragBackground", Type = typeof(Border))]
+[TemplatePart(Name = "LayoutRoot", Type = typeof(FrameworkElement))]
 public partial class SetsViewItem : ListViewItem
 {
     private const string SetCloseButtonName = "CloseButton";
@@ -44,6 +49,11 @@ public partial class SetsViewItem : ListViewItem
     private Rectangle _setSelectionIndicator;
 
     private bool _isMiddleClick;
+
+    internal TranslateTransform HeaderDragTranslation { get; private set; }
+    internal TranslateTransform HeaderLayoutTranslation { get; private set; }
+    internal Border HeaderDragBackground { get; private set; }
+    internal FrameworkElement HeaderDragRoot { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SetsViewItem"/> class.
@@ -93,6 +103,7 @@ public partial class SetsViewItem : ListViewItem
     /// <inheritdoc/>
     protected override void OnApplyTemplate()
     {
+        this.FindParent<SetsView>()?.InvalidateTabHeader();
         base.OnApplyTemplate();
 
         if (_setCloseButton != null)
@@ -110,6 +121,10 @@ public partial class SetsViewItem : ListViewItem
         _setLeftSideSeparator = GetTemplateChild(SetLeftSideSeparatorName) as Border;
         _setRightSideSeparator = GetTemplateChild(SetRightSideSeparatorName) as Border;
         _setSelectionIndicator = GetTemplateChild(SetSelectionIndicatorName) as Rectangle;
+        HeaderDragTranslation = GetTemplateChild("HeaderDragTranslation") as TranslateTransform;
+        HeaderLayoutTranslation = GetTemplateChild("HeaderLayoutTranslation") as TranslateTransform;
+        HeaderDragBackground = GetTemplateChild("HeaderDragBackground") as Border;
+        HeaderDragRoot = GetTemplateChild("LayoutRoot") as FrameworkElement;
     }
 
     /// <inheritdoc/>
@@ -142,6 +157,10 @@ public partial class SetsViewItem : ListViewItem
                 }
             }
         }
+
+        // Modifier clicks must retain their existing behavior before either
+        // the rail or ListViewItem can capture the press and change selection.
+        if (this.FindParent<SetsView>()?.TryStartMouseDrag(this, e) == true) return;
 
         base.OnPointerPressed(e);
     }

@@ -186,6 +186,19 @@ internal static class InteractiveEditorHost
     {
         switch (command[0])
         {
+            case "tabs-start" when command.Length == 3:
+                return await NotepadsIntegrationTests.TabDragTestHost.StartAsync(int.Parse(command[1]), command[2]);
+            case "tabs-frame" when command.Length == 1:
+                await NotepadsIntegrationTests.TabDragTestHost.FrameAsync();
+                return NotepadsIntegrationTests.TabDragTestHost.State();
+            case "tabs-state" when command.Length == 1:
+                return NotepadsIntegrationTests.TabDragTestHost.State();
+            case "tabs-focus-action" when command.Length == 1:
+                return NotepadsIntegrationTests.TabDragTestHost.FocusStatusAction();
+            case "tabs-hold-drop" when command.Length == 2:
+                return NotepadsIntegrationTests.TabDragTestHost.SetDropHold(bool.Parse(command[1]));
+            case "tabs-close" when command.Length == 2:
+                return NotepadsIntegrationTests.TabDragTestHost.Close(int.Parse(command[1]));
             case "dpi-prepare" when command.Length == 4:
                 _dpiFixture?.Dispose();
                 _dpiFixture = null;
@@ -342,6 +355,7 @@ internal static class InteractiveEditorHost
                 _disposed = true;
                 break;
             case "exit" when command.Length == 1:
+                await NotepadsIntegrationTests.TabDragTestHost.DisposeAsync();
                 _dpiFixture?.Dispose();
                 _dpiFixture = null;
                 await DiscardPreparedReplacementAsync();

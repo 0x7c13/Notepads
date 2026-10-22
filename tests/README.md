@@ -47,13 +47,13 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Open/save/save-as/save-all, reload/revert, external file changes | `Documents`, `FileOpening` |
 | Find/replace, Go To, clipboard, native edit commands | `EditingUI`, `Clipboard`, `ClipboardRejectedCut`, `Editor`, `Search` |
 | Syntax, native Diff, ICU regex and failures | `Editor`; focused `Syntax`, `Diff`, `NativeDiff`, `RegexText`, `NativeFaults` |
-| Tabs, content-derived draft titles, pending availability and activation ordering | `WorkspaceCommands`, `Activation`, `Workspace`; Unit Unicode/title rules |
-| Prelaunch, first-paint restore, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
+| Tabs, content-derived titles, selected reorder attachment, transfer admission and pending availability | `WorkspaceCommands`, `Activation`, `Workspace`; Unit title/drag geometry |
+| Prelaunch, first-paint restore, new-window protocol, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
 | Preferences (fresh defaults, preserved explicit values, real Tab), themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
 | Session restart/import/close, transfer, persistence, recovery and leases | `Workspace*`, `Persistence`, `Leases`, `SessionResilience` |
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
 | RTL/LTR shaping, geometry, navigation, selection, undo and direction persistence | `NativeBidi`, `Bidi`, `ReadingOrder`, `AutomationNavigation` |
-| Real keys/clicks, TSF typing, UIA ranges, raster and cross-process dragging | `UIAutomation`, `DragDrop` |
+| Real keys/clicks, TSF typing, UIA ranges, raster and cross-process dragging | `UIAutomation`, `DragDrop`; `TabDragging` for rail, modifier clicks, keyboard focus, release continuity/stacking, drag-back, cancellation, RTL/Equal overflow and actual workspace moves |
 | DPI geometry / actual Windows scale transitions | `DpiLayout` / opt-in `DisplayDpi` |
 | Installed Production launch, file association, windows, suspension and V1 data import | Hosted-only `PackagedApp` |
 | Localization, notices, package content and dependency boundaries | `Localization`, `Headers`, `Package`, `Architecture` |
@@ -87,6 +87,8 @@ exact text, caret and one-step undo without relying on paint/idle to synchronize
   control; pending-presentation checks use owned windows and the real App helper.
   Pending broker calls stay session-owned through cleanup. If one never settles,
   its isolated registration stays fenced against replacement by later runs.
+  A private test protocol contract permits direct AUMID activation without
+  registering the product URI scheme; protocol entry requires an explicit run marker.
   Production/Dev apps and user sessions
   stay outside this boundary. Ordinary hosts must exit cleanly; the drag peer is
   deliberately terminated by cleanup, so its natural exit is not verified.

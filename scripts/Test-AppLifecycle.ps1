@@ -168,6 +168,13 @@ function Check-MultiWindowRouting {
     Check ($repeat.Id -eq $first.Id) 'A repeated user launch created another process with window reuse enabled.'
     $null = Wait-Observation $first ready 2
     Close-IsolatedTestProcess $session $repeat
+    $activation = Start-IsolatedTestActivation $session -ReceiptPattern 'lifecycle-*-ready-*.json' -Protocol
+    $protocol = Wait-IsolatedTestActivation $session
+    $protocolState = Get-Content -LiteralPath $activation.Receipt -Raw | ConvertFrom-Json
+    Check ($protocol.Id -ne $first.Id) 'Explicit new-window protocol activation was redirected to the existing window.'
+    Check (!$protocolState.Primary -and $protocolState.Visible -and $protocolState.Tabs -eq 1) 'The protocol window did not create an independent secondary workspace.'
+    Close-LifecycleProcess $protocol
+    Write-Output 'PASS: real new-window protocol activation creates a separate editable window with reuse enabled.'
     Send-Command $first new-window
     $null = Wait-Observation $first new-window
     $second = Start-IsolatedTestProcess $session '--lifecycle-secondary'

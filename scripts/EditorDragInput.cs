@@ -55,14 +55,14 @@ public sealed class EditorDragInput : IDisposable
 
     private readonly uint editorProcess, peerProcess;
     private readonly IntPtr priorDpi;
-    private bool mouseDown, controlDown, escapeDown;
+    private bool mouseDown, controlDown, shiftDown, altDown, escapeDown;
     private uint sourceProcess;
     public IntPtr EditorAnchor { get; private set; }
     public IntPtr PeerAnchor { get; private set; }
     public IntPtr EditorWindow { get; private set; }
     public IntPtr PeerWindow { get; private set; }
     public Rect WorkArea { get; private set; }
-    public bool HasPressedInput { get { return mouseDown || controlDown || escapeDown; } }
+    public bool HasPressedInput { get { return mouseDown || controlDown || shiftDown || altDown || escapeDown; } }
     public bool HasMousePress { get { return mouseDown; } }
     public uint SourceProcessId { get { return sourceProcess; } }
 
@@ -112,7 +112,8 @@ public sealed class EditorDragInput : IDisposable
     private string DescribeOwnership()
     {
         return Environment.NewLine + "Ownership: editorPid=" + editorProcess + ",peerPid=" + peerProcess +
-            ",mouseDown=" + mouseDown + ",controlDown=" + controlDown + ",escapeDown=" + escapeDown + Environment.NewLine +
+            ",mouseDown=" + mouseDown + ",controlDown=" + controlDown + ",shiftDown=" + shiftDown +
+            ",altDown=" + altDown + ",escapeDown=" + escapeDown + Environment.NewLine +
             DescribeWindow("cachedEditor", EditorWindow) + Environment.NewLine +
             DescribeWindow("cachedPeer", PeerWindow) + Environment.NewLine +
             DescribeWindow("editorAnchor", EditorAnchor) + Environment.NewLine +
@@ -289,10 +290,16 @@ public sealed class EditorDragInput : IDisposable
     }
     public void Begin(uint pid, int x, int y, bool copy)
     {
+        Begin(pid, x, y, copy, false, false);
+    }
+    public void Begin(uint pid, int x, int y, bool control, bool shift, bool alt)
+    {
         AssertIdleInput(); Activate(pid); RequirePoint(x, y, pid);
         sourceProcess = pid;
         MoveTo(x, y, 1);
-        if (copy) { RequireForeground(); Key(0x11, false); controlDown = true; }
+        if (control) { RequireForeground(); Key(0x11, false); controlDown = true; }
+        if (shift) { RequireForeground(); Key(0x10, false); shiftDown = true; }
+        if (alt) { RequireForeground(); Key(0x12, false); altDown = true; }
         RequireForeground(); RequirePoint(x, y, pid);
         Send(new Input { MouseFlags = 2 }); mouseDown = true;
     }
@@ -329,7 +336,15 @@ public sealed class EditorDragInput : IDisposable
     public void ReleaseOwnedKeys()
     {
         try { ReleaseEscape(); }
-        finally { ReleaseControl(); }
+        finally
+        {
+            try { if (altDown) { Key(0x12, true); altDown = false; } }
+            finally
+            {
+                try { if (shiftDown) { Key(0x10, true); shiftDown = false; } }
+                finally { ReleaseControl(); }
+            }
+        }
     }
     public void ReleaseOwnedInput(Process exitedSource)
     {

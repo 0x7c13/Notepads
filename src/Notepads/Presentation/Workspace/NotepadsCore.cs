@@ -21,7 +21,6 @@ using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Helpers;
 using Notepads.Presentation.PreviewExtensions;
 using Notepads.Presentation.Theming;
-using Notepads.Presentation.Workspace.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
@@ -73,7 +72,11 @@ public sealed partial class NotepadsCore : INotepadsCore
     private readonly WindowContext _context;
     private readonly CoreDispatcher _dispatcher;
 
-    private readonly Dictionary<Guid, TextEditorTransfer> _transfers = new();
+    private sealed record ActiveTabTransfer(Guid OperationId, TextEditorTransfer Transfer)
+    {
+        internal bool Completing { get; set; }
+    }
+    private readonly Dictionary<Guid, ActiveTabTransfer> _transfers = new();
     private readonly HashSet<ITextEditor> _ownedEditors = new();
 
     private bool _disposed;
@@ -90,12 +93,12 @@ public sealed partial class NotepadsCore : INotepadsCore
         _sets = sets;
         _sets.SetClosing += SetsView_OnSetClosing;
         _sets.SetTapped += SetsView_OnSetTapped;
+        _sets.SetInteractionCompleted += SetsView_OnSetTapped;
         _sets.SelectionChanged += SetsView_OnSelectionChanged;
-        _sets.SetDraggedOutside += Sets_SetDraggedOutside;
         _sets.DragOver += Sets_DragOver;
         _sets.Drop += Sets_Drop;
-        _sets.DragItemsStarting += Sets_DragItemsStarting;
-        _sets.DragItemsCompleted += Sets_DragItemsCompleted;
+        _sets.TabDragStarting += Sets_TabDragStarting;
+        _sets.TabDragCompleted += Sets_TabDragCompleted;
 
         _dispatcher = dispatcher;
         _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -116,17 +119,17 @@ public sealed partial class NotepadsCore : INotepadsCore
         ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         _sets.SetClosing -= SetsView_OnSetClosing;
         _sets.SetTapped -= SetsView_OnSetTapped;
+        _sets.SetInteractionCompleted -= SetsView_OnSetTapped;
         _sets.SelectionChanged -= SetsView_OnSelectionChanged;
-        _sets.SetDraggedOutside -= Sets_SetDraggedOutside;
         _sets.DragOver -= Sets_DragOver;
         _sets.Drop -= Sets_Drop;
-        _sets.DragItemsStarting -= Sets_DragItemsStarting;
-        _sets.DragItemsCompleted -= Sets_DragItemsCompleted;
+        _sets.TabDragStarting -= Sets_TabDragStarting;
+        _sets.TabDragCompleted -= Sets_TabDragCompleted;
 
-        var transfers = _transfers.Values.ToArray();
+        var transfers = _transfers.Values.Where(active => !active.Completing).Select(active => active.Transfer).ToArray();
         _transfers.Clear();
         foreach (var transfer in transfers)
-            _ = TrackWorkAsync(transfer.CompleteAsync(TextEditorTransferResult.Cancelled, sourceIsAlive: false));
+            _ = TrackWorkAsync(transfer.CompleteAsync(TextEditorTransferResult.Cancelled, () => false));
 
         // View shutdown does not mean the user discarded these documents.
         // Leave durable recovery roots for the next activation.
@@ -608,8 +611,10 @@ public sealed partial class NotepadsCore : INotepadsCore
         TabStateChanged?.Invoke(this, tab);
     }
 
-    private void SetsView_OnSelectionChanged(object sender, SelectionChangedEventArgs e) =>
-        TabSelected?.Invoke(this, GetSelectedTab());
+    private void SetsView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_sets.IsReordering) TabSelected?.Invoke(this, GetSelectedTab());
+    }
 
     private void MarkTextEditorSetNotSaved(ITextEditor textEditor)
     {
@@ -732,10 +737,7 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     #region DragAndDrop
 
-    private static ITextEditor GetDraggedEditor(object item)
-    {
-        return (item as WorkspaceTab)?.ReadyEditor ?? ((item as SetsViewItem)?.Tag as WorkspaceTab)?.ReadyEditor;
-    }
+    private static WorkspaceTab GetDraggedTab(object item) => item as WorkspaceTab ?? (item as SetsViewItem)?.Tag as WorkspaceTab;
 
     private bool IsLocalTransfer(DataPackageView data)
     {
@@ -767,32 +769,26 @@ public sealed partial class NotepadsCore : INotepadsCore
         finally { deferral.Complete(); }
     }
 
-    private void Sets_DragItemsStarting(object sender, DragItemsStartingEventArgs args)
+    private void Sets_TabDragStarting(object sender, TabDragStartingEventArgs args)
     {
         if (_disposed || IsClosing) { args.Cancel = true; return; }
-        var editor = GetDraggedEditor(args.Items.FirstOrDefault());
+        var editor = GetDraggedTab(args.Item)?.ReadyEditor;
+        // A pending tab can still participate in native local reorder; it advertises no transfer.
         if (editor == null) return;
+        if (_transfers.ContainsKey(editor.Id)) { args.Cancel = true; return; }
         TextEditorTransfer transfer = null;
         try
         {
             transfer = new TextEditorTransfer(editor, _context);
-            var captured = transfer;
-            transfer.Populate(args.Data, async received =>
-            {
-                try
-                {
-                    await _dispatcher.CallOnUIThreadAsync(async () =>
-                        await CompleteTransferAsync(captured, received));
-                }
-                catch (Exception ex) { LoggingService.LogException(ex); }
-            });
-            _transfers.Add(editor.Id, transfer);
+            transfer.Populate(args.Data);
+            _transfers.Add(editor.Id, new ActiveTabTransfer(args.OperationId, transfer));
         }
         catch (Exception ex)
         {
             args.Cancel = true;
             LoggingService.LogException(ex);
-            if (transfer != null) _ = TrackWorkAsync(transfer.CompleteAsync(TextEditorTransferResult.Cancelled, true));
+            if (transfer != null) _ = TrackWorkAsync(transfer.CompleteAsync(TextEditorTransferResult.Cancelled,
+                () => !_disposed && GetTab(transfer.Editor) != null));
         }
     }
 
@@ -801,9 +797,8 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     private async Task CompleteTransferCoreAsync(TextEditorTransfer transfer, bool received)
     {
-        if (!_transfers.TryGetValue(transfer.Editor.Id, out var active) || active != transfer) return;
-        _transfers.Remove(transfer.Editor.Id);
-        bool alive = GetTab(transfer.Editor) != null;
+        if (!_transfers.TryGetValue(transfer.Editor.Id, out var active) || active.Transfer != transfer || active.Completing) return;
+        active.Completing = true;
         var result = received ? TextEditorTransferResult.UnverifiedMove : TextEditorTransferResult.Cancelled;
         try
         {
@@ -815,12 +810,18 @@ public sealed partial class NotepadsCore : INotepadsCore
                 {
                     result = TextEditorTransferResult.Received;
                 }
-
-                alive = !_disposed && GetTab(transfer.Editor) != null;
             }
         }
         catch (Exception ex) { LoggingService.LogException(ex); }
-        finally { await transfer.CompleteAsync(result, alive); }
+        finally
+        {
+            try { await transfer.CompleteAsync(result, () => !_disposed && GetTab(transfer.Editor) != null); }
+            finally
+            {
+                if (_transfers.TryGetValue(transfer.Editor.Id, out var current) && ReferenceEquals(current, active))
+                    _transfers.Remove(transfer.Editor.Id);
+            }
+        }
     }
 
     private int GetDropIndex(SetsView sets, DragEventArgs args)
@@ -844,7 +845,6 @@ public sealed partial class NotepadsCore : INotepadsCore
     {
         var deferral = args.GetDeferral();
         IDisposable sourcePin = null;
-        bool published = false;
         try
         {
             if (!args.DataView.Contains(TextEditorTransfer.DataFormat))
@@ -857,6 +857,7 @@ public sealed partial class NotepadsCore : INotepadsCore
                 return;
             }
             args.Handled = true;
+            args.AcceptedOperation = DataPackageOperation.None;
             using var lifetime = CaptureFileOperation();
             var expectedTarget = _context.Sessions.CurrentStamp;
             var serialized = await args.DataView.GetDataAsync(TextEditorTransfer.DataFormat) as string;
@@ -901,8 +902,7 @@ public sealed partial class NotepadsCore : INotepadsCore
             }
             if (result.Kind == WorkspaceFileOpenKind.Failed) throw result.Error;
             if (result.Kind != WorkspaceFileOpenKind.Created) return;
-            published = true;
-            args.DataView.ReportOperationCompleted(DataPackageOperation.Move);
+            args.AcceptedOperation = DataPackageOperation.Move;
             if (!_disposed && !IsClosing && result.Tab.ReadyEditor is ITextEditor candidate)
             {
                 if (data.StateMetaData.IsContentPreviewPanelOpened) candidate.ShowHideContentPreview();
@@ -913,39 +913,24 @@ public sealed partial class NotepadsCore : INotepadsCore
         catch (Exception ex) { LoggingService.LogException(ex); }
         finally
         {
-            if (!published)
-            {
-                if (args.DataView.Contains(TextEditorTransfer.DataFormat)) args.DataView.ReportOperationCompleted(DataPackageOperation.None);
-            }
             try { sourcePin?.Dispose(); }
             finally { deferral.Complete(); }
         }
     }
 
-    private async void Sets_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+    private async void Sets_TabDragCompleted(object sender, TabDragCompletedEventArgs args)
     {
-        var editor = GetDraggedEditor(args.Items.FirstOrDefault());
-        if (editor == null || !_transfers.TryGetValue(editor.Id, out var transfer)) return;
+        if (args.Error != null) LoggingService.LogException(args.Error);
+        var tab = GetDraggedTab(args.Item);
+        if (tab == null || !_transfers.TryGetValue(tab.Id, out var active) || active.OperationId != args.OperationId) return;
+        var transfer = active.Transfer;
         // Same-window reorder does not request our recovery descriptor and
         // retains the existing native document and undo history.
-        if (args.DropResult == DataPackageOperation.None || !transfer.HasPublishedData)
-        {
-            try { await CompleteTransferAsync(transfer, false); }
-            catch (Exception ex) { LoggingService.LogException(ex); }
-        }
-    }
-
-    private async void Sets_SetDraggedOutside(object sender, SetDraggedOutsideEventArgs e)
-    {
-        if (_sets.Items?.Count > 1 && (e.Set?.Tag as WorkspaceTab)?.ReadyEditor is ITextEditor textEditor)
-        {
-            // Only allow untitled empty document to be dragged outside for now
-            if (!textEditor.IsModified && textEditor.EditingFile == null && textEditor.IsDocumentEmpty)
-            {
-                TabClosing?.Invoke(this, GetTab(textEditor));
-                await NotepadsProtocolService.LaunchProtocolAsync(NotepadsOperationProtocol.OpenNewInstance);
-            }
-        }
+        // Drag completion owns cleanup. DataPackage.OperationCompleted is a
+        // clipboard callback, not a dependable drag/drop completion signal.
+        // A reported Move still requires the durable receiver receipt above.
+        try { await CompleteTransferAsync(transfer, args.Result == DataPackageOperation.Move && transfer.HasPublishedData); }
+        catch (Exception ex) { LoggingService.LogException(ex); }
     }
 
     #endregion

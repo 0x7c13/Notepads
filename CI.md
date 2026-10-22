@@ -30,7 +30,7 @@ one fails. Unit fixtures parallelize inside their runner; source and headless
 groups share one build.
 The desktop job matrix gives E2E and fault injection separate VMs and builds.
 E2E runs all default Release App groups from `Test.ps1 -Suite Integration -List`,
-plus `UIAutomation`, `DragDrop` and `AppLifecycle`. The latter builds a separate
+plus `UIAutomation`, `DragDrop`, `TabDragging` and `AppLifecycle`. The latter builds a separate
 Release AOT host with the actual App/bootstrap/router for OS activation tests.
 The Debug lane runs only the default fault
 group, without repeating ordinary syntax or storage tests; those already run in

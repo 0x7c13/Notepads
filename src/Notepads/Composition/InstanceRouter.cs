@@ -11,6 +11,7 @@ using Notepads.Infrastructure.Settings;
 using Notepads.Presentation.Workspace.Activation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using WinRT;
 
 namespace Notepads.Composition;
 
@@ -42,8 +43,10 @@ internal sealed class InstanceRouter(Action<BootstrapContext> startApplication)
                 }
                 else
                 {
-                    if (!prelaunch && (newWindow || args is ProtocolActivatedEventArgs protocol &&
-                        NotepadsProtocolService.GetOperationProtocol(protocol.Uri) == NotepadsOperationProtocol.OpenNewInstance))
+                    // Before XAML startup, Native AOT may expose activation as
+                    // IInspectable rather than its concrete managed runtime class.
+                    if (!prelaunch && (newWindow || args.Kind == ActivationKind.Protocol &&
+                        NotepadsProtocolService.GetOperationProtocol(args.As<IProtocolActivatedEventArgs>().Uri) == NotepadsOperationProtocol.OpenNewInstance))
                         existing = null;
                     // Serialize discovery and registration, so concurrent activations
                     // see the first registered process before choosing another one.

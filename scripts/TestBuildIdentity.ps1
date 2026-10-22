@@ -10,7 +10,7 @@ function Get-TestSourceFiles {
     $repo = Split-Path $PSScriptRoot -Parent
     $roots = switch ($Profile) {
         'Unit' { @('tests/UnitTests', 'src/Notepads/Features/Documents', 'src/Notepads/Features/Sessions/Contracts',
-            'src/Notepads/Features/Sessions/Validation', 'src/Notepads/Features/WebSearch') }
+            'src/Notepads/Features/Sessions/Validation', 'src/Notepads/Features/WebSearch', 'src/Notepads.Controls/SetsView') }
         'Headless' { @('tests/IntegrationTests/Headless', 'src/Notepads/Features/Documents', 'src/Notepads/Features/Sessions',
             'src/Notepads/Infrastructure/Diagnostics') }
         'App' { @('src', 'tests/IntegrationTests/App', 'tests/Shared') }

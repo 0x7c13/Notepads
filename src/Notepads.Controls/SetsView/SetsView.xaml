@@ -7,6 +7,7 @@
     <!-- BackgroundTransition interpolates Color, so keep transparency in the color alpha. -->
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="SetsViewItemDragBackground" Color="#FFF9F9F9" />
             <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
                          Color="#40FFFFFF"/>
@@ -38,6 +39,7 @@
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="SetsViewItemDragBackground" Color="#FF292929" />
             <SolidColorBrush x:Key="SetsViewBackground" Color="Transparent"/>
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
                          Color="#40000000"/>
@@ -69,6 +71,7 @@
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="SetsViewItemDragBackground" Color="{ThemeResource SystemColorHighlightColor}" />
             <SolidColorBrush x:Key="SetsViewBackground"
                              Color="{ThemeResource SystemChromeLowColor}" />
             <SolidColorBrush x:Key="SetsViewItemHeaderBackgroundSelected"
@@ -161,15 +164,8 @@
         <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
         <!--  Need UseLayoutRounding as Width being dynamically changed in same cases to fill up an entire space, otherwise gap.  -->
         <Setter Property="UseLayoutRounding" Value="False" />
-        <Setter Property="ItemContainerTransitions">
-            <Setter.Value>
-                <TransitionCollection>
-                    <ContentThemeTransition />
-                    <EntranceThemeTransition IsStaggeringEnabled="False" />
-                    <EdgeUIThemeTransition Edge="Bottom" />
-                </TransitionCollection>
-            </Setter.Value>
-        </Setter>
+        <!-- The rail owns header motion. Native entrance proxies can outlive a
+             new-tab insertion and draw neighboring text over an opaque drag. -->
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -350,8 +346,20 @@
                 <BrushTransition />
             </Grid.BackgroundTransition>
             <Grid.RenderTransform>
-                <ScaleTransform x:Name="LayoutRootScale" />
+                <TransformGroup>
+                    <ScaleTransform x:Name="LayoutRootScale" />
+                    <TranslateTransform x:Name="HeaderDragTranslation" />
+                    <TranslateTransform x:Name="HeaderLayoutTranslation" />
+                </TransformGroup>
             </Grid.RenderTransform>
+
+            <!-- Opaque only during the rail preview; normal hover/selection
+                 states keep their existing translucent background. -->
+            <Border x:Name="HeaderDragBackground"
+                    Background="{ThemeResource SetsViewItemDragBackground}"
+                    CornerRadius="4,4,0,0"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False" />
 
             <controls:DropShadowPanel 
                 x:Name="ItemLeftSideShadow"

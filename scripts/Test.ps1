@@ -73,6 +73,7 @@ $groups = [ordered]@{
     DpiLayout = @{ Profile = 'Desktop'; Default = $false }
     DisplayDpi = @{ Profile = 'Desktop'; Default = $false }
     DragDrop = @{ Profile = 'Desktop'; Default = $false }
+    TabDragging = @{ Profile = 'Desktop'; Default = $false }
     RegexMemory = @{ Profile = 'App'; Arguments = @('--regex-memory'); Default = $false; Performance = $true }
     Performance = @{ Profile = 'App'; Arguments = @('--performance'); Default = $false; Performance = $true }
     Package = @{ Profile = 'Package'; Default = $false }
@@ -241,6 +242,9 @@ try {
                     if ($name -eq 'DragDrop') {
                         Ensure-TestBuild DragPeer
                         & (Join-Path $PSScriptRoot 'Test-EditorDragDrop.ps1') -Platform $Platform
+                    }
+                    elseif ($name -eq 'TabDragging') {
+                        & (Join-Path $PSScriptRoot 'Test-TabDragging.ps1') -Platform $Platform
                     }
                     elseif ($name -in @('DpiLayout', 'DisplayDpi')) {
                         & (Join-Path $PSScriptRoot 'Test-EditorDpi.ps1') -Platform $Platform -CurrentScaleOnly:($name -eq 'DpiLayout')

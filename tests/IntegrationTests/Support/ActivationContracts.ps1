@@ -19,12 +19,18 @@ public static class ActivationLifetimeBroker {
     public static System.Threading.Tasks.TaskCompletionSource<uint> Pending;
     public static bool RejectQueue;
     public static uint LastOptions;
+    public static string LastProtocol;
     public static uint Launch(string app, string arguments, uint options) {
         LastOptions = options;
         return 42;
     }
     public static System.Threading.Tasks.Task<uint> LaunchAsync(string app, string arguments, uint options) {
         LastOptions = options;
+        if (RejectQueue) throw new System.InvalidOperationException("Fixture queue failure");
+        return Pending.Task;
+    }
+    public static System.Threading.Tasks.Task<uint> LaunchProtocolAsync(string app, string uri) {
+        LastProtocol = uri;
         if (RejectQueue) throw new System.InvalidOperationException("Fixture queue failure");
         return Pending.Task;
     }
@@ -146,6 +152,26 @@ foreach ($prelaunch in @($false, $true)) {
         Assert-Restored $session
         $checks.Add("Activation flags (prelaunch=$prelaunch, asynchronous=$asynchronous)")
     }
+}
+
+$session = New-Fixture 'protocol-activation'
+$activation = Start-IsolatedTestActivation $session -ReceiptPattern 'lifecycle-*-declined-*.json' -Protocol
+if ([ActivationLifetimeBroker]::LastProtocol -cne 'notepads://newinstance' -or
+    (Get-Content -LiteralPath (Join-Path $session.Layout 'ProtocolTestRun.txt') -Raw) -cne $session.RunId -or
+    !(Test-Path -LiteralPath $activation.Marker)) { throw 'Protocol activation lost its exact operation, explicit root or broker fence.' }
+Publish-Receipt $session
+[ActivationLifetimeBroker]::Pending.SetResult(42u)
+$null = Wait-IsolatedTestActivation $session
+Complete-IsolatedTestPackage $session | Out-Null
+Assert-Restored $session
+$checks.Add('Protocol activation retains the explicit run marker and fenced broker handshake')
+
+$session = New-Fixture 'protocol-prelaunch'
+Expect-Rejection 'Protocol activation refuses prelaunch before creating a fence' '*cannot be prelaunch*' {
+    Start-IsolatedTestActivation $session -Protocol -Prelaunch
+}
+if ($session.PendingActivation -or (Test-Path -LiteralPath (Join-Path $session.Layout 'PendingTestActivation.txt'))) {
+    throw 'An invalid protocol/prelaunch combination created pending work.'
 }
 
 $session = New-Fixture 'unfinished'

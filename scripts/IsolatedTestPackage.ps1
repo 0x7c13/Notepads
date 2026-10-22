@@ -87,7 +87,8 @@ function Start-IsolatedTestProcess {
 
 function Start-IsolatedTestActivation {
     param([hashtable] $Session, [string] $Argument, [string] $ReceiptPattern,
-        [switch] $Prelaunch)
+        [switch] $Prelaunch, [switch] $Protocol)
+    if ($Protocol -and $Prelaunch) { throw 'Protocol activation cannot be prelaunch.' }
     Assert-IsolatedTestRunOwnership $Session
     $marker = Join-Path $Session.Layout 'PendingTestActivation.txt'
     if ($Session.PendingActivation -or (Test-Path -LiteralPath $marker)) {
@@ -101,8 +102,14 @@ function Start-IsolatedTestActivation {
     $Session.PendingActivation = $activation
     try {
         $options = if ($Prelaunch) { $script:IsolatedPrelaunchActivationOption } else { [uint32] 0 }
-        $activation.Task = [PreservingUwpTestLauncher]::LaunchAsync("$($Session.Package.PackageFamilyName)!App",
-            "--test-run $($Session.RunId) $Argument", $options)
+        if ($Protocol) {
+            [IO.File]::WriteAllText((Join-Path $Session.Layout 'ProtocolTestRun.txt'), $Session.RunId)
+            $activation.Task = [PreservingUwpTestLauncher]::LaunchProtocolAsync("$($Session.Package.PackageFamilyName)!App", 'notepads://newinstance')
+        }
+        else {
+            $activation.Task = [PreservingUwpTestLauncher]::LaunchAsync("$($Session.Package.PackageFamilyName)!App",
+                "--test-run $($Session.RunId) $Argument", $options)
+        }
     }
     catch {
         [IO.File]::Delete($marker)
@@ -404,12 +411,19 @@ function Start-IsolatedTestPackage {
         }
         [xml] $manifest = Get-Content -LiteralPath $manifestPath
         $app = @($manifest.Package.Applications.Application)
+        # A private protocol contract permits explicit AUMID activation without
+        # registering a Production scheme or changing any user's associations.
+        $extensions = @($app[0].Extensions.ChildNodes)
+        $privateProtocol = $extensions.Count -eq 1 -and $extensions[0].LocalName -eq 'Extension' -and
+            $extensions[0].Attributes.Count -eq 1 -and $extensions[0].Category -eq 'windows.protocol' -and
+            $extensions[0].ChildNodes.Count -eq 1 -and $extensions[0].Protocol.Attributes.Count -eq 1 -and
+            $extensions[0].Protocol.Name -ceq 'notepads-integration-tests' -and $extensions[0].Protocol.ChildNodes.Count -eq 0
         if ($manifest.Package.Identity.Name -ne 'Notepads.Editor.Tests' -or
             $manifest.Package.Identity.ProcessorArchitecture -ine $Platform -or
             $manifest.Package.Identity.Publisher -ne 'CN=40E66D07-5A3A-4954-9CA3-A1EB15ED0804' -or
-            $app.Count -ne 1 -or $app[0].Extensions -or $app[0].Id -ne 'App' -or
+            $app.Count -ne 1 -or !$privateProtocol -or $app[0].Id -ne 'App' -or
             $app[0].Executable -ne 'NotepadsIntegrationTests.exe' -or $app[0].EntryPoint -ne 'Notepads.App') {
-            throw 'Only the integration test identity, executable and entry point without activation extensions may be registered.'
+            throw 'Only the integration test identity, executable, entry point and exact private protocol contract may be registered.'
         }
         $session.Executable = Join-Path $layout 'NotepadsIntegrationTests.exe'
         if (!(Test-Path -LiteralPath $session.Executable -PathType Leaf)) { throw 'The isolated executable is missing.' }
@@ -420,10 +434,31 @@ using System.Runtime.InteropServices;
 [ComImport, Guid("2e941141-7f97-4756-ba1d-9decde894a3d"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 interface IPreservingTestActivationManager {
     [PreserveSig] int ActivateApplication([MarshalAs(UnmanagedType.LPWStr)] string appId, [MarshalAs(UnmanagedType.LPWStr)] string arguments, uint options, out uint processId);
-    [PreserveSig] int ActivateForFile(IntPtr items, string verb, out uint processId);
-    [PreserveSig] int ActivateForProtocol(IntPtr items, out uint processId);
+    [PreserveSig] int ActivateForFile([MarshalAs(UnmanagedType.LPWStr)] string appId, IntPtr items, [MarshalAs(UnmanagedType.LPWStr)] string verb, out uint processId);
+    [PreserveSig] int ActivateForProtocol([MarshalAs(UnmanagedType.LPWStr)] string appId, IntPtr items, out uint processId);
 }
 public static class PreservingUwpTestLauncher {
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+    private static extern void SHCreateItemFromParsingName(string path, IntPtr context, ref Guid iid, out IntPtr item);
+    [DllImport("shell32.dll", PreserveSig = false)]
+    private static extern void SHCreateShellItemArrayFromShellItem(IntPtr item, ref Guid iid, out IntPtr array);
+    public static System.Threading.Tasks.Task<uint> LaunchProtocolAsync(string appId, string uri) => System.Threading.Tasks.Task.Run(() => {
+        var manager = (IPreservingTestActivationManager)Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("45ba127d-10a8-46ea-8ab7-56ea9078943c")));
+        IntPtr item = IntPtr.Zero, array = IntPtr.Zero;
+        try {
+            var itemId = new Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE");
+            var arrayId = new Guid("B63EA76D-1F85-456F-A19C-48159EFA858B");
+            SHCreateItemFromParsingName(uri, IntPtr.Zero, ref itemId, out item);
+            SHCreateShellItemArrayFromShellItem(item, ref arrayId, out array);
+            uint processId;
+            Marshal.ThrowExceptionForHR(manager.ActivateForProtocol(appId, array, out processId));
+            return processId;
+        } finally {
+            if (array != IntPtr.Zero) Marshal.Release(array);
+            if (item != IntPtr.Zero) Marshal.Release(item);
+            Marshal.ReleaseComObject(manager);
+        }
+    });
     public static System.Threading.Tasks.Task<uint> LaunchAsync(string appId, string arguments, uint options) =>
         System.Threading.Tasks.Task.Run(() => Launch(appId, arguments, options));
     public static uint Launch(string appId, string arguments, uint options = 0) {

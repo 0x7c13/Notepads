@@ -47,8 +47,6 @@ internal sealed class TextEditorTransfer
     private readonly CancellationTokenSource _cancellation = new();
     private string _serializedData;
     private TransferToken _token;
-    private DataPackage _package;
-    private Func<bool, Task> _onCompleted;
     private long _sourceRemovalRevision;
     private bool _completed;
 
@@ -70,25 +68,15 @@ internal sealed class TextEditorTransfer
 
     public bool HasPublishedData => _serializedData != null;
 
-    public void Populate(DataPackage package, Func<bool, Task> onCompleted)
+    public void Populate(DataPackage package)
     {
-        _package = package ?? throw new ArgumentNullException(nameof(package));
-        _onCompleted = onCompleted ?? throw new ArgumentNullException(nameof(onCompleted));
-        package.OperationCompleted += OnOperationCompleted;
+        ArgumentNullException.ThrowIfNull(package);
         package.RequestedOperation = DataPackageOperation.Move;
         package.Properties.ApplicationName = _context.ApplicationName;
         package.Properties.Add(InstanceProperty, _context.InstanceId.ToString());
         package.Properties.Add(TransferProperty, Id.ToString());
         if (_editingFile != null) package.SetStorageItems(new[] { _editingFile }, readOnly: false);
         package.SetDataProvider(DataFormat, ProvideData);
-    }
-
-    private async void OnOperationCompleted(DataPackage sender, OperationCompletedEventArgs args)
-    {
-        var callback = _onCompleted;
-        if (callback == null) return;
-        try { await callback(args.Operation == DataPackageOperation.Move); }
-        catch (Exception ex) { LoggingService.LogException(ex); }
     }
 
     private async void ProvideData(DataProviderRequest request)
@@ -157,11 +145,8 @@ internal sealed class TextEditorTransfer
         Editor.TryCommitTransferAsync(() => canRemove() && IsSourceUnchanged(),
             MarkSourceAcknowledgedAsync, removeLogicalSource);
 
-    public async Task CompleteAsync(TextEditorTransferResult result, bool sourceIsAlive)
+    public async Task CompleteAsync(TextEditorTransferResult result, Func<bool> sourceIsAlive)
     {
-        if (_package != null) _package.OperationCompleted -= OnOperationCompleted;
-        _package = null;
-        _onCompleted = null;
         if (result != TextEditorTransferResult.Received) _cancellation.Cancel();
         await _gate.WaitAsync();
         try
@@ -171,7 +156,7 @@ internal sealed class TextEditorTransfer
             // A failed move from an already closed source leaves a recovery
             // root available instead of destroying the only remaining copy.
             if (_token != null && (result == TextEditorTransferResult.Received ||
-                result == TextEditorTransferResult.Cancelled && sourceIsAlive))
+                result == TextEditorTransferResult.Cancelled && sourceIsAlive()))
             {
                 await TransferRecoveryStore.DeleteSourceTransferAsync(_token);
             }

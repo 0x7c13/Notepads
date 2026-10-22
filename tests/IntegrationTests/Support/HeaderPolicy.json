@@ -218,7 +218,6 @@
           "sha256": "8D8E96447C27661FF6434CC7C837987471E6C9C3A223F709D9BD571AB8D64FA8",
           "paths": [
             "src/Notepads.Controls/SetsView/SetClosingEventArgs.cs",
-            "src/Notepads.Controls/SetsView/SetDraggedOutsideEventArgs.cs",
             "src/Notepads.Controls/SetsView/SetSelectedEventArgs.cs",
             "src/Notepads.Controls/SetsView/SetsView.cs",
             "src/Notepads.Controls/SetsView/SetsView.HeaderLayout.cs",
