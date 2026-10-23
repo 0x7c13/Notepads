@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Закрыть приложение при закрытии последней вкладки.</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Закрыть приложение при закрытии последней вкладки.</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Проверка орфографии в этом редакторе недоступна.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Отрисовка шрифта</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Сглаживание в оттенках серого</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Сглаживание в оттенках серого сглаживает края символов, сохраняя цвета текста и прозрачность фона. ClearType может выглядеть чётче на некоторых экранах и использует непрозрачный фон редактора.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType требует непрозрачного фона редактора. Чтобы настроить прозрачность, выберите сглаживание в оттенках серого в настройках отображения шрифта.</value></data>
 </root>

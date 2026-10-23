@@ -18,17 +18,6 @@ using DCRenderTarget = winrt::com_ptr<ID2D1DCRenderTarget>;
 
 using D3D11Device = winrt::com_ptr<ID3D11Device1>;
 
-using WriteRenderingParams = winrt::com_ptr<IDWriteRenderingParams1>;
-
-struct RenderingParams {
-	WriteRenderingParams defaultRenderingParams;
-	WriteRenderingParams customRenderingParams;
-};
-
-struct ISetRenderingParams {
-	virtual void SetRenderingParams(std::shared_ptr<RenderingParams> renderingParams_) = 0;
-};
-
 using BrushSolid = winrt::com_ptr<ID2D1SolidColorBrush>;
 using Geometry = winrt::com_ptr<ID2D1PathGeometry>;
 using GeometrySink = winrt::com_ptr<ID2D1GeometrySink>;

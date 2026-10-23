@@ -70,6 +70,7 @@
 #include "PlatWin.h"
 #if defined(USE_D2D)
 #include "SurfaceD2D.h"
+#include "TextRendering.h"
 #include "DirectWriteParagraph.h"
 #include "DirectWriteRenderer.h"
 #endif
@@ -149,23 +150,6 @@ void LoadD2DOnce() noexcept {
 	fnDCD = DLLFunction<PFN_D3D11_CREATE_DEVICE>(hDLLD3D, "D3D11CreateDevice");
 	if (!fnDCD) {
 		Platform::DebugPrintf("Direct3D does not have D3D11CreateDevice\n");
-	}
-}
-
-constexpr D2D1_TEXT_ANTIALIAS_MODE DWriteMapFontQuality(FontQuality extraFontFlag) noexcept {
-	switch (extraFontFlag & FontQuality::QualityMask) {
-
-		case FontQuality::QualityNonAntialiased:
-			return D2D1_TEXT_ANTIALIAS_MODE_ALIASED;
-
-		case FontQuality::QualityAntialiased:
-			return D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE;
-
-		case FontQuality::QualityLcdOptimized:
-			return D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE;
-
-		default:
-			return D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
 	}
 }
 
@@ -292,7 +276,7 @@ constexpr D2D_COLOR_F ColorFromColourAlpha(ColourRGBA colour) noexcept {
 
 class BlobInline;
 
-class SurfaceD2D : public Surface, public ISetRenderingParams {
+class SurfaceD2D : public Surface {
 	SurfaceMode mode;
 
 	// Text measuring surface: both pRenderTarget and pBitmapRenderTarget are null.
@@ -308,7 +292,6 @@ class SurfaceD2D : public Surface, public ISetRenderingParams {
 	FontQuality fontQuality = invalidFontQuality;
 	int logPixelsY = USER_DEFAULT_SCREEN_DPI;
 	int deviceScaleFactor = 1;
-	std::shared_ptr<RenderingParams> renderingParams;
 	WindowID windowId; // Used to access chevron folding font
 
 	void Clear() noexcept;
@@ -391,8 +374,6 @@ public:
 	void FlushCachedState() override;
 	void FlushDrawing() override;
 
-	void SetRenderingParams(std::shared_ptr<RenderingParams> renderingParams_) override;
-
 	WindowID GetWindowId() const;
 };
 
@@ -471,7 +452,6 @@ void SurfaceD2D::Init(SurfaceID sid, WindowID wid) {
 
 std::unique_ptr<Surface> SurfaceD2D::AllocatePixMap(int width, int height) {
 	std::unique_ptr<SurfaceD2D> surf = std::make_unique<SurfaceD2D>(pRenderTarget.get(), width, height, mode, logPixelsY);
-	surf->SetRenderingParams(renderingParams);
 	return surf;
 }
 
@@ -499,15 +479,11 @@ void SurfaceD2D::D2DPenColourAlpha(ColourRGBA fore) noexcept {
 }
 
 void SurfaceD2D::SetFontQuality(FontQuality extraFontFlag) {
-	if ((fontQuality != extraFontFlag) && renderingParams) {
+	if (pRenderTarget && fontQuality != extraFontFlag) {
+		// Antialiasing is target state, independent of optional DirectWrite
+		// rendering parameters. Measuring surfaces must not consume the update.
+		pRenderTarget->SetTextAntialiasMode(TextAntialiasMode(extraFontFlag));
 		fontQuality = extraFontFlag;
-		const D2D1_TEXT_ANTIALIAS_MODE aaMode = DWriteMapFontQuality(extraFontFlag);
-		if (aaMode == D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE && renderingParams->customRenderingParams) {
-			pRenderTarget->SetTextRenderingParams(renderingParams->customRenderingParams.get());
-		} else if (renderingParams->defaultRenderingParams) {
-			pRenderTarget->SetTextRenderingParams(renderingParams->defaultRenderingParams.get());
-		}
-		pRenderTarget->SetTextAntialiasMode(aaMode);
 	}
 }
 
@@ -1713,10 +1689,6 @@ void SurfaceD2D::FlushDrawing() {
 	if (pRenderTarget) {
 		pRenderTarget->Flush();
 	}
-}
-
-void SurfaceD2D::SetRenderingParams(std::shared_ptr<RenderingParams> renderingParams_) {
-	renderingParams = std::move(renderingParams_);
 }
 
 WindowID SurfaceD2D::GetWindowId() const

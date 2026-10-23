@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>App afsluiten bij het sluiten van laatste tabblad</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>App afsluiten bij het sluiten van laatste tabblad</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Spellingcontrole is niet beschikbaar in deze editor.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Lettertypeweergave</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Grijstintverzachting</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Grijstintverzachting maakt tekenranden gladder en behoudt de tekstkleuren en achtergrondtransparantie. ClearType kan op sommige schermen scherper ogen en gebruikt een ondoorzichtige editorachtergrond.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType vereist een ondoorzichtige editorachtergrond. Kies grijswaarden bij lettertypeweergave om de transparantie aan te passen.</value></data>
 </root>

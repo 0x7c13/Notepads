@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>आखिरी टैब बंद करते समय ऐप से बाहर निकलें</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>आखिरी टैब बंद करते समय ऐप से बाहर निकलें</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>इस संपादक में वर्तनी जाँच उपलब्ध नहीं है।</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>फ़ॉन्ट रेंडरिंग</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>ग्रेस्केल स्मूदिंग</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>ग्रेस्केल स्मूदिंग अक्षरों के किनारों को चिकना बनाती है और टेक्स्ट के रंगों व पृष्ठभूमि की पारदर्शिता को बनाए रखती है। ClearType कुछ डिस्प्ले पर अधिक स्पष्ट दिख सकता है और संपादक की पृष्ठभूमि को अपारदर्शी बनाता है।</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType के लिए संपादक की पृष्ठभूमि अपारदर्शी होनी चाहिए। पारदर्शिता बदलने के लिए फ़ॉन्ट रेंडरिंग में ग्रेस्केल चुनें।</value></data>
 </root>

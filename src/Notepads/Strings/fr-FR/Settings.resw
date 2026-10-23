@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Quitter l'application à la &#xA;fermeture du dernier onglet</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Quitter l'application à la &#xA;fermeture du dernier onglet</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>La vérification orthographique n’est pas disponible dans cet éditeur.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Rendu des polices</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Lissage en niveaux de gris</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Le lissage en niveaux de gris adoucit les contours des caractères tout en conservant les couleurs du texte et la transparence du fond. ClearType peut paraître plus net sur certains écrans et utilise un fond opaque dans l’éditeur.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType nécessite un arrière-plan opaque dans l’éditeur. Sélectionnez le lissage en niveaux de gris dans le rendu des polices pour régler la transparence.</value></data>
 </root>

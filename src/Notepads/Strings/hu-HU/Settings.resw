@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Kilépés az alkalmazásból az utolsó fül bezárásakor</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Kilépés az alkalmazásból az utolsó fül bezárásakor</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Ebben a szerkesztőben nem érhető el helyesírás-ellenőrzés.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Betűmegjelenítés</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Szürkeárnyalatos élsimítás</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>A szürkeárnyalatos élsimítás kisimítja a karakterek széleit, megőrizve a szöveg színeit és a háttér átlátszóságát. A ClearType egyes kijelzőkön élesebbnek tűnhet, és átlátszatlan szerkesztőhátteret használ.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>A ClearType átlátszatlan szerkesztőhátteret igényel. Az átlátszóság módosításához válassza a szürkeárnyalatos simítást a betűmegjelenítésnél.</value></data>
 </root>

@@ -10,7 +10,7 @@ using Windows.UI.Xaml;
 
 namespace Notepads.Presentation.Theming;
 
-internal enum EditorColorRole { Background, Foreground, LineNumber, CaretLine, SelectionText }
+internal enum EditorColorRole { Background, Foreground, LineNumber, CaretLine, SelectionText, OpaqueBackground }
 
 internal sealed class EditorColorPalette
 {
@@ -25,7 +25,8 @@ internal sealed class EditorColorPalette
         (Color)resources["EditorForegroundColor"],
         (Color)resources["EditorLineNumberColor"],
         (Color)resources["EditorCaretLineColor"],
-        (Color)resources["EditorSelectionTextColor"]
+        (Color)resources["EditorSelectionTextColor"],
+        (Color)resources["EditorOpaqueBackgroundColor"]
     ]) { }
 
     public Color this[EditorColorRole role] => _colors[(int)role];
@@ -38,9 +39,10 @@ internal sealed class EditorColorPalette
         {
             var settings = new UISettings();
             var foreground = settings.GetColorValue(UIColorType.Foreground);
+            var background = settings.GetColorValue(UIColorType.Background);
             // High contrast hides the caret line.
-            return new EditorColorPalette([settings.GetColorValue(UIColorType.Background), foreground, foreground,
-                Colors.Transparent, (Color)Application.Current.Resources["SystemColorHighlightTextColor"]]);
+            return new EditorColorPalette([background, foreground, foreground,
+                Colors.Transparent, (Color)Application.Current.Resources["SystemColorHighlightTextColor"], background]);
         }
         lock (PaletteLock)
         {

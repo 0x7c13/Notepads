@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>आखरी टैब बंद करते समय ऐप बंद करें</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>आखरी टैब बंद करते समय ऐप बंद करें</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>ଏହି ସମ୍ପାଦକରେ ବନାନ ଯାଞ୍ଚ ଉପଲବ୍ଧ ନାହିଁ।</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>ଫଣ୍ଟ ରେଣ୍ଡରିଂ</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>ଗ୍ରେସ୍କେଲ୍ ସ୍ମୁଦିଂ</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>ଗ୍ରେସ୍କେଲ୍ ସ୍ମୁଦିଂ ଅକ୍ଷରର ଧାରକୁ ମସୃଣ କରେ ଏବଂ ପାଠ୍ୟର ରଙ୍ଗ ଓ ପୃଷ୍ଠଭୂମିର ସ୍ୱଚ୍ଛତା ବଜାୟ ରଖେ। କିଛି ଡିସ୍ପ୍ଲେରେ ClearType ଅଧିକ ସ୍ପଷ୍ଟ ଦେଖାଯାଇପାରେ ଏବଂ ଏହା ସମ୍ପାଦକ ପାଇଁ ଅସ୍ୱଚ୍ଛ ପୃଷ୍ଠଭୂମି ବ୍ୟବହାର କରେ।</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType ପାଇଁ ସମ୍ପାଦକର ପୃଷ୍ଠଭୂମି ଅସ୍ୱଚ୍ଛ ହେବା ଆବଶ୍ୟକ। ସ୍ୱଚ୍ଛତା ବଦଳାଇବାକୁ ଫଣ୍ଟ ରେଣ୍ଡରିଂରେ ଗ୍ରେସ୍କେଲ୍ ବାଛନ୍ତୁ।</value></data>
 </root>

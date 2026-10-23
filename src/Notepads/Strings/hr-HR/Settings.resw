@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Izađi iz aplikacije pri zatvaranju posljednjeg taba</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Izađi iz aplikacije pri zatvaranju posljednjeg taba</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Provjera pravopisa nije dostupna u ovom uređivaču.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Iscrtavanje fonta</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Zaglađivanje u sivim tonovima</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Zaglađivanje u sivim tonovima zaglađuje rubove znakova uz očuvanje boja teksta i prozirnosti pozadine. ClearType na nekim zaslonima može izgledati oštrije i koristi neprozirnu pozadinu uređivača.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType zahtijeva neprozirnu pozadinu uređivača. Za podešavanje prozirnosti odaberite zaglađivanje u sivim tonovima u postavkama prikaza fonta.</value></data>
 </root>

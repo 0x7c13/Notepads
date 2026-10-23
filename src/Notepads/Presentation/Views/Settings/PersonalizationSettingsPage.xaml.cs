@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using Notepads.Features.Preferences;
 using Notepads.Presentation.Helpers;
 using Notepads.Presentation.Theming;
 using Windows.System.Power;
@@ -23,10 +24,14 @@ public sealed partial class PersonalizationSettingsPage : Page
 
     private SettingsContext _context;
     private bool _eventsBound;
+    private bool _updatingFontRendering;
 
     public PersonalizationSettingsPage()
     {
         InitializeComponent();
+        // Isolate this group from theme choices and retired page instances,
+        // including preference initialization before entering the visual tree.
+        GrayscaleRenderingRadioButton.GroupName = ClearTypeRenderingRadioButton.GroupName = Guid.NewGuid().ToString("N");
     }
 
     internal void Initialize(SettingsContext context)
@@ -60,8 +65,7 @@ public sealed partial class PersonalizationSettingsPage : Page
         BackgroundTintOpacitySlider.Value = ThemeSettingsService.AppBackgroundPanelTintOpacity * 100;
         AccentColorPicker.Color = ThemeSettingsService.AppAccentColor;
 
-        BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
-                                                PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+        UpdateFontRenderingControls();
 
         Loaded += PersonalizationSettings_Loaded;
         Unloaded += PersonalizationSettings_Unloaded;
@@ -89,6 +93,9 @@ public sealed partial class PersonalizationSettingsPage : Page
     {
         if (_eventsBound) return;
         _eventsBound = true;
+        UpdateFontRenderingControls();
+        GrayscaleRenderingRadioButton.Checked += FontRenderingRadioButton_Checked;
+        ClearTypeRenderingRadioButton.Checked += FontRenderingRadioButton_Checked;
         ThemeModeDefaultButton.Checked += ThemeRadioButton_OnChecked;
         ThemeModeLightButton.Checked += ThemeRadioButton_OnChecked;
         ThemeModeDarkButton.Checked += ThemeRadioButton_OnChecked;
@@ -98,12 +105,15 @@ public sealed partial class PersonalizationSettingsPage : Page
         ThemeSettingsService.OnAccentColorChanged += ThemeSettingsService_OnAccentColorChanged;
         UISettings.AdvancedEffectsEnabledChanged += UISettings_AdvancedEffectsEnabledChanged;
         PowerManager.EnergySaverStatusChanged += PowerManager_EnergySaverStatusChanged;
+        ApplicationPreferences.OnFontRenderingChanged += OnFontRenderingChanged;
     }
 
     private void PersonalizationSettings_Unloaded(object sender, RoutedEventArgs e)
     {
         if (!_eventsBound) return;
         _eventsBound = false;
+        GrayscaleRenderingRadioButton.Checked -= FontRenderingRadioButton_Checked;
+        ClearTypeRenderingRadioButton.Checked -= FontRenderingRadioButton_Checked;
         ThemeModeDefaultButton.Checked -= ThemeRadioButton_OnChecked;
         ThemeModeLightButton.Checked -= ThemeRadioButton_OnChecked;
         ThemeModeDarkButton.Checked -= ThemeRadioButton_OnChecked;
@@ -113,14 +123,50 @@ public sealed partial class PersonalizationSettingsPage : Page
         ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
         UISettings.AdvancedEffectsEnabledChanged -= UISettings_AdvancedEffectsEnabledChanged;
         PowerManager.EnergySaverStatusChanged -= PowerManager_EnergySaverStatusChanged;
+        ApplicationPreferences.OnFontRenderingChanged -= OnFontRenderingChanged;
+    }
+
+    private void UpdateBackgroundTintAvailability()
+    {
+        var clearType = ApplicationPreferences.EditorFontRendering == FontRenderingMode.ClearType;
+        BackgroundTintOpacitySlider.IsEnabled = !clearType && UISettings.AdvancedEffectsEnabled &&
+                                                PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+        ClearTypeTransparencyNotice.Visibility = clearType ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void UpdateFontRenderingControls()
+    {
+        _updatingFontRendering = true;
+        try
+        {
+            GrayscaleRenderingRadioButton.IsChecked = ApplicationPreferences.EditorFontRendering == FontRenderingMode.Grayscale;
+            ClearTypeRenderingRadioButton.IsChecked = ApplicationPreferences.EditorFontRendering == FontRenderingMode.ClearType;
+        }
+        finally { _updatingFontRendering = false; }
+        UpdateBackgroundTintAvailability();
+    }
+
+    private void FontRenderingRadioButton_Checked(object sender, RoutedEventArgs e)
+    {
+        if (_updatingFontRendering) return;
+        ApplicationPreferences.EditorFontRendering = ReferenceEquals(sender, ClearTypeRenderingRadioButton)
+            ? FontRenderingMode.ClearType : FontRenderingMode.Grayscale;
+    }
+
+    private async void OnFontRenderingChanged(object sender, FontRenderingMode rendering)
+    {
+        if (!_eventsBound) return;
+        await Dispatcher.CallOnUIThreadAsync(() =>
+        {
+            if (_eventsBound) UpdateFontRenderingControls();
+        });
     }
 
     private async void PowerManager_EnergySaverStatusChanged(object sender, object e)
     {
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
-            BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
-                                                    PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+            if (_eventsBound) UpdateBackgroundTintAvailability();
         });
     }
 
@@ -128,8 +174,7 @@ public sealed partial class PersonalizationSettingsPage : Page
     {
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
-            BackgroundTintOpacitySlider.IsEnabled = UISettings.AdvancedEffectsEnabled &&
-                                                    PowerManager.EnergySaverStatus != EnergySaverStatus.On;
+            if (_eventsBound) UpdateBackgroundTintAvailability();
         });
     }
 

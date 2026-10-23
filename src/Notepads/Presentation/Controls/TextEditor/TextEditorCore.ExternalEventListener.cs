@@ -21,6 +21,7 @@ public sealed partial class TextEditorCore
         ApplicationPreferences.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
         ApplicationPreferences.OnFontStyleChanged += EditorSettingsService_OnFontStyleChanged;
         ApplicationPreferences.OnFontWeightChanged += EditorSettingsService_OnFontWeightChanged;
+        ApplicationPreferences.OnFontRenderingChanged += EditorSettingsService_OnFontRenderingChanged;
         ApplicationPreferences.OnDefaultTextWrappingChanged += EditorSettingsService_OnDefaultTextWrappingChanged;
         ApplicationPreferences.OnDefaultDisplayLineNumbersViewStateChanged += EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
         ApplicationPreferences.OnDefaultLineHighlighterViewStateChanged += EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
@@ -34,6 +35,7 @@ public sealed partial class TextEditorCore
         ApplicationPreferences.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
         ApplicationPreferences.OnFontStyleChanged -= EditorSettingsService_OnFontStyleChanged;
         ApplicationPreferences.OnFontWeightChanged -= EditorSettingsService_OnFontWeightChanged;
+        ApplicationPreferences.OnFontRenderingChanged -= EditorSettingsService_OnFontRenderingChanged;
         ApplicationPreferences.OnDefaultTextWrappingChanged -= EditorSettingsService_OnDefaultTextWrappingChanged;
         ApplicationPreferences.OnDefaultDisplayLineNumbersViewStateChanged -= EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged;
         ApplicationPreferences.OnDefaultLineHighlighterViewStateChanged -= EditorSettingsService_OnDefaultLineHighlighterViewStateChanged;
@@ -81,6 +83,16 @@ public sealed partial class TextEditorCore
             if (_disposed) return;
             FontWeight = fontWeight.ToFontWeight();
             ApplyFont();
+        });
+    }
+
+    private async void EditorSettingsService_OnFontRenderingChanged(object sender, FontRenderingMode rendering)
+    {
+        if (_disposed) return;
+        await Dispatcher.CallOnUIThreadAsync(() =>
+        {
+            // Read the latest preference if several queued changes coalesce.
+            if (!_disposed) ApplyTheme();
         });
     }
 

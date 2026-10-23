@@ -7,6 +7,22 @@
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="RenderingConstraintBrush" Color="#FFD966"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="RenderingConstraintBrush" Color="#8A5B00"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="RenderingConstraintBrush" Color="{ThemeResource SystemColorWindowTextColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
     <Grid>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -35,6 +51,23 @@
                     <RadioButton x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_DarkModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="ThemeModeDarkButton" Tag="Dark" />
                     <RadioButton x:Uid="/Settings/PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton" Style="{StaticResource CustomRadioButtonStyle}" x:Name="ThemeModeDefaultButton" Tag="Default" />
                 </StackPanel>
+                <TextBlock
+                    x:Uid="/Settings/PersonalizationPage_FontRendering_Title"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,20,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel x:Name="FontRenderingPanel" Margin="0,10,0,0">
+                    <RadioButton x:Name="GrayscaleRenderingRadioButton"
+                                 x:Uid="/Settings/PersonalizationPage_FontRendering_Grayscale"
+                                 Style="{StaticResource CustomRadioButtonStyle}"/>
+                    <RadioButton x:Name="ClearTypeRenderingRadioButton"
+                                 x:Uid="/Settings/PersonalizationPage_FontRendering_ClearType"
+                                 Style="{StaticResource CustomRadioButtonStyle}"/>
+                </StackPanel>
+                <TextBlock x:Name="FontRenderingDescription"
+                           x:Uid="/Settings/PersonalizationPage_FontRendering_Description"
+                           Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"
+                           TextWrapping="Wrap" MaxWidth="400"/>
                 <TextBlock x:Name="BackgroundTintOpacityTitle"
                     x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Title"
                     Style="{StaticResource CompactSubtitleTextBlockStyle}"
@@ -58,6 +91,12 @@
                                    FontSize="18"/>
                     </StackPanel>
                     <TextBlock x:Uid="/Settings/PersonalizationPage_BackgroundTintOpacitySettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
+                    <TextBlock x:Name="ClearTypeTransparencyNotice"
+                               x:Uid="/Settings/PersonalizationPage_ClearTypeTransparencyNotice"
+                               Style="{ThemeResource DescriptionTextBlockStyle}"
+                               Foreground="{ThemeResource RenderingConstraintBrush}"
+                               Margin="0,8,0,0" TextWrapping="Wrap" MaxWidth="400"
+                               Visibility="Collapsed" AutomationProperties.LiveSetting="Polite"/>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/PersonalizationPage_AccentColorSettings_Title"

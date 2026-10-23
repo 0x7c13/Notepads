@@ -49,7 +49,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Syntax, native Diff, ICU regex and failures | `Editor`; focused `Syntax`, `Diff`, `NativeDiff`, `RegexText`, `NativeFaults` |
 | Tabs, content-derived titles, selected reorder attachment, transfer admission and pending availability | `WorkspaceCommands`, `Activation`, `Workspace`; Unit title/drag geometry |
 | Prelaunch, first-paint restore, new-window protocol, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
-| Preferences (fresh defaults, preserved explicit values, real Tab), themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
+| Preferences (defaults, persisted values, Tab, grayscale/ClearType), themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
 | Session restart/import/close, transfer, persistence, recovery and leases | `Workspace*`, `Persistence`, `Leases`, `SessionResilience` |
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
 | RTL/LTR shaping, geometry, navigation, selection, undo and direction persistence | `NativeBidi`, `Bidi`, `ReadingOrder`, `AutomationNavigation` |
@@ -65,16 +65,23 @@ names from `-List`. Markdown preview is not implemented and has no completion cl
 NativeBidi uses production native code with independent whole-paragraph DirectWrite
 geometry and WIC pixel references. It covers Unicode byte/UTF-16 boundaries,
 shaping/fallback, wrapping, visual navigation, rectangles, immutable foregrounds,
-color glyphs, clipping/transforms, DPI, gutter geometry, viewport bounds/animation clocks and undo notifications.
+color glyphs, clipping/transforms, DPI, font-quality transitions, gutter geometry,
+viewport bounds/animation clocks and undo notifications.
 Regular CI also requires an optimized **262,144 UTF-16-unit** dense LTR paragraph:
 bounded beginning/middle/end samples check navigation, selection and panned pixels.
 The complete lazy navigation index is built; native fallback remains separately tested.
 
 App tests exercise the real adapter/control, including immediate post-edit queries,
 first paint, restore, rectangles, language, accessibility and focus. External tests
-add physical input and independent UIA/pixel observations. These layers complement
-each other: NativeBidi does not compile `Editor.cxx` or the TSF bridge; App `TypeText`
-uses native paste, so neither is proof of TSF keyboard handling.
+add physical input and independent UIA/pixel observations. Font-quality raster
+checks cover transparent/opaque Light/Dark, compatible buffers, mode round-trips,
+ClearType selection and the real preference's native background opacity. Settings
+checks preserve hidden/Diff state, selection, undo and a legal RTL viewport;
+refresh is simulated through shared storage, while restart uses a new process.
+These checks do not
+require ClearType to differ on systems configured for grayscale pixel geometry.
+These layers complement each other: NativeBidi does not compile `Editor.cxx` or
+the TSF bridge; App `TypeText` uses native paste, so neither is proof of TSF keyboard handling.
 Physical typing also queues a selection shortcut and character together, checking
 exact text, caret and one-step undo without relying on paint/idle to synchronize TSF.
 

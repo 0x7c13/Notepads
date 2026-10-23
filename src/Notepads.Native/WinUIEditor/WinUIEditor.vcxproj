@@ -188,6 +188,7 @@
     <ClInclude Include="..\scintilla\winui\PlatWin.h" />
     <ClInclude Include="..\scintilla\winui\ScintillaWin.h" />
     <ClInclude Include="..\scintilla\winui\SurfaceD2D.h" />
+    <ClInclude Include="..\scintilla\winui\TextRendering.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteParagraph.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteRunLayout.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteRenderer.h" />

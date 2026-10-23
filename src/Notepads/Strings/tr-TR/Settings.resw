@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Son sekme kapatıldığında uygulamadan çık.</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Son sekme kapatıldığında uygulamadan çık.</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Bu düzenleyicide yazım denetimi kullanılamıyor.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Yazı tipi işleme</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Gri tonlamalı yumuşatma</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Gri tonlamalı yumuşatma, metin renklerini ve arka plan saydamlığını koruyarak karakter kenarlarını yumuşatır. ClearType bazı ekranlarda daha net görünebilir ve düzenleyicide opak bir arka plan kullanır.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType, düzenleyicide opak bir arka plan gerektirir. Saydamlığı ayarlamak için yazı tipi işleme ayarlarında gri tonlamaya geçin.</value></data>
 </root>

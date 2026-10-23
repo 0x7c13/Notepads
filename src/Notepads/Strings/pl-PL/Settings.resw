@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Zamknij aplikację przy zamykaniu ostatniej karty.</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Zamknij aplikację przy zamykaniu ostatniej karty.</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Sprawdzanie pisowni jest niedostępne w tym edytorze.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Renderowanie czcionek</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Wygładzanie w skali szarości</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Wygładzanie w skali szarości wygładza krawędzie znaków, zachowując kolory tekstu i przezroczystość tła. ClearType może wyglądać ostrzej na niektórych ekranach i używa nieprzezroczystego tła edytora.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType wymaga nieprzezroczystego tła edytora. Aby zmienić przezroczystość, wybierz wygładzanie w skali szarości w ustawieniach renderowania czcionek.</value></data>
 </root>

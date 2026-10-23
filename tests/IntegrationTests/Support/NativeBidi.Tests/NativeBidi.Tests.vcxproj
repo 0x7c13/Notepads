@@ -41,6 +41,7 @@
     <ClInclude Include="UnwrappedWidthTests.h" />
     <ClInclude Include="InputBoundaryTests.h" />
     <ClInclude Include="RunLayoutTests.h" />
+    <ClInclude Include="TextRenderingTests.h" />
     <None Include="GenerateFonts.py" />
     <FontFixture Include="Fonts\*.ttf" />
     <ClCompile Include="LineLayoutCacheTests.cpp" />

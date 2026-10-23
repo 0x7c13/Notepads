@@ -416,6 +416,14 @@ public sealed partial class NotepadsCore : INotepadsCore
         if (_disposed || tab == null) return;
         var item = GetTabSetsViewItem(tab);
         if (item == null) return;
+        if (ReferenceEquals(_sets.SelectedItem, item) && _sets.Items.Count > 1)
+        {
+            // Own the successor by document order before removing the selection.
+            // The close guard temporarily disables the whole page, so the
+            // control's enabled-container fallback cannot choose a neighbor.
+            var index = _sets.Items.IndexOf(item);
+            _sets.SelectedItem = _sets.Items[index + 1 < _sets.Items.Count ? index + 1 : index - 1];
+        }
         tab.StateChanged -= OnTabStateChanged;
         tab.MarkClosed();
         item.IsEnabled = false;

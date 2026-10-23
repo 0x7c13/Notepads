@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>გასვლა აპლიკაციიდან, როდესაც ბოლო ჩანართი იქნება დახურული</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>გასვლა აპლიკაციიდან, როდესაც ბოლო ჩანართი იქნება დახურული</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>ამ რედაქტორში მართლწერის შემოწმება მიუწვდომელია.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>შრიფტის გამოსახვა</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>ნაცრისფერი გრადაციებით გლუვება</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>ნაცრისფერი გრადაციებით გლუვება ასწორებს სიმბოლოების კიდეებს და ინარჩუნებს ტექსტის ფერებსა და ფონის გამჭვირვალობას. ClearType ზოგიერთ ეკრანზე შეიძლება უფრო მკაფიოდ გამოჩნდეს და რედაქტორის გაუმჭვირვალე ფონს იყენებს.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType-ს რედაქტორის გაუმჭვირვალე ფონი სჭირდება. გამჭვირვალობის შესაცვლელად შრიფტის გამოსახვის პარამეტრებში აირჩიეთ ნაცრისფერი ტონებით გასწორება.</value></data>
 </root>

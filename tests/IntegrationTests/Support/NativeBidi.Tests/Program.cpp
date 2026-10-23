@@ -28,6 +28,7 @@
 #include "DirectWriteRunLayout.h"
 #include "DirectWriteRenderer.h"
 #include "SurfaceDrawSession.h"
+#include "TextRendering.h"
 #include "UniConversion.h"
 
 size_t CheckLineLayoutCache(IDWriteFactory *factory, IDWriteTextFormat *format);
@@ -1138,6 +1139,7 @@ void ReportScaling(Environment &env) {
 #include "ForegroundRenderingTests.h"
 #include "InputBoundaryTests.h"
 #include "RunLayoutTests.h"
+#include "TextRenderingTests.h"
 }
 
 int wmain(int argc, wchar_t **argv) {
@@ -1157,6 +1159,7 @@ int wmain(int argc, wchar_t **argv) {
             std::cout << "PASS: RTL scaling observations (no machine-dependent timing threshold).\n";
         } else {
         CheckRunLayout(env);
+        CheckTextRendering(env);
         std::cout << "PASS: analyzed paragraph geometry and glyphs match independent whole-paragraph DirectWrite.\n";
         for (const auto fixture : {u8"אבג", u8"ABC אבג 123 DEF", u8"مرحبا بالعالم 123 ABC",
             u8"السَّلَامُ عَلَيْكُمْ", u8"אב😀ג e\u0301", u8"(אבג) [123] ABC", u8"אבג  ", u8"אבג\tABC\t12"}) {

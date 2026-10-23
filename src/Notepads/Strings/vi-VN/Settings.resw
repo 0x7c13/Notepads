@@ -196,4 +196,9 @@
   <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve"><value>Sao chép</value><comment>AdvancedPage SmartCopySettings Title display text.</comment></data>
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>Giống hệ thống</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Trình soạn thảo này không hỗ trợ kiểm tra chính tả.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Hiển thị phông chữ</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Khử răng cưa thang xám</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Khử răng cưa thang xám làm mịn cạnh ký tự, đồng thời giữ màu văn bản và độ trong suốt của nền. ClearType có thể trông sắc nét hơn trên một số màn hình và sử dụng nền trình soạn thảo không trong suốt.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType yêu cầu nền trình soạn thảo không trong suốt. Chuyển sang khử răng cưa thang xám trong cài đặt hiển thị phông chữ để điều chỉnh độ trong suốt.</value></data>
 </root>

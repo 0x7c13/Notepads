@@ -186,6 +186,14 @@ internal static class InteractiveEditorHost
     {
         switch (command[0])
         {
+            case "font-workspace-geometry" when command.Length == 1:
+                return await WorkspaceFontSurfaceGeometryAsync();
+            case "font-rendering" when command.Length == 6:
+                return await PrepareFontRenderingAsync(int.Parse(command[1], CultureInfo.InvariantCulture),
+                    bool.Parse(command[2]), bool.Parse(command[3]), Number(command[4]), Number(command[5]));
+            case "font-preference" when command.Length is 3 or 4:
+                return await PrepareFontPreferenceAsync(bool.Parse(command[1]), bool.Parse(command[2]),
+                    command.Length == 3 || bool.Parse(command[3]));
             case "tabs-start" when command.Length == 3:
                 return await NotepadsIntegrationTests.TabDragTestHost.StartAsync(int.Parse(command[1]), command[2]);
             case "tabs-frame" when command.Length == 1:
@@ -562,6 +570,84 @@ internal static class InteractiveEditorHost
 
     private static double Number(string value) => double.Parse(value, CultureInfo.InvariantCulture);
 
+    private static async Task<string> WorkspaceFontSurfaceGeometryAsync()
+    {
+        var previous = Window.Current.Content;
+        try
+        {
+            await using var host = await NotepadsIntegrationTests.FeatureTestHost.CreateAsync();
+            var core = ((TextEditor)host.Core.GetSelectedReadyEditor()).TestNativeCore;
+            var view = (WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0];
+            await EditorTestLayout.AfterPaintAsync(view.Editor, () =>
+                view.Editor.StyleSetFore(0, view.Editor.StyleGetFore(0)));
+            return FontSurfaceGeometry(view);
+        }
+        finally { Window.Current.Content = previous; }
+    }
+
+    private const string FontRenderingText = "Il1| mnwMW 0123456789\rThe quick brown fox jumps over the lazy dog.\r中文字体清晰度测试：你好，世界。\rABC אבג العربية e\u0301 Ω 😀";
+
+    private static async Task<string> PrepareFontPreferenceAsync(bool clearType, bool dark, bool nativeOnly)
+    {
+        await ResetAsync(FontRenderingText, false, 660, 240, 15);
+        await EditorTestLayout.AfterPaintAsync(Native, () =>
+        {
+            ThemeSettingsService.SetTheme(dark ? ElementTheme.Dark : ElementTheme.Light);
+            ApplicationPreferences.EditorFontRendering = clearType ? FontRenderingMode.ClearType : FontRenderingMode.Grayscale;
+            _editor.FontFamily = new FontFamily("Consolas");
+            // Force production font/theme application even after a manual-quality fixture.
+            _editor.FontSize = 14;
+            _editor.Padding = new Thickness(6, 6, 10, 6);
+            _editor.DisplayLineHighlighter = false;
+            Native.CaretStyle = WinUIEditor.CaretStyle.Invisible;
+            _panel.Padding = new Thickness(24);
+            ((Grid)Window.Current.Content).Background = new SolidColorBrush(Color.FromArgb(255, 26, 88, 55));
+            // Remove only the XAML underlay: the independent pixel oracle must
+            // prove that the production preference paints native opaque pixels.
+            if (nativeOnly) ((Grid)_editor.Content).Background = null;
+            _editor.UpdateLayout();
+        });
+        var origin = _editor.TransformToVisual(null).TransformPoint(default);
+        var window = Window.Current.CoreWindow.Bounds;
+        var target = FindImageTarget(_view) ?? throw new InvalidOperationException("Missing text surface.");
+        var inset = target.TransformToVisual(_editor).TransformPoint(default);
+        var scale = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+        // Frame capture uses physical screen coordinates; the inset is a local
+        // distance, independent of the app window's position on the desktop.
+        return FontSurfaceGeometry(_view) + FormattableString.Invariant(
+            $"renderFrameLeft={(origin.X + window.X) * scale}\nrenderFrameTop={(origin.Y + window.Y) * scale}\nrenderFrameWidth={_editor.ActualWidth * scale}\nrenderFrameHeight={_editor.ActualHeight * scale}\nrenderFrameInsetTop={inset.Y * scale}\n");
+    }
+
+    private static async Task<string> PrepareFontRenderingAsync(int quality, bool dark, bool opaque, double placement, double size)
+    {
+        if (quality is < 0 or > 3 || !double.IsFinite(placement) || placement is < 0 or > 1)
+            throw new ArgumentOutOfRangeException(nameof(quality));
+        await ResetAsync(FontRenderingText, false, 660, 240, size);
+        await EditorTestLayout.AfterPaintAsync(Native, () =>
+        {
+            _panel.Padding = new Thickness(24 + placement);
+            ((Grid)Window.Current.Content).Background = new SolidColorBrush(dark ? Color.FromArgb(255, 32, 32, 32) : Colors.White);
+            _editor.FontFamily = new FontFamily("Consolas");
+            _editor.DisplayLineHighlighter = false;
+            _view.SetBackgroundColor(dark ? Color.FromArgb(opaque ? (byte)255 : (byte)0, 32, 32, 32) :
+                Color.FromArgb(opaque ? (byte)255 : (byte)0, 255, 255, 255));
+            Native.StyleSetFore((int)WinUIEditor.StylesCommon.Default, dark ? 0xe0e0e0 : 0);
+            Native.StyleClearAll();
+            Native.FontQuality = (WinUIEditor.FontQuality)quality;
+            Native.CaretStyle = WinUIEditor.CaretStyle.Invisible;
+            _editor.UpdateLayout();
+        });
+        return FontSurfaceGeometry(_view);
+    }
+
+    private static string FontSurfaceGeometry(WinUIEditor.EditorBaseControl view)
+    {
+        var target = FindImageTarget(view) as FrameworkElement ?? throw new InvalidOperationException("Missing text surface.");
+        var origin = target.TransformToVisual(null).TransformPoint(default);
+        double scale = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+        return FormattableString.Invariant($"renderOriginX={origin.X * scale}\nrenderOriginY={origin.Y * scale}\nrenderWidth={target.ActualWidth * scale}\nrenderHeight={target.ActualHeight * scale}\nrenderQuality={(int)view.Editor.FontQuality}\nrenderLayoutRounding={target.UseLayoutRounding}\n");
+    }
+
     private static async Task ResetAsync(string text, bool wrap, double width, double height, double fontSize)
     {
         if (width < 120 || width > 700 || height < 100 || height > 440 || fontSize < 10 || fontSize > 40)
@@ -582,6 +668,7 @@ internal static class InteractiveEditorHost
             Native.BufferedDraw = false;
             _editor.Width = width;
             _editor.Height = height;
+            _editor.Padding = new Thickness(0);
             _editor.FontSize = fontSize;
             _editor.RightToLeftReadingOrder = false;
             _editor.DisplayLineNumbers = false;

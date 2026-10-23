@@ -357,17 +357,23 @@ function Close-EditorContextMenu {
     $null = Wait-EditorState { param($state) [int] $state.openPopups -eq 0 } 'The editor context menu leaves the visual tree'
 }
 
-function Read-StableInk([string] $Name, [int] $Rows = 1) {
+function Read-StableInk([string] $Name, [int] $Rows = 1, $Frame = $null) {
     $deadline = [DateTime]::UtcNow.AddSeconds(6)
     $state = Invoke-EditorTestCommand $session 'state'
     $previous = $null
     do {
         Assert-EditorTestAlive $session
         $bounds = $element.Current.BoundingRectangle
+        if ($Frame) {
+            $bounds = [Windows.Rect]::new([double] $Frame.renderFrameLeft, [double] $Frame.renderFrameTop,
+                [double] $Frame.renderFrameWidth, [double] $Frame.renderFrameHeight)
+        }
+        $height = if ($Frame) { [Math]::Floor($bounds.Height) }
+            else { [Math]::Min($bounds.Height, $Rows * [int] $state.lineHeight + 6) }
         # Exclude scrollbar and focus chrome; a rectangle fixture needs two rows.
         $capture = [EditorAutomationInput]::Capture([uint32] $session.ProcessId,
             [int] [Math]::Ceiling($bounds.Left), [int] [Math]::Ceiling($bounds.Top),
-            [int] [Math]::Floor($bounds.Width), [int] [Math]::Min($bounds.Height, $Rows * [int] $state.lineHeight + 6),
+            [int] [Math]::Floor($bounds.Width), [int] $height,
             (Join-Path $session.Root "$Name.png"))
         if ($previous -and $capture.Fingerprint -eq $previous.Fingerprint -and
             $capture.Left -eq $previous.Left -and $capture.Top -eq $previous.Top -and
@@ -1724,6 +1730,96 @@ try {
         Assert-True ($plain.Fingerprint -ne $selected.Fingerprint) 'Selecting the newline changes its painted marker'
         foreach ($point in $samples) {
             Assert-Equal $selected.PixelRgb($point.X, $point.Y) $plain.PixelRgb($point.X, $point.Y) 'EOL highlight leaves every trailing Hebrew glyph background unchanged'
+        }
+    }
+
+    Test-Case 'Font antialiasing changes actual pixels without changing layout' {
+        foreach ($dark in @($false, $true)) {
+            foreach ($opaque in @($false, $true)) {
+                $grayState = Invoke-EditorTestCommand $session "font-rendering|2|$dark|$opaque|0|14"
+                $expectedText = $pattern.DocumentRange.GetText(-1)
+                $gray = Read-StableInk "font-gray-$dark-$opaque" 4
+                $aliasState = Invoke-EditorTestCommand $session "font-rendering|1|$dark|$opaque|0|14"
+                $alias = Read-StableInk "font-aliased-$dark-$opaque" 4
+                Assert-True ($gray.Fingerprint -ne $alias.Fingerprint) 'Font quality changes real editor pixels, not just its property getter'
+                Assert-Equal $aliasState.positionY $grayState.positionY 'Antialiasing preserves display-row geometry'
+                Assert-Equal $pattern.DocumentRange.GetText(-1) $expectedText 'Antialiasing preserves independent UIA text'
+                $null = Invoke-EditorTestCommand $session 'buffered-draw|True'
+                $bufferedAlias = Read-StableInk "font-aliased-buffered-$dark-$opaque" 4
+                Assert-Equal $bufferedAlias.Fingerprint $alias.Fingerprint 'Compatible buffers apply non-default aliased quality'
+                $null = Invoke-EditorTestCommand $session "font-rendering|2|$dark|$opaque|0|14"
+                $restored = Read-StableInk "font-gray-restored-$dark-$opaque" 4
+                Assert-Equal $restored.Fingerprint $gray.Fingerprint 'Returning to grayscale restores exact pixels'
+                $null = Invoke-EditorTestCommand $session 'buffered-draw|True'
+                $buffered = Read-StableInk "font-gray-buffered-$dark-$opaque" 4
+                Assert-Equal $buffered.Fingerprint $gray.Fingerprint 'Compatible text buffers preserve the requested quality'
+                if ($opaque) {
+                    # Opaque pixels are painted in the native target itself.
+                    # No claim of universal chromatic fringes: pixel geometry
+                    # and system smoothing settings differ between machines.
+                    $lcd = Invoke-EditorTestCommand $session "font-rendering|3|$dark|True|0|14"
+                    $lcdInk = Read-StableInk "font-cleartype-$dark" 4
+                    Assert-Equal $lcd.positionY $grayState.positionY 'ClearType preserves row geometry and successfully paints'
+                    $null = Invoke-EditorTestCommand $session 'buffered-draw|True'
+                    $lcdBuffered = Read-StableInk "font-cleartype-buffered-$dark" 4
+                    Assert-Equal $lcdBuffered.Fingerprint $lcdInk.Fingerprint 'Compatible buffers apply opaque ClearType'
+                    $null = Invoke-EditorTestCommand $session 'select|0|12'
+                    $lcdSelected = Read-StableInk "font-cleartype-selected-$dark" 4
+                    Assert-True ($lcdSelected.Fingerprint -ne $lcdInk.Fingerprint) 'ClearType renders the real selection'
+                    Assert-Equal $pattern.GetSelection()[0].GetText(-1) $expectedText.Substring(0, 12) 'ClearType selection retains independent logical text'
+                    $null = Invoke-EditorTestCommand $session 'select|0|0'
+                    $lcdCleared = Read-StableInk "font-cleartype-cleared-$dark" 4
+                    Assert-Equal $lcdCleared.Fingerprint $lcdInk.Fingerprint 'Clearing ClearType selection restores exact pixels'
+                }
+            }
+        }
+    }
+
+    Test-Case 'Font preference paints opaque ClearType and restores transparent grayscale' {
+        foreach ($dark in @($false, $true)) {
+            $grayState = Invoke-EditorTestCommand $session "font-preference|False|$dark"
+            $expectedText = $pattern.DocumentRange.GetText(-1)
+            $gray = Read-StableInk "font-preference-gray-$dark" 4
+            $bounds = $element.Current.BoundingRectangle
+            $sampleX = [int] [Math]::Floor($bounds.Width) - 40
+            $sampleY = [int] $grayState.lineHeight * 2 + 2
+            Assert-Equal $gray.PixelRgb($sampleX, $sampleY) 0x1a5837 'Grayscale exposes the diagnostic backdrop through native transparent pixels'
+            $lcdState = Invoke-EditorTestCommand $session "font-preference|True|$dark"
+            $lcd = Read-StableInk "font-preference-cleartype-$dark" 4
+            $expectedBackground = if ($dark) { 0x252525 } else { 0xf0f0f0 }
+            Assert-Equal $lcd.PixelRgb($sampleX, $sampleY) $expectedBackground 'The ClearType preference itself paints the solid native theme background'
+            Assert-Equal $lcdState.renderQuality '3' 'The production preference selects ClearType antialiasing'
+            Assert-Equal $lcdState.positionY $grayState.positionY 'The preference preserves measured display-row geometry'
+            Assert-Equal $pattern.DocumentRange.GetText(-1) $expectedText 'The preference preserves independent UIA document text'
+            $restoredState = Invoke-EditorTestCommand $session "font-preference|False|$dark"
+            $restored = Read-StableInk "font-preference-restored-$dark" 4
+            Assert-Equal $restoredState.renderQuality '2' 'Returning to grayscale restores its native quality'
+            Assert-Equal $restored.Fingerprint $gray.Fingerprint 'Returning to grayscale restores exact transparent text pixels'
+        }
+    }
+
+    Test-Case 'Font preference fills the editor insets without moving its text' {
+        foreach ($dark in @($false, $true)) {
+            $grayState = Invoke-EditorTestCommand $session "font-preference|False|$dark|False"
+            $gray = Read-StableInk "font-frame-gray-$dark" -Frame $grayState
+            $topInset = [double] $grayState.renderFrameInsetTop
+            Assert-True ($topInset -ge 6 * [double] $grayState.scale) 'The fixture contains the real editor top inset'
+            $x = [int] [Math]::Floor([double] $grayState.renderFrameWidth) - 40
+            $top = [int] [Math]::Floor($topInset / 2)
+            $bottom = [int] [Math]::Floor([double] $grayState.renderFrameHeight) - 2
+            Assert-Equal $gray.PixelRgb($x, $top) 0x1a5837 'Grayscale leaves the top inset transparent'
+            Assert-Equal $gray.PixelRgb($x, $bottom) 0x1a5837 'Grayscale leaves the bottom inset transparent'
+            $lcdState = Invoke-EditorTestCommand $session "font-preference|True|$dark|False"
+            $lcd = Read-StableInk "font-frame-cleartype-$dark" -Frame $lcdState
+            $expected = if ($dark) { 0x252525 } else { 0xf0f0f0 }
+            Assert-Equal $lcd.PixelRgb($x, $top) $expected 'ClearType fills the former dark strip with the body color'
+            Assert-Equal $lcd.PixelRgb($x, $bottom) $expected 'ClearType fills the bottom inset with the body color'
+            Assert-Equal $lcd.PixelRgb($x, $top + [int] $lcdState.lineHeight * 3) $expected 'The body and inset share identical physical pixels'
+            Assert-Equal $lcdState.renderOriginY $grayState.renderOriginY 'The native text surface keeps its vertical origin'
+            Assert-Equal $lcdState.positionY $grayState.positionY 'Filling the inset does not move the text rows'
+            $restoredState = Invoke-EditorTestCommand $session "font-preference|False|$dark|False"
+            $restored = Read-StableInk "font-frame-restored-$dark" -Frame $restoredState
+            Assert-Equal $restored.Fingerprint $gray.Fingerprint 'Returning to grayscale restores the entire transparent frame'
         }
     }
 

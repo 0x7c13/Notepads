@@ -18,6 +18,7 @@ public static class ApplicationPreferences
     public static event EventHandler<string> OnFontFamilyChanged;
     public static event EventHandler<FontSlant> OnFontStyleChanged;
     public static event EventHandler<ushort> OnFontWeightChanged;
+    public static event EventHandler<FontRenderingMode> OnFontRenderingChanged;
     public static event EventHandler<int> OnFontSizeChanged;
     public static event EventHandler<bool> OnDefaultTextWrappingChanged;
     public static event EventHandler<bool> OnDefaultLineHighlighterViewStateChanged;
@@ -79,6 +80,35 @@ public static class ApplicationPreferences
             OnFontWeightChanged?.Invoke(null, value);
             ApplicationSettingsStore.Write(SettingsKey.EditorFontWeightUshort, value);
         }
+    }
+
+    private static FontRenderingMode _editorFontRendering;
+
+    public static FontRenderingMode EditorFontRendering
+    {
+        get => _editorFontRendering;
+        set
+        {
+            if (!Enum.IsDefined(value)) throw new ArgumentOutOfRangeException(nameof(value));
+            if (_editorFontRendering == value) return;
+            ApplicationSettingsStore.Write(SettingsKey.EditorFontRenderingStr, value.ToString());
+            _editorFontRendering = value;
+            OnFontRenderingChanged?.Invoke(null, value);
+        }
+    }
+
+    private static FontRenderingMode ReadFontRendering() =>
+        ApplicationSettingsStore.Read(SettingsKey.EditorFontRenderingStr) is nameof(FontRenderingMode.ClearType)
+            ? FontRenderingMode.ClearType : FontRenderingMode.Grayscale;
+
+    // Windows are separate processes. Reconcile on activation without writing
+    // the setting back or restyling editors when the value has not changed.
+    internal static void RefreshFontRenderingSetting()
+    {
+        var rendering = ReadFontRendering();
+        if (_editorFontRendering == rendering) return;
+        _editorFontRendering = rendering;
+        OnFontRenderingChanged?.Invoke(null, rendering);
     }
 
     private static bool _editorDefaultTextWrapping;
@@ -518,6 +548,7 @@ public static class ApplicationPreferences
 
     private static void InitializeFontSettings()
     {
+        _editorFontRendering = ReadFontRendering();
         if (ApplicationSettingsStore.Read(SettingsKey.EditorFontFamilyStr) is string fontFamily)
         {
             _editorFontFamily = fontFamily;

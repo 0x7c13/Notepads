@@ -124,7 +124,8 @@ internal static class AppearanceFeatureTests
         var background = system.GetColorValue(UIColorType.Background);
         var editor = EditorColorPalette.ForTheme(ElementTheme.Light, highContrast: true);
         Check(editor[EditorColorRole.Foreground] == foreground && editor[EditorColorRole.LineNumber] == foreground &&
-            editor[EditorColorRole.Background] == background && editor[EditorColorRole.CaretLine].A == 0,
+            editor[EditorColorRole.Background] == background && editor[EditorColorRole.OpaqueBackground] == background &&
+            editor[EditorColorRole.CaretLine].A == 0,
             "High contrast editor palette uses system text/background and suppresses caret shading.");
         var diff = DiffColorPalette.ForTheme(ElementTheme.Dark, highContrast: true);
         Check(diff[DiffColorRole.ActiveChangeBorder] == foreground && diff[DiffColorRole.GapHatch] == foreground &&

@@ -196,4 +196,9 @@
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>마지막 탭을 닫을 때 앱 종료</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>마지막 탭을 닫을 때 앱 종료</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>이 편집기에서는 맞춤법 검사를 사용할 수 없습니다.</value></data>
+  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>글꼴 렌더링</value></data>
+  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>회색조</value></data>
+  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
+  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>회색조는 글자의 가장자리를 부드럽게 하면서 텍스트 색상과 배경 투명도를 유지합니다. ClearType은 일부 디스플레이에서 더 선명하게 보일 수 있으며 편집기 배경을 불투명한 단색으로 표시합니다.</value></data>
+  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType을 사용하려면 편집기 배경이 불투명해야 합니다. 투명도를 조절하려면 글꼴 렌더링에서 회색조로 전환하세요.</value></data>
 </root>

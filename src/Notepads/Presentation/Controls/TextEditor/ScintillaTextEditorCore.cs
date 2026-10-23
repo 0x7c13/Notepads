@@ -49,6 +49,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     private readonly GradientStop _lineNumberGlowCenter;
     private readonly GradientStop _lineNumberGlowEnd;
     private EditorColorPalette _palette;
+    private FontRenderingMode _fontRendering;
     private double _dpiScale = 1;
     private readonly AccessibilitySettings _accessibility = new();
     private Editor Native => _view.Editor;
@@ -243,9 +244,10 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private void ApplyEditorPadding()
     {
-        // Keep the old top text inset. The native template gives the horizontal
-        // scrollbar its own row, so no space is needed below the control.
-        _surface.Margin = new Thickness(0, Padding.Top, 0, Padding.Bottom);
+        // Keep the text inset inside the painted surface, so its background
+        // also covers the space between the tab strip and the first text row.
+        // The native template already reserves its horizontal scrollbar row.
+        _surface.Padding = new Thickness(0, Padding.Top, 0, Padding.Bottom);
     }
 
     private void OnActualThemeChanged(FrameworkElement sender, object args) => ApplyTheme();
@@ -272,15 +274,22 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     private void ApplyTheme(bool force = false)
     {
         var palette = EditorColorPalette.ForTheme(ThemeSettingsService.ThemeMode, _accessibility.HighContrast);
+        var rendering = ApplicationPreferences.EditorFontRendering;
         // Restyling re-wraps the whole document. Light and dark palettes are shared,
         // so a repeated theme notification skips it; high contrast always reapplies.
-        if (!force && palette == _palette) return;
+        if (!force && palette == _palette && rendering == _fontRendering) return;
         _palette = palette;
+        _fontRendering = rendering;
         var foreground = ToScintillaColor(palette[EditorColorRole.Foreground]);
-        var background = palette[EditorColorRole.Background];
+        var clearType = rendering == FontRenderingMode.ClearType;
+        var background = palette[clearType ? EditorColorRole.OpaqueBackground : EditorColorRole.Background];
+        // Paint the insets whenever the native surface is opaque, including
+        // grayscale in high contrast. Otherwise let the page backdrop show.
+        _surface.Background = background.A == byte.MaxValue ? new SolidColorBrush(background) : null;
         Native.StyleSetFore((int)StylesCommon.Default, foreground);
-        // The main page already owns the acrylic/solid backdrop brush.
-        // Keep the native text surface and margins transparent above it.
+        // ClearType needs opaque pixels in the native text target itself;
+        // an opaque XAML backdrop alone is insufficient. Grayscale keeps the
+        // palette's alpha (transparent normally, solid in high contrast).
         _view.SetBackgroundColor(background);
         Native.StyleClearAll();
         // StyleClearAll assigns the platform chrome color to line numbers.
@@ -288,7 +297,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         _view.SetBackgroundColor(background);
         ApplySyntaxColors();
         Native.StyleSetFore((int)StylesCommon.LineNumber, ToScintillaColor(palette[EditorColorRole.LineNumber]));
-        Native.FontQuality = WinUIEditor.FontQuality.QualityAntialiased;
+        Native.FontQuality = clearType ? WinUIEditor.FontQuality.QualityLcdOptimized
+            : WinUIEditor.FontQuality.QualityAntialiased;
         Native.CaretFore = foreground;
         ApplyCaretLineAppearance();
         HideLineNumberGlow();

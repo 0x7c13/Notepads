@@ -59,6 +59,8 @@
                         </sets:SetsView.KeyboardAccelerators>-->
 
                         <controls:SetsView.Resources>
+                            <!-- Keep header actions unfilled while a close operation disables the workspace. -->
+                            <SolidColorBrush x:Key="ButtonRevealBackgroundDisabled" Color="Transparent" />
                             <x:Double x:Key="SetsViewItemHeaderMinHeight">32</x:Double>
                             <x:Double x:Key="SetsViewItemHeaderMinWidth">90</x:Double>
                             <x:Double x:Key="SetsViewItemHeaderMaxWidth">210</x:Double>
