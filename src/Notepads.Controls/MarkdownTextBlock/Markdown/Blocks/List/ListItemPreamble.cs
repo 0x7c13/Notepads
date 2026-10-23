@@ -3,12 +3,11 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Parsers/Markdown/Blocks/List
 
-namespace Notepads.Controls.Markdown
-{
-    internal class ListItemPreamble
-    {
-        public ListStyle Style { get; set; }
+namespace Notepads.Controls.Markdown;
 
-        public int ContentStartPos { get; set; }
-    }
+internal class ListItemPreamble
+{
+    public ListStyle Style { get; set; }
+
+    public int ContentStartPos { get; set; }
 }

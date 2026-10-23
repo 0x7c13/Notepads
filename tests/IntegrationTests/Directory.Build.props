@@ -1,0 +1,9 @@
+<Project>
+  <!-- Set before SDK imports: NuGet and generated sources must never cross hosts. -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'IntegrationTests'">
+    <IntegrationHost Condition="'$(IntegrationHost)' == ''">Headless</IntegrationHost>
+    <BaseIntermediateOutputPath>obj\$(IntegrationHost)\</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+    <BaseOutputPath>bin\$(IntegrationHost)\</BaseOutputPath>
+  </PropertyGroup>
+</Project>

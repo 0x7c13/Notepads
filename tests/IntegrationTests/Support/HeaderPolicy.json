@@ -1,0 +1,1257 @@
+{
+  "ownedXml": [
+    "Directory.Packages.props",
+    "src/Notepads.Native/Projection/Notepads.Native.Projection.csproj"
+  ],
+  "licenses": [
+    {
+      "path": "LICENSE.txt",
+      "sha256": "7370110DC5DD8ED21B4530576AD533DD028C22F431E6DEB452B47B1D7411C875"
+    },
+    {
+      "path": "src/Notepads.Native/LICENSE",
+      "sha256": "E2E7D586DB03B93558076290613B7AC682AFE5562BF29B1CD65FAFD15AD3360A"
+    },
+    {
+      "path": "src/Notepads.Native/scintilla/License.txt",
+      "sha256": "AC32743BD464C837E481BEAE20DF65A9207F84D3FF1912F6003000343E9C753D"
+    },
+    {
+      "path": "src/Notepads.Native/lexilla/License.txt",
+      "sha256": "AC32743BD464C837E481BEAE20DF65A9207F84D3FF1912F6003000343E9C753D"
+    }
+  ],
+  "preserved": [
+    {
+      "reason": "Retain Toolkit attribution and upstream formatting; do not replace with a Notepads-only notice.",
+      "license": "LICENSE.txt",
+      "headers": [
+        {
+          "lines": 4,
+          "sha256": "D955C44D5B610CEB4053DCCC79D9EDB84A6F018F38DECFABBEBF43E24F99F4B8",
+          "paths": [
+            "src/Notepads.Controls/DropShadowPanel/DropShadowPanel.cs",
+            "src/Notepads.Controls/DropShadowPanel/DropShadowPanel.Properties.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "89D58DB7A0CD53CF2390BB4C29610D8CA2B13212DA6AAF4A77975F494EE84703",
+          "paths": [
+            "src/Notepads.Controls/GridSplitter/GridSplitter.cs",
+            "src/Notepads.Controls/GridSplitter/GridSplitter.Data.cs",
+            "src/Notepads.Controls/GridSplitter/GridSplitter.Events.cs",
+            "src/Notepads.Controls/GridSplitter/GridSplitter.Helper.cs",
+            "src/Notepads.Controls/GridSplitter/GridSplitter.Options.cs",
+            "src/Notepads.Controls/GridSplitter/GripperHoverWrapper.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "9A3B0869FD30B3D15BD8F6790C5884B85544C7C9AC79851649F7B2E64CA0AF01",
+          "paths": [
+            "src/Notepads.Controls/Helpers/DispatcherQueueHelper.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "8DD1445C60371DD4A933086F69A25C40C5CC3645A8D5BA89D9C7D95F3672A221",
+          "paths": [
+            "src/Notepads.Controls/Helpers/ThemeListener.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "86C9F9AE524559087FCCDCC26E240AC5EF299AC0ACC042BE709DD6C15FF2BE60",
+          "paths": [
+            "src/Notepads.Controls/InAppNotification/InAppNotification.AttachedProperties.cs",
+            "src/Notepads.Controls/InAppNotification/InAppNotification.Constants.cs",
+            "src/Notepads.Controls/InAppNotification/InAppNotification.cs",
+            "src/Notepads.Controls/InAppNotification/InAppNotification.Events.cs",
+            "src/Notepads.Controls/InAppNotification/InAppNotification.Properties.cs",
+            "src/Notepads.Controls/InAppNotification/InAppNotificationClosedEventArgs.cs",
+            "src/Notepads.Controls/InAppNotification/InAppNotificationClosingEventArgs.cs",
+            "src/Notepads.Controls/InAppNotification/InAppNotificationDismissKind.cs",
+            "src/Notepads.Controls/InAppNotification/InAppNotificationOpeningEventArgs.cs",
+            "src/Notepads.Controls/InAppNotification/NotificationOptions.cs",
+            "src/Notepads.Controls/InAppNotification/StackMode.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "D2B8B659337395EF85B49DD8A5DAE396A06640617BB03C0BEB197C570D02847F",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/CodeBlockResolvingEventArgs.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/ImageResolvingEventArgs.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/LinkClickedEventArgs.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/MarkdownRenderedEventArgs.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/MarkdownTextBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/MarkdownTextBlock.Dimensions.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/MarkdownTextBlock.Events.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/MarkdownTextBlock.Methods.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/MarkdownTextBlock.Properties.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "6158F0D55F05DB5C1C559634DCD6B16FFBB5F43815096D319CF8EC587EBCC8F7",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/CodeBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/HeaderBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/HorizontalRuleBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/LinkReferenceBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/ListBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/ParagraphBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/QuoteBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/TableBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/YamlHeaderBlock.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "AC489150F7215EF145CDE0CFA668FC3FFAE9DD3C47E16EF4751BCEF56BCCDF71",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemBuilder.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemPreamble.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Blocks/List/NestedListInfo.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "B210C7FD9CB9EF9D55F2BF2BE5E22125CAB55499A2246ECD683C1F2462F34D62",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Core/IParser.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Core/ParseHelpers.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Core/SchemaBase.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Core/StringValueAttribute.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "B62F5403B251745611458A009C6CE2C1D0722FCCA91666E80FAC2649D1BAE3FC",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Enums/ColumnAlignment.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Enums/HyperlinkType.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Enums/InlineParseMethod.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Enums/ListStyle.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Enums/MarkdownBlockType.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Enums/MarkdownInlineType.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "9A184D27987C6BC99555846CB6B5AC75CBC49C143CB2F199263E2CE90CE56FE5",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Helpers/Common.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Helpers/DebuggingReporter.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Helpers/InlineParseResult.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Helpers/InlineTripCharHelper.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Helpers/LineInfo.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "DF4B2932D6BC1C74AA1F5DF87F88CC6F24D5934442F3B1109716F0813C400E2C",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/BoldItalicTextInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/BoldTextInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/CodeInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/CommentInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/EmojiInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/EmojiInline.EmojiCodes.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/HyperlinkInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/IInlineContainer.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/IInlineLeaf.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/ILinkElement.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/ImageInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/ItalicTextInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/LinkAnchorInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/MarkdownLinkInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/StrikethroughTextInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/SubscriptTextInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/SuperscriptTextInline.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Inlines/TextRunInline.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "B805ADAE9E21C54DCA5DBDF5EAFDFCE5FC5E7AA2731B7A9CFF87AE11FCFEDEF7",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/MarkdownBlock.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/MarkdownDocument.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/MarkdownElement.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/MarkdownInline.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "FCF76C1B393BF3894A42CDF90073C45A1546B4D9CD11CC3EA190BAD0A2F5844A",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/ICodeBlockResolver.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/IImageResolver.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/ILinkRegister.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/InlineRenderContext.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Blocks.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Dimensions.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Inlines.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Properties.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownTable.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/RenderContext.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/RenderContextIncorrectException.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/UIElementCollectionRenderContext.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "9B8A6970DF9F8A1F7763A4D4ED2F698AD1E661BE7E7AA79F31EBD41CE4027BE1",
+          "paths": [
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/IRenderContext.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.Blocks.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.cs",
+            "src/Notepads.Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.Inlines.cs"
+          ]
+        },
+        {
+          "lines": 3,
+          "sha256": "8D8E96447C27661FF6434CC7C837987471E6C9C3A223F709D9BD571AB8D64FA8",
+          "paths": [
+            "src/Notepads.Controls/SetsView/SetClosingEventArgs.cs",
+            "src/Notepads.Controls/SetsView/SetSelectedEventArgs.cs",
+            "src/Notepads.Controls/SetsView/SetsView.cs",
+            "src/Notepads.Controls/SetsView/SetsView.HeaderLayout.cs",
+            "src/Notepads.Controls/SetsView/SetsView.ItemSources.cs",
+            "src/Notepads.Controls/SetsView/SetsView.Properties.cs",
+            "src/Notepads.Controls/SetsView/SetsViewItem.cs",
+            "src/Notepads.Controls/SetsView/SetsViewItem.Properties.cs",
+            "src/Notepads.Controls/SetsView/SetsWidthMode.cs"
+          ]
+        }
+      ],
+      "withoutHeader": []
+    },
+    {
+      "reason": "Retain WinUIEdit attribution and upstream formatting; do not replace with a Notepads-only notice.",
+      "license": "src/Notepads.Native/LICENSE",
+      "headers": [
+        {
+          "lines": 7,
+          "sha256": "CB2A50A8B39C2F8B75D48BF4D1C374EECD12AEAEBE7CD5E6F08EE79737663DC7",
+          "paths": [
+            "src/Notepads.Native/Directory.Build.props",
+            "src/Notepads.Native/Tools/Tool/Tool.csproj",
+            "src/Notepads.Native/WinUIEditor/Themes/Generic.xaml"
+          ]
+        },
+        {
+          "lines": 5,
+          "sha256": "66C21531D2336D69270FF04368B84922F5A6B9A5835BEED976BD762AE75FCA96",
+          "paths": [
+            "src/Notepads.Native/Tools/Tool/InterfaceGeneratorTool.cs",
+            "src/Notepads.Native/Tools/Tool/Program.cs",
+            "src/Notepads.Native/WinUIEditor/AutocompletionWrapper.cpp",
+            "src/Notepads.Native/WinUIEditor/AutocompletionWrapper.h",
+            "src/Notepads.Native/WinUIEditor/CallTipControl.cpp",
+            "src/Notepads.Native/WinUIEditor/CallTipControl.h",
+            "src/Notepads.Native/WinUIEditor/CallTipWrapper.cpp",
+            "src/Notepads.Native/WinUIEditor/ControlIncludes.h",
+            "src/Notepads.Native/WinUIEditor/Defines.idl",
+            "src/Notepads.Native/WinUIEditor/EditorBaseControl.cpp",
+            "src/Notepads.Native/WinUIEditor/EditorBaseControl.h",
+            "src/Notepads.Native/WinUIEditor/EditorBaseControl.idl",
+            "src/Notepads.Native/WinUIEditor/EditorBaseControlAutomationPeer.cpp",
+            "src/Notepads.Native/WinUIEditor/EditorWrapper.cpp",
+            "src/Notepads.Native/WinUIEditor/EditorWrapper.h",
+            "src/Notepads.Native/WinUIEditor/EditorWrapper.idl",
+            "src/Notepads.Native/WinUIEditor/Helpers.cpp",
+            "src/Notepads.Native/WinUIEditor/Helpers.h",
+            "src/Notepads.Native/WinUIEditor/MainWrapper.cpp",
+            "src/Notepads.Native/WinUIEditor/MainWrapper.h",
+            "src/Notepads.Native/WinUIEditor/pch.h",
+            "src/Notepads.Native/WinUIEditor/TextRangeProvider.cpp",
+            "src/Notepads.Native/WinUIEditor/Wrapper.cpp",
+            "src/Notepads.Native/WinUIEditor/Wrapper.h"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "12A34593B0475ED8DE2310C81F3B66C487EE1ED5325EE80B2DF8157E13E7AB58",
+          "paths": [
+            "src/Notepads.Native/WinUIEditor/WinUIEditor.vcxproj"
+          ]
+        }
+      ],
+      "withoutHeader": [
+        "src/Notepads.Native/WinUIEditor/AutocompletionControl.cpp",
+        "src/Notepads.Native/WinUIEditor/AutocompletionControl.h",
+        "src/Notepads.Native/WinUIEditor/AutocompletionControl.idl",
+        "src/Notepads.Native/WinUIEditor/CallTipControl.idl",
+        "src/Notepads.Native/WinUIEditor/CallTipWrapper.h",
+        "src/Notepads.Native/WinUIEditor/DummyPage.cpp",
+        "src/Notepads.Native/WinUIEditor/DummyPage.h",
+        "src/Notepads.Native/WinUIEditor/DummyPage.idl",
+        "src/Notepads.Native/WinUIEditor/EditorBaseControlAutomationPeer.h",
+        "src/Notepads.Native/WinUIEditor/EditorBaseControlAutomationPeer.idl",
+        "src/Notepads.Native/WinUIEditor/IEditorAccess.idl",
+        "src/Notepads.Native/WinUIEditor/MuiResourceLoader.cpp",
+        "src/Notepads.Native/WinUIEditor/MuiResourceLoader.h",
+        "src/Notepads.Native/WinUIEditor/pch.cpp",
+        "src/Notepads.Native/WinUIEditor/TextRangeProvider.h",
+        "src/Notepads.Native/WinUIEditor/XamlStringIds.h"
+      ]
+    },
+    {
+      "reason": "Retain Scintilla attribution and upstream formatting; do not replace with a Notepads-only notice.",
+      "license": "src/Notepads.Native/scintilla/License.txt",
+      "headers": [
+        {
+          "lines": 9,
+          "sha256": "4B105F275CFF615CECD9EEC79A239DDE396327846FCC69D2A176D7F5DE5B4E36",
+          "paths": [
+            "src/Notepads.Native/scintilla/call/ScintillaCall.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "8AA3BED4F3151CDD9C011D7D938E2F28E4328BD5F93927A49E4CEED01742F04D",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/ILexer.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "E66CE2EC9204A3CFF476C09FD343202DA7DAA88CE3574757DB0FA0EAD7F83531",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/ILoader.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "49A70AB504F31350DBC19D2921CF3DB3DBDF58BFFF2A8585EE0E4244B7D6CB67",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/Sci_Position.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "161AAB7187D89D5E8CB46B7277FC7DC68EE854CD99D313F9271C0CE082E9974D",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/Scintilla.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "AD69C6F8008DDE35EDD62EA91B7A2D28B9517DD3E4B58040B5D19477D0509900",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/ScintillaCall.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "A1546E6581EFA2434E17501DD57D3053E915363B3010669EBB9BA4DDC3E991F1",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/ScintillaMessages.h"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "D14B4A49E195C9E579D76DCE9C2873FE7087DA7811A6C60A5CBE20BAD4B5AA16",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/ScintillaStructures.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "C5BFAE57AEF30CE7E520A05552786A510C412BB1C4DAD5851947D24FC60B24D2",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/ScintillaTypes.h"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "447A5F020834BE4C3275600344CE86ED94046E3179F58259DC246086F870936F",
+          "paths": [
+            "src/Notepads.Native/scintilla/include/ScintillaWidget.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "0924554927B846A35FA2667318DBA42E9E0446AFE89A7E7E9BF8FD3A23A48516",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/AutoComplete.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "822266322DFA9EB1D9ED7A89DBF61C1B808A341726F77D181FF039F9702E18AA",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/AutoComplete.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "4002224FA573EB3560DFF058FEF2A20F890DBE7A62CB4DDF423D47AF95C6C53A",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CallTip.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "61DBB13636A2037D7ABC18CDE7482EB52F466F76AF8CD032D8704F7C09D53B76",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CallTip.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "E044780C824803D2E9D591C909A73EC9150417D2D96A544DE27CE611686B08C4",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CaseConvert.cxx"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "CF213E092C40FE3C789D4C758EF224D8DD389FF21BD66BE66FC33A4F66FA81EA",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CaseConvert.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "45DDB5EF5CAF2A67E45A8153360049061654B5C17C6D75A0FCC832CDB29DF220",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CaseFolder.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "349B229081A8CED612CD617940DD4D58866C74FBD038AB961B53C04972390AAD",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CaseFolder.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "5220B2C9DB5FB62DE70D0BE0382B7B21E5B04CA966A972C00632D34875810842",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CellBuffer.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "6D2E9742B32B1FFD7F3349137003BCC9725139140B3B5902F2A60C75C90B757A",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CellBuffer.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "F965C5596211DB0628E8D603649D02790059325B2FCA0CCC75DDA8D78D2FF131",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ChangeHistory.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "83A52E70CE89F932570AE902B2806C9DA3B82DF1A2E4926A9CB0669AF941E004",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ChangeHistory.h"
+          ]
+        },
+        {
+          "lines": 10,
+          "sha256": "F48BF999006040700E3BD2ADAF988848A8AB644316356355093C1590281CC4D8",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CharacterCategoryMap.cxx"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "62843B5BC15AE6BC266A1827C3C47FC2A24FFF21FF42DF336F3DA18741BB0280",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CharacterCategoryMap.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "E5F6BD481A307A40600508BED241C56A2A040084C4F1BD25199D277D410ABCFD",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CharacterType.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "EEF456413B214EB419C73ACB26EB5C5AF7E46B4EB14F84820D25531FACAB2844",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CharacterType.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "04AACFF64B28E42AADDAF788E765F6E38AA2D8183D1F85710EE274BD01BDFBAA",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CharClassify.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "A38AAAF8A31C853C0C7247A0EF03C81CDADF6570DACEC6FAD3CFEB22927A5102",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/CharClassify.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "AC27234D9E186DB2994F50F0E630B52AB23DD2757F03691512922BB4C7B38D76",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ContractionState.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "B4B6C126AFDB18F6F547BA211252B0816784A7BA56CD436AF61B6F56B9E43953",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ContractionState.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "FA794A7DF9742FD9B4DB8A3E5183EEBA302190DECA019BA05CDAA7F4EB7AA04E",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/DBCS.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "C6C3A01EB3B5C8D8459E9F8DB5234A5541F8E3E0B13E7306CC8642B51AE3DE48",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/DBCS.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "422E9A351A77621D88A72AE6A28BF1C8B07D3951DD7DF481D691051815AD9DCB",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Debugging.h"
+          ]
+        },
+        {
+          "lines": 5,
+          "sha256": "3F483ECBF77A61AD553C9FA7A8DB2DE1A6E848984B7D2BD1322D315C2E2C2BCF",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Decoration.cxx"
+          ]
+        },
+        {
+          "lines": 5,
+          "sha256": "9F6F81BAC06173128A26F317540ECE63A252C1CA2574358B84EBA23FA98348D2",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Decoration.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "69ACB99BD8622FF3C97D50BE30F79CF638EB5231C1812F890F354F377AEEB0D4",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Document.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "9EC19C25618221455DF47DE6E8E392B351DB976EAE760A9DB3893F1DC48BC938",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Document.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "7DFE4B173F438077EDCD70F165D6DDBB3B9962EC6191C2878433B01CFABED4ED",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/EditModel.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "84F95E58DA0D3F13191F8083795B23B9B911A87F482B85A1A7ED8813F4EE0373",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/EditModel.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "B956D12B2EB998E2AD0EA042EE9690FCDB901F30157B6D43BEC2C3C12FE9CC69",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Editor.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "6E9DBD730EFB57D57EF564344FF71DEB9A99EDA8475208AF44B4FAF7167BBA37",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Editor.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "E103BA1DFC9A9010C2BFF6457AEE88D10447A36BBE835B92C1FBB14EB3137DBE",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/EditView.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "3AECD12C8D2400B30083FF88F8B13EA876C84FB9B1FAD6604E3951C491A5312E",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/EditView.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "06E0E507C70CB2EAE1F5810347B86D58BFF041DE5FB724DDB2F13F820D64D89C",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ElapsedPeriod.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "98517638240B305465C33E2CA42C8D95F544F10DD17C306D532FE63036C0B644",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Geometry.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "C99D68B1A88082EC5664795A5A5D089CE89D3ECDABD61335C33D37F3FA2AF7BC",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Geometry.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "EC232E6E478D22FD7AEC48E81AC0E52919270EEE76B0547ED000C708AA2740FB",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Indicator.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "606ED08CCCF3523F6452DC03FEADEB30345232317F50A333D96F4EA8C912438F",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Indicator.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "5AD747ED99FCDFAEDD2033EBA40FDC48755E6EBC0D47245BFBA07653B00E5E6F",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/KeyMap.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "A0D1959BDE2F8AA47BEACD89504BB849218881A17AFDA0F71D82BA6BEB9BC899",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/KeyMap.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "0C187382E41213A338B6110112423C4992DDB1BB1B644C90158D3D04657566EA",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/LineMarker.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "D612CA601BC826AC1E44E2567C0335E22147D0005058578B8B2719922630883A",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/LineMarker.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "364764BC58A7A7BD835A8DD918EABFF2B9FFCA828EAE8C0B47F2D0CA7FE57BB9",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/MarginView.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "AE0BEE9C277CC44BD54CD890B2B1AE54C65457602F77A4C65946875CD23DDE81",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/MarginView.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "07EA0A0D5CF36C3756E9A91AEB0CE0608F39E5175D28B510B03BD1393D500E64",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Partitioning.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "E751F0D13B2B1E604B789960A771E3BB592461004B75BADAB9C71116D879487D",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/PerLine.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "5A5F3821E8F5231F277692CF3A85806CEE89C90683F6BD602AB832CC2B9A0EAC",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/PerLine.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "821ADF984BDD63F97EECCFF9B895EB15F4CABC7D01D1909694F0B445C89E0941",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Platform.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "FFE581C678C6DD13EA4E823238520BD0CF9226295CEC2FA4D776F4D2B9F75321",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Position.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "FE8AE2764672BF00CCAAE3A34492EE4F0E5BAC4E735131CA117AEA45FBB19CC3",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/PositionCache.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "98A2D684890335F04D88695BB6ABD46B4005D23921C78D14289A696ADBFE9D1E",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/PositionCache.h"
+          ]
+        },
+        {
+          "lines": 201,
+          "sha256": "060FD04ED1616A557FC3EB0DF6EDB52FC9C2760A79AD3827BAD67A75B926CE17",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/RESearch.cxx"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "18F4E4AEBFD267E2D50311C7D4128095A619681777B9826AA65B0354948D0E98",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/RESearch.h"
+          ]
+        },
+        {
+          "lines": 5,
+          "sha256": "EF3FE9EE8C48EB1A4595B5E8A9B58FB2B1CD3E9BF709A09C8EAA2AC472883ACA",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/RunStyles.cxx"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "438E25F76A03190E2603A5DECEDA18FA9DF241E745AECCA0D9B8FB21EE771B4F",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/RunStyles.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "84017266B5DB734580BA7265D17DD011E9B0686211989AC0F6D7C194E5232492",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ScintillaBase.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "42545BE587CA0A92C862879A925857367D45C6437726C0ABD5A20773AA4F7E80",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ScintillaBase.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "2DA2463668AF6ECCC530E706BD62F914BC6CA6DF635228168B1DA3008CD009CC",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Selection.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "80CEA9E5C9CE070F610B0B4808EC5FF89F52B594792A532F8FA8CDEAC981AC11",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Selection.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "7C60E4E8AEBE32995E0A05AB06ABF80F946D61202A34DC312439DBA11A2B54D3",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/SparseVector.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "04CA8E8A037A0D784913B2755607B0CEE031541666354A204B90E0335231AA0E",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/SplitVector.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "E44A2DD3C763ABCD49D265E94911E2D9C798F99E19094B0F94683C18EEB1CDC7",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Style.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "B38C9D650E8599F8429F812A73019E41D1B665CD49DF42D711CA9C925E7427F1",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/Style.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "EE51260DD93B118C08D20184FCB58341A701CC6664E1E3DCA04E75C142907915",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/UndoHistory.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "B2EC0AFA874BEE6708CA86D359CE2B8C8B8B218D4A13EF71242966D70B28CE8D",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/UndoHistory.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "E8ED866CD9418A14F795106F338DFCD8653288043F7F24FC3AE9B216BB52C990",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/UniConversion.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "7C292E1C02AA78A581E1FA46F5AF1D2BA8329935820F7F0C6C0A37052A758A0A",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/UniConversion.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "8EE5283AA2EFE022784EAD8ED403A5C8F786A81FC5BDAA86BF1261A916B4A7FA",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/UniqueString.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "25D844B5CB94EBE47D480644873DB1AED184046AE5B34503733F61C4CB3C078C",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/UniqueString.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "0FB2C629762729B0B4DF44DF17015B49316ACA91A97A4CA5E219A02462C6ABED",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ViewStyle.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "D7BE1CF853CFC8CA2FF70C9B63AA6F7489E04417823B2B34D786E433502D905F",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/ViewStyle.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "48A32EBE0B756B6081CD4895004A52EE17FC53E2F7ED1CA471AA70CF03A1B264",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/XPM.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "F67FF8272A3D272497236192B4E49FDF1A0446B7C2EE19FEEAF2492EE22EFCA3",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/XPM.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "4E334720A865F11F381B0AE8D5FE581EB421C86407A606464AC6FB433A0EF770",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/ListBox.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "56DD18A9EA0A5A0232CAB4850D4A589B09FFA9E4C195196220549A084AD17955",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/ListBox.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "7C6DC65C12AE3FFD8268A7BDC2395CDC640CC5FD97B06856033F4303EA162B6C",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/PlatWin.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "4984BBCAEFC633F6DF39A3B0CE4B3D8A19F2DF5BE4BF246EC68154F352E3BE31",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/PlatWin.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "F120428E15890B8B78452F0B944A084C868AD5C08F6C3BD2BA451EE75F574CF4",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/ScintillaWin.cxx"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "CE899865864BD4B36D362B40D37043DF55C9CCE28D116057F884268548992F5F",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/ScintillaWin.h"
+          ]
+        },
+        {
+          "lines": 9,
+          "sha256": "FE60D2F21F55F226FA675114C11E152133AAE84C8991F4F3CB3926A7BEAA7FB2",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/SurfaceD2D.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "8F18372CB551144A15E862E8A6FB88878BEBE689A63060BF651176E9E70293D4",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/SurfaceD2D.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "6F9F7AD3FAC1FB05F56A58A92E3C2F6784EF59E3D131DF0D419C485D0ED61231",
+          "paths": [
+            "src/Notepads.Native/scintilla/winui/WinTypes.h"
+          ]
+        }
+      ],
+      "withoutHeader": []
+    },
+    {
+      "reason": "Retain Lexilla attribution and upstream formatting; do not replace with a Notepads-only notice.",
+      "license": "src/Notepads.Native/lexilla/License.txt",
+      "headers": [
+        {
+          "lines": 10,
+          "sha256": "B9AC80FBFFD233E100D3A36A6BD97D9FD0ABAB7564D01D08842A8E85A3211B49",
+          "paths": [
+            "src/Notepads.Native/lexilla/include/SciLexer.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "78700BA5921A9ED32CE6909BD4893F7EE2A1E6D3823BF42D449BA335328BD624",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexBash.cxx"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "5744331849489D05F8DBBF6C67746A43F5206808075368EFB6B85225180BFA1F",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexCPP.cxx"
+          ]
+        },
+        {
+          "lines": 15,
+          "sha256": "67D294D8AC816DD3A2EEA3FA0A47DAE5CF24A85CF5367AC23700EF771CD4FB22",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexCSS.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "003FA2CD081C31A7C9BD836BBB5C86E85374A0D87459A4BEA85A2D56C8DF7B23",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexHTML.cxx"
+          ]
+        },
+        {
+          "lines": 11,
+          "sha256": "F0B4AC7CBA1F1512561826175364A8FC73AE5F69118B743185E49CA566CAF64B",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexJSON.cxx"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "63DE0DCA4A075638DFB424C6BBCAFCFEEFD3514FFD82DE2BC5BF7C8249124E70",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexLua.cxx"
+          ]
+        },
+        {
+          "lines": 38,
+          "sha256": "E095B8172BC78492B1A19FF6DF3BA4832FB71EB0EA64144B0AD7DB20DF67C95E",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexMarkdown.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "32EEA41D79D54DAF6447A37F424BEFE1D850DD9CC01F2A1DE6FDC961A1976966",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexPowerShell.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "1C7C31E11CCA5336CB3FF37D5E2AEF82C4178F86EA6CA5AEC2B7F4FD5B2B1CE2",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexPython.cxx"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "9AEF1AF0A452881C9C74518CC429D42DB339C66047238565BC24A8C3D83635BC",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexRust.cxx"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "6BE19E7D906B41C57079E3D8C97BD134123372B1012CC24A98F641B682DAF8F1",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexSQL.cxx"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "7BF7667D0BBE1A8EC3586459BE4D86F186357F6CEE8F72F3DD44D21090B10662",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexTOML.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "50110DEB07CDD9E7968617BBE8FC389AD6D0C26939DF947DA019F95E4BCB321F",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexers/LexYAML.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "9BB6CC8BEE0A558BD4567A4470B93CA5EDBE6537CE7539E16522CE619C0B2B56",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/Accessor.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "33F4FA329DFA8DB8726AC9AEC34BC53C1DA0FC097A05E66101D55249659439F7",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/Accessor.h"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "70D1E274BFD1B15A22CD206932192FBA1C5259C11498EABEDD6183FE4C926FE5",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/CharacterCategory.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "88AF4C34380E3E2C4A7ECBDD3EAC8C5D23B4E4CCD481B1F2C4BED131B1D2D24C",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/CharacterCategory.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "2DC2F39F6BB446148F66E4B8951D286B13ADA805D8DA4DC3FE4FF8867090239E",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/CharacterSet.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "AC84BE07409E67C6C6A5D1610978E6F2C20A620441679C34A512BD4CBE3A25D7",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/CharacterSet.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "E502F77E3A1BDB36873A6B9F1712BB0EB6D52E3875A2A850CB5D729CF56371B8",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/DefaultLexer.cxx"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "2889F9FF486A251864E71B61DA770FAB62077E46BE82717CA8D1998538C4CF48",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/DefaultLexer.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "A2FE5EF9074F0F7C0415F19D48255EF675931CA1AE90F2CA2AF497F165233D2A",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/InList.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "1678CBA17E0D0AFA634AD07BAB4C8C9CC65D93FEEDE5A9E59E7AE690AB8768C2",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/InList.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "0137020EEE6D5812DAEECDF35AC97207D45B3AE5AA06F2DBAECE1F1E0FEEA60E",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/LexAccessor.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "6F88DA0C9A4099D63ADEE7582C1D4904015DC5767A5EE33B52650032DE203E89",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/LexAccessor.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "EB7AE811720ACF870C7CD3691D5C7116A7056D5A853C90B5A67AFCDE6789A5D4",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/LexerBase.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "86219B73127C2793B5ED76F5082E6F56A3CE552A8AB6316978CC1F1F4720BC59",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/LexerBase.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "C1E0C04A89EB213CE844F711A67AA497A96CEFC2E6C9434D8BBAB52F80737D0A",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/LexerModule.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "61AB35678DC5317DC04707246578C84F62C2B3C17DC4ADB669F9A48094A2334E",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/LexerModule.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "DEDB83A2C1C75B01B7CAE941C06993010934D0FC112021CA2D64364B966F10E5",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/LexerSimple.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "4BB9E548CC65B203B16D83484CBDD65C06A0108D9BCBBFA60D49FF39643D3BF3",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/LexerSimple.h"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "B01F505EF067D8FEDF3F418D58398FB13B1353BCBA8A261820A88AFD2AE1481B",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/OptionSet.h"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "0EB7425A62B3AF9B26696477F42BCB3975D87F819817C44CBB7B425E88704E79",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/PropSetSimple.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "5237B21673A648EE214D7261A8B0D2D986DA2684C086325F46D39584A6AE7825",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/PropSetSimple.h"
+          ]
+        },
+        {
+          "lines": 8,
+          "sha256": "EF05813D90F46185908DB61B3C18D8D0CEEB30582AC8B1631DBC73FED60BFA1C",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/SparseState.h"
+          ]
+        },
+        {
+          "lines": 7,
+          "sha256": "30600C24E89D50B9A30558DD45055A2011B570CC5C97E724015B382E32D4A5B9",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/StringCopy.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "EEA939269117F1BB0D809D326DDBCC7D7400408E09506D7BE4FE2B7638BDFD5B",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/StyleContext.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "34A0A4F1830B337131A3A7336BE908FA460E8962295BB4EE493FD9FBDBA5400A",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/StyleContext.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "50D06376B3AE6F5A5FC9AC52A95ACC80A2AAA0F98A29B9FB0A269E28BF35249B",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/SubStyles.h"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "E453BF1FE2D7EAC9236E5C192FFB1A22C492D3C423122D94305D104FB5B59C75",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/WordList.cxx"
+          ]
+        },
+        {
+          "lines": 6,
+          "sha256": "D0CC4512D520A60CA90C2480919B780DAEE4210385624EF50AA7DFBCA117DDD3",
+          "paths": [
+            "src/Notepads.Native/lexilla/lexlib/WordList.h"
+          ]
+        }
+      ],
+      "withoutHeader": []
+    }
+  ]
+}

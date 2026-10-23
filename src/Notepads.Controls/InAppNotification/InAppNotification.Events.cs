@@ -3,85 +3,85 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Uwp.UI.Controls/InAppNotification
 
-namespace Notepads.Controls
+
+using System;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
+
+namespace Notepads.Controls;
+
+/// <summary>
+/// In App Notification defines a control to show local notification in the app.
+/// </summary>
+public partial class InAppNotification
 {
-    using System;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Automation;
-    using Windows.UI.Xaml.Automation.Peers;
+    /// <summary>
+    /// Event raised when the notification is opening
+    /// </summary>
+    public event InAppNotificationOpeningEventHandler Opening;
 
     /// <summary>
-    /// In App Notification defines a control to show local notification in the app.
+    /// Event raised when the notification is opened
     /// </summary>
-    public partial class InAppNotification
+    public event EventHandler Opened;
+
+    /// <summary>
+    /// Event raised when the notification is closing
+    /// </summary>
+    public event InAppNotificationClosingEventHandler Closing;
+
+    /// <summary>
+    /// Event raised when the notification is closed
+    /// </summary>
+    public event InAppNotificationClosedEventHandler Closed;
+
+    private AutomationPeer peer;
+
+    private void DismissButton_Click(object sender, RoutedEventArgs e)
     {
-        /// <summary>
-        /// Event raised when the notification is opening
-        /// </summary>
-        public event InAppNotificationOpeningEventHandler Opening;
+        Dismiss(InAppNotificationDismissKind.User);
+    }
 
-        /// <summary>
-        /// Event raised when the notification is opened
-        /// </summary>
-        public event EventHandler Opened;
+    private void DismissTimer_Tick(object sender, object e)
+    {
+        Dismiss(InAppNotificationDismissKind.Timeout);
+    }
 
-        /// <summary>
-        /// Event raised when the notification is closing
-        /// </summary>
-        public event InAppNotificationClosingEventHandler Closing;
-
-        /// <summary>
-        /// Event raised when the notification is closed
-        /// </summary>
-        public event InAppNotificationClosedEventHandler Closed;
-
-        private AutomationPeer peer;
-
-        private void DismissButton_Click(object sender, RoutedEventArgs e)
+    private void OpenAnimationTimer_Tick(object sender, object e)
+    {
+        lock (_openAnimationTimer)
         {
-            Dismiss(InAppNotificationDismissKind.User);
-        }
-
-        private void DismissTimer_Tick(object sender, object e)
-        {
-            Dismiss(InAppNotificationDismissKind.Timeout);
-        }
-
-        private void OpenAnimationTimer_Tick(object sender, object e)
-        {
-            lock (_openAnimationTimer)
+            _openAnimationTimer.Stop();
+            Opened?.Invoke(this, EventArgs.Empty);
+            SetValue(AutomationProperties.NameProperty, "Notification");
+            peer = FrameworkElementAutomationPeer.CreatePeerForElement(ContentTemplateRoot);
+            if (Content?.GetType() == typeof(string))
             {
-                _openAnimationTimer.Stop();
-                Opened?.Invoke(this, EventArgs.Empty);
-                SetValue(AutomationProperties.NameProperty, "Notification");
-                peer = FrameworkElementAutomationPeer.CreatePeerForElement(ContentTemplateRoot);
-                if (Content?.GetType() == typeof(string))
-                {
-                    AutomateTextNotification(Content.ToString());
-                }
+                AutomateTextNotification(Content.ToString());
             }
         }
+    }
 
-        private void AutomateTextNotification(string message)
+    private void AutomateTextNotification(string message)
+    {
+        if (peer != null)
         {
-            if (peer != null)
-            {
-                peer.SetFocus();
-                peer.RaiseNotificationEvent(
-                    AutomationNotificationKind.Other,
-                    AutomationNotificationProcessing.ImportantMostRecent,
-                    "New notification" + message,
-                    Guid.NewGuid().ToString());
-            }
+            peer.SetFocus();
+            peer.RaiseNotificationEvent(
+                AutomationNotificationKind.Other,
+                AutomationNotificationProcessing.ImportantMostRecent,
+                "New notification" + message,
+                Guid.NewGuid().ToString());
         }
+    }
 
-        private void ClosingAnimationTimer_Tick(object sender, object e)
+    private void ClosingAnimationTimer_Tick(object sender, object e)
+    {
+        lock (_closingAnimationTimer)
         {
-            lock (_closingAnimationTimer)
-            {
-                _closingAnimationTimer.Stop();
-                Closed?.Invoke(this, new InAppNotificationClosedEventArgs(_lastDismissKind));
-            }
+            _closingAnimationTimer.Stop();
+            Closed?.Invoke(this, new InAppNotificationClosedEventArgs(_lastDismissKind));
         }
     }
 }

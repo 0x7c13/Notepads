@@ -3,16 +3,15 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/blob/master/Microsoft.Toolkit.Parsers/Core
 
-namespace Notepads.Controls.Markdown
+namespace Notepads.Controls.Markdown;
+
+/// <summary>
+/// Strong typed schema base class.
+/// </summary>
+public abstract class SchemaBase
 {
     /// <summary>
-    /// Strong typed schema base class.
+    /// Gets or sets identifier for strong typed record.
     /// </summary>
-    public abstract class SchemaBase
-    {
-        /// <summary>
-        /// Gets or sets identifier for strong typed record.
-        /// </summary>
-        public string InternalID { get; set; }
-    }
+    public string InternalID { get; set; }
 }

@@ -1,0 +1,8 @@
+## See Scintilla.iface for documentation
+## This file can be used to define additional features for the editor interface
+## The "use" keyword overrides subsequent definitions
+
+cat Overrides
+
+# CallTipPosStart was changed from fun to get in Scintilla 5.5.7, which broke the naming convention
+use get position CallTipPosStart=2203(,) -> fun position CallTipPosStart=2203(,)

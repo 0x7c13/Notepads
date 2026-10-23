@@ -6,6 +6,5 @@
         <ResourceDictionary Source="ms-appx:///Notepads.Controls/GridSplitter/GridSplitter.xaml" />
         <ResourceDictionary Source="ms-appx:///Notepads.Controls/InAppNotification/InAppNotification.xaml" />
         <ResourceDictionary Source="ms-appx:///Notepads.Controls/SetsView/SetsView.xaml" />
-        <ResourceDictionary Source="ms-appx:///Notepads.Controls/MarkdownTextBlock/MarkdownTextBlock.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

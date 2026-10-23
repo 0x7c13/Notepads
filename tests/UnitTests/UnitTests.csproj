@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <LangVersion>14</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsTestProject>true</IsTestProject>
+    <!-- Use the Visual Studio/VSTest adapter. xunit.v3 defaults to MTP 2,
+         which otherwise requires a repository-wide .NET 10 runner opt-in. -->
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+    <IsPackable>false</IsPackable>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Notepads.Controls/SetsView/TabDragGeometry.cs" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/LineEnding.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentMetadata.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentLimits.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/DocumentLanguage.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/DocumentLanguages.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/FileTypeUtility.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Text/LineEndingUtility.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTextCodec.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTitle.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Text/IndentationDetector.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Operations/DocumentOperationCoordinator.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/IO/FileNameRules.cs" />
+    <Compile Include="../../src/Notepads/Features/WebSearch/SearchUrls.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/*.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Legacy/*.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Recovery/RecoverySelection.cs" />
+    <Compile Include="../../src/Notepads/Features/Sessions/Validation/*.cs" />
+  </ItemGroup>
+</Project>

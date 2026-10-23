@@ -3,31 +3,30 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Parsers/Markdown/Enums
 
-namespace Notepads.Controls.Markdown
+namespace Notepads.Controls.Markdown;
+
+/// <summary>
+/// The alignment of content in a table column.
+/// </summary>
+public enum ColumnAlignment
 {
     /// <summary>
-    /// The alignment of content in a table column.
+    /// The alignment was not specified.
     /// </summary>
-    public enum ColumnAlignment
-    {
-        /// <summary>
-        /// The alignment was not specified.
-        /// </summary>
-        Unspecified,
+    Unspecified,
 
-        /// <summary>
-        /// Content should be left aligned.
-        /// </summary>
-        Left,
+    /// <summary>
+    /// Content should be left aligned.
+    /// </summary>
+    Left,
 
-        /// <summary>
-        /// Content should be right aligned.
-        /// </summary>
-        Right,
+    /// <summary>
+    /// Content should be right aligned.
+    /// </summary>
+    Right,
 
-        /// <summary>
-        /// Content should be centered.
-        /// </summary>
-        Center,
-    }
+    /// <summary>
+    /// Content should be centered.
+    /// </summary>
+    Center,
 }

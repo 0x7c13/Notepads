@@ -1,0 +1,13 @@
+<Project>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)TestApplicationData.cs" Link="Isolation\TestApplicationData.cs" />
+    <Content Include="$(MSBuildThisFileDirectory)TestIsolation.txt" Link="TestIsolation.txt" />
+  </ItemGroup>
+  <Target Name="AssertTestStorageIsolation" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <_StorageCheckedCompile Include="@(Compile)" Exclude="$(MSBuildThisFileDirectory)TestApplicationData.cs" />
+    </ItemGroup>
+    <Error Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($([System.IO.File]::ReadAllText('%(_StorageCheckedCompile.FullPath)')), 'Windows\s*\.\s*Storage\s*\.\s*ApplicationData\b'))"
+           Text="Qualified ApplicationData bypasses the isolated test data root: %(_StorageCheckedCompile.Identity). Use the shared global alias." />
+  </Target>
+</Project>

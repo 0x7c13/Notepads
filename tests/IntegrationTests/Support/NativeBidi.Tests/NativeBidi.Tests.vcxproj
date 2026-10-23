@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FB58E4BE-8663-4C23-89FD-0367FDD64373}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v145</PlatformToolset>
+    <UseDebugLibraries Condition="'$(Configuration)' == 'Debug'">true</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup>
+    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>NOMINMAX;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\src\Notepads.Native\scintilla\winui;$(ProjectDir)..\..\..\..\src\Notepads.Native\scintilla\src;$(ProjectDir)..\..\..\..\src\Notepads.Native\scintilla\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>dwrite.lib;d2d1.lib;windowscodecs.lib;ole32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Program.cpp" />
+    <ClInclude Include="RowRenderingTests.h" />
+    <ClInclude Include="LegacyColorTests.h" />
+    <ClInclude Include="LegacyTarget.h" />
+    <ClInclude Include="ForegroundRenderingTests.h" />
+    <ClInclude Include="UnwrappedWidthTests.h" />
+    <ClInclude Include="InputBoundaryTests.h" />
+    <ClInclude Include="RunLayoutTests.h" />
+    <ClInclude Include="TextRenderingTests.h" />
+    <None Include="GenerateFonts.py" />
+    <FontFixture Include="Fonts\*.ttf" />
+    <ClCompile Include="LineLayoutCacheTests.cpp" />
+    <ClCompile Include="SelectionDisplayTests.cpp" />
+    <ClCompile Include="UndoCaretTests.cpp" />
+    <ClCompile Include="VerticalScrollTests.cpp" />
+    <ClCompile Include="GutterGeometryTests.cpp" />
+    <ClCompile Include="HeadlessPlatform.cpp" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\CaseConvert.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\CaseFolder.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\CellBuffer.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\ChangeHistory.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\CharacterCategoryMap.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\CharacterType.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\CharClassify.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\ContractionState.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\DBCS.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\Decoration.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\Document.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\Geometry.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\Indicator.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\KeyMap.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\LineMarker.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\PerLine.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\RESearch.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\RunStyles.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\Selection.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\Style.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\UndoHistory.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\UniConversion.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\UniqueString.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\ViewStyle.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\XPM.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\PositionCache.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteParagraph.cpp" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteRunLayout.cpp" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteRenderer.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="CopyFontFixtures" AfterTargets="Build">
+    <Copy SourceFiles="@(FontFixture)" DestinationFolder="$(OutDir)Fonts" SkipUnchangedFiles="true" />
+  </Target>
+</Project>
