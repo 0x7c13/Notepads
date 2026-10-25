@@ -73,6 +73,7 @@
 #include "TextRendering.h"
 #include "DirectWriteParagraph.h"
 #include "DirectWriteRenderer.h"
+#include "DirectWriteTextLayoutCache.h"
 #endif
 
 #include "Wrapper.h"
@@ -155,6 +156,7 @@ void LoadD2DOnce() noexcept {
 
 struct FontDirectWrite : public Font {
 	winrt::com_ptr<IDWriteTextFormat> pTextFormat;
+	mutable std::unique_ptr<DirectWriteTextLayoutCache> drawingLayouts;
 	FontQuality extraFontFlag = FontQuality::QualityDefault;
 	CharacterSet characterSet = CharacterSet::Ansi;
 	static constexpr FLOAT minimalAscent = 2.0f;
@@ -204,7 +206,7 @@ struct FontDirectWrite : public Font {
 			}
 		}
 	}
-	// Allow copy constructor. Has to explicitly copy each field since can't use =default as deleted in Font.
+	// Copy the immutable font state; each copy starts with an empty drawing cache.
 	FontDirectWrite(const FontDirectWrite &other) noexcept {
 		pTextFormat = other.pTextFormat;
 		extraFontFlag = other.extraFontFlag;
@@ -1402,6 +1404,11 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION yba
 		// Use Unicode calls
 		const int codePageDraw = codePageOverride ? codePageOverride : pfm->CodePageText(mode.codePage);
 		const TextWide tbuf(text, codePageDraw);
+		if (!pfm->drawingLayouts) {
+			pfm->drawingLayouts = std::make_unique<DirectWriteTextLayoutCache>(pIDWriteFactory, pfm->pTextFormat.get());
+		}
+		const auto pTextLayout = pfm->drawingLayouts->Get(tbuf.AsView(),
+			static_cast<FLOAT>(rc.Width()), static_cast<FLOAT>(rc.Height()));
 
 		SetFontQuality(pfm->extraFontFlag);
 		if (fuOptions & ETO_CLIPPED) {
@@ -1409,15 +1416,9 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION yba
 			pRenderTarget->PushAxisAlignedClip(rcClip, D2D1_ANTIALIAS_MODE_ALIASED);
 		}
 
-		// Explicitly creating a text layout appears a little faster
-		TextLayout pTextLayout = LayoutCreate(
-				tbuf.AsView(),
-				pfm->pTextFormat.get(),
-				static_cast<FLOAT>(rc.Width()),
-				static_cast<FLOAT>(rc.Height()));
 		if (pTextLayout) {
 			const D2D1_POINT_2F origin = DPointFromPoint(Point(rc.left, ybase - pfm->yAscent));
-			pRenderTarget->DrawTextLayout(origin, pTextLayout.get(), pBrush.get(), d2dDrawTextOptions);
+			pRenderTarget->DrawTextLayout(origin, pTextLayout.Get(), pBrush.get(), d2dDrawTextOptions);
 		}
 
 		if (fuOptions & ETO_CLIPPED) {
@@ -1762,23 +1763,7 @@ StrokeStyle StrokeStyleCreate(const D2D1_STROKE_STYLE_PROPERTIES &strokeStylePro
 
 TextLayout LayoutCreate(std::wstring_view wsv, IDWriteTextFormat *pTextFormat, FLOAT maxWidth, FLOAT maxHeight) noexcept {
 	TextLayout layout;
-	const HRESULT hr = pIDWriteFactory->CreateTextLayout(wsv.data(), static_cast<UINT32>(wsv.length()),
-		pTextFormat, maxWidth, maxHeight, layout.put());
-	// Set text to use tabular number spacing and use other defaults from WinUI
-	winrt::com_ptr<IDWriteTypography> typography;
-	if (SUCCEEDED(hr)
-		&& SUCCEEDED(pIDWriteFactory->CreateTypography(typography.put()))
-		&& SUCCEEDED(typography->AddFontFeature({ DWRITE_FONT_FEATURE_TAG_STANDARD_LIGATURES, 1 }))
-		&& SUCCEEDED(typography->AddFontFeature({ DWRITE_FONT_FEATURE_TAG_CONTEXTUAL_LIGATURES, 1 }))
-		&& SUCCEEDED(typography->AddFontFeature({ DWRITE_FONT_FEATURE_TAG_CONTEXTUAL_ALTERNATES, 1 }))
-		&& SUCCEEDED(typography->AddFontFeature({ DWRITE_FONT_FEATURE_TAG_KERNING, 1 }))
-		&& SUCCEEDED(typography->AddFontFeature({ DWRITE_FONT_FEATURE_TAG_TABULAR_FIGURES, 1 })))
-	{
-		layout->SetTypography(typography.get(), { 0, static_cast<UINT32>(wsv.length()) }); // Ignore result
-	}
-	if (FAILED(hr)) {
-		return {};
-	}
+	layout.attach(CreateDrawingTextLayout(pIDWriteFactory, pTextFormat, wsv, maxWidth, maxHeight).Detach());
 	return layout;
 }
 

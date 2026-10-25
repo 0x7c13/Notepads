@@ -65,7 +65,8 @@ names from `-List`. Markdown preview is not implemented and has no completion cl
 
 NativeBidi uses production native code with independent whole-paragraph DirectWrite
 geometry and WIC pixel references. It covers Unicode byte/UTF-16 boundaries,
-shaping/fallback, wrapping, visual navigation, rectangles, immutable foregrounds,
+shaping/fallback, bounded drawing-layout reuse/eviction, wrapping, visual navigation,
+rectangles, immutable foregrounds,
 color glyphs, clipping/transforms, DPI, font-quality transitions, gutter geometry,
 viewport bounds/animation clocks and undo notifications.
 Regular CI also requires an optimized **262,144 UTF-16-unit** dense LTR paragraph:
@@ -152,6 +153,9 @@ runs. Prepared-document timings exclude activation/disk and are not key-to-photo
 latency; sampled memory is not an allocation profile or proof of leak freedom.
 External benchmark drivers can request `PerformanceTestWindow`'s isolated readiness
 handshake to acquire foreground before timers start; ordinary runs need no handshake.
+Private `--scroll-cadence` diagnostics use copied inputs for rendering/paint cadence,
+off-thread memory sampling and multi-editor retention. Callbacks are not presented frames;
+disposal snapshots must allow XAML/native retirement before drawing reclamation conclusions.
 `Test-AppLifecycle.ps1 -PerformanceRounds 4` alternates normal process startup and
 forced prelaunch/suspend/reuse on one Release AOT build. Preparation CPU/memory are
 reported separately. CPU admission reads processor utility with PDH's language-independent English counter lookup;

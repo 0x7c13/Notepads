@@ -42,6 +42,7 @@
     <ClInclude Include="InputBoundaryTests.h" />
     <ClInclude Include="RunLayoutTests.h" />
     <ClInclude Include="TextRenderingTests.h" />
+    <ClInclude Include="DrawingLayoutCacheTests.h" />
     <None Include="GenerateFonts.py" />
     <FontFixture Include="Fonts\*.ttf" />
     <ClCompile Include="LineLayoutCacheTests.cpp" />
@@ -81,6 +82,7 @@
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteParagraph.cpp" />
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteRunLayout.cpp" />
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteRenderer.cpp" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\winui\DirectWriteTextLayoutCache.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="CopyFontFixtures" AfterTargets="Build">
