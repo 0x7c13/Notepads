@@ -62,6 +62,14 @@ this local development registration.
 Developer Mode and registration; `-NoInstall` skips toolchain installation but
 still registers/runs the app and enables Developer Mode if needed.
 
+After upgrading Visual Studio or .NET, restart Visual Studio. NativeAOT compiler
+packages follow the selected SDK automatically during restore; old generated
+imports cannot pin a previous compiler patch. If a build reports
+`NOTEPADSBUILD001` or mismatched `System.Private.CoreLib` versions, run
+`.\scripts\Run-Dev.ps1 -Platform x64 -BuildOnly` (choose your target architecture),
+then reopen the solution. No global NuGet-cache deletion or runtime version pin is
+needed. `_buildUwp` contains native C++ outputs, not the managed NuGet restore graph.
+
 For offline testers, open a CI run's **Artifacts** and download
 `notepads-offline-x64`, `notepads-offline-ARM64` or `notepads-offline-x86` for the target
 machine. These are regular CI outputs, not a separate manual workflow.

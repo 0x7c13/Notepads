@@ -58,7 +58,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | DPI geometry / actual Windows scale transitions | `DpiLayout` / opt-in `DisplayDpi` |
 | Installed Production launch, file association, windows, suspension and V1 data import | Hosted-only `PackagedApp` |
 | Localization, notices, package content and dependency boundaries | `Localization`, `Headers`, `Package`, `Architecture` |
-| Runner ownership, toolchain/offline integrity, CI export without rebuilding and registration boundaries | `Runner` (inert OS/install fixtures) |
+| Runner ownership, toolchain/offline integrity, AOT restore after SDK updates, CI export and registration boundaries | `Runner` (inert OS/install fixtures; real SDK restore) |
 
 `*` denotes a family for orientation, not a selectable wildcard; use exact group
 names from `-List`. Markdown preview is not implemented and has no completion claim.

@@ -859,4 +859,5 @@ Write-Output "PASS: Runner contracts ($($checks.Count) checks); private evidence
 & (Join-Path $PSScriptRoot 'ActivationContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'activation')
 & (Join-Path $PSScriptRoot 'LifecycleSamplingContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'lifecycle-sampling')
 & (Join-Path $PSScriptRoot 'DevBuildContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'dev-build')
+& (Join-Path $PSScriptRoot 'NativeAotContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'native-aot')
 & (Join-Path $PSScriptRoot 'OfflinePackageContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'offline-package')

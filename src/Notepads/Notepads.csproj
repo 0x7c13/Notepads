@@ -97,4 +97,5 @@
     </Content>
   </ItemGroup>
   <Import Project="Package.targets" />
+  <Import Project="..\..\scripts\NativeAot.targets" />
 </Project>

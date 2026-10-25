@@ -46,6 +46,11 @@ outputs and test results are never reused across hosted jobs. Dependencies are
 centrally versioned, but the repository does not yet lock transitive NuGet
 resolution. The runner image itself receives upstream updates.
 
+`scripts/NativeAot.targets` keeps implicit AOT compiler packs on the selected SDK's
+version during restore and rejects stale imported compiler targets before build.
+The `Runner` checks reproduce an SDK/old-restore mismatch on all three target
+architectures and verify repair through one normal `/restore` invocation.
+
 Workflow permissions are `contents: read`, checkout does not persist credentials,
 and actions are pinned to full commit SHAs. actionlint's downloaded release archive
 is SHA-256 verified before execution. The PR workflow does not use

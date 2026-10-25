@@ -116,4 +116,5 @@
   <Target Name="ValidateIntegrationHost" BeforeTargets="PrepareForBuild">
     <Error Condition="'$(IntegrationHost)' != 'App' and '$(IntegrationHost)' != 'Headless' and '$(IntegrationHost)' != 'Lifecycle'" Text="IntegrationHost must be App, Lifecycle or Headless." />
   </Target>
+  <Import Project="..\..\scripts\NativeAot.targets" />
 </Project>
