@@ -39,6 +39,9 @@ public sealed partial class App : Application
         var success = false;
         try
         {
+            // Even --test-cleanup can finish before ActivateApplication returns.
+            // Yield the activation callback until the runner verifies and retains us.
+            await TestProcessLifetime.WaitForRetentionAsync(ApplicationData.Current.LocalFolder.Path);
             await LoggingService.InitializeAsync(new WorkspaceLogSink());
             if (phase == "--test-cleanup")
             {

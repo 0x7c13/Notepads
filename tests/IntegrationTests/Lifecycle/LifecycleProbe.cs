@@ -182,7 +182,7 @@ internal static class LifecycleProbe
                                 if (_page != null) await _page.TestDisposeWindowAsync();
                                 TestApplicationData.ValidatePreservedFileGrants();
                                 Publish("exiting", commandId: commandId);
-                                await LifecycleProgram.WaitForRetentionAsync();
+                                await TestProcessLifetime.WaitForRetentionAsync(ApplicationData.Current.LocalFolder.Path);
                                 _ = Task.Run(() => Environment.Exit(0));
                             }
                             else

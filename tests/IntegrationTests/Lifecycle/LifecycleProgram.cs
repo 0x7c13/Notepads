@@ -94,7 +94,7 @@ internal static partial class LifecycleProgram
             }, LifecycleJsonContext.Default.LifecycleMoveEntry));
             File.Move(marker + ".tmp", marker);
             // The runner retains the exact process before a rejected import can exit.
-            WaitForRetentionAsync().GetAwaiter().GetResult();
+            TestProcessLifetime.WaitForRetentionAsync(ApplicationData.Current.LocalFolder.Path).GetAwaiter().GetResult();
         }
         Application.Start(initialization =>
         {
@@ -119,27 +119,12 @@ internal static partial class LifecycleProgram
                     // Hold only the observer until the runner retains the process.
                     // The control independently measures framework Exit's result;
                     // the real case must use the product's queued Exit request.
-                    WaitForRetentionAsync().GetAwaiter().GetResult();
+                    TestProcessLifetime.WaitForRetentionAsync(ApplicationData.Current.LocalFolder.Path).GetAwaiter().GetResult();
                     if (control) _ = Window.Current.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Application.Current.Exit);
                 }
                 else LifecycleProbe.Activated(activation);
             };
         });
-    }
-
-    internal static async Task WaitForRetentionAsync()
-    {
-        using var process = Process.GetCurrentProcess();
-        var marker = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"retained-process-{process.Id}.txt");
-        var expected = process.StartTime.ToUniversalTime().Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        var watch = Stopwatch.StartNew();
-        while (true)
-        {
-            try { if (File.Exists(marker) && File.ReadAllText(marker) == expected) return; }
-            catch (IOException) { }
-            if (watch.Elapsed > TimeSpan.FromSeconds(15)) throw new TimeoutException("The runner never retained this process.");
-            await Task.Delay(10).ConfigureAwait(false);
-        }
     }
 
     private static async Task CleanupAsync()
@@ -151,7 +136,7 @@ internal static partial class LifecycleProgram
             TestApplicationData.RemoveOwnedSettings();
             TestReport.Write(Phase, true, 0);
             File.WriteAllText(Path.Combine(ApplicationData.Current.LocalFolder.Path, "results.txt"), "PASS: lifecycle cleanup.");
-            await WaitForRetentionAsync();
+            await TestProcessLifetime.WaitForRetentionAsync(ApplicationData.Current.LocalFolder.Path);
             passed = true;
         }
         catch (Exception error)

@@ -38,6 +38,7 @@ function Get-TestSourceFiles {
     $generatedNames = @('bin', 'obj', '.git', '.vs', 'packages', '__pycache__', 'TestResults',
         '_buildUwp', '_buildWinUI3', 'Generated Files', 'AppPackages', 'BundleArtifacts')
     $projectInputs = if ($Profile -in @('Headless', 'App', 'Lifecycle')) { @('tests/IntegrationTests/IntegrationTests.csproj', 'tests/IntegrationTests/Directory.Build.props') } else { @() }
+    if ($Profile -eq 'Unit') { $projectInputs += 'tests/Shared/TestProcessLifetime.cs' }
     if ($Profile -in @('App', 'Lifecycle')) { $projectInputs += 'tests/IntegrationTests/Package.appxmanifest' }
     foreach ($relative in (@('Directory.Packages.props', 'global.json', '.editorconfig') + $projectInputs)) {
         $path = Join-Path $repo $relative

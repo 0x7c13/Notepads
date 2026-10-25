@@ -1,6 +1,7 @@
 <Project>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)TestApplicationData.cs" Link="Isolation\TestApplicationData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestProcessLifetime.cs" Link="Isolation\TestProcessLifetime.cs" />
     <Content Include="$(MSBuildThisFileDirectory)TestIsolation.txt" Link="TestIsolation.txt" />
   </ItemGroup>
   <Target Name="AssertTestStorageIsolation" BeforeTargets="CoreCompile">

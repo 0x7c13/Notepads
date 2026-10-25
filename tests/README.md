@@ -100,7 +100,9 @@ titles and enabled session snapshots, with spaced typing and immediate undo.
 
 - Local App/desktop tests register only `Notepads.Editor.Tests`, use private GUID
   data/settings, restore prior registration, verify existing test data/grants and
-  validate process identity before cleanup. Lifecycle decline additionally requires
+  validate process identity before cleanup. Ordinary phases, including cleanup,
+  wait for the runner's PID/creation-time acknowledgement before executing.
+  Lifecycle decline additionally requires
   the framework shutdown event and actual exit matching an independent framework
   control; pending-presentation checks use owned windows and the real App helper.
   Pending broker calls stay session-owned through cleanup. If one never settles,
