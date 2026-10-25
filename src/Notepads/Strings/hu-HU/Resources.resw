@@ -302,4 +302,6 @@
   <data name="MainMenu_AutomationName" xml:space="preserve"><value>Menü</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>Lapok görgetése visszafelé</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Lapok görgetése előre</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>Áthelyezés új ablakba</value></data>
+  <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>Az áthelyezés nem fejeződött be. Az eredeti lap megmaradt. Ellenőrizze, hogy megnyílt-e egy új ablak.</value></data>
 </root>

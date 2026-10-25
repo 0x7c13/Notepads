@@ -302,4 +302,6 @@
   <data name="MainMenu_AutomationName" xml:space="preserve"><value>Menü</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>Registerkarten rückwärts scrollen</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Registerkarten vorwärts scrollen</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>In neues Fenster verschieben</value></data>
+  <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>Das Verschieben konnte nicht abgeschlossen werden. Der ursprüngliche Tab bleibt erhalten. Prüfen Sie, ob ein neues Fenster geöffnet wurde.</value></data>
 </root>

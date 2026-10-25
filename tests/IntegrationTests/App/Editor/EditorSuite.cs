@@ -193,10 +193,18 @@ internal static class EditorSuite
             }
             if (arguments == "--native-storage")
             {
+                await EditorStateTransferTests.RunAsync(log);
                 await CheckNativeUtf8ContractsAsync();
                 await CheckNativeJournalContractsAsync();
                 core.Dispose();
                 log.AppendLine("PASS: native read leases, undo-preserving load, bounded journal checkpoints/replay/rotation.");
+                return;
+            }
+            if (arguments == "--window-move")
+            {
+                await EditorStateTransferTests.RunAsync(log);
+                await NotepadsIntegrationTests.WindowMoveFeatureTests.RunAsync(log);
+                core.Dispose();
                 return;
             }
             native.GotoPos(0);

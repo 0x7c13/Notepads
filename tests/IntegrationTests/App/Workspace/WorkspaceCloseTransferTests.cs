@@ -31,27 +31,30 @@ namespace NotepadsWorkspaceTests;
 
 internal static partial class WorkspaceFileOpeningTests
 {
-    private static async Task VerifySnapshotOffTransferClosesAsync(StringBuilder log)
+    private static async Task VerifySecondaryTransferClosesAsync(StringBuilder log)
     {
         var snapshots = ApplicationPreferences.IsSessionSnapshotEnabled;
         try
         {
-            // Change the isolated preference before creating each page; this is not a live reset.
-            ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, false);
-            ApplicationPreferences.RefreshSessionSnapshotSetting();
-            foreach (var button in new[] { "CloseButton", "PrimaryButton", "SecondaryButton" })
-                await VerifySnapshotOffTransferCloseAsync(button);
+            foreach (var enabled in new[] { false, true })
+            {
+                // Change the isolated preference before creating each page; this is not a live reset.
+                ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, enabled);
+                ApplicationPreferences.RefreshSessionSnapshotSetting();
+                foreach (var button in new[] { "CloseButton", "PrimaryButton", "SecondaryButton" })
+                    await VerifySecondaryTransferCloseAsync(button, enabled);
+            }
         }
         finally
         {
             ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, snapshots);
             ApplicationPreferences.RefreshSessionSnapshotSetting();
         }
-        log.AppendLine("PASS: snapshot-off close waits for transfer installation before Cancel/Save/Discard.");
+        log.AppendLine("PASS: secondary close waits for transfer installation before Cancel/Save/Discard, with snapshots on or off.");
         log.AppendLine("PASS: Cancel preserves edits; Save/Discard persist Closed and reject later source ACK.");
     }
 
-    private static async Task VerifySnapshotOffTransferCloseAsync(string button)
+    private static async Task VerifySecondaryTransferCloseAsync(string button, bool snapshots)
     {
         var owner = Guid.NewGuid();
         var scope = new SessionScopeData { OwnerId = owner, InstanceId = owner, Kind = SessionScopeData.Secondary };
@@ -70,14 +73,14 @@ internal static partial class WorkspaceFileOpeningTests
         {
             var frame = new Frame();
             Check(frame.Navigate(typeof(NotepadsMainPage), new WorkspaceNavigation(context, null)),
-                "Could not create the snapshot-off close workspace.");
+                "Could not create the secondary close workspace.");
             page = (NotepadsMainPage)frame.Content;
             Window.Current.Content = frame;
-            await UntilAsync(() => page.TestStartupComplete, "Snapshot-off close startup did not finish.");
+            await UntilAsync(() => page.TestStartupComplete, "Secondary close startup did not finish.");
             var core = (NotepadsCore)page.TestCore;
-            Check(!page.TestController.IsBackupEnabled && core.GetTabCount() == 1 && !core.HasTabsRequiringSave(),
-                "The close fixture must begin with only an unmodified untitled tab and snapshots off.");
-            var file = await NewFileAsync("snapshot-off-" + button);
+            Check(page.TestController.IsBackupEnabled == snapshots && core.GetTabCount() == 1 && !core.HasTabsRequiringSave(),
+                "The close fixture must begin with an unmodified untitled tab and the requested snapshot policy.");
+            var file = await NewFileAsync("secondary-close-" + snapshots + "-" + button);
             source = await TransferFixture.CreateAsync(core, service, file);
             transfer = core.OpenTransferredFileAsync(file, source.PrepareAsync, async editor =>
             {
@@ -108,7 +111,9 @@ internal static partial class WorkspaceFileOpeningTests
             });
             var approved = await close;
             var canceled = button == "CloseButton";
-            Check(approved != canceled, "The snapshot-off close decision returned the wrong approval result.");
+            Check(approved != canceled, "The secondary close decision returned the wrong approval result.");
+            Check(page.TestController.IsBackupEnabled == (canceled && snapshots),
+                "Cancel retains the snapshot preference; confirmed closure disables further suspension captures.");
             using (await SessionRecoveryTransaction.EnterAsync())
             {
                 var catalog = await SessionRecoveryCatalog.ReadScopeAsync(owner);

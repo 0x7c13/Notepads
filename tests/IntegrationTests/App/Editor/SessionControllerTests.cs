@@ -280,6 +280,8 @@ internal static partial class SessionControllerTests
 
         public void Close(FakeTextEditor editor) => CloseTab(GetTab(editor));
         public void DeleteTab(WorkspaceTab tab) => CloseTab(tab);
+        public bool CanMoveTabToNewWindow(WorkspaceTab tab) => false;
+        public Task<bool> MoveTabToNewWindowAsync(WorkspaceTab tab) => Task.FromResult(false);
         public void CloseTab(WorkspaceTab tab)
         {
             RequireUIThread(_dispatcher);

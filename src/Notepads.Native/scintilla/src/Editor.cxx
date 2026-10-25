@@ -390,7 +390,8 @@ void Editor::RefreshStyleData() {
 			vs.Refresh(*surface, pdoc->tabInChars);
 		}
 		SetScrollBars();
-		SetRectangularRange();
+		// Layout changes preserve the selected text, including imported ranges.
+		// Only an explicit rectangular selection/edit operation reprojects its corners.
 	}
 }
 

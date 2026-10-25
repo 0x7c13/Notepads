@@ -12,6 +12,7 @@ namespace Notepads.Features.Sessions.Contracts;
 [JsonSerializable(typeof(NotepadsSessionDataV2))]
 [JsonSerializable(typeof(TextEditorSessionDataV2))]
 [JsonSerializable(typeof(TransferToken))]
+[JsonSerializable(typeof(WindowMoveRequest))]
 [JsonSerializable(typeof(RecoveryRecord))]
 internal sealed partial class SessionJsonContext : JsonSerializerContext
 {

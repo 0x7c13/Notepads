@@ -55,7 +55,7 @@ public sealed partial class TextEditor
 
     public async Task OpenSideBySideDiffViewerAsync()
     {
-        if (_disposed) return;
+        if (_disposed || _windowMoveActive) return;
         try { await PrepareDiffPreviewAsync(); }
         catch (OperationCanceledException) when (_disposed) { }
         catch (ObjectDisposedException) when (_disposed) { }
@@ -130,6 +130,7 @@ public sealed partial class TextEditor
 
     public void CloseSideBySideDiffViewer()
     {
+        if (_windowMoveActive && !_disposed) return; // Shutdown still owns disposal.
         var generation = _diffGeneration;
         if (generation == null) return;
         _diffGeneration = null;
@@ -158,9 +159,13 @@ public sealed partial class TextEditor
     }
 
     private void DiffViewer_CloseRequested(object sender, EventArgs args) => CloseSideBySideDiffViewer();
-    private void DiffViewer_ZoomChanged(object sender, double zoom) => TextEditorCore.SetFontZoomFactor(zoom);
+    private void DiffViewer_ZoomChanged(object sender, double zoom)
+    {
+        if (!_windowMoveActive) TextEditorCore.SetFontZoomFactor(zoom);
+    }
     public async Task ToggleDiffPreviewAsync()
     {
+        if (_windowMoveActive) return;
         if (_diffGeneration != null) CloseSideBySideDiffViewer();
         else await OpenSideBySideDiffViewerAsync();
     }

@@ -302,4 +302,6 @@
   <data name="MainMenu_AutomationName" xml:space="preserve"><value>Menü</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>Sekmeleri geriye kaydır</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Sekmeleri ileriye kaydır</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>Yeni pencereye taşı</value></data>
+  <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>Taşıma tamamlanamadı. Özgün sekme korundu. Yeni bir pencere açılıp açılmadığını kontrol edin.</value></data>
 </root>

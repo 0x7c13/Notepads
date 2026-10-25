@@ -75,7 +75,7 @@ try {
             @{ Mode = 'test-failure'; Error = '*fixture UI test failure*'; Invoked = $true }
         )) {
             $case.Configuration = if ($lane -eq 'E2E') { 'Release' } else { 'Debug' }
-            $case.Groups = if ($lane -eq 'E2E') { 'UIAutomation,DragDrop,TabDragging,AppLifecycle,Editor,FutureFeature' } else { 'NativeFaults' }
+            $case.Groups = if ($lane -eq 'E2E') { 'UIAutomation,DragDrop,TabDragging,AppLifecycle,WindowMoveBroker,Editor,FutureFeature' } else { 'NativeFaults' }
             $case | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $ciFixtureRoot 'case.json')
             $marker = Join-Path $ciFixtureRoot 'invoked.txt'
             if (Test-Path -LiteralPath $marker) { Remove-Item -LiteralPath $marker }

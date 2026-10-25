@@ -8,11 +8,13 @@ param(
     [ValidateSet('Debug', 'Release')] [string] $Configuration = 'Release',
     [int] $TimeoutSeconds = 180,
     [ValidateRange(0, 20)] [int] $PerformanceRounds = 0,
+    [switch] $WindowMoveOnly,
     [string] $SourceLayout = ''
 )
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'IsolatedTestPackage.ps1')
 if (!('PackagedAppDriver' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'PackagedAppDriver.cs') }
+if ($PerformanceRounds -gt 0 -and !('ProcessorUtilitySampler' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'ProcessorUtilitySampler.cs') }
 $session = $null
 $driver = $null
 $samples = [Collections.Generic.List[object]]::new()
@@ -94,24 +96,24 @@ function Wait-IdleCpu {
     $history = [Collections.Generic.List[double]]::new()
     $consecutive = 0
     $watch = [Diagnostics.Stopwatch]::StartNew()
-    do {
-        # CIM class/property names are language-independent. Preserve the same
-        # Processor Utility metric and leave a second between provider samples.
-        Start-Sleep -Seconds 1
-        try {
-            $samples = @(Get-CimInstance -Query "SELECT Name,PercentProcessorUtility FROM Win32_PerfFormattedData_Counters_ProcessorInformation WHERE Name='_Total'" -OperationTimeoutSec 5 -ErrorAction Stop)
-            if ($samples.Count -ne 1 -or $samples[0].Name -cne '_Total' -or $null -eq $samples[0].PercentProcessorUtility) {
-                throw 'The provider did not return exactly one total-processor utility sample.'
+    $sampler = $null
+    try {
+        try { $sampler = [ProcessorUtilitySampler]::new() }
+        catch { throw "Cannot sample total processor utility through PDH: $($_.Exception.Message)" }
+        do {
+            Start-Sleep -Seconds 1
+            try {
+                $load = $sampler.Read()
+                if (![double]::IsFinite($load) -or $load -lt 0) { throw 'The provider returned an invalid processor utility value.' }
             }
-            $load = [double] $samples[0].PercentProcessorUtility
-            if (![double]::IsFinite($load) -or $load -lt 0) { throw 'The provider returned an invalid processor utility value.' }
-        }
-        catch { throw "Cannot sample total processor utility through CIM: $($_.Exception.Message)" }
-        $history.Add($load)
-        $consecutive = if ($load -le 25) { $consecutive + 1 } else { 0 }
-        if ($watch.Elapsed.TotalSeconds -gt 120) { throw 'CPU did not settle; no performance sample was launched.' }
-    } while ($consecutive -lt 3)
-    return ,$history.ToArray()
+            catch { throw "Cannot sample total processor utility through PDH: $($_.Exception.Message)" }
+            $history.Add($load)
+            $consecutive = if ($load -le 25) { $consecutive + 1 } else { 0 }
+            if ($watch.Elapsed.TotalSeconds -gt 120) { throw 'CPU did not settle; no performance sample was launched.' }
+        } while ($consecutive -lt 3)
+        return ,$history.ToArray()
+    }
+    finally { if ($sampler) { $sampler.Dispose() } }
 }
 
 function Measure-Activation([bool] $Prepared, [string] $ExpectedHash, [bool] $Measurement = $false) {
@@ -251,6 +253,7 @@ function Check-ActivationPresentation {
     $null = Wait-Observation $first new-window
     $second = Start-IsolatedTestProcess $session '--lifecycle-secondary'
     $secondState = Wait-Observation $second ready
+    Arrange-LifecycleProcesses $first $second
     foreach ($case in @(
         @{ Begin = 'begin-late-activation'; End = 'complete-activation'; Negative = $true },
         @{ Begin = 'begin-activation'; End = 'complete-activation'; Negative = $false },
@@ -285,7 +288,169 @@ function Check-ActivationPresentation {
 function Focus-LifecycleProcess($Identity) {
     Assert-IsolatedTestRunOwnership $session
     if (!(Get-IsolatedTestProcess $Identity)) { throw 'Cannot present an exited lifecycle process.' }
-    [PackagedAppDriver]::Focus($Identity.Id)
+    if (!('OwnedWindowActivation' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'OwnedWindowActivation.cs') }
+    [OwnedWindowActivation]::RequireIdle()
+    # Ask the owned UWP view on its dispatcher before using desktop activation.
+    # This is fixture preparation only, never a repair after the behavior under test.
+    Send-Command $Identity focus
+    $null = Wait-Observation $Identity focus
+    if ([PackagedAppDriver]::IsForeground($Identity.Id)) { return }
+    Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
+    $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($Identity.Id))
+    $editor = $root.FindFirst([Windows.Automation.TreeScope]::Descendants, [Windows.Automation.AndCondition]::new(
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ClassNameProperty, 'WinUIEditor.EditorBaseControl'),
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ProcessIdProperty, [int]$Identity.Id)))
+    if (!$editor -or $editor.Current.IsOffscreen -or !$editor.Current.IsEnabled) { throw 'No visible owned editor for lifecycle setup.' }
+    [OwnedWindowActivation]::RequireIdle()
+    $editor.SetFocus()
+    $null = [OwnedWindowActivation]::Acquire([uint32]$Identity.Id, [PackagedAppDriver]::Window($Identity.Id))
+}
+
+function Arrange-LifecycleProcesses($First, $Second) {
+    Assert-IsolatedTestRunOwnership $session
+    if (!(Get-IsolatedTestProcess $First) -or !(Get-IsolatedTestProcess $Second)) { throw 'Cannot arrange an exited lifecycle process.' }
+    if (!('EditorDragInput' -as [type])) { Add-Type -Path (Join-Path $PSScriptRoot 'EditorDragInput.cs') }
+    # Keep both exact owned captions visible. The existing arrangement helper
+    # validates HWND ancestry/idle input and never makes either window topmost.
+    $placement = [EditorDragInput]::new([uint32]$First.Id, [uint32]$Second.Id)
+    try { $placement.Arrange() }
+    finally { $placement.Dispose() }
+}
+
+function Start-IndirectMoveActivation($Source, [string] $Command, $Existing = $null) {
+    Assert-IsolatedTestRunOwnership $session
+    $marker = Join-Path $session.Layout 'PendingTestActivation.txt'
+    if ($session.PendingActivation -or (Test-Path -LiteralPath $marker)) { throw 'An activation still owns this registration.' }
+    $session.MoveBrokerSequence = 1 + [int]$session.MoveBrokerSequence
+    $completion = [Threading.Tasks.TaskCompletionSource[uint32]]::new([Threading.Tasks.TaskCreationOptions]::RunContinuationsAsynchronously)
+    $activation = @{ Task = $completion.Task; CompletionSource = $completion; Identity = $Existing; Receipt = $null
+        Marker = $marker; ReceiptPattern = 'move-entry-*.json'; Indirect = $true; Source = $Source; Existing = $Existing
+        BrokerPath = (Join-Path $session.RunRoot "move-broker-$($Source.Id)-$($session.MoveBrokerSequence).txt")
+        PriorReceipts = @(Get-ChildItem -LiteralPath $session.RunRoot -Filter 'move-entry-*.json' | ForEach-Object FullName) }
+    if ($Existing) { $activation.Receipt = Join-Path $session.RunRoot "move-entry-$($Existing.Id).json" }
+    $activation.PriorReadyReceipts = if ($Existing) {
+        @(Get-ChildItem -LiteralPath $session.RunRoot -Filter "lifecycle-$($Existing.Id)-ready-*.json" | ForEach-Object FullName)
+    } else { @() }
+    [IO.File]::WriteAllText($marker, $session.RunId)
+    $session.PendingActivation = $activation
+    # Persist before commanding the process: a timeout must not unregister a
+    # package while its in-package broker call can still create a receiver.
+    Send-Command $Source $Command
+}
+
+function Wait-IndirectMoveActivation([int] $BudgetSeconds = $TimeoutSeconds) {
+    $activation = $session.PendingActivation
+    if (!$activation -or !$activation.Indirect) { throw 'No indirect move activation is pending.' }
+    $watch = [Diagnostics.Stopwatch]::StartNew()
+    do {
+        $entries = @(Get-ChildItem -LiteralPath $session.RunRoot -Filter $activation.ReceiptPattern |
+            Where-Object FullName -NotIn $activation.PriorReceipts)
+        foreach ($entry in $entries) {
+            $receipt = Get-Content -LiteralPath $entry.FullName -Raw | ConvertFrom-Json
+            if (!$activation.Identity -or $activation.Identity.Id -ne $receipt.ProcessId -or $activation.Identity.StartTicks -ne $receipt.StartTicks) {
+                if ($activation.Identity) { $activation.UnexpectedReceiver = $true }
+                # A duplicate can race the old receiver exiting. Retain the actual
+                # replacement before rejecting it; never clear against a stale PID.
+                $activation.Identity = Register-IsolatedTestProcess $session $receipt.ProcessId -ExpectedStartTicks $receipt.StartTicks
+                $activation.Receipt = $entry.FullName
+            }
+        }
+        if ($entries.Count -gt 1) { throw 'Multiple receivers acknowledged one move activation.' }
+        $currentDelivery = !$activation.Existing -or $entries.Count -gt 0
+        if (!$currentDelivery) {
+            foreach ($ready in Get-ChildItem -LiteralPath $session.RunRoot -Filter "lifecycle-$($activation.Existing.Id)-ready-*.json" |
+                Where-Object FullName -NotIn $activation.PriorReadyReceipts) {
+                $observed = Get-Content -LiteralPath $ready.FullName -Raw | ConvertFrom-Json
+                if ($observed.ProcessId -eq $activation.Existing.Id -and $observed.StartTicks -eq $activation.Existing.StartTicks) {
+                    $currentDelivery = $true
+                }
+            }
+        }
+        if ((Test-Path -LiteralPath $activation.BrokerPath) -and $activation.Identity -and $currentDelivery) {
+            $broker = [IO.File]::ReadAllLines($activation.BrokerPath)
+            $receiver = Get-Content -LiteralPath $activation.Receipt -Raw | ConvertFrom-Json
+            Check ($broker.Length -eq 3 -and [long]$broker[0] -eq $activation.Source.StartTicks -and
+                $broker[1] -ceq $receiver.TransferId -and $broker[2] -ceq 'True') 'The completed broker call does not match its receiving process.'
+            $null = $activation.CompletionSource.TrySetResult([uint32]$activation.Identity.Id)
+            Complete-IsolatedTestActivation $session
+            if ($activation.UnexpectedReceiver) { throw 'Duplicate activation unexpectedly replaced its retained receiver.' }
+            return $activation.Identity
+        }
+        Start-Sleep -Milliseconds 25
+    } while ($watch.Elapsed.TotalSeconds -lt $BudgetSeconds)
+    throw 'The move broker/receiver handshake is unresolved; the pending fence retains its isolated registration.'
+}
+
+function Check-WindowMove {
+    [IO.File]::WriteAllText((Join-Path $session.Layout 'ProtocolTestRun.txt'), $session.RunId)
+    $source = Start-IsolatedTestProcess $session '--lifecycle-open'
+    $before = Wait-Observation $source ready
+    if ($PerformanceRounds -gt 0) {
+        $null = Wait-IdleCpu
+        Send-Command $source measure-move-state
+        $null = Wait-Observation $source measure-move-state
+        Copy-Item -LiteralPath (Join-Path $session.RunRoot 'window-move-capture.json') -Destination $session.Root
+        Start-IndirectMoveActivation $source move-large-tab
+        $largeTarget = Wait-IndirectMoveActivation
+        $largeReady = Wait-Observation $largeTarget ready
+        $largeMove = Wait-Observation $source move-large-tab
+        Send-Command $largeTarget verify-large-move
+        $largeVerified = Wait-Observation $largeTarget verify-large-move
+        Check ($largeMove.MoveVerified -and $largeVerified.MoveVerified -and !$largeReady.Primary) 'The large move did not preserve its document and native history.'
+        Close-LifecycleProcess $largeTarget
+        Send-Command $source after-large-move
+        $largeClosed = Wait-Observation $source after-large-move
+        @($largeReady, $largeMove, $largeVerified, $largeClosed) | ConvertTo-Json -Depth 5 |
+            Set-Content -LiteralPath (Join-Path $session.Root 'window-move-large.json')
+    }
+    Start-IndirectMoveActivation $source move-tab
+    $target = Wait-IndirectMoveActivation
+    Check ($source.Id -ne $target.Id) 'The move did not create a different process.'
+    $received = Wait-Observation $target ready
+    $moved = Wait-Observation $source move-tab
+    Check ($moved.MoveVerified -and $moved.Tabs -eq $before.Tabs -and $moved.TextHash -ceq $before.TextHash) 'The background move changed the remaining source workspace.'
+    Check (!$received.Primary -and $received.Tabs -eq 1) 'The receiver restored the wrong workspace.'
+    Send-Command $target verify-moved-tab
+    $verified = Wait-Observation $target verify-moved-tab
+    Check $verified.MoveVerified 'The receiving process did not verify live document state.'
+    Arrange-LifecycleProcesses $source $target
+    Focus-LifecycleProcess $target
+    Send-Command $target focus-moved-input
+    $null = Wait-Observation $target focus-moved-input
+    [OwnedWindowActivation]::RequireIdle()
+    [PackagedAppDriver]::KeyThenCharacter($target.Id, 0x23, [char]'Q', $true)
+    Send-Command $target verify-move-input
+    $null = Wait-Observation $target verify-move-input
+    Start-IndirectMoveActivation $source repeat-move $target
+    $null = Wait-IndirectMoveActivation
+    $null = Wait-Observation $source repeat-move
+    $repeated = Wait-Observation $target ready 2
+    Check ($repeated.Tabs -eq 1 -and $repeated.TextHash -ceq $received.TextHash) 'Duplicate activation reimported or changed the document.'
+    Close-LifecycleProcess $target
+    Start-IndirectMoveActivation $source repeat-move
+    $rejected = Wait-IndirectMoveActivation
+    $null = Wait-Observation $source repeat-move
+    if (!$rejected.Process.WaitForExit(15000)) { throw 'A replay receiver remained registered after failing import.' }
+    $exitMarker = Join-Path $session.RunRoot "framework-exiting-$($rejected.Id).txt"
+    Check ((Test-Path -LiteralPath $exitMarker) -and $rejected.Process.ExitCode -eq $session.FrameworkExitCode) 'The rejected receiver did not complete framework shutdown.'
+    Close-IsolatedTestProcess $session $rejected
+    # Arrangement may legitimately clamp the source viewport on a taller screen.
+    # Compare the move with its current source, not with its pre-resize position.
+    Send-Command $source before-last-move
+    $beforeLastMove = Wait-Observation $source before-last-move
+    Start-IndirectMoveActivation $source move-last-tab
+    $lastTarget = Wait-IndirectMoveActivation
+    $lastState = Wait-Observation $lastTarget ready
+    Check (!$lastState.Primary -and $lastState.Tabs -eq 1 -and $lastState.TextHash -ceq $before.TextHash -and
+        $lastState.FirstVisibleLine -eq $beforeLastMove.FirstVisibleLine) 'Last-tab move changed the document or viewport.'
+    if (!$source.Process.WaitForExit(15000)) { throw 'Moving the last tab did not retire the source process.' }
+    Check ((Test-Path -LiteralPath (Join-Path $session.RunRoot "framework-exiting-$($source.Id).txt")) -and
+        $source.Process.ExitCode -eq $session.FrameworkExitCode) 'Last-tab source did not complete framework shutdown.'
+    Close-IsolatedTestProcess $session $source
+    Close-LifecycleProcess $lastTarget
+    @($before, $received, $moved, $verified, $repeated, $beforeLastMove, $lastState) | ConvertTo-Json -Depth 5 |
+        Set-Content -LiteralPath (Join-Path $session.Root 'window-move-broker.json')
+    Write-Output 'PASS: real ValueSet broker/AOT move, background and last-tab source, RTL/selection/undo/redo, duplicate activation and closed-receiver replay refusal.'
 }
 
 try {
@@ -298,6 +463,12 @@ try {
     $session.LastActiveInstance = $seedState.Instance
     $session.ClosedInstance = $seedState.Instance
     Close-LifecycleProcess $seed
+    if ($WindowMoveOnly) {
+        Check-DeclinedPrelaunch -FrameworkControl
+        Check-WindowMove
+        Write-Output "Window move report: $($session.Root)"
+        return
+    }
     Measure-Activation $false $expected
     Measure-Activation $true $expected
     Write-Output 'PASS: real cold launch and prelaunch/suspend/user activation restore exact text and first-paint viewport.'
@@ -319,6 +490,10 @@ catch {
 finally {
     if ($driver) { $driver.Dispose() }
     if ($session) {
+        if ($session.PendingActivation -and $session.PendingActivation.Indirect) {
+            try { $null = Wait-IndirectMoveActivation -BudgetSeconds 15 }
+            catch { Write-Warning "Indirect activation remains fenced: $_" }
+        }
         try { Complete-IsolatedTestPackage $session }
         catch { if ($primaryFailure) { Write-Warning "Additional lifecycle cleanup failure: $_" } else { throw } }
     }

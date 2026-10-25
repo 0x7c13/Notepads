@@ -302,4 +302,6 @@
   <data name="MainMenu_AutomationName" xml:space="preserve"><value>Menu</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>Rolar abas para trás</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Rolar abas para frente</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>Mover para nova janela</value></data>
+  <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>Não foi possível concluir a transferência. A aba original foi mantida. Verifique se uma nova janela foi aberta.</value></data>
 </root>

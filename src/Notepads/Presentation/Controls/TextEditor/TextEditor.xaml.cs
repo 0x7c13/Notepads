@@ -374,7 +374,9 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         StartCheckingFileStatusPeriodically();
 
         // Insert "Legacy Windows Notepad" style date and time if document starts with ".LOG"
-        TextEditorCore.TryInsertNewLogEntry();
+        if (_windowMoveActive) _deferredMoveLogEntry = true;
+        else if (_skipMovedAttachmentLogEntry) _skipMovedAttachmentLogEntry = false;
+        else TextEditorCore.TryInsertNewLogEntry();
     }
 
     private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
@@ -817,7 +819,8 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     private void FindAndReplacePlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
     {
         CancelSearch();
-        FindAndReplacePlaceholder.Visibility = Visibility.Collapsed;
+        // UnloadObject may have already cleared the lazy XAML field.
+        ((InAppNotification)sender).Visibility = Visibility.Collapsed;
     }
 
     private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
@@ -878,7 +881,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private void GoToPlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
     {
-        GoToPlaceholder.Visibility = Visibility.Collapsed;
+        ((InAppNotification)sender).Visibility = Visibility.Collapsed;
     }
 
     private void GoToControl_OnDismissKeyDown(object sender, RoutedEventArgs e)

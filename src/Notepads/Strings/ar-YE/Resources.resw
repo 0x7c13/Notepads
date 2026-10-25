@@ -302,4 +302,6 @@
   <data name="MainMenu_AutomationName" xml:space="preserve"><value>القائمة</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>تمرير علامات التبويب للخلف</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>تمرير علامات التبويب للأمام</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>نقل إلى نافذة جديدة</value></data>
+  <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>تعذر إكمال النقل. تم الاحتفاظ بعلامة التبويب الأصلية. تحقق مما إذا فُتحت نافذة جديدة.</value></data>
 </root>

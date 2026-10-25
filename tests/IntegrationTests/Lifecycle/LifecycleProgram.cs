@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads;
@@ -77,16 +78,30 @@ internal static partial class LifecycleProgram
             ApplicationSettingsStore.Write(SettingsKey.AlwaysOpenNewWindowBool, false);
         }
         if (Phase == "--lifecycle-exit-control") StartApplication(new BootstrapContext());
-        else new InstanceRouter(StartApplication).Activate();
+        else new InstanceRouter(StartApplication, "notepads-integration-tests").Activate();
     }
 
     private static void StartApplication(BootstrapContext bootstrap)
     {
+        if (bootstrap.WindowMove != null)
+        {
+            using var process = Process.GetCurrentProcess();
+            var marker = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"move-entry-{process.Id}.json");
+            File.WriteAllText(marker + ".tmp", JsonSerializer.Serialize(new LifecycleMoveEntry
+            {
+                ProcessId = process.Id, StartTicks = process.StartTime.ToUniversalTime().Ticks,
+                TransferId = bootstrap.InstanceId.ToString("N")
+            }, LifecycleJsonContext.Default.LifecycleMoveEntry));
+            File.Move(marker + ".tmp", marker);
+            // The runner retains the exact process before a rejected import can exit.
+            WaitForRetentionAsync().GetAwaiter().GetResult();
+        }
         Application.Start(initialization =>
         {
             SynchronizationContext.SetSynchronizationContext(new Windows.System.DispatcherQueueSynchronizationContext(
                 Windows.System.DispatcherQueue.GetForCurrentThread()));
             new App(bootstrap);
+            WindowMoveLifecycle.Configure();
             CoreApplication.Exiting += (_, _) =>
             {
                 using var process = Process.GetCurrentProcess();

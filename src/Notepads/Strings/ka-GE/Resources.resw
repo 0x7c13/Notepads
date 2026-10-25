@@ -302,4 +302,6 @@
   <data name="MainMenu_AutomationName" xml:space="preserve"><value>მენიუ</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>ჩანართების უკან გადახვევა</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>ჩანართების წინ გადახვევა</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
+  <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>ახალ ფანჯარაში გადატანა</value></data>
+  <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>გადატანა ვერ დასრულდა. საწყისი ჩანართი შენარჩუნებულია. შეამოწმეთ, გაიხსნა თუ არა ახალი ფანჯარა.</value></data>
 </root>

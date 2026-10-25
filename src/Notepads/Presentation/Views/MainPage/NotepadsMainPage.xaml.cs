@@ -144,7 +144,7 @@ public sealed partial class NotepadsMainPage : Page
         InitializeMainMenu();
         InitializeKeyboardShortcuts();
         // Activation can open another file before Sets_Loaded begins restoration.
-        if (ApplicationPreferences.IsSessionSnapshotEnabled) SessionController.RequestRestoration();
+        if (ApplicationPreferences.IsSessionSnapshotEnabled && _context.WindowMove == null) SessionController.RequestRestoration();
         Loaded += MainPage_Loaded;
         Unloaded += MainPage_Unloaded;
 
@@ -249,9 +249,25 @@ public sealed partial class NotepadsMainPage : Page
 
     private async void OnWindowClosed(object sender, Windows.UI.Core.CoreWindowEventArgs args) => await DisposeWindowAsync();
 
-    private async Task DisposeWindowAsync()
+    private Task _windowDisposal;
+
+    private Task DisposeWindowAsync()
     {
-        if (_viewClosed) return;
+        if (_windowDisposal != null) return _windowDisposal;
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _windowDisposal = completion.Task; // Publish before shutdown can reenter Window.Closed.
+        _ = CompleteWindowDisposalAsync(completion);
+        return _windowDisposal;
+    }
+
+    private async Task CompleteWindowDisposalAsync(TaskCompletionSource completion)
+    {
+        try { await DisposeWindowCoreAsync(); completion.TrySetResult(); }
+        catch (Exception error) { completion.TrySetException(error); }
+    }
+
+    private async Task DisposeWindowCoreAsync()
+    {
         _viewClosed = true;
         _isAppClosing = true;
         _activationReady.TrySetResult(false);
@@ -301,6 +317,9 @@ public sealed partial class NotepadsMainPage : Page
         Initialize(navigation.Context);
         switch (navigation.Activation)
         {
+            case Notepads.Features.Sessions.Contracts.TransferToken move:
+                _ = ActivateWindowMoveAsync(move);
+                break;
             case null:
                 return;
             case FileActivatedEventArgs fileActivatedEventArgs:
@@ -327,7 +346,7 @@ public sealed partial class NotepadsMainPage : Page
     {
         if (!await CanContinueAfterCloseAsync()) return;
 
-        if (!_loaded && ApplicationPreferences.IsSessionSnapshotEnabled)
+        if (!_loaded && ApplicationPreferences.IsSessionSnapshotEnabled && _context.WindowMove == null)
         {
             try
             {
@@ -381,6 +400,12 @@ public sealed partial class NotepadsMainPage : Page
         _activationReady.TrySetResult(true);
         await _activationTail;
 
+        if (_windowMoveReceiverRetired)
+        {
+            await DisposeWindowAsync();
+            Application.Current.Exit();
+            return;
+        }
         if (!await CanContinueAfterCloseAsync()) return;
         if (!_loaded)
         {
@@ -394,6 +419,7 @@ public sealed partial class NotepadsMainPage : Page
 
         // Not awaited: collects what crashes, terminal saves and snapshot-off sessions left behind.
         _ = SessionController.RunStartupMaintenanceAsync();
+        _ = CleanupInactiveWindowMovesAsync();
 
         await BuildOpenRecentButtonSubItemsAsync();
         if (!await CanContinueAfterCloseAsync()) return;
@@ -506,6 +532,7 @@ public sealed partial class NotepadsMainPage : Page
         if (_viewClosed || _isAppClosing || _isLastTabCloseInProgress || _closingTextEditors.Count > 0) return false;
         var closeDecision = _windowCloseDecision = new(TaskCreationOptions.RunContinuationsAsynchronously);
         var closeApproved = false;
+        var retainSessionOnClose = false;
         var wasEnabled = IsEnabled;
         try
         {
@@ -519,7 +546,7 @@ public sealed partial class NotepadsMainPage : Page
         }
         try
         {
-            if (!_viewClosed && closeApproved && !ApplicationPreferences.IsSessionSnapshotEnabled)
+            if (!_viewClosed && closeApproved && !retainSessionOnClose)
             {
                 var closed = new HashSet<Guid>();
                 try
@@ -539,7 +566,13 @@ public sealed partial class NotepadsMainPage : Page
                     if (!closeApproved) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
                 }
             }
-            if (!_viewClosed && closeApproved && _sessionManager != null) await _sessionManager.DrainAsync();
+            if (!_viewClosed && closeApproved && _sessionManager != null)
+            {
+                // Confirmed explicit closes must also stop suspension captures during shutdown.
+                // A veto or failed drain restores backup in the common cancellation path below.
+                SessionController.IsBackupEnabled = false;
+                await _sessionManager.DrainAsync();
+            }
         }
         catch (Exception ex)
         {
@@ -582,6 +615,9 @@ public sealed partial class NotepadsMainPage : Page
         {
             if (ApplicationPreferences.RefreshSessionSnapshotSetting())
                 SessionController.IsBackupEnabled = ApplicationPreferences.IsSessionSnapshotEnabled;
+            // Secondary snapshots protect against interruption, not an explicit user close.
+            // Only the primary workspace is retained for the next ordinary launch.
+            retainSessionOnClose = _context.IsPrimaryInstance && ApplicationPreferences.IsSessionSnapshotEnabled;
             _isAppClosing = true;
             NotepadsCore.IsClosing = true;
             SessionController.PauseRestoration();
@@ -597,7 +633,7 @@ public sealed partial class NotepadsMainPage : Page
             await Task.WhenAll(NotepadsCore.GetTabs().Where(tab => tab.ReadyEditor != null)
                 .Select(tab => tab.ReadyEditor.WaitForDocumentOperationsAsync()));
             if (_viewClosed) return;
-            if (ApplicationPreferences.IsSessionSnapshotEnabled)
+            if (retainSessionOnClose)
             {
                 closeApproved = await SessionController.SaveSessionAsync(() => { SessionController.IsBackupEnabled = false; });
                 if (!_viewClosed && !closeApproved) ShowSessionBackupFailureNotification(offerRecoveryFolder: true);
@@ -891,6 +927,7 @@ public sealed partial class NotepadsMainPage : Page
         try
         {
             var editor = tab.ReadyEditor;
+            if (editor is TextEditor movingEditor) movingEditor.CancelWindowMove();
             if (editor != null) await editor.WaitForDocumentOperationsAsync();
             if (_viewClosed || _isAppClosing || !NotepadsCore.ContainsTab(tab)) return;
             if (editor != null && !ApplicationPreferences.ExitWhenLastTabClosed &&

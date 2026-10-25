@@ -14,7 +14,8 @@ public sealed class WindowContext
 {
     internal WindowContext(string applicationName, Guid instanceId, bool isPrimaryInstance, Guid documentOwnerId,
         CoreDispatcher dispatcher, SessionService sessions,
-        Func<ISessionPersistenceParticipant, IDisposable> registerSession, Action releaseInstanceOwnership)
+        Func<ISessionPersistenceParticipant, IDisposable> registerSession, Action releaseInstanceOwnership,
+        TransferToken windowMove = null, string protocolScheme = "notepads")
     {
         ApplicationName = applicationName;
         InstanceId = instanceId;
@@ -24,6 +25,8 @@ public sealed class WindowContext
         Sessions = sessions;
         RegisterSession = registerSession;
         ReleaseInstanceOwnership = releaseInstanceOwnership;
+        WindowMove = windowMove?.Clone();
+        ProtocolScheme = protocolScheme;
     }
 
     public string ApplicationName { get; }
@@ -34,6 +37,8 @@ public sealed class WindowContext
     internal SessionService Sessions { get; }
     internal Func<ISessionPersistenceParticipant, IDisposable> RegisterSession { get; }
     internal Action ReleaseInstanceOwnership { get; }
+    internal TransferToken WindowMove { get; }
+    internal string ProtocolScheme { get; }
 }
 
 internal sealed class WorkspaceNavigation

@@ -19,6 +19,8 @@
 		Windows.Foundation.IAsyncActionWithProgress<UInt64> LoadUtf8Async(Windows.Storage.Streams.IInputStream stream, UInt64 byteLength, Boolean preserveUndo);
 		Windows.Storage.Streams.IBuffer ReadUtf8Range(Int64 offset, Int32 maxBytes);
 		EditorUtf8Reader AcquireUtf8Reader();
+		EditorStateReader AcquireStateReader();
+		Windows.Foundation.IAsyncAction RestoreStateAsync(Windows.Storage.Streams.IInputStream stream, UInt64 byteLength, String sha256);
 		UInt64 DocumentSequence { get; };
 		UInt64 DocumentRevision { get; };
 		UInt64 SelectionRevision { get; };

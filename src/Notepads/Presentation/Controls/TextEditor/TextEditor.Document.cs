@@ -514,7 +514,7 @@ public sealed partial class TextEditor
 
     public bool TryChangeEncoding(Encoding encoding)
     {
-        if (_transferCommitInProgress || encoding == null) return false;
+        if (_transferCommitInProgress || _windowMoveActive || encoding == null) return false;
 
         if (!EncodingCatalog.Equals(LastSavedSnapshot.Encoding, encoding))
         {
@@ -536,7 +536,7 @@ public sealed partial class TextEditor
 
     public bool TryChangeLineEnding(LineEnding lineEnding)
     {
-        if (_transferCommitInProgress) return false;
+        if (_transferCommitInProgress || _windowMoveActive) return false;
 
         if (LastSavedSnapshot.LineEnding != lineEnding)
         {

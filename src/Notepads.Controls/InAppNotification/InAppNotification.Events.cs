@@ -53,9 +53,11 @@ public partial class InAppNotification
         lock (_openAnimationTimer)
         {
             _openAnimationTimer.Stop();
+            if (!IsLoaded) return;
             Opened?.Invoke(this, EventArgs.Empty);
+            if (!IsLoaded) return; // An Opened subscriber can remove the control.
             SetValue(AutomationProperties.NameProperty, "Notification");
-            peer = FrameworkElementAutomationPeer.CreatePeerForElement(ContentTemplateRoot);
+            peer = FrameworkElementAutomationPeer.CreatePeerForElement(ContentTemplateRoot ?? this);
             if (Content?.GetType() == typeof(string))
             {
                 AutomateTextNotification(Content.ToString());
@@ -78,8 +80,15 @@ public partial class InAppNotification
 
     private void ClosingAnimationTimer_Tick(object sender, object e)
     {
+        CompleteClose();
+    }
+
+    private void CompleteClose()
+    {
         lock (_closingAnimationTimer)
         {
+            if (!_closingAnimationTimer.IsEnabled) return;
+            // Retire first: a Closed subscriber may unload or reopen the control.
             _closingAnimationTimer.Stop();
             Closed?.Invoke(this, new InAppNotificationClosedEventArgs(_lastDismissKind));
         }

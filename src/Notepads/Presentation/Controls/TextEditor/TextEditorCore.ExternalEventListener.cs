@@ -49,8 +49,11 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (_disposed) return;
-            FontFamily = new FontFamily(fontFamily);
-            ApplyFont();
+            ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnFontFamilyChanged), () =>
+            {
+                FontFamily = new FontFamily(fontFamily);
+                ApplyFont();
+            });
         });
     }
 
@@ -60,7 +63,7 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (_disposed) return;
-            FontSize = fontSize;
+            ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnFontSizeChanged), () => FontSize = fontSize);
         });
     }
 
@@ -70,8 +73,11 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (_disposed) return;
-            FontStyle = fontStyle.ToFontStyle();
-            ApplyFont();
+            ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnFontStyleChanged), () =>
+            {
+                FontStyle = fontStyle.ToFontStyle();
+                ApplyFont();
+            });
         });
     }
 
@@ -81,8 +87,11 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (_disposed) return;
-            FontWeight = fontWeight.ToFontWeight();
-            ApplyFont();
+            ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnFontWeightChanged), () =>
+            {
+                FontWeight = fontWeight.ToFontWeight();
+                ApplyFont();
+            });
         });
     }
 
@@ -92,7 +101,7 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             // Read the latest preference if several queued changes coalesce.
-            if (!_disposed) ApplyTheme();
+            ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnFontRenderingChanged), () => ApplyTheme());
         });
     }
 
@@ -102,7 +111,7 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (_disposed) return;
-            TextWrapping = textWrapping.ToTextWrapping();
+            ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnDefaultTextWrappingChanged), () => TextWrapping = textWrapping.ToTextWrapping());
         });
     }
 
@@ -112,7 +121,7 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (_disposed) return;
-            DisplayLineNumbers = displayLineNumbers;
+            ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnDefaultDisplayLineNumbersViewStateChanged), () => DisplayLineNumbers = displayLineNumbers);
         });
     }
 
@@ -122,7 +131,7 @@ public sealed partial class TextEditorCore
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (_disposed) return;
-            DisplayLineHighlighter = displayLineHighlighter;
+            ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnDefaultLineHighlighterViewStateChanged), () => DisplayLineHighlighter = displayLineHighlighter);
         });
     }
 
@@ -133,8 +142,11 @@ public sealed partial class TextEditorCore
         {
             if (_disposed) return;
             // A contrast-scheme switch also arrives here: refresh every system color, not only the selection.
-            if (_accessibility.HighContrast) ApplyTheme();
-            else ApplySelectionAppearance();
+            ApplyOrDeferMoveSetting(nameof(ThemeSettingsService_OnAccentColorChanged), () =>
+            {
+                if (_accessibility.HighContrast) ApplyTheme();
+                else ApplySelectionAppearance();
+            });
         });
     }
 }

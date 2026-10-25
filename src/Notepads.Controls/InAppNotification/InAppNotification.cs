@@ -38,6 +38,15 @@ public partial class InAppNotification : ContentControl
         _dismissTimer.Tick += DismissTimer_Tick;
         _openAnimationTimer.Tick += OpenAnimationTimer_Tick;
         _closingAnimationTimer.Tick += ClosingAnimationTimer_Tick;
+        Unloaded += (_, _) =>
+        {
+            _openAnimationTimer.Stop();
+            _dismissTimer.Stop();
+            peer = null;
+            // Unloading retires animation, not an accepted close. Owners use Closed
+            // to finish their visibility/state transition before the next Show.
+            CompleteClose();
+        };
     }
 
     /// <inheritdoc />

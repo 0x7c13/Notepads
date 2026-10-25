@@ -233,6 +233,8 @@ public:
 	int UndoTentative() const noexcept;
 	void SetUndoCurrent(int action);
 	int UndoCurrent() const noexcept;
+	bool CanReplaceUndoHistory() const noexcept;
+	void ReplaceUndoHistory(std::unique_ptr<UndoHistory> history, bool collectUndo);
 	int UndoActionType(int action) const noexcept;
 	Sci::Position UndoActionPosition(int action) const noexcept;
 	std::string_view UndoActionText(int action) const noexcept;

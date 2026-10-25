@@ -118,6 +118,19 @@ internal static class LifecycleProbe
         CompositionTarget.Rendering += Rendering;
         try { await frame.Task.WaitAsync(TimeSpan.FromSeconds(10)); }
         finally { CompositionTarget.Rendering -= Rendering; }
+        // The first XAML render can precede the broker's visibility notification.
+        // Observe presentation without activating the window from the test probe.
+        var visible = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        void VisibilityChanged(object sender, VisibilityChangedEventArgs args)
+        {
+            if (args.Visible) visible.TrySetResult();
+        }
+        Window.Current.VisibilityChanged += VisibilityChanged;
+        try
+        {
+            if (!Window.Current.Visible) await visible.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        finally { Window.Current.VisibilityChanged -= VisibilityChanged; }
         _readyTicks = Stopwatch.GetTimestamp();
         if (_page.TestCore.GetSelectedReadyEditor() is not TextEditor editor || !editor.TestNativeCore.IsEnabled)
             throw new InvalidOperationException("The selected editor is not editable.");
@@ -196,6 +209,7 @@ internal static class LifecycleProbe
                                 if (action.StartsWith("stale-active-", StringComparison.Ordinal))
                                     ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, Guid.Parse(action.AsSpan("stale-active-".Length)).ToString());
                                 if (action.StartsWith("focus", StringComparison.Ordinal)) Window.Current.Activate();
+                                await WindowMoveLifecycle.CommandAsync(_page, action);
                                 Publish(action, commandId: commandId);
                             }
                         }
@@ -239,7 +253,8 @@ internal static class LifecycleProbe
             PrivateBytes = process.PrivateMemorySize64, CpuMilliseconds = process.TotalProcessorTime.TotalMilliseconds,
             TextHash = editor == null ? null : Hash(editor.GetText()), Tabs = _page?.TestCore.GetTabCount() ?? 0,
             FirstVisibleLine = core?.FirstVisibleRow ?? -1, Width = core?.ActualWidth ?? 0, Height = core?.ActualHeight ?? 0,
-            FontSize = core?.FontSize ?? 0
+            FontSize = core?.FontSize ?? 0,
+            MoveVerified = WindowMoveLifecycle.Verified, MoveMilliseconds = WindowMoveLifecycle.MoveMilliseconds
         };
         var path = Path.Combine(Root, Stem + ".json");
         var json = JsonSerializer.Serialize(result, LifecycleJsonContext.Default.LifecycleObservation);
@@ -284,7 +299,18 @@ internal sealed class LifecycleObservation
     public string TextHash { get; set; }
     public int Tabs { get; set; }
     public long FirstVisibleLine { get; set; }
+    public bool MoveVerified { get; set; }
+    public double MoveMilliseconds { get; set; }
+}
+
+internal sealed class LifecycleMoveEntry
+{
+    public int ProcessId { get; set; }
+    public long StartTicks { get; set; }
+    public string TransferId { get; set; }
 }
 
 [JsonSerializable(typeof(LifecycleObservation))]
+[JsonSerializable(typeof(LifecycleMoveEntry))]
+[JsonSerializable(typeof(System.Collections.Generic.List<WindowMoveCaptureSample>))]
 internal partial class LifecycleJsonContext : JsonSerializerContext;

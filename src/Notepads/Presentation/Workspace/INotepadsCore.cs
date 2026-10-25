@@ -87,6 +87,10 @@ public interface INotepadsCore : IDisposable, IAsyncDisposable
 
     void CloseTab(WorkspaceTab tab);
 
+    bool CanMoveTabToNewWindow(WorkspaceTab tab);
+
+    Task<bool> MoveTabToNewWindowAsync(WorkspaceTab tab);
+
     void SwitchTo(WorkspaceTab tab);
 
     Task SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file);

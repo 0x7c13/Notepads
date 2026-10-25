@@ -30,17 +30,17 @@ internal sealed class FeatureTestHost : IAsyncDisposable
     internal INotepadsCore Core => Page.TestCore;
     internal StorageFolder Folder { get; }
 
-    internal static async Task<FeatureTestHost> CreateAsync()
+    internal static async Task<FeatureTestHost> CreateAsync(TransferToken windowMove = null)
     {
-        var owner = Guid.NewGuid();
+        var owner = windowMove?.TransferId ?? Guid.NewGuid();
         var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Feature-" + owner.ToString("N"));
         var registry = new SessionRegistry();
         var scope = new SessionScopeData { OwnerId = owner, InstanceId = owner, Kind = SessionScopeData.Secondary };
         var sessions = new SessionService(scope, SessionScopeData.GetSecondaryPrefix(owner) + "NotepadsSessionData.json", () => new[] { owner });
-        var context = new WindowContext("Integration Tests", owner, true, owner, Window.Current.Dispatcher,
-            sessions, registry.Register, () => { });
+        var context = new WindowContext("Integration Tests", owner, windowMove == null, owner, Window.Current.Dispatcher,
+            sessions, registry.Register, () => { }, windowMove);
         var frame = new Frame();
-        if (!frame.Navigate(typeof(NotepadsMainPage), new WorkspaceNavigation(context, null)))
+        if (!frame.Navigate(typeof(NotepadsMainPage), new WorkspaceNavigation(context, windowMove)))
             throw new InvalidOperationException("Production MainPage navigation failed.");
         var page = (NotepadsMainPage)frame.Content;
         var host = new FeatureTestHost(page, folder, owner);

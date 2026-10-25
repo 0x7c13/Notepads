@@ -17,11 +17,12 @@ namespace Notepads.Composition;
 
 // Process routing is independent of XAML construction. The selected process alone
 // runs the application factory; background warmups never activate a user's window.
-internal sealed class InstanceRouter(Action<BootstrapContext> startApplication)
+internal sealed class InstanceRouter(Action<BootstrapContext> startApplication, string protocolScheme = "notepads")
 {
     internal void Activate()
     {
         var args = AppInstance.GetActivatedEventArgs();
+        var windowMove = WindowMoveActivation.Read(args, protocolScheme);
         BootstrapContext bootstrap;
         AppInstance target;
         using (var gate = new Mutex(false, "Notepads.Activation." + Package.Current.Id.FamilyName))
@@ -34,8 +35,12 @@ internal sealed class InstanceRouter(Action<BootstrapContext> startApplication)
                 var newWindow = ApplicationSettingsStore.Read(SettingsKey.AlwaysOpenNewWindowBool) is true;
                 var prelaunch = args is LaunchActivatedEventArgs { PrelaunchActivated: true };
                 var discardPrelaunch = prelaunch && (existing != null || newWindow);
-                bootstrap = new BootstrapContext(discardPrelaunch);
-                if (discardPrelaunch)
+                bootstrap = new BootstrapContext(discardPrelaunch, windowMove, protocolScheme);
+                if (windowMove != null)
+                {
+                    target = AppInstance.FindOrRegisterInstanceForKey(windowMove.TransferId.ToString());
+                }
+                else if (discardPrelaunch)
                 {
                     // Acknowledge activation before exiting, otherwise Windows
                     // reports an activation failure. Do not register or redirect.

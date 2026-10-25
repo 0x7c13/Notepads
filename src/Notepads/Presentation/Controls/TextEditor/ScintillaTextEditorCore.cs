@@ -99,7 +99,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         get => Native.Bidirectional == Bidirectional.R2l;
         set
         {
-            if (RightToLeftReadingOrder == value) return;
+            if (_movingToWindow || RightToLeftReadingOrder == value) return;
             Native.Bidirectional = value ? Bidirectional.R2l : Bidirectional.L2r;
             UpdateLineNumberMargin();
             HideLineNumberGlow();
@@ -111,6 +111,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         get => _textWrapping;
         set
         {
+            if (_movingToWindow) return;
             if (_diffPreview) value = TextWrapping.NoWrap;
             _textWrapping = value;
             Native.WrapMode = value == TextWrapping.NoWrap ? Wrap.None : Wrap.Word;
@@ -123,7 +124,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         get => _fontSize;
         set
         {
-            if (double.IsNaN(value) || double.IsInfinity(value)) return;
+            if (_movingToWindow || double.IsNaN(value) || double.IsInfinity(value)) return;
             var fontSize = Math.Max(_minimumZoomFactor * ApplicationPreferences.EditorFontSize / 100,
                 Math.Min(_maximumZoomFactor * ApplicationPreferences.EditorFontSize / 100, value));
             if (fontSize != _fontSize)

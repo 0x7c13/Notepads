@@ -48,6 +48,9 @@ internal static class InteractiveEditorHost
     private static string _preparedReplacementCase;
     private static string _preparedReplacementText;
     private static (long Anchor, long Caret)? _selectionOnKey;
+    private static RichEditBox _imeReference;
+    private static byte[] _imeBaseline;
+    private static NotepadsIntegrationTests.FeatureTestHost _imeWorkspace;
 
     private static WinUIEditor.Editor Native => _view.Editor;
 
@@ -363,6 +366,8 @@ internal static class InteractiveEditorHost
                 _disposed = true;
                 break;
             case "exit" when command.Length == 1:
+                if (_imeWorkspace != null) await _imeWorkspace.DisposeAsync();
+                _imeWorkspace = null;
                 await NotepadsIntegrationTests.TabDragTestHost.DisposeAsync();
                 _dpiFixture?.Dispose();
                 _dpiFixture = null;
@@ -376,6 +381,51 @@ internal static class InteractiveEditorHost
                 // Only IME probes need the OS input profile; ordinary editor
                 // and OLE state snapshots use local control observations.
                 return "inputLanguage=" + Windows.Globalization.Language.CurrentInputMethodLanguageTag + "\n";
+            case "ime-workspace-start" when command.Length == 1:
+                if (_imeWorkspace != null) throw new InvalidOperationException("An IME workspace already exists.");
+                ApplicationPreferences.IsSessionSnapshotEnabled = true;
+                _imeWorkspace = await NotepadsIntegrationTests.FeatureTestHost.CreateAsync();
+                return ImeWorkspaceState();
+            case "ime-workspace-new" when command.Length == 2:
+                var workspaceEditor = (TextEditor)await _imeWorkspace.Core.CreateNewTextEditorAsync(DecodeText(command[1]));
+                _imeWorkspace.Core.OpenTextEditor(workspaceEditor);
+                await NotepadsIntegrationTests.TabDragTestHost.FrameAsync();
+                var workspaceView = (WinUIEditor.EditorBaseControl)((Grid)workspaceEditor.TestNativeCore.Content).Children[0];
+                AutomationProperties.SetAutomationId(workspaceView, "WorkspaceImeEditor");
+                workspaceEditor.Focus();
+                return ImeWorkspaceState();
+            case "ime-workspace-state" when command.Length == 1:
+                return ImeWorkspaceState();
+            case "ime-reference" when command.Length == 1:
+                // A real system RichEdit control provides an independent IME
+                // policy oracle; input still comes from the external keyboard.
+                if (_imeReference == null)
+                {
+                    _imeReference = new RichEditBox { Width = 520, Height = 80 };
+                    AutomationProperties.SetAutomationId(_imeReference, "ImeReference");
+                    _panel.Children.Add(_imeReference);
+                }
+                _imeReference.Document.SetText(Windows.UI.Text.TextSetOptions.None, string.Empty);
+                _imeReference.Focus(FocusState.Programmatic);
+                break;
+            case "ime-reference-state" when command.Length == 1:
+                if (_imeReference == null) throw new InvalidOperationException("No IME reference control.");
+                _imeReference.Document.GetText(Windows.UI.Text.TextGetOptions.None, out var referenceText);
+                return "referenceText64=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(referenceText)) + "\n";
+            case "ime-journal-start" when command.Length == 1:
+                if (Native.Length > 128 * 1024 || _view.IsComposing)
+                    throw new InvalidOperationException("IME journal fixture requires a bounded, non-composing baseline.");
+                _imeBaseline = Encoding.UTF8.GetBytes(_editor.GetText());
+                var journalPath = Path.Combine(_channel, "ime-" + Guid.NewGuid().ToString("N") + ".npj");
+                using (File.Create(journalPath)) { }
+                Native.StartJournal(journalPath, Native.DocumentSequence);
+                break;
+            case "ime-journal-check" when command.Length == 1:
+                return await CheckImeJournalAsync();
+            case "ime-journal-stop" when command.Length == 1:
+                await Native.StopJournalAsync();
+                _imeBaseline = null;
+                break;
             default:
                 throw new ArgumentException("Unknown interactive command: " + command[0]);
         }
@@ -387,6 +437,43 @@ internal static class InteractiveEditorHost
         var text = Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
         if (Encoding.UTF8.GetByteCount(text) > 128 * 1024) throw new ArgumentException("Fixture text exceeds 128 KiB.");
         return text;
+    }
+
+    private static string ImeWorkspaceState()
+    {
+        var editor = (TextEditor)_imeWorkspace.Core.GetSelectedReadyEditor();
+        var core = editor.TestNativeCore;
+        var view = (WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0];
+        return "text64=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(editor.GetText())) +
+            "\nundoDepth=" + view.Editor.UndoSequence + "\nisComposing=" + view.IsComposing +
+            "\ncanUndo=" + view.Editor.CanUndo() + "\ncanRedo=" + view.Editor.CanRedo() +
+            "\ncaret=" + view.Editor.CurrentPos + "\nlength=" + view.Editor.Length +
+            "\ntitle64=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(editor.DisplayTitle)) + "\n";
+    }
+
+    private static async Task<string> CheckImeJournalAsync()
+    {
+        if (_imeBaseline == null) throw new InvalidOperationException("No IME journal baseline.");
+        using var checkpoint = Native.AcquireJournalCheckpoint();
+        await checkpoint.FlushAsync();
+        using var baseline = new Windows.Storage.Streams.InMemoryRandomAccessStream();
+        using var result = new Windows.Storage.Streams.InMemoryRandomAccessStream();
+        using (var writer = new Windows.Storage.Streams.DataWriter(baseline.GetOutputStreamAt(0)))
+        {
+            writer.WriteBytes(_imeBaseline);
+            await writer.StoreAsync();
+        }
+        using (var input = baseline.GetInputStreamAt(0))
+        using (var output = result.GetOutputStreamAt(0))
+            await checkpoint.WriteBaselineAsync(input, (ulong)_imeBaseline.Length, output, 128 * 1024);
+        using var read = result.GetInputStreamAt(0);
+        using var reader = new Windows.Storage.Streams.DataReader(read);
+        var count = await reader.LoadAsync(checked((uint)result.Size));
+        if (count != result.Size || count != checkpoint.CommittedDocumentByteLength)
+            throw new InvalidOperationException("IME journal replay did not restore the committed byte length.");
+        var bytes = new byte[count];
+        reader.ReadBytes(bytes);
+        return "journalText64=" + Convert.ToBase64String(bytes) + "\n";
     }
 
     private static string GutterState()
@@ -713,6 +800,7 @@ internal static class InteractiveEditorHost
             "\nfirstLineRows=" + Native.WrapCount(0) +
             "\nenabled=" + _editor.IsEnabled + "\nloaded=" + _view.IsLoaded + "\nreadOnly=" + Native.ReadOnly +
             "\ndragDropEnabled=" + Native.DragDropEnabled + "\ncanUndo=" + Native.CanUndo() +
+            "\ncanRedo=" + Native.CanRedo() + "\nundoDepth=" + Native.UndoSequence +
             "\nrtl=" + _editor.RightToLeftReadingOrder + "\nrevision=" + Native.DocumentRevision +
             "\novertype=" + Native.Overtype + "\nnativeFocus=" + Native.Focus +
             "\nopenPopups=" + VisualTreeHelper.GetOpenPopups(Window.Current).Count +

@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System.Threading.Tasks;
+using System;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Views.MainPage;
 using Notepads.Presentation.Workspace;
@@ -16,6 +17,19 @@ public static class ActivationService
 {
     public static async Task ActivateAsync(Frame rootFrame, IActivatedEventArgs e, WindowContext context)
     {
+        var move = WindowMoveActivation.Read(e, context.ProtocolScheme);
+        if (move != null)
+        {
+            if (context.WindowMove == null || !context.WindowMove.Matches(move))
+            {
+                LoggingService.LogError("The receiving window has a different move identity; activation was refused.");
+                return;
+            }
+            if (rootFrame.Content == null)
+                rootFrame.Navigate(typeof(NotepadsMainPage), new WorkspaceNavigation(context, move));
+            else if (rootFrame.Content is NotepadsMainPage receiver) await receiver.ActivateWindowMoveAsync(move);
+            return;
+        }
         switch (e)
         {
             case ProtocolActivatedEventArgs protocolActivatedEventArgs:

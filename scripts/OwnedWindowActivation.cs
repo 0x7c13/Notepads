@@ -79,10 +79,12 @@ public static class OwnedWindowActivation
     }
     private static void RequireIndependentRoot(IntPtr root)
     {
-        bool hasOwnedWindow = false;
-        EnumWindows((window, _) => { hasOwnedWindow |= GetWindow(window, 4) == root; return !hasOwnedWindow; }, IntPtr.Zero);
-        if (GetWindow(root, 4) != IntPtr.Zero || hasOwnedWindow)
-            throw new InvalidOperationException("Temporary foreground promotion requires a root without owner or owned top-level windows.");
+        IntPtr owned = IntPtr.Zero;
+        EnumWindows((window, _) => { if (GetWindow(window, 4) == root) owned = window; return owned == IntPtr.Zero; }, IntPtr.Zero);
+        IntPtr owner = GetWindow(root, 4);
+        if (owner != IntPtr.Zero || owned != IntPtr.Zero)
+            throw new InvalidOperationException($"Temporary foreground promotion requires a root without owner or owned top-level windows: " +
+                $"root={root}/pid={ProcessOf(root)}, owner={owner}/pid={ProcessOf(owner)}, owned={owned}/pid={ProcessOf(owned)}.");
     }
     private static void Raise(IntPtr root, IntPtr after)
     {
@@ -110,12 +112,18 @@ public static class OwnedWindowActivation
         var title = new TitleBarInfo { Size = Marshal.SizeOf(typeof(TitleBarInfo)), State = new uint[6] };
         if (!GetTitleBarInfo(root, ref title) || title.Rect.Right <= title.Rect.Left || title.Rect.Bottom <= title.Rect.Top)
             throw new InvalidOperationException("The owned window has no available non-client caption.");
+        Point? obscured = null;
         foreach (int quarter in new[] { 2, 1, 3 })
         {
             var point = new Point { X = title.Rect.Left + (title.Rect.Right - title.Rect.Left) * quarter / 4,
                 Y = title.Rect.Top + (title.Rect.Bottom - title.Rect.Top) / 2 };
-            if (CaptionAt(root, point, false)) return point;
+            if (CaptionAt(root, point, true)) return point;
+            if (!obscured.HasValue && CaptionAt(root, point, false)) obscured = point;
         }
+        // A covered center does not justify promotion when another verified
+        // caption point is already visible. Preserve the guarded fallback only
+        // when every candidate is obscured.
+        if (obscured.HasValue) return obscured.Value;
         throw new InvalidOperationException("No safe caption point exists in the owned test window.");
     }
     private static void Send(Input input)

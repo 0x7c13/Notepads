@@ -144,6 +144,8 @@ public:
 	[[nodiscard]] std::string_view Text(int action) noexcept;
 	void PushUndoActionType(int type, Sci::Position position);
 	void ChangeLastUndoActionText(size_t length, const char *text);
+	// Streaming import appends bounded chunks to a detached history candidate.
+	void AppendLastUndoActionText(std::string_view text);
 
 	// Tentative actions are used for input composition so that it can be undone cleanly
 	void SetTentative(int action) noexcept;

@@ -76,6 +76,7 @@ namespace Notepads.Presentation.Workspace
             "CloseRight" => CloseRight,
             "CloseSaved" => CloseSaved,
             "Rename" => Rename,
+            "MoveToNewWindow" => MoveToNewWindow,
             "CopyFullPath" => CopyFullPath,
             "OpenContainingFolder" => OpenContainingFolder,
             _ => throw new ArgumentOutOfRangeException(nameof(name))

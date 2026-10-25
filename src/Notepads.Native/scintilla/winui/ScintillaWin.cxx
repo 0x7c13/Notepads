@@ -94,6 +94,7 @@
 #include "Decoration.h"
 #include "CaseFolder.h"
 #include "Document.h"
+#include "UndoHistory.h"
 #include "CaseConvert.h"
 #include "UniConversion.h"
 #include "DBCS.h"
@@ -529,6 +530,7 @@ namespace Scintilla::Internal {
 		if (_tsfCore)
 		{
 			auto manager{ winrt::Windows::UI::Text::Core::CoreTextServicesManager::GetForCurrentView() };
+			_inputLanguageChangedRevoker = manager.InputLanguageChanged(winrt::auto_revoke, { this, &ScintillaWinUI::OnInputLanguageChanged });
 			_editContext = manager.CreateEditContext();
 			_editContext.InputScope(winrt::Windows::UI::Text::Core::CoreTextInputScope::Text); // Todo: make sure this is needed. Update: Unset value is 0, Default
 			_textRequestedRevoker = _editContext.TextRequested(winrt::auto_revoke, { this, &ScintillaWinUI::OnTextRequested });
@@ -1079,6 +1081,7 @@ namespace Scintilla::Internal {
 		_idleFinalized = true;
 		_idleSuspended = true;
 		StopJournals();
+		_coreTextComposition.reset();
 		// Also used after normal owning-thread shutdown. Revocation removes
 		// raw-this handlers before their source objects are released. Once
 		// the apartment is gone, stopping timers or calling TSF on that
@@ -1103,6 +1106,7 @@ namespace Scintilla::Internal {
 		_layoutRequestedRevoker.revoke();
 		_compositionStartedRevoker.revoke();
 		_compositionCompletedRevoker.revoke();
+		_inputLanguageChangedRevoker.revoke();
 		_editContext = nullptr;
 		_tfDocumentManager = nullptr;
 		_tfThreadManager = nullptr;
@@ -1194,6 +1198,11 @@ namespace Scintilla::Internal {
 			? winrt::Windows::UI::Text::Core::CoreTextTextUpdatingResult::Succeeded
 			: winrt::Windows::UI::Text::Core::CoreTextTextUpdatingResult::Failed);
 
+		// The update is fully applied before queued UI observers run. Recovery
+		// may checkpoint visible preedit between keys, while undo still treats
+		// the whole composition as one action. Preserve any caller's outer group.
+		if (_journal && _coreTextComposition && pdoc->UndoSequenceDepth() == 1)
+			_journal->CompleteEdit();
 		TsfCoreUnlock();
 	}
 
@@ -1259,6 +1268,47 @@ namespace Scintilla::Internal {
 	void ScintillaWinUI::OnCompositionCompleted(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextCompositionCompletedEventArgs const &args)
 	{
 		OnEndComposition(nullptr);
+	}
+
+	void ScintillaWinUI::OnInputLanguageChanged(winrt::Windows::UI::Text::Core::CoreTextServicesManager const &, winrt::Windows::Foundation::IInspectable const &)
+	{
+		// A profile switch precedes the old IME's completion notification. Mark
+		// only its active transaction; never delete a previously committed edit.
+		// Shift/Enter may explicitly commit Latin text before this event arrives.
+		if (IsComposing() && _coreTextComposition) _coreTextComposition->cancel = true;
+	}
+
+	void ScintillaWinUI::CompleteCoreTextComposition()
+	{
+		// Retire the event-owned state before undo notifications can reenter us.
+		// The local owner keeps the group open until rollback and selection finish.
+		const auto composition = std::move(_coreTextComposition);
+		if (!composition) return;
+		if (composition->cancel && composition->undoStart >= 0 &&
+			pdoc->IsCollectingUndo() && !pdoc->IsReadOnly() &&
+			pdoc->UndoCurrent() > composition->undoStart) {
+			// Reuse retained native edit records rather than copying the selected
+			// text (which may be large). TentativeUndo also discards the cancelled
+			// tail: Redo must not resurrect an unconfirmed composition.
+			pdoc->SetUndoTentative(composition->undoStart);
+			pdoc->TentativeUndo();
+			sel = std::move(composition->originalSelection);
+			ContainerNeedsUpdate(Update::Selection);
+			Redraw();
+			ClaimSelection();
+		}
+	}
+
+	void ScintillaWinUI::FinishCoreTextComposition()
+	{
+		if (!_tsfCore || !IsComposing()) return;
+		// CoreText has no terminate-composition API. Leave and re-enter its
+		// focus scope before invalidating the document or its undo history.
+		// Do not attempt that reentrantly while a text-service edit is in flight.
+		if (HasTextStoreLock()) winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
+		const bool focused = hasFocus;
+		SetFocusState(false);
+		if (focused) SetFocusState(true);
 	}
 
 	void ScintillaWinUI::OnCaretTimerTick(winrt::Windows::Foundation::IInspectable const &sender, winrt::Windows::Foundation::IInspectable const &args)
@@ -1812,7 +1862,6 @@ namespace Scintilla::Internal {
 	{
 		// Todo: Problem with inserting characters like Right Single Quotation Mark
 		// Todo: Problems with Cyrillic Small Letter Short I (cursor in wrong spot + same problem as above)
-		// Todo: Should not make an undo for individual letters
 
 		if (pchText == 0)
 		{
@@ -1826,6 +1875,10 @@ namespace Scintilla::Internal {
 		{
 			return TS_E_READONLY;
 		}
+
+		// Begin on the first accepted edit, not the start notification: an IME
+		// can start while a read lease temporarily prevents document mutations.
+		if (_tsfCore && IsComposing() && !_coreTextComposition) _coreTextComposition = std::make_unique<CoreTextComposition>(pdoc, sel);
 
 		const auto startPos{ AcpToDocPosition(acpStart) };
 		const auto endPos{ AcpToDocPosition(acpEnd) };
@@ -2126,6 +2179,7 @@ namespace Scintilla::Internal {
 	IFACEMETHODIMP ScintillaWinUI::OnEndComposition(ITfCompositionView *pComposition)
 	{
 		if (_compositionCount) --_compositionCount;
+		if (!_compositionCount) CompleteCoreTextComposition();
 #ifdef EnableTsfDebugMessages
 		DebugOut(L"OnEndComposition\n");
 #endif
@@ -2705,7 +2759,11 @@ namespace Scintilla::Internal {
 		}
 		// Retire stale composition state after TSF has processed focus loss,
 		// even if it did not send an end-composition notification.
-		if (!focus) _compositionCount = 0;
+		if (!focus)
+		{
+			_compositionCount = 0;
+			CompleteCoreTextComposition();
+		}
 		Editor::NotifyFocus(focus);
 	}
 
@@ -2807,7 +2865,11 @@ namespace Scintilla::Internal {
 	void ScintillaWinUI::DpiChanged()
 	{
 		CancelSmoothScroll();
-		viewportScale = _mainWrapper->LogicalDpi() / 96.0;
+		const double scale = _mainWrapper->LogicalDpi() / 96.0;
+		// The preferred column is stored in device pixels. Preserve its DIP
+		// distance on first attachment and when moving between display scales.
+		if (lastXChosen) lastXChosen->offset *= scale / viewportScale;
+		viewportScale = scale;
 		_mainWrapper->AdjustCallTipPadding(ct);
 
 		InvalidateStyleRedraw();
@@ -3921,6 +3983,7 @@ namespace Scintilla::Internal {
 		if (document == pdoc)
 			return 0;
 		if (_journal) winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
+		FinishCoreTextComposition();
 		const auto oldLen{ DocPositionToAcp(pdoc->Length()) };
 		auto previous = pdoc;
 		previous->AddRef();
@@ -4091,6 +4154,16 @@ namespace Scintilla::Internal {
 			return __super::WndProc(iMessage, wParam, lParam);
 		}
 #endif
+		case Message::SetUndoCollection:
+		case Message::EmptyUndoBuffer:
+		case Message::SetUndoCurrent:
+		case Message::SetUndoTentative:
+		{
+			// Composition rollback addresses retained undo actions. Finish before
+			// a caller replaces that history or its current/tentative boundaries.
+			FinishCoreTextComposition();
+			return __super::WndProc(iMessage, wParam, lParam);
+		}
 		case Message::GetDirectFunction:
 			return reinterpret_cast<sptr_t>(DirectFunction);
 
@@ -4177,7 +4250,10 @@ namespace Scintilla::Internal {
 		case Message::ClearAll:
 		case Message::SetText:
 			if (!pdoc->IsReadOnly() && (iMessage == Message::ClearAll || lParam != 0))
+			{
+				FinishCoreTextComposition();
 				_horizontalViewport.reset();
+			}
 			return __super::WndProc(iMessage, wParam, lParam);
 
 		case Message::SetMarginWidthN:
@@ -4202,6 +4278,83 @@ namespace Scintilla::Internal {
 			pdoc->SetReadOnly(true);
 			pdoc->SetReadLease(true);
 		}
+	}
+
+	std::unique_ptr<WinUIEditor::EditorStateWriter> ScintillaWinUI::CaptureEditorState()
+	{
+		if (!_readLeases || IsComposing() || sel.Tentative() ||
+			undoSelectionHistoryOption != UndoSelectionHistoryOption::Disabled ||
+			changeHistoryOption != ChangeHistoryOption::Disabled)
+			winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
+		auto position = [](const SelectionPosition &p) -> WinUIEditor::EditorStatePosition {
+			return {static_cast<uint64_t>(p.Position()), static_cast<uint64_t>(p.VirtualSpace()), p.TrailingEdge()};
+		};
+		auto range = [&](const SelectionRange &r) -> WinUIEditor::EditorStateRange {
+			return {position(r.caret), position(r.anchor)};
+		};
+		WinUIEditor::EditorViewState state;
+		state.selections.reserve(sel.Count());
+		for (size_t i = 0; i < sel.Count(); ++i) state.selections.push_back(range(sel.Range(i)));
+		// A stream selection's unused rectangle may still contain the invalid sentinel.
+		state.rectangle = sel.IsRectangular() ? range(sel.RectangularCopy()) : state.selections[sel.Main()];
+		state.main = static_cast<uint32_t>(sel.Main());
+		state.mode = static_cast<uint32_t>(sel.selType);
+		state.moveExtends = sel.MoveExtends();
+		state.tabWidth = pdoc->tabInChars;
+		state.indent = pdoc->indentInChars;
+		state.readOnly = _readOnlyBeforeLease;
+		state.useTabs = pdoc->useTabs;
+		state.overtype = inOverstrike;
+		state.additionalSelectionTyping = additionalSelectionTyping;
+		state.virtualSpaceOptions = static_cast<uint32_t>(virtualSpaceOptions);
+		state.multiPaste = static_cast<uint32_t>(multiPasteMode);
+		state.hasPreferredX = lastXChosen.has_value();
+		if (lastXChosen) {
+			state.preferredXDips = lastXChosen->offset / (_mainWrapper->LogicalDpi() / 96.0);
+			state.preferredFromRight = lastXChosen->fromRight;
+		}
+		return std::make_unique<WinUIEditor::EditorStateWriter>(*pdoc, DocumentSequence(), state);
+	}
+
+	void ScintillaWinUI::PublishEditorState(WinUIEditor::EditorState state)
+	{
+		if (state.documentLength != static_cast<uint64_t>(pdoc->Length()) || state.sequence != DocumentSequence() ||
+			_readLeases || IsComposing() || HasTextStoreLock() || !pdoc->CanReplaceUndoHistory() ||
+			undoSelectionHistoryOption != UndoSelectionHistoryOption::Disabled)
+			winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
+		auto position = [](const WinUIEditor::EditorStatePosition &p) {
+			SelectionPosition result(static_cast<Sci::Position>(p.position), static_cast<Sci::Position>(p.virtualSpace));
+			result.SetTrailingEdge(p.trailing);
+			return result;
+		};
+		auto range = [&](const WinUIEditor::EditorStateRange &r) { return SelectionRange(position(r.caret), position(r.anchor)); };
+		const auto &view = state.view;
+		Selection prepared;
+		prepared.SetSelection(range(view.selections.front()));
+		for (size_t i = 1; i < view.selections.size(); ++i) prepared.AddSelectionWithoutTrim(range(view.selections[i]));
+		prepared.SetMain(view.main);
+		prepared.selType = static_cast<Selection::SelTypes>(view.mode);
+		prepared.Rectangular() = range(view.rectangle);
+		prepared.SetMoveExtends(view.moveExtends);
+		// All allocation and validation precedes this publication. No text edits or
+		// journal entries are generated while installing the live editing state.
+		pdoc->ReplaceUndoHistory(std::move(state.undo), state.collectingUndo);
+		sel = std::move(prepared);
+		pdoc->tabInChars = view.tabWidth;
+		pdoc->indentInChars = view.indent;
+		pdoc->actualIndentInChars = view.indent ? view.indent : view.tabWidth;
+		pdoc->useTabs = view.useTabs;
+		pdoc->SetReadOnly(view.readOnly);
+		inOverstrike = view.overtype;
+		additionalSelectionTyping = view.additionalSelectionTyping;
+		virtualSpaceOptions = static_cast<VirtualSpace>(view.virtualSpaceOptions);
+		multiPasteMode = static_cast<MultiPaste>(view.multiPaste);
+		lastXChosen = view.hasPreferredX ? std::optional<TextPositionX>{{view.preferredXDips *
+			(_mainWrapper->LogicalDpi() / 96.0), view.preferredFromRight}} : std::nullopt;
+		CancelSmoothScroll();
+		ContainerNeedsUpdate(Update::Selection);
+		InvalidateStyleRedraw();
+		ClaimSelection();
 	}
 
 	std::pair<Sci::Line, Sci::Line> ScintillaWinUI::AutomationVisibleDisplayRows() {

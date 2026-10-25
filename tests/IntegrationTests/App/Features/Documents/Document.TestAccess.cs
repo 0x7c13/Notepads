@@ -7,6 +7,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Controls;
 using Notepads.Presentation.Controls.FindAndReplace;
 using Notepads.Presentation.Controls.GoTo;
 using Notepads.Presentation.Controls.TextEditor;
@@ -30,6 +31,8 @@ namespace Notepads.Presentation.Controls.TextEditor
             RunDocumentOperationAsync(token => SaveAndUpdateEditorStateAsync(file, token), cancellation);
         internal FindAndReplaceControl TestFindControl => (FindAndReplaceControl)FindAndReplacePlaceholder?.Content;
         internal GoToControl TestGoToControl => (GoToControl)GoToPlaceholder?.Content;
+        internal InAppNotification TestFindNotification => FindAndReplacePlaceholder;
+        internal InAppNotification TestGoToNotification => GoToPlaceholder;
         internal bool TestFindVisible => FindAndReplacePlaceholder?.Visibility == Visibility.Visible;
         internal bool TestGoToVisible => GoToPlaceholder?.Visibility == Visibility.Visible;
         internal void TestEscape() => OnEscapeKeyDown();

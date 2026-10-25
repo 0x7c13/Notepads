@@ -725,9 +725,9 @@ namespace WinUIEditor
 			winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
 		return _file->Capture(_sequence, _document->Length());
 	}
-	void NativeDocumentJournal::Complete() noexcept
+	void NativeDocumentJournal::CompleteEdit() noexcept
 	{
-		if (!_operation || !_document)
+		if (!_operation || !_document || _preparingReplacement)
 			return;
 		if (_sequence == UINT64_MAX)
 		{
@@ -749,7 +749,7 @@ namespace WinUIEditor
 	void NativeDocumentJournal::NotifyGroupCompleted(Scintilla::Internal::Document *, void *) noexcept
 	{
 		if (_preparingReplacement) return;
-		Complete();
+		CompleteEdit();
 	}
 	void NativeDocumentJournal::NotifyTransactionAborted(Scintilla::Internal::Document *, void *) noexcept
 	{
@@ -777,7 +777,7 @@ namespace WinUIEditor
 			// final step of a group that changed text earlier in the batch.
 			if (FlagSet(modification.modificationType, ModificationFlags::Undo | ModificationFlags::Redo) &&
 				FlagSet(modification.modificationType, ModificationFlags::LastStepInUndoRedo))
-				Complete();
+				CompleteEdit();
 			return;
 		}
 		try
@@ -808,6 +808,6 @@ namespace WinUIEditor
 		const bool undoRedo = FlagSet(modification.modificationType, ModificationFlags::Undo | ModificationFlags::Redo);
 		if (undoRedo ? FlagSet(modification.modificationType, ModificationFlags::LastStepInUndoRedo)
 					 : document->UndoSequenceDepth() == 0 && !document->InAtomicReplacement())
-			Complete();
+			CompleteEdit();
 	}
 } // namespace WinUIEditor

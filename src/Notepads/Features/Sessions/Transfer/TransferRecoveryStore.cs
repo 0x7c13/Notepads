@@ -72,7 +72,7 @@ internal static class TransferRecoveryStore
 
     public static async Task CreateReceiptAsync(TransferToken token, Guid targetRootId, Guid targetInstanceId,
         TextEditorSessionDataV2 target, DocumentRecoveryState capture, StorageFile editingFile,
-        RecoveryStamp expectedTargetStamp, CancellationToken cancellationToken = default)
+        RecoveryStamp expectedTargetStamp, CancellationToken cancellationToken = default, WindowMoveRequest windowMove = null)
     {
         ArgumentNullException.ThrowIfNull(capture);
         token = token?.Clone() ?? throw new ArgumentNullException(nameof(token)); token.Validate();
@@ -86,6 +86,11 @@ internal static class TransferRecoveryStore
         {
             using (await SessionRecoveryTransaction.EnterAsync(cancellationToken))
             {
+                if (windowMove != null)
+                {
+                    if (!token.Matches(windowMove.Source)) throw new InvalidDataException("Move request identity differs from its receipt.");
+                    await WindowMoveStore.RequirePendingAsync(windowMove, cancellationToken);
+                }
                 await RequireOpenAsync(expected, target.Id, cancellationToken);
                 var sourceStamp = new RecoveryStamp { ScopeId = token.SourceOwnerId, EpochId = token.SourceEpochId };
                 await RequireOpenAsync(sourceStamp, token.SourceEditorId, cancellationToken);
@@ -99,6 +104,8 @@ internal static class TransferRecoveryStore
                 await RequireAbsentAsync(token.TransferId, RecoveryRecordKind.TransferReceipt, cancellationToken);
                 target.EditingFileFutureAccessToken = editingFile == null ? null :
                     SessionDocumentStore.TryRegisterFileAccess(target.Id, editingFile, expected.ScopeId, draft);
+                if (windowMove != null && editingFile != null && target.EditingFileFutureAccessToken == null)
+                    throw new IOException("The receiving window could not retain permission to the source file.");
                 var session = RecoveryRecordValidator.CreateEditorRoot(target);
                 session.Scope = RecoveryRecordValidator.GetProvenScope(expected.ScopeId, targetInstanceId);
                 session.TransferReceipt = new TransferReceiptData
@@ -185,19 +192,19 @@ internal static class TransferRecoveryStore
         }
     }
 
-    public static async Task DeleteSourceTransferAsync(TransferToken token)
+    public static async Task DeleteSourceTransferAsync(TransferToken token, CancellationToken cancellation = default)
     {
-        using (await SessionRecoveryTransaction.EnterAsync())
+        using (await SessionRecoveryTransaction.EnterAsync(cancellation))
         {
             try
             {
-                var source = await RecoveryRootStore.ReadTransferAsync(token.TransferId, RecoveryRecordKind.TransferOffer);
+                var source = await RecoveryRootStore.ReadTransferAsync(token.TransferId, RecoveryRecordKind.TransferOffer, cancellation);
                 RecoveryRecordValidator.ValidateEditorRoot(source.Record.Session);
                 if (!token.Matches(source.Record.Session.TransferSource)) throw new InvalidDataException("The source transfer identity differs.");
                 // Acknowledgement retains the complete source and target roots.
                 // An unacknowledged offer may be the only flushed recovery prefix.
-                if (await TransferRootReader.IsSourceAcknowledgedAsync(token))
-                    await RecoveryRootStore.CreateStore().DeleteAsync(source.Address);
+                if (await TransferRootReader.IsSourceAcknowledgedAsync(token, cancellation))
+                    await RecoveryRootStore.CreateStore().DeleteAsync(source.Address, cancellation);
             }
             catch (FileNotFoundException) { }
         }

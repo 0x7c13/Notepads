@@ -43,7 +43,7 @@ internal static partial class WorkspaceFileOpeningTests
         log.AppendLine("PASS: actual Core admission coalesces results, serializes ordinary/transfer opens and honors close/reset generations.");
         await VerifyPresentationIndependentShutdownAsync(page, core, service);
         log.AppendLine("PASS: close and disposal finish committed transfers before native shutdown; ordinary result presentation remains independent.");
-        await VerifySnapshotOffTransferClosesAsync(log);
+        await VerifySecondaryTransferClosesAsync(log);
     }
 
     private static async Task VerifyOrdinaryCoalescingAsync(NotepadsMainPage page, NotepadsCore core, bool failure)

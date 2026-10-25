@@ -586,6 +586,16 @@ void UndoHistory::ChangeLastUndoActionText(size_t length, const char *text) {
 	scraps->Push(text, length);
 }
 
+void UndoHistory::AppendLastUndoActionText(std::string_view text) {
+	assert(actions.SSize() > 0);
+	const size_t action = static_cast<size_t>(actions.SSize() - 1);
+	const size_t length = actions.lengths.ValueAt(action);
+	if (text.size() > static_cast<size_t>(PTRDIFF_MAX) - length)
+		throw std::length_error("Undo action text exceeds the position range.");
+	scraps->Push(text.data(), text.size());
+	actions.lengths.SetValueAt(action, length + text.size());
+}
+
 void UndoHistory::SetTentative(int action) noexcept {
 	tentativePoint = action;
 }

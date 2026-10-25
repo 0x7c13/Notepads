@@ -49,8 +49,9 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Syntax, native Diff, ICU regex and failures | `Editor`; focused `Syntax`, `Diff`, `NativeDiff`, `RegexText`, `NativeFaults` |
 | Tabs, content-derived titles, selected reorder attachment, transfer admission and pending availability | `WorkspaceCommands`, `Activation`, `Workspace`; Unit title/drag geometry |
 | Prelaunch, first-paint restore, new-window protocol, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
+| Move tab to new window: live undo/selection, draft/file/Diff state, cancellation; real ValueSet broker, duplicates and replay retirement | `WindowMove` (default); `WindowMoveBroker` (explicit locally; E2E CI) |
 | Preferences (defaults, persisted values, Tab, grayscale/ClearType), themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
-| Session restart/import/close, transfer, persistence, recovery and leases | `Workspace*`, `Persistence`, `Leases`, `SessionResilience` |
+| Session restart/import, primary snapshot close, secondary Save/Discard/Cancel with snapshots on/off, transfer, persistence and recovery | `Workspace*`, `FileOpening`, `WindowMove`, `Persistence`, `Leases`, `SessionResilience` |
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
 | RTL/LTR shaping, geometry, navigation, selection, undo and direction persistence | `NativeBidi`, `Bidi`, `ReadingOrder`, `AutomationNavigation` |
 | Real keys/clicks, TSF typing, UIA ranges, raster and cross-process dragging | `UIAutomation`, `DragDrop`; `TabDragging` for rail, modifier clicks, keyboard focus, release continuity/stacking, drag-back, cancellation, RTL/Equal overflow and actual workspace moves |
@@ -84,6 +85,16 @@ These layers complement each other: NativeBidi does not compile `Editor.cxx` or
 the TSF bridge; App `TypeText` uses native paste, so neither is proof of TSF keyboard handling.
 Physical typing also queues a selection shortcut and character together, checking
 exact text, caret and one-step undo without relying on paint/idle to synchronize TSF.
+`scripts/Test-ImeComposition.ps1` additionally requires installed Microsoft Pinyin
+and English input profiles plus an idle desktop. It drives actual composition,
+Space/Enter/Esc/Shift, language switching (including Win+Space), grouped undo/redo,
+Unicode selection replacement, focus loss, document replacement and disposal.
+Language switching cancels pending input; Shift's English commit is preserved.
+It replays durable checkpoints and compares unchanged behavior with RichEdit;
+RichEdit's differing language-switch behavior is recorded separately. Its
+`-ObserveOnly` mode records behavior without claiming regression verification.
+`-Workspace` instead exercises the production MainPage, automatic/fixed draft
+titles and enabled session snapshots, with spaced typing and immediate undo.
 
 ## Isolation and the meaning of a pass
 
@@ -141,9 +152,11 @@ External benchmark drivers can request `PerformanceTestWindow`'s isolated readin
 handshake to acquire foreground before timers start; ordinary runs need no handshake.
 `Test-AppLifecycle.ps1 -PerformanceRounds 4` alternates normal process startup and
 forced prelaunch/suspend/reuse on one Release AOT build. Preparation CPU/memory are
-reported separately. CPU admission reads language-independent CIM processor utility;
+reported separately. CPU admission reads processor utility with PDH's language-independent English counter lookup;
 provider errors or invalid samples fail explicitly. This measures native paint/next render, not GPU presentation,
 true cold disk caches or Windows' automatic prelaunch frequency.
+`WindowMovePerformance` measures state-reader acquisition and bounded export for 1 KiB/8 MiB histories,
+plus actual broker moves and process memory before/after capture, disposal and collection. Process peaks include fixture setup.
 Correctness tests have no machine-dependent performance pass/fail threshold.
 
 Protect observable contracts with independent expectations and a reproducer for

@@ -45,7 +45,8 @@ public sealed partial class NotepadsCore
         }
     }
 
-    private async Task ProtectTransferredEditorAsync(ITextEditor editor, TransferToken token, RecoveryStamp expectedStamp)
+    private async Task ProtectTransferredEditorAsync(ITextEditor editor, TransferToken token, RecoveryStamp expectedStamp,
+        WindowMoveRequest windowMove = null)
     {
         var rootId = Guid.NewGuid();
         using var recovery = editor.CaptureRecoveryState();
@@ -53,6 +54,6 @@ public sealed partial class NotepadsCore
         var descriptor = SessionDocumentStore.CaptureEditor(editor.Id, recovery,
             editor.EditingFile?.Name, editor.EditingFilePath);
         await TransferRecoveryStore.CreateReceiptAsync(token, rootId, _context.InstanceId,
-            descriptor, recovery, editor.EditingFile, expectedStamp);
+            descriptor, recovery, editor.EditingFile, expectedStamp, windowMove: windowMove);
     }
 }

@@ -15,6 +15,7 @@
 #include "CallTipWrapper.h"
 #include "DisplayLineMap.h"
 #include "SmoothScrollAnimation.h"
+#include "NativeEditorState.h"
 #include <winrt/WinUIEditor.h>
 
 namespace WinUIEditor { class NativeDocumentJournal; class NativeJournalFile; struct JournalPrefix; }
@@ -110,6 +111,8 @@ namespace Scintilla::Internal {
 		void FinalizeAfterApartmentClosed() noexcept;
 		void AcquireReadLease();
 		void ReleaseReadLease() noexcept;
+		std::unique_ptr<WinUIEditor::EditorStateWriter> CaptureEditorState();
+		void PublishEditorState(WinUIEditor::EditorState state);
 		void ReplaceDocumentWithUndo(Document &replacement);
 		void PublishPreparedReplacement(Document &replacement, const char *previousText, std::unique_ptr<IContractionState> contraction, bool leased = false);
 		const Document &LeasedDocument() const;
@@ -226,6 +229,7 @@ namespace Scintilla::Internal {
 		void AdvanceSmoothScroll(bool finish = false);
 
 		winrt::Windows::UI::Text::Core::CoreTextEditContext _editContext{ nullptr };
+		winrt::Windows::UI::Text::Core::CoreTextServicesManager::InputLanguageChanged_revoker _inputLanguageChangedRevoker{};
 		winrt::Windows::UI::Text::Core::CoreTextEditContext::TextRequested_revoker _textRequestedRevoker{};
 		winrt::Windows::UI::Text::Core::CoreTextEditContext::SelectionRequested_revoker _selectionRequestedRevoker{};
 		winrt::Windows::UI::Text::Core::CoreTextEditContext::FocusRemoved_revoker _focusRemovedRevoker{};
@@ -244,9 +248,12 @@ namespace Scintilla::Internal {
 		void OnLayoutRequested(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextLayoutRequestedEventArgs const &args);
 		void OnCompositionStarted(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextCompositionStartedEventArgs const &args);
 		void OnCompositionCompleted(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextCompositionCompletedEventArgs const &args);
+		void OnInputLanguageChanged(winrt::Windows::UI::Text::Core::CoreTextServicesManager const &, winrt::Windows::Foundation::IInspectable const &);
+		void CompleteCoreTextComposition();
 		bool TsfCoreLock(DWORD lock);
 		void TsfCoreUnlock();
 		void SetTextStoreSelection(Sci::Position caretPosition, Sci::Position anchorPosition);
+		void FinishCoreTextComposition();
 
 		winrt::com_ptr<ITfThreadMgr2> _tfThreadManager{ nullptr };
 		winrt::com_ptr<ITfDocumentMgr> _tfDocumentManager{ nullptr };
@@ -257,6 +264,19 @@ namespace Scintilla::Internal {
 		TfEditCookie _tfEditCookie{ 0 };
 		TfClientId _tfClientId{ 0 };
 		unsigned int _compositionCount{ 0 };
+		// CoreText brackets all preedit updates, including the final replacement.
+		// Keep that edit in one native undo group, without copying document text.
+		struct CoreTextComposition {
+			Selection originalSelection;
+			int undoStart;
+			bool cancel{ false };
+			UndoGroup undo;
+			CoreTextComposition(Document *document, const Selection &selection) :
+				originalSelection(selection),
+				undoStart(document->IsCollectingUndo() ? document->UndoCurrent() : -1),
+				undo(document) {}
+		};
+		std::unique_ptr<CoreTextComposition> _coreTextComposition;
 		enum LockTypes
 		{
 			NONE = 0,

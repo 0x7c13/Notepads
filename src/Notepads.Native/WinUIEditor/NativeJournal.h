@@ -107,6 +107,8 @@ namespace WinUIEditor
 			return _sequence;
 		}
 		JournalPrefix Capture();
+		// A durable edit can end while a longer-lived IME undo group stays open.
+		void CompleteEdit() noexcept;
 		std::shared_ptr<NativeJournalFile> File() const noexcept
 		{
 			return _file;
@@ -149,6 +151,5 @@ namespace WinUIEditor
 		uint64_t _replacementNewLength{};
 		bool _stopRequested{};
 		JournalPrefix _replacementPrefix;
-		void Complete() noexcept;
 	};
 } // namespace WinUIEditor

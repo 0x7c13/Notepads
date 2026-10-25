@@ -5,6 +5,7 @@
 // See LICENSE.txt in the project root for the Notepads modifications.
 
 import "EditorUtf8Reader.idl";
+import "EditorStateReader.idl";
 import "EditorJournalCheckpoint.idl";
 import "EditorSearch.idl";
 import "EditorDiffResult.idl";

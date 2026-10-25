@@ -7,7 +7,9 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Notepads.Controls;
 using Notepads.Presentation.Controls.FindAndReplace;
+using Notepads.Presentation.Controls.TextEditor;
 using NotepadsIntegrationTests;
 using Windows.System;
 using Windows.UI.Core;
@@ -160,6 +162,125 @@ internal static class EditingUiTests
         // Drain callbacks before host disposal; no synthetic physical keyboard or clipboard input.
         await editor.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () => { });
         log.AppendLine("PASS: editing/go-to validates actual TextBox input, live button binding, current-line prefill and panel exclusivity.");
+        await CheckPanelCloseAcrossTabsAsync(host, editor, log);
+    }
+
+    private static async Task CheckPanelCloseAcrossTabsAsync(FeatureTestHost host, TextEditor editor, StringBuilder log)
+    {
+        var originalTab = host.Core.GetTab(editor);
+        var other = await OpenAsync(host, "other-panel-tab.txt", Encoding.UTF8.GetBytes("other tab"));
+        var otherTab = host.Core.GetTab(other);
+        host.Core.SwitchTo(originalTab);
+        await UntilAsync(() => editor.IsLoaded, "The panel fixture must be attached before opening.");
+
+        foreach (var isFind in new[] { true, false })
+        {
+            void Open()
+            {
+                if (isFind) editor.ShowFindAndReplaceControl(showReplaceBar: false);
+                else editor.ShowGoToControl();
+            }
+            Open();
+            var panel = isFind ? editor.TestFindNotification : editor.TestGoToNotification;
+            var input = isFind ? editor.TestFindControl.TestFindInput : editor.TestGoToControl.TestInput;
+            var duration = panel.AnimationDuration;
+            var closed = 0;
+            void Closed(object sender, InAppNotificationClosedEventArgs args)
+            {
+                Check(args.DismissKind == InAppNotificationDismissKind.Programmatic,
+                    "Unloading must preserve the accepted dismissal reason.");
+                closed++;
+            }
+            void CancelClose(object sender, InAppNotificationClosingEventArgs args) => args.Cancel = true;
+            async Task SwitchAwayAsync()
+            {
+                var unloaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                void Unloaded(object sender, RoutedEventArgs args) => unloaded.TrySetResult(true);
+                panel.Unloaded += Unloaded;
+                try
+                {
+                    host.Core.SwitchTo(otherTab);
+                    // IsLoaded becomes false before the routed Unloaded handlers run.
+                    await unloaded.Task.WaitAsync(TimeSpan.FromSeconds(10));
+                }
+                finally { panel.Unloaded -= Unloaded; }
+            }
+            panel.Closed += Closed;
+            try
+            {
+                await UntilAsync(() => input.IsLoaded && ReferenceEquals(FocusManager.GetFocusedElement(), input),
+                    "The panel must open and focus its actual input.");
+                // An ordinary tab switch, including a vetoed close, must not invent Closed.
+                foreach (var cancelClose in new[] { false, true })
+                {
+                    if (cancelClose)
+                    {
+                        panel.Closing += CancelClose;
+                        try { editor.TestEscape(); }
+                        finally { panel.Closing -= CancelClose; }
+                    }
+                    await SwitchAwayAsync();
+                    Check(closed == 0 && panel.Visibility == Visibility.Visible,
+                        "Unloading an open panel or a cancelled close must preserve its open state.");
+                    host.Core.SwitchTo(originalTab);
+                    await UntilAsync(() => editor.IsLoaded && panel.IsLoaded, "Returning must reattach the same panel.");
+                    Open();
+                    await UntilAsync(() => ReferenceEquals(FocusManager.GetFocusedElement(), input),
+                        "A preserved panel must remain focusable after returning.");
+                }
+
+                // Hold the close pending without racing the normal 50ms animation.
+                // Dismiss and tab selection occur in one dispatcher turn; no timer is invoked by the test.
+                panel.AnimationDuration = TimeSpan.FromMinutes(1);
+                editor.TestEscape();
+                Check(closed == 0 && panel.Visibility == Visibility.Visible, "Closing must initially be pending.");
+                await SwitchAwayAsync();
+                Check(closed == 1 && panel.Visibility == Visibility.Collapsed,
+                    "Unloading must complete the accepted close exactly once, including the owner's visibility change.");
+
+                panel.AnimationDuration = duration;
+                host.Core.SwitchTo(originalTab);
+                await UntilAsync(() => editor.IsLoaded, "The editor must reattach after closing its panel.");
+                Open();
+                await UntilAsync(() => panel.Visibility == Visibility.Visible && input.IsLoaded &&
+                    ReferenceEquals(FocusManager.GetFocusedElement(), input), "The dismissed panel must reopen and focus normally.");
+                Check(closed == 1, "Reopening must not deliver the retired close a second time.");
+                editor.TestEscape();
+                await UntilAsync(() => panel.Visibility == Visibility.Collapsed && closed == 2,
+                    "The reopened panel must still complete an ordinary animated close exactly once.");
+            }
+            finally
+            {
+                panel.AnimationDuration = duration;
+                panel.Closed -= Closed;
+            }
+        }
+
+        // Destroy both lazy XAML panels while close completion is still pending.
+        // Their fields may be cleared before Unloaded delivers Closed to the owner.
+        var findPanel = editor.TestFindNotification;
+        var goToPanel = editor.TestGoToNotification;
+        var disposedCloses = 0;
+        void DisposedClose(object sender, InAppNotificationClosedEventArgs args) => disposedCloses++;
+        findPanel.Closed += DisposedClose;
+        goToPanel.Closed += DisposedClose;
+        try
+        {
+            findPanel.AnimationDuration = goToPanel.AnimationDuration = TimeSpan.FromMinutes(1);
+            editor.ShowFindAndReplaceControl(showReplaceBar: false);
+            editor.ShowGoToControl();
+            editor.HideGoToControl();
+            await host.Page.TestCloseTabAsync(originalTab);
+            await UntilAsync(() => disposedCloses == 2, "Closing the tab must complete both pending panel closes safely.");
+            Check(!host.Core.ContainsTab(originalTab) && findPanel.Visibility == Visibility.Collapsed &&
+                goToPanel.Visibility == Visibility.Collapsed, "Disposed panels must close without relying on cleared XAML fields.");
+        }
+        finally
+        {
+            findPanel.Closed -= DisposedClose;
+            goToPanel.Closed -= DisposedClose;
+        }
+        log.AppendLine("PASS: Find/Go To unload preserves open/vetoed panels, completes pending closes once, reopens and disposes safely.");
     }
 
     private static bool Selected(Notepads.Presentation.Controls.TextEditor.TextEditor editor, int start, int end)

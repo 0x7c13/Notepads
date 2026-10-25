@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.Graphics.Printing;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -45,6 +46,13 @@ internal static class TestLauncher
     internal static bool Result { get; set; } = true;
     internal static Exception Failure { get; set; }
     public static Task<bool> LaunchUriAsync(Uri uri) => LaunchUriAsync(uri, null);
+    internal static Func<Uri, LauncherOptions, ValueSet, Task<bool>> DataLaunch { get; set; }
+    public static Task<bool> LaunchUriAsync(Uri uri, LauncherOptions options, ValueSet data)
+    {
+        Requests.Add(new Request(uri, options, null));
+        return DataLaunch?.Invoke(uri, options, data) ?? Task.FromException<bool>(
+            new InvalidOperationException("A data-bearing launch requires an explicitly configured test boundary."));
+    }
     public static Task<bool> LaunchUriAsync(Uri uri, LauncherOptions options)
     {
         Requests.Add(new Request(uri, options, null));
@@ -57,7 +65,7 @@ internal static class TestLauncher
     }
     public static Task<bool> LaunchFolderAsync(StorageFolder folder) => LaunchFolderPathAsync(folder.Path);
     private static Task<bool> Complete() => Failure == null ? Task.FromResult(Result) : Task.FromException<bool>(Failure);
-    internal static void Reset() { Requests.Clear(); Result = true; Failure = null; }
+    internal static void Reset() { Requests.Clear(); Result = true; Failure = null; DataLaunch = null; }
 }
 
 internal sealed class TestPrintManager

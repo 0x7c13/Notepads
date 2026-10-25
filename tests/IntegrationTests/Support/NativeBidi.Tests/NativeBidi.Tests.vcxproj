@@ -47,6 +47,8 @@
     <ClCompile Include="LineLayoutCacheTests.cpp" />
     <ClCompile Include="SelectionDisplayTests.cpp" />
     <ClCompile Include="UndoCaretTests.cpp" />
+    <ClCompile Include="EditorStateTests.cpp" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Native\WinUIEditor\NativeEditorState.cpp" />
     <ClCompile Include="VerticalScrollTests.cpp" />
     <ClCompile Include="GutterGeometryTests.cpp" />
     <ClCompile Include="HeadlessPlatform.cpp" />

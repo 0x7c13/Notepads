@@ -58,6 +58,8 @@ namespace winrt::WinUIEditor::implementation
 		void FinalizeAfterApartmentClosed() noexcept;
 		void AcquireReadLease();
 		void ReleaseReadLease() noexcept;
+		std::unique_ptr<::WinUIEditor::EditorStateWriter> CaptureEditorState() { return _scintilla->CaptureEditorState(); }
+		void PublishEditorState(::WinUIEditor::EditorState state) { _scintilla->PublishEditorState(std::move(state)); }
 		void ReplaceDocumentWithUndo(Scintilla::Internal::Document &replacement);
 		void SetLoadedDocument(Scintilla::Internal::Document &replacement);
 		void SetDisplayLineMap(std::vector<Scintilla::Internal::DisplayGap> gaps, std::vector<Scintilla::Internal::TintedLineRange> tints);

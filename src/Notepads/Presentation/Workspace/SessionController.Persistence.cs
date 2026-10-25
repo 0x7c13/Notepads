@@ -49,7 +49,12 @@ internal sealed partial class SessionController
                     // a later Load cannot restore a partly archived frozen plan.
                     _recoveryAdmission = RecoveryAdmission.Archiving;
                     if (BeforeRecoveryArchive != null) await BeforeRecoveryArchive(cancellation);
-                    await Task.Run(() => _service.ArchiveRecoverySourcesAsync(_restorePlan.Sources, cancellation));
+                    // A transfer may publish ownership before this first discovery. Its live
+                    // editor is already claimed; archiving it would publish Closed and veto
+                    // the capture below. Other scopes and unclaimed old rows stay protected.
+                    var liveIds = LiveTabs().Select(tab => tab.Id).ToHashSet();
+                    var unclaimed = _restorePlan.Sources.Where(source => !source.IsOwned || !liveIds.Contains(source.Id)).ToArray();
+                    await Task.Run(() => _service.ArchiveRecoverySourcesAsync(unclaimed, cancellation));
                     _recoveryAdmission = RecoveryAdmission.Archived;
                 }
             }

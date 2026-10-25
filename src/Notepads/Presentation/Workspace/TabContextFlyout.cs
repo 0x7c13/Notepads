@@ -27,6 +27,7 @@ public sealed partial class TabContextFlyout : MenuFlyout
     private MenuFlyoutItem _copyFullPath;
     private MenuFlyoutItem _openContainingFolder;
     private MenuFlyoutItem _rename;
+    private MenuFlyoutItem _moveToNewWindow;
 
     private string _filePath;
     private string _containingFolderPath;
@@ -52,6 +53,7 @@ public sealed partial class TabContextFlyout : MenuFlyout
         Items.Add(OpenContainingFolder);
         Items.Add(new MenuFlyoutSeparator());
         Items.Add(Rename);
+        Items.Add(MoveToNewWindow);
 
         var style = new Style(typeof(MenuFlyoutPresenter));
         style.Setters.Add(new Setter(Control.BorderThicknessProperty, 0));
@@ -84,6 +86,18 @@ public sealed partial class TabContextFlyout : MenuFlyout
         CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
         OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
         Rename.IsEnabled = textEditor != null && textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted && !isFileReadonly;
+        MoveToNewWindow.IsEnabled = _notepadsCore.CanMoveTabToNewWindow(_tab);
+    }
+
+    private MenuFlyoutItem MoveToNewWindow
+    {
+        get
+        {
+            if (_moveToNewWindow != null) return _moveToNewWindow;
+            _moveToNewWindow = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_MoveToNewWindowDisplayText") };
+            _moveToNewWindow.Click += async (_, _) => await _notepadsCore.MoveTabToNewWindowAsync(_tab);
+            return _moveToNewWindow;
+        }
     }
 
     private void TabContextFlyout_Closed(object sender, object e)

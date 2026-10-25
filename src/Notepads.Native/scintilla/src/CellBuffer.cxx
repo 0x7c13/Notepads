@@ -1458,6 +1458,19 @@ int CellBuffer::UndoCurrent() const noexcept {
 	return uh->Current();
 }
 
+bool CellBuffer::CanReplaceUndoHistory() const noexcept {
+	return !readLease && !changeHistory && !uh->TentativeActive() && uh->UndoSequenceDepth() == 0;
+}
+
+void CellBuffer::ReplaceUndoHistory(std::unique_ptr<UndoHistory> history, bool collectUndo) {
+	if (!history || !CanReplaceUndoHistory())
+		throw std::runtime_error("Cannot replace active undo history.");
+	// The caller validates a detached history against the current document first.
+	// Publication itself cannot allocate or notify observers of a partial history.
+	uh.swap(history);
+	collectingUndo = collectUndo;
+}
+
 int CellBuffer::UndoActionType(int action) const noexcept {
 	return uh->Type(action);
 }

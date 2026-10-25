@@ -165,6 +165,15 @@ function Finish-Motion([string] $Name, [string] $Order, [int] $Source, [bool] $A
 function Ready([int] $Count = 3, [string] $Mode = 'equal') {
     $null = Invoke-EditorTestCommand $session "tabs-start|$Count|$Mode"
     $null = Invoke-EditorTestCommand $session 'tabs-frame'
+    # UIA can focus the exact editor through the UWP frame when an ordinary
+    # foreground request is denied. This is setup, before any gesture oracle.
+    $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($session.ProcessId))
+    $editor = $root.FindFirst([Windows.Automation.TreeScope]::Descendants, [Windows.Automation.AndCondition]::new(
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ClassNameProperty, 'WinUIEditor.EditorBaseControl'),
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ProcessIdProperty, [int]$session.ProcessId)))
+    if (!$editor -or $editor.Current.IsOffscreen -or !$editor.Current.IsEnabled) { throw 'No visible owned editor for tab-drag setup.' }
+    [OwnedWindowActivation]::RequireIdle()
+    $editor.SetFocus()
     $null = [OwnedWindowActivation]::Acquire($session.ProcessId, [PackagedAppDriver]::Window($session.ProcessId))
     $driver.Activate($session.ProcessId)
 }

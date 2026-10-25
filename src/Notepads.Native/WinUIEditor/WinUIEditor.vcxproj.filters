@@ -35,6 +35,8 @@
     <ClCompile Include="EditorBaseControlAutomationPeer.cpp" />
     <ClCompile Include="EditorExtensions.cpp" />
     <ClCompile Include="EditorUtf8Reader.cpp" />
+    <ClCompile Include="EditorStateReader.cpp" />
+    <ClCompile Include="EditorStateExtensions.cpp" />
     <ClCompile Include="EditorJournalCheckpoint.cpp" />
     <ClCompile Include="EditorJournalExtensions.cpp" />
     <ClCompile Include="NativeJournal.cpp" />
@@ -194,6 +196,7 @@
     <ClInclude Include="EditorExtensions.h" />
     <ClInclude Include="EditorExtensionsState.h" />
     <ClInclude Include="EditorUtf8Reader.h" />
+    <ClInclude Include="EditorStateReader.h" />
     <ClInclude Include="EditorJournalCheckpoint.h" />
     <ClInclude Include="NativeJournal.h" />
     <ClInclude Include="NativeSyntax.h" />
@@ -391,6 +394,7 @@
     <Midl Include="EditorBaseControlAutomationPeer.idl" />
     <Midl Include="EditorWrapper.idl" />
     <Midl Include="EditorUtf8Reader.idl" />
+    <Midl Include="EditorStateReader.idl" />
     <Midl Include="EditorJournalCheckpoint.idl" />
     <Midl Include="IEditorAccess.idl" />
   </ItemGroup>
@@ -402,6 +406,8 @@
     <ClCompile Include="EditorDiff.cpp" />
     <ClCompile Include="EditorDiffResult.cpp" />
     <ClCompile Include="NativeDiff.cpp" />
+    <ClCompile Include="NativeEditorState.cpp" />
+    <ClInclude Include="NativeEditorState.h" />
     <ClCompile Include="..\scintilla\src\DisplayLineMap.cxx" />
     <Midl Include="EditorDiffResult.idl" />
     <Midl Include="EditorSyntax.idl" />

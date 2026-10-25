@@ -63,7 +63,9 @@ internal static class WorkspaceSuite
                 var registry = new SessionRegistry();
                 var scope = new SessionScopeData { OwnerId = owner, InstanceId = instance, Kind = SessionScopeData.Secondary };
                 var service = new SessionService(scope, SessionScopeData.GetSecondaryPrefix(owner) + "NotepadsSessionData.json", () => new Guid[] { instance });
-                var context = new WindowContext("Workspace Tests", instance, false, owner, Window.Current.Dispatcher,
+                // Exercise primary-window restore/close policy with a private secondary-format
+                // storage scope so this fixture cannot claim the app's real primary authority.
+                var context = new WindowContext("Workspace Tests", instance, true, owner, Window.Current.Dispatcher,
                     service, registry.Register, () => { });
                 var frame = new Frame();
                 if (!frame.Navigate(typeof(NotepadsMainPage), new WorkspaceNavigation(context, null)))

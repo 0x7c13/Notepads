@@ -24,6 +24,7 @@ internal static class WindowContextFactory
         var prefix = bootstrap.IsPrimaryInstance ? "" : SessionScopeData.GetSecondaryPrefix(scope.OwnerId);
         var service = new SessionService(scope, prefix + "NotepadsSessionData.json", InstanceCatalog.GetLiveInstanceIds);
         return new WindowContext(BootstrapContext.ApplicationName, bootstrap.InstanceId, bootstrap.IsPrimaryInstance,
-            scope.OwnerId, dispatcher, service, registry.Register, bootstrap.ReleaseInstanceOwnership);
+            scope.OwnerId, dispatcher, service, registry.Register, bootstrap.ReleaseInstanceOwnership,
+            bootstrap.WindowMove, bootstrap.ProtocolScheme);
     }
 }

@@ -68,6 +68,27 @@ internal sealed class TextEditorTransfer
 
     public bool HasPublishedData => _serializedData != null;
 
+    internal async Task<TransferToken> PrepareAsync(CancellationToken cancellation = default)
+    {
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellation, _cancellation.Token);
+        await _gate.WaitAsync(linked.Token);
+        try
+        {
+            if (_completed) throw new InvalidOperationException("The transfer is already complete.");
+            if (_serializedData == null)
+            {
+                await _recovery.Checkpoint.FlushAsync().AsCompletionTask(linked.Token);
+                var descriptor = SessionDocumentStore.CaptureEditor(Editor.Id, _recovery, _fileName, _filePath);
+                _recovery.PreserveForRecovery();
+                _token = await TransferRecoveryStore.CreateSourceTransferAsync(Id, _context.InstanceId,
+                    _nonce, descriptor, _editingFile, _expectedStamp, linked.Token);
+                _serializedData = JsonSerializer.Serialize(_token, SessionJsonContext.Default.TransferToken);
+            }
+            return _token.Clone();
+        }
+        finally { _gate.Release(); }
+    }
+
     public void Populate(DataPackage package)
     {
         ArgumentNullException.ThrowIfNull(package);
@@ -82,22 +103,9 @@ internal sealed class TextEditorTransfer
     private async void ProvideData(DataProviderRequest request)
     {
         var deferral = request.GetDeferral();
-        await _gate.WaitAsync();
         try
         {
-            if (_completed) return;
-            if (_serializedData == null)
-            {
-                await _recovery.Checkpoint.FlushAsync().AsCompletionTask(_cancellation.Token);
-                var descriptor = SessionDocumentStore.CaptureEditor(Editor.Id, _recovery, _fileName, _filePath);
-                _recovery.PreserveForRecovery();
-                var token = await TransferRecoveryStore.CreateSourceTransferAsync(Id, _context.InstanceId,
-                    _nonce, descriptor, _editingFile, _expectedStamp, _cancellation.Token);
-                // The receiver may outlive this process. Promote captured assets
-                // before publication; deliver the descriptor only after commit.
-                _token = token;
-                _serializedData = JsonSerializer.Serialize(token, SessionJsonContext.Default.TransferToken);
-            }
+            await PrepareAsync();
             request.SetData(_serializedData);
         }
         catch (Exception ex)
@@ -106,13 +114,12 @@ internal sealed class TextEditorTransfer
         }
         finally
         {
-            _gate.Release();
             deferral.Complete();
         }
     }
 
     /// <summary>Do not discard edits or save-setting changes made after the captured revision.</summary>
-    public bool IsSourceUnchanged()
+    public bool IsSourceUnchanged(bool includeView = false)
     {
         using var current = Editor.CaptureRecoveryState();
         var metadata = current.MetaData;
@@ -130,25 +137,33 @@ internal sealed class TextEditorTransfer
             (Editor.EditingFile == null ? _editingFile == null :
                 _editingFile != null && Editor.EditingFile.IsEqual(_editingFile)) &&
             Editor.EditingFile?.Name == _fileName && Editor.EditingFilePath == _filePath;
+        if (includeView) unchanged &= metadata.WrapWord == captured.WrapWord &&
+            metadata.RightToLeftReadingOrder == captured.RightToLeftReadingOrder && metadata.FontZoomFactor == captured.FontZoomFactor &&
+            metadata.IsContentPreviewPanelOpened == captured.IsContentPreviewPanelOpened && metadata.IsInDiffPreviewMode == captured.IsInDiffPreviewMode &&
+            metadata.FirstVisibleDocumentLine == captured.FirstVisibleDocumentLine && metadata.FirstVisibleSubLine == captured.FirstVisibleSubLine &&
+            metadata.FirstVisibleRowOffset == captured.FirstVisibleRowOffset && metadata.ScrollViewerHorizontalOffset == captured.ScrollViewerHorizontalOffset;
         _sourceRemovalRevision = unchanged ? current.CaptureRevision : 0;
         return unchanged;
     }
 
-    public Task<bool> HasReceiptAsync() => _token == null ? Task.FromResult(false) :
-        TransferRecoveryStore.HasReceiptAsync(_token);
+    public Task<bool> HasReceiptAsync(CancellationToken cancellation = default) => _token == null ? Task.FromResult(false) :
+        TransferRecoveryStore.HasReceiptAsync(_token, cancellation);
 
-    public Task MarkSourceAcknowledgedAsync() => _token == null ?
+    public Task MarkSourceAcknowledgedAsync() => MarkSourceAcknowledgedAsync(CancellationToken.None);
+
+    internal Task MarkSourceAcknowledgedAsync(CancellationToken cancellation) => _token == null ?
         Task.FromException(new InvalidOperationException("The source transfer has not been published.")) :
-        TransferRecoveryStore.MarkSourceAcknowledgedAsync(_token, _sourceRemovalRevision);
+        TransferRecoveryStore.MarkSourceAcknowledgedAsync(_token, _sourceRemovalRevision, cancellation);
 
     public Task<bool> TryCommitSourceMoveAsync(Func<bool> canRemove, Action removeLogicalSource) =>
         Editor.TryCommitTransferAsync(() => canRemove() && IsSourceUnchanged(),
             MarkSourceAcknowledgedAsync, removeLogicalSource);
 
-    public async Task CompleteAsync(TextEditorTransferResult result, Func<bool> sourceIsAlive)
+    public async Task CompleteAsync(TextEditorTransferResult result, Func<bool> sourceIsAlive,
+        CancellationToken cancellation = default)
     {
         if (result != TextEditorTransferResult.Received) _cancellation.Cancel();
-        await _gate.WaitAsync();
+        await _gate.WaitAsync(cancellation);
         try
         {
             if (_completed) return;
@@ -158,7 +173,7 @@ internal sealed class TextEditorTransfer
             if (_token != null && (result == TextEditorTransferResult.Received ||
                 result == TextEditorTransferResult.Cancelled && sourceIsAlive()))
             {
-                await TransferRecoveryStore.DeleteSourceTransferAsync(_token);
+                await TransferRecoveryStore.DeleteSourceTransferAsync(_token, cancellation);
             }
         }
         catch (Exception ex)

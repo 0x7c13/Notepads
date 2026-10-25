@@ -38,6 +38,9 @@ $groups = [ordered]@{
     Documents = @{ Profile = 'App'; Arguments = @('--documents'); Default = $true }
     Activation = @{ Profile = 'App'; Arguments = @('--activation'); Default = $true }
     AppLifecycle = @{ Profile = 'Lifecycle'; Default = $false }
+    WindowMove = @{ Profile = 'App'; Arguments = @('--window-move'); Default = $true }
+    WindowMoveBroker = @{ Profile = 'Lifecycle'; Default = $false }
+    WindowMovePerformance = @{ Profile = 'Lifecycle'; Default = $false; Performance = $true }
     OpenPicker = @{ Profile = 'App'; Arguments = @('--open-picker'); Default = $true }
     Outbound = @{ Profile = 'App'; Arguments = @('--outbound'); Default = $true }
     Printing = @{ Profile = 'App'; Arguments = @('--printing'); Default = $true }
@@ -213,7 +216,8 @@ try {
                 }
                 elseif ($spec.Profile -eq 'Lifecycle') {
                     Ensure-TestBuild Lifecycle
-                    & (Join-Path $PSScriptRoot 'Test-AppLifecycle.ps1') -Platform $Platform -Configuration $Configuration -TimeoutSeconds $TimeoutSeconds
+                    & (Join-Path $PSScriptRoot 'Test-AppLifecycle.ps1') -Platform $Platform -Configuration $Configuration -TimeoutSeconds $TimeoutSeconds `
+                        -WindowMoveOnly:($name -in @('WindowMoveBroker', 'WindowMovePerformance')) -PerformanceRounds $(if ($name -eq 'WindowMovePerformance') { 1 } else { 0 })
                 }
                 elseif ($spec.Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) {
                     Ensure-TestBuild $spec.Profile

@@ -48,6 +48,7 @@
 #include "Partitioning.h"
 #include "RunStyles.h"
 #include "CellBuffer.h"
+#include "UndoHistory.h"
 #include "PerLine.h"
 #include "CharClassify.h"
 #include "Decoration.h"
@@ -475,6 +476,10 @@ void Document::SetUndoCurrent(int action) {
 
 int Document::UndoCurrent() const noexcept {
 	return cb.UndoCurrent();
+}
+
+void Document::ReplaceUndoHistory(std::unique_ptr<UndoHistory> history, bool collectUndo) {
+	cb.ReplaceUndoHistory(std::move(history), collectUndo);
 }
 
 int Document::UndoActionType(int action) const noexcept {
