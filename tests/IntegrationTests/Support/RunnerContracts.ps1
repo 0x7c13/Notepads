@@ -523,7 +523,8 @@ finally {
             $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name
         }, $false)
         $body = $definition.Extent.Text.Replace('[PreservingUwpTestLauncher]', '[LifecycleContractLauncher]')
-        . ([scriptblock]::Create($body.Replace('[IO.File]::Move(', '[LifecycleContractFiles]::Move(')))
+        . ([scriptblock]::Create($body.Replace('[IO.File]::Move(', '[LifecycleContractFiles]::Move(').
+            Replace('[IO.File]::Replace(', '[LifecycleContractFiles]::Replace(')))
     }
     $activationAst = [Management.Automation.Language.Parser]::ParseFile(
         (Join-Path $repo 'scripts/IsolatedTestPackage.ps1'), [ref]$null, [ref]$null)
@@ -544,10 +545,17 @@ public static class LifecycleContractLauncher {
 }
 public static class LifecycleContractFiles {
     public static int Failures, Code, Moves;
-    public static void Move(string source, string target, bool overwrite) {
+    private static void BeforePublication() {
         Moves++;
         if (Failures-- > 0) throw new System.IO.IOException("Command publication rejected", unchecked((int)0x80070000) | Code);
-        System.IO.File.Move(source, target, overwrite);
+    }
+    public static void Move(string source, string target) {
+        BeforePublication();
+        System.IO.File.Move(source, target);
+    }
+    public static void Replace(string source, string target, string backup) {
+        BeforePublication();
+        System.IO.File.Replace(source, target, backup);
     }
 }
 '@
@@ -609,6 +617,60 @@ public static class LifecycleContractFiles {
     Expect-Rejection 'Non-sharing command I/O error' '*Command publication rejected*' { Send-Command $identity exit }
     if ([IO.File]::ReadAllText($command) -ne '1:new-window' -or [LifecycleContractFiles]::Moves -ne 1) {
         throw 'A non-sharing publication error was retried or changed the previous command.'
+    }
+
+    & {
+        # Exercise the real Windows I/O boundary as well as the injected errors.
+        # File.Move(overwrite: true) reports ACCESS_DENIED for an open destination,
+        # not the sharing violation simulated above. Hold the observer's actual
+        # File.ReadAllText sharing mode until the publisher backs off once.
+        $send = $ast.Find({ param($node)
+            $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq 'Send-Command'
+        }, $false)
+        . ([scriptblock]::Create($send.Extent.Text))
+        $session = @{ RunRoot = (Join-Path $fixtureRoot 'real-command-replacement') }
+        $null = New-Item -ItemType Directory -Path $session.RunRoot
+        $identity = @{ Id = 42 }
+        $command = Join-Path $session.RunRoot 'lifecycle-42-command.txt'
+        $publication = @{ Sleeps = 0; Reader = $null; Path = $command }
+        function Start-Sleep {
+            param([int] $Milliseconds)
+            if ($Milliseconds -ne 25 -or ++$publication.Sleeps -ne 1 -or !$publication.Reader) {
+                throw 'Command publication retried beyond the held reader.'
+            }
+            if ($publication.Reader.ReadToEnd() -cne '1:new-window' -or
+                [IO.File]::ReadAllText($publication.Path) -cne '1:new-window') {
+                throw 'Failed publication changed the complete previous command.'
+            }
+            $publication.Reader.Dispose()
+        }
+        Send-Command $identity new-window
+        if ([IO.File]::ReadAllText($command) -cne '1:new-window' -or $publication.Sleeps) {
+            throw 'First command publication did not create the complete command directly.'
+        }
+        $checks.Add('Lifecycle first command publication creates the complete file')
+        $publication.Reader = [IO.StreamReader]::new([IO.File]::OpenRead($command))
+        try { Send-Command $identity reuse-window }
+        finally { $publication.Reader.Dispose() }
+        if ($publication.Sleeps -ne 1 -or [IO.File]::ReadAllText($command) -cne '2:reuse-window' -or
+            (Test-Path -LiteralPath ($command + '.tmp'))) {
+            throw 'The actual Windows reader lock prevented complete command replacement after release.'
+        }
+        $checks.Add('Lifecycle command replacement survives a real Windows reader lock')
+
+        [IO.File]::SetAttributes($command, [IO.FileAttributes]::ReadOnly)
+        try {
+            $failure = $null
+            try { Send-Command $identity exit } catch { $failure = $_.Exception.GetBaseException() }
+            if (!$failure -or ($failure.HResult -band 0xffff) -ne 5) {
+                throw 'A read-only command destination did not report access denied.'
+            }
+            if ($publication.Sleeps -ne 1 -or [IO.File]::ReadAllText($command) -cne '2:reuse-window') {
+                throw 'A genuine access denial was retried or changed the previous command.'
+            }
+            $checks.Add('Read-only command destination is rejected without retry or data loss')
+        }
+        finally { [IO.File]::SetAttributes($command, [IO.FileAttributes]::Normal) }
     }
 }
 

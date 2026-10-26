@@ -50,7 +50,13 @@ function Send-Command($Identity, [string] $Command) {
     [IO.File]::WriteAllText($path + '.tmp', "$($Identity.LastCommandId):$Command")
     $watch = [Diagnostics.Stopwatch]::StartNew()
     while ($true) {
-        try { [IO.File]::Move($path + '.tmp', $path, $true); break }
+        try {
+            # Replace an existing command with ReplaceFile: MoveFileEx(overwrite)
+            # reports ACCESS_DENIED when the observer has the destination open.
+            if ([IO.File]::Exists($path)) { [IO.File]::Replace($path + '.tmp', $path, [NullString]::Value) }
+            else { [IO.File]::Move($path + '.tmp', $path) }
+            break
+        }
         catch [IO.IOException] {
             # The observer may briefly hold the previous command for reading.
             # Retry only sharing/lock violations; publish by atomic replacement.
