@@ -21,6 +21,7 @@ internal static class DocumentWorkflowsTests
 {
     internal static async Task RunAsync(StringBuilder log)
     {
+        await ContentModificationTests.RunAsync(log);
         await using var host = await FeatureTestHost.CreateAsync();
         await EncodingMenuTests.RunAsync(host, log);
         await EncodingAndLineEndingsAsync(host, log);

@@ -16,6 +16,6 @@ public sealed partial class NotepadsCore
     internal Task<ITextEditor> TestPrepareTransferredEditorAsync(TextEditorSessionDataV2 data, StorageFile file) =>
         PrepareTransferredEditorAsync(data, file);
 
-    internal Task TestProtectTransferredEditorAsync(ITextEditor editor, TransferToken token, RecoveryStamp stamp) =>
-        ProtectTransferredEditorAsync(editor, token, stamp);
+    internal Task TestProtectTransferredEditorAsync(ITextEditor editor, TransferToken token, RecoveryStamp stamp,
+        TextEditorSessionDataV2 source) => ProtectTransferredEditorAsync(editor, token, stamp, source);
 }

@@ -165,7 +165,7 @@ public sealed partial class NotepadsCore
                     return candidate;
                 }
                 catch { await DiscardUnattachedEditorAsync(candidate); throw; }
-            }, editor => ProtectTransferredEditorAsync(editor, token, expected, request), -1, cancellation);
+            }, editor => ProtectTransferredEditorAsync(editor, token, expected, data, request), -1, cancellation);
             if (result.Kind != WorkspaceFileOpenKind.Created)
                 throw result.Error ?? new OperationCanceledException("The receiving window was closed.");
         }

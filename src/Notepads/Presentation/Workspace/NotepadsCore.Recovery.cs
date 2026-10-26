@@ -46,10 +46,19 @@ public sealed partial class NotepadsCore
     }
 
     private async Task ProtectTransferredEditorAsync(ITextEditor editor, TransferToken token, RecoveryStamp expectedStamp,
-        WindowMoveRequest windowMove = null)
+        TextEditorSessionDataV2 source, WindowMoveRequest windowMove = null)
     {
         var rootId = Guid.NewGuid();
-        using var recovery = editor.CaptureRecoveryState();
+        using var current = editor.CaptureRecoveryState();
+        var metadata = current.MetaData;
+        // A receipt acknowledges the frozen source classification. Background
+        // comparison may already have refined either live editor's dirty flag.
+        // All content and other metadata still come from the independent target
+        // and must match the token-bound source in CreateReceiptAsync.
+        metadata.IsModified = source.StateMetaData.IsModified;
+        using var recovery = new DocumentRecoveryState(current.SavedSnapshot, current.RecoveryBaseline,
+            current.DocumentJournal, current.Checkpoint, metadata, source.TextDirty,
+            current.DocumentByteLength, current.CaptureRevision);
         await recovery.Checkpoint.FlushAsync();
         var descriptor = SessionDocumentStore.CaptureEditor(editor.Id, recovery,
             editor.EditingFile?.Name, editor.EditingFilePath);

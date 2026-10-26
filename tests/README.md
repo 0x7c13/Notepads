@@ -44,12 +44,12 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | --- | --- |
 | Encoding/BOM/EOL, language, indentation policy, filenames and search URLs | Unit; `Editor`, `NativeStorage` |
 | Document admission/cancellation, recovery schema and authority | Unit; Headless `Storage` and metrics-failure groups |
-| Open/save/save-as/save-all, reload/revert, external file changes | `Documents`, `FileOpening` |
+| Open/save/save-as/save-all, reload/revert, manual content reversion/dirty indicators, external file changes, editor insets | `Documents`, `FileOpening` |
 | Find/replace, Go To, clipboard, native edit commands | `EditingUI`, `Clipboard`, `ClipboardRejectedCut`, `Editor`, `Search` |
 | Syntax, native Diff, ICU regex and failures | `Editor`; focused `Syntax`, `Diff`, `NativeDiff`, `RegexText`, `NativeFaults` |
 | Tabs, content-derived titles, selected reorder attachment, transfer admission and pending availability | `WorkspaceCommands`, `Activation`, `Workspace`; Unit title/drag geometry |
 | Prelaunch, first-paint restore, new-window protocol, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
-| Move tab to new window: live undo/selection, draft/file/Diff state, cancellation; real ValueSet broker, duplicates and replay retirement | `WindowMove` (default); `WindowMoveBroker` (explicit locally; E2E CI) |
+| Move tab to new window: live undo/selection, draft/file/Diff state, pending content equality, cancellation; real ValueSet broker, duplicates and replay retirement | `WindowMove` (default); `WindowMoveBroker` (explicit locally; E2E CI) |
 | Preferences (defaults, persisted values, Tab, grayscale/ClearType), themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
 | Session restart/import, primary snapshot close, secondary Save/Discard/Cancel with snapshots on/off, transfer, persistence and recovery | `Workspace*`, `FileOpening`, `WindowMove`, `Persistence`, `Leases`, `SessionResilience` |
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |

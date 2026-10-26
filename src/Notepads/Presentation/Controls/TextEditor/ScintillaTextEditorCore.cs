@@ -527,6 +527,9 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     internal EditorUtf8Reader AcquireDocumentReader() => Native.AcquireUtf8Reader();
 
+    internal Windows.Storage.Streams.IBuffer ReadCurrentUtf8Range(long offset, int maxBytes) =>
+        Native.ReadUtf8Range(offset, maxBytes);
+
     internal void StartJournal(DocumentJournal journal) => Native.StartJournal(journal.File.Path, Native.DocumentSequence);
 
     internal EditorJournalCheckpoint AcquireJournalCheckpoint() => Native.AcquireJournalCheckpoint();

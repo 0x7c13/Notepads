@@ -56,8 +56,11 @@ public sealed partial class TextEditor
 
     public Task DisposalCompletion => _disposalCompletion.Task;
 
-    public Task WaitForDocumentOperationsAsync() =>
-        _documentOperations.WaitForIdleAsync();
+    public async Task WaitForDocumentOperationsAsync()
+    {
+        await _documentOperations.WaitForIdleAsync();
+        await RefreshModificationStateAsync();
+    }
 
     public async Task<bool> TryCommitTransferAsync(Func<bool> sourceUnchanged,
         Func<Task> commitRemovalIntent, Action removeLogicalSource)
@@ -135,7 +138,7 @@ public sealed partial class TextEditor
         if (isModified) TextEditorCore.MarkModified();
         else TextEditorCore.MarkSaved();
         _loaded = true;
-        IsModified = !NoChangesSinceLastSaved();
+        RefreshModificationState();
     }
 
     public Task InitAsync(DocumentSnapshot snapshot, StorageFile file, bool isModified = false)
@@ -179,7 +182,7 @@ public sealed partial class TextEditor
     {
         try
         {
-            await Task.WhenAll(_documentOperations.Completion, _fileStatusCheckerCompletion);
+            await Task.WhenAll(_documentOperations.Completion, _fileStatusCheckerCompletion, _contentComparisonCompletion);
             // An operation may have attached or stopped a candidate while cancellation
             // unwound. Drain every native writer, even when no managed journal is attached.
             _journalShutdown = TextEditorCore.StopJournalAsync();
@@ -231,7 +234,7 @@ public sealed partial class TextEditor
             throw new InvalidOperationException("The document is still preparing its recovery state.");
         using var checkpoint = TextEditorCore.AcquireJournalCheckpoint();
         return new DocumentRecoveryState(LastSavedSnapshot, _recoveryBaseline, _documentJournal,
-            checkpoint, GetTextEditorStateMetaData(), TextEditorCore.IsDocumentModified,
+            checkpoint, GetTextEditorStateMetaData(), IsTextModified,
             checked((long)checkpoint.CommittedDocumentByteLength));
     }
 
@@ -271,7 +274,13 @@ public sealed partial class TextEditor
             }
             catch
             {
-                if (!_disposed) _loaded = wasLoaded;
+                if (!_disposed)
+                {
+                    _loaded = wasLoaded;
+                    // A pending equality check may have retired while loading.
+                    // Failure keeps the old document, so resume its dirty check.
+                    RefreshModificationState();
+                }
                 throw;
             }
             finally
@@ -349,7 +358,7 @@ public sealed partial class TextEditor
         TextEditorCore.SetScrollViewerInitPosition(metadata.ScrollViewerHorizontalOffset, metadata.ScrollViewerVerticalOffset,
             metadata.FirstVisibleDocumentLine, metadata.FirstVisibleSubLine, rowOffset: metadata.FirstVisibleRowOffset);
         TextEditorCore.ClearUndoQueue();
-        IsModified = !NoChangesSinceLastSaved();
+        RefreshModificationState();
     }
 
     public Task RestoreAsync(DocumentSnapshot snapshot, StorageFile file, DocumentMetadata metadata,
@@ -527,7 +536,7 @@ public sealed partial class TextEditor
         if (_requestedEncoding != null && EncodingCatalog.Equals(LastSavedSnapshot.Encoding, encoding))
         {
             _requestedEncoding = null;
-            IsModified = !NoChangesSinceLastSaved();
+            RefreshModificationState();
             EncodingChanged?.Invoke(this, EventArgs.Empty);
             return true;
         }
@@ -549,7 +558,7 @@ public sealed partial class TextEditor
         if (RequestedLineEnding != null && LastSavedSnapshot.LineEnding == lineEnding)
         {
             RequestedLineEnding = null;
-            IsModified = !NoChangesSinceLastSaved();
+            RefreshModificationState();
             LineEndingChanged?.Invoke(this, EventArgs.Empty);
             return true;
         }
@@ -622,7 +631,7 @@ public sealed partial class TextEditor
             RequestedLineEnding = currentLineEnding == lineEnding ? (LineEnding?)null : currentLineEnding;
             if (version == TextEditorCore.ContentVersion) TextEditorCore.MarkSaved();
             else TextEditorCore.MarkModified();
-            IsModified = !NoChangesSinceLastSaved();
+            RefreshModificationState();
             FileSaved?.Invoke(this, EventArgs.Empty);
             StartCheckingFileStatusPeriodically();
             if (result.ProviderError != null)

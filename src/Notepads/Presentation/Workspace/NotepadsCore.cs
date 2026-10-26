@@ -901,7 +901,7 @@ public sealed partial class NotepadsCore : INotepadsCore
             }
             var result = await OpenTransferredFileAsync(editingFile,
                 () => PrepareTransferredEditorAsync(data, editingFile),
-                editor => ProtectTransferredEditorAsync(editor, token, expectedTarget),
+                editor => ProtectTransferredEditorAsync(editor, token, expectedTarget, data),
                 GetDropIndex(sets, args), lifetime.Token);
             if (result.Kind == WorkspaceFileOpenKind.Existing)
             {

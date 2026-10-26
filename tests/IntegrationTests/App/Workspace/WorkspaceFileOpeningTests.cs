@@ -478,7 +478,7 @@ internal static partial class WorkspaceFileOpeningTests
         internal Task PublishAsync(ITextEditor editor)
         {
             ReceiptCount++;
-            return _core.TestProtectTransferredEditorAsync(editor, Token, _stamp);
+            return _core.TestProtectTransferredEditorAsync(editor, Token, _stamp, _descriptor);
         }
 
         public async ValueTask DisposeAsync()

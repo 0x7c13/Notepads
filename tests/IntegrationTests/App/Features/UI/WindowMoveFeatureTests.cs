@@ -32,6 +32,7 @@ internal static class WindowMoveFeatureTests
 {
     internal static async Task RunAsync(StringBuilder log)
     {
+        await NotepadsWorkspaceTests.ContentModificationTransferTests.RunAsync(log);
         await VerifyFileMoveAsync("SecondaryButton");
         await VerifyFileMoveAsync("PrimaryButton");
         await VerifyFailureAsync();

@@ -82,6 +82,7 @@ public sealed partial class TextEditor
     internal async Task RestoreWindowMoveStateAsync(WindowMoveRequest state, Stream input, CancellationToken cancellation)
     {
         await TextEditorCore.RestoreWindowMoveStateAsync(state, input, cancellation);
+        RefreshModificationState();
         // This is an existing open document, even if it was initially empty and
         // the user subsequently typed .LOG. Reattachment must not append a date.
         _skipMovedAttachmentLogEntry = true;

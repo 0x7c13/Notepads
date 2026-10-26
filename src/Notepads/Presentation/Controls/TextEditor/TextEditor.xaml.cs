@@ -249,6 +249,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         BeginShutdown(CancelSearch, failures);
         BeginShutdown(CloseSideBySideDiffViewer, failures);
         BeginShutdown(StopCheckingFileStatus, failures);
+        BeginShutdown(StopContentComparison, failures);
         BeginShutdown(_documentOperations.Dispose, failures);
         try { DisposeUserInterface(); }
         catch (Exception failure) { failures.Add(failure); }
@@ -662,7 +663,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             return false;
         }
 
-        return !TextEditorCore.IsDocumentModified;
+        return !IsTextModified;
     }
 
     private void OnEscapeKeyDown()
@@ -717,13 +718,13 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private void TextEditorCore_OnModificationStateChanged(object sender, EventArgs args)
     {
-        if (_loaded) IsModified = !NoChangesSinceLastSaved();
+        RefreshModificationState();
     }
 
     private void TextEditorCore_OnTextChanging(object textEditor, EventArgs args)
     {
         if (!_loaded) return;
-        IsModified = !NoChangesSinceLastSaved();
+        RefreshModificationState();
         TextChanging?.Invoke(this, EventArgs.Empty);
 
         GoToPlaceholder?.Dismiss();
