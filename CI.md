@@ -39,7 +39,10 @@ does not cancel one lane when the other fails, and CI Gate requires both.
 Package jobs do not build the test host again.
 
 The Windows image is `windows-2025-vs2026`, with Visual Studio 2026/v145 and Windows
-SDK 10.0.26100.0. `global.json` selects .NET; `Initialize-BuildTools.ps1` checks the
+SDK 10.0.26100.0. The shared SDK setup action installs the explicit version from
+`global.json`, avoiding a remote latest-patch download during bootstrap. Builds
+still follow `global.json`'s roll-forward policy for newer installed SDK patches.
+`Initialize-BuildTools.ps1` checks the
 actual compiler/UWP library paths and installs missing native components on hosted
 runners. NuGet downloads are cached against project/dependency inputs. Build
 outputs and test results are never reused across hosted jobs. Dependencies are
@@ -52,7 +55,7 @@ The `Runner` checks reproduce an SDK/old-restore mismatch on all three target
 architectures and verify repair through one normal `/restore` invocation.
 
 Workflow permissions are `contents: read`, checkout does not persist credentials,
-and actions are pinned to full commit SHAs. actionlint's downloaded release archive
+and external actions are pinned to full commit SHAs. actionlint's downloaded release archive
 is SHA-256 verified before execution. The PR workflow does not use
 `pull_request_target`, repository secrets or a self-hosted runner.
 
