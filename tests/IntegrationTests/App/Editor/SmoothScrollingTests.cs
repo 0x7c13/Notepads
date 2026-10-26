@@ -34,6 +34,7 @@ internal static class SmoothScrollingTests
         log.AppendLine($"SCROLL animationEnabled={new UISettings().AnimationsEnabled}");
         try
         {
+            await CheckZoomScrollBarsAsync(log);
             foreach (var rtl in new[] { false, true })
                 foreach (var wrap in new[] { false, true })
                     await CheckViewportAsync(log, rtl, wrap);
@@ -46,6 +47,50 @@ internal static class SmoothScrollingTests
             }
         }
         finally { Window.Current.Content = previous; }
+    }
+
+    private static async Task CheckZoomScrollBarsAsync(StringBuilder log)
+    {
+        using var core = new TextEditorCore
+        {
+            Width = 620, Height = 351, TextWrapping = TextWrapping.NoWrap,
+            HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top
+        };
+        var view = (EditorBaseControl)((Grid)core.Content).Children[0];
+        var native = view.Editor;
+        core.SetFontZoomFactor(100);
+        core.SetText(string.Join('\r', Enumerable.Range(0, 60).Select(i => $"row{i:D2} " + new string('x', 120))));
+        await AfterPaintAsync(native, () => Window.Current.Content = core);
+        await UntilAsync(() => !view.IsViewportRestorePending);
+        var vertical = Find<ScrollBar>(view, "VerticalScrollBar");
+        var horizontal = Find<ScrollBar>(view, "HorizontalScrollBar");
+        Check(vertical != null && horizontal != null && vertical.Maximum > 20 && horizontal.Maximum > 120,
+            "The zoom fixture initially overflows both axes");
+        native.SetEmptySelection(0);
+        await AfterPaintAsync(native, () =>
+        {
+            view.SetVerticalViewport(20, 0);
+            native.XOffset = 120;
+        });
+        Check(vertical.Value == 20 && horizontal.Value == 120, "Both thumbs start away from the leading edge");
+        await AfterPaintAsync(native, () => core.SetFontZoomFactor(10));
+        await UntilAsync(() => vertical.Visibility == Visibility.Collapsed && horizontal.Visibility == Visibility.Collapsed);
+        Check(native.FirstVisibleLine == 0 && view.DisplayVerticalOffset == 0 && native.XOffset == 0,
+            "Zooming out until the document fits clamps the actual viewport to the origin");
+        foreach (var zoom in new[] { 40, 50, 100 })
+        {
+            await AfterPaintAsync(native, () => core.SetFontZoomFactor(zoom));
+            Check(native.FirstVisibleLine == 0 && view.DisplayVerticalOffset == 0 && native.XOffset == 0,
+                $"Zooming back to {zoom}% preserves the document origin");
+            Check(vertical.Value == 0 && horizontal.Value == 0,
+                $"Zooming back to {zoom}% must not restore stale thumb positions: vertical={vertical.Value}/{vertical.Maximum}, horizontal={horizontal.Value}/{horizontal.Maximum}");
+        }
+        // Width tracking publishes the measured horizontal extent after paint;
+        // the first paint notification alone is not the final XAML layout.
+        await UntilAsync(() => vertical.Visibility == Visibility.Visible && horizontal.Visibility == Visibility.Visible);
+        Check(vertical.Value == 0 && horizontal.Value == 0 && native.FirstVisibleLine == 0 && native.XOffset == 0,
+            "Both reappearing thumbs remain at the document origin after extent measurement");
+        log.AppendLine("PASS: zoom through zero scroll range keeps both thumbs at the actual document origin.");
     }
 
     private static async Task CheckViewportAsync(StringBuilder log, bool rtl, bool wrap)

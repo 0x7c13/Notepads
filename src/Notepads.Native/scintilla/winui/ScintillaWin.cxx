@@ -2385,6 +2385,11 @@ namespace Scintilla::Internal {
 				_mainWrapper->VerticalScrollBarViewportSize(page);
 				_mainWrapper->VerticalScrollBarMinimum(0);
 				_mainWrapper->VerticalScrollBarMaximum(end);
+				// RangeBase retains an unclamped Value even while its getter is zero.
+				// Publish the model with the new range, including when it collapses,
+				// so a later expansion cannot resurrect an obsolete thumb position.
+				_mainWrapper->VerticalScrollBarValue(std::clamp(
+					topLine + verticalOffset / geometry.RowHeight(), 0.0, end));
 				_mainWrapper->VerticalScrollBarVisible(end > 0);
 				modified = true;
 			}
@@ -2450,6 +2455,8 @@ namespace Scintilla::Internal {
 			_mainWrapper->HorizontalScrollBarViewportSize(nPage);
 			_mainWrapper->HorizontalScrollBarMinimum(nMin);
 			_mainWrapper->HorizontalScrollBarMaximum(max);
+			// Synchronize the retained Value as well as RangeBase's coerced value.
+			_mainWrapper->HorizontalScrollBarValue(std::clamp<double>(xOffset, nMin, max));
 			_mainWrapper->HorizontalScrollBarVisible(max != 0);
 			return true;
 		}
