@@ -71,14 +71,19 @@ namespace winrt::WinUIEditor::implementation
 		return _line;
 	}
 
-	UpdateUIEventArgs::UpdateUIEventArgs(int32_t updated)
-		: _updated { updated }
+	UpdateUIEventArgs::UpdateUIEventArgs(int32_t updated, int32_t position)
+		: _updated { updated }, _position { position }
 	{
 	}
 
 	int32_t UpdateUIEventArgs::Updated()
 	{
 		return _updated;
+	}
+
+	int32_t UpdateUIEventArgs::Position()
+	{
+		return _position;
 	}
 
 	ModifiedEventArgs::ModifiedEventArgs(int32_t position, int32_t modificationType, const char *text, int32_t length, int32_t linesAdded, int32_t line, int32_t foldLevelNow, int32_t foldLevelPrev, int32_t token, int32_t annotationLinesAdded)
@@ -676,7 +681,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			if (_updateUIEvent)
 			{
-				_updateUIEvent(*this, *make_self<implementation::UpdateUIEventArgs>(static_cast<int32_t>(data->updated)));
+				_updateUIEvent(*this, *make_self<implementation::UpdateUIEventArgs>(static_cast<int32_t>(data->updated), static_cast<int32_t>(data->position)));
 			}
 		}
 		break;
@@ -3690,6 +3695,22 @@ namespace winrt::WinUIEditor::implementation
 	int32_t Editor::NamedStyles()
 	{
 		return static_cast<int32_t>(_editor.get()->PublicWndProc(Scintilla::Message::GetNamedStyles, static_cast<Scintilla::uptr_t>(0), static_cast<Scintilla::sptr_t>(0)));
+	}
+
+	/**
+	 * Get the scale technique
+	 */
+	WinUIEditor::ScaleTechnique Editor::ScaleTechnique()
+	{
+		return static_cast<WinUIEditor::ScaleTechnique>(_editor.get()->PublicWndProc(Scintilla::Message::GetScaleTechnique, static_cast<Scintilla::uptr_t>(0), static_cast<Scintilla::sptr_t>(0)));
+	}
+
+	/**
+	 * Set the scale technique
+	 */
+	void Editor::ScaleTechnique(WinUIEditor::ScaleTechnique const &value)
+	{
+		_editor.get()->PublicWndProc(Scintilla::Message::SetScaleTechnique, static_cast<Scintilla::uptr_t>(value), static_cast<Scintilla::sptr_t>(0));
 	}
 
 	/**

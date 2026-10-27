@@ -93,15 +93,17 @@ bool SelectionPosition::operator >(const SelectionPosition &other) const noexcep
 }
 
 bool SelectionPosition::operator <=(const SelectionPosition &other) const noexcept {
-	if (other == *this)
-		return true;
-	return other > *this;
+	if (position == other.position) {
+		return virtualSpace <= other.virtualSpace;
+	}
+	return position <= other.position;
 }
 
 bool SelectionPosition::operator >=(const SelectionPosition &other) const noexcept {
-	if (other == *this)
-		return true;
-	return *this > other;
+	if (position == other.position) {
+		return virtualSpace >= other.virtualSpace;
+	}
+	return position >= other.position;
 }
 
 double SelectionPosition::VirtualSpaceWidth(double spaceWidth) const noexcept {
@@ -128,11 +130,7 @@ SelectionRange::SelectionRange(std::string_view &sv) {
 }
 
 Sci::Position SelectionRange::Length() const noexcept {
-	if (anchor > caret) {
-		return anchor.Position() - caret.Position();
-	} else {
-		return caret.Position() - anchor.Position();
-	}
+	return std::abs(anchor.Position() - caret.Position());
 }
 
 void SelectionRange::MoveForInsertDelete(bool insertion, Sci::Position startChange, Sci::Position length) noexcept {
@@ -150,31 +148,27 @@ void SelectionRange::MoveForInsertDelete(bool insertion, Sci::Position startChan
 }
 
 bool SelectionRange::Contains(Sci::Position pos) const noexcept {
-	if (anchor > caret)
+	if (anchor.Position() > caret.Position())
 		return (pos >= caret.Position()) && (pos <= anchor.Position());
-	else
-		return (pos >= anchor.Position()) && (pos <= caret.Position());
+	return (pos >= anchor.Position()) && (pos <= caret.Position());
 }
 
 bool SelectionRange::Contains(SelectionPosition sp) const noexcept {
 	if (anchor > caret)
 		return (sp >= caret) && (sp <= anchor);
-	else
-		return (sp >= anchor) && (sp <= caret);
+	return (sp >= anchor) && (sp <= caret);
 }
 
 bool SelectionRange::ContainsCharacter(Sci::Position posCharacter) const noexcept {
-	if (anchor > caret)
+	if (anchor.Position() > caret.Position())
 		return (posCharacter >= caret.Position()) && (posCharacter < anchor.Position());
-	else
-		return (posCharacter >= anchor.Position()) && (posCharacter < caret.Position());
+	return (posCharacter >= anchor.Position()) && (posCharacter < caret.Position());
 }
 
 bool SelectionRange::ContainsCharacter(SelectionPosition spCharacter) const noexcept {
 	if (anchor > caret)
 		return (spCharacter >= caret) && (spCharacter < anchor);
-	else
-		return (spCharacter >= anchor) && (spCharacter < caret);
+	return (spCharacter >= anchor) && (spCharacter < caret);
 }
 
 SelectionSegment SelectionRange::Intersect(SelectionSegment check) const noexcept {
@@ -265,9 +259,7 @@ void SelectionRange::Truncate(Sci::Position length) noexcept {
 // If range is all virtual collapse to start of virtual space
 void SelectionRange::MinimizeVirtualSpace() noexcept {
 	if (caret.Position() == anchor.Position()) {
-		Sci::Position virtualSpace = caret.VirtualSpace();
-		if (virtualSpace > anchor.VirtualSpace())
-			virtualSpace = anchor.VirtualSpace();
+		const Sci::Position virtualSpace = std::min(caret.VirtualSpace(), anchor.VirtualSpace());
 		caret.SetVirtualSpace(virtualSpace);
 		anchor.SetVirtualSpace(virtualSpace);
 	}

@@ -69,6 +69,14 @@ shaping/fallback, bounded drawing-layout reuse/eviction, wrapping, visual naviga
 rectangles, immutable foregrounds,
 color glyphs, clipping/transforms, DPI, font-quality transitions, gutter geometry,
 viewport bounds/animation clocks and undo notifications.
+The Scintilla 5.6.7 checks also cover compact position precision on million-byte
+lines; `Editor` exercises the new UpdateUI fields, empty rows, control-character
+representations and parallel wrapping in the actual UWP component.
+The opt-in `SmoothScrollPerformance` group also records three 600-paint batches
+for ASCII, short/long CJK and wrapped CJK, including CPU, memory and notification
+counts. The fixtures install the application's plain-text language configuration
+and require completed styling before measuring steady scrolling. These observations
+add about a minute at 120 Hz and are not timing gates.
 Regular CI also requires an optimized **262,144 UTF-16-unit** dense LTR paragraph:
 bounded beginning/middle/end samples check navigation, selection and panned pixels.
 The complete lazy navigation index is built; native fallback remains separately tested.

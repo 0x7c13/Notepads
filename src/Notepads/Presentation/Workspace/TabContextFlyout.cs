@@ -94,7 +94,11 @@ public sealed partial class TabContextFlyout : MenuFlyout
         get
         {
             if (_moveToNewWindow != null) return _moveToNewWindow;
-            _moveToNewWindow = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_MoveToNewWindowDisplayText") };
+            _moveToNewWindow = new MenuFlyoutItem
+            {
+                Text = _resourceLoader.GetString("Tab_ContextFlyout_MoveToNewWindowDisplayText"),
+                Icon = new FontIcon { Glyph = "\uE8A7" }
+            };
             _moveToNewWindow.Click += async (_, _) => await _notepadsCore.MoveTabToNewWindowAsync(_tab);
             return _moveToNewWindow;
         }
@@ -201,7 +205,11 @@ public sealed partial class TabContextFlyout : MenuFlyout
         {
             if (_copyFullPath != null) return _copyFullPath;
 
-            _copyFullPath = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText") };
+            _copyFullPath = new MenuFlyoutItem
+            {
+                Text = _resourceLoader.GetString("Tab_ContextFlyout_CopyFullPathButtonDisplayText"),
+                Icon = new FontIcon { Glyph = "\uE8C8" }
+            };
             _copyFullPath.Click += (sender, args) =>
             {
                 try
@@ -227,7 +235,11 @@ public sealed partial class TabContextFlyout : MenuFlyout
         {
             if (_openContainingFolder != null) return _openContainingFolder;
 
-            _openContainingFolder = new MenuFlyoutItem { Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText") };
+            _openContainingFolder = new MenuFlyoutItem
+            {
+                Text = _resourceLoader.GetString("Tab_ContextFlyout_OpenContainingFolderButtonDisplayText"),
+                Icon = new FontIcon { Glyph = "\uED25" }
+            };
             _openContainingFolder.Click += async (sender, args) =>
             {
                 try

@@ -102,6 +102,7 @@ internal static class ScrollPerformanceTests
             // Keep the established vertical workload above unchanged so older
             // hosts can supply a matching before/after comparison.
             foreach (var rtl in new[] { false, true }) await CheckHorizontalAsync(log, rtl);
+            await CjkScrollPerformanceTests.RunAsync(log);
         }
         finally { Window.Current.Content = previous; }
     }

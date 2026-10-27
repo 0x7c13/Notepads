@@ -16,11 +16,10 @@ namespace Scintilla::Internal {
 */
 class Caret {
 public:
-	bool active;
-	bool on;
-	int period;
-
-	Caret() noexcept;
+	static constexpr int periodCaret = 500;	// Default caret period in milliseconds
+	bool active=false;
+	bool on=false;
+	int period=periodCaret;
 };
 
 enum class UndoRedo { undo, redo };
@@ -48,7 +47,7 @@ struct ModelState : ViewState {
 	void RememberSelectionOntoStack(int index, Sci::Line topLine);
 	void RememberSelectionForRedoOntoStack(int index, const Selection &sel, Sci::Line topLine);
 	SelectionWithScroll SelectionFromStack(int index, UndoRedo history) const;
-	virtual void TruncateUndo(int index) final;
+	void TruncateUndo(int index) final;
 };
 
 using ModelStateShared = std::shared_ptr<ModelState>;
@@ -81,7 +80,7 @@ public:
 	UniqueString defaultFoldDisplayText;
 	std::unique_ptr<IContractionState> pcs;
 	// Hotspot support
-	Range hotspot;
+	ForwardRange hotspot;
 	bool hotspotSingleLine;
 	Sci::Position hoverIndicatorPos;
 

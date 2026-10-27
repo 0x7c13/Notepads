@@ -55,9 +55,6 @@
 using namespace Scintilla;
 using namespace Scintilla::Internal;
 
-Caret::Caret() noexcept :
-	active(false), on(false), period(500) {}
-
 void ModelState::RememberSelectionForUndo(int index, const Selection &sel) {
 	historyForUndo.indexCurrent = index;
 	historyForUndo.ssCurrent = sel.ToString();
@@ -109,7 +106,6 @@ EditModel::EditModel() : braces{} {
 	bidirectional = Bidirectional::Disabled;
 	foldFlags = FoldFlag::None;
 	foldDisplayTextStyle = FoldDisplayTextStyle::Hidden;
-	hotspot = Range(Sci::invalidPosition);
 	hotspotSingleLine = true;
 	hoverIndicatorPos = Sci::invalidPosition;
 	wrapWidth = LineLayout::wrapWidthInfinite;

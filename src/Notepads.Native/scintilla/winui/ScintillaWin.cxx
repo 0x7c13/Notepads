@@ -4471,8 +4471,8 @@ namespace Scintilla::Internal {
 				const auto to = std::min<Sci::Position>(localEnd, row.end);
 				if (from >= to) continue;
 				const auto indent = subLine > 0 ? ll->wrapIndent : 0;
-				const auto left = originX + indent + ll->positions[from] - ll->positions[row.start];
-				const auto right = originX + indent + ll->positions[to] - ll->positions[row.start];
+				const auto left = originX + indent + ll->GetWidth(from, row.start);
+				const auto right = originX + indent + ll->GetWidth(to, row.start);
 				const auto top = originY + subLine * vs.lineHeight;
 				append(PRectangle{left, top, right, top + vs.lineHeight});
 			}

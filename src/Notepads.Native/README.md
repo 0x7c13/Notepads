@@ -2,7 +2,9 @@
 
 This directory is maintained as part of Notepads. It is based on
 [WinUIEdit](https://github.com/BreeceW/WinUIEdit), imported from commit
-`d9f60dbca65c2af54ced590d873d9438de32ce77`, with Scintilla 5.6.3.
+`d9f60dbca65c2af54ced590d873d9438de32ce77`. The retained Scintilla sources
+have been updated from 5.6.3 to [5.6.7](https://www.scintilla.org/scintilla567.zip),
+preserving the Notepads rendering, scrolling and document-state extensions.
 
 Only the UWP editor, compiled Scintilla backend, interface generator and
 required interface inputs are retained. No submodule or patch step is used.

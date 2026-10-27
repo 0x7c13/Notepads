@@ -529,7 +529,7 @@ void MarginView::PaintMargin(Surface *surface, PRectangle rc, PRectangle rcMargi
 				surface->FillRectangle(rcOneMargin, vs.styles[StyleLineNumber].back);
 			}
 
-			if (marginStyle.ShowsFolding() && highlightDelimiter.isEnabled) {
+			if (marginStyle.ShowsFolding() && highlightDelimiter.IsEnabled()) {
 				const auto rows = model.VisibleDisplayRows(rcMargin, vs.lineHeight);
 				if (rows.first < rows.second) {
 					const Sci::Line lastLine = model.pcs->DocFromDisplay(rows.second - 1) + 1;

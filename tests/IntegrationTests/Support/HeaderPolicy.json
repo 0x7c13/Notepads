@@ -948,6 +948,13 @@
           "paths": [
             "src/Notepads.Native/scintilla/winui/WinTypes.h"
           ]
+        },
+        {
+          "lines": 6,
+          "sha256": "320022997C6D88CD40037F15ED415F1FBA0E2F1F28D9C32A1830429244A42D29",
+          "paths": [
+            "src/Notepads.Native/scintilla/src/RunThreads.h"
+          ]
         }
       ],
       "withoutHeader": []

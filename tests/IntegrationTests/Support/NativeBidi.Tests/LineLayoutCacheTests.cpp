@@ -53,6 +53,8 @@
 #include "PositionCache.h"
 #include "DirectWriteParagraph.h"
 
+Scintilla::Internal::ViewStyle MakeGeometryTestStyle();
+
 size_t CheckLineLayoutCache(IDWriteFactory *factory, IDWriteTextFormat *format) {
     using namespace Scintilla;
     using namespace Scintilla::Internal;
@@ -69,6 +71,77 @@ size_t CheckLineLayoutCache(IDWriteFactory *factory, IDWriteTextFormat *format) 
             if (const auto live = entry.lock()) total += static_cast<uint64_t>(live->maxLineLength) + 1;
         return total;
     };
+
+    // Independent cumulative-width oracle for the compact 5.6.7 positions.
+    // Include coordinates beyond float's exact integer range, tabs and an
+    // empty terminal row; callers must never read a synthetic character -1.
+    {
+        class TabStops final : public TabStopProvider {
+            XYPOSITION NextTabstopPos(Sci::Line, XYPOSITION x, XYPOSITION width) const noexcept override {
+                return (std::floor(x / width) + 1) * width;
+            }
+        } tabs;
+        auto style = MakeGeometryTestStyle();
+        style.tabWidth = 64;
+        style.lastSegItalicsOffset = 3;
+        for (const int length : {0, 1, 4096, 1000000}) {
+            LineLayout row(0, length);
+            row.numCharsInLine = row.numCharsBeforeEOL = length;
+            std::vector<double> expected(static_cast<size_t>(length) + 1);
+            double x = 0;
+            for (int index = 0; index < length; ++index) {
+                const bool tab = index % 257 == 256;
+                const float width = tab ? 0.0f : (index % 3 == 0 ? 38.125f : 31.75f);
+                row.chars[index] = tab ? '\t' : 'x';
+                row.styles[index] = 0;
+                row.SetValue(index, width);
+                x = tab ? (std::floor(x / 64) + 1) * 64 : x + width;
+                expected[index + 1] = x;
+            }
+            row.chars[length] = 0;
+            row.styles[length] = 0;
+            row.CalculatePositions(0, tabs, style, true);
+            require(row.GetPosition(0) == 0, "Empty and nonempty lines start at zero");
+            for (int index = 0; index <= length; ++index) {
+                require(std::abs(row.GetPosition(index) - expected[index]) < 0.01,
+                    "Compact positions retain subpixel geometry on very long lines");
+            }
+            require(row.FindPositionFromX(x, Range(0, length), false) == length,
+                "Hit testing the final edge returns the final byte");
+        }
+        LineLayout italic(0, 1);
+        italic.chars[0] = 'x';
+        italic.styles[0] = 0;
+        italic.numCharsInLine = italic.numCharsBeforeEOL = 1;
+        italic.SetValue(0, 12.5f);
+        style.styles[0].italic = true;
+        italic.CalculatePositions(0, tabs, style, true);
+        require(italic.GetPosition(1) == 15.5, "Italic terminal ink keeps its trailing allowance");
+        italic.numCharsInLine = italic.numCharsBeforeEOL = 0;
+        italic.CalculatePositions(0, tabs, style, true);
+        require(italic.GetPosition(0) == 0, "An empty italic row has no trailing glyph allowance");
+
+        style.styles[0].italic = false;
+        LineLayout tab(0, 1);
+        tab.chars[0] = '\t';
+        tab.styles[0] = 0;
+        tab.numCharsInLine = tab.numCharsBeforeEOL = 1;
+        style.styles[0].visible = false;
+        tab.SetValue(0, 0);
+        tab.CalculatePositions(0, tabs, style, true);
+        require(tab.GetPosition(1) == 0, "An invisible tab does not expand to the next stop");
+        tab.SetValue(0, 7);
+        tab.CalculatePositions(0, tabs, style, true);
+        require(tab.GetPosition(1) == 7, "An invisible tab keeps its replacement glyph width");
+        style.styles[0].visible = true;
+        tab.SetValue(0, 7);
+        tab.CalculatePositions(0, tabs, style, false);
+        require(tab.GetPosition(1) == 7, "A cleared tab representation keeps the measured width");
+        tab.SetValue(0, 7);
+        style.tabDrawMode = TabDrawMode::ControlChar;
+        tab.CalculatePositions(0, tabs, style, true);
+        require(tab.GetPosition(1) == 7, "A control-symbol tab keeps its measured width");
+    }
 
     // The real repeated-measure/paint workload: retain long rows from the
     // visible page, regardless of the direction metadata stored on each row.

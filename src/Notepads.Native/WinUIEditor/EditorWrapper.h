@@ -106,12 +106,14 @@ namespace winrt::WinUIEditor::implementation
 
 	struct UpdateUIEventArgs : UpdateUIEventArgsT<UpdateUIEventArgs>
 	{
-		UpdateUIEventArgs(int32_t updated);
+		UpdateUIEventArgs(int32_t updated, int32_t position);
 
 		int32_t Updated();
+		int32_t Position();
 
 	private:
 		int32_t _updated;
+		int32_t _position;
 	};
 
 	struct ModifiedEventArgs : ModifiedEventArgsT<ModifiedEventArgs>
@@ -2095,6 +2097,16 @@ namespace winrt::WinUIEditor::implementation
 		 * Retrieve the number of named styles for the lexer.
 		 */
 		int32_t NamedStyles();
+
+		/**
+		 * Get the scale technique
+		 */
+		WinUIEditor::ScaleTechnique ScaleTechnique();
+
+		/**
+		 * Set the scale technique
+		 */
+		void ScaleTechnique(WinUIEditor::ScaleTechnique const &value);
 
 		/**
 		 * Retrieve bidirectional text display state.

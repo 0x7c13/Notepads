@@ -396,6 +396,7 @@
     <ClInclude Include="..\scintilla\winui\SmoothScrollAnimation.h" />
     <ClInclude Include="..\scintilla\src\RESearch.h" />
     <ClInclude Include="..\scintilla\src\RunStyles.h" />
+    <ClInclude Include="..\scintilla\src\RunThreads.h" />
     <ClInclude Include="..\scintilla\src\ScintillaBase.h" />
     <ClInclude Include="..\scintilla\src\Selection.h" />
     <ClInclude Include="..\scintilla\src\SparseVector.h" />

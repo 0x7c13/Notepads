@@ -227,6 +227,7 @@ internal static class EditorSuite
             await CheckNativeUtf8ContractsAsync();
             log.AppendLine("PASS: owned canonical UTF-8 stream loading, bounded native readers, edit leases, and atomic undo-preserving replacement.");
             await CheckNativeScrollWidthContractsAsync();
+            await ScintillaUpgradeTests.RunAsync(log);
             log.AppendLine("PASS: native document, deletion, and font invalidation refresh tracked widths while preserving explicit fixed widths.");
             CheckNativeNotificationLifetime();
             log.AppendLine("PASS: borrowed native notification payloads expire safely while requested owned snapshots remain readable.");

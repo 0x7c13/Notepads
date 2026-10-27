@@ -830,6 +830,8 @@ namespace WinUIEditor
 		TagsOfStyle = 4031,
 		DescriptionOfStyle = 4032,
 		SetILexer = 4033,
+		SetScaleTechnique = 2820,
+		GetScaleTechnique = 2821,
 		GetBidirectional = 2708,
 		SetBidirectional = 2709,
 	};
@@ -1499,6 +1501,8 @@ namespace WinUIEditor
 		Selection = 2,
 		VScroll = 4,
 		HScroll = 8,
+		Text = 16,
+		LineCount = 32,
 	};
 
 	enum FocusChange
@@ -1558,6 +1562,12 @@ namespace WinUIEditor
 		DirectInput = 0,
 		TentativeInput = 1,
 		ImeResult = 2,
+	};
+
+	enum ScaleTechnique
+	{
+		Default = 0,
+		PixelAligned = 1,
 	};
 
 	enum Bidirectional
@@ -4934,6 +4944,7 @@ namespace WinUIEditor
 	runtimeclass UpdateUIEventArgs
 	{
 		Int32 Updated { get; };
+		Int32 Position { get; };
 	}
 
 	[default_interface]
@@ -6193,6 +6204,12 @@ namespace WinUIEditor
 		 * Retrieve the number of named styles for the lexer.
 		 */
 		Int32 NamedStyles { get; };
+
+		/**
+		 * Get the scale technique
+		 * Set the scale technique
+		 */
+		ScaleTechnique ScaleTechnique { get; set; };
 
 		/**
 		 * Retrieve bidirectional text display state.
