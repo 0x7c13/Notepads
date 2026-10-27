@@ -105,6 +105,7 @@ internal static class WindowMoveFeatureTests
         await UntilAsync(() => editor.IsLoaded && editor.TestNativeCore.IsLoaded,
             "The draft must finish its initial empty .LOG check before typing a header.");
         editor.TypeText(".LOG\rabc אבג 中文\rtail");
+        editor.SetIndentationOverride(8);
         var native = editor.TestNativeCore.TestFeatureNative;
         native.EmptyUndoBuffer();
         native.BeginUndoAction(); native.InsertText(5, "X"); native.EndUndoAction();
@@ -165,6 +166,8 @@ internal static class WindowMoveFeatureTests
                 "Moving a background tab preserves the other tab and its selection.");
             Check(receiver.Core.GetTabCount() == 1, "Dedicated startup opens only the moved document.");
             var received = (TextEditor)receiver.Core.GetSelectedReadyEditor();
+            Check(received.IndentationOverride == 8 && received.EffectiveIndentation == 8,
+                "The document's explicit indentation policy survives the window transfer.");
             Check(received.Mode == (diff ? TextEditorMode.DiffPreview : TextEditorMode.Editing),
                 "The requested view mode is restored before the source is removed.");
             Check(received.GetText() == expected && received.DisplayTitle == title && received.IsModified,

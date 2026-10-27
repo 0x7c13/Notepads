@@ -304,4 +304,10 @@
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Rolar abas para frente</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>Mover para nova janela</value></data>
   <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>Não foi possível concluir a transferência. A aba original foi mantida. Verifique se uma nova janela foi aberta.</value></data>
+  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>Tabulações</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>Espaços: {0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>Recuo deste documento</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Converter recuo em espaços</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Converter recuo em tabulações</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Não foi possível converter o recuo.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
 </root>

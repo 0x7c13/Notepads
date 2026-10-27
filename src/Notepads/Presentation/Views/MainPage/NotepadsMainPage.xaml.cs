@@ -87,6 +87,7 @@ public sealed partial class NotepadsMainPage : Page
             _notepadsCore.TextEditorSelectionChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateLineColumnIndicator(editor); };
             _notepadsCore.TextEditorFontZoomFactorChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateFontZoomIndicator(editor); };
             _notepadsCore.TextEditorLanguageChanged += (sender, editor) => { if (ReferenceEquals(NotepadsCore.GetSelectedReadyEditor(), editor)) UpdateLanguageIndicator(editor); };
+            _notepadsCore.TextEditorIndentationChanged += (sender, editor) => { if (ReferenceEquals(NotepadsCore.GetSelectedReadyEditor(), editor)) UpdateIndentationIndicator(editor); };
             _notepadsCore.TextEditorEncodingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) UpdateEncodingIndicator(editor.GetEncoding()); };
             _notepadsCore.TextEditorLineEndingChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) { UpdateLineEndingIndicator(editor.GetLineEnding()); UpdateLineColumnIndicator(editor); } };
             _notepadsCore.TextEditorEditorModificationStateChanged += (sender, editor) => { if (NotepadsCore.GetSelectedReadyEditor() == editor) SetupStatusBar(editor); };
@@ -233,7 +234,8 @@ public sealed partial class NotepadsMainPage : Page
             new(VirtualKeyModifiers.None, VirtualKey.Escape, () => { if (RootSplitView.IsPaneOpen) RootSplitView.IsPaneOpen = false; }),
             new(VirtualKeyModifiers.None, VirtualKey.F1, () => { if (_context.IsPrimaryInstance) RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; }),
             new(VirtualKeyModifiers.None, VirtualKey.F2, async () => await RenameFileAsync(NotepadsCore.GetSelectedReadyEditor())),
-            new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Menu | VirtualKeyModifiers.Shift, VirtualKey.L, async () => { await OpenFileAsync(LoggingService.GetLogFile(), rebuildOpenRecentItems: false); }),
+            // Ctrl+Alt letter chords also generate AltGr text (for example Polish Ł).
+            new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.F12, async () => { await OpenFileAsync(LoggingService.GetLogFile(), rebuildOpenRecentItems: false); }),
         ]);
     }
 

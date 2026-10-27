@@ -304,4 +304,10 @@
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Scroll tabs forward</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>Move to new window</value></data>
   <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>Could not complete the move. The original tab is kept. Check whether a new window opened.</value></data>
+  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>Tabs</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>Spaces: {0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>Indentation for this document</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Convert indentation to spaces</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Convert indentation to tabs</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Unable to convert indentation.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
 </root>

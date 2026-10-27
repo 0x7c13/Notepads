@@ -43,6 +43,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Change area | Primary checks |
 | --- | --- |
 | Encoding/BOM/EOL, language, indentation policy, filenames and search URLs | Unit; `Editor`, `NativeStorage` |
+| Per-document indentation status/menu, metadata-only overrides, conversion undo, YAML, selection and session/window transfer | `Editor`, `WorkspaceCommands`, `WindowMove`; Unit recovery metadata |
 | Document admission/cancellation, recovery schema and authority | Unit; Headless `Storage` and metrics-failure groups |
 | Open/save/save-as/save-all, reload/revert, manual content reversion/dirty indicators, external file changes, editor insets | `Documents`, `FileOpening` |
 | Find/replace, Go To, clipboard, native edit commands | `EditingUI`, `Clipboard`, `ClipboardRejectedCut`, `Editor`, `Search` |
@@ -55,6 +56,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
 | RTL/LTR shaping, geometry, navigation, selection, undo and direction persistence | `NativeBidi`, `Bidi`, `ReadingOrder`, `AutomationNavigation` |
 | Real keys/clicks, TSF typing, UIA ranges, raster and cross-process dragging | `UIAutomation`, `DragDrop`; `TabDragging` for rail, modifier clicks, keyboard focus, release continuity/stacking, drag-back, cancellation, RTL/Equal overflow and actual workspace moves |
+| International keyboard shortcuts (Polish AltGr and left Ctrl+Alt emulation) | Explicit `scripts/Test-InternationalKeyboard.ps1`; requires an idle desktop, isolated Release AOT host and physical input ownership |
 | DPI geometry / actual Windows scale transitions | `DpiLayout` / opt-in `DisplayDpi` |
 | Installed Production launch, file association, windows, suspension and V1 data import | Hosted-only `PackagedApp` |
 | Localization, notices, package content and dependency boundaries | `Localization`, `Headers`, `Package`, `Architecture` |
@@ -62,6 +64,13 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 
 `*` denotes a family for orientation, not a selectable wildcard; use exact group
 names from `-List`. Markdown preview is not implemented and has no completion claim.
+
+`Test-InternationalKeyboard.ps1` temporarily loads Windows' Polish Programmers
+layout in the owned test window, verifies `ł/Ł` through native and UIA text, then
+restores the original layout and unloads only the layout it introduced. It does
+not edit the user's language list. It also checks Ctrl+A/Backspace/Undo and the
+diagnostic log shortcut, Ctrl+Shift+F12. Other international layouts and IMEs
+still require their own coverage.
 
 NativeBidi uses production native code with independent whole-paragraph DirectWrite
 geometry and WIC pixel references. It covers Unicode byte/UTF-16 boundaries,

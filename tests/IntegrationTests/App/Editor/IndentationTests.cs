@@ -5,6 +5,7 @@
 
 using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Preferences;
@@ -34,10 +35,14 @@ internal static class IndentationTests
             CheckReadOnly(core, native);
             CheckSingleLineDedentSelection(core, native);
             CheckBackspace(core, native);
+            await CheckDocumentOverrideAndConversionAsync(core, native);
+            await CheckConversionSelectionsAsync(core, native, log);
+            await CheckConversionSelectionModesAsync(core, native);
         }
         finally
         {
             ApplicationPreferences.EditorDefaultTabIndents = previousIndent;
+            core.SetIndentationOverride(0);
             core.SetSyntaxLanguage(DocumentLanguages.PlainText, "x.txt");
         }
         log.AppendLine("PASS: indentation precedence (file, language, Tab setting), Enter rules for brackets, colons, YAML and Python block exits, " +
@@ -81,6 +86,160 @@ internal static class IndentationTests
             Enter(core, native, language, text, text.Replace("^", "\r  ^", StringComparison.Ordinal), language + " continuing Enter");
             Check(core.TestIndentationCheckedVersion == -1, language + " continuing Enter does not read the indentation sample");
         }
+    }
+
+    private static async Task CheckDocumentOverrideAndConversionAsync(TextEditorCore core, WinUIEditor.Editor native)
+    {
+        Load(core, "json", "a\r  b\r    c\r^");
+        core.SetIndentationOverride(8);
+        Check(core.EffectiveIndentation == 8 && !core.CanUndo, "A document override wins without editing or adding undo.");
+        core.TestIndentation(false);
+        Expect(core, native, "a\r  b\r    c\r        ^", "Explicit indentation wins over detection and language");
+        core.Undo();
+        core.SetIndentationOverride(0);
+        Check(core.EffectiveIndentation == 2, "Automatic restores detected indentation.");
+
+        const string original = "\t中文\t正文  \r \t x\r    y\r\t \r";
+        const string spaces = "    中文\t正文  \r     x\r    y\r     \r";
+        Load(core, "plaintext", original + "^");
+        await core.ConvertIndentationAsync(false, Guid.NewGuid());
+        Equal(spaces, core.GetText(), "Converting only prefixes preserves visual columns, body tabs, trailing spaces and EOLs");
+        Check(native.CurrentPos == native.Length, "Conversion adjusts a caret after all edits.");
+        core.Undo();
+        Check(core.GetText() == original && !core.CanUndo, "All indentation conversion edits form one undo step.");
+        core.Redo();
+        await core.ConvertIndentationAsync(true, Guid.NewGuid());
+        Equal("\t中文\t正文  \r\t x\r\ty\r\t \r", core.GetText(), "Tabs preserve alignment with remainder spaces");
+        core.Undo();
+        Equal(spaces, core.GetText(), "One undo reverses conversion to tabs");
+        native.EmptyUndoBuffer();
+        await core.ConvertIndentationAsync(false, Guid.NewGuid());
+        Check(!core.CanUndo, "Already converted text does not add undo or dirty edits.");
+        using (var cancellation = new CancellationTokenSource())
+        {
+            var conversion = core.ConvertIndentationAsync(true, Guid.NewGuid(), cancellation.Token);
+            Check(!core.IsEnabled, "Conversion disables editing before its first asynchronous boundary.");
+            core.TypeText("blocked input");
+            cancellation.Cancel();
+            try { await conversion; throw new InvalidOperationException("Conversion ignored cancellation."); }
+            catch (OperationCanceledException) { }
+            Check(core.IsEnabled && core.GetText() == spaces && !core.CanUndo && !native.ReadOnly,
+                "Cancellation retains the original bytes and undo history, restores input, and releases the read lease.");
+        }
+        native.ReadOnly = true;
+        await core.ConvertIndentationAsync(true, Guid.NewGuid());
+        Check(core.GetText() == spaces && !core.CanUndo, "Read-only conversion is refused.");
+        native.ReadOnly = false;
+        Load(core, "yaml", "key:\r    value: 1^");
+        core.SetIndentationOverride(-1);
+        Check(core.EffectiveIndentation == 2, "YAML never emits tabs from an override restored from another language.");
+        await core.ConvertIndentationAsync(true, Guid.NewGuid());
+        Check(!core.CanUndo, "YAML conversion to tabs is refused.");
+        core.SetIndentationOverride(0);
+    }
+
+    private static async Task CheckConversionSelectionsAsync(TextEditorCore core, WinUIEditor.Editor native, StringBuilder log)
+    {
+        Load(core, "plaintext", "\t abc\r\t def^");
+        native.SetSelection(1, 0); native.AddSelection(10, 9); native.MainSelection = 1;
+        await core.ConvertIndentationAsync(false, Guid.NewGuid());
+        Check(native.Selections == 2 && native.MainSelection == 1 && native.GetSelectionNCaret(0) == 4 &&
+            native.GetSelectionNAnchor(0) == 0 && native.GetSelectionNCaret(1) == 16 && native.GetSelectionNAnchor(1) == 15,
+            "Conversion preserves directed multiple selections by column, including endpoints inside indentation.");
+        Load(core, "plaintext", "\t abc\r\t def^");
+        native.SelectionMode = WinUIEditor.SelectionMode.Rectangle;
+        native.RectangularSelectionAnchor = 1;
+        native.RectangularSelectionCaret = 8;
+        await core.ConvertIndentationAsync(false, Guid.NewGuid());
+        Check(native.SelectionIsRectangle && native.RectangularSelectionAnchor == 4 && native.RectangularSelectionCaret == 14,
+            "Conversion preserves the rectangular selection and its visual columns.");
+        native.SelectionMode = WinUIEditor.SelectionMode.Stream;
+        var text = new StringBuilder();
+        for (var i = 0; i < 20_000; i++) text.Append("\t  中文\t text  \r");
+        core.SetText(text.ToString());
+        var allocations = GC.GetAllocatedBytesForCurrentThread();
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        await core.ConvertIndentationAsync(false, Guid.NewGuid());
+        watch.Stop();
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - allocations;
+        Check(native.LineCount == 20_001 && native.GetLineIndentation(19_999) == 6,
+            "A 20,000-line conversion preserves all line boundaries and indentation columns.");
+        core.Undo();
+        Check(core.GetText() == text.ToString() && !core.CanUndo, "One undo restores a large conversion exactly.");
+        log.AppendLine($"MEASURE: convert 20,000 indentation prefixes: {watch.ElapsedMilliseconds} ms; UI-thread managed allocation {allocated} bytes. Explicit command cost, not a timing gate.");
+    }
+
+    private static async Task CheckConversionSelectionModesAsync(TextEditorCore core, WinUIEditor.Editor native)
+    {
+        var movementPreserved = true;
+        foreach (var extends in new[] { false, true })
+        {
+            Load(core, "plaintext", "\t ab^c");
+            native.MoveExtendsSelection = extends;
+            await core.ConvertIndentationAsync(false, Guid.NewGuid());
+            movementPreserved &= native.MoveExtendsSelection == extends;
+            native.CharRight();
+            movementPreserved &= native.CurrentPos == 8 && native.Anchor == (extends ? 7 : 8);
+        }
+
+        Load(core, "plaintext", "\t abc\r\t def^");
+        native.ChangeSelectionMode(WinUIEditor.SelectionMode.Rectangle);
+        native.RectangularSelectionAnchor = 2;
+        native.RectangularSelectionCaret = 8;
+        core.TypeText("X");
+        Check(native.SelectionMode == WinUIEditor.SelectionMode.Thin && core.GetText() == "\t Xabc\r\t Xdef",
+            "Typing in a real rectangle produces the native thin-column selection fixture.");
+        // Paste advances the per-row carets independently of the retained
+        // rectangle corners; conversion must preserve both sets of positions.
+        Check(native.RectangularSelectionAnchor == 2 && native.RectangularSelectionCaret == 8 &&
+            native.GetSelectionNCaret(0) == 3 && native.GetSelectionNCaret(1) == 10,
+            "The thin fixture has distinct rectangular bounds and per-row insertion carets.");
+        native.MoveExtendsSelection = false;
+        var main = native.MainSelection;
+        await core.ConvertIndentationAsync(false, Guid.NewGuid());
+        var thinPreserved = native.SelectionMode == WinUIEditor.SelectionMode.Thin && native.Selections == 2 &&
+            native.MainSelection == main && native.RectangularSelectionAnchor == 5 && native.RectangularSelectionCaret == 14 &&
+            native.GetSelectionNCaret(0) == 6 && native.GetSelectionNCaret(1) == 16 &&
+            !native.MoveExtendsSelection;
+        core.TypeText("Y");
+        thinPreserved &= core.GetText() == "     XYabc\r     XYdef";
+        Check(movementPreserved && thinPreserved,
+            $"Conversion preserves ordinary/extended arrow movement ({movementPreserved}) and thin-column bounds/continued typing ({thinPreserved}).");
+
+        Load(core, "plaintext", "    a^");
+        native.SetSelection(1, 1);
+        native.AddSelection(2, 2);
+        native.AddSelection(3, 3);
+        native.MainSelection = 2;
+        await core.ConvertIndentationAsync(true, Guid.NewGuid());
+        Check(native.Selections == 1 && native.MainSelection == 0 && native.CurrentPos == 0 && native.Anchor == 0,
+            "Carets collapsed into one new tab merge and retain a valid main selection.");
+        native.Clear();
+        Equal("a", core.GetText(), "Delete at coincident carets removes only the tab");
+        core.Undo();
+        native.SetEmptySelection(0); // Undo restores the caret after the inserted tab.
+        core.TypeText("X");
+        Check(core.GetText() == "X\ta" && native.Selections == 1, "Collapsed carets insert text once.");
+        native.CharRight();
+        Check(native.CurrentPos == 2 && native.Anchor == 2,
+            "Navigation after collapsed selections remains valid and skips the complete tab.");
+
+        Load(core, "plaintext", "    x^");
+        native.SetSelectionSerialized("#2,5v1,5v2,5v3");
+        await core.ConvertIndentationAsync(true, Guid.NewGuid());
+        Check(native.Selections == 3 && native.MainSelection == 2, "Virtual-space carets retain their main index.");
+        for (var i = 0; i < 3; i++)
+            Check(native.GetSelectionNAnchor(i) == 2 && native.GetSelectionNCaret(i) == 2 &&
+                native.GetSelectionNAnchorVirtualSpace(i) == i + 1 && native.GetSelectionNCaretVirtualSpace(i) == i + 1,
+                "Distinct virtual-space carets at the same byte position survive conversion.");
+
+        Load(core, "plaintext", "\ta\r\tb\r\tc^");
+        native.SetEmptySelection(4);
+        native.ChangeSelectionMode(WinUIEditor.SelectionMode.Lines);
+        Check(native.GetSelText() == "\tb", "The native whole-line fixture excludes the line terminator.");
+        await core.ConvertIndentationAsync(false, Guid.NewGuid());
+        Check(native.SelectionMode == WinUIEditor.SelectionMode.Lines && !native.MoveExtendsSelection &&
+            native.GetSelText() == "    b", "Conversion preserves whole-line selection without enabling arrow extension.");
     }
 
     private static async Task CheckReviewRegressionsAsync(TextEditorCore core, WinUIEditor.Editor native)

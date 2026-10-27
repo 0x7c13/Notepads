@@ -47,6 +47,15 @@ public interface ITextEditor
     bool CanChangeLanguage { get; }
     void SetLanguageOverride(string id);
 
+    event EventHandler IndentationChanged;
+    event EventHandler IndentationOverrideChanged;
+    int IndentationOverride { get; }
+    int EffectiveIndentation { get; }
+    bool CanChangeIndentation { get; }
+    bool CanConvertIndentation { get; }
+    void SetIndentationOverride(int value);
+    Task ConvertIndentationAsync(bool useTabs);
+
     Guid Id { get; set; }
 
     FileType FileType { get; }

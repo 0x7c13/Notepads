@@ -304,4 +304,10 @@
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>टैब आगे स्क्रॉल करें</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>नई विंडो में ले जाएँ</value></data>
   <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>स्थानांतरण पूरा नहीं हुआ। मूल टैब रखा गया है। देखें कि कोई नई विंडो खुली है या नहीं।</value></data>
+  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>टैब</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>स्पेस: {0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>इस दस्तावेज़ का इंडेंटेशन</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>इंडेंटेशन को स्पेस में बदलें</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>इंडेंटेशन को टैब में बदलें</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>इंडेंटेशन नहीं बदला जा सका।</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
 </root>

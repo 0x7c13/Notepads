@@ -96,6 +96,7 @@ internal static class RecoveryRecordValidator
         return string.Equals(left.FileNamePlaceholder, right.FileNamePlaceholder, StringComparison.Ordinal) &&
             left.UseContentBasedTitle == right.UseContentBasedTitle &&
             string.Equals(left.LanguageOverride, right.LanguageOverride, StringComparison.Ordinal) &&
+            left.IndentationOverride == right.IndentationOverride &&
             string.Equals(left.LastSavedEncoding, right.LastSavedEncoding, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(left.LastSavedLineEnding, right.LastSavedLineEnding, StringComparison.OrdinalIgnoreCase) &&
             left.DateModifiedFileTime == right.DateModifiedFileTime &&

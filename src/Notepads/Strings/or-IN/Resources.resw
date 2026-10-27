@@ -304,4 +304,10 @@
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>ଟ୍ୟାବ୍‌ଗୁଡ଼ିକୁ ଆଗକୁ ସ୍କ୍ରୋଲ୍ କରନ୍ତୁ</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>ନୂଆ ୱିଣ୍ଡୋକୁ ନିଅନ୍ତୁ</value></data>
   <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>ସ୍ଥାନାନ୍ତର ସମ୍ପୂର୍ଣ୍ଣ ହୋଇପାରିଲା ନାହିଁ। ମୂଳ ଟ୍ୟାବ୍ ରଖାଯାଇଛି। ଏକ ନୂଆ ୱିଣ୍ଡୋ ଖୋଲିଛି କି ନାହିଁ ଯାଞ୍ଚ କରନ୍ତୁ।</value></data>
+  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>ଟ୍ୟାବ୍</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>ସ୍ପେସ୍: {0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>ଏହି ଡକ୍ୟୁମେଣ୍ଟର ଇଣ୍ଡେଣ୍ଟେସନ୍</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>ଇଣ୍ଡେଣ୍ଟେସନ୍‌କୁ ସ୍ପେସ୍‌ରେ ବଦଳାନ୍ତୁ</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>ଇଣ୍ଡେଣ୍ଟେସନ୍‌କୁ ଟ୍ୟାବ୍‌ରେ ବଦଳାନ୍ତୁ</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>ଇଣ୍ଡେଣ୍ଟେସନ୍ ବଦଳାଯାଇପାରିଲା ନାହିଁ।</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
 </root>

@@ -916,6 +916,7 @@ Write-Output "PASS: Runner contracts ($($checks.Count) checks); private evidence
 & (Join-Path $PSScriptRoot 'CIContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'ci')
 & (Join-Path $PSScriptRoot 'PackagedAppProcessContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'packaged-processes')
 & (Join-Path $PSScriptRoot 'PackagedAppInputContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'packaged-input')
+& (Join-Path $PSScriptRoot 'InternationalKeyboardContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'international-keyboard')
 & (Join-Path $PSScriptRoot 'EditorDragInputContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'drag-input')
 & (Join-Path $PSScriptRoot 'TabDragRasterContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'tab-raster')
 & (Join-Path $PSScriptRoot 'ActivationContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'activation')

@@ -304,4 +304,10 @@
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Помери картице унапред</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>Премести у нови прозор</value></data>
   <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>Премештање није довршено. Оригинална картица је сачувана. Проверите да ли је отворен нови прозор.</value></data>
+  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>Табулатори</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>Размаци: {0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>Увлачење за овај документ</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Претвори увлачење у размаке</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Претвори увлачење у табулаторе</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Није могуће претворити увлачење.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
 </root>

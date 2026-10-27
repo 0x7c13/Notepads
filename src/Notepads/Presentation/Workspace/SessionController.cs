@@ -300,6 +300,7 @@ internal sealed partial class SessionController : ISessionController, ISessionPe
         textEditor.LineEndingChanged += OnEditorDocumentStateChanged;
         textEditor.FileRenamed += OnEditorDocumentStateChanged;
         textEditor.LanguageOverrideChanged += OnEditorDocumentStateChanged;
+        textEditor.IndentationOverrideChanged += OnEditorDocumentStateChanged;
     }
 
     private void UnbindEditorContentStateChangeEvent(object sender, WorkspaceTab tab)
@@ -322,6 +323,7 @@ internal sealed partial class SessionController : ISessionController, ISessionPe
         textEditor.LineEndingChanged -= OnEditorDocumentStateChanged;
         textEditor.FileRenamed -= OnEditorDocumentStateChanged;
         textEditor.LanguageOverrideChanged -= OnEditorDocumentStateChanged;
+        textEditor.IndentationOverrideChanged -= OnEditorDocumentStateChanged;
         _editorRevisions.TryRemove(textEditor.Id, out _);
     }
 

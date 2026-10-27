@@ -428,6 +428,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         _lastInsertionEnd = args.Position + args.Length;
         if (_settingText) return;
         UpdateSyntaxStatus();
+        if (args.Position <= IndentationDetector.SampleBytes) QueueIndentationStatus();
         if (args.Position <= DocumentLanguages.DetectionSampleBytes) QueueLanguageDetection();
         if (args.LinesAdded != 0 && LineNumberDigits() != _lineNumberDigits)
             UpdateLineNumberMargin();
@@ -777,6 +778,11 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         if (_disposed) return;
         _disposed = true;
         IsEnabled = false;
+        if (_indentationStatusTimer != null)
+        {
+            _indentationStatusTimer.Stop();
+            _indentationStatusTimer.Tick -= OnIndentationStatusTick;
+        }
         UnhookExternalEvents();
         Native.Modified -= OnNativeModified;
         Native.CharAdded -= OnNativeCharAdded;

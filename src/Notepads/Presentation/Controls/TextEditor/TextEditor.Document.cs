@@ -339,6 +339,7 @@ public sealed partial class TextEditor
             (metadata.UseContentBasedTitle ?? (!metadata.HasEditingFile && IsDefaultUntitledName(FileNamePlaceholder)));
         RefreshDisplayTitle();
         RestoreLanguageOverride(metadata.LanguageOverride);
+        RestoreIndentationOverride(metadata.IndentationOverride);
         RefreshDocumentLanguage();
         _requiresSaveAs = EditingFile == null && (metadata.RequiresSaveAs || metadata.HasEditingFile);
         if (!string.IsNullOrEmpty(metadata.RequestedEncoding))

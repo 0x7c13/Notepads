@@ -86,4 +86,31 @@ ComPtr<IDWriteTextLayout> DirectWriteTextLayoutCache::Get(std::wstring_view text
 	return layout;
 }
 
+float DirectWriteTextWidthCache::Get(std::wstring_view text) {
+	Entry *victim = nullptr;
+	if (!text.empty() && text.size() <= MaximumEntryUnits) {
+		const size_t first = (std::hash<std::wstring_view>{}(text) % (MaximumEntries / Ways)) * Ways;
+		victim = &entries[first];
+		for (size_t i = first; i < first + Ways; ++i) {
+			auto &entry = entries[i];
+			if (entry.used && std::wstring_view(entry.text.data(), entry.length) == text) {
+				entry.used = ++clock;
+				return entry.width;
+			}
+			if (entry.used < victim->used) victim = &entry;
+		}
+	}
+	bool cacheable = false;
+	const auto layout = CreateDrawingTextLayout(factory.Get(), format.Get(), text, 10000.0F, 1000.0F, &cacheable);
+	DWRITE_TEXT_METRICS metrics{};
+	if (!layout || FAILED(layout->GetMetrics(&metrics))) return 1.0F;
+	if (victim && cacheable) {
+		std::copy(text.begin(), text.end(), victim->text.begin());
+		victim->length = text.size();
+		victim->width = metrics.widthIncludingTrailingWhitespace;
+		victim->used = ++clock;
+	}
+	return metrics.widthIncludingTrailingWhitespace;
+}
+
 }

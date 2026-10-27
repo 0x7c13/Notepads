@@ -192,6 +192,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         TextEditorCore.TextChanged += TextEditorCore_OnTitleTextChanged;
         TextEditorCore.LanguageDetectionRequested += OnLanguageDetectionRequested;
         TextEditorCore.SyntaxStatusChanged += OnSyntaxStatusChanged;
+        TextEditorCore.IndentationChanged += OnIndentationChanged;
         TextEditorCore.ModificationStateChanged += TextEditorCore_OnModificationStateChanged;
         TextEditorCore.SelectionChanged += TextEditorCore_OnSelectionChanged;
         TextEditorCore.SizeChanged += TextEditorCore_OnSizeChanged;
@@ -267,6 +268,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         TextEditorCore.TextChanged -= TextEditorCore_OnTitleTextChanged;
         TextEditorCore.LanguageDetectionRequested -= OnLanguageDetectionRequested;
         TextEditorCore.SyntaxStatusChanged -= OnSyntaxStatusChanged;
+        TextEditorCore.IndentationChanged -= OnIndentationChanged;
         TextEditorCore.ModificationStateChanged -= TextEditorCore_OnModificationStateChanged;
         TextEditorCore.SelectionChanged -= TextEditorCore_OnSelectionChanged;
         TextEditorCore.SizeChanged -= TextEditorCore_OnSizeChanged;
@@ -334,6 +336,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             UseContentBasedTitle = _useContentBasedTitle,
             ContentTitle = EditingFile == null && _useContentBasedTitle ? GetContentTitle() : null,
             LanguageOverride = LanguageOverride,
+            IndentationOverride = IndentationOverride,
             LastSavedEncoding = EncodingCatalog.GetEncodingName(LastSavedSnapshot.Encoding),
             LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),
             DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime,

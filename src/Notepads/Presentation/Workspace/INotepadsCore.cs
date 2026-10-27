@@ -27,6 +27,7 @@ public interface INotepadsCore : IDisposable, IAsyncDisposable
     event EventHandler<WorkspaceTab> EditorAttached;
     event EventHandler<ITextEditor> TextEditorLoaded;
     event EventHandler<ITextEditor> TextEditorLanguageChanged;
+    event EventHandler<ITextEditor> TextEditorIndentationChanged;
     event EventHandler<ITextEditor> TextEditorEditorModificationStateChanged;
     event EventHandler<ITextEditor> TextEditorFileModificationStateChanged;
     event EventHandler<ITextEditor> TextEditorSaved;

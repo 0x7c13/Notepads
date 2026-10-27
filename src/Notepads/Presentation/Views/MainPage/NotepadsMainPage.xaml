@@ -334,6 +334,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid Column="0">
                 <Button x:Name="FileModificationStateIndicator"
@@ -632,7 +633,21 @@
                     </MenuFlyout>
                 </FlyoutBase.AttachedFlyout>
             </Button>
-            <Grid Column="8"
+            <Button Grid.Column="8" x:Name="IndentationIndicatorButton"
+                    Style="{StaticResource StatusBarButtonStyle}"
+                    AutomationProperties.Name="{Binding (AutomationProperties.Name), ElementName=IndentationIndicator}"
+                    Visibility="{Binding Visibility, ElementName=IndentationIndicator}"
+                    ui:FrameworkElementExtensions.Cursor="Hand"
+                    Click="StatusBarComponent_OnClick" ContextRequested="IndentationIndicator_OnContextRequested">
+                <TextBlock x:Name="IndentationIndicator" Style="{StaticResource StatusBarTextBlockStyle}"
+                           AutomationProperties.AccessibilityView="Raw"/>
+                <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout x:Name="IndentationSelectionFlyout" Placement="TopEdgeAlignedRight"
+                                Opening="IndentationSelectionFlyout_OnOpening" Closing="StatusBarFlyout_OnClosing"
+                                Closed="IndentationSelectionFlyout_OnClosed"/>
+                </FlyoutBase.AttachedFlyout>
+            </Button>
+            <Grid Column="9"
                   ui:FrameworkElementExtensions.Cursor="Hand">
 
                 <Button x:Name="ShadowWindowIndicator"

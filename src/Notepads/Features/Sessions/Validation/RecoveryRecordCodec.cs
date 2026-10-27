@@ -351,6 +351,8 @@ internal static partial class RecoveryRecordCodec
             }
         }
         var state = editor.StateMetaData;
+        if (state.IndentationOverride is not (0 or -1 or 2 or 4 or 8))
+            throw new InvalidDataException("Invalid recovery indentation override.");
         if (state.ContentTitle is string title && (state.UseContentBasedTitle != true ||
             title.Length > DocumentTitle.MaximumLength || title != DocumentTitle.FromPrefix(title)))
             throw new InvalidDataException("Invalid recovery content title.");

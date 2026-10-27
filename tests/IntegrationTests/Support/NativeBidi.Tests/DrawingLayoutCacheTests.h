@@ -18,6 +18,26 @@ ComPtr<IDWriteTextLayout> DrawingLayoutReference(Environment &env, IDWriteTextFo
 }
 
 void CheckDrawingLayoutCache(Environment &env) {
+    {
+        auto format = env.format;
+        DirectWriteTextWidthCache cache(env.factory.Get(), format.Get());
+        for (const auto text : {L"", L"1", L"99", L"100", L"1234567890", L"00001", L" 42 ", L"中文 🙂", L"e\u0301 עברית",
+            L"This is longer than the short-label cache admission limit"}) {
+            const auto reference = DrawingLayoutReference(env, format.Get(), text, 10000, 1000);
+            DWRITE_TEXT_METRICS expected{};
+            CheckHR(reference->GetMetrics(&expected), "Independent width query");
+            Require(cache.Get(text) == expected.widthIncludingTrailingWhitespace && cache.Get(text) == expected.widthIncludingTrailingWhitespace,
+                "Numeric, trailing-space, Unicode and oversized width queries preserve exact geometry");
+        }
+        for (unsigned int i = 0; i < 2048; ++i) {
+            const auto number = std::to_wstring(i);
+            const auto reference = DrawingLayoutReference(env, format.Get(), number, 10000, 1000);
+            DWRITE_TEXT_METRICS expected{};
+            CheckHR(reference->GetMetrics(&expected), "Width collision oracle");
+            Require(cache.Get(number) == expected.widthIncludingTrailingWhitespace,
+                "Eviction and hash collisions never return another label's width");
+        }
+    }
     bool cacheable = true;
     Require(!CreateDrawingTextLayout(env.factory.Get(), env.format.Get(), L"failure", -1, 40, &cacheable) && !cacheable,
         "Creation failures explicitly refuse cache admission");
@@ -31,6 +51,12 @@ void CheckDrawingLayoutCache(Environment &env) {
             DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, size, L"en-US", &format), "Cache font fixture");
         CheckHR(format->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP), "Cache uses ordinary unwrapped fragments");
         DirectWriteTextLayoutCache cache(env.factory.Get(), format.Get());
+        DirectWriteTextWidthCache widths(env.factory.Get(), format.Get());
+        const auto widthReference = DrawingLayoutReference(env, format.Get(), text, 10000, 1000);
+        DWRITE_TEXT_METRICS widthMetrics{};
+        CheckHR(widthReference->GetMetrics(&widthMetrics), "New font width oracle");
+        Require(widths.Get(text) == widthMetrics.widthIncludingTrailingWhitespace,
+            "A realised font owns its own width measurements");
         auto layout = cache.Get(text, 600, 50);
         Require(layout && layout.Get() == cache.Get(text, 600, 50).Get(), "Identical draws reuse the actual layout object");
         held = layout;

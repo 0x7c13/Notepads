@@ -37,6 +37,7 @@ internal static class WorkspaceCommandFeatureTests
     {
         await TabCloseSelectionTests.RunAsync(log);
         await DocumentTitleFeatureTests.RunAsync(log);
+        await IndentationFeatureTests.RunAsync(log);
         await using var host = await FeatureTestHost.CreateAsync();
         var page = host.Page;
         var core = host.Core;
@@ -157,7 +158,7 @@ internal static class WorkspaceCommandFeatureTests
                 Named<TextBlock>(page, "FontZoomIndicator").Visibility == Visibility.Collapsed,
                 "Pending status keeps recovery metadata without loading text or ready-editor zoom.");
             foreach (var name in new[] { "PathIndicatorButton", "ModificationIndicatorButton", "LineColumnIndicatorButton",
-                "FontZoomIndicatorButton", "LineEndingIndicatorButton", "EncodingIndicatorButton", "LanguageIndicatorButton" })
+                "FontZoomIndicatorButton", "LineEndingIndicatorButton", "EncodingIndicatorButton", "LanguageIndicatorButton", "IndentationIndicatorButton" })
                 Check(!Named<Button>(page, name).IsEnabled,
                     "Pending status disables keyboard and UIA actions as well as pointer input: " + name);
             context = (TabContextFlyout)page.TestContainer(pending).ContextFlyout;

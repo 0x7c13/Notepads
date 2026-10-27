@@ -195,7 +195,7 @@ internal static partial class SessionControllerTests
         public event EventHandler<WorkspaceTab> TabOpened, TabClosed, TabSelected, EditorAttached;
 #pragma warning disable CS0067
         public event EventHandler<WorkspaceTab> TabClosing, TabStateChanged;
-        public event EventHandler<ITextEditor> TextEditorLoaded, TextEditorLanguageChanged,
+        public event EventHandler<ITextEditor> TextEditorLoaded, TextEditorLanguageChanged, TextEditorIndentationChanged,
             TextEditorEditorModificationStateChanged, TextEditorFileModificationStateChanged, TextEditorSaved,
             TextEditorRenamed, TextEditorTitleChanged, TextEditorSelectionChanged, TextEditorFontZoomFactorChanged, TextEditorEncodingChanged,
             TextEditorLineEndingChanged, TextEditorMovedToAnotherAppInstance;
@@ -337,7 +337,7 @@ internal static partial class SessionControllerTests
         public event KeyEventHandler KeyDown;
         public event EventHandler ModificationStateChanged, FileModificationStateChanged, LineEndingChanged,
             EncodingChanged, SelectionChanged, FontZoomFactorChanged, TextChanging, ChangeReverted, FileSaved, FileReloaded,
-            FileRenamed, DisplayTitleChanged, LanguageChanged, LanguageOverrideChanged;
+            FileRenamed, DisplayTitleChanged, LanguageChanged, LanguageOverrideChanged, IndentationChanged, IndentationOverrideChanged;
 #pragma warning restore CS0067
 
         public SessionTestDocument Document { get; private set; }
@@ -394,6 +394,12 @@ internal static partial class SessionControllerTests
         public EditorSyntaxPauseReason SyntaxHighlightingPauseReason => throw Unused();
         public bool CanChangeLanguage => throw Unused();
         public void SetLanguageOverride(string id) => throw Unused();
+        public int IndentationOverride => throw Unused();
+        public int EffectiveIndentation => throw Unused();
+        public bool CanChangeIndentation => throw Unused();
+        public bool CanConvertIndentation => throw Unused();
+        public void SetIndentationOverride(int value) => throw Unused();
+        public Task ConvertIndentationAsync(bool useTabs) => throw Unused();
         public FileType FileType => throw Unused();
         public DocumentSnapshot LastSavedSnapshot => throw Unused();
         public Guid DocumentOwnerId { get => throw Unused(); set => throw Unused(); }

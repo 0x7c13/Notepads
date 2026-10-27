@@ -10,6 +10,7 @@ using Notepads.Features.Preferences;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Theming;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using WinUIEditor;
 
 namespace Notepads.Presentation.Controls.TextEditor;
@@ -31,6 +32,46 @@ public sealed partial class TextEditorCore
     private long _typedIndentationTriggerPos;
     private long _typedIndentationVersion;
     private long _typedIndentationPos;
+    private int _indentationOverride;
+    private DispatcherTimer _indentationStatusTimer;
+    internal event EventHandler IndentationChanged;
+    internal int IndentationOverride => _indentationOverride;
+    internal int EffectiveIndentation
+    {
+        get
+        {
+            var value = GetEffectiveIndentation();
+            return value == 0 ? Native.TabWidth : value;
+        }
+    }
+    internal bool CanConvertIndentation => CanEdit && !_view.IsComposing && !_view.HasTextStoreLock;
+
+    internal void SetIndentationOverride(int value)
+    {
+        if (value is not (0 or -1 or 2 or 4 or 8)) throw new ArgumentOutOfRangeException(nameof(value));
+        if (_indentationOverride == value) return;
+        _indentationOverride = value;
+        if (value == 0) ResetDetectedIndentation();
+        IndentationChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void QueueIndentationStatus()
+    {
+        if (_indentationOverride != 0 || _detectedIndentation != 0 || IndentationChanged == null) return;
+        if (_indentationStatusTimer == null)
+        {
+            _indentationStatusTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+            _indentationStatusTimer.Tick += OnIndentationStatusTick;
+        }
+        _indentationStatusTimer.Stop();
+        _indentationStatusTimer.Start();
+    }
+
+    private void OnIndentationStatusTick(object sender, object args)
+    {
+        _indentationStatusTimer.Stop();
+        if (!_disposed && !_settingText && !_movingToWindow) IndentationChanged?.Invoke(this, EventArgs.Empty);
+    }
 
     private bool HasBracketRules => _language.Id is not ("plaintext" or "markdown" or "html" or "xml" or "yaml");
     private bool HasColonRules => _language.Id is "python" or "yaml";
@@ -45,6 +86,8 @@ public sealed partial class TextEditorCore
 
     private int GetEffectiveIndentation()
     {
+        if (_indentationOverride != 0)
+            return _language.Id == "yaml" && _indentationOverride < 0 ? 2 : _indentationOverride;
         // A detected result stays until the next load; an unknown one is retried after edits.
         if (_detectedIndentation == 0 && _indentationCheckedVersion != ContentVersion)
         {

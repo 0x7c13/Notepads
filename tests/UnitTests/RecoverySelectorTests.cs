@@ -16,6 +16,23 @@ namespace Notepads.UnitTests;
 public sealed class RecoverySelectorTests
 {
     [Fact]
+    public void IndentationOverrideRejectsUnsupportedValues()
+    {
+        var fixture = new Evidence();
+        var read = fixture.Rescue(fixture.Editor(12, 5));
+        foreach (var value in new[] { 0, -1, 2, 4, 8 })
+        {
+            read.Record.Editor.StateMetaData.IndentationOverride = value;
+            _ = RecoveryRecordCodec.Encode(read.Record, read.Address);
+        }
+        foreach (var value in new[] { int.MinValue, -2, 1, 3, 256, int.MaxValue })
+        {
+            read.Record.Editor.StateMetaData.IndentationOverride = value;
+            Assert.Throws<System.IO.InvalidDataException>(() => RecoveryRecordCodec.Encode(read.Record, read.Address));
+        }
+    }
+
+    [Fact]
     public void ContentTitleMetadataMustBeBoundedNormalizedAndAutomatic()
     {
         var fixture = new Evidence();

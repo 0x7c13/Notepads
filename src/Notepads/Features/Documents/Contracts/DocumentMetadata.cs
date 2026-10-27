@@ -20,6 +20,10 @@ public sealed class DocumentMetadata
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string LanguageOverride { get; set; }
 
+    // 0 follows detection/language/preferences; -1 uses tabs; 2/4/8 use spaces.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public int IndentationOverride { get; set; }
+
     public string LastSavedEncoding { get; set; }
 
     public string LastSavedLineEnding { get; set; }

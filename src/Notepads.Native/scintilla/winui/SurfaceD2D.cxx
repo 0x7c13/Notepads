@@ -157,6 +157,7 @@ void LoadD2DOnce() noexcept {
 struct FontDirectWrite : public Font {
 	winrt::com_ptr<IDWriteTextFormat> pTextFormat;
 	mutable std::unique_ptr<DirectWriteTextLayoutCache> drawingLayouts;
+	mutable std::unique_ptr<DirectWriteTextWidthCache> textWidths;
 	FontQuality extraFontFlag = FontQuality::QualityDefault;
 	CharacterSet characterSet = CharacterSet::Ansi;
 	static constexpr FLOAT minimalAscent = 2.0f;
@@ -206,7 +207,7 @@ struct FontDirectWrite : public Font {
 			}
 		}
 	}
-	// Copy the immutable font state; each copy starts with an empty drawing cache.
+	// Copy the immutable font state; each copy starts with empty caches.
 	FontDirectWrite(const FontDirectWrite &other) noexcept {
 		pTextFormat = other.pTextFormat;
 		extraFontFlag = other.extraFontFlag;
@@ -220,6 +221,13 @@ struct FontDirectWrite : public Font {
 	FontDirectWrite &operator=(const FontDirectWrite &) = delete;
 	FontDirectWrite &operator=(FontDirectWrite &&) = delete;
 	~FontDirectWrite() noexcept override = default;
+
+	// WidthText runs on the owner thread. Parallel workers use MeasureWidths,
+	// whose mutable position measurements are not shared with this cache.
+	FLOAT TextWidth(std::wstring_view text) const {
+		if (!textWidths) textWidths = std::make_unique<DirectWriteTextWidthCache>(pIDWriteFactory, pTextFormat.get());
+		return textWidths->Get(text);
+	}
 
 	[[nodiscard]] int CodePageText(int codePage) const noexcept {
 		if (!(codePage == CpUtf8) && (characterSet != CharacterSet::Ansi)) {
@@ -1549,12 +1557,7 @@ XYPOSITION SurfaceD2D::WidthText(const Font *font_, std::string_view text) {
 	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_);
 	if (pfm->pTextFormat) {
 		const TextWide tbuf(text, pfm->CodePageText(mode.codePage));
-		// Create a layout
-		if (TextLayout pTextLayout = LayoutCreate(tbuf.AsView(), pfm->pTextFormat.get())) {
-			DWRITE_TEXT_METRICS textMetrics;
-			if (SUCCEEDED(pTextLayout->GetMetrics(&textMetrics)))
-				width = textMetrics.widthIncludingTrailingWhitespace;
-		}
+		width = pfm->TextWidth(tbuf.AsView());
 	}
 	return width;
 }
@@ -1622,12 +1625,7 @@ XYPOSITION SurfaceD2D::WidthTextUTF8(const Font * font_, std::string_view text) 
 	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_);
 	if (pfm->pTextFormat) {
 		const TextWide tbuf(text, CpUtf8);
-		// Create a layout
-		if (TextLayout pTextLayout = LayoutCreate(tbuf.AsView(), pfm->pTextFormat.get())) {
-			DWRITE_TEXT_METRICS textMetrics;
-			if (SUCCEEDED(pTextLayout->GetMetrics(&textMetrics)))
-				width = textMetrics.widthIncludingTrailingWhitespace;
-		}
+		width = pfm->TextWidth(tbuf.AsView());
 	}
 	return width;
 }

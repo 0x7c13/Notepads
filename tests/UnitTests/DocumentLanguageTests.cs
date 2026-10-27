@@ -84,4 +84,24 @@ public sealed class DocumentLanguageTests
         data.StateMetaData.LanguageOverride = null;
         Assert.Equal(previousHash, data.ComputeSha256());
     }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(2)]
+    [InlineData(4)]
+    [InlineData(8)]
+    public void DocumentIndentationRoundTripsWithoutChangingLegacyAutomaticIdentity(int value)
+    {
+        var data = new TextEditorSessionDataV2 { StateMetaData = new DocumentMetadata() };
+        var hash = data.ComputeSha256();
+        Assert.DoesNotContain("IndentationOverride", JsonSerializer.Serialize(data, SessionJsonContext.Default.TextEditorSessionDataV2));
+        data.StateMetaData.IndentationOverride = value;
+        var json = JsonSerializer.Serialize(data, SessionJsonContext.Default.TextEditorSessionDataV2);
+        var restored = JsonSerializer.Deserialize(json, SessionJsonContext.Default.TextEditorSessionDataV2);
+        Assert.Equal(value, restored.StateMetaData.IndentationOverride);
+        Assert.Equal(value, data.StateMetaData.Clone().IndentationOverride);
+        Assert.NotEqual(hash, data.ComputeSha256());
+        data.StateMetaData.IndentationOverride = 0;
+        Assert.Equal(hash, data.ComputeSha256());
+    }
 }

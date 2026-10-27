@@ -366,6 +366,7 @@ internal static class InteractiveEditorHost
                 _disposed = true;
                 break;
             case "exit" when command.Length == 1:
+                KeyboardLayoutTestScope.Restore();
                 if (_imeWorkspace != null) await _imeWorkspace.DisposeAsync();
                 _imeWorkspace = null;
                 await NotepadsIntegrationTests.TabDragTestHost.DisposeAsync();
@@ -386,6 +387,11 @@ internal static class InteractiveEditorHost
                 ApplicationPreferences.IsSessionSnapshotEnabled = true;
                 _imeWorkspace = await NotepadsIntegrationTests.FeatureTestHost.CreateAsync();
                 return ImeWorkspaceState();
+            case "keyboard-layout-polish" when command.Length == 1:
+                return KeyboardLayoutTestScope.Begin();
+            case "keyboard-layout-restore" when command.Length == 1:
+                KeyboardLayoutTestScope.Restore();
+                return "keyboardLayoutRestored=True\n";
             case "ime-workspace-new" when command.Length == 2:
                 var workspaceEditor = (TextEditor)await _imeWorkspace.Core.CreateNewTextEditorAsync(DecodeText(command[1]));
                 _imeWorkspace.Core.OpenTextEditor(workspaceEditor);
@@ -448,7 +454,8 @@ internal static class InteractiveEditorHost
             "\nundoDepth=" + view.Editor.UndoSequence + "\nisComposing=" + view.IsComposing +
             "\ncanUndo=" + view.Editor.CanUndo() + "\ncanRedo=" + view.Editor.CanRedo() +
             "\ncaret=" + view.Editor.CurrentPos + "\nlength=" + view.Editor.Length +
-            "\ntitle64=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(editor.DisplayTitle)) + "\n";
+            "\ntitle64=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(editor.DisplayTitle)) +
+            "\ntabCount=" + _imeWorkspace.Core.GetTabs().Length + "\n";
     }
 
     private static async Task<string> CheckImeJournalAsync()

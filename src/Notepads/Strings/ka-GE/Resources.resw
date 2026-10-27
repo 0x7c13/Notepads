@@ -304,4 +304,10 @@
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>ჩანართების წინ გადახვევა</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>ახალ ფანჯარაში გადატანა</value></data>
   <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>გადატანა ვერ დასრულდა. საწყისი ჩანართი შენარჩუნებულია. შეამოწმეთ, გაიხსნა თუ არა ახალი ფანჯარა.</value></data>
+  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>ტაბულაციები</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>გამოტოვებები: {0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>ამ დოკუმენტის შეწევა</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>შეწევის გამოტოვებებად გარდაქმნა</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>შეწევის ტაბულაციებად გარდაქმნა</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>შეწევის გარდაქმნა ვერ მოხერხდა.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
 </root>

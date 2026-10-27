@@ -18,6 +18,7 @@ public sealed partial class TextEditorCore
     internal void HookExternalEvents()
     {
         ApplicationPreferences.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
+        ApplicationPreferences.OnDefaultTabIndentsChanged += EditorSettingsService_OnDefaultTabIndentsChanged;
         ApplicationPreferences.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
         ApplicationPreferences.OnFontStyleChanged += EditorSettingsService_OnFontStyleChanged;
         ApplicationPreferences.OnFontWeightChanged += EditorSettingsService_OnFontWeightChanged;
@@ -32,6 +33,7 @@ public sealed partial class TextEditorCore
     internal void UnhookExternalEvents()
     {
         ApplicationPreferences.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
+        ApplicationPreferences.OnDefaultTabIndentsChanged -= EditorSettingsService_OnDefaultTabIndentsChanged;
         ApplicationPreferences.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;
         ApplicationPreferences.OnFontStyleChanged -= EditorSettingsService_OnFontStyleChanged;
         ApplicationPreferences.OnFontWeightChanged -= EditorSettingsService_OnFontWeightChanged;
@@ -55,6 +57,13 @@ public sealed partial class TextEditorCore
                 ApplyFont();
             });
         });
+    }
+
+    private async void EditorSettingsService_OnDefaultTabIndentsChanged(object sender, int indentation)
+    {
+        if (_disposed) return;
+        await Dispatcher.CallOnUIThreadAsync(() => ApplyOrDeferMoveSetting(nameof(EditorSettingsService_OnDefaultTabIndentsChanged),
+            () => IndentationChanged?.Invoke(this, System.EventArgs.Empty)));
     }
 
     private async void EditorSettingsService_OnFontSizeChanged(object sender, int fontSize)

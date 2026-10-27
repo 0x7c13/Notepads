@@ -38,6 +38,7 @@ public sealed partial class NotepadsMainPage
     private void UpdateLanguageIndicator(ITextEditor editor)
     {
         if (StatusBar == null) return;
+        UpdateIndentationIndicator(editor);
         var label = GetLanguageLabel(editor.DocumentLanguage);
         LanguageIndicator.Text = label;
         var description = _resourceLoader.GetString("TextEditor_Language_Select") + ": " + label;

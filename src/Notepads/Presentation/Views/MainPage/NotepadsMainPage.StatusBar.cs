@@ -38,7 +38,7 @@ public sealed partial class NotepadsMainPage
         FileModificationStateIndicator.IsEnabled = PathIndicatorButton.IsEnabled =
             ModificationIndicatorButton.IsEnabled = LineColumnIndicatorButton.IsEnabled =
             FontZoomIndicatorButton.IsEnabled = LineEndingIndicatorButton.IsEnabled =
-            EncodingIndicatorButton.IsEnabled = LanguageIndicatorButton.IsEnabled =
+            EncodingIndicatorButton.IsEnabled = LanguageIndicatorButton.IsEnabled = IndentationIndicatorButton.IsEnabled =
             ShadowWindowIndicator.IsEnabled = enabled;
     }
 
@@ -54,7 +54,7 @@ public sealed partial class NotepadsMainPage
         {
             SetStatusBarInteractive(true);
             LineColumnIndicator.Visibility = FontZoomIndicator.Visibility = LineEndingIndicator.Visibility =
-                EncodingIndicator.Visibility = LanguageIndicator.Visibility = Visibility.Visible;
+                EncodingIndicator.Visibility = LanguageIndicator.Visibility = IndentationIndicator.Visibility = Visibility.Visible;
         }
         UpdateApplicationTitle(textEditor);
         UpdateFileModificationStateIndicator(textEditor);
@@ -88,7 +88,7 @@ public sealed partial class NotepadsMainPage
             _resourceLoader.GetString("WorkspaceTab_LoadFailed") : string.Empty;
         LineColumnIndicator.Visibility = tab?.State == WorkspaceTabState.Failed ? Visibility.Visible : Visibility.Collapsed;
         FontZoomIndicator.Visibility = LineEndingIndicator.Visibility =
-            EncodingIndicator.Visibility = LanguageIndicator.Visibility = Visibility.Collapsed;
+            EncodingIndicator.Visibility = LanguageIndicator.Visibility = IndentationIndicator.Visibility = Visibility.Collapsed;
         UpdateShadowWindowIndicator();
     }
 
@@ -419,6 +419,10 @@ public sealed partial class NotepadsMainPage
         else if (ReferenceEquals(sender, LanguageIndicatorButton) && selectedEditor.CanChangeLanguage)
         {
             LanguageSelectionFlyout.ShowAt(LanguageIndicatorButton);
+        }
+        else if (ReferenceEquals(sender, IndentationIndicatorButton) && selectedEditor.CanChangeIndentation)
+        {
+            IndentationSelectionFlyout.ShowAt(IndentationIndicatorButton);
         }
     }
 

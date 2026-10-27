@@ -52,6 +52,7 @@ public sealed partial class NotepadsCore : INotepadsCore
     public event EventHandler<ITextEditor> TextEditorSelectionChanged;
     public event EventHandler<ITextEditor> TextEditorFontZoomFactorChanged;
     public event EventHandler<ITextEditor> TextEditorLanguageChanged;
+    public event EventHandler<ITextEditor> TextEditorIndentationChanged;
     public event EventHandler<ITextEditor> TextEditorEncodingChanged;
     public event EventHandler<ITextEditor> TextEditorLineEndingChanged;
     public event EventHandler<ITextEditor> TextEditorMovedToAnotherAppInstance;
@@ -390,6 +391,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         textEditor.SelectionChanged += TextEditor_OnSelectionChanged;
         textEditor.FontZoomFactorChanged += TextEditor_OnFontZoomFactorChanged;
         textEditor.LanguageChanged += TextEditor_OnLanguageChanged;
+        textEditor.IndentationChanged += TextEditor_OnIndentationChanged;
         textEditor.KeyDown += TextEditor_OnKeyDown;
         textEditor.ModificationStateChanged += TextEditor_OnEditorModificationStateChanged;
         textEditor.FileModificationStateChanged += TextEditor_OnFileModificationStateChanged;
@@ -441,6 +443,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         textEditor.SelectionChanged -= TextEditor_OnSelectionChanged;
         textEditor.FontZoomFactorChanged -= TextEditor_OnFontZoomFactorChanged;
         textEditor.LanguageChanged -= TextEditor_OnLanguageChanged;
+        textEditor.IndentationChanged -= TextEditor_OnIndentationChanged;
         textEditor.ModificationStateChanged -= TextEditor_OnEditorModificationStateChanged;
         textEditor.FileModificationStateChanged -= TextEditor_OnFileModificationStateChanged;
         textEditor.LineEndingChanged -= TextEditor_OnLineEndingChanged;
@@ -719,6 +722,11 @@ public sealed partial class NotepadsCore : INotepadsCore
     private void TextEditor_OnLanguageChanged(object sender, EventArgs e)
     {
         if (sender is ITextEditor editor) TextEditorLanguageChanged?.Invoke(this, editor);
+    }
+
+    private void TextEditor_OnIndentationChanged(object sender, EventArgs e)
+    {
+        if (sender is ITextEditor editor) TextEditorIndentationChanged?.Invoke(this, editor);
     }
 
     private void TextEditor_OnFileRenamed(object sender, EventArgs e)

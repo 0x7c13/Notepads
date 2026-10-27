@@ -130,6 +130,7 @@ internal sealed class TextEditorTransfer
             metadata.RequestedEncoding == captured.RequestedEncoding &&
             metadata.RequestedLineEnding == captured.RequestedLineEnding &&
             metadata.LanguageOverride == captured.LanguageOverride &&
+            metadata.IndentationOverride == captured.IndentationOverride &&
             metadata.FileNamePlaceholder == captured.FileNamePlaceholder &&
             metadata.UseContentBasedTitle == captured.UseContentBasedTitle &&
             metadata.RequiresSaveAs == captured.RequiresSaveAs &&

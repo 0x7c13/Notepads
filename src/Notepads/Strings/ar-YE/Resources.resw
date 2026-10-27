@@ -304,4 +304,10 @@
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>تمرير علامات التبويب للأمام</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>نقل إلى نافذة جديدة</value></data>
   <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>تعذر إكمال النقل. تم الاحتفاظ بعلامة التبويب الأصلية. تحقق مما إذا فُتحت نافذة جديدة.</value></data>
+  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>علامات جدولة</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>مسافات: {0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>المسافة البادئة لهذا المستند</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>تحويل المسافة البادئة إلى مسافات</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>تحويل المسافة البادئة إلى علامات جدولة</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>تعذر تحويل المسافة البادئة.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
 </root>
