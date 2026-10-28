@@ -61,7 +61,7 @@ packaging design and corresponding validation.
 | Lexilla | 5.5.4 | Only 13 lexer source files / 14 modules and shared lexlib are compiled, with the documented CR-newline fix. |
 | Windows ICU | OS component | Regex uses `icuuc.dll` and `icuin.dll`, not the newer combined `icu.dll`; servicing follows Windows. |
 | DirectWrite / Direct2D / D3D11 | OS components | Text layout, painting and compositing. No separately bundled rendering engine. |
-| Microsoft.Windows.CppWinRT | 2.0.250303.1 | Candidate for a separate 3.0.260818.1 upgrade with cancellation/lifetime regression tests. |
+| Microsoft.Windows.CppWinRT | 3.0.260818.1 | Upgraded with cancellation/lifetime AOT regression coverage. Retain the existing C++20 projection headers/PCH; modules remain disabled. |
 | Microsoft.Windows.SDK.BuildTools, native project | 10.0.28000.2705 | Updated build tools; packages.config, imports and missing-package guards use the same version. SDK headers and the runtime OS floor are unchanged. |
 | .NET SDK | global.json: 10.0.401, latestPatch | Local installed patches can roll forward; CI bootstraps the explicit version. Runtime/ILCompiler versions follow that SDK through NativeAot.targets. |
 | Windows SDK headers / managed target | 10.0.26100.0 | Compilation target, not the minimum runtime OS. |
@@ -96,15 +96,11 @@ target; it is not a claim that every OS/architecture combination has been tested
 
 ## Follow-up decisions
 
-1. Evaluate **C++/WinRT 3.0.260818.1** separately. It fixes races around cancellable
-   awaitable setup/teardown; 3.0 also removes pre-standard coroutine support.
-   The generated 2.0 base header contains the older implementation, but no direct
-   use of its affected resume_after/resume_on_signal awaiters was found in the
-   retained product source, and no application failure was reproduced. Notepads
-   already uses C++20 and explicitly disables propagation on several publication
-   paths; neither fact proves all async paths unaffected. Validate
-   cancellation, disposal, streaming, journal publication and cross-window moves
-   under real AOT builds before replacing the generator/headers.
+1. Evaluate **C++/WinRT C++20 modules** only as a separate build-time experiment.
+   The 3.0 package upgrade below retains projection headers/PCH. Modules require
+   changes to PCH/import ordering and generated-XAML integration; benefits from
+   sharing modules across native projects do not establish a benefit for this
+   single native component. Measure before adopting them.
 2. **UTF.Unknown 2.8.0** changes byte/span detection batching to match stream
    detection. The maintenance upgrade is now applied. Notepads still calls
    DetectFromStream; no file-opening speed or detection-accuracy gain is claimed.
@@ -141,7 +137,7 @@ change is not a performance experiment or proof of oldest-OS/x86 runtime support
 
 UTF.Unknown 2.7.0 -> 2.8.0, native Windows SDK BuildTools
 10.0.28000.1839 -> 10.0.28000.2705 and Microsoft.NET.Test.Sdk
-18.10.1 -> 18.11.0 are now applied. C++/WinRT remains 2.0.250303.1.
+18.10.1 -> 18.11.0 are now applied. The separate C++/WinRT upgrade follows below.
 
 - New and old UTF.Unknown assemblies give identical stream results for 91
   samples, including truncated input, malformed UTF-8, random bytes and chunk
@@ -169,6 +165,63 @@ or errors. Unit compilation retains five xUnit1051 cancellation-token warnings
 already present in the 2026-10-27 baseline; no analyzer suppressions were added.
 No performance A/B, oldest-Windows run or x86/x64 product execution was performed.
 
+### C++/WinRT 3.0 upgrade
+
+Microsoft.Windows.CppWinRT 2.0.250303.1 -> 3.0.260818.1 changes only the native
+package pin and its matching props/targets imports and missing-package guards.
+Notepads already uses standard C++20 coroutines, so removal of pre-standard
+`/await` support needs no product adaptation. CsWinRT, UWP/WinUI 2, SDK headers,
+the OS minimum and supported architectures remain unchanged.
+
+The SDK fixes races in cancellation registration/revocation and overlapping
+Cancel calls. Ordinary WinRT `co_await` can use this machinery as well as
+`resume_after` / `resume_on_signal`, but registration requires cancellation
+propagation, which is disabled by default. The retained native source has six
+explicit `enable_propagation(false)` calls and no enabling call or direct use of
+those two awaiters. No current Notepads failure attributable to this SDK race
+has been reproduced.
+
+Keep the existing cancellation flags, owner-apartment cleanup and read-lease
+draining. The SDK fix does not replace application ownership: a canceled load,
+restore, journal or Diff/regex job must still stop using its resources before
+its completion permits reuse or disposal.
+
+Validation on 2026-10-28, using the isolated upgrade candidate:
+
+- Production Native AOT publish, architecture/PE/framework checks and offline
+  `-CheckOnly` pass for ARM64, x64 and x86.
+- Release ARM64 AOT Editor, NativeStorage, Persistence, WindowMove and Search
+  pass, including isolated-data preservation. Coverage includes finalization,
+  cancellation/restart, blocked reads retaining leases until completion, journal
+  and recovery publication, undo/selection transfer and search admission.
+  WindowMove uses a test launcher; this is not a new Windows-broker input test.
+- ARM64 WinRT metadata is byte-identical after excluding the build MVID. The
+  native DLL adds no static system API import. The full native build retains
+  exactly the same 192 warning instances as the 2.0 baseline.
+- A standalone probe against each SDK's actual generated headers uses semaphore
+  barriers for two cancellation interleavings. Each scenario fails all 1,000
+  repetitions with 2.0 and passes all 1,000 with 3.0. This confirms the SDK fix;
+  it is not an application reproduction or exhaustive race coverage.
+
+Separate SDK review found that `Cancel()` and the canceled `await_transform()`
+path call the `originate_on_cancel()` setter as a getter. This resets the optional
+false policy and may introduce concurrent flag writes if those paths overlap.
+Notepads does not use the opt-out. Its externally canceled SDK coroutines have
+no ordinary await after their caller-visible suspension; multi-await workers
+receive neither direct nor propagated cancellation. No current product path to
+the overlap was identified. Reassess this upstream issue before adding later
+awaits to those public operations or adopting the opt-out; disabling propagation
+alone would not address this separate flag-access issue.
+
+The adopted configuration files are identical to that candidate. After adoption,
+the main worktree also passes ARM64 Production AOT/offline checks, Release AOT
+Editor and NativeStorage, and Headers. Retaining the old build directories
+correctly regenerates 3.0 headers in both Production and Release without a clean.
+
+The generator's file-reading improvements concern build time; no startup,
+scrolling, memory or build-speed improvement is claimed without performance A/B.
+Windows 10 17763 and x86/x64 product execution remain separate validation gaps.
+
 ## Rechecking the inventory
 
 Restore using the repository build scripts, then inspect the resolved graph,
@@ -193,6 +246,7 @@ Primary references: [WinUI](https://www.nuget.org/packages/Microsoft.UI.Xaml),
 [Toolkit](https://www.nuget.org/packages/CommunityToolkit.Uwp.Helpers),
 [UTF.Unknown release](https://github.com/CharsetDetector/UTF-unknown/releases/tag/v2.8),
 [C++/WinRT 3.0](https://github.com/microsoft/cppwinrt/releases/tag/3.0.260520.1),
+[C++/WinRT pinned release](https://github.com/microsoft/cppwinrt/releases/tag/3.0.260818.1),
 [cancellation fix](https://github.com/microsoft/cppwinrt/pull/1609),
 [WebView2 SDK](https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.4314.35),
 [Windows SDK BuildTools](https://www.nuget.org/packages/Microsoft.Windows.SDK.BuildTools/10.0.28000.2705),
