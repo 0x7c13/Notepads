@@ -155,12 +155,13 @@ namespace Notepads.Controls.TextEditor
 
         private Dictionary<int, Rect> CalculateLineNumberTextRenderingPositions(string[] lines, ITextRange startRange, ITextRange endRange)
         {
-            var offset = 0;
             var lineRects = new Dictionary<int, Rect>(); // 1 - based
+            var firstLineIndex = Math.Max(0, FindDocumentLineIndex(startRange.StartPosition) - 1);
 
-            for (int i = 0; i < lines.Length - 1; i++)
+            for (int i = firstLineIndex; i < lines.Length - 1; i++)
             {
                 var line = lines[i];
+                var offset = _documentLineStartOffsets[i];
 
                 // Use "offset + line.Length + 1" instead of just "offset" here is to capture the line right above the viewport
                 if (offset + line.Length + 1 >= startRange.StartPosition && offset <= endRange.EndPosition)
@@ -175,7 +176,6 @@ namespace Notepads.Controls.TextEditor
                     break;
                 }
 
-                offset += line.Length + 1; // 1 for line ending: '\r'
             }
 
             return lineRects;

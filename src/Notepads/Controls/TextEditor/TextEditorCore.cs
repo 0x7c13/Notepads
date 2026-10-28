@@ -41,10 +41,13 @@ namespace Notepads.Controls.TextEditor
 
         private const char RichEditBoxDefaultLineEnding = '\r';
         private const char RegexDefaultLineEnding = '\n';
+        private const int MaximumUnwrappedLineLength = 32 * 1024;
 
         private bool _isDocumentLinesCachePendingUpdate = true;
         private string[] _documentLinesCache; // internal copy of the active document text in array format
+        private int[] _documentLineStartOffsets;
         private string _document = string.Empty; // internal copy of the active document text
+        private bool _isBulkSettingText;
 
         private readonly ICommandHandler<KeyRoutedEventArgs> _keyboardCommandHandler;
         private readonly ICommandHandler<PointerRoutedEventArgs> _mouseCommandHandler;
@@ -374,7 +377,7 @@ namespace Notepads.Controls.TextEditor
 
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
-            if (args.IsContentChanging)
+            if (args.IsContentChanging && !_isBulkSettingText)
             {
                 Document.GetText(TextGetOptions.None, out var document);
                 _document = TrimRichEditBoxText(document);
@@ -490,7 +493,45 @@ namespace Notepads.Controls.TextEditor
 
         public void SetText(string text)
         {
-            Document.SetText(TextSetOptions.None, text);
+            text = text ?? string.Empty;
+
+            if (TextWrapping == TextWrapping.NoWrap && ContainsOverlongLine(text))
+            {
+                TextWrapping = TextWrapping.Wrap;
+            }
+
+            _document = NormalizeRichEditBoxLineEndings(text);
+            _documentLinesCache = null;
+            _documentLineStartOffsets = null;
+            _isDocumentLinesCachePendingUpdate = true;
+
+            _isBulkSettingText = true;
+            try
+            {
+                Document.SetText(TextSetOptions.None, text);
+            }
+            finally
+            {
+                _isBulkSettingText = false;
+            }
+        }
+
+        private static bool ContainsOverlongLine(string text)
+        {
+            var lineLength = 0;
+            foreach (var character in text)
+            {
+                if (character == '\r' || character == '\n')
+                {
+                    lineLength = 0;
+                }
+                else if (++lineLength > MaximumUnwrappedLineLength)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -616,10 +657,24 @@ namespace Notepads.Controls.TextEditor
             if (_isDocumentLinesCachePendingUpdate)
             {
                 _documentLinesCache = (GetText() + RichEditBoxDefaultLineEnding).Split(RichEditBoxDefaultLineEnding);
+                _documentLineStartOffsets = new int[_documentLinesCache.Length];
+                var offset = 0;
+                for (var i = 0; i < _documentLinesCache.Length; i++)
+                {
+                    _documentLineStartOffsets[i] = offset;
+                    offset += _documentLinesCache[i].Length + 1;
+                }
                 _isDocumentLinesCachePendingUpdate = false;
             }
 
             return _documentLinesCache;
+        }
+
+        private int FindDocumentLineIndex(int characterPosition)
+        {
+            GetDocumentLinesCache();
+            var index = Array.BinarySearch(_documentLineStartOffsets, characterPosition);
+            return index >= 0 ? index : Math.Max(0, ~index - 1);
         }
 
         public double GetFontZoomFactor()
@@ -795,6 +850,16 @@ namespace Notepads.Controls.TextEditor
             }
 
             return text;
+        }
+
+        private static string NormalizeRichEditBoxLineEndings(string text)
+        {
+            if (text.IndexOf(RegexDefaultLineEnding) < 0)
+            {
+                return text;
+            }
+
+            return text.Replace("\r\n", "\r").Replace(RegexDefaultLineEnding, RichEditBoxDefaultLineEnding);
         }
 
         private bool IsSelectionRectInView(Windows.Foundation.Rect rect, double horizontalOffset, double verticalOffset)

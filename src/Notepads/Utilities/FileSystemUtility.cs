@@ -15,7 +15,6 @@ namespace Notepads.Utilities
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using UtfUnknown;
-    using Windows.ApplicationModel.Resources;
     using Windows.Storage;
     using Windows.Storage.FileProperties;
     using Windows.Storage.Provider;
@@ -39,9 +38,8 @@ namespace Notepads.Utilities
         private const Int32 ERROR_UNABLE_TO_REMOVE_REPLACED = unchecked((Int32)0x80070497);
         private const Int32 ERROR_FAIL = unchecked((Int32)0x80004005);
 
-        private static readonly ResourceLoader ResourceLoader = ResourceLoader.GetForCurrentView();
-
         private const string WslRootPath = "\\\\wsl$\\";
+        private const int EncodingDetectionSampleSize = 256 * 1024;
 
         // https://stackoverflow.com/questions/62771/how-do-i-check-if-a-given-string-is-a-legal-valid-file-name-under-windows
         private static readonly Regex ValidWindowsFileNames = new Regex(@"^(?!(?:PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d)(?:\..+)?$)[^\x00-\x1F\xA5\\?*:\"";|\/<>]+(?<![\s.])$", RegexOptions.IgnoreCase);
@@ -344,11 +342,6 @@ namespace Notepads.Utilities
         {
             var fileProperties = await file.GetBasicPropertiesAsync();
 
-            if (!ignoreFileSizeLimit && fileProperties.Size > 1000 * 1024)
-            {
-                throw new Exception(ResourceLoader.GetString("ErrorMessage_NotepadsFileSizeLimit"));
-            }
-
             Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
             string text;
@@ -357,33 +350,34 @@ namespace Notepads.Utilities
             using (var inputStream = await file.OpenReadAsync())
             using (var stream = inputStream.AsStreamForRead())
             {
-                stream.Read(bom, 0, 4); // Read BOM values
+                await stream.ReadAsync(bom, 0, bom.Length).ConfigureAwait(false); // Read BOM values
                 stream.Position = 0; // Reset stream position
 
                 var reader = CreateStreamReader(stream, bom, encoding);
 
-                string PeekAndRead()
+                async Task<string> PeekAndReadAsync()
                 {
                     if (encoding == null)
                     {
                         reader.Peek();
                         encoding = reader.CurrentEncoding;
                     }
-                    var str = reader.ReadToEnd();
-                    reader.Close();
+                    var str = await reader.ReadToEndAsync().ConfigureAwait(false);
+                    reader.Dispose();
                     return str;
                 }
 
                 try
                 {
-                    text = PeekAndRead();
+                    text = await PeekAndReadAsync().ConfigureAwait(false);
                 }
                 catch (DecoderFallbackException)
                 {
+                    reader.Dispose();
                     stream.Position = 0; // Reset stream position
                     encoding = GetFallBackEncoding();
-                    reader = new StreamReader(stream, encoding);
-                    text = PeekAndRead();
+                    reader = new StreamReader(stream, encoding, true, 64 * 1024, true);
+                    text = await PeekAndReadAsync().ConfigureAwait(false);
                 }
             }
 
@@ -412,13 +406,13 @@ namespace Notepads.Utilities
             StreamReader reader;
             if (encoding != null)
             {
-                reader = new StreamReader(stream, encoding);
+                reader = new StreamReader(stream, encoding, true, 64 * 1024, true);
             }
             else
             {
                 if (HasBom(bom))
                 {
-                    reader = new StreamReader(stream);
+                    reader = new StreamReader(stream, Encoding.UTF8, true, 64 * 1024, true);
                 }
                 else // No BOM, need to guess or use default decoding set by user
                 {
@@ -427,12 +421,12 @@ namespace Notepads.Utilities
                         var success = TryGuessEncoding(stream, out var autoEncoding);
                         stream.Position = 0; // Reset stream position
                         reader = success ?
-                            new StreamReader(stream, autoEncoding) :
-                            new StreamReader(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true));
+                            new StreamReader(stream, autoEncoding, true, 64 * 1024, true) :
+                            new StreamReader(stream, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true), true, 64 * 1024, true);
                     }
                     else
                     {
-                        reader = new StreamReader(stream, AppSettingsService.EditorDefaultDecoding);
+                        reader = new StreamReader(stream, AppSettingsService.EditorDefaultDecoding, true, 64 * 1024, true);
                     }
                 }
             }
@@ -445,15 +439,28 @@ namespace Notepads.Utilities
 
             try
             {
-                var result = CharsetDetector.DetectFromStream(stream);
-                if (result.Detected?.Encoding != null) // Detected can be null
+                var sampleLength = (int)Math.Min(stream.Length, EncodingDetectionSampleSize);
+                var sample = new byte[sampleLength];
+                var bytesRead = 0;
+                while (bytesRead < sampleLength)
                 {
-                    encoding = AnalyzeAndGuessEncoding(result);
-                    return true;
+                    var count = stream.Read(sample, bytesRead, sampleLength - bytesRead);
+                    if (count == 0) break;
+                    bytesRead += count;
                 }
-                else if (stream.Length > 0) // We do not care about empty file
+
+                using (var sampleStream = new MemoryStream(sample, 0, bytesRead, false, true))
                 {
-                    AnalyticsService.TrackEvent("UnableToDetectEncoding");
+                    var result = CharsetDetector.DetectFromStream(sampleStream);
+                    if (result.Detected?.Encoding != null) // Detected can be null
+                    {
+                        encoding = AnalyzeAndGuessEncoding(result);
+                        return true;
+                    }
+                    else if (stream.Length > 0) // We do not care about empty file
+                    {
+                        AnalyticsService.TrackEvent("UnableToDetectEncoding");
+                    }
                 }
             }
             catch (Exception ex)

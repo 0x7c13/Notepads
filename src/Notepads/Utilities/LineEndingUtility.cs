@@ -16,22 +16,37 @@ namespace Notepads.Utilities
     {
         public static LineEnding GetLineEndingTypeFromText(string text)
         {
-            if (text.Contains("\r\n"))
+            var containsCr = false;
+            var containsLf = false;
+
+            for (var i = 0; i < text.Length; i++)
             {
-                return LineEnding.Crlf;
+                if (text[i] == '\r')
+                {
+                    if (i + 1 < text.Length && text[i + 1] == '\n')
+                    {
+                        return LineEnding.Crlf;
+                    }
+
+                    containsCr = true;
+                }
+                else if (text[i] == '\n')
+                {
+                    containsLf = true;
+                }
             }
-            else if (text.Contains("\r"))
+
+            if (containsCr)
             {
                 return LineEnding.Cr;
             }
-            else if (text.Contains("\n"))
+
+            if (containsLf)
             {
                 return LineEnding.Lf;
             }
-            else
-            {
-                return LineEnding.Crlf;
-            }
+
+            return LineEnding.Crlf;
         }
 
         public static string GetLineEndingDisplayText(LineEnding lineEnding)
