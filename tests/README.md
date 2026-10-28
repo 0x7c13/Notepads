@@ -42,7 +42,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 
 | Change area | Primary checks |
 | --- | --- |
-| Encoding/BOM/EOL, language, indentation policy, filenames and search URLs | Unit; `Editor`, `NativeStorage` |
+| Encoding/BOM/EOL, language, indentation policy, filenames and search URLs | Unit; `Editor`, `NativeStorage`; `Persistence` for file decoding, multilingual auto detection and late-error fallback |
 | Per-document indentation status/menu, metadata-only overrides, conversion undo, YAML, selection and session/window transfer | `Editor`, `WorkspaceCommands`, `WindowMove`; Unit recovery metadata |
 | Document admission/cancellation, recovery schema and authority | Unit; Headless `Storage` and metrics-failure groups |
 | Open/save/save-as/save-all, reload/revert, manual content reversion/dirty indicators, external file changes, editor insets | `Documents`, `FileOpening` |
@@ -60,7 +60,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | DPI geometry / actual Windows scale transitions | `DpiLayout` / opt-in `DisplayDpi` |
 | Installed Production launch, file association, windows, suspension and V1 data import | Hosted-only `PackagedApp` |
 | Localization, notices, package content and dependency boundaries | `Localization`, `Headers`, `Package`, `Architecture` |
-| Runner ownership, toolchain/offline integrity, AOT restore after SDK updates, CI export and registration boundaries | `Runner` (inert OS/install fixtures; real SDK restore) |
+| Runner ownership, toolchain/offline integrity, native package architecture/framework validation, AOT restore after SDK updates, CI export and registration boundaries | `Runner` (inert OS/install fixtures; real SDK restore) |
 
 `*` denotes a family for orientation, not a selectable wildcard; use exact group
 names from `-List`. Markdown preview is not implemented and has no completion claim.

@@ -25,6 +25,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.UI.Xaml" />
+    <!-- WinUI's older transitive WebView2 selects the build host's x64 DLL
+         when cross-compiling ARM64. Pin the SDK with the PlatformTarget fix. -->
+    <PackageReference Include="Microsoft.Web.WebView2" />
     <PackageReference Include="CommunityToolkit.Uwp.Extensions" />
     <PackageReference Include="CommunityToolkit.Uwp.Converters" />
   </ItemGroup>

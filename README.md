@@ -90,7 +90,7 @@ TL;DR: You might notice that I work for Microsoft but Notepads is my personal pr
 ## Contributing:
 
 * [How to contribute?](CONTRIBUTING.md)
-* V2 development: [build and CI](CI.md), [tests and coverage boundaries](tests/README.md).
+* V2 development: [build and CI](CI.md), [dependencies and platform scope](DEPENDENCIES.md), [tests and coverage boundaries](tests/README.md).
 * Notepads is free and open source, if you like my work, please consider:
    * Star this project on GitHub
    * Leave me a review [here](https://www.microsoft.com/store/apps/9nhl4nsc67wm)

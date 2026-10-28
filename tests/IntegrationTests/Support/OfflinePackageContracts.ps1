@@ -140,17 +140,69 @@ function New-TestArchive([string] $Path, [hashtable] $Files) {
         }
     } finally { $archive.Dispose() }
 }
-$image = [byte[]]::new(512)
-$image[0] = 0x4d; $image[1] = 0x5a; $image[60] = 128
-$image[128] = 0x50; $image[129] = 0x45; $image[152] = 0x0b; $image[153] = 0x02
+function New-TestNativeImage([string] $Architecture) {
+    $image = [byte[]]::new(512)
+    $image[0] = 0x4d; $image[1] = 0x5a; $image[60] = 128
+    $image[128] = 0x50; $image[129] = 0x45
+    $machine = switch ($Architecture) { 'x86' { 0x014c } 'x64' { 0x8664 } 'ARM64' { 0xaa64 } }
+    [BitConverter]::GetBytes([uint16]$machine).CopyTo($image, 132)
+    $magic = if ($Architecture -eq 'x86') { 0x010b } else { 0x020b }
+    [BitConverter]::GetBytes([uint16]$magic).CopyTo($image, 152)
+    return ,$image
+}
+$image = New-TestNativeImage $architecture
 $payloadManifest = $manifest.Replace('<PackageDependency Name="Framework.Test" Publisher="CN=Microsoft" MinVersion="1.0.0.0" />',
-    '<PackageDependency Name="Microsoft.VCLibs.140.00" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /><PackageDependency Name="Microsoft.Services.Store.Engagement" Publisher="CN=Microsoft" MinVersion="1.0.0.0" />')
+    '<PackageDependency Name="Microsoft.UI.Xaml.2.8" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /><PackageDependency Name="Microsoft.VCLibs.140.00" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /><PackageDependency Name="Microsoft.Services.Store.Engagement" Publisher="CN=Microsoft" MinVersion="1.0.0.0" />')
+
+# A correct manifest alone cannot prove that native DLLs match its architecture.
+# Exercise the actual package validator with mixed-machine and missing-framework
+# payloads as well as valid PE32/PE32+ images for every shipping architecture.
+foreach ($target in @('x86', 'x64', 'ARM64')) {
+    foreach ($case in @('valid', 'wrong-dll', 'wrong-header', 'managed-dll', 'missing-winui', 'missing-vclibs', 'missing-engagement')) {
+        $targetManifest = $payloadManifest.Replace("ProcessorArchitecture=`"$architecture`"", "ProcessorArchitecture=`"$target`"")
+        $targetImage = New-TestNativeImage $target
+        $library = New-TestNativeImage $target
+        $expectedError = ''
+        switch ($case) {
+            'wrong-dll' {
+                $other = if ($target -eq 'x86') { 'x64' } else { 'x86' }
+                $library = New-TestNativeImage $other
+                $expectedError = '*Native image architecture does not match*fixture.dll*'
+            }
+            'wrong-header' {
+                $library[153] = if ($target -eq 'x86') { 2 } else { 1 }
+                $expectedError = '*Invalid optional header*fixture.dll*'
+            }
+            'managed-dll' {
+                $directory = if ($target -eq 'x86') { 96 } else { 112 }
+                $library[152 + $directory + 14 * 8] = 1
+                $expectedError = '*Managed image in Native AOT package*fixture.dll*'
+            }
+        }
+        if ($case -like 'missing-*') {
+            $dependency = switch ($case) {
+                'missing-winui' { 'Microsoft.UI.Xaml.2.8' }
+                'missing-vclibs' { 'Microsoft.VCLibs.140.00' }
+                'missing-engagement' { 'Microsoft.Services.Store.Engagement' }
+            }
+            $targetManifest = $targetManifest.Replace("<PackageDependency Name=`"$dependency`" Publisher=`"CN=Microsoft`" MinVersion=`"1.0.0.0`" />", '')
+            $expectedError = '*Missing native framework dependency*'
+        }
+        $package = Join-Path $fixture "$target-$case.msix"
+        New-TestArchive $package @{ 'AppxManifest.xml' = $targetManifest; 'Notepads.exe' = $targetImage; 'fixture.dll' = $library }
+        $failure = $null
+        try { & (Join-Path $repo 'scripts/Test-AppPackage.ps1') -Path $package -ExpectedArchitectures $target | Out-Null }
+        catch { $failure = $_ }
+        Check ((!$expectedError -and !$failure) -or
+            ($expectedError -and $failure -and $failure.Exception.Message -like $expectedError)) "Native package validation: $target/$case ($failure)"
+    }
+}
 foreach ($case in @('complete', 'split-resources', 'wrong-architecture', 'stale-source')) {
     $caseRoot = Join-Path $fixture $case
     $null = New-Item -ItemType Directory -Path $caseRoot
     $app = Join-Path $caseRoot 'app.msix'
     New-TestArchive $app @{ 'AppxManifest.xml' = $payloadManifest; 'Notepads.exe' = $image }
-    foreach ($name in @('Microsoft.VCLibs.140.00', 'Microsoft.Services.Store.Engagement')) {
+    foreach ($name in @('Microsoft.UI.Xaml.2.8', 'Microsoft.VCLibs.140.00', 'Microsoft.Services.Store.Engagement')) {
         New-TestArchive (Join-Path $caseRoot ($name + '.appx')) @{
             'AppxManifest.xml' = "<Package><Identity Name=`"$name`" Publisher=`"CN=Microsoft`" Version=`"1.0.0.0`" ProcessorArchitecture=`"$architecture`" /></Package>"
         }

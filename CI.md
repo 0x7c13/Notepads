@@ -90,8 +90,9 @@ Artifacts are retained for 14 days, including available diagnostics after failur
 
 `Build-CI.ps1` creates a unique output directory and requires exactly one fresh
 upload package. `Test-AppPackage.ps1` checks the manifest architecture set,
-declared executable, current framework dependencies/minimum Windows version,
-publishing symbol archive, and every packaged EXE/DLL for a CLR header. CoreCLR
+declared executable, WinUI/VCLibs/Store Engagement dependencies/minimum Windows version,
+publishing symbol archive, and every packaged EXE/DLL for matching PE architecture
+and absence of a CLR header. CoreCLR
 and JIT payloads are rejected. The upload package's size and SHA-256 are recorded.
 This checks symbol presence, not source indexing or successful crash symbolication.
 The managed architecture guard inspects the actual compiled product assembly

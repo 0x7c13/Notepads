@@ -110,6 +110,7 @@ internal static class DocumentBaselineTests
             }
             var disk = await FileIO.ReadBufferAsync(input);
             Assert(disk.ToArray().SequenceEqual(raw), "Encoding retries modified the source file.");
+            await CheckAutoDetectedEncodingsAsync(input, owner);
             await FileIO.WriteBytesAsync(input, []);
             using var empty = await DocumentTextPipeline.DecodeFileAsync(input, automatic, owner);
             Assert(empty.Baseline.ByteLength == 0, "Auto detection rejected a valid empty file.");
@@ -117,6 +118,42 @@ internal static class DocumentBaselineTests
         finally
         {
             await folder.DeleteAsync(StorageDeleteOption.PermanentDelete);
+        }
+    }
+
+    private static async Task CheckAutoDetectedEncodingsAsync(StorageFile input, Guid owner)
+    {
+        // These known texts cross the detector's internal chunk boundary. Verify
+        // decoded content and retained save encoding through the production pipeline,
+        // not the detector's own confidence or a particular alias for a code page.
+        var samples = new (int CodePage, string Text)[]
+        {
+            (65001, "Plain text document. Editing, saving and restoring remain consistent. 0123456789\r\n"),
+            (65001, "中文文本，测试自动识别文件编码。繁體中文與日本語、العربية、한국어、Русский、café、😀。\r\n"),
+            (936, "这是用于检测文件编码的中文文档。打开文件以后，编辑器应该正确显示所有文字，保存和重新加载不能改变原有内容。春天的风吹过城市，书桌上放着一本关于计算机科学的书。\r\n"),
+            (54936, "这是用于检测文件编码的中文文档。打开文件以后，编辑器应该正确显示所有文字，保存和重新加载不能改变原有内容。春天的风吹过城市，书桌上放着一本关于计算机科学的书。𠀀😀\r\n"),
+            (950, "這是用於檢測檔案編碼的繁體中文文件。開啟檔案以後，編輯器應該正確顯示所有文字，儲存和重新載入不能改變原有內容。春天的風吹過城市，書桌上放著一本關於電腦科學的書。\r\n"),
+            (932, "これは文字コードを自動的に検出するための日本語の文章です。ファイルを開いて編集してから保存しても、元の文字列が正しく表示されなければなりません。春の風が街を吹き抜けています。\r\n"),
+            (51932, "これは文字コードを自動的に検出するための日本語の文章です。ファイルを開いて編集してから保存しても、元の文字列が正しく表示されなければなりません。春の風が街を吹き抜けています。\r\n"),
+            (949, "이 문서는 문자 인코딩을 자동으로 감지하는 기능을 확인하기 위한 한국어 문서입니다. 파일을 열고 내용을 편집한 다음 저장해도 모든 문자가 정확하게 표시되어야 합니다. 오늘은 날씨가 좋습니다.\r\n"),
+            (1251, "Это русский текст для проверки автоматического определения кодировки. Редактор должен правильно открывать документы, сохранять изменения и восстанавливать исходное содержимое без потери символов.\r\n"),
+            (1252, "L’été arrive bientôt. François prépare son café et écrit une lettre à sa sœur. Déjà, les fenêtres éclairées révèlent une agréable lumière. Grüße aus München, für größere Möglichkeiten.\r\n")
+        };
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        var automatic = new DocumentLoadOptions(decodingMode: DocumentDecodingMode.AutoDetect);
+        foreach (var (codePage, sample) in samples)
+        {
+            var text = string.Concat(Enumerable.Repeat(sample, 40));
+            var encoding = Encoding.GetEncoding(codePage, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
+            var bytes = encoding.GetBytes(text);
+            await FileIO.WriteBytesAsync(input, bytes);
+            using var snapshot = await DocumentTextPipeline.DecodeFileAsync(input, automatic, owner);
+            Assert(await snapshot.ReadTextAsync() == text.Replace("\r\n", "\r", StringComparison.Ordinal),
+                $"Auto detection changed the text for code page {codePage}.");
+            Assert(snapshot.Encoding.GetBytes(text).SequenceEqual(bytes) && snapshot.LineEnding == LineEnding.Crlf,
+                $"Auto detection lost the original byte encoding or line endings for code page {codePage}.");
+            Assert((await FileIO.ReadBufferAsync(input)).ToArray().SequenceEqual(bytes),
+                $"Auto detection modified the source file for code page {codePage}.");
         }
     }
 

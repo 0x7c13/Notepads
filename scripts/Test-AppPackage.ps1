@@ -8,7 +8,7 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $architectures = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 
-function Test-NativeImage($Entry) {
+function Test-NativeImage($Entry, [string] $Architecture) {
     $stream = $Entry.Open()
     $reader = [IO.BinaryReader]::new($stream)
     try {
@@ -18,8 +18,20 @@ function Test-NativeImage($Entry) {
         if ($offset -lt 64 -or $offset -gt 1048576) { throw 'Invalid PE header offset.' }
         $null = $reader.ReadBytes($offset - 64)
         if ($reader.ReadUInt32() -ne 0x4550) { throw 'Invalid PE signature.' }
-        $null = $reader.ReadBytes(20)
+        $machine = $reader.ReadUInt16()
+        $expectedMachine = switch ($Architecture) {
+            'x86' { 0x014c }
+            'x64' { 0x8664 }
+            'arm64' { 0xaa64 }
+            default { throw "Unsupported package architecture: $Architecture" }
+        }
+        if ($machine -ne $expectedMachine) {
+            throw "Native image architecture does not match ${Architecture}: $($Entry.FullName)"
+        }
+        $null = $reader.ReadBytes(18)
         $magic = $reader.ReadUInt16()
+        $expectedMagic = if ($Architecture -eq 'x86') { 0x10B } else { 0x20B }
+        if ($magic -ne $expectedMagic) { throw "Invalid optional header for ${Architecture}: $($Entry.FullName)" }
         $directoryOffset = switch ($magic) { 0x10B { 96 } 0x20B { 112 } default { throw 'Invalid optional header.' } }
         $null = $reader.ReadBytes($directoryOffset - 2 + 14 * 8)
         if ($reader.ReadUInt32() -ne 0) { throw "Managed image in Native AOT package: $($Entry.FullName)" }
@@ -34,11 +46,13 @@ function Test-Package($Archive, [string] $Name) {
     $applications = $manifest.SelectNodes("/*[local-name()='Package']/*[local-name()='Applications']/*[local-name()='Application']")
     if ($applications.Count -eq 0) { return } # Resource package.
     $identity = $manifest.SelectSingleNode("/*[local-name()='Package']/*[local-name()='Identity']")
-    $null = $architectures.Add($identity.GetAttribute('ProcessorArchitecture'))
+    $architecture = $identity.GetAttribute('ProcessorArchitecture')
+    $null = $architectures.Add($architecture)
     if ($Archive.GetEntry('Notepads.exe')) {
         $dependencies = @($manifest.Package.Dependencies.PackageDependency.Name)
         $hasVCLibs = 'Microsoft.VCLibs.140.00' -in $dependencies -or 'Microsoft.VCLibs.140.00.Debug' -in $dependencies
-        if ('Microsoft.Services.Store.Engagement' -notin $dependencies -or !$hasVCLibs) {
+        if ('Microsoft.UI.Xaml.2.8' -notin $dependencies -or
+            'Microsoft.Services.Store.Engagement' -notin $dependencies -or !$hasVCLibs) {
             throw "Missing native framework dependency: $Name"
         }
         if ($manifest.Package.Dependencies.TargetDeviceFamily.MinVersion -ne '10.0.17763.0') {
@@ -50,7 +64,7 @@ function Test-Package($Archive, [string] $Name) {
     }
     foreach ($file in $Archive.Entries) {
         if ($file.Name -match '^(coreclr|clrjit)\.dll$') { throw "Managed runtime in Native AOT package: $Name" }
-        if ($file.Name -match '\.(exe|dll)$') { Test-NativeImage $file }
+        if ($file.Name -match '\.(exe|dll)$') { Test-NativeImage $file $architecture }
     }
     Write-Output "PASS: $Name contains native executables and libraries without managed assemblies or CoreCLR."
 }
