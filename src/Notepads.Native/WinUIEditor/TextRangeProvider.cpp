@@ -141,7 +141,9 @@ namespace winrt::WinUIEditor::implementation
 		const auto target{ textRangeProvider.as<TextRangeProvider>() };
 		const auto thisEnd{ endpoint == TextPatternRangeEndpoint::Start ? _rangeStart : _rangeEnd };
 		const auto targetEnd{ targetEndpoint == TextPatternRangeEndpoint::Start ? target->_rangeStart : target->_rangeEnd };
-		return thisEnd - targetEnd;
+		// UIA requires ordering, not a byte distance. Narrowing a 64-bit
+		// difference can reverse that ordering for large documents.
+		return (thisEnd > targetEnd) - (thisEnd < targetEnd);
 	}
 
 	void TextRangeProvider::ExpandToEnclosingUnit(TextUnit const &unit)
@@ -164,7 +166,12 @@ namespace winrt::WinUIEditor::implementation
 
 	ITextRangeProvider TextRangeProvider::FindText(hstring const &text, bool backward, bool ignoreCase)
 	{
-		throw hresult_not_implemented{};
+		if (text.empty()) throw hresult_invalid_argument();
+		const auto editor = _editor.get();
+		if (!editor) throw hresult_error{ E_POINTER };
+		const auto range = get_self<implementation::Editor>(editor)->AutomationFindText(
+			_rangeStart, _rangeEnd, text, backward, ignoreCase);
+		return range.start < 0 ? nullptr : make<TextRangeProvider>(_peer, editor, range.start, range.end);
 	}
 
 	IInspectable TextRangeProvider::GetAttributeValue(int32_t attributeId)

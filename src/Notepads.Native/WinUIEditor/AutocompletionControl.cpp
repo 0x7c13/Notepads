@@ -1,3 +1,9 @@
+// Copyright 2026 by Breece Walker
+// See src/Notepads.Native/LICENSE for the original WinUIEdit license.
+//
+// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+// See LICENSE.txt in the project root for the Notepads modifications.
+
 #include "pch.h"
 #include "AutocompletionControl.h"
 #if __has_include("AutocompletionControl.g.cpp")
@@ -42,7 +48,7 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void AutocompletionControl::OnSelectionChanged(IInspectable const &sender, DUXC::SelectionChangedEventArgs const &e)
+	void AutocompletionControl::OnSelectionChanged(IInspectable const &/*sender*/, DUXC::SelectionChangedEventArgs const &e)
 	{
 		if (e.AddedItems().Size() > 0)
 		{

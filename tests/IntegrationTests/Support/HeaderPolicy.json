@@ -250,6 +250,7 @@
           "paths": [
             "src/Notepads.Native/Tools/Tool/InterfaceGeneratorTool.cs",
             "src/Notepads.Native/Tools/Tool/Program.cs",
+            "src/Notepads.Native/WinUIEditor/AutocompletionControl.cpp",
             "src/Notepads.Native/WinUIEditor/AutocompletionWrapper.cpp",
             "src/Notepads.Native/WinUIEditor/AutocompletionWrapper.h",
             "src/Notepads.Native/WinUIEditor/CallTipControl.cpp",
@@ -283,7 +284,6 @@
         }
       ],
       "withoutHeader": [
-        "src/Notepads.Native/WinUIEditor/AutocompletionControl.cpp",
         "src/Notepads.Native/WinUIEditor/AutocompletionControl.h",
         "src/Notepads.Native/WinUIEditor/AutocompletionControl.idl",
         "src/Notepads.Native/WinUIEditor/CallTipControl.idl",

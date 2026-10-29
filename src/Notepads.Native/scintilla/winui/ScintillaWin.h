@@ -124,6 +124,7 @@ namespace Scintilla::Internal {
 		uint64_t DocumentRevision() const noexcept { return _documentRevision; }
 		uint64_t SelectionRevision() const noexcept { return selectionRevision; }
 		Range AutomationUnitRange(Sci::Position position, bool word);
+		Range AutomationFindText(Sci::Position start, Sci::Position end, std::wstring_view text, bool backward, bool ignoreCase);
 		std::pair<Sci::Line, Sci::Line> AutomationVisibleDisplayRows();
 		std::vector<PRectangle> AutomationRangeRectangles(Sci::Position start, Sci::Position end, bool *clipped = nullptr);
 		PRectangle GutterRectangle() const { return vs.MarginRectangle(GetClientRectangle(), BidirectionalR2L()); }

@@ -2468,7 +2468,9 @@ Sci::Position Document::FindText(Sci::Position minPos, Sci::Position maxPos, con
 			// UTF-8 search will not be self-synchronizing when starts with trail byte
 			const std::string_view suffix(search + 1, lengthFind - 1);
 			while (pos < endSearch) {
-				pos = SplitFindChar(cbView, pos, limitPos - pos, charStartSearch);
+				// Every candidate must leave room for the entire match. Scanning
+				// to limitPos could match beyond the range, including zero past EOF.
+				pos = SplitFindChar(cbView, pos, endSearch - pos, charStartSearch);
 				if (pos < 0) {
 					break;
 				}

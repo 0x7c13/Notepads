@@ -79,7 +79,7 @@ namespace Scintilla::Internal {
 UINT DpiForWindow(WindowID wid) noexcept {
 	auto wrapper{ reinterpret_cast<WinUIEditor::Wrapper *>(wid) };
 	return wrapper && wrapper->LogicalDpi()
-		? wrapper->LogicalDpi()
+		? static_cast<UINT>(wrapper->LogicalDpi())
 		: USER_DEFAULT_SCREEN_DPI;
 }
 
@@ -98,12 +98,12 @@ PRectangle Window::GetPosition() const {
 	return PRectangle::FromInts(0, 0, 0, 0);
 }
 
-void Window::SetPosition(PRectangle rc) {
+void Window::SetPosition(PRectangle /*rc*/) {
 }
 
 namespace {
 
-RECT RectFromMonitor(HMONITOR hMonitor) noexcept {
+RECT RectFromMonitor(HMONITOR /*hMonitor*/) noexcept {
 	/*MONITORINFO mi = {};
 	mi.cbSize = sizeof(mi);
 	if (GetMonitorInfo(hMonitor, &mi)) {
@@ -195,7 +195,7 @@ void Window::SetCursor(Cursor curs) {
 
 /* Returns rectangle of monitor pt is on, both rect and pt are in Window's
    coordinates */
-PRectangle Window::GetMonitorRect(Point pt) {
+PRectangle Window::GetMonitorRect(Point /*pt*/) {
 	/*const PRectangle rcPosition = GetPosition();
 	const POINT ptDesktop = {static_cast<LONG>(pt.x + rcPosition.left),
 		static_cast<LONG>(pt.y + rcPosition.top)};
@@ -231,7 +231,7 @@ void Menu::Destroy() noexcept {
 	mid = {};
 }
 
-void Menu::Show(Point pt, const Window &w) {
+void Menu::Show(Point /*pt*/, const Window &/*w*/) {
 	// WinUI Todo
 	//::TrackPopupMenu(static_cast<HMENU>(mid),
 		//TPM_RIGHTBUTTON, static_cast<int>(pt.x - 4), static_cast<int>(pt.y), 0,
@@ -319,7 +319,7 @@ void Platform::Assert(const char *c, const char *file, int line) noexcept {
 	/*}*/
 }
 
-void Platform_Initialise(void *hInstance) noexcept {
+void Platform_Initialise(void */*hInstance*/) noexcept {
 	//ListBoxX_Register();
 	// WinUI Todo
 }

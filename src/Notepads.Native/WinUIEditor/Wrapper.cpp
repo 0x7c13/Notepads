@@ -143,7 +143,7 @@ namespace WinUIEditor
 		SisNativeWithD2D()->SetDevice(d2dDevice.get());
 	}
 
-	std::shared_ptr<Wrapper> Wrapper::CreateCallTipWindow(Scintilla::Internal::PRectangle rc, winrt::com_ptr<Scintilla::Internal::ScintillaWinUI> const &scintilla)
+	std::shared_ptr<Wrapper> Wrapper::CreateCallTipWindow(Scintilla::Internal::PRectangle /*rc*/, winrt::com_ptr<Scintilla::Internal::ScintillaWinUI> const &scintilla)
 	{
 		auto theme{ winrt::DUX::ElementTheme::Default };
 		winrt::DUX::XamlRoot xamlRoot{ nullptr };

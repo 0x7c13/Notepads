@@ -205,7 +205,7 @@ namespace winrt::WinUIEditor::implementation
 	std::shared_ptr<::WinUIEditor::NativeJournalFile> EditorBaseControl::ActiveJournalFile() const noexcept { return _scintilla->ActiveJournalFile(); }
 	std::vector<std::shared_ptr<::WinUIEditor::NativeJournalFile>> EditorBaseControl::StopJournal() { return _scintilla->StopJournal(); }
 
-	void EditorBaseControl::OnLoaded(IInspectable const &sender, DUX::RoutedEventArgs const &args)
+	void EditorBaseControl::OnLoaded(IInspectable const &/*sender*/, DUX::RoutedEventArgs const &/*args*/)
 	{
 		// Following pattern from https://github.com/microsoft/microsoft-ui-xaml/blob/a7183df20367bc0e2b8c825430597a5c1e6871b6/dev/WebView2/WebView2.cpp#L1556
 
@@ -222,17 +222,17 @@ namespace winrt::WinUIEditor::implementation
 
 		if (_hasXamlRoot)
 		{
-			UpdateDpi(XamlRoot().RasterizationScale());
+			UpdateDpi(static_cast<float>(XamlRoot().RasterizationScale()));
 			_xamlRootChangedRevoker = XamlRoot().Changed(auto_revoke, { this, &EditorBaseControl::XamlRoot_Changed });
 		}
 		else
 		{
-			UpdateDpi(_displayInformation.RawPixelsPerViewPixel());
+			UpdateDpi(static_cast<float>(_displayInformation.RawPixelsPerViewPixel()));
 			_dpiChangedRevoker = _displayInformation.DpiChanged(auto_revoke, { this, &EditorBaseControl::DisplayInformation_DpiChanged });
 		}
 	}
 
-	void EditorBaseControl::OnUnloaded(IInspectable const &sender, DUX::RoutedEventArgs const &args)
+	void EditorBaseControl::OnUnloaded(IInspectable const &/*sender*/, DUX::RoutedEventArgs const &/*args*/)
 	{
 		_isLoaded = false;
 
@@ -256,7 +256,7 @@ namespace winrt::WinUIEditor::implementation
 		_wrapper->ReleaseAutocompletePopup();
 	}
 
-	void EditorBaseControl::OnLosingFocus(Windows::Foundation::IInspectable const &sender, DUX::Input::LosingFocusEventArgs const &args)
+	void EditorBaseControl::OnLosingFocus(Windows::Foundation::IInspectable const &/*sender*/, DUX::Input::LosingFocusEventArgs const &args)
 	{
 		const auto newFocusedElement{ args.NewFocusedElement() };
 		if (!newFocusedElement || !_call->AutoCActive())
@@ -288,14 +288,14 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void EditorBaseControl::DisplayInformation_DpiChanged(DisplayInformation const &sender, IInspectable const &args)
+	void EditorBaseControl::DisplayInformation_DpiChanged(DisplayInformation const &sender, IInspectable const &/*args*/)
 	{
-		UpdateDpi(sender.RawPixelsPerViewPixel());
+		UpdateDpi(static_cast<float>(sender.RawPixelsPerViewPixel()));
 	}
 
-	void EditorBaseControl::XamlRoot_Changed(DUX::XamlRoot const &sender, XamlRootChangedEventArgs const &args)
+	void EditorBaseControl::XamlRoot_Changed(DUX::XamlRoot const &sender, XamlRootChangedEventArgs const &/*args*/)
 	{
-		UpdateDpi(sender.RasterizationScale());
+		UpdateDpi(static_cast<float>(sender.RasterizationScale()));
 	}
 
 	void EditorBaseControl::UpdateDpi(float dpiScale)
@@ -551,7 +551,7 @@ namespace winrt::WinUIEditor::implementation
 			imageTarget.Background(brush);
 		}
 
-		UpdateDpi(_hasXamlRoot ? XamlRoot().RasterizationScale() : _displayInformation.RawPixelsPerViewPixel());
+		UpdateDpi(static_cast<float>(_hasXamlRoot ? XamlRoot().RasterizationScale() : _displayInformation.RawPixelsPerViewPixel()));
 		if (const auto target{ GetTemplateChild(L"ImageTarget").try_as<FrameworkElement>() })
 		{
 			UpdateSurfaceSize({ static_cast<float>(target.ActualWidth()), static_cast<float>(target.ActualHeight()) });
@@ -639,7 +639,7 @@ namespace winrt::WinUIEditor::implementation
 		return make<EditorBaseControlAutomationPeer>(*this);
 	}
 
-	void EditorBaseControl::ImageTarget_PointerMoved(IInspectable const &sender, PointerRoutedEventArgs const &e)
+	void EditorBaseControl::ImageTarget_PointerMoved(IInspectable const &/*sender*/, PointerRoutedEventArgs const &e)
 	{
 		if (auto imageTarget{ GetTemplateChild(L"ImageTarget").try_as<UIElement>() }) // Todo: Store this
 		{
@@ -652,7 +652,7 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void EditorBaseControl::ImageTarget_PointerCaptureLost(IInspectable const &sender, PointerRoutedEventArgs const &e)
+	void EditorBaseControl::ImageTarget_PointerCaptureLost(IInspectable const &/*sender*/, PointerRoutedEventArgs const &/*e*/)
 	{
 		if (!_isPointerOver)
 		{
@@ -661,12 +661,12 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void EditorBaseControl::ImageTarget_PointerEntered(IInspectable const &sender, PointerRoutedEventArgs const &e)
+	void EditorBaseControl::ImageTarget_PointerEntered(IInspectable const &/*sender*/, PointerRoutedEventArgs const &/*e*/)
 	{
 		_isPointerOver = true;
 	}
 
-	void EditorBaseControl::ImageTarget_PointerExited(IInspectable const &sender, PointerRoutedEventArgs const &e)
+	void EditorBaseControl::ImageTarget_PointerExited(IInspectable const &/*sender*/, PointerRoutedEventArgs const &/*e*/)
 	{
 		_isPointerOver = false;
 		if (!_wrapper->HaveMouseCapture())
@@ -703,7 +703,7 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void EditorBaseControl::EditorBaseControl_CharacterReceived(DUX::UIElement const &sender, CharacterReceivedRoutedEventArgs const &e)
+	void EditorBaseControl::EditorBaseControl_CharacterReceived(DUX::UIElement const &/*sender*/, CharacterReceivedRoutedEventArgs const &e)
 	{
 		if (_isFocused)
 		{
@@ -712,7 +712,7 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void EditorBaseControl::ImageTarget_SizeChanged(IInspectable const &sender, SizeChangedEventArgs const &args)
+	void EditorBaseControl::ImageTarget_SizeChanged(IInspectable const &/*sender*/, SizeChangedEventArgs const &args)
 	{
 		UpdateSurfaceSize(args.NewSize());
 	}
@@ -770,7 +770,7 @@ namespace winrt::WinUIEditor::implementation
 		_scintilla->PointerWheelChanged(properties.MouseWheelDelta(), properties.IsHorizontalMouseWheel(), e.KeyModifiers());
 	}
 
-	void EditorBaseControl::ImageTarget_DragEnter(IInspectable const &sender, DragEventArgs const &e)
+	void EditorBaseControl::ImageTarget_DragEnter(IInspectable const &/*sender*/, DragEventArgs const &e)
 	{
 		DataPackageOperation op;
 		_scintilla->DragEnter(e.DataView(), e.AllowedOperations(), e.Modifiers(), op);
@@ -789,7 +789,7 @@ namespace winrt::WinUIEditor::implementation
 		e.AcceptedOperation(op);
 	}
 
-	void EditorBaseControl::ImageTarget_DragLeave(IInspectable const &sender, DragEventArgs const &e)
+	void EditorBaseControl::ImageTarget_DragLeave(IInspectable const &/*sender*/, DragEventArgs const &/*e*/)
 	{
 		_scintilla->DragLeave();
 	}
@@ -818,7 +818,7 @@ namespace winrt::WinUIEditor::implementation
 		deferral.Complete();
 	}
 
-	void EditorBaseControl::ImageTarget_DragStarting(UIElement const &sender, DragStartingEventArgs const &e)
+	void EditorBaseControl::ImageTarget_DragStarting(UIElement const &/*sender*/, DragStartingEventArgs const &e)
 	{
 		e.AllowedOperations(DataPackageOperation::Copy | DataPackageOperation::Move);
 		e.Data().SetText(winrt::to_hstring(_scintilla->GetDragData()));
@@ -838,22 +838,22 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void EditorBaseControl::ContextMenuItem_Click(Windows::Foundation::IInspectable const &sender, DUX::RoutedEventArgs const &e)
+	void EditorBaseControl::ContextMenuItem_Click(Windows::Foundation::IInspectable const &sender, DUX::RoutedEventArgs const &/*e*/)
 	{
 		_scintilla->WndProc(static_cast<Scintilla::Message>(unbox_value<ScintillaMessage>(sender.as<FrameworkElement>().Tag())), 0, 0);
 	}
 
-	void EditorBaseControl::HorizontalScrollBar_Scroll(IInspectable const &sender, ScrollEventArgs const &e)
+	void EditorBaseControl::HorizontalScrollBar_Scroll(IInspectable const &/*sender*/, ScrollEventArgs const &e)
 	{
 		_scintilla->HorizontalScroll(static_cast<Scintilla::Internal::ScrollEventType>(e.ScrollEventType()), static_cast<int>(e.NewValue()));
 	}
 
-	void EditorBaseControl::VerticalScrollBar_Scroll(IInspectable const &sender, ScrollEventArgs const &e)
+	void EditorBaseControl::VerticalScrollBar_Scroll(IInspectable const &/*sender*/, ScrollEventArgs const &e)
 	{
 		_scintilla->Scroll(static_cast<Scintilla::Internal::ScrollEventType>(e.ScrollEventType()), e.NewValue());
 	}
 
-	LRESULT EditorBaseControl::WndProc(IInspectable const &tag, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT EditorBaseControl::WndProc(IInspectable const &tag, UINT msg, WPARAM /*wParam*/, LPARAM lParam)
 	{
 		if (msg == WM_NOTIFY)
 		{
@@ -892,7 +892,7 @@ namespace winrt::WinUIEditor::implementation
 		return _dpiScale;
 	}
 
-	void EditorBaseControl::Application_Suspending(IInspectable const &sender, SuspendingEventArgs const &args)
+	void EditorBaseControl::Application_Suspending(IInspectable const &/*sender*/, SuspendingEventArgs const &/*args*/)
 	{
 		// Required or crashes on resume
 		// https://learn.microsoft.com/en-us/windows/uwp/gaming/directx-and-xaml-interop

@@ -167,12 +167,12 @@ ListBoxWinUI::~ListBoxWinUI() noexcept
 	// winui todo constructor/destructor
 }
 
-void ListBoxWinUI::SetFont(const Font *font)
+void ListBoxWinUI::SetFont(const Font */*font*/)
 {
 	// winui todo
 }
 
-void ListBoxWinUI::Create(Window &parent, int ctrlID, Point location, int lineHeight_, bool unicodeMode_, Scintilla::Technology technology_)
+void ListBoxWinUI::Create(Window &parent, int /*ctrlID*/, Point /*location*/, int /*lineHeight_*/, bool /*unicodeMode_*/, Scintilla::Technology /*technology_*/)
 {
 	const auto wrapper{ static_cast<WinUIEditor::Wrapper *>(parent.GetID()) };
 	wid = static_cast<WinUIEditor::Wrapper *>(wrapper->CreateAutocompletionWindow().get());
@@ -198,7 +198,7 @@ PRectangle ListBoxWinUI::GetDesiredRect()
 	PRectangle rcDesired = GetPosition();
 	const auto dpiScale{ Wrapper()->LogicalDpi() / 96.f };
 	rcDesired.right += WinUIEditor::ConvertFromDipToPixelUnit(432, dpiScale);
-	rcDesired.bottom += WinUIEditor::ConvertFromDipToPixelUnit(32 * std::min(_desiredVisibleRows, _lti.Count()) + 6, dpiScale); // winui todo
+	rcDesired.bottom += WinUIEditor::ConvertFromDipToPixelUnit(static_cast<float>(32 * std::min(_desiredVisibleRows, _lti.Count()) + 6), dpiScale); // winui todo
 
 	XYPOSITION adjustmentForScaling = 0;
 	float discard;
@@ -227,7 +227,7 @@ void ListBoxWinUI::Clear() noexcept
 	_lti.Clear();
 }
 
-void ListBoxWinUI::Append(char *s, int type)
+void ListBoxWinUI::Append(char */*s*/, int /*type*/)
 {
 	// This method is no longer called in Scintilla
 	PLATFORM_ASSERT(false);
@@ -248,7 +248,7 @@ int ListBoxWinUI::GetSelection()
 	return Wrapper()->SelectedIndex();
 }
 
-int ListBoxWinUI::Find(const char *prefix)
+int ListBoxWinUI::Find(const char */*prefix*/)
 {
 	// This is not actually called at present
 	return -1;
@@ -260,12 +260,12 @@ std::string ListBoxWinUI::GetValue(int n)
 	return item.text;
 }
 
-void ListBoxWinUI::RegisterImage(int type, const char *xpm_data)
+void ListBoxWinUI::RegisterImage(int /*type*/, const char */*xpm_data*/)
 {
 	// winui todo
 }
 
-void ListBoxWinUI::RegisterRGBAImage(int type, int width, int height, const unsigned char *pixelsImage)
+void ListBoxWinUI::RegisterRGBAImage(int /*type*/, int /*width*/, int /*height*/, const unsigned char */*pixelsImage*/)
 {
 	// winui todo
 }
@@ -342,7 +342,7 @@ void ListBoxWinUI::SetList(const char *list, char separator, char typesep)
 	//SetRedraw(true);
 }
 
-void ListBoxWinUI::SetOptions(ListOptions options_)
+void ListBoxWinUI::SetOptions(ListOptions /*options_*/)
 {
 
 }

@@ -895,7 +895,7 @@ public partial class InterfaceGeneratorTool
                             .Append(In).Append(In).Append('{').Append(End)
                             .Append(In).Append(In).Append(In).AppendFormat("if (_{0}AsPointer)", name).Append(End)
                             .Append(In).Append(In).Append(In).Append('{').Append(End)
-                            .Append(hasLength ? string.Empty : In + In + In + In + "const auto length { strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max()) };" + End)
+                            .Append(hasLength ? string.Empty : In + In + In + In + "const auto length { static_cast<uint32_t>(strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max())) };" + End)
                             .Append(In).Append(In).Append(In).Append(In).AppendFormat("_{0}AsBuffer = Windows::Storage::Streams::Buffer{{ static_cast<uint32_t>({1}length) }};", name, hasLength ? "_" : string.Empty).Append(End)
                             .Append(In).Append(In).Append(In).Append(In).AppendFormat("memcpy(_{0}AsBuffer.data(), _{0}AsPointer, {1}length);", name, hasLength ? "_" : string.Empty).Append(End)
                             .Append(In).Append(In).Append(In).Append(In).AppendFormat("_{0}AsBuffer.Length({1}length);", name, hasLength ? "_" : string.Empty).Append(End)

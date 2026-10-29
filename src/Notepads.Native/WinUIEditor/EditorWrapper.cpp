@@ -240,7 +240,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			if (_textAsPointer)
 			{
-				const auto length { strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max()) };
+				const auto length { static_cast<uint32_t>(strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max())) };
 				_textAsBuffer = Windows::Storage::Streams::Buffer{ static_cast<uint32_t>(length) };
 				memcpy(_textAsBuffer.data(), _textAsPointer, length);
 				_textAsBuffer.Length(length);
@@ -292,7 +292,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			if (_textAsPointer)
 			{
-				const auto length { strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max()) };
+				const auto length { static_cast<uint32_t>(strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max())) };
 				_textAsBuffer = Windows::Storage::Streams::Buffer{ static_cast<uint32_t>(length) };
 				memcpy(_textAsBuffer.data(), _textAsPointer, length);
 				_textAsBuffer.Length(length);
@@ -409,7 +409,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			if (_textAsPointer)
 			{
-				const auto length { strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max()) };
+				const auto length { static_cast<uint32_t>(strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max())) };
 				_textAsBuffer = Windows::Storage::Streams::Buffer{ static_cast<uint32_t>(length) };
 				memcpy(_textAsBuffer.data(), _textAsPointer, length);
 				_textAsBuffer.Length(length);
@@ -506,7 +506,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			if (_textAsPointer)
 			{
-				const auto length { strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max()) };
+				const auto length { static_cast<uint32_t>(strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max())) };
 				_textAsBuffer = Windows::Storage::Streams::Buffer{ static_cast<uint32_t>(length) };
 				memcpy(_textAsBuffer.data(), _textAsPointer, length);
 				_textAsBuffer.Length(length);
@@ -583,7 +583,7 @@ namespace winrt::WinUIEditor::implementation
 		{
 			if (_textAsPointer)
 			{
-				const auto length { strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max()) };
+				const auto length { static_cast<uint32_t>(strnlen_s(_textAsPointer, std::numeric_limits<uint32_t>::max())) };
 				_textAsBuffer = Windows::Storage::Streams::Buffer{ static_cast<uint32_t>(length) };
 				memcpy(_textAsBuffer.data(), _textAsPointer, length);
 				_textAsBuffer.Length(length);

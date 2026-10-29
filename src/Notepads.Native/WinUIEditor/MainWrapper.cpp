@@ -57,11 +57,11 @@ namespace WinUIEditor
 		_mouseCaptureElement = element;
 		// Todo: Do we need to revoke?
 		// Todo: Do we need a strong/weak reference?
-		_mouseCaptureElement.PointerPressed([&](winrt::Windows::Foundation::IInspectable const &sender, winrt::DUX::Input::PointerRoutedEventArgs const &args)
+		_mouseCaptureElement.PointerPressed([&](winrt::Windows::Foundation::IInspectable const &/*sender*/, winrt::DUX::Input::PointerRoutedEventArgs const &args)
 			{
 				_lastPointer = args.Pointer();
 			});
-		_mouseCaptureElement.PointerCaptureLost([&](winrt::Windows::Foundation::IInspectable const &sender, winrt::DUX::Input::PointerRoutedEventArgs const &args)
+		_mouseCaptureElement.PointerCaptureLost([&](winrt::Windows::Foundation::IInspectable const &/*sender*/, winrt::DUX::Input::PointerRoutedEventArgs const &/*args*/)
 			{
 				_captured = false;
 			});
@@ -201,7 +201,7 @@ namespace WinUIEditor
 		return _mouseCaptureElement.StartDragAsync(pointerPoint);
 	}
 
-	void MainWrapper::Show(bool visible)
+	void MainWrapper::Show(bool /*visible*/)
 	{
 	}
 
@@ -209,7 +209,7 @@ namespace WinUIEditor
 	{
 	}
 
-	void MainWrapper::SetPositionRelative(Scintilla::Internal::PRectangle rc, Wrapper const &wrapper)
+	void MainWrapper::SetPositionRelative(Scintilla::Internal::PRectangle /*rc*/, Wrapper const &/*wrapper*/)
 	{
 	}
 }

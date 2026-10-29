@@ -36,10 +36,10 @@ namespace WinUIEditor
 		// Todo: Make sure to position such that the tooltip does not hang off the monitor
 		// Transform to root rather than other window because that is how XAML Popup offset will be set
 		const auto dpiScale{ LogicalDpi() / 96.f };
-		float x = rc.left / dpiScale;
-		float y = rc.top / dpiScale;
-		float width = rc.Width() / dpiScale;
-		float height = rc.Height() / dpiScale;
+		float x = static_cast<float>(rc.left / dpiScale);
+		float y = static_cast<float>(rc.top / dpiScale);
+		const auto width = rc.Width() / dpiScale;
+		const auto height = rc.Height() / dpiScale;
 		if (!wrapper.TransformToRoot(x, y))
 		{
 			return;

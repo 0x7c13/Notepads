@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Notepads.Presentation.Controls.TextEditor;
@@ -23,7 +24,11 @@ internal static class AutomationNavigationTests
     {
         var view = (WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0];
         var native = view.Editor;
-        var provider = (ITextProvider)FrameworkElementAutomationPeer.CreatePeerForElement(view).GetPattern(PatternInterface.Text);
+        var peer = FrameworkElementAutomationPeer.CreatePeerForElement(view);
+        var provider = (ITextProvider)peer.GetPattern(PatternInterface.Text);
+        var standardEditType = new TextBoxAutomationPeer(new TextBox()).GetLocalizedControlType();
+        Check(!string.IsNullOrEmpty(standardEditType) && peer.GetLocalizedControlType() == standardEditType,
+            "editor uses the platform's localized Edit control type");
         var width = core.Width;
         var wrapping = core.TextWrapping;
         try
@@ -41,6 +46,8 @@ internal static class AutomationNavigationTests
             CheckEmpty(core, provider);
             CheckStaleOffset(core, provider);
             CheckRawLineEndings(core, native, provider);
+            CheckTextSearch(core, native, provider);
+            CheckLegacyTextSearch();
             await CheckImmediateWrappingAsync(core, native, provider);
             await CheckPendingSyntaxWrappingAsync(core, native, provider);
 
@@ -87,7 +94,162 @@ internal static class AutomationNavigationTests
             core.TextWrapping = wrapping;
             core.UpdateLayout();
         }
-        log.AppendLine("PASS: UIA word, visual-line and paragraph navigation, trailing separators, Unicode, empty/EOF boundaries, normalization, endpoint crossing, supported-unit fallback, wrapped layout and unchanged editor selection.");
+        log.AppendLine("PASS: UIA word, visual-line and paragraph navigation, trailing separators, Unicode, empty/EOF boundaries, normalization, endpoint crossing, supported-unit fallback, wrapped layout, bounded text search and unchanged editor state.");
+    }
+
+    private static void CheckTextSearch(TextEditorCore core, WinUIEditor.Editor native, ITextProvider provider)
+    {
+        const string text = "first Äpfel 中文 😀\rsecond äPFEL 中文 😀\rliteral a.b\0tail";
+        core.SetText(text);
+        native.SetSel(2, 5);
+        native.TargetStart = 3;
+        native.TargetEnd = 7;
+        native.SearchFlags = WinUIEditor.FindOption.WholeWord | WinUIEditor.FindOption.RegExp;
+        var state = (native.CurrentPos, native.Anchor, native.TargetStart, native.TargetEnd,
+            native.SearchFlags, native.FirstVisibleLine, native.XOffset, native.CanUndo(), native.Modify);
+        var document = provider.DocumentRange;
+        var unchanged = document.Clone();
+
+        Match(document, "Äpfel", false, false, "Äpfel", text.IndexOf("Äpfel", StringComparison.Ordinal));
+        Match(document, "äpfel", true, true, "äPFEL", text.IndexOf("äPFEL", StringComparison.Ordinal));
+        Match(document, "äpfel", false, true, "Äpfel", text.IndexOf("Äpfel", StringComparison.Ordinal));
+        Match(document, "中文 😀", true, false, "中文 😀", text.LastIndexOf("中文 😀", StringComparison.Ordinal));
+        Match(document, "😀\rsecond", false, false, "😀\rsecond", text.IndexOf("😀", StringComparison.Ordinal));
+        Match(document, "a.b\0tail", false, false, "a.b\0tail", text.IndexOf("a.b", StringComparison.Ordinal));
+        Match(document, "\0", true, false, "\0", text.IndexOf('\0'));
+        Check(document.FindText("not present", false, false) == null, "UIA missing text returns no range");
+        Check(document.FindText("ÄPFEL", false, false) == null, "UIA case-sensitive search preserves case");
+        Check(At(provider, 0).FindText("first", false, false) == null, "UIA empty range cannot match text");
+        var partial = At(provider, 6, 4);
+        Check(partial.FindText("Äpfel", false, true) == null, "UIA match cannot cross the range end");
+        Check(partial.FindText("first", true, true) == null, "UIA backward match cannot escape the range start");
+        Match(partial, "Äpfe", true, false, "Äpfe", 6);
+        var rejectedEmpty = false;
+        try { document.FindText(string.Empty, false, false); }
+        catch (ArgumentException) { rejectedEmpty = true; }
+        Check(rejectedEmpty, "UIA rejects an empty search string");
+        Check(document.Compare(unchanged), "UIA search does not modify its source range");
+        Check(state == (native.CurrentPos, native.Anchor, native.TargetStart, native.TargetEnd,
+            native.SearchFlags, native.FirstVisibleLine, native.XOffset, native.CanUndo(), native.Modify),
+            "UIA search preserves selection, target, flags, viewport and edit state");
+        Equal(text, core.GetText(), "UIA search preserves document bytes");
+
+        foreach (var backward in new[] { false, true })
+        foreach (var ignoreCase in new[] { false, true })
+        {
+            core.SetText("abcd");
+            var bounded = At(provider, 0, 3);
+            Check(bounded.FindText("cd", backward, ignoreCase) == null,
+                "UIA candidate near range end cannot match text outside the range");
+            Match(bounded, "bc", backward, ignoreCase, "bc", 1);
+            Match(bounded, "c", backward, ignoreCase, "c", 2);
+            core.SetText("abc");
+            Check(provider.DocumentRange.FindText("c\0", backward, ignoreCase) == null,
+                "UIA search cannot treat the byte after EOF as a real NUL");
+            core.SetText("abc\0");
+            Match(provider.DocumentRange, "c\0", backward, ignoreCase, "c\0", 2);
+            core.SetText("甲乙丙");
+            bounded = At(provider, 0, 2);
+            Check(bounded.FindText("乙丙", backward, ignoreCase) == null,
+                "UIA multibyte match cannot extend past the range end");
+            Match(bounded, "甲乙", backward, ignoreCase, "甲乙", 0);
+        }
+
+        core.SetText("one 中文 😀");
+        var multipleSelection = native.MultipleSelection;
+        native.MultipleSelection = true;
+        try
+        {
+            native.SetSelection(3, 0);
+            native.AddSelection(10, 4);
+            native.AddSelection(15, 11);
+            var selections = provider.GetSelection();
+            Check(selections.Length == 3, "UIA returns all disjoint selections");
+            Equal("one", selections[0].GetText(-1), "UIA first selection");
+            Equal("中文", selections[1].GetText(-1), "UIA second selection");
+            Equal("😀", selections[2].GetText(-1), "UIA third selection");
+        }
+        finally
+        {
+            native.SetSel(0, 0);
+            native.MultipleSelection = multipleSelection;
+        }
+
+        core.SetText("abc");
+        var stale = provider.DocumentRange;
+        core.SetText("x😀B");
+        Check(stale.FindText("😀", false, false) == null, "UIA stale range ending inside UTF-8 cannot expose a partial match");
+        core.SetText("abc");
+        Match(document, "bc", true, false, "bc", 1);
+        core.SetText("\uFFFD");
+        foreach (var backward in new[] { false, true })
+        foreach (var ignoreCase in new[] { false, true })
+        {
+            Check(provider.DocumentRange.FindText("\uD800", backward, ignoreCase) == null,
+                "UIA malformed UTF-16 query must not match a replacement character");
+            Match(provider.DocumentRange, "\uFFFD", backward, ignoreCase, "\uFFFD", 0);
+        }
+        core.SetText(string.Empty);
+        Check(document.FindText("a", true, false) == null, "UIA stale range clamps to an empty document");
+        native.SearchFlags = WinUIEditor.FindOption.None;
+
+        void Match(ITextRangeProvider range, string query, bool backward, bool ignoreCase, string expected, int utf16Offset)
+        {
+            var result = range.FindText(query, backward, ignoreCase);
+            Check(result != null, "UIA text match exists: " + query);
+            Equal(expected, result.GetText(-1), "UIA returns the exact matched text");
+            var prefix = core.GetText()[..utf16Offset];
+            var position = At(provider, CharacterCount(prefix));
+            Check(result.CompareEndpoints(TextPatternRangeEndpoint.Start, position, TextPatternRangeEndpoint.Start) == 0,
+                "UIA match uses document UTF-8 coordinates");
+            Check(result.CompareEndpoints(TextPatternRangeEndpoint.End, position, TextPatternRangeEndpoint.Start) > 0 &&
+                position.CompareEndpoints(TextPatternRangeEndpoint.Start, result, TextPatternRangeEndpoint.End) < 0,
+                "UIA endpoint comparison preserves ordering in both directions");
+        }
+    }
+
+    private static void CheckLegacyTextSearch()
+    {
+        // Exercise the generic control without changing Notepads' UTF-8 host.
+        var view = new WinUIEditor.EditorBaseControl();
+        var native = view.Editor;
+        native.CodePage = 0;
+        native.StyleSetCharacterSet((int)WinUIEditor.StylesCommon.Default, WinUIEditor.CharacterSet.Ansi);
+        byte[] bytes = [(byte)'?', (byte)'A', 0, 0xE9, (byte)'?', (byte)'A'];
+        native.AddTextFromBuffer(bytes.Length, bytes.AsBuffer());
+        var provider = (ITextProvider)FrameworkElementAutomationPeer.CreatePeerForElement(view).GetPattern(PatternInterface.Text);
+        var document = provider.DocumentRange;
+        var state = (native.CurrentPos, native.Anchor, native.TargetStart, native.TargetEnd,
+            native.SearchFlags, native.CanUndo(), native.Modify);
+        foreach (var backward in new[] { false, true })
+        foreach (var ignoreCase in new[] { false, true })
+        {
+            Check(document.FindText("漢", backward, ignoreCase) == null,
+                "UIA CP1252 query must not match a substituted question mark");
+            Check(document.FindText("\uFF21", backward, ignoreCase) == null,
+                "UIA CP1252 query must not match a best-fit ASCII letter");
+            Check(document.FindText("😀", backward, ignoreCase) == null,
+                "UIA CP1252 query must not substitute a supplementary character");
+            Match("?", backward ? 4 : 0, 1);
+            Match("A", backward ? 5 : 1, 1);
+            Match("é", 3, 1);
+            Match("A\0é", 1, 3);
+            if (ignoreCase) Match("É", 3, 1);
+            else Check(document.FindText("É", backward, false) == null, "UIA CP1252 search preserves case");
+
+            void Match(string query, int start, int length)
+            {
+                var result = document.FindText(query, backward, ignoreCase);
+                Check(result != null && result.Compare(At(provider, start, length)),
+                    "UIA CP1252 query returns the exact expected byte range");
+            }
+        }
+        Check(state == (native.CurrentPos, native.Anchor, native.TargetStart, native.TargetEnd,
+            native.SearchFlags, native.CanUndo(), native.Modify), "UIA legacy search preserves editor state");
+        Check(native.Length == bytes.Length, "UIA legacy search preserves document length");
+        for (var index = 0; index < bytes.Length; ++index)
+            Check(unchecked((byte)native.GetCharAt(index)) == bytes[index], "UIA legacy search preserves document bytes");
+        GC.KeepAlive(view);
     }
 
     private static void CheckUnits(TextEditorCore core, WinUIEditor.Editor native, ITextProvider provider, TextUnit unit, string[] units)

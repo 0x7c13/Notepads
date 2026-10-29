@@ -691,7 +691,7 @@ namespace Scintilla::Internal {
 		__super::NotifyModified(document, modification, userData);
 	}
 
-	void ScintillaWinUI::ProcessNotifyMessage(uptr_t wParam, NotificationData const &notificationData, bool notifyTsf, Sci::Position deletedUtf16Length)
+	void ScintillaWinUI::ProcessNotifyMessage(uptr_t /*wParam*/, NotificationData const &notificationData, bool notifyTsf, Sci::Position deletedUtf16Length)
 	{
 		if (notificationData.nmhdr.code == Scintilla::Notification::UpdateUI && FlagSet(notificationData.updated, Update::Selection))
 			ClaimSelection();
@@ -930,9 +930,9 @@ namespace Scintilla::Internal {
 			catch (const std::bad_alloc &) { state->PauseForMemory(); }
 			if (state->PauseReason() == EditorSyntaxPauseReason::Memory) { PauseSyntaxForMemory(); return; }
 			auto lexer = WinUIEditor::CreateSyntaxLexer(to_string(name), state);
-			for (size_t slot = 0; slot < keywords.size(); ++slot)
+			for (uint32_t slot = 0; slot < keywords.size(); ++slot)
 				lexer->WordListSet(static_cast<int>(slot), to_string(keywords[slot]).c_str());
-			for (size_t property = 0; property < propertyNames.size(); ++property)
+			for (uint32_t property = 0; property < propertyNames.size(); ++property)
 				lexer->PropertySet(to_string(propertyNames[property]).c_str(), to_string(propertyValues[property]).c_str());
 #ifdef _DEBUG
 			WinUIEditor::CheckSyntaxAllocationForTesting(WinUIEditor::SyntaxFaultPoint::LexInterface);
@@ -1036,11 +1036,11 @@ namespace Scintilla::Internal {
 		// Pending drags belong to this attachment, even if it is reloaded
 		// before the other process finishes providing or accepting text.
 		++_dragGeneration;
-		for (const auto &timer : { _caretTimer, _scrollTimer, _widenTimer, _dwellTimer, _idleTimer })
+		for (const auto &dispatcherTimer : { _caretTimer, _scrollTimer, _widenTimer, _dwellTimer, _idleTimer })
 		{
 			try
 			{
-				timer.Stop();
+				dispatcherTimer.Stop();
 			}
 			catch (winrt::hresult_error const &error)
 			{
@@ -1117,7 +1117,7 @@ namespace Scintilla::Internal {
 
 	// TSF WinRT
 
-	void ScintillaWinUI::OnTextRequested(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextTextRequestedEventArgs const &args)
+	void ScintillaWinUI::OnTextRequested(winrt::Windows::UI::Text::Core::CoreTextEditContext const &/*sender*/, winrt::Windows::UI::Text::Core::CoreTextTextRequestedEventArgs const &args)
 	{
 		if (!TsfCoreLock(READONLY))
 		{
@@ -1146,24 +1146,24 @@ namespace Scintilla::Internal {
 		TsfCoreUnlock();
 	}
 
-	void ScintillaWinUI::OnSelectionRequested(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextSelectionRequestedEventArgs const &args)
+	void ScintillaWinUI::OnSelectionRequested(winrt::Windows::UI::Text::Core::CoreTextEditContext const &/*sender*/, winrt::Windows::UI::Text::Core::CoreTextSelectionRequestedEventArgs const &args)
 	{
 		if (!TsfCoreLock(READONLY))
 		{
 			return;
 		}
 
-		TS_SELECTION_ACP sel;
+		TS_SELECTION_ACP textSelection;
 		ULONG sels;
-		if (SUCCEEDED(GetSelection(TF_DEFAULT_SELECTION, 1, &sel, &sels)) && sels == 1)
+		if (SUCCEEDED(GetSelection(TF_DEFAULT_SELECTION, 1, &textSelection, &sels)) && sels == 1)
 		{
-			args.Request().Selection(winrt::Windows::UI::Text::Core::CoreTextRange{ sel.acpStart, sel.acpEnd });
+			args.Request().Selection(winrt::Windows::UI::Text::Core::CoreTextRange{ textSelection.acpStart, textSelection.acpEnd });
 		}
 
 		TsfCoreUnlock();
 	}
 
-	void ScintillaWinUI::OnFocusRemoved(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::Foundation::IInspectable const &args)
+	void ScintillaWinUI::OnFocusRemoved(winrt::Windows::UI::Text::Core::CoreTextEditContext const &/*sender*/, winrt::Windows::Foundation::IInspectable const &/*args*/)
 	{
 		SetFocusState(false);
 	}
@@ -1206,21 +1206,21 @@ namespace Scintilla::Internal {
 		TsfCoreUnlock();
 	}
 
-	void ScintillaWinUI::OnSelectionUpdating(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextSelectionUpdatingEventArgs const &args)
+	void ScintillaWinUI::OnSelectionUpdating(winrt::Windows::UI::Text::Core::CoreTextEditContext const &/*sender*/, winrt::Windows::UI::Text::Core::CoreTextSelectionUpdatingEventArgs const &args)
 	{
 		if (!TsfCoreLock(READWRITE))
 		{
 			return;
 		}
 
-		TS_SELECTION_ACP sel;
-		sel.acpStart = args.Selection().StartCaretPosition;
-		sel.acpEnd = args.Selection().EndCaretPosition;
-		sel.style.ase = TS_AE_END; // Todo: Figure out how to set this
+		TS_SELECTION_ACP textSelection;
+		textSelection.acpStart = args.Selection().StartCaretPosition;
+		textSelection.acpEnd = args.Selection().EndCaretPosition;
+		textSelection.style.ase = TS_AE_END; // Todo: Figure out how to set this
 		// Docs say "StartCaretPosition must always be less than or equal to the EndCaretPosition"
 		// so it does not work like Scintilla, where they can be flipped
-		sel.style.fInterimChar = 0; // Todo: Figure out how to set this
-		const auto hr{ SetSelection(1, &sel) };
+		textSelection.style.fInterimChar = 0; // Todo: Figure out how to set this
+		const auto hr{ SetSelection(1, &textSelection) };
 		args.Result(SUCCEEDED(hr)
 			? winrt::Windows::UI::Text::Core::CoreTextSelectionUpdatingResult::Succeeded
 			: winrt::Windows::UI::Text::Core::CoreTextSelectionUpdatingResult::Failed);
@@ -1228,11 +1228,11 @@ namespace Scintilla::Internal {
 		TsfCoreUnlock();
 	}
 
-	void ScintillaWinUI::OnFormatUpdating(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextFormatUpdatingEventArgs const &args)
+	void ScintillaWinUI::OnFormatUpdating(winrt::Windows::UI::Text::Core::CoreTextEditContext const &/*sender*/, winrt::Windows::UI::Text::Core::CoreTextFormatUpdatingEventArgs const &/*args*/)
 	{
 	}
 
-	void ScintillaWinUI::OnLayoutRequested(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextLayoutRequestedEventArgs const &args)
+	void ScintillaWinUI::OnLayoutRequested(winrt::Windows::UI::Text::Core::CoreTextEditContext const &/*sender*/, winrt::Windows::UI::Text::Core::CoreTextLayoutRequestedEventArgs const &args)
 	{
 		if (!TsfCoreLock(READONLY))
 		{
@@ -1259,13 +1259,13 @@ namespace Scintilla::Internal {
 		TsfCoreUnlock();
 	}
 
-	void ScintillaWinUI::OnCompositionStarted(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextCompositionStartedEventArgs const &args)
+	void ScintillaWinUI::OnCompositionStarted(winrt::Windows::UI::Text::Core::CoreTextEditContext const &/*sender*/, winrt::Windows::UI::Text::Core::CoreTextCompositionStartedEventArgs const &/*args*/)
 	{
 		BOOL ok;
 		OnStartComposition(nullptr, &ok);
 	}
 
-	void ScintillaWinUI::OnCompositionCompleted(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextCompositionCompletedEventArgs const &args)
+	void ScintillaWinUI::OnCompositionCompleted(winrt::Windows::UI::Text::Core::CoreTextEditContext const &/*sender*/, winrt::Windows::UI::Text::Core::CoreTextCompositionCompletedEventArgs const &/*args*/)
 	{
 		OnEndComposition(nullptr);
 	}
@@ -1311,17 +1311,17 @@ namespace Scintilla::Internal {
 		if (focused) SetFocusState(true);
 	}
 
-	void ScintillaWinUI::OnCaretTimerTick(winrt::Windows::Foundation::IInspectable const &sender, winrt::Windows::Foundation::IInspectable const &args)
+	void ScintillaWinUI::OnCaretTimerTick(winrt::Windows::Foundation::IInspectable const &/*sender*/, winrt::Windows::Foundation::IInspectable const &/*args*/)
 	{
 		TickFor(TickReason::caret);
 	}
 
-	void ScintillaWinUI::OnScrollTimerTick(winrt::Windows::Foundation::IInspectable const &sender, winrt::Windows::Foundation::IInspectable const &args)
+	void ScintillaWinUI::OnScrollTimerTick(winrt::Windows::Foundation::IInspectable const &/*sender*/, winrt::Windows::Foundation::IInspectable const &/*args*/)
 	{
 		TickFor(TickReason::scroll);
 	}
 
-	void ScintillaWinUI::OnWidenTimerTick(winrt::Windows::Foundation::IInspectable const &sender, winrt::Windows::Foundation::IInspectable const &args)
+	void ScintillaWinUI::OnWidenTimerTick(winrt::Windows::Foundation::IInspectable const &/*sender*/, winrt::Windows::Foundation::IInspectable const &/*args*/)
 	{
 		if (_displayViewport || (BidirectionalR2L() && !Wrapping())) {
 			// RTL and diff viewports project retained intent after measuring. The
@@ -1333,7 +1333,7 @@ namespace Scintilla::Internal {
 		}
 	}
 
-	void ScintillaWinUI::OnDwellTimerTick(winrt::Windows::Foundation::IInspectable const &sender, winrt::Windows::Foundation::IInspectable const &args)
+	void ScintillaWinUI::OnDwellTimerTick(winrt::Windows::Foundation::IInspectable const &/*sender*/, winrt::Windows::Foundation::IInspectable const &/*args*/)
 	{
 		TickFor(TickReason::dwell);
 	}
@@ -1520,7 +1520,7 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
-	IFACEMETHODIMP ScintillaWinUI::QueryInsert(LONG acpTestStart, LONG acpTestEnd, ULONG cch, LONG *pacpResultStart, LONG *pacpResultEnd)
+	IFACEMETHODIMP ScintillaWinUI::QueryInsert(LONG acpTestStart, LONG acpTestEnd, ULONG /*cch*/, LONG *pacpResultStart, LONG *pacpResultEnd)
 	{
 		if (pacpResultStart == 0 || pacpResultEnd == 0)
 		{
@@ -1858,7 +1858,7 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
-	IFACEMETHODIMP ScintillaWinUI::SetText(DWORD dwFlags, LONG acpStart, LONG acpEnd, const WCHAR *pchText, ULONG cch, TS_TEXTCHANGE *pChange)
+	IFACEMETHODIMP ScintillaWinUI::SetText(DWORD /*dwFlags*/, LONG acpStart, LONG acpEnd, const WCHAR *pchText, ULONG cch, TS_TEXTCHANGE *pChange)
 	{
 		// Todo: Problem with inserting characters like Right Single Quotation Mark
 		// Todo: Problems with Cyrillic Small Letter Short I (cursor in wrong spot + same problem as above)
@@ -1940,7 +1940,7 @@ namespace Scintilla::Internal {
 		return E_NOTIMPL; // Not implemented
 	}
 
-	IFACEMETHODIMP ScintillaWinUI::QueryInsertEmbedded(const GUID *pguidService, const FORMATETC *pFormatEtc, BOOL *pfInsertable)
+	IFACEMETHODIMP ScintillaWinUI::QueryInsertEmbedded(const GUID */*pguidService*/, const FORMATETC */*pFormatEtc*/, BOOL *pfInsertable)
 	{
 		if (!pfInsertable)
 		{
@@ -1952,7 +1952,7 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
-	IFACEMETHODIMP ScintillaWinUI::InsertEmbedded(DWORD dwFlags, LONG acpStart, LONG acpEnd, IDataObject *pDataObject, TS_TEXTCHANGE *pChange)
+	IFACEMETHODIMP ScintillaWinUI::InsertEmbedded(DWORD /*dwFlags*/, LONG /*acpStart*/, LONG /*acpEnd*/, IDataObject *pDataObject, TS_TEXTCHANGE */*pChange*/)
 	{
 		if (!pDataObject)
 		{
@@ -2081,39 +2081,11 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
-	IFACEMETHODIMP ScintillaWinUI::GetACPFromPoint(TsViewCookie vcView, const POINT *ptScreen, DWORD dwFlags, LONG *pacp)
+	IFACEMETHODIMP ScintillaWinUI::GetACPFromPoint(TsViewCookie /*vcView*/, const POINT */*ptScreen*/, DWORD /*dwFlags*/, LONG */*pacp*/)
 	{
-		return E_NOTIMPL; // Todo: Not sure if we really need this, or even can do this from UWP. Chromium (metro and current) do not implement
-		/*if (vcView != 0 || ptScreen == 0 || pacp == 0)
-		{
-			return E_INVALIDARG;
-		}
-		if (dwLock == NONE)
-			return TS_E_NOLOCK;
-		// Map screen point into window-relative point
-		POINT ptWnd = *ptScreen;
-		if (!::MapWindowPoints(NULL, MainHWND(), &ptWnd, 1))
-		{
-			return HRESULT_FROM_WIN32(::GetLastError());
-		}
-		Point pt(ptWnd.x, ptWnd.y);
-		int posExclude = PositionFromLocationClose(pt);
-		HRESULT hr = S_OK;
-		if (posExclude == INVALID_POSITION)
-		{
-			hr = TF_E_INVALIDPOINT;
-			if (dwFlags == GXFPF_NEAREST)
-			{
-				*pacp = pdoc->MovePositionOutsideChar(PositionFromLocation(pt), 0, false);
-				return S_OK;
-			}
-		}
-		if (SUCCEEDED(hr) && dwFlags == GXFPF_ROUND_NEAREST)
-		{
-			// TODO:  may need to bump the character pos up one if it's actually closer to the next char...
-		}
-		*pacp = posExclude;
-		return hr;*/
+		// The legacy desktop TSF point-query interface is not implemented by
+		// this UWP backend. CoreText layout requests and UIA use XAML transforms.
+		return E_NOTIMPL;
 	}
 
 	IFACEMETHODIMP ScintillaWinUI::GetTextExt(TsViewCookie vcView, LONG acpStart, LONG acpEnd, RECT *prc, BOOL *pfClipped)
@@ -2176,7 +2148,7 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
-	IFACEMETHODIMP ScintillaWinUI::OnEndComposition(ITfCompositionView *pComposition)
+	IFACEMETHODIMP ScintillaWinUI::OnEndComposition(ITfCompositionView */*pComposition*/)
 	{
 		if (_compositionCount) --_compositionCount;
 		if (!_compositionCount) CompleteCoreTextComposition();
@@ -2187,7 +2159,7 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
-	IFACEMETHODIMP ScintillaWinUI::OnStartComposition(ITfCompositionView *pComposition, BOOL *pfOk)
+	IFACEMETHODIMP ScintillaWinUI::OnStartComposition(ITfCompositionView */*pComposition*/, BOOL *pfOk)
 	{
 		++_compositionCount;
 #ifdef EnableTsfDebugMessages
@@ -2201,7 +2173,7 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
-	IFACEMETHODIMP ScintillaWinUI::OnUpdateComposition(ITfCompositionView *pComposition, ITfRange *pRangeNew)
+	IFACEMETHODIMP ScintillaWinUI::OnUpdateComposition(ITfCompositionView */*pComposition*/, ITfRange */*pRangeNew*/)
 	{
 #ifdef EnableTsfDebugMessages
 		DebugOut(L"OnUpdateComposition\n");
@@ -2262,11 +2234,11 @@ namespace Scintilla::Internal {
 		return GetTimerForReason(reason).IsEnabled();
 	}
 
-	void ScintillaWinUI::FineTickerStart(TickReason reason, int millis, int tolerance)
+	void ScintillaWinUI::FineTickerStart(TickReason reason, int millis, int /*tolerance*/)
 	{
-		auto timer{ GetTimerForReason(reason) };
-		timer.Interval(winrt::Windows::Foundation::TimeSpan{ std::chrono::milliseconds{ millis } });
-		timer.Start();
+		auto dispatcherTimer{ GetTimerForReason(reason) };
+		dispatcherTimer.Interval(winrt::Windows::Foundation::TimeSpan{ std::chrono::milliseconds{ millis } });
+		dispatcherTimer.Start();
 	}
 
 	void ScintillaWinUI::FineTickerCancel(TickReason reason)
@@ -2800,7 +2772,7 @@ namespace Scintilla::Internal {
 			winrt::Windows::ApplicationModel::DataTransfer::Clipboard::SetContent(dp);
 			winrt::Windows::ApplicationModel::DataTransfer::Clipboard::Flush();
 		}
-		catch (winrt::hresult_error const &ex)
+		catch (winrt::hresult_error const &)
 		{
 			// Todo: Retry
 		}
@@ -2841,7 +2813,7 @@ namespace Scintilla::Internal {
 		return StringEncode(ws, CodePageOfDocument());
 	}
 
-	Scintilla::sptr_t ScintillaWinUI::DefWndProc(Scintilla::Message iMessage, Scintilla::uptr_t wParam, Scintilla::sptr_t lParam)
+	Scintilla::sptr_t ScintillaWinUI::DefWndProc(Scintilla::Message /*iMessage*/, Scintilla::uptr_t /*wParam*/, Scintilla::sptr_t /*lParam*/)
 	{
 		return 0;
 	}
@@ -2865,7 +2837,7 @@ namespace Scintilla::Internal {
 		}
 	}
 
-	void ScintillaWinUI::AddToPopUp(const char *label, int cmd, bool enabled)
+	void ScintillaWinUI::AddToPopUp(const char */*label*/, int /*cmd*/, bool /*enabled*/)
 	{
 	}
 
@@ -2950,7 +2922,8 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::ProcessPointerPressedMessage(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers)
 	{
-		ButtonDownWithModifiers(Point{ point.X, point.Y }, timestamp, WindowsModifiers(modifiers));
+		// Scintilla compares unsigned millisecond intervals across timer wrap.
+		ButtonDownWithModifiers(Point{ point.X, point.Y }, static_cast<unsigned int>(timestamp), WindowsModifiers(modifiers));
 	}
 
 	void ScintillaWinUI::ProcessRightPointerPressedMessage(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers)
@@ -2962,7 +2935,7 @@ namespace Scintilla::Internal {
 			SetEmptySelection(SPositionFromLocation(pt, false, false, false));
 		}
 
-		RightButtonDownWithModifiers(pt, timestamp, WindowsModifiers(modifiers));
+		RightButtonDownWithModifiers(pt, static_cast<unsigned int>(timestamp), WindowsModifiers(modifiers));
 	}
 
 	void ScintillaWinUI::ProcessPointerMovedMessage(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers, winrt::DUI::PointerPoint const &pointerPoint)
@@ -2973,12 +2946,12 @@ namespace Scintilla::Internal {
 		{
 			_dragPointer = pointerPoint;
 		}
-		ButtonMoveWithModifiers(Point{ point.X, point.Y }, timestamp, WindowsModifiers(modifiers));
+		ButtonMoveWithModifiers(Point{ point.X, point.Y }, static_cast<unsigned int>(timestamp), WindowsModifiers(modifiers));
 	}
 
 	void ScintillaWinUI::ProcessPointerReleasedMessage(winrt::Windows::Foundation::Point const &point, uint64_t timestamp, winrt::Windows::System::VirtualKeyModifiers modifiers)
 	{
-		ButtonUpWithModifiers(Point{ point.X, point.Y }, timestamp, WindowsModifiers(modifiers));
+		ButtonUpWithModifiers(Point{ point.X, point.Y }, static_cast<unsigned int>(timestamp), WindowsModifiers(modifiers));
 	}
 
 	namespace {
@@ -3579,14 +3552,15 @@ namespace Scintilla::Internal {
 
 			surfaceOffset.x -= drawingBounds.left;
 			surfaceOffset.y -= drawingBounds.top;
-			float offsetX = surfaceOffset.x;
-			float offsetY = surfaceOffset.y;
+			const auto offsetX = static_cast<float>(surfaceOffset.x);
+			const auto offsetY = static_cast<float>(surfaceOffset.y);
 
 			d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Translation(offsetX, offsetY));
 
 			// Constrain the drawing only to the designated portion of the surface
 			draw.PushClip(D2D1::RectF(
-				drawingBounds.left, drawingBounds.top, drawingBounds.right, drawingBounds.bottom));
+				static_cast<float>(drawingBounds.left), static_cast<float>(drawingBounds.top),
+				static_cast<float>(drawingBounds.right), static_cast<float>(drawingBounds.bottom)));
 			// Clear only the invalidated tile. Alpha backgrounds must replace
 			// previous text/highlights instead of blending over stale pixels.
 			d2dDeviceContext->Clear(D2D1::ColorF(0, 0.0f));
@@ -4335,29 +4309,29 @@ namespace Scintilla::Internal {
 			return result;
 		};
 		auto range = [&](const WinUIEditor::EditorStateRange &r) { return SelectionRange(position(r.caret), position(r.anchor)); };
-		const auto &view = state.view;
+		const auto &savedView = state.view;
 		Selection prepared;
-		prepared.SetSelection(range(view.selections.front()));
-		for (size_t i = 1; i < view.selections.size(); ++i) prepared.AddSelectionWithoutTrim(range(view.selections[i]));
-		prepared.SetMain(view.main);
-		prepared.selType = static_cast<Selection::SelTypes>(view.mode);
-		prepared.Rectangular() = range(view.rectangle);
-		prepared.SetMoveExtends(view.moveExtends);
+		prepared.SetSelection(range(savedView.selections.front()));
+		for (size_t i = 1; i < savedView.selections.size(); ++i) prepared.AddSelectionWithoutTrim(range(savedView.selections[i]));
+		prepared.SetMain(savedView.main);
+		prepared.selType = static_cast<Selection::SelTypes>(savedView.mode);
+		prepared.Rectangular() = range(savedView.rectangle);
+		prepared.SetMoveExtends(savedView.moveExtends);
 		// All allocation and validation precedes this publication. No text edits or
 		// journal entries are generated while installing the live editing state.
 		pdoc->ReplaceUndoHistory(std::move(state.undo), state.collectingUndo);
 		sel = std::move(prepared);
-		pdoc->tabInChars = view.tabWidth;
-		pdoc->indentInChars = view.indent;
-		pdoc->actualIndentInChars = view.indent ? view.indent : view.tabWidth;
-		pdoc->useTabs = view.useTabs;
-		pdoc->SetReadOnly(view.readOnly);
-		inOverstrike = view.overtype;
-		additionalSelectionTyping = view.additionalSelectionTyping;
-		virtualSpaceOptions = static_cast<VirtualSpace>(view.virtualSpaceOptions);
-		multiPasteMode = static_cast<MultiPaste>(view.multiPaste);
-		lastXChosen = view.hasPreferredX ? std::optional<TextPositionX>{{view.preferredXDips *
-			(_mainWrapper->LogicalDpi() / 96.0), view.preferredFromRight}} : std::nullopt;
+		pdoc->tabInChars = savedView.tabWidth;
+		pdoc->indentInChars = savedView.indent;
+		pdoc->actualIndentInChars = savedView.indent ? savedView.indent : savedView.tabWidth;
+		pdoc->useTabs = savedView.useTabs;
+		pdoc->SetReadOnly(savedView.readOnly);
+		inOverstrike = savedView.overtype;
+		additionalSelectionTyping = savedView.additionalSelectionTyping;
+		virtualSpaceOptions = static_cast<VirtualSpace>(savedView.virtualSpaceOptions);
+		multiPasteMode = static_cast<MultiPaste>(savedView.multiPaste);
+		lastXChosen = savedView.hasPreferredX ? std::optional<TextPositionX>{{savedView.preferredXDips *
+			(_mainWrapper->LogicalDpi() / 96.0), savedView.preferredFromRight}} : std::nullopt;
 		CancelSmoothScroll();
 		ContainerNeedsUpdate(Update::Selection);
 		InvalidateStyleRedraw();
@@ -4479,6 +4453,29 @@ namespace Scintilla::Internal {
 		}
 		if (previousLine < last) markClipped();
 		return rectangles;
+	}
+
+	Range ScintillaWinUI::AutomationFindText(Sci::Position start, Sci::Position end, std::wstring_view text, bool backward, bool ignoreCase) {
+		// Search the live document without changing the user's selection, target,
+		// search flags or viewport, and without copying the entire range into UIA.
+		start = pdoc->MovePositionOutsideChar(start, 1, false);
+		end = pdoc->MovePositionOutsideChar(end, -1, false);
+		if (start >= end || text.empty()) return Range(-1, -1);
+		if (text.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
+			winrt::throw_hresult(E_INVALIDARG);
+		const auto codePage = CodePageOfDocument();
+		const auto encoded = StringEncode(text, codePage);
+		// A query must survive conversion exactly: default substitutions and
+		// best-fit mappings could otherwise find unrelated text. This also
+		// rejects malformed UTF-16 instead of searching for its replacement.
+		if (encoded.empty() || StringDecode(encoded, codePage) != text) return Range(-1, -1);
+		if (encoded.size() > static_cast<size_t>(std::numeric_limits<Sci::Position>::max()))
+			winrt::throw_hresult(E_INVALIDARG);
+		auto length = static_cast<Sci::Position>(encoded.size());
+		if (!pdoc->HasCaseFolder()) pdoc->SetCaseFolder(CaseFolderForEncoding());
+		const auto position = pdoc->FindText(backward ? end : start, backward ? start : end,
+			encoded.data(), ignoreCase ? FindOption::None : FindOption::MatchCase, &length);
+		return position < 0 ? Range(-1, -1) : Range(position, position + length);
 	}
 
 	Range ScintillaWinUI::AutomationUnitRange(Sci::Position position, bool word) {
@@ -4761,15 +4758,16 @@ namespace Scintilla::Internal {
 
 			surfaceOffset.x -= drawingBounds.left;
 			surfaceOffset.y -= drawingBounds.top;
-			float offsetX = surfaceOffset.x;
-			float offsetY = surfaceOffset.y;
+			const auto offsetX = static_cast<float>(surfaceOffset.x);
+			const auto offsetY = static_cast<float>(surfaceOffset.y);
 
 			d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Translation(offsetX, offsetY));
 
 			// Constrain the drawing only to the designated portion of the surface
 			d2dDeviceContext->PushAxisAlignedClip(
 				D2D1::RectF(
-					drawingBounds.left, drawingBounds.top, drawingBounds.right, drawingBounds.bottom
+					static_cast<float>(drawingBounds.left), static_cast<float>(drawingBounds.top),
+					static_cast<float>(drawingBounds.right), static_cast<float>(drawingBounds.bottom)
 				),
 				D2D1_ANTIALIAS_MODE_ALIASED
 			);

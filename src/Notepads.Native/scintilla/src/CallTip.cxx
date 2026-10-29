@@ -110,7 +110,7 @@ constexpr bool IsArrowCharacter(char ch) noexcept {
 	return (ch == 0) || (ch == '\001') || (ch == '\002');
 }
 
-void DrawArrow(Surface *surface, const PRectangle &rc, bool upArrow, ColourRGBA colourBG, ColourRGBA colourUnSel) {
+void DrawArrow(Surface *surface, const PRectangle &rc, bool upArrow, ColourRGBA colourUnSel) {
 	// WinUI
 	const auto height{ rc.Height() * 0.5 };
 	const auto font{ Scintilla::Internal::GetChevronFontFromSurface(*surface, height) };
@@ -119,34 +119,6 @@ void DrawArrow(Surface *surface, const PRectangle &rc, bool upArrow, ColourRGBA 
 	const auto padding{ (rc.Width() - textWidth) / 2 };
 	const PRectangle rcText{ rc.left + padding, rc.top, rc.right - padding, rc.bottom };
 	surface->DrawTextTransparentUTF8(rcText, font.get(), rcText.Height() / 2 + height / 2, text, colourUnSel);
-	return;
-
-	surface->FillRectangle(rc, colourBG);
-	const PRectangle rcClientInner = Clamp(rc.Inset(1), Edge::right, rc.right - 2);
-	surface->FillRectangle(rcClientInner, colourUnSel);
-
-	const XYPOSITION width = std::floor(rcClientInner.Width());
-	const XYPOSITION halfWidth = std::floor(width / 2) - 1;
-	const XYPOSITION quarterWidth = std::floor(halfWidth / 2);
-	const XYPOSITION centreX = rcClientInner.left + width / 2;
-	const XYPOSITION centreY = std::floor((rcClientInner.top + rcClientInner.bottom) / 2);
-
-	constexpr XYPOSITION pixelMove = 0.0f;
-	if (upArrow) {      // Up arrow
-		const Point pts[] = {
-			Point(centreX - halfWidth + pixelMove, centreY + quarterWidth + 0.5f),
-			Point(centreX + halfWidth + pixelMove, centreY + quarterWidth + 0.5f),
-			Point(centreX + pixelMove, centreY - halfWidth + quarterWidth + 0.5f),
-		};
-		surface->Polygon(pts, std::size(pts), FillStroke(colourBG));
-	} else {            // Down arrow
-		const Point pts[] = {
-			Point(centreX - halfWidth + pixelMove, centreY - quarterWidth + 0.5f),
-			Point(centreX + halfWidth + pixelMove, centreY - quarterWidth + 0.5f),
-			Point(centreX + pixelMove, centreY + halfWidth - quarterWidth + 0.5f),
-		};
-		surface->Polygon(pts, std::size(pts), FillStroke(colourBG));
-	}
 }
 
 }
@@ -185,7 +157,7 @@ int CallTip::DrawChunk(Surface *surface, int x, std::string_view sv,
 			rcClient.left = static_cast<XYPOSITION>(x);
 			rcClient.right = static_cast<XYPOSITION>(xEnd);
 			if (draw) {
-				DrawArrow(surface, rcClient, upArrow, colourBG, hoverPlace == 0 || (hoverPlace == 1 && !upArrow) || (hoverPlace == 2 && upArrow) ? colourUnSel : colourHovered); // WinUI
+				DrawArrow(surface, rcClient, upArrow, hoverPlace == 0 || (hoverPlace == 1 && !upArrow) || (hoverPlace == 2 && upArrow) ? colourUnSel : colourHovered); // WinUI
 			}
 			offsetMain = xEnd;
 			if (upArrow) {

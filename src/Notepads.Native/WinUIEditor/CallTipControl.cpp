@@ -59,7 +59,7 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void CallTipControl::OnLoaded(IInspectable const &sender, DUX::RoutedEventArgs const &args)
+	void CallTipControl::OnLoaded(IInspectable const &/*sender*/, DUX::RoutedEventArgs const &/*args*/)
 	{
 		// Following pattern from https://github.com/microsoft/microsoft-ui-xaml/blob/a7183df20367bc0e2b8c825430597a5c1e6871b6/dev/WebView2/WebView2.cpp#L1556
 
@@ -72,17 +72,17 @@ namespace winrt::WinUIEditor::implementation
 
 		if (_hasXamlRoot)
 		{
-			UpdateDpi(XamlRoot().RasterizationScale());
+			UpdateDpi(static_cast<float>(XamlRoot().RasterizationScale()));
 			_xamlRootChangedRevoker = XamlRoot().Changed(auto_revoke, { this, &CallTipControl::XamlRoot_Changed });
 		}
 		else
 		{
-			UpdateDpi(_displayInformation.RawPixelsPerViewPixel());
+			UpdateDpi(static_cast<float>(_displayInformation.RawPixelsPerViewPixel()));
 			_dpiChangedRevoker = _displayInformation.DpiChanged(auto_revoke, { this, &CallTipControl::DisplayInformation_DpiChanged });
 		}
 	}
 
-	void CallTipControl::OnUnloaded(IInspectable const &sender, DUX::RoutedEventArgs const &args)
+	void CallTipControl::OnUnloaded(IInspectable const &/*sender*/, DUX::RoutedEventArgs const &/*args*/)
 	{
 		_isLoaded = false;
 
@@ -113,14 +113,14 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void CallTipControl::DisplayInformation_DpiChanged(DisplayInformation const &sender, IInspectable const &args)
+	void CallTipControl::DisplayInformation_DpiChanged(DisplayInformation const &sender, IInspectable const &/*args*/)
 	{
-		UpdateDpi(sender.RawPixelsPerViewPixel());
+		UpdateDpi(static_cast<float>(sender.RawPixelsPerViewPixel()));
 	}
 
-	void CallTipControl::XamlRoot_Changed(DUX::XamlRoot const &sender, XamlRootChangedEventArgs const &args)
+	void CallTipControl::XamlRoot_Changed(DUX::XamlRoot const &sender, XamlRootChangedEventArgs const &/*args*/)
 	{
-		UpdateDpi(sender.RasterizationScale());
+		UpdateDpi(static_cast<float>(sender.RasterizationScale()));
 	}
 
 	void CallTipControl::UpdateDpi(float dpiScale)
@@ -138,11 +138,11 @@ namespace winrt::WinUIEditor::implementation
 
 		if (_hasXamlRoot)
 		{
-			UpdateDpi(XamlRoot().RasterizationScale());
+			UpdateDpi(static_cast<float>(XamlRoot().RasterizationScale()));
 		}
 		else
 		{
-			UpdateDpi(_displayInformation.RawPixelsPerViewPixel());
+			UpdateDpi(static_cast<float>(_displayInformation.RawPixelsPerViewPixel()));
 		}
 
 		const VirtualSurfaceImageSource virtualSurfaceImageSource{ 0, 0 };
@@ -226,7 +226,7 @@ namespace winrt::WinUIEditor::implementation
 		return _wrapper;
 	}
 
-	void CallTipControl::ImageTarget_SizeChanged(IInspectable const &sender, SizeChangedEventArgs const &args)
+	void CallTipControl::ImageTarget_SizeChanged(IInspectable const &/*sender*/, SizeChangedEventArgs const &args)
 	{
 		if (_vsisNative)
 		{
@@ -238,7 +238,7 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void CallTipControl::Application_Suspending(IInspectable const &sender, SuspendingEventArgs const &args)
+	void CallTipControl::Application_Suspending(IInspectable const &/*sender*/, SuspendingEventArgs const &/*args*/)
 	{
 		// Required or crashes on resume
 		// https://learn.microsoft.com/en-us/windows/uwp/gaming/directx-and-xaml-interop

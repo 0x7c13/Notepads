@@ -222,6 +222,85 @@ The generator's file-reading improvements concern build time; no startup,
 scrolling, memory or build-speed improvement is claimed without performance A/B.
 Windows 10 17763 and x86/x64 product execution remain separate validation gaps.
 
+## WinUIEdit adapter maintenance audit
+
+The 2026-10-29 audit covers the retained `WinUIEditor` control, Scintilla's
+`winui` backend and the local CallTip drawing override. A TODO is not itself
+evidence of a reachable Notepads defect. The following distinctions matter:
+
+| Area | Notepads V2 impact and disposition |
+| --- | --- |
+| UIA `TextRangeProvider::FindText` | Was advertised through Text ranges but threw `E_NOTIMPL`. Implemented counted, bounded native search, including Unicode, case folding, reverse search and embedded NUL. It leaves selection, target/search settings, viewport and edit state unchanged. |
+| UIA query encoding | A counted encode/decode round trip rejects lossy substitutions, best-fit mappings and malformed UTF-16 before searching. This prevents legacy-codepage queries such as `漢` or fullwidth `Ａ` from matching unrelated `?` or `A` bytes. Validation copies only the query; Notepads continues to use UTF-8 internally. |
+| Native literal-search bounds | Review found that the forward, case-sensitive fast path could scan candidate starts too close to the range end, then match outside it or treat EOF as a real NUL. Restrict candidate scanning to positions that fit the entire query. Native tests compare every subrange and buffer-gap position of an ASCII/NUL fixture with standard-library search; UIA tests also cover CJK, exact-end matches and real versus artificial NUL. |
+| UIA `CompareEndpoints` | A 64-bit byte difference was narrowed to 32 bits and could reverse ordering. Return only the sign, as the UIA contract permits. This is preventive library hardening, not a reproduced failure within Notepads' current Int32 document admission. |
+| UIA localized control type | The English-only `code editor` override prevented platform localization. Use XAML's localized standard Edit type. Multiple-selection range text is also exercised directly; the old unspecific crash comment is removed. |
+| CallTip drawing | The WinUI chevron implementation returned before the retained Win32 triangle drawing. Remove the unreachable code and its unused argument; keep the existing chevron output. Notepads does not currently invoke `CallTipShow`. |
+| Autocomplete/CallTip TODOs | Font selection, images, list matching, popup placement, live theme changes and CallTip automation remain incomplete generic-control features. Notepads does not invoke `AutoCShow` or `CallTipShow`; syntax highlighting uses the independent Lexilla path. These need feature-specific work before exposing completion/help popups. |
+| Win32 menu/monitor and desktop TSF stubs | These are not equivalent to missing Notepads menus or all IME input being unimplemented. The app supplies a XAML context menu and UWP uses CoreText. Remove the commented, non-compiling Win32 body of `GetACPFromPoint`; keep its explicit unsupported result. Rich embedded objects are outside the plain-text editor contract. |
+| IME/focus/device-loss comments | Some describe older implementations; the current CoreText composition transaction, finalization and selection notifications have dedicated tests. Do not infer that every keyboard/IME/device scenario is solved, or remove lifecycle work merely because an old TODO looks stale. |
+| Capability-query caching / WinUI 3 notes | Per-instance `ApiInformation` caching is a possible small startup cleanup, not an established performance bottleneck. WinUI 3 shutdown notes do not describe the retained UWP product. |
+| Scintilla core notes | `SafeSegment` still has an upstream grapheme-boundary limitation when splitting long shaping segments; this is not an unimplemented UTF-8 decoder. `BraceMatch` does not extend pending styling itself. `UndoHistory::Text` assumes enumeration restarts at action zero; the retained state readers follow that contract. These need targeted reproductions before changing core layout, syntax or undo semantics. |
+
+Remaining reachable accessibility work includes `FindAttribute`, honoring
+`ScrollIntoView(alignToTop)`, the composition/conversion methods of the currently
+advertised TextEdit pattern, and a consistent memory policy for full-document
+Value/Text reads. Annotation and embedded-child behavior need explicit unsupported
+contracts if those features are ever introduced. No arbitrary truncation or stale
+viewport cache has been added to hide these gaps.
+
+The clean ARM64 Release baseline emitted 192 native compiler warning instances;
+the final rebuild emits 23. Clean x64 Release, Win32 Release and ARM64 Debug
+builds also pass, with 23, 22 and 23 warning instances respectively. Counts
+exclude repeated compiler diagnostic continuation lines.
+Cleanup keeps `/W4`: unused callback/stub parameters are unnamed, shadowing locals
+are renamed, WinRT array indexes use their 32-bit size type, bounded notification
+lengths are narrowed in the generator, and XAML/Direct2D geometry conversions are
+explicit. The generator remains the source for generated wrapper changes.
+Remaining TSF position/rectangle narrowing needs a separate overflow policy;
+casting away those warnings would not establish correctness. No blanket warning
+suppression, API/ABI change or scrolling-performance improvement is claimed.
+Win32 also retains pre-existing 64-bit WinRT-to-native-position conversion
+warnings in range reads and regex/editor adapters; the architecture build is
+not a claim that every narrowing site has been eliminated.
+
+UIA search is synchronous. Candidate and suffix comparisons can take O(n * m)
+time in the worst case, where n is the range length and m is the encoded query
+length. Temporary search storage scales with the query, not the entire document;
+this is not an asynchronous or time-bounded large-document search service.
+
+Validation before the literal-search boundary follow-up passes ARM64 Release AOT AutomationNavigation,
+Editor, Bidi and ScrollRestoration, plus the Headers suite. The added UIA tests
+cover bounded/reverse search, Unicode case folding, CJK/emoji, embedded NUL,
+stale ranges, multiple selections and preservation of editor state. Running the
+interface generator twice leaves all three checked-in generated files unchanged.
+These checks do not substitute for physical IME/Narrator testing, x86/x64 product
+execution or performance measurements. Local receipts are under
+`artifacts/winuiedit-audit`, with runtime results in
+`artifacts/test-runs/f1ed73cbe5a74bf783ffa9955f9903cb/results.json` and Headers in
+`artifacts/test-runs/1656309557c54314bd2a7c646a3c2436/results.json`.
+
+The literal-search boundary follow-up first reproduced the old defect in the
+native suite (`range=0:2`, forward/case-sensitive, expected no match but returned
+position 1). After the fix, all 48,420 new native checks pass, along with the
+complete x64 NativeBidi suite, ARM64 Release AOT AutomationNavigation and Search,
+and Headers. Results are recorded in
+`artifacts/test-runs/9e5738597dea45d2b6b5a0f1282ea8c1/results.json`; the negative
+and corrected run logs are `artifacts/winuiedit-audit/search-boundary-before.log`
+and `search-boundary-after.log`. Independent review found no remaining issue in
+the boundary fix or its regression tests.
+
+The query-encoding follow-up passes ARM64 Release AOT AutomationNavigation and
+Search, plus Headers, recorded in
+`artifacts/test-runs/5e3194099b494c3a8b3f6a976f7766b1/results.json`. The generic
+control fixture uses raw CP1252 bytes to test rejected substitutions/best-fit
+queries, valid accented letters, case modes, reverse search and embedded NULs.
+UTF-8 coverage distinguishes malformed UTF-16 queries from an actual replacement
+character. Independent review also confirmed the fix without new findings.
+
+Contract references: [UIA text range requirements](https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-implementingtextandtextrange),
+[standard control-type localization](https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml.automation.peers.automationpeer.getlocalizedcontroltypecore).
+
 ## Rechecking the inventory
 
 Restore using the repository build scripts, then inspect the resolved graph,

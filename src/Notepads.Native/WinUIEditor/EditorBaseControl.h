@@ -75,6 +75,8 @@ namespace winrt::WinUIEditor::implementation
 		uint64_t SelectionRevision() const noexcept;
 		Scintilla::Internal::Range AutomationUnitRange(int64_t position, bool word)
 		{ return _scintilla->AutomationUnitRange(static_cast<Sci::Position>(position), word); }
+		Scintilla::Internal::Range AutomationFindText(int64_t start, int64_t end, std::wstring_view text, bool backward, bool ignoreCase)
+		{ return _scintilla->AutomationFindText(static_cast<Sci::Position>(start), static_cast<Sci::Position>(end), text, backward, ignoreCase); }
 		std::pair<int64_t, int64_t> AutomationVisibleDisplayRows()
 		{
 			if (!IsLoadedCompat() || Visibility() != DUX::Visibility::Visible) return {};

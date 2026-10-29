@@ -32,6 +32,21 @@ namespace winrt::WinUIEditor::implementation
 		return view->AutomationUnitRange(position, word);
 	}
 
+	Scintilla::Internal::Range Editor::AutomationFindText(int64_t start, int64_t end, hstring const &text, bool backward, bool ignoreCase)
+	{
+		auto view = _editor.get();
+		if (!view || view->IsFinalized())
+			winrt::throw_hresult(RO_E_CLOSED);
+		if (!view->Dispatcher().HasThreadAccess())
+			winrt::throw_hresult(RPC_E_WRONG_THREAD);
+		// Clamp in the WinRT API's 64-bit UTF-8 byte space before narrowing to
+		// Sci::Position on x86. The text-store GetTextLength counts UTF-16 instead.
+		const auto length = Length();
+		start = std::clamp(start, int64_t{0}, length);
+		end = std::clamp(end, start, length);
+		return view->AutomationFindText(start, end, text, backward, ignoreCase);
+	}
+
 	Windows::Storage::Streams::IBuffer Editor::ReadUtf8Range(int64_t offset, int32_t maxBytes)
 	{
 		auto view = _editor.get();

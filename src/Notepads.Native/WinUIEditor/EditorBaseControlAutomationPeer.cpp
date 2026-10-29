@@ -33,7 +33,7 @@ namespace winrt::WinUIEditor::implementation
 		_updateUIRevoker = owner.Editor().UpdateUI(auto_revoke, { this, &EditorBaseControlAutomationPeer::Editor_UpdateUI });
 	}
 
-	void EditorBaseControlAutomationPeer::Editor_UpdateUI(Editor const &sender, UpdateUIEventArgs const &args)
+	void EditorBaseControlAutomationPeer::Editor_UpdateUI(Editor const &/*sender*/, UpdateUIEventArgs const &args)
 	{
 		// https://github.com/microsoft/terminal/blob/main/src/cascadia/TerminalControl/TermControlAutomationPeer.cpp#L133
 		if (static_cast<int>(static_cast<Update>(args.Updated()) & Update::Content))
@@ -55,9 +55,8 @@ namespace winrt::WinUIEditor::implementation
 
 	hstring EditorBaseControlAutomationPeer::GetLocalizedControlTypeCore()
 	{
-		// Todo: Localize
-		// Todo: Make sure this is a good name
-		return L"code editor";
+		// Edit is a standard UIA control type; XAML supplies its localized name.
+		return __super::GetLocalizedControlTypeCore();
 	}
 
 	IInspectable EditorBaseControlAutomationPeer::GetPatternCore(PatternInterface const &patternInterface)
@@ -109,7 +108,7 @@ namespace winrt::WinUIEditor::implementation
 			const auto end{ editor.GetSelectionNEnd(i) };
 			arr[i] = make<TextRangeProvider>(ProviderFromPeer(*this), editor, start, end);
 		}
-		return arr; // Todo: Trying to retrieve the value of a selection n >= 1 crashes Accessibility Insights
+		return arr;
 	}
 
 	com_array<ITextRangeProvider> EditorBaseControlAutomationPeer::GetVisibleRanges()
@@ -140,7 +139,7 @@ namespace winrt::WinUIEditor::implementation
 		return com_array<ITextRangeProvider>(ranges.begin(), ranges.end());
 	}
 
-	ITextRangeProvider EditorBaseControlAutomationPeer::RangeFromChild(IRawElementProviderSimple const &childElement)
+	ITextRangeProvider EditorBaseControlAutomationPeer::RangeFromChild(IRawElementProviderSimple const &/*childElement*/)
 	{
 		// Todo: Does this need to be implemented?
 		return nullptr;
@@ -152,7 +151,7 @@ namespace winrt::WinUIEditor::implementation
 		Point point = screenLocation;
 		if (!get_self<EditorBaseControl>(owner)->AutomationPointFromRoot(point)) return nullptr;
 		const auto editor = owner.Editor();
-		const auto pos{ editor.PositionFromPoint(point.X, point.Y) };
+		const auto pos{ editor.PositionFromPoint(static_cast<int32_t>(point.X), static_cast<int32_t>(point.Y)) };
 
 		return make<TextRangeProvider>(ProviderFromPeer(*this), editor, pos, pos);
 	}
@@ -169,7 +168,7 @@ namespace winrt::WinUIEditor::implementation
 		throw hresult_not_implemented{};
 	}
 
-	ITextRangeProvider EditorBaseControlAutomationPeer::RangeFromAnnotation(IRawElementProviderSimple const &annotationElement)
+	ITextRangeProvider EditorBaseControlAutomationPeer::RangeFromAnnotation(IRawElementProviderSimple const &/*annotationElement*/)
 	{
 		// Todo: implement
 		throw hresult_not_implemented{};
