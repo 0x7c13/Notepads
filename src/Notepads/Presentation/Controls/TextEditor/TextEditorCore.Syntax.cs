@@ -47,6 +47,9 @@ public sealed partial class TextEditorCore
         if (_disposed || _syntaxProfile == null) return;
         Native.SetLexerLanguage(_syntaxProfile.Lexer, _syntaxProfile.Keywords,
             _syntaxProfile.PropertyNames, _syntaxProfile.PropertyValues);
+        // A lexer reset can preserve all style bytes (e.g. plain text), so it
+        // must invalidate the cached pair even without a ChangeStyle event.
+        InvalidateBraceStyles();
         ApplySyntaxColors();
         UpdateSyntaxStatus();
     }
@@ -81,6 +84,7 @@ public sealed partial class TextEditorCore
         var reason = Native.SyntaxHighlightingPauseReason;
         if (reason == _syntaxPauseReason) return;
         _syntaxPauseReason = reason;
+        InvalidateBraceStyles();
         SyntaxStatusChanged?.Invoke(this, EventArgs.Empty);
     }
 

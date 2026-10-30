@@ -19,6 +19,16 @@ namespace Notepads.Presentation.Controls.FindAndReplace;
 public sealed partial class FindAndReplaceControl : UserControl
 {
     public event EventHandler<RoutedEventArgs> OnDismissKeyDown;
+    public event EventHandler<SearchContext> SearchQueryChanged;
+
+    private void FindAllButton_Click(object sender, RoutedEventArgs args) =>
+        OnFindAndReplaceButtonClicked?.Invoke(this, new FindAndReplaceEventArgs(GetSearchContext(), null, FindAndReplaceMode.FindAll));
+
+    private void FindAllAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        args.Handled = true;
+        FindAllButton_Click(this, null);
+    }
     public event EventHandler<FindAndReplaceEventArgs> OnFindAndReplaceButtonClicked;
     public event EventHandler<bool> OnToggleReplaceModeButtonClicked;
     public event EventHandler<KeyRoutedEventArgs> OnFindReplaceControlKeyDown;
@@ -81,7 +91,7 @@ public sealed partial class FindAndReplaceControl : UserControl
     {
         if (_shouldUpdateSearchString && !string.IsNullOrEmpty(searchString)) FindBar.Text = searchString;
 
-        if (mode == FindAndReplaceMode.FindOnly)
+        if (mode is FindAndReplaceMode.FindOnly or FindAndReplaceMode.FindAll)
         {
             FindBar.Focus(FocusState.Programmatic);
         }
@@ -123,6 +133,8 @@ public sealed partial class FindAndReplaceControl : UserControl
 
     private void FindBar_OnTextChanged(object sender, TextChangedEventArgs e)
     {
+        if (e != null) SearchQueryChanged?.Invoke(this, GetSearchContext());
+        if (FindAllButton != null) FindAllButton.IsEnabled = !string.IsNullOrEmpty(FindBar.Text);
         if (!string.IsNullOrEmpty(FindBar.Text))
         {
             SearchForwardButton.IsEnabled = true;
@@ -161,6 +173,7 @@ public sealed partial class FindAndReplaceControl : UserControl
         var shiftDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
         var ctrlDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
         var altDown = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+
 
         // Ctrl+Alt+Enter belongs to Replace All's keyboard accelerator.
         // Running the field's Enter command as well would execute two actions.
@@ -255,6 +268,7 @@ public sealed partial class FindAndReplaceControl : UserControl
 
     private void OptionButtonFlyoutItem_OnClick(object sender, RoutedEventArgs e)
     {
+        SearchQueryChanged?.Invoke(this, GetSearchContext());
         MatchWholeWordToggle.IsEnabled = !UseRegexToggle.IsChecked;
         UseRegexToggle.IsEnabled = !MatchWholeWordToggle.IsChecked;
 

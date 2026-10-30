@@ -8,6 +8,7 @@
 #include "EditorWrapper.h"
 #include "EditorUtf8Reader.h"
 #include "EditorJournalCheckpoint.h"
+#include "NativeRegex.h"
 #include <exception>
 
 namespace winrt::WinUIEditor::implementation
@@ -45,6 +46,23 @@ namespace winrt::WinUIEditor::implementation
 		start = std::clamp(start, int64_t{0}, length);
 		end = std::clamp(end, start, length);
 		return view->AutomationFindText(start, end, text, backward, ignoreCase);
+	}
+
+	WinUIEditor::EditorSearchResult Editor::FindLiteralSlice(hstring const &pattern, bool matchCase, bool wholeWord, int64_t start)
+	{
+		auto view = _editor.get();
+		if (!view || view->IsFinalized()) throw_hresult(RO_E_CLOSED);
+		if (!view->Dispatcher().HasThreadAccess()) throw_hresult(RPC_E_WRONG_THREAD);
+		if (CodePage() != Scintilla::CpUtf8 || start < 0 || start > Length()) throw hresult_invalid_argument();
+		if (pattern.size() > ::WinUIEditor::MaximumRegexInput)
+			return ::WinUIEditor::StatusResult(WinUIEditor::EditorSearchStatus::ResourceLimit);
+		const auto [range, next] = view->FindLiteralSlice(start, to_string(pattern), matchCase, wholeWord);
+		auto result = ::WinUIEditor::StatusResult(range.start < 0 ? WinUIEditor::EditorSearchStatus::NotFound : WinUIEditor::EditorSearchStatus::Found);
+		result.Start = range.start < 0 ? next : range.start;
+		result.End = range.end;
+		result.Revision = view->DocumentRevision();
+		result.SelectionRevision = view->SelectionRevision();
+		return result;
 	}
 
 	Windows::Storage::Streams::IBuffer Editor::ReadUtf8Range(int64_t offset, int32_t maxBytes)

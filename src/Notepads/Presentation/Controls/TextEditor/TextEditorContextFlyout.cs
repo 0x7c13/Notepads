@@ -49,6 +49,7 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
         Items.Add(new MenuFlyoutSeparator());
         Items.Add(WordWrap);
         Items.Add(RightToLeftReadingOrder);
+        AddEditorTools();
         Items.Add(WebSearch);
         Items.Add(PreviewToggle);
         Items.Add(Share);
@@ -92,6 +93,7 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
         Cut.IsEnabled = _textEditorCore.IsEnabled && _textEditorCore.HasSelection;
         Copy.IsEnabled = _textEditorCore.HasSelection;
         Paste.IsEnabled = _textEditorCore.IsEnabled;
+        _lineTools.IsEnabled = _textEditorCore.CanTransformSelectedLines;
 
         PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType) ? Visibility.Visible : Visibility.Collapsed;
         WordWrap.Icon.Visibility = (_textEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;

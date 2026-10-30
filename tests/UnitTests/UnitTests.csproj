@@ -30,6 +30,7 @@
     <Compile Include="../../src/Notepads/Features/Documents/Text/LineEndingUtility.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTextCodec.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTitle.cs" />
+    <Compile Include="../../src/Notepads/Features/Documents/Text/SelectedLineOperations.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/IndentationDetector.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Text/IndentationConverter.cs" />
     <Compile Include="../../src/Notepads/Features/Documents/Operations/DocumentOperationCoordinator.cs" />

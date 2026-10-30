@@ -38,6 +38,7 @@ size_t CheckGutterGeometry();
 size_t CheckUndoCaretRestoration();
 size_t CheckEditorStateTransfer();
 size_t CheckDocumentSearchBounds();
+size_t CheckPreparedReplacementDecorations();
 size_t CheckVerticalScrollGeometry();
 
 namespace {
@@ -1207,6 +1208,7 @@ int wmain(int argc, wchar_t **argv) {
         checks += CheckUndoCaretRestoration();
         checks += CheckEditorStateTransfer();
         checks += CheckDocumentSearchBounds();
+        checks += CheckPreparedReplacementDecorations();
         std::cout << "PASS: bounded literal search across buffer gaps, directions, case modes and NUL/EOF boundaries.\n";
         checks += CheckVerticalScrollGeometry();
         std::cout << "PASS: undo/redo caret edges survive grouped replacements, coalesced deletion and container actions.\n";

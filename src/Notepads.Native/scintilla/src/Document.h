@@ -605,7 +605,8 @@ public:
 	bool MatchesWordOptions(bool word, bool wordStart, Sci::Position pos, Sci::Position length) const;
 	bool HasCaseFolder() const noexcept;
 	void SetCaseFolder(std::unique_ptr<CaseFolder> pcf_) noexcept;
-	Sci::Position FindText(Sci::Position minPos, Sci::Position maxPos, const char *search, Scintilla::FindOption flags, Sci::Position *length);
+	// candidateEnd optionally bounds forward literal match starts, not match ends.
+	Sci::Position FindText(Sci::Position minPos, Sci::Position maxPos, const char *search, Scintilla::FindOption flags, Sci::Position *length, Sci::Position candidateEnd = -1);
 	const char *SubstituteByPosition(const char *text, Sci::Position *length);
 	Scintilla::LineCharacterIndexType LineCharacterIndex() const noexcept;
 	void AllocateLineCharacterIndex(Scintilla::LineCharacterIndexType lineCharacterIndex);

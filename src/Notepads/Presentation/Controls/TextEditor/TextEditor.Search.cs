@@ -26,6 +26,7 @@ public sealed partial class TextEditor
     {
         _searchRequestVersion++;
         _searchCancellation?.Cancel();
+        if (_findAllRunning) InvalidateFindAll();
     }
 
     private Task RunDocumentOperationAsync(Func<CancellationToken, Task> operation,
@@ -51,14 +52,20 @@ public sealed partial class TextEditor
             _lastSearchContext = request.SearchContext;
 
         var result = new EditorSearchResult { Status = EditorSearchStatus.Canceled };
+        DocumentSearchResults allResults = null;
         try
         {
+            if (request.FindAndReplaceMode == FindAndReplaceMode.FindAll) BeginFindAll(request.SearchContext);
             await _documentOperations.RunAsync(async token =>
             {
                 if (_disposed || version != _searchRequestVersion || Mode != TextEditorMode.Editing) return;
                 var previous = request.SearchDirection == SearchDirection.Previous;
                 switch (request.FindAndReplaceMode)
                 {
+                    case FindAndReplaceMode.FindAll:
+                        allResults = await TextEditorCore.FindAllAsync(request.SearchContext, token);
+                        result = allResults.Summary;
+                        break;
                     case FindAndReplaceMode.FindOnly:
                         result = await TextEditorCore.FindAsync(request.SearchContext, previous, false, token);
                         break;
@@ -81,9 +88,16 @@ public sealed partial class TextEditor
         finally
         {
             if (_searchCancellation == cancellation) _searchCancellation = null;
+            if (_findAllRunning && version == _searchRequestVersion &&
+                (allResults == null || result.Status is not (EditorSearchStatus.Found or EditorSearchStatus.NotFound))) InvalidateFindAll();
         }
 
         if (_disposed || cancellation.IsCancellationRequested || version != _searchRequestVersion) return false;
+        if (allResults != null && result.Status is EditorSearchStatus.Found or EditorSearchStatus.NotFound)
+        {
+            ShowFindAllResults(allResults, request.SearchContext);
+            return true;
+        }
         string resourceKey;
         switch (result.Status)
         {
@@ -96,7 +110,10 @@ public sealed partial class TextEditor
             case EditorSearchStatus.Failed: resourceKey = "FindAndReplace_NotificationMsg_SearchFailed"; break;
             default: return false;
         }
-        NotificationCenter.Instance.PostNotification(_resourceLoader.GetString(resourceKey), 2000);
+        var message = _resourceLoader.GetString(resourceKey);
+        if (request.FindAndReplaceMode == FindAndReplaceMode.FindAll && FindAllPanel?.Visibility == Visibility.Visible)
+            UpdateFindAllHeader(_resourceLoader.GetString("EditorTools_FindAllErrorTitle"), request.SearchContext, message);
+        NotificationCenter.Instance.PostNotification(message, 2000);
         return false;
     }
 }

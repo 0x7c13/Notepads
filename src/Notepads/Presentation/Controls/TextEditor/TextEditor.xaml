@@ -15,6 +15,8 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="FindAllBackgroundBrush" Color="#FAFAFA"/>
+                    <SolidColorBrush x:Key="FindAllHeaderBrush" Color="#EEEEEE"/>
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
                                      Opacity="0.4"
                                      Color="White"/>
@@ -23,6 +25,8 @@
                                      Color="LightGray"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="FindAllBackgroundBrush" Color="#252525"/>
+                    <SolidColorBrush x:Key="FindAllHeaderBrush" Color="#303030"/>
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
                                   Opacity="0.25"
                                   Color="Black"/>
@@ -31,6 +35,8 @@
                                      Color="Black"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="FindAllBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}"/>
+                    <SolidColorBrush x:Key="FindAllHeaderBrush" Color="{ThemeResource SystemColorWindowColor}"/>
                     <SolidColorBrush x:Key="SplitViewBackgroundThemeBrush"
                                      Color="{ThemeResource SystemColorHighlightColor}"/>
                     <SolidColorBrush x:Key="GridSplitterBackgroundThemeBrush"
@@ -89,6 +95,69 @@
                 <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
             </Grid.ColumnDefinitions>
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid x:Name="FindAllPanel" x:Load="False" Grid.Row="1" MaxHeight="220"
+                      Background="{ThemeResource FindAllBackgroundBrush}" CornerRadius="8,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border Background="{ThemeResource FindAllHeaderBrush}" CornerRadius="8,8,0,0"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="0,0,0,1" Padding="12,2,6,2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid x:Name="FindAllSummaryHeader" Margin="0,2,12,2" VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MaxWidth="200"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <ToolTipService.ToolTip>
+                                    <ToolTip MaxWidth="560">
+                                        <ScrollViewer MaxHeight="280" HorizontalScrollBarVisibility="Disabled"
+                                                      VerticalScrollBarVisibility="Auto" IsTabStop="False">
+                                            <TextBlock x:Name="FindAllFullSummary" MaxWidth="520" FontSize="13" TextWrapping="Wrap"/>
+                                        </ScrollViewer>
+                                    </ToolTip>
+                                </ToolTipService.ToolTip>
+                                <TextBlock x:Name="FindAllStatus" FontSize="13" FontWeight="Normal"
+                                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" AutomationProperties.LiveSetting="Polite"/>
+                                <TextBlock x:Name="FindAllDetails" Grid.Column="1" FontSize="13" FontWeight="Normal"
+                                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" AutomationProperties.AccessibilityView="Raw">
+                                    <Run x:Name="FindAllQueryText"/><Run x:Name="FindAllRulesText" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                                </TextBlock>
+                            </Grid>
+                            <Button x:Name="FindAllCloseButton" x:Uid="EditorTools_CloseResults" Grid.Column="1"
+                                    VerticalAlignment="Center" Width="28" Height="28" MinWidth="0" MinHeight="0" Padding="0"
+                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                    Click="FindAllClose_Click" Style="{StaticResource DismissButtonStyle}">
+                                <FontIcon x:Name="FindAllCloseIcon" Glyph="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <ListView x:Name="FindAllList" x:Uid="EditorTools_Results" Grid.Row="1" IsItemClickEnabled="True"
+                              Margin="0,6,0,4"
+                              ItemClick="FindAllList_ItemClick" KeyDown="FindAllList_KeyDown">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                <Setter Property="MinHeight" Value="28"/>
+                                <Setter Property="Margin" Value="6,0,6,0"/>
+                                <Setter Property="Padding" Value="16,4,12,4"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="textEditor:DocumentSearchRow">
+                                <TextBlock Text="{x:Bind Label}" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
                 <textEditor:TextEditorCore x:Name="TextEditorCore" 
                                            Style="{StaticResource TextEditorCore}" 
                                            Grid.Column="0"
@@ -112,6 +181,7 @@
                         <findAndReplace:FindAndReplaceControl x:Name="FindAndReplaceControl" 
                                                               Width="390"
                                                               OnDismissKeyDown="FindAndReplaceControl_OnDismissKeyDown"
+                                                              SearchQueryChanged="FindAllQueryChanged"
                                                               OnToggleReplaceModeButtonClicked="FindAndReplaceControl_OnToggleReplaceModeButtonClicked"
                                                               OnFindReplaceControlKeyDown="TextEditorCore_OnKeyDown"
                                                               OnFindAndReplaceButtonClicked="FindAndReplaceControl_OnFindAndReplaceButtonClicked"/>

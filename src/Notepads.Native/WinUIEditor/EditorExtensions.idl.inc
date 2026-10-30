@@ -25,6 +25,8 @@
 		UInt64 DocumentRevision { get; };
 		UInt64 SelectionRevision { get; };
 		Windows.Foundation.IAsyncOperation<EditorSearchResult> FindRegexAsync(String pattern, Boolean matchCase, Int64 origin, Boolean previous, Boolean wrap, Int64 excludedEmpty);
+		// NotFound.Start is the next UTF-8 candidate position, or Length at EOF.
+		EditorSearchResult FindLiteralSlice(String pattern, Boolean matchCase, Boolean wholeWord, Int64 start);
 		Windows.Foundation.IAsyncOperation<EditorSearchResult> ReplaceRegexAsync(String pattern, Boolean matchCase, String replacement, Int64 origin, Boolean previous, Boolean replaceAll);
 		void StartJournal(String localPath, UInt64 baselineSequence);
 		Windows.Foundation.IAsyncAction StartJournalFromCheckpointAsync(String localPath, EditorJournalCheckpoint checkpoint);

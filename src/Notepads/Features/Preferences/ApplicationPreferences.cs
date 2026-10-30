@@ -13,7 +13,7 @@ using Notepads.Infrastructure.Settings;
 
 namespace Notepads.Features.Preferences;
 
-public static class ApplicationPreferences
+public static partial class ApplicationPreferences
 {
     public static event EventHandler<string> OnFontFamilyChanged;
     public static event EventHandler<FontSlant> OnFontStyleChanged;
@@ -341,6 +341,7 @@ public static class ApplicationPreferences
         InitializeSpellingSettings();
 
         InitializeDisplaySettings();
+        RefreshReadingAids();
 
         InitializeSmartCopySettings();
 

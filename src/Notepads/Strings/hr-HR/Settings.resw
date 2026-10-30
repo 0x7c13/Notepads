@@ -201,4 +201,17 @@
   <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
   <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Zaglađivanje u sivim tonovima zaglađuje rubove znakova uz očuvanje boja teksta i prozirnosti pozadine. ClearType na nekim zaslonima može izgledati oštrije i koristi neprozirnu pozadinu uređivača.</value></data>
   <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType zahtijeva neprozirnu pozadinu uređivača. Za podešavanje prozirnosti odaberite zaglađivanje u sivim tonovima u postavkama prikaza fonta.</value></data>
+  <data name="EditorWhitespace.OffContent" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="EditorWhitespace.OnContent" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="EditorIndentGuides.OffContent" xml:space="preserve"><value>Show indentation guides</value></data>
+  <data name="EditorIndentGuides.OnContent" xml:space="preserve"><value>Show indentation guides</value></data>
+  <data name="EditorBraceMatching.OffContent" xml:space="preserve"><value>Highlight matching brackets</value></data>
+  <data name="EditorBraceMatching.OnContent" xml:space="preserve"><value>Highlight matching brackets</value></data>
+  <data name="EditorOccurrences.OffContent" xml:space="preserve"><value>Highlight selected text occurrences</value></data>
+  <data name="EditorOccurrences.OnContent" xml:space="preserve"><value>Highlight selected text occurrences</value></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve"><value>Shade the line containing the cursor to help you keep your place.</value></data>
+  <data name="EditorWhitespace_Description.Text" xml:space="preserve"><value>Show dots for spaces and arrows for tabs. These marks do not change the text.</value></data>
+  <data name="EditorIndentGuides_Description.Text" xml:space="preserve"><value>Show vertical guides along indentation to make nested blocks easier to follow.</value></data>
+  <data name="EditorBraceMatching_Description.Text" xml:space="preserve"><value>Highlight matching (), [] and {} when the cursor is next to a bracket.</value></data>
+  <data name="EditorOccurrences_Description.Text" xml:space="preserve"><value>Select a short piece of text on one line to highlight identical, case-sensitive matches in view.</value></data>
 </root>

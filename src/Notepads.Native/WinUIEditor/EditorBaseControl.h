@@ -77,6 +77,8 @@ namespace winrt::WinUIEditor::implementation
 		{ return _scintilla->AutomationUnitRange(static_cast<Sci::Position>(position), word); }
 		Scintilla::Internal::Range AutomationFindText(int64_t start, int64_t end, std::wstring_view text, bool backward, bool ignoreCase)
 		{ return _scintilla->AutomationFindText(static_cast<Sci::Position>(start), static_cast<Sci::Position>(end), text, backward, ignoreCase); }
+		std::pair<Scintilla::Internal::Range, Sci::Position> FindLiteralSlice(int64_t start, std::string_view text, bool matchCase, bool wholeWord)
+		{ return _scintilla->FindLiteralSlice(static_cast<Sci::Position>(start), text, matchCase, wholeWord); }
 		std::pair<int64_t, int64_t> AutomationVisibleDisplayRows()
 		{
 			if (!IsLoadedCompat() || Visibility() != DUX::Visibility::Visible) return {};

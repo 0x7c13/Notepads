@@ -483,6 +483,7 @@ public sealed partial class NotepadsMainPage : Page
             // finish out of order after the user has already switched windows.
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, _context.InstanceId.ToString());
             ApplicationPreferences.RefreshFontRenderingSetting();
+            ApplicationPreferences.RefreshReadingAids();
             NotepadsCore.GetSelectedReadyEditor()?.StartCheckingFileStatusPeriodically();
             if (!_isAppClosing && !_isLastTabCloseInProgress)
             {

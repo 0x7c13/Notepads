@@ -4478,6 +4478,24 @@ namespace Scintilla::Internal {
 		return position < 0 ? Range(-1, -1) : Range(position, position + length);
 	}
 
+	std::pair<Range, Sci::Position> ScintillaWinUI::FindLiteralSlice(Sci::Position start, std::string_view text, bool matchCase, bool wholeWord) {
+		start = pdoc->MovePositionOutsideChar(start, 1, false);
+		const auto end = pdoc->Length();
+		if (start >= end || text.empty()) return {Range(-1, -1), end};
+		// Bound comparison work as well as scanned bytes. In particular, a long
+		// repeated prefix must not turn one UI slice into quadratic work. The
+		// fourfold allowance covers Unicode case-fold expansion; the API caps
+		// pattern size separately, including its per-call folding allocation.
+		const auto span = static_cast<Sci::Position>(std::clamp(size_t{256 * 1024} / (text.size() * 4), size_t{4}, size_t{32 * 1024}));
+		const auto next = pdoc->MovePositionOutsideChar(start + std::min(span, end - start), -1, false);
+		if (!pdoc->HasCaseFolder()) pdoc->SetCaseFolder(CaseFolderForEncoding());
+		auto length = static_cast<Sci::Position>(text.size());
+		const auto flags = (matchCase ? FindOption::MatchCase : FindOption::None) |
+			(wholeWord ? FindOption::WholeWord : FindOption::None);
+		const auto found = pdoc->FindText(start, end, text.data(), flags, &length, next);
+		return {found < 0 ? Range(-1, -1) : Range(found, found + length), next};
+	}
+
 	Range ScintillaWinUI::AutomationUnitRange(Sci::Position position, bool word) {
 		const auto length = pdoc->Length();
 		position = std::clamp(position, Sci::Position{0}, length);

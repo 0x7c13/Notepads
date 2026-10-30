@@ -190,6 +190,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
         TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
         TextEditorCore.TextChanged += TextEditorCore_OnTitleTextChanged;
+        TextEditorCore.TextChanged += FindAllDocumentChanged;
         TextEditorCore.LanguageDetectionRequested += OnLanguageDetectionRequested;
         TextEditorCore.SyntaxStatusChanged += OnSyntaxStatusChanged;
         TextEditorCore.IndentationChanged += OnIndentationChanged;
@@ -222,7 +223,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     {
         if (e.Handled) return;
         if (e.Key == VirtualKey.Escape &&
-            (FindAndReplacePlaceholder?.Visibility == Visibility.Visible ||
+            (FindAllPanel?.Visibility == Visibility.Visible || FindAndReplacePlaceholder?.Visibility == Visibility.Visible ||
              GoToPlaceholder?.Visibility == Visibility.Visible || _isContentPreviewPanelOpened || _diffGeneration != null))
         {
             OnEscapeKeyDown();
@@ -266,6 +267,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
         TextEditorCore.TextChanging -= TextEditorCore_OnTextChanging;
         TextEditorCore.TextChanged -= TextEditorCore_OnTitleTextChanged;
+        TextEditorCore.TextChanged -= FindAllDocumentChanged;
         TextEditorCore.LanguageDetectionRequested -= OnLanguageDetectionRequested;
         TextEditorCore.SyntaxStatusChanged -= OnSyntaxStatusChanged;
         TextEditorCore.IndentationChanged -= OnIndentationChanged;
@@ -304,6 +306,15 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         {
             goToControl.Dispose();
             UnloadObject(GoToPlaceholder);
+        }
+
+        _findAllResults = null;
+        _findAllContext = null;
+        _findAllRunning = false;
+        if (FindAllPanel != null)
+        {
+            FindAllList.ItemsSource = null;
+            UnloadObject(FindAllPanel);
         }
 
         if (GridSplitter != null)
@@ -671,12 +682,16 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private void OnEscapeKeyDown()
     {
-        CancelSearch();
+        // Diff owns Escape while preparing or displayed. The hidden source can
+        // still have a logically visible Find All panel to restore on return.
         if (_diffGeneration != null)
         {
+            CancelSearch();
             CloseSideBySideDiffViewer();
             return;
         }
+        if (DismissFindAll()) return;
+        CancelSearch();
         if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
         {
             HideFindAndReplaceControl();
@@ -805,6 +820,28 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         var version = _searchRequestVersion;
         var found = await search;
         if (_disposed || version != _searchRequestVersion) return;
+        if (e.FindAndReplaceMode == FindAndReplaceMode.FindAll)
+        {
+            // Let the flyout finish its own focus restoration, including when a
+            // short literal search completes synchronously inside Click.
+            await Task.Delay(10);
+            if (!_disposed && version == _searchRequestVersion && IsLoaded)
+            {
+                if (found && _findAllResults?.Rows.Count > 0)
+                {
+                    FindAllList.SelectedIndex = 0;
+                    FindAllList.ScrollIntoView(FindAllList.SelectedItem);
+                    FindAllList.UpdateLayout();
+                    // Keep the initial selection subtle. Pointer focus suppresses
+                    // the focus rectangle; arrow/Tab navigation restores it.
+                    if (FindAllList.ContainerFromIndex(0) is ListViewItem firstResult)
+                        firstResult.Focus(FocusState.Pointer);
+                }
+                else if (FindAndReplacePlaceholder?.Visibility == Visibility.Visible)
+                    FindAndReplaceControl.Focus(string.Empty, FindAndReplaceMode.FindOnly);
+            }
+            return;
+        }
 
         // In case user hit "enter" key in search box instead of clicking on search button or hit F3
         // We should re-focus on FindAndReplaceControl to make the next search "flows"

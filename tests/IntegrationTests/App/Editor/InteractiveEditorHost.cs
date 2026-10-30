@@ -51,6 +51,7 @@ internal static class InteractiveEditorHost
     private static RichEditBox _imeReference;
     private static byte[] _imeBaseline;
     private static NotepadsIntegrationTests.FeatureTestHost _imeWorkspace;
+    private static NotepadsIntegrationTests.EditorToolsKeyboardFixture _editorTools;
 
     private static WinUIEditor.Editor Native => _view.Editor;
 
@@ -367,6 +368,8 @@ internal static class InteractiveEditorHost
                 break;
             case "exit" when command.Length == 1:
                 KeyboardLayoutTestScope.Restore();
+                if (_editorTools != null) await _editorTools.DisposeAsync();
+                _editorTools = null;
                 if (_imeWorkspace != null) await _imeWorkspace.DisposeAsync();
                 _imeWorkspace = null;
                 await NotepadsIntegrationTests.TabDragTestHost.DisposeAsync();
@@ -377,6 +380,17 @@ internal static class InteractiveEditorHost
                 _disposed = true;
                 break;
             case "state" when command.Length == 1:
+                break;
+            case "editor-tools-start" when command.Length == 1:
+                if (_editorTools != null) throw new InvalidOperationException("An editor tools fixture already exists.");
+                _editorTools = await NotepadsIntegrationTests.EditorToolsKeyboardFixture.CreateAsync();
+                return _editorTools.Snapshot();
+            case "editor-tools-state" when command.Length == 1:
+                return _editorTools.Snapshot();
+            case "editor-tools-stop" when command.Length == 1:
+                var tools = _editorTools;
+                _editorTools = null;
+                if (tools != null) await tools.DisposeAsync();
                 break;
             case "ime-state" when command.Length == 1:
                 // Only IME probes need the OS input profile; ordinary editor

@@ -31,6 +31,7 @@
 		Scintilla::Internal::Range AutomationFindText(int64_t start, int64_t end, hstring const &text, bool backward, bool ignoreCase);
 		std::vector<Scintilla::Internal::PRectangle> AutomationRangeRectangles(int64_t start, int64_t end);
 		Windows::Foundation::IAsyncOperation<WinUIEditor::EditorSearchResult> FindRegexAsync(hstring pattern, bool matchCase, int64_t origin, bool previous, bool wrap, int64_t excludedEmpty);
+		WinUIEditor::EditorSearchResult FindLiteralSlice(hstring const &pattern, bool matchCase, bool wholeWord, int64_t start);
 		Windows::Foundation::IAsyncOperation<WinUIEditor::EditorSearchResult> ReplaceRegexAsync(hstring pattern, bool matchCase, hstring replacement, int64_t origin, bool previous, bool replaceAll);
 		void StartJournal(hstring const &localPath, uint64_t baselineSequence);
 		Windows::Foundation::IAsyncAction StartJournalFromCheckpointAsync(hstring localPath, WinUIEditor::EditorJournalCheckpoint checkpoint);

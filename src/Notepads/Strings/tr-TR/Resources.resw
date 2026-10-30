@@ -310,4 +310,31 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Girintiyi boşluklara dönüştür</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Girintiyi sekmelere dönüştür</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Girinti dönüştürülemedi.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search results</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search results</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
 </root>

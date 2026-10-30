@@ -180,9 +180,9 @@
   <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve"><value>Default Search Engine</value><comment>TextAndEditorPage SearchEngineSettings Title display text.</comment></data>
   <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve"><value>Auto guess Encoding (Recommended)</value><comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment></data>
   <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve"><value>Display</value><comment>TextAndEditorPage DisplaySettings Title display text.</comment></data>
-  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve"><value>Display line numbers in the document.</value><comment>TextAndEditorPage LineNumbersSettings Description display text.</comment></data>
-  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>Display line numbers</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment></data>
-  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>Display line numbers</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve"><value>Show line numbers beside the text to help you locate and refer to lines.</value><comment>TextAndEditorPage LineNumbersSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>Show line numbers</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>Show line numbers</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment></data>
   <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve"><value>Default Font Style</value><comment>TextAndEditorPage FontStyleSettings Title display text.</comment></data>
   <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve"><value>Default Font Weight</value><comment>TextAndEditorPage FontWeightSettings Title display text.</comment></data>
   <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve"><value>Choose a custom language to override system default language used in Notepads. Restart is required to complete changes.</value><comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment></data>
@@ -201,4 +201,17 @@
   <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
   <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Grayscale smooths character edges while preserving text colors and background transparency. ClearType may look sharper on some displays and uses a solid editor background.</value></data>
   <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType requires a solid editor background. Switch to Grayscale in Font Rendering to adjust transparency.</value></data>
+  <data name="EditorWhitespace.OffContent" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="EditorWhitespace.OnContent" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="EditorIndentGuides.OffContent" xml:space="preserve"><value>Show indentation guides</value></data>
+  <data name="EditorIndentGuides.OnContent" xml:space="preserve"><value>Show indentation guides</value></data>
+  <data name="EditorBraceMatching.OffContent" xml:space="preserve"><value>Highlight matching brackets</value></data>
+  <data name="EditorBraceMatching.OnContent" xml:space="preserve"><value>Highlight matching brackets</value></data>
+  <data name="EditorOccurrences.OffContent" xml:space="preserve"><value>Highlight selected text occurrences</value></data>
+  <data name="EditorOccurrences.OnContent" xml:space="preserve"><value>Highlight selected text occurrences</value></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve"><value>Shade the line containing the cursor to help you keep your place.</value></data>
+  <data name="EditorWhitespace_Description.Text" xml:space="preserve"><value>Show dots for spaces and arrows for tabs. These marks do not change the text.</value></data>
+  <data name="EditorIndentGuides_Description.Text" xml:space="preserve"><value>Show vertical guides along indentation to make nested blocks easier to follow.</value></data>
+  <data name="EditorBraceMatching_Description.Text" xml:space="preserve"><value>Highlight matching (), [] and {} when the cursor is next to a bracket.</value></data>
+  <data name="EditorOccurrences_Description.Text" xml:space="preserve"><value>Select a short piece of text on one line to highlight identical, case-sensitive matches in view.</value></data>
 </root>

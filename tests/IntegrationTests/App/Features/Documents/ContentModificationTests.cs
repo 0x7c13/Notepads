@@ -92,11 +92,36 @@ internal static class ContentModificationTests
         Check(!emptyFile.IsModified && emptyFile.TestComparedChunks.Count == 0,
             "The same immediate empty check applies to an actual empty saved file.");
         var core = emptyFile.TestNativeCore;
-        var view = (FrameworkElement)((Grid)core.Content).Children[0];
+        var view = (WinUIEditor.EditorBaseControl)((Grid)core.Content).Children[0];
         await UntilAsync(() => view.ActualHeight > 0 && core.ActualHeight > 12, "The editor inset fixture must be arranged.");
-        var top = view.TransformToVisual(core).TransformPoint(new Point()).Y;
-        Check(Math.Abs(top - 6) < 0.01 && Math.Abs(core.ActualHeight - view.ActualHeight - top - 6) < 0.01,
+        var surface = Descendants(view).OfType<Border>().Single(element => element.Name == "ImageTarget");
+        var horizontal = Descendants(view).OfType<Windows.UI.Xaml.Controls.Primitives.ScrollBar>()
+            .Single(element => element.Name == "HorizontalScrollBar");
+        var top = surface.TransformToVisual(core).TransformPoint(new Point()).Y;
+        Check(Math.Abs(top - 6) < 0.01 && Math.Abs(core.ActualHeight - surface.ActualHeight - top - 6) < 0.01,
             "The actual native viewport has six DIP of painted space above and below it.");
+        var wrapping = core.TextWrapping;
+        try
+        {
+            await EditorTestLayout.AfterPaintAsync(view.Editor, () =>
+            {
+                core.TextWrapping = TextWrapping.NoWrap;
+                Replace(emptyFile, new string('W', 512));
+            });
+            await UntilAsync(() => horizontal.Visibility == Visibility.Visible && horizontal.ActualHeight > 0,
+                "A long line exposes the actual horizontal scrollbar.");
+            core.UpdateLayout();
+            var barTop = horizontal.TransformToVisual(core).TransformPoint(new Point()).Y;
+            var textBottom = surface.TransformToVisual(core).TransformPoint(new Point(0, surface.ActualHeight)).Y;
+            Check(Math.Abs(barTop + horizontal.ActualHeight - core.ActualHeight) < 0.01 &&
+                Math.Abs(barTop - textBottom - 6) < 0.01,
+                "The horizontal scrollbar reaches the editor bottom while text retains its six DIP inset above it.");
+        }
+        finally
+        {
+            Replace(emptyFile, string.Empty);
+            core.TextWrapping = wrapping;
+        }
     }
 
     private static async Task EqualityUndoRecoveryCloseAsync(FeatureTestHost host)

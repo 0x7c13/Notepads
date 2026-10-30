@@ -2428,7 +2428,7 @@ bool SplitMatch(const SplitView &view, size_t start, std::string_view text) noex
  * Has not been tested with backwards DBCS searches yet.
  */
 Sci::Position Document::FindText(Sci::Position minPos, Sci::Position maxPos, const char *search,
-                        FindOption flags, Sci::Position *length) {
+                        FindOption flags, Sci::Position *length, Sci::Position candidateEnd) {
 	if (*length <= 0)
 		return minPos;
 	const bool caseSensitive = FlagSet(flags, FindOption::MatchCase);
@@ -2447,6 +2447,10 @@ Sci::Position Document::FindText(Sci::Position minPos, Sci::Position maxPos, con
 	// Range endpoints should not be inside DBCS characters, but just in case, move them.
 	const Sci::Position startPos = MovePositionOutsideChar(minPos, increment, false);
 	const Sci::Position endPos = MovePositionOutsideChar(maxPos, increment, false);
+	// A cooperative caller may stop before the last candidate without truncating
+	// matches or Unicode case-fold/whole-word lookahead across that boundary.
+	const Sci::Position candidateLimit = forward && candidateEnd >= 0 ?
+		std::clamp(candidateEnd, startPos, endPos) : endPos;
 
 	// Compute actual search ranges needed
 	const Sci::Position lengthFind = *length;
@@ -2460,7 +2464,7 @@ Sci::Position Document::FindText(Sci::Position minPos, Sci::Position maxPos, con
 	}
 	const SplitView cbView = cb.AllView();
 	if (caseSensitive) {
-		const Sci::Position endSearch = (startPos <= endPos) ? endPos - lengthFind + 1 : endPos;
+		const Sci::Position endSearch = (startPos <= endPos) ? std::min(endPos - lengthFind + 1, candidateLimit) : endPos;
 		const unsigned char charStartSearch =  search[0];
 		if (forward && ((0 == dbcsCodePage) || (CpUtf8 == dbcsCodePage && !UTF8IsTrailByte(charStartSearch)))) {
 			// This is a fast case where there is no need to test byte values to iterate
@@ -2510,7 +2514,7 @@ Sci::Position Document::FindText(Sci::Position minPos, Sci::Position maxPos, con
 		std::vector<char> searchThing(((lengthFind+1) * UTF8MaxBytes * maxFoldingExpansion) + 1);
 		const size_t lenSearch =
 			pcf->Fold(searchThing.data(), searchThing.size(), search, lengthFind);
-		while (forward ? (pos < endPos) : (pos >= endPos)) {
+		while (forward ? (pos < candidateLimit) : (pos >= endPos)) {
 			int widthFirstCharacter = 1;
 			Sci::Position posIndexDocument = pos;
 			size_t indexSearch = 0;
@@ -2569,7 +2573,7 @@ Sci::Position Document::FindText(Sci::Position minPos, Sci::Position maxPos, con
 		constexpr size_t maxFoldingExpansion = 4;
 		std::vector<char> searchThing(((lengthFind+1) * maxBytesCharacter * maxFoldingExpansion) + 1);
 		const size_t lenSearch = pcf->Fold(searchThing.data(), searchThing.size(), search, lengthFind);
-		while (forward ? (pos < endPos) : (pos >= endPos)) {
+		while (forward ? (pos < candidateLimit) : (pos >= endPos)) {
 			int widthFirstCharacter = 0;
 			Sci::Position indexDocument = 0;
 			size_t indexSearch = 0;
@@ -2620,7 +2624,7 @@ Sci::Position Document::FindText(Sci::Position minPos, Sci::Position maxPos, con
 			}
 		}
 	} else {
-		const Sci::Position endSearch = (startPos <= endPos) ? endPos - lengthFind + 1 : endPos;
+		const Sci::Position endSearch = (startPos <= endPos) ? std::min(endPos - lengthFind + 1, candidateLimit) : endPos;
 		std::vector<char> searchThing(lengthFind + 1);
 		pcf->Fold(searchThing.data(), searchThing.size(), search, lengthFind);
 		while (forward ? (pos < endSearch) : (pos >= endSearch)) {
@@ -2998,10 +3002,14 @@ void Document::NotifyGroupCompleted() noexcept {
 }
 
 void Document::NotifyModified(DocModification mh) {
-	if (FlagSet(mh.modificationType, ModificationFlags::InsertText)) {
-		decorations->InsertSpace(mh.position, mh.length);
-	} else if (FlagSet(mh.modificationType, ModificationFlags::DeleteText)) {
-		decorations->DeleteRange(mh.position, mh.length);
+	// Atomic publication already swapped in the replacement's decorations.
+	// Its synthetic notifications update watchers, not those final-sized runs.
+	if (!atomicReplacement) {
+		if (FlagSet(mh.modificationType, ModificationFlags::InsertText)) {
+			decorations->InsertSpace(mh.position, mh.length);
+		} else if (FlagSet(mh.modificationType, ModificationFlags::DeleteText)) {
+			decorations->DeleteRange(mh.position, mh.length);
+		}
 	}
 	for (const WatcherWithUserData &watcher : watchers) {
 		watcher.watcher->NotifyModified(this, mh, watcher.userData);

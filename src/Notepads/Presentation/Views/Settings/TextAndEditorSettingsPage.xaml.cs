@@ -129,6 +129,10 @@ public sealed partial class TextAndEditorSettingsPage : Page
         HighlightMisspelledWordsToggle.IsOn = ApplicationPreferences.IsHighlightMisspelledWordsEnabled;
         LineHighlighterToggle.IsOn = ApplicationPreferences.EditorDisplayLineHighlighter;
         LineNumbersToggle.IsOn = ApplicationPreferences.EditorDisplayLineNumbers;
+        WhitespaceToggle.IsOn = ApplicationPreferences.EditorReadingAids.HasFlag(ReadingAids.Whitespace);
+        IndentGuidesToggle.IsOn = ApplicationPreferences.EditorReadingAids.HasFlag(ReadingAids.IndentGuides);
+        BraceMatchingToggle.IsOn = ApplicationPreferences.EditorReadingAids.HasFlag(ReadingAids.Braces);
+        OccurrencesToggle.IsOn = ApplicationPreferences.EditorReadingAids.HasFlag(ReadingAids.Occurrences);
         FontFamilyPicker.SelectedItem = ApplicationPreferences.EditorFontFamily;
         FontSizePicker.SelectedItem = ApplicationPreferences.EditorFontSize;
         FontStylePicker.SelectedItem = AvailableFontStyles.FirstOrDefault(style => style.FontStyle == ApplicationPreferences.EditorFontStyle.ToFontStyle());
@@ -264,6 +268,10 @@ public sealed partial class TextAndEditorSettingsPage : Page
         TextWrappingToggle.Toggled += TextWrappingToggle_OnToggled;
         HighlightMisspelledWordsToggle.Toggled += HighlightMisspelledWordsToggle_OnToggled;
         LineHighlighterToggle.Toggled += LineHighlighterToggle_OnToggled;
+        WhitespaceToggle.Toggled += ReadingAids_OnToggled;
+        IndentGuidesToggle.Toggled += ReadingAids_OnToggled;
+        BraceMatchingToggle.Toggled += ReadingAids_OnToggled;
+        OccurrencesToggle.Toggled += ReadingAids_OnToggled;
         LineNumbersToggle.Toggled += LineNumbersToggle_Toggled;
         FontFamilyPicker.SelectionChanged += FontFamilyPicker_OnSelectionChanged;
         FontSizePicker.SelectionChanged += FontSizePicker_OnSelectionChanged;
@@ -301,6 +309,10 @@ public sealed partial class TextAndEditorSettingsPage : Page
         TextWrappingToggle.Toggled -= TextWrappingToggle_OnToggled;
         HighlightMisspelledWordsToggle.Toggled -= HighlightMisspelledWordsToggle_OnToggled;
         LineHighlighterToggle.Toggled -= LineHighlighterToggle_OnToggled;
+        WhitespaceToggle.Toggled -= ReadingAids_OnToggled;
+        IndentGuidesToggle.Toggled -= ReadingAids_OnToggled;
+        BraceMatchingToggle.Toggled -= ReadingAids_OnToggled;
+        OccurrencesToggle.Toggled -= ReadingAids_OnToggled;
         LineNumbersToggle.Toggled -= LineNumbersToggle_Toggled;
         FontFamilyPicker.SelectionChanged -= FontFamilyPicker_OnSelectionChanged;
         FontSizePicker.SelectionChanged -= FontSizePicker_OnSelectionChanged;
@@ -480,6 +492,15 @@ public sealed partial class TextAndEditorSettingsPage : Page
     private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)
     {
         ApplicationPreferences.EditorDisplayLineHighlighter = LineHighlighterToggle.IsOn;
+    }
+
+    private void ReadingAids_OnToggled(object sender, RoutedEventArgs e)
+    {
+        ApplicationPreferences.EditorReadingAids =
+            (WhitespaceToggle.IsOn ? ReadingAids.Whitespace : 0) |
+            (IndentGuidesToggle.IsOn ? ReadingAids.IndentGuides : 0) |
+            (BraceMatchingToggle.IsOn ? ReadingAids.Braces : 0) |
+            (OccurrencesToggle.IsOn ? ReadingAids.Occurrences : 0);
     }
 
     private void LineNumbersToggle_Toggled(object sender, RoutedEventArgs e)

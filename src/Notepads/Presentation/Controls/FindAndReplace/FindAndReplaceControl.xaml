@@ -10,6 +10,9 @@
     d:DesignWidth="250">
 
     <Grid x:Name="FindAndReplaceRootGrid" Padding="6,2,6,2" KeyDown="FindAndReplaceRootGrid_KeyDown">
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control" Key="Enter" ScopeOwner="{x:Bind FindAndReplaceRootGrid}" Invoked="FindAllAccelerator_Invoked"/>
+        </Grid.KeyboardAccelerators>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -82,6 +85,8 @@
                         FontFamily="Segoe MDL2 Assets">
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem x:Name="FindAllButton" x:Uid="EditorTools_FindAll" KeyboardAcceleratorTextOverride="Ctrl+Enter" Click="FindAllButton_Click"/>
+                            <MenuFlyoutSeparator/>
                             <ToggleMenuFlyoutItem x:Uid="FindAndReplace_SearchOptionToggleButton_MatchCase" x:Name="MatchCaseToggle" Click="OptionButtonFlyoutItem_OnClick">
                                 <ToggleMenuFlyoutItem.KeyboardAccelerators>
                                     <KeyboardAccelerator Modifiers="Menu" Key="C"/>

@@ -34,6 +34,7 @@ public sealed partial class TextEditorCore
     internal void ConfigureDiffPreview()
     {
         _diffPreview = true;
+        ApplyReadingAids();
         TextWrapping = TextWrapping.NoWrap;
         DisplayLineNumbers = true;
         DisplayLineHighlighter = false;

@@ -230,6 +230,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         AddHandler(PointerMovedEvent, new PointerEventHandler(OnEditorPointerMoved), true);
         AddHandler(PointerExitedEvent, new PointerEventHandler(OnEditorPointerExited), true);
         Loading += OnLoading;
+        Loaded += ReadingAids_Loaded;
+        Unloaded += ReadingAids_Unloaded;
         ActualThemeChanged += OnActualThemeChanged;
         ThemeSettingsService.OnThemeChanged += OnAppThemeChanged;
         _accessibility.HighContrastChanged += OnHighContrastChanged;
@@ -245,10 +247,10 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private void ApplyEditorPadding()
     {
-        // Keep the text inset inside the painted surface, so its background
-        // also covers the space between the tab strip and the first text row.
-        // The native template already reserves its horizontal scrollbar row.
-        _surface.Padding = new Thickness(0, Padding.Top, 0, Padding.Bottom);
+        // Keep the painted top inset below the tab strip. Bottom space belongs
+        // to the text target, so the horizontal scrollbar reaches the status bar.
+        _surface.Padding = new Thickness(0, Padding.Top, 0, 0);
+        _view.Padding = new Thickness(0, 0, 0, Padding.Bottom);
     }
 
     private void OnActualThemeChanged(FrameworkElement sender, object args) => ApplyTheme();
@@ -305,6 +307,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         HideLineNumberGlow();
         _lineNumberReveal.BorderBrush = _accessibility.HighContrast ? null : _lineNumberGlow;
         ApplySelectionAppearance();
+        ApplyReadingAids();
         UpdateLineNumberMargin();
         AppearanceChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -355,10 +358,11 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         _lineNumberDigits = LineNumberDigits();
         var width = _displayLineNumbers ? Native.TextWidth((int)StylesCommon.LineNumber, new string('9', _lineNumberDigits)) + (int)Math.Round(12 * _dpiScale) : 0;
         Native.SetMarginWidthN(0, width);
-        var rtl = RightToLeftReadingOrder;
         var gap = (int)Math.Round(6 * _dpiScale);
-        Native.MarginLeft = rtl ? 1 : gap;
-        Native.MarginRight = rtl ? gap : 1;
+        // Keep text away from both viewport edges, including when the vertical
+        // scrollbar is hidden. Native margins also constrain wrapping and hits.
+        Native.MarginLeft = gap;
+        Native.MarginRight = gap;
         _lineNumberReveal.Width = width / _dpiScale;
         UpdateLineNumberRevealLayout();
         _lineNumberReveal.Visibility = _displayLineNumbers ? Visibility.Visible : Visibility.Collapsed;
@@ -367,7 +371,12 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private int LineNumberDigits() => Math.Max(2, Native.LineCount.ToString().Length);
 
-    private void OnNativeViewportGeometryChanged(object sender, object args) => UpdateLineNumberRevealLayout();
+    private void OnNativeViewportGeometryChanged(object sender, object args)
+    {
+        UpdateLineNumberRevealLayout();
+        // Reflow at a fixed scroll position need not raise SCN_UPDATEUI.
+        QueueReadingAids();
+    }
     private void OnNativeScrollStarted(object sender, object args) => ScrollStarted?.Invoke(this, EventArgs.Empty);
 
     private void UpdateLineNumberRevealLayout()
@@ -421,6 +430,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private void OnNativeModified(Editor sender, ModifiedEventArgs args)
     {
+        if ((args.ModificationType & (int)ModificationFlags.ChangeStyle) != 0) InvalidateBraceStyles();
         if ((args.ModificationType & (int)TextModifications) == 0) return;
         ContentVersion++;
         if (args.Position <= DocumentTitle.SampleBytes) LeadingTextVersion++;
@@ -439,6 +449,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     private void OnNativeUpdateUI(Editor sender, UpdateUIEventArgs args)
     {
         UpdateSyntaxStatus();
+        if ((args.Updated & (int)(Update.Content | Update.Selection | Update.VScroll | Update.HScroll)) != 0) QueueReadingAids();
         // Scintilla reports a content update without a separate selection flag
         // when typing replaces a selection. The status bar still needs the
         // final caret/selection after that edit.
@@ -787,6 +798,10 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         Native.Modified -= OnNativeModified;
         Native.CharAdded -= OnNativeCharAdded;
         Native.UpdateUI -= OnNativeUpdateUI;
+        _readingTimer?.Stop();
+        if (_readingTimer != null) _readingTimer.Tick -= ReadingTimer_Tick;
+        Loaded -= ReadingAids_Loaded;
+        Unloaded -= ReadingAids_Unloaded;
         Native.SavePointReached -= OnSavePointReached;
         Native.SavePointLeft -= OnSavePointLeft;
         _view.PreviewKeyDown -= OnEditorPreviewKeyDown;

@@ -53,9 +53,17 @@ namespace Notepads.Presentation.Views.Settings
 
 namespace Notepads.Presentation.Controls.TextEditor
 {
+    public sealed partial class TextEditor
+    {
+        internal bool TestFindAllVisible => FindAllPanel?.Visibility == Visibility.Visible;
+        internal ListView TestFindAllList => FindAllList;
+        internal bool TestDiffPreparing => _diffGeneration?.Preparing == true;
+    }
+
     public sealed partial class TextEditorCore
     {
         internal Editor TestFeatureNative => Native;
+        internal (long, long) TestHighlightedBracePair => _highlightedBracePair;
     }
 
     public sealed partial class TextEditorContextFlyout

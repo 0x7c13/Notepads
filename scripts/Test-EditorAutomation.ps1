@@ -1823,6 +1823,121 @@ try {
         }
     }
 
+    Test-Case 'Find All physical Escape from results, editor and query' {
+        function Find-ToolsControl([string] $Id, [switch] $Optional) {
+            $condition = [Windows.Automation.AndCondition]::new(
+                [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ProcessIdProperty, [int] $session.ProcessId),
+                [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, $Id))
+            $control = [Windows.Automation.AutomationElement]::RootElement.FindFirst([Windows.Automation.TreeScope]::Descendants, $condition)
+            if (!$control -and !$Optional) { throw "The editor tools control is unavailable: $Id" }
+            return $control
+        }
+        function Wait-ToolsState([scriptblock] $Condition, [string] $Label) {
+            $deadline = [DateTime]::UtcNow.AddSeconds(5)
+            do {
+                $state = Invoke-EditorTestCommand $session 'editor-tools-state'
+                if (& $Condition $state) { $script:checks++; return $state }
+                Start-Sleep -Milliseconds 25
+            } while ([DateTime]::UtcNow -lt $deadline)
+            throw "$Label`: $($state | ConvertTo-Json -Compress)"
+        }
+        function Send-ToolsKey($Target, [int] $Key, [bool] $Control = $false, [bool] $Alt = $false) {
+            Assert-EditorTestAlive $session
+            [EditorAutomationInput]::RequireIdle()
+            if (!$Target.Current.HasKeyboardFocus) { throw 'The editor tools target lost keyboard focus.' }
+            [PackagedAppDriver]::Key([uint32] $session.ProcessId, [uint16] $Key, $Control, $false, $Alt)
+        }
+        try {
+            $initial = Invoke-EditorTestCommand $session 'editor-tools-start'
+            foreach ($targetId in @('EditorToolsResult', 'EditorToolsEditor', 'EditorToolsQuery')) {
+                $query = Find-ToolsControl 'EditorToolsQuery'
+                $query.SetFocus()
+                Send-ToolsKey $query 0x0d $true
+                $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'True' -and $state.toolsResultCount -eq '3' -and $state.toolsResultReady -eq 'True' } 'Ctrl+Enter opens all results'
+                $result = Find-ToolsControl 'EditorToolsResult'
+                $deadline = [DateTime]::UtcNow.AddSeconds(5)
+                while (!$result.Current.HasKeyboardFocus -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 25 }
+                Assert-True $result.Current.HasKeyboardFocus 'Find All completion focuses the first result'
+                $null = Wait-ToolsState { param($state) $state.toolsSelectedResult -eq '0' -and $state.toolsResultFocus -eq 'Pointer' } 'The initial result has selection without a keyboard focus rectangle'
+                if ($targetId -eq 'EditorToolsResult') {
+                    $listBounds = (Find-ToolsControl 'FindAllList').Current.BoundingRectangle
+                    $closeBounds = (Find-ToolsControl 'FindAllCloseButton').Current.BoundingRectangle
+                    Start-Sleep -Milliseconds 100
+                    $null = [EditorAutomationInput]::Capture([uint32] $session.ProcessId,
+                        [int] [Math]::Ceiling($listBounds.Left), [int] [Math]::Ceiling($closeBounds.Top),
+                        [int] [Math]::Floor($listBounds.Width), [int] [Math]::Floor($listBounds.Bottom - $closeBounds.Top),
+                        (Join-Path $session.Root 'find-all-initial-selection.png'))
+                    Send-ToolsKey $result 0x28
+                    $null = Wait-ToolsState { param($state) $state.toolsSelectedResult -eq '1' -and $state.toolsResultFocus -eq 'Keyboard' } 'Arrow navigation restores keyboard focus on the next result'
+                    Send-ToolsKey ([Windows.Automation.AutomationElement]::FocusedElement) 0x26
+                    $null = Wait-ToolsState { param($state) $state.toolsSelectedResult -eq '0' -and $state.toolsResultFocus -eq 'Keyboard' } 'Arrow navigation returns to the first result'
+                }
+                $target = Find-ToolsControl $targetId
+                $target.SetFocus()
+                Send-ToolsKey $target 0x1b
+                $closed = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsResultCount -eq '0' -and $state.toolsQueryVisible -eq 'True' } "Escape from $targetId closes results and retains the query"
+                Assert-Equal $closed.toolsText64 $initial.toolsText64 'Escape leaves document content unchanged'
+                $body = Find-ToolsControl 'EditorToolsEditor'
+                Assert-True $body.Current.HasKeyboardFocus 'Dismissing results restores editor focus'
+                Send-ToolsKey $body 0x1b
+                $null = Wait-ToolsState { param($state) $state.toolsQueryVisible -eq 'False' } 'A second Escape closes the query bar'
+                Send-ToolsKey $body 0x46 $true
+                $null = Wait-ToolsState { param($state) $state.toolsQueryVisible -eq 'True' } 'Ctrl+F reopens the query for the next focus case'
+            }
+            $query = Find-ToolsControl 'EditorToolsQuery'
+            $query.SetFocus()
+            Send-ToolsKey $query 0x0d $true
+            $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'True' -and $state.toolsResultCount -eq '3' -and $state.toolsResultFocus -eq 'Pointer' } 'Find All is open before entering Diff'
+            Send-ToolsKey (Find-ToolsControl 'EditorToolsResult') 0x44 $false $true
+            $null = Wait-ToolsState { param($state) $state.toolsMode -eq 'DiffPreview' } 'Alt+D opens Diff over the existing results'
+            Send-ToolsKey ([Windows.Automation.AutomationElement]::FocusedElement) 0x1b
+            $returned = Wait-ToolsState { param($state) $state.toolsMode -eq 'Editing' -and $state.toolsResultsVisible -eq 'True' -and $state.toolsResultCount -eq '3' } 'One Escape exits Diff while retaining Find All results'
+            Assert-Equal $returned.toolsText64 $initial.toolsText64 'Diff and Escape preserve source text'
+            $body = Find-ToolsControl 'EditorToolsEditor'
+            Assert-True $body.Current.HasKeyboardFocus 'Exiting Diff restores source editor focus'
+            Send-ToolsKey $body 0x1b
+            $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsQueryVisible -eq 'True' } 'The following Escape dismisses Find All'
+            $query = Find-ToolsControl 'EditorToolsQuery'
+            $query.SetFocus()
+            $longQuery = ('long-query-' * 400) + 'END'
+            $value = $query.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern)
+            $value.SetValue($longQuery)
+            Send-ToolsKey $query 0x0d $true
+            $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'True' -and $state.toolsResultCount -eq '0' } 'The long query opens an empty result summary'
+            $status = Find-ToolsControl 'FindAllStatus'
+            Assert-True ($status.Current.Name.Contains($longQuery)) 'Accessibility exposes the complete query despite visual ellipsis'
+            $bounds = $status.Current.BoundingRectangle
+            [EditorAutomationInput]::Move([uint32] $session.ProcessId, [int] ($bounds.Left + $bounds.Width / 2), [int] ($bounds.Top + $bounds.Height / 2))
+            $deadline = [DateTime]::UtcNow.AddSeconds(5)
+            do {
+                $tip = Find-ToolsControl 'FindAllFullSummary' -Optional
+                if ($tip -and !$tip.Current.IsOffscreen) { break }
+                Start-Sleep -Milliseconds 50
+            } while ([DateTime]::UtcNow -lt $deadline)
+            Assert-True ($tip -and !$tip.Current.IsOffscreen) 'Hover reveals the full search-summary tooltip'
+            $parent = $tip
+            $scroll = $null
+            for ($i = 0; $i -lt 8 -and $parent; $i++) {
+                if ($parent.TryGetCurrentPattern([Windows.Automation.ScrollPattern]::Pattern, [ref] $scroll)) { break }
+                $parent = [Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($parent)
+            }
+            Assert-True ($scroll -and $scroll.Current.VerticallyScrollable) 'Long tooltip contents expose vertical scrolling'
+            # Tooltips have their own non-foreground popup HWND. Keep the mouse
+            # driver's foreground guard intact and use the owned UIA provider.
+            Assert-Equal $parent.Current.ProcessId ([int] $session.ProcessId) 'The tooltip scroll provider belongs to the isolated app'
+            $scroll.Scroll([Windows.Automation.ScrollAmount]::NoAmount, [Windows.Automation.ScrollAmount]::LargeIncrement)
+            $deadline = [DateTime]::UtcNow.AddSeconds(3)
+            while ($scroll.Current.VerticalScrollPercent -le 0 -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 25 }
+            Assert-True (!$tip.Current.IsOffscreen -and $scroll.Current.VerticalScrollPercent -gt 0) 'The tooltip stays open and scrolls through its native UIA provider'
+            $bounds = $query.Current.BoundingRectangle
+            [EditorAutomationInput]::Move([uint32] $session.ProcessId, [int] ($bounds.Left + $bounds.Width / 2), [int] ($bounds.Top + $bounds.Height / 2))
+            $query.SetFocus()
+            Send-ToolsKey $query 0x1b
+            $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' } 'Escape dismisses the long-query result pane'
+        }
+        finally { $null = Invoke-EditorTestCommand $session 'editor-tools-stop' }
+    }
+
     if ($script:report.Count -eq 0) { throw "No automation case matched '$($Case -join ', ')'." }
     $summary = "PASS: external UIA, physical RTL input and raster checks, $($script:report.Count) cases, $script:checks assertions"
     $script:report.Add($summary)

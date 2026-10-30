@@ -310,4 +310,31 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>将缩进转换为空格</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>将缩进转换为制表符</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>无法转换缩进。</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>选中行</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>升序排列（区分大小写）</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>降序排列（区分大小写）</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>删除重复行</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>此操作支持最多 100,000 行、4 MB 的选中文本。</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>无法完成行操作。</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>查找当前文档中的所有匹配项</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} 处匹配</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>已显示 {0} 个匹配项。达到数量或时间限制，请缩小查找范围。</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>文档或查找条件已更改，请重新查找全部。</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>关闭查找结果</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>关闭查找结果</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>当前文档查找结果</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>正在查找…可关闭此面板以取消。</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} 处匹配</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>已显示 {0} 处（未完成）</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>正在查找…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>结果已失效</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>查找失败</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>当前文档</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>文本</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>正则表达式</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>区分大小写</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>忽略大小写</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>整词匹配</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>不限整词</value></data>
+  <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
 </root>

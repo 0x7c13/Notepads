@@ -17,6 +17,7 @@ public sealed partial class TextEditorCore
 {
     internal void HookExternalEvents()
     {
+        ApplicationPreferences.ReadingAidsChanged += OnReadingAidsChanged;
         ApplicationPreferences.OnFontFamilyChanged += EditorSettingsService_OnFontFamilyChanged;
         ApplicationPreferences.OnDefaultTabIndentsChanged += EditorSettingsService_OnDefaultTabIndentsChanged;
         ApplicationPreferences.OnFontSizeChanged += EditorSettingsService_OnFontSizeChanged;
@@ -32,6 +33,7 @@ public sealed partial class TextEditorCore
 
     internal void UnhookExternalEvents()
     {
+        ApplicationPreferences.ReadingAidsChanged -= OnReadingAidsChanged;
         ApplicationPreferences.OnFontFamilyChanged -= EditorSettingsService_OnFontFamilyChanged;
         ApplicationPreferences.OnDefaultTabIndentsChanged -= EditorSettingsService_OnDefaultTabIndentsChanged;
         ApplicationPreferences.OnFontSizeChanged -= EditorSettingsService_OnFontSizeChanged;

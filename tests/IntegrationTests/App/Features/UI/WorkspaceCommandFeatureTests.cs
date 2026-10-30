@@ -38,6 +38,7 @@ internal static class WorkspaceCommandFeatureTests
         await TabCloseSelectionTests.RunAsync(log);
         await DocumentTitleFeatureTests.RunAsync(log);
         await IndentationFeatureTests.RunAsync(log);
+        await EditorToolsFeatureTests.RunAsync(log);
         await using var host = await FeatureTestHost.CreateAsync();
         var page = host.Page;
         var core = host.Core;

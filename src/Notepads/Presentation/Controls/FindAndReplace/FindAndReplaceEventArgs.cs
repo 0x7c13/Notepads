@@ -11,7 +11,8 @@ public enum FindAndReplaceMode
 {
     FindOnly,
     Replace,
-    ReplaceAll
+    ReplaceAll,
+    FindAll
 }
 
 public enum SearchDirection

@@ -8,6 +8,14 @@
     mc:Ignorable="d"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
+    <Page.Resources>
+        <Style x:Key="DisplaySettingDescriptionStyle" TargetType="TextBlock" BasedOn="{StaticResource DescriptionTextBlockStyle}">
+            <!-- Align with the label after the 44-DIP switch and its 12-DIP gap. -->
+            <Setter Property="Margin" Value="56,2,0,0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </Page.Resources>
+
     <Grid>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -46,21 +54,6 @@
                                   IsEnabled="False"
                                   Style="{StaticResource CustomToggleSwitchStyle}" 
                                   x:Name="HighlightMisspelledWordsToggle"/>
-                </StackPanel>
-                <TextBlock
-                    x:Uid="/Settings/TextAndEditorPage_DisplaySettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
-                    Margin="0,20,0,0"
-                    FontWeight="Normal"/>
-                <StackPanel Margin="0,10,0,0">
-                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_ToggleSwitch"
-                                  Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="LineHighlighterToggle"
-                                  Margin="0,0,0,10"/>
-                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_ToggleSwitch"
-                                  Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="LineNumbersToggle"/>
-                    <TextBlock x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_Description" Style="{ThemeResource DescriptionTextBlockStyle}" Margin="0,8,0,0"/>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontSettings_Title"
@@ -138,6 +131,59 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+                </StackPanel>
+                <TextBlock
+                    x:Uid="/Settings/TextAndEditorPage_DisplaySettings_Title"
+                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
+                    Margin="0,20,0,0"
+                    FontWeight="Normal"/>
+                <StackPanel Margin="0,10,0,0" Spacing="16">
+                    <StackPanel>
+                        <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_ToggleSwitch"
+                                      x:Name="LineHighlighterToggle" Style="{StaticResource CustomToggleSwitchStyle}"
+                                      AutomationProperties.HelpText="{Binding Text, ElementName=LineHighlighterDescription}"/>
+                        <TextBlock x:Name="LineHighlighterDescription" x:Uid="/Settings/TextAndEditorPage_LineHighlighterSettings_Description"
+                                   Style="{StaticResource DisplaySettingDescriptionStyle}"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_ToggleSwitch"
+                                      x:Name="LineNumbersToggle" Style="{StaticResource CustomToggleSwitchStyle}"
+                                      AutomationProperties.HelpText="{Binding Text, ElementName=LineNumbersDescription}"/>
+                        <TextBlock x:Name="LineNumbersDescription" x:Uid="/Settings/TextAndEditorPage_LineNumbersSettings_Description"
+                                   Style="{StaticResource DisplaySettingDescriptionStyle}"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <ToggleSwitch x:Name="WhitespaceToggle" x:Uid="/Settings/EditorWhitespace"
+                                      AutomationProperties.Name="{Binding OnContent, RelativeSource={RelativeSource Self}}"
+                                      AutomationProperties.HelpText="{Binding Text, ElementName=WhitespaceDescription}"
+                                      Style="{StaticResource CustomToggleSwitchStyle}"/>
+                        <TextBlock x:Name="WhitespaceDescription" x:Uid="/Settings/EditorWhitespace_Description"
+                                   Style="{StaticResource DisplaySettingDescriptionStyle}"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <ToggleSwitch x:Name="IndentGuidesToggle" x:Uid="/Settings/EditorIndentGuides"
+                                      AutomationProperties.Name="{Binding OnContent, RelativeSource={RelativeSource Self}}"
+                                      AutomationProperties.HelpText="{Binding Text, ElementName=IndentGuidesDescription}"
+                                      Style="{StaticResource CustomToggleSwitchStyle}"/>
+                        <TextBlock x:Name="IndentGuidesDescription" x:Uid="/Settings/EditorIndentGuides_Description"
+                                   Style="{StaticResource DisplaySettingDescriptionStyle}"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <ToggleSwitch x:Name="BraceMatchingToggle" x:Uid="/Settings/EditorBraceMatching"
+                                      AutomationProperties.Name="{Binding OnContent, RelativeSource={RelativeSource Self}}"
+                                      AutomationProperties.HelpText="{Binding Text, ElementName=BraceMatchingDescription}"
+                                      Style="{StaticResource CustomToggleSwitchStyle}"/>
+                        <TextBlock x:Name="BraceMatchingDescription" x:Uid="/Settings/EditorBraceMatching_Description"
+                                   Style="{StaticResource DisplaySettingDescriptionStyle}"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <ToggleSwitch x:Name="OccurrencesToggle" x:Uid="/Settings/EditorOccurrences"
+                                      AutomationProperties.Name="{Binding OnContent, RelativeSource={RelativeSource Self}}"
+                                      AutomationProperties.HelpText="{Binding Text, ElementName=OccurrencesDescription}"
+                                      Style="{StaticResource CustomToggleSwitchStyle}"/>
+                        <TextBlock x:Name="OccurrencesDescription" x:Uid="/Settings/EditorOccurrences_Description"
+                                   Style="{StaticResource DisplaySettingDescriptionStyle}"/>
+                    </StackPanel>
                 </StackPanel>
                 <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_LineEndingSettings_Title"

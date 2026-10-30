@@ -44,6 +44,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | --- | --- |
 | Encoding/BOM/EOL, language, indentation policy, filenames and search URLs | Unit; `Editor`, `NativeStorage`; `Persistence` for file decoding, multilingual auto detection and late-error fallback |
 | Per-document indentation status/menu, metadata-only overrides, conversion undo, YAML, selection and session/window transfer | `Editor`, `WorkspaceCommands`, `WindowMove`; Unit recovery metadata |
+| Reading aids (including occurrence refresh/reuse across width-only reflow), Find All results and selected-line sort/dedup undo/cancellation | `WorkspaceCommands`, `Preferences`; Unit line operations; `UIAutomation` for physical Ctrl+Enter/Escape from result/editor/query focus and Diff over existing results |
 | Document admission/cancellation, recovery schema and authority | Unit; Headless `Storage` and metrics-failure groups |
 | Open/save/save-as/save-all, reload/revert, manual content reversion/dirty indicators, external file changes, editor insets | `Documents`, `FileOpening` |
 | Find/replace, Go To, clipboard, native edit commands | `EditingUI`, `Clipboard`, `ClipboardRejectedCut`, `Editor`, `Search` |

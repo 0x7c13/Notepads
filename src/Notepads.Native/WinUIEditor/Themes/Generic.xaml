@@ -15,7 +15,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:EditorBaseControl">
                     <Grid
-                        Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
@@ -29,11 +28,12 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <!-- Keep the drawing surface out of the scrollbar row and column. -->
+                        <!-- Text insets stay inside the viewport; scrollbars reach its outer edges. -->
                         <Border
                             x:Name="ImageTarget"
                             Grid.Row="0"
                             Grid.Column="1"
+                            Margin="{TemplateBinding Padding}"
                             AllowDrop="True" />
                         <ScrollBar
                             x:Name="VerticalScrollBar"
