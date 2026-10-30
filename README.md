@@ -47,7 +47,7 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+(Shift)+Tab to switch between tabs.
 * Ctrl+Num(1-9) to quickly switch to specified tab.
 * Ctrl+"+"/"-" for zooming. Ctrl+"0" to reset zooming to default.
-* Ctrl+L/R to change text flow direction. (LTR/RTL)
+* Ctrl+L/R changed text flow direction in V1. V2 keeps these commands disabled until native RTL paragraph layout is ready; mixed Arabic/Hebrew rendering remains enabled.
 * Alt+P to toggle preview split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
 
@@ -90,6 +90,7 @@ TL;DR: You might notice that I work for Microsoft but Notepads is my personal pr
 ## Contributing:
 
 * [How to contribute?](CONTRIBUTING.md)
+* V2 development: [build and CI](CI.md), [dependencies and platform scope](DEPENDENCIES.md), [tests and coverage boundaries](tests/README.md).
 * Notepads is free and open source, if you like my work, please consider:
    * Star this project on GitHub
    * Leave me a review [here](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
@@ -136,8 +137,6 @@ TL;DR: You might notice that I work for Microsoft but Notepads is my personal pr
     * [sr-Latn][Serbian (Latin)]: [bzzrak](https://github.com/bzzrak)
     * [sr-cyrl][Serbian (Cyrillic)]: [bzzrak](https://github.com/bzzrak)
     * [nl-NL][Dutch (Netherlands)]: [Stephan Paternotte](https://github.com/Stephan-P)
-
-* Notepads CI/CD pipeline: Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
 
 [![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/0)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/0)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/1)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/1)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/2)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/2)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/3)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/3)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/4)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/4)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/5)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/5)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/6)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/6)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/7)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/7)
 

@@ -1,0 +1,93 @@
+<UserControl x:Class="Notepads.Presentation.Controls.DiffViewer.SideBySideDiffViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:editor="using:Notepads.Presentation.Controls.TextEditor">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Theming/DiffThemes.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="DiffNavigationButtonStyle" TargetType="Button" BasedOn="{StaticResource DismissButtonStyle}">
+                <Setter Property="Width" Value="28"/>
+                <Setter Property="Height" Value="28"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.ColumnSpan="3" Background="{ThemeResource DiffToolbarBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="CloseButton" Style="{StaticResource DiffNavigationButtonStyle}" Content="&#xE72B;"
+                    HorizontalAlignment="Left" Click="CloseButton_Click"/>
+            <!-- Adjacent Runs avoid implicit XAML whitespace between the count fragments. -->
+            <TextBlock x:Name="Summary" Grid.Column="1" FontSize="12" Margin="8,0,12,0" VerticalAlignment="Center"
+                       AutomationProperties.LiveSetting="Polite" TextTrimming="CharacterEllipsis">
+                <Run x:Name="SummaryMessage"/><Run x:Name="StatisticsOpen"/><Run x:Name="AddedCount" Foreground="{ThemeResource DiffAddedCountBrush}"/><Run x:Name="StatisticsSeparator"/><Run x:Name="DeletedCount" Foreground="{ThemeResource DiffDeletedCountBrush}"/><Run x:Name="StatisticsClose"/>
+            </TextBlock>
+            <!-- Scale the standard checkbox to a 16-DIP box, retaining its
+                 pointer/keyboard states and a 12-DIP label. -->
+            <Viewbox Grid.Column="2" Height="24" MaxWidth="180" Margin="0,0,8,0" VerticalAlignment="Center">
+                <CheckBox x:Name="WhitespaceToggle" MinWidth="0" MaxWidth="225" MinHeight="0" Height="30"
+                          Padding="8,0,0,0" VerticalContentAlignment="Center"
+                          Checked="WhitespaceToggle_Changed" Unchecked="WhitespaceToggle_Changed">
+                    <CheckBox.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.ThemeDictionaries>
+                                <ResourceDictionary x:Key="Default">
+                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillChecked" ResourceKey="SystemControlHighlightAccentBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" ResourceKey="SystemControlHighlightAccentBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPressed" ResourceKey="SystemControlHighlightAccentBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckGlyphForegroundChecked" ResourceKey="SystemControlForegroundChromeWhiteBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" ResourceKey="SystemControlForegroundChromeWhiteBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" ResourceKey="SystemControlForegroundChromeWhiteBrush"/>
+                                </ResourceDictionary>
+                                <ResourceDictionary x:Key="HighContrast">
+                                    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{ThemeResource SystemColorHighlightColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{ThemeResource SystemColorHighlightColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="{ThemeResource SystemColorHighlightColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                                </ResourceDictionary>
+                            </ResourceDictionary.ThemeDictionaries>
+                        </ResourceDictionary>
+                    </CheckBox.Resources>
+                    <TextBlock x:Name="WhitespaceLabel" FontSize="15" TextTrimming="CharacterEllipsis"/>
+                </CheckBox>
+            </Viewbox>
+            <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="PreviousButton" Style="{StaticResource DiffNavigationButtonStyle}" Content="&#xE70E;"
+                        IsEnabled="False" Click="PreviousButton_Click"/>
+                <Button x:Name="NextButton" Style="{StaticResource DiffNavigationButtonStyle}" Content="&#xE70D;"
+                        IsEnabled="False" Click="NextButton_Click"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions><RowDefinition Height="26"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <TextBlock x:Uid="DiffViewer_Header_OldTextTittle" Margin="8,0" FontSize="12" VerticalAlignment="Center"/>
+            <editor:TextEditorCore x:Name="OldEditor" Grid.Row="1" Padding="0,2,0,0" IsEnabled="False"/>
+        </Grid>
+        <Border Grid.Column="1" Grid.Row="1" Background="{ThemeResource DiffSeparatorBrush}"/>
+        <Grid Grid.Column="2" Grid.Row="1">
+            <Grid.RowDefinitions><RowDefinition Height="26"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <TextBlock x:Uid="DiffViewer_Header_NewTextTittle" Margin="8,0" FontSize="12" VerticalAlignment="Center"/>
+            <editor:TextEditorCore x:Name="NewEditor" Grid.Row="1" Padding="0,2,0,0" IsEnabled="False"/>
+        </Grid>
+    </Grid>
+</UserControl>

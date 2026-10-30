@@ -1,0 +1,28 @@
+name: Set up repository .NET SDK
+description: Install the explicit SDK baseline without resolving a remote latest-patch channel.
+inputs:
+  cache:
+    description: Cache NuGet packages.
+    default: 'false'
+  cache-dependency-path:
+    description: Files used for the NuGet cache key.
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Read SDK baseline
+      id: sdk
+      shell: pwsh
+      run: |
+        [string] $version = (Get-Content -LiteralPath global.json -Raw | ConvertFrom-Json).sdk.version
+        if ($version -notmatch '\A\d+\.\d+\.\d+\z') { throw 'global.json must specify a stable SDK version.' }
+        "version=$version" >> $env:GITHUB_OUTPUT
+    # Passing global-json-file to setup-dotnet translates latestPatch into a
+    # remote channel lookup, even if a compatible SDK is already installed.
+    # Install the declared baseline; global.json still selects newer installed
+    # patches during builds, preserving the local/VS SDK selection policy.
+    - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      with:
+        dotnet-version: ${{ steps.sdk.outputs.version }}
+        cache: ${{ inputs.cache }}
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}

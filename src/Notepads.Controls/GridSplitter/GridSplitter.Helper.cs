@@ -3,259 +3,239 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Uwp.UI.Controls/GridSplitter
 
-namespace Notepads.Controls
+
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+
+namespace Notepads.Controls;
+
+/// <summary>
+/// Represents the control that redistributes space between columns or rows of a Grid control.
+/// </summary>
+public partial class GridSplitter
 {
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
-
-    /// <summary>
-    /// Represents the control that redistributes space between columns or rows of a Grid control.
-    /// </summary>
-    public partial class GridSplitter
+    private static bool IsStarColumn(ColumnDefinition definition)
     {
-        private static bool IsStarColumn(ColumnDefinition definition)
+        return ((GridLength)definition.GetValue(ColumnDefinition.WidthProperty)).IsStar;
+    }
+
+    private static bool IsStarRow(RowDefinition definition)
+    {
+        return ((GridLength)definition.GetValue(RowDefinition.HeightProperty)).IsStar;
+    }
+
+    private bool SetColumnWidth(ColumnDefinition columnDefinition, double horizontalChange, GridUnitType unitType)
+    {
+        var newWidth = columnDefinition.ActualWidth + horizontalChange;
+
+        var minWidth = columnDefinition.MinWidth;
+        if (!double.IsNaN(minWidth) && newWidth < minWidth)
         {
-            return ((GridLength)definition.GetValue(ColumnDefinition.WidthProperty)).IsStar;
+            newWidth = minWidth;
         }
 
-        private static bool IsStarRow(RowDefinition definition)
+        var maxWidth = columnDefinition.MaxWidth;
+        if (!double.IsNaN(maxWidth) && newWidth > maxWidth)
         {
-            return ((GridLength)definition.GetValue(RowDefinition.HeightProperty)).IsStar;
+            newWidth = maxWidth;
         }
 
-        private bool SetColumnWidth(ColumnDefinition columnDefinition, double horizontalChange, GridUnitType unitType)
+        if (newWidth > ActualWidth)
         {
-            var newWidth = columnDefinition.ActualWidth + horizontalChange;
-
-            var minWidth = columnDefinition.MinWidth;
-            if (!double.IsNaN(minWidth) && newWidth < minWidth)
-            {
-                newWidth = minWidth;
-            }
-
-            var maxWidth = columnDefinition.MaxWidth;
-            if (!double.IsNaN(maxWidth) && newWidth > maxWidth)
-            {
-                newWidth = maxWidth;
-            }
-
-            if (newWidth > ActualWidth)
-            {
-                columnDefinition.Width = new GridLength(newWidth, unitType);
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool IsValidColumnWidth(ColumnDefinition columnDefinition, double horizontalChange)
-        {
-            var newWidth = columnDefinition.ActualWidth + horizontalChange;
-
-            var minWidth = columnDefinition.MinWidth;
-            if (!double.IsNaN(minWidth) && newWidth < minWidth)
-            {
-                return false;
-            }
-
-            var maxWidth = columnDefinition.MaxWidth;
-            if (!double.IsNaN(maxWidth) && newWidth > maxWidth)
-            {
-                return false;
-            }
-
-            if (newWidth <= ActualWidth)
-            {
-                return false;
-            }
-
+            columnDefinition.Width = new GridLength(newWidth, unitType);
             return true;
         }
 
-        private bool SetRowHeight(RowDefinition rowDefinition, double verticalChange, GridUnitType unitType)
+        return false;
+    }
+
+    private bool IsValidColumnWidth(ColumnDefinition columnDefinition, double horizontalChange)
+    {
+        var newWidth = columnDefinition.ActualWidth + horizontalChange;
+
+        var minWidth = columnDefinition.MinWidth;
+        if (!double.IsNaN(minWidth) && newWidth < minWidth)
         {
-            var newHeight = rowDefinition.ActualHeight + verticalChange;
-
-            var minHeight = rowDefinition.MinHeight;
-            if (!double.IsNaN(minHeight) && newHeight < minHeight)
-            {
-                newHeight = minHeight;
-            }
-
-            var maxWidth = rowDefinition.MaxHeight;
-            if (!double.IsNaN(maxWidth) && newHeight > maxWidth)
-            {
-                newHeight = maxWidth;
-            }
-
-            if (newHeight > ActualHeight)
-            {
-                rowDefinition.Height = new GridLength(newHeight, unitType);
-                return true;
-            }
-
             return false;
         }
 
-        private bool IsValidRowHeight(RowDefinition rowDefinition, double verticalChange)
+        var maxWidth = columnDefinition.MaxWidth;
+        if (!double.IsNaN(maxWidth) && newWidth > maxWidth)
         {
-            var newHeight = rowDefinition.ActualHeight + verticalChange;
+            return false;
+        }
 
-            var minHeight = rowDefinition.MinHeight;
-            if (!double.IsNaN(minHeight) && newHeight < minHeight)
-            {
-                return false;
-            }
+        if (newWidth <= ActualWidth)
+        {
+            return false;
+        }
 
-            var maxHeight = rowDefinition.MaxHeight;
-            if (!double.IsNaN(maxHeight) && newHeight > maxHeight)
-            {
-                return false;
-            }
+        return true;
+    }
 
-            if (newHeight <= ActualHeight)
-            {
-                return false;
-            }
+    private bool SetRowHeight(RowDefinition rowDefinition, double verticalChange, GridUnitType unitType)
+    {
+        var newHeight = rowDefinition.ActualHeight + verticalChange;
 
+        var minHeight = rowDefinition.MinHeight;
+        if (!double.IsNaN(minHeight) && newHeight < minHeight)
+        {
+            newHeight = minHeight;
+        }
+
+        var maxWidth = rowDefinition.MaxHeight;
+        if (!double.IsNaN(maxWidth) && newHeight > maxWidth)
+        {
+            newHeight = maxWidth;
+        }
+
+        if (newHeight > ActualHeight)
+        {
+            rowDefinition.Height = new GridLength(newHeight, unitType);
             return true;
         }
 
-        // Return the targeted Column based on the resize behavior
-        private int GetTargetedColumn()
+        return false;
+    }
+
+    private bool IsValidRowHeight(RowDefinition rowDefinition, double verticalChange)
+    {
+        var newHeight = rowDefinition.ActualHeight + verticalChange;
+
+        var minHeight = rowDefinition.MinHeight;
+        if (!double.IsNaN(minHeight) && newHeight < minHeight)
         {
-            var currentIndex = Grid.GetColumn(TargetControl);
-            return GetTargetIndex(currentIndex);
+            return false;
         }
 
-        // Return the sibling Row based on the resize behavior
-        private int GetTargetedRow()
+        var maxHeight = rowDefinition.MaxHeight;
+        if (!double.IsNaN(maxHeight) && newHeight > maxHeight)
         {
-            var currentIndex = Grid.GetRow(TargetControl);
-            return GetTargetIndex(currentIndex);
+            return false;
         }
 
-        // Return the sibling Column based on the resize behavior
-        private int GetSiblingColumn()
+        if (newHeight <= ActualHeight)
         {
-            var currentIndex = Grid.GetColumn(TargetControl);
-            return GetSiblingIndex(currentIndex);
+            return false;
         }
 
-        // Return the sibling Row based on the resize behavior
-        private int GetSiblingRow()
-        {
-            var currentIndex = Grid.GetRow(TargetControl);
-            return GetSiblingIndex(currentIndex);
-        }
+        return true;
+    }
 
-        // Gets index based on resize behavior for first targeted row/column
-        private int GetTargetIndex(int currentIndex)
+    // Return the targeted Column based on the resize behavior
+    private int GetTargetedColumn()
+    {
+        var currentIndex = Grid.GetColumn(TargetControl);
+        return GetTargetIndex(currentIndex);
+    }
+
+    // Return the sibling Row based on the resize behavior
+    private int GetTargetedRow()
+    {
+        var currentIndex = Grid.GetRow(TargetControl);
+        return GetTargetIndex(currentIndex);
+    }
+
+    // Return the sibling Column based on the resize behavior
+    private int GetSiblingColumn()
+    {
+        var currentIndex = Grid.GetColumn(TargetControl);
+        return GetSiblingIndex(currentIndex);
+    }
+
+    // Return the sibling Row based on the resize behavior
+    private int GetSiblingRow()
+    {
+        var currentIndex = Grid.GetRow(TargetControl);
+        return GetSiblingIndex(currentIndex);
+    }
+
+    // Gets index based on resize behavior for first targeted row/column
+    private int GetTargetIndex(int currentIndex)
+    {
+        return _resizeBehavior switch
         {
-            switch (_resizeBehavior)
+            GridResizeBehavior.CurrentAndNext => currentIndex,
+            GridResizeBehavior.PreviousAndNext => currentIndex - 1,
+            GridResizeBehavior.PreviousAndCurrent => currentIndex - 1,
+            _ => -1,
+        };
+    }
+
+    // Gets index based on resize behavior for second targeted row/column
+    private int GetSiblingIndex(int currentIndex)
+    {
+        return _resizeBehavior switch
+        {
+            GridResizeBehavior.CurrentAndNext => currentIndex + 1,
+            GridResizeBehavior.PreviousAndNext => currentIndex + 1,
+            GridResizeBehavior.PreviousAndCurrent => currentIndex,
+            _ => -1,
+        };
+    }
+
+    // Checks the control alignment and Width/Height to detect the control resize direction columns/rows
+    private GridResizeDirection GetResizeDirection()
+    {
+        GridResizeDirection direction = ResizeDirection;
+
+        if (direction == GridResizeDirection.Auto)
+        {
+            // When HorizontalAlignment is Left, Right or Center, resize Columns
+            if (HorizontalAlignment != HorizontalAlignment.Stretch)
             {
-                case GridResizeBehavior.CurrentAndNext:
-                    return currentIndex;
-                case GridResizeBehavior.PreviousAndNext:
-                    return currentIndex - 1;
-                case GridResizeBehavior.PreviousAndCurrent:
-                    return currentIndex - 1;
-                default:
-                    return -1;
+                direction = GridResizeDirection.Columns;
+            }
+
+            // When VerticalAlignment is Top, Bottom or Center, resize Rows
+            else if (VerticalAlignment != VerticalAlignment.Stretch)
+            {
+                direction = GridResizeDirection.Rows;
+            }
+
+            // Check Width vs Height
+            else if (ActualWidth <= ActualHeight)
+            {
+                direction = GridResizeDirection.Columns;
+            }
+            else
+            {
+                direction = GridResizeDirection.Rows;
             }
         }
 
-        // Gets index based on resize behavior for second targeted row/column
-        private int GetSiblingIndex(int currentIndex)
+        return direction;
+    }
+
+    // Get the resize behavior (Which columns/rows should be resized) based on alignment and Direction
+    private GridResizeBehavior GetResizeBehavior()
+    {
+        GridResizeBehavior resizeBehavior = ResizeBehavior;
+
+        if (resizeBehavior == GridResizeBehavior.BasedOnAlignment)
         {
-            switch (_resizeBehavior)
+            if (_resizeDirection == GridResizeDirection.Columns)
             {
-                case GridResizeBehavior.CurrentAndNext:
-                    return currentIndex + 1;
-                case GridResizeBehavior.PreviousAndNext:
-                    return currentIndex + 1;
-                case GridResizeBehavior.PreviousAndCurrent:
-                    return currentIndex;
-                default:
-                    return -1;
+                resizeBehavior = HorizontalAlignment switch
+                {
+                    HorizontalAlignment.Left => GridResizeBehavior.PreviousAndCurrent,
+                    HorizontalAlignment.Right => GridResizeBehavior.CurrentAndNext,
+                    _ => GridResizeBehavior.PreviousAndNext,
+                };
+            }
+
+            // resize direction is vertical
+            else
+            {
+                resizeBehavior = VerticalAlignment switch
+                {
+                    VerticalAlignment.Top => GridResizeBehavior.PreviousAndCurrent,
+                    VerticalAlignment.Bottom => GridResizeBehavior.CurrentAndNext,
+                    _ => GridResizeBehavior.PreviousAndNext,
+                };
             }
         }
 
-        // Checks the control alignment and Width/Height to detect the control resize direction columns/rows
-        private GridResizeDirection GetResizeDirection()
-        {
-            GridResizeDirection direction = ResizeDirection;
-
-            if (direction == GridResizeDirection.Auto)
-            {
-                // When HorizontalAlignment is Left, Right or Center, resize Columns
-                if (HorizontalAlignment != HorizontalAlignment.Stretch)
-                {
-                    direction = GridResizeDirection.Columns;
-                }
-
-                // When VerticalAlignment is Top, Bottom or Center, resize Rows
-                else if (VerticalAlignment != VerticalAlignment.Stretch)
-                {
-                    direction = GridResizeDirection.Rows;
-                }
-
-                // Check Width vs Height
-                else if (ActualWidth <= ActualHeight)
-                {
-                    direction = GridResizeDirection.Columns;
-                }
-                else
-                {
-                    direction = GridResizeDirection.Rows;
-                }
-            }
-
-            return direction;
-        }
-
-        // Get the resize behavior (Which columns/rows should be resized) based on alignment and Direction
-        private GridResizeBehavior GetResizeBehavior()
-        {
-            GridResizeBehavior resizeBehavior = ResizeBehavior;
-
-            if (resizeBehavior == GridResizeBehavior.BasedOnAlignment)
-            {
-                if (_resizeDirection == GridResizeDirection.Columns)
-                {
-                    switch (HorizontalAlignment)
-                    {
-                        case HorizontalAlignment.Left:
-                            resizeBehavior = GridResizeBehavior.PreviousAndCurrent;
-                            break;
-                        case HorizontalAlignment.Right:
-                            resizeBehavior = GridResizeBehavior.CurrentAndNext;
-                            break;
-                        default:
-                            resizeBehavior = GridResizeBehavior.PreviousAndNext;
-                            break;
-                    }
-                }
-
-                // resize direction is vertical
-                else
-                {
-                    switch (VerticalAlignment)
-                    {
-                        case VerticalAlignment.Top:
-                            resizeBehavior = GridResizeBehavior.PreviousAndCurrent;
-                            break;
-                        case VerticalAlignment.Bottom:
-                            resizeBehavior = GridResizeBehavior.CurrentAndNext;
-                            break;
-                        default:
-                            resizeBehavior = GridResizeBehavior.PreviousAndNext;
-                            break;
-                    }
-                }
-            }
-
-            return resizeBehavior;
-        }
+        return resizeBehavior;
     }
 }
