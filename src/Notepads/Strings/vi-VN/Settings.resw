@@ -165,9 +165,6 @@
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve"><value>Sao lưu định kỳ</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment></data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve"><value>Bật sao lưu</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve"><value>Sao lưu</value><comment>AdvancedPage SessionSnapshotSettings Title display text.</comment></data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve"><value>Đánh dấu các từ sai chính tả</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment></data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve"><value>Đánh dấu các từ sai chính tả</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment></data>
-  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve"><value>Chính tả</value><comment>TextAndEditorPage SpellingSettings Title display text.</comment></data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve"><value>Luôn mở tệp trong cửa sổ mới thay vì tạo tab mới.</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve"><value>Mở cửa sổ mới</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve"><value>Mở cửa sổ mới</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment></data>
@@ -195,7 +192,6 @@
   <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve"><value>Sao chép thông minh</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment></data>
   <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve"><value>Sao chép</value><comment>AdvancedPage SmartCopySettings Title display text.</comment></data>
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>Giống hệ thống</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>Trình soạn thảo này không hỗ trợ kiểm tra chính tả.</value></data>
   <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Hiển thị phông chữ</value></data>
   <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Khử răng cưa thang xám</value></data>
   <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>

@@ -58,6 +58,7 @@ namespace Notepads.Presentation.Controls.TextEditor
         internal bool TestFindAllVisible => FindAllPanel?.Visibility == Visibility.Visible;
         internal ListView TestFindAllList => FindAllList;
         internal bool TestDiffPreparing => _diffGeneration?.Preparing == true;
+        internal bool TestSearchPending => _searchCancellation != null;
     }
 
     public sealed partial class TextEditorCore

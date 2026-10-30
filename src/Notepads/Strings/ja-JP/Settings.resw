@@ -165,9 +165,6 @@
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve"><value>セッション スナップショットを使用する</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment></data>
   <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve"><value>セッション スナップショットを使用する</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve"><value>セッション スナップショット設定</value><comment>AdvancedPage SessionSnapshotSettings Title display text.</comment></data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OffContent" xml:space="preserve"><value>スペルミスした単語をハイライト</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch Off display text.</comment></data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.OnContent" xml:space="preserve"><value>スペルミスした単語をハイライト</value><comment>TextAndEditorPage SpellingSettings HighlightMisspelledWordsToggleSwitch On display text.</comment></data>
-  <data name="TextAndEditorPage_SpellingSettings_Title.Text" xml:space="preserve"><value>スペルチェック</value><comment>TextAndEditorPage SpellingSettings Title display text.</comment></data>
   <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve"><value>有効にすると、Notepads は新しいタブを作らず、常に新しいウィンドウでファイルを開くようになります。</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve"><value>常に新しいウィンドウで開く</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve"><value>常に新しいウィンドウで開く</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment></data>
@@ -195,7 +192,6 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>システム既定</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>最後のタブを閉じる時にアプリを終了する</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>最後のタブを閉じる時にアプリを終了する</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
-  <data name="TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch.ToolTipService.ToolTip" xml:space="preserve"><value>このエディターではスペルチェックを利用できません。</value></data>
   <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>フォントの描画</value></data>
   <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>グレースケール</value></data>
   <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>

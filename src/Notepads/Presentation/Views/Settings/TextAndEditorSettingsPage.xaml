@@ -45,17 +45,6 @@
                                   x:Name="TextWrappingToggle"/>
                 </StackPanel>
                 <TextBlock
-                    x:Uid="/Settings/TextAndEditorPage_SpellingSettings_Title"
-                    Style="{StaticResource CompactSubtitleTextBlockStyle}"
-                    Margin="0,20,0,0"
-                    FontWeight="Normal"/>
-                <StackPanel Margin="0,10,0,0">
-                    <ToggleSwitch x:Uid="/Settings/TextAndEditorPage_SpellingSettings_HighlightMisspelledWordsToggleSwitch"
-                                  IsEnabled="False"
-                                  Style="{StaticResource CustomToggleSwitchStyle}" 
-                                  x:Name="HighlightMisspelledWordsToggle"/>
-                </StackPanel>
-                <TextBlock
                     x:Uid="/Settings/TextAndEditorPage_FontSettings_Title"
                     Style="{StaticResource CompactSubtitleTextBlockStyle}"
                     Margin="0,25,0,0"

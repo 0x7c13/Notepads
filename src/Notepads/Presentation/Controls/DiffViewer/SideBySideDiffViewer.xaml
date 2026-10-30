@@ -27,14 +27,51 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.ColumnSpan="3" Background="{ThemeResource DiffToolbarBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
             <Button x:Name="CloseButton" Style="{StaticResource DiffNavigationButtonStyle}" Content="&#xE72B;"
                     HorizontalAlignment="Left" Click="CloseButton_Click"/>
             <!-- Adjacent Runs avoid implicit XAML whitespace between the count fragments. -->
-            <TextBlock x:Name="Summary" FontSize="12" Margin="36,0,70,0" VerticalAlignment="Center"
+            <TextBlock x:Name="Summary" Grid.Column="1" FontSize="12" Margin="8,0,12,0" VerticalAlignment="Center"
                        AutomationProperties.LiveSetting="Polite" TextTrimming="CharacterEllipsis">
                 <Run x:Name="SummaryMessage"/><Run x:Name="StatisticsOpen"/><Run x:Name="AddedCount" Foreground="{ThemeResource DiffAddedCountBrush}"/><Run x:Name="StatisticsSeparator"/><Run x:Name="DeletedCount" Foreground="{ThemeResource DiffDeletedCountBrush}"/><Run x:Name="StatisticsClose"/>
             </TextBlock>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <!-- Scale the standard checkbox to a 16-DIP box, retaining its
+                 pointer/keyboard states and a 12-DIP label. -->
+            <Viewbox Grid.Column="2" Height="24" MaxWidth="180" Margin="0,0,8,0" VerticalAlignment="Center">
+                <CheckBox x:Name="WhitespaceToggle" MinWidth="0" MaxWidth="225" MinHeight="0" Height="30"
+                          Padding="8,0,0,0" VerticalContentAlignment="Center"
+                          Checked="WhitespaceToggle_Changed" Unchecked="WhitespaceToggle_Changed">
+                    <CheckBox.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.ThemeDictionaries>
+                                <ResourceDictionary x:Key="Default">
+                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillChecked" ResourceKey="SystemControlHighlightAccentBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" ResourceKey="SystemControlHighlightAccentBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPressed" ResourceKey="SystemControlHighlightAccentBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckGlyphForegroundChecked" ResourceKey="SystemControlForegroundChromeWhiteBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" ResourceKey="SystemControlForegroundChromeWhiteBrush"/>
+                                    <StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" ResourceKey="SystemControlForegroundChromeWhiteBrush"/>
+                                </ResourceDictionary>
+                                <ResourceDictionary x:Key="HighContrast">
+                                    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{ThemeResource SystemColorHighlightColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{ThemeResource SystemColorHighlightColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="{ThemeResource SystemColorHighlightColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                                    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                                </ResourceDictionary>
+                            </ResourceDictionary.ThemeDictionaries>
+                        </ResourceDictionary>
+                    </CheckBox.Resources>
+                    <TextBlock x:Name="WhitespaceLabel" FontSize="15" TextTrimming="CharacterEllipsis"/>
+                </CheckBox>
+            </Viewbox>
+            <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Name="PreviousButton" Style="{StaticResource DiffNavigationButtonStyle}" Content="&#xE70E;"
                         IsEnabled="False" Click="PreviousButton_Click"/>
                 <Button x:Name="NextButton" Style="{StaticResource DiffNavigationButtonStyle}" Content="&#xE70D;"

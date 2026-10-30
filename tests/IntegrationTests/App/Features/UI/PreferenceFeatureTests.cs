@@ -36,7 +36,7 @@ internal static partial class PreferenceFeatureTests
         SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool, SettingsKey.EditorDefaultDecodingCodePageInt,
         SettingsKey.EditorDefaultTabIndentsInt, SettingsKey.EditorDefaultSearchEngineStr,
         SettingsKey.EditorCustomMadeSearchUrlStr, SettingsKey.EditorShowStatusBarBool,
-        SettingsKey.EditorEnableSessionBackupAndRestoreBool, SettingsKey.EditorHighlightMisspelledWordsBool,
+        SettingsKey.EditorEnableSessionBackupAndRestoreBool,
         SettingsKey.EditorEnableSmartCopyBool, SettingsKey.AlwaysOpenNewWindowBool, SettingsKey.ExitWhenLastTabClosed
     ];
 
@@ -51,8 +51,6 @@ internal static partial class PreferenceFeatureTests
         var originalEncoding = original.GetEncoding();
         var originalLineEnding = original.GetLineEnding();
         var settings = await SettingsAsync<TextAndEditorSettingsPage>(host.Page, "TextAndEditor");
-        Check(!Named<ToggleSwitch>(settings, "HighlightMisspelledWordsToggle").IsEnabled,
-            "Unavailable native spelling is visibly disabled in the real settings page.");
         Named<ToggleSwitch>(settings, "TextWrappingToggle").IsOn = true;
         Named<ToggleSwitch>(settings, "LineNumbersToggle").IsOn = false;
         Named<ToggleSwitch>(settings, "LineHighlighterToggle").IsOn = false;

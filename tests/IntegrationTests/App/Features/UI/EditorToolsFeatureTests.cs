@@ -116,15 +116,17 @@ internal static class EditorToolsFeatureTests
             // This checks the dismissal command only. The UIAutomation desktop
             // case sends real Escape keys through all three focused controls.
             editor.TestEscape();
-            Check(resultPanel.Visibility == Visibility.Collapsed && resultList.Items.Count == 0 && editor.TestFindVisible,
-                "Dismissal clears results while retaining the query bar.");
+            await UntilAsync(() => resultPanel.Visibility == Visibility.Collapsed && resultList.Items.Count == 0 && !editor.TestFindVisible,
+                "One Escape closes the result list and query bar together.");
+            editor.ShowFindAndReplaceControl(false);
+            Named<TextBox>(findControl, "FindBar").Text = "中文😀";
             Invoke(Named<MenuFlyoutItem>(findControl, "FindAllButton"));
             await UntilAsync(() => resultList.Items.Count == 2 && resultList.SelectedIndex == 0 &&
                 resultList.ContainerFromIndex(0) is ListViewItem first && first.FocusState == FocusState.Pointer,
                 "Find all can reopen with a subtle selected result after dismissal.");
             editor.TypeText("changed");
             Check(!core.NavigateSearchResult(found, 0), "Stale results cannot navigate after an edit.");
-            Check(resultList.Items.Count == 0, "Editing invalidates visible search results immediately.");
+            Check(resultList.Items.Count == 0 && !editor.TestFindAllVisible, "Editing dismisses obsolete search results immediately.");
             editor.HideFindAndReplaceControl();
             var empty = await core.FindAllAsync(new SearchContext("(?=.)", useRegex: true), CancellationToken.None);
             Check(empty.Rows.Count > 1 && empty.Rows.Select(row => row.Start).Distinct().Count() == empty.Rows.Count,
@@ -288,10 +290,12 @@ internal static class EditorToolsFeatureTests
             Check(rules.Text.Contains(resources.GetString("EditorTools_FindAllRegex"), StringComparison.Ordinal) &&
                 !full.Text.Contains(resources.GetString("EditorTools_FindAllAnyWord"), StringComparison.Ordinal),
                 "Regex summaries do not advertise an inapplicable whole-word option.");
+            query.Focus(FocusState.Programmatic);
             query.Text = "different query";
-            await UntilAsync(() => status.Text == resources.GetString("EditorTools_FindAllStaleTitle"), "Changed conditions invalidate the result summary.");
-            Check(full.Text.Contains("a[a-z]+", StringComparison.Ordinal) && !full.Text.Contains(query.Text, StringComparison.Ordinal),
-                "Stale results retain their original query instead of being relabelled with an unexecuted query.");
+            await UntilAsync(() => !editor.TestFindAllVisible && list.Items.Count == 0,
+                "Changing the query dismisses the old results.");
+            Check(editor.TestFindVisible && query.FocusState != FocusState.Unfocused,
+                "Changing the query keeps the search box open and preserves typing focus.");
             await SearchAsync("[", null, regex: true);
             Check(full.Text.Contains(resources.GetString("FindAndReplace_NotificationMsg_InvalidRegex"), StringComparison.Ordinal),
                 "The full summary explains the actual search error.");
@@ -342,6 +346,22 @@ internal static class EditorToolsFeatureTests
                 $"The Find All vertical scrollbar reaches the panel edge while result items retain their inset (bar={barBounds}, panel={panel.ActualWidth}, list={list.ActualWidth}, flow={panel.FlowDirection}).");
             Check(full.Text.Contains(string.Format(resources.GetString("EditorTools_FindAllLimited"), TextEditorCore.MaximumSearchResults), StringComparison.Ordinal),
                 "Limited results never present the displayed count as the complete total.");
+
+            SetText(new string('a', 256 * 1024));
+            query.Text = new string('a', (int)TextEditorCore.SearchPatternLimit - 1) + "b";
+            Invoke(Named<MenuFlyoutItem>(find, "FindAllButton"));
+            Check(editor.TestSearchPending && editor.TestFindAllVisible, "A long search remains pending before changing its query.");
+            query.Focus(FocusState.Programmatic);
+            query.Text = "replacement";
+            await UntilAsync(() => !editor.TestSearchPending, "Changing the query drains the canceled search.");
+            Check(!editor.TestFindAllVisible && list.Items.Count == 0 && editor.TestFindVisible && query.FocusState != FocusState.Unfocused,
+                "A canceled search cannot reopen its results or steal input focus.");
+
+            SetText("alpha alpha");
+            await SearchAsync("alpha", 2);
+            Invoke(Named<Button>(editor, "FindAllCloseButton"));
+            await UntilAsync(() => !editor.TestFindVisible && !editor.TestFindAllVisible,
+                "The results close button dismisses the whole search interface.");
         }
         finally
         {

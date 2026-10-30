@@ -30,7 +30,9 @@ public sealed partial class TextEditorCore
     private void ApplyReadingAids()
     {
         if (_disposed || _palette == null) return;
-        var aids = _diffPreview ? ReadingAids.None : ApplicationPreferences.EditorReadingAids;
+        var aids = _diffPreview
+            ? (_diffWhitespaceVisible ? ReadingAids.Whitespace : ReadingAids.None)
+            : ApplicationPreferences.EditorReadingAids;
         Native.ModEventMask = TextModifications |
             (aids.HasFlag(ReadingAids.Braces) ? ModificationFlags.ChangeStyle : ModificationFlags.None);
         Native.ViewWS = aids.HasFlag(ReadingAids.Whitespace) ? WhiteSpace.VisibleAlways : WhiteSpace.Invisible;

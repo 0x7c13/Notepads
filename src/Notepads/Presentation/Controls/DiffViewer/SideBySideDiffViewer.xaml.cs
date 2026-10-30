@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Documents.Storage;
 using Notepads.Features.Documents.Text;
+using Notepads.Features.Preferences;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Theming;
 using Windows.ApplicationModel.Resources;
@@ -46,6 +47,11 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         InitializeComponent();
         OldEditor.ConfigureDiffPreview();
         NewEditor.ConfigureDiffPreview();
+        var whitespaceLabel = _resources.GetString("DiffViewer_Whitespace");
+        WhitespaceLabel.Text = whitespaceLabel;
+        AutomationProperties.SetName(WhitespaceToggle, whitespaceLabel);
+        ToolTipService.SetToolTip(WhitespaceToggle, whitespaceLabel);
+        WhitespaceToggle.IsChecked = ApplicationPreferences.EditorReadingAids.HasFlag(ReadingAids.Whitespace);
         OldEditor.ViewportChanged += OnViewportChanged;
         NewEditor.ViewportChanged += OnViewportChanged;
         OldEditor.ScrollStarted += OnScrollStarted;
@@ -65,6 +71,16 @@ public sealed partial class SideBySideDiffViewer : UserControl, IDisposable
         SetButtonLabel(PreviousButton, "DiffViewer_Previous");
         SetButtonLabel(NextButton, "DiffViewer_Next");
         SetSummary(_resources.GetString("DiffViewer_Loading"));
+    }
+
+    private void WhitespaceToggle_Changed(object sender, RoutedEventArgs args)
+    {
+        if (_disposed) return;
+        // This is a per-view comparison aid; changing it does not alter the
+        // source editor's saved preference or rebuild either snapshot.
+        var visible = WhitespaceToggle.IsChecked == true;
+        OldEditor.SetDiffWhitespaceVisible(visible);
+        NewEditor.SetDiffWhitespaceVisible(visible);
     }
 
     private void SetButtonLabel(Button button, string key)

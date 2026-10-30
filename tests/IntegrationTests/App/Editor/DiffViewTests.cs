@@ -11,10 +11,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Documents.Storage;
+using Notepads.Features.Preferences;
 using Notepads.Presentation.Controls.DiffViewer;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Theming;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using WinUIEditor;
 
@@ -220,6 +224,7 @@ internal static class DiffViewTests
             Require(old.GetText() == "x", "canceled compare drained leases");
         }
         await CheckDetachedFirstHunkAsync();
+        await CheckWhitespaceToggleAsync();
         await CheckOrdinaryPageNavigationAsync();
         log.AppendLine("PASS Scintilla DiffView: native snapshot, aligned read-only panes, Unicode/NUL, terminators, undo isolation and cancellation drain.");
     }
@@ -264,6 +269,108 @@ internal static class DiffViewTests
             oldView.Editor.Painted -= OldPainted;
             newView.Editor.Painted -= NewPainted;
             Window.Current.Content = null;
+        }
+    }
+
+    private static async Task CheckWhitespaceToggleAsync()
+    {
+        var preferences = ApplicationPreferences.EditorReadingAids;
+        var previousContent = Window.Current.Content;
+        var accent = ThemeSettingsService.AppAccentColor;
+        try
+        {
+            ApplicationPreferences.EditorReadingAids = preferences & ~ReadingAids.Whitespace;
+            const string before = "alpha\tbeta  \r  中文😀";
+            const string after = "alpha    beta\r\t中文😀";
+            using var baseline = await DocumentBaseline.FromTextAsync(before, Guid.NewGuid());
+            using var source = new TextEditorCore();
+            source.SetText(after);
+            var sourceRevision = Native(source).DocumentRevision;
+            using var viewer = new SideBySideDiffViewer { Width = 700, Height = 320 };
+            Require(await viewer.PrepareAsync(baseline, source, DocumentLanguages.PlainText, "whitespace.txt", CancellationToken.None) && viewer.HasChanges,
+                "whitespace-only edits produce a real Diff");
+            var old = (TextEditorCore)viewer.FindName("OldEditor");
+            var current = (TextEditorCore)viewer.FindName("NewEditor");
+            var toggle = (CheckBox)viewer.FindName("WhitespaceToggle");
+            var label = (TextBlock)viewer.FindName("WhitespaceLabel");
+            var peer = new CheckBoxAutomationPeer(toggle);
+            var provider = (IToggleProvider)peer.GetPattern(PatternInterface.Toggle);
+            var oldRevision = Native(old).DocumentRevision;
+            var currentRevision = Native(current).DocumentRevision;
+            Window.Current.Content = viewer;
+            viewer.UpdateLayout();
+            Require(toggle.IsChecked == false && Native(old).ViewWS == WhiteSpace.Invisible &&
+                Native(current).ViewWS == WhiteSpace.Invisible && !string.IsNullOrWhiteSpace(label.Text) && peer.GetName() == label.Text,
+                "Diff starts from the whitespace preference and exposes a named toggle");
+            await EditorTestLayout.AfterPaintAsync(Native(old), provider.Toggle);
+            Require(toggle.IsChecked == true && Native(old).ViewWS == WhiteSpace.VisibleAlways &&
+                Native(current).ViewWS == WhiteSpace.VisibleAlways && Native(source).ViewWS == WhiteSpace.Invisible &&
+                ApplicationPreferences.EditorReadingAids == (preferences & ~ReadingAids.Whitespace),
+                "toggling paints whitespace in both Diff panes without changing the source or saved preference");
+            foreach (var color in new[] { Windows.UI.Color.FromArgb(255, 197, 36, 85), Windows.UI.Color.FromArgb(255, 27, 122, 82) })
+            {
+                ThemeSettingsService.AppAccentColor = color;
+                ThemeSettingsService.SetRequestedAccentColor();
+                viewer.UpdateLayout();
+                var expectedColor = new AccessibilitySettings().HighContrast
+                    ? (Windows.UI.Color)Application.Current.Resources["SystemColorHighlightColor"]
+                    : color;
+                var coloredBoxes = NotepadsWorkspaceTests.WorkspaceTestUI.Descendants(toggle).OfType<FrameworkElement>()
+                    .Where(element => (element switch
+                    {
+                        Windows.UI.Xaml.Shapes.Shape shape => shape.Fill,
+                        Border border => border.Background,
+                        _ => null
+                    }) is Windows.UI.Xaml.Media.SolidColorBrush brush && brush.Color == expectedColor).ToArray();
+                Require(coloredBoxes.Any(element =>
+                {
+                    var bounds = element.TransformToVisual(viewer).TransformBounds(
+                        new Windows.Foundation.Rect(0, 0, element.ActualWidth, element.ActualHeight));
+                    return bounds.Width > 0 && bounds.Height > 0 && bounds.Width <= 16.1 && bounds.Height <= 16.1;
+                }), "the visible checked box stays compact and uses the app accent or system highlight in high contrast");
+            }
+            // A theme refresh must preserve the local override, including when
+            // changing the global preference would otherwise turn it off.
+            old.RequestedTheme = current.RequestedTheme = ElementTheme.Light;
+            await EditorTestLayout.AfterPaintAsync(Native(old), () => old.RequestedTheme = current.RequestedTheme = ElementTheme.Dark);
+            Require(Native(old).ViewWS == WhiteSpace.VisibleAlways && Native(current).ViewWS == WhiteSpace.VisibleAlways,
+                "theme changes retain the Diff whitespace override");
+            provider.Toggle();
+            ApplicationPreferences.EditorReadingAids |= ReadingAids.Whitespace;
+            await source.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { });
+            Require(toggle.IsChecked == false && Native(old).ViewWS == WhiteSpace.Invisible &&
+                Native(current).ViewWS == WhiteSpace.Invisible && Native(source).ViewWS == WhiteSpace.VisibleAlways,
+                "a later global preference change does not overwrite this Diff's local choice");
+            using (var nextViewer = new SideBySideDiffViewer())
+                Require(((CheckBox)nextViewer.FindName("WhitespaceToggle")).IsChecked == true &&
+                    Native((TextEditorCore)nextViewer.FindName("OldEditor")).ViewWS == WhiteSpace.VisibleAlways &&
+                    Native((TextEditorCore)nextViewer.FindName("NewEditor")).ViewWS == WhiteSpace.VisibleAlways,
+                    "a new Diff adopts the current enabled whitespace preference");
+
+            viewer.Width = 320;
+            foreach (var flow in new[] { FlowDirection.LeftToRight, FlowDirection.RightToLeft })
+            {
+                viewer.FlowDirection = flow;
+                viewer.UpdateLayout();
+                var controls = new FrameworkElement[] { (Button)viewer.FindName("CloseButton"), toggle,
+                    (Button)viewer.FindName("PreviousButton"), (Button)viewer.FindName("NextButton") };
+                var bounds = controls.Select(control => control.TransformToVisual(viewer).TransformBounds(
+                    new Windows.Foundation.Rect(0, 0, control.ActualWidth, control.ActualHeight))).OrderBy(rect => rect.Left).ToArray();
+                Require(bounds.All(rect => rect.Width > 0 && rect.Left >= 0 && rect.Right <= viewer.ActualWidth && rect.Top >= 0 && rect.Bottom <= 32) &&
+                    bounds.Zip(bounds.Skip(1), (left, right) => left.Right <= right.Left).All(value => value),
+                    "a narrow LTR/RTL toolbar keeps whitespace and navigation controls visible without overlap");
+            }
+            Require(old.GetText() == before && current.GetText() == after && source.GetText() == after &&
+                Native(old).DocumentRevision == oldRevision && Native(current).DocumentRevision == currentRevision &&
+                Native(source).DocumentRevision == sourceRevision && Native(old).ReadOnly && Native(current).ReadOnly,
+                "whitespace display leaves snapshot/source bytes and read-only state intact");
+        }
+        finally
+        {
+            Window.Current.Content = previousContent;
+            ApplicationPreferences.EditorReadingAids = preferences;
+            ThemeSettingsService.AppAccentColor = accent;
+            ThemeSettingsService.SetRequestedAccentColor();
         }
     }
 

@@ -6,6 +6,7 @@
 using System;
 using System.Globalization;
 using Notepads.Presentation.Controls.FindAndReplace;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -19,7 +20,12 @@ public sealed partial class TextEditor
     private DocumentSearchResults _findAllResults;
     private SearchContext _findAllContext;
     private bool _findAllRunning;
-    private void FindAllDocumentChanged(object sender, RoutedEventArgs args) => InvalidateFindAll();
+    private void FindAllDocumentChanged(object sender, RoutedEventArgs args)
+    {
+        if (_findAllResults == null && !_findAllRunning) return;
+        CancelSearch();
+        ClearFindAllResults();
+    }
 
     private void BeginFindAll(SearchContext context)
     {
@@ -102,29 +108,28 @@ public sealed partial class TextEditor
 
     private void FindAllQueryChanged(object sender, SearchContext context)
     {
-        if (_disposed || _findAllContext == null) return;
+        if (_disposed || FindAllPanel?.Visibility != Visibility.Visible) return;
         // TextChanged can arrive after a command has already read the new text.
         // That notification must not cancel a search using those same options.
-        if (context.SearchText == _findAllContext.SearchText && context.MatchCase == _findAllContext.MatchCase &&
+        if (_findAllContext != null && context.SearchText == _findAllContext.SearchText && context.MatchCase == _findAllContext.MatchCase &&
             context.MatchWholeWord == _findAllContext.MatchWholeWord && context.UseRegex == _findAllContext.UseRegex) return;
-        if (_findAllRunning) CancelSearch();
-        else InvalidateFindAll();
+        CancelSearch();
+        ClearFindAllResults();
     }
 
     private void FindAllClose_Click(object sender, RoutedEventArgs args)
-        => DismissFindAll();
-
-    private bool DismissFindAll()
     {
-        if (_disposed || FindAllPanel?.Visibility != Visibility.Visible) return false;
-        CancelSearch();
+        HideFindAndReplaceControl();
+        TextEditorCore.Focus(FocusState.Programmatic);
+    }
+
+    private void ClearFindAllResults()
+    {
         _findAllRunning = false;
         _findAllResults = null;
         _findAllContext = null;
-        FindAllList.ItemsSource = null;
-        FindAllPanel.Visibility = Visibility.Collapsed;
-        TextEditorCore.Focus(FocusState.Programmatic);
-        return true;
+        if (FindAllList != null) FindAllList.ItemsSource = null;
+        if (FindAllPanel != null) FindAllPanel.Visibility = Visibility.Collapsed;
     }
 
     private void FindAllList_ItemClick(object sender, ItemClickEventArgs args)
@@ -136,14 +141,21 @@ public sealed partial class TextEditor
         }
     }
 
-    private void FindAllList_KeyDown(object sender, KeyRoutedEventArgs args)
+    private void FindAllList_PreviewKeyDown(object sender, KeyRoutedEventArgs args)
     {
-        if (_disposed) return;
-        if (args.Key == VirtualKey.Enter && _findAllResults != null)
+        if (_disposed || args.Handled || args.Key != VirtualKey.Enter || _findAllResults == null) return;
+        var window = Window.Current.CoreWindow;
+        if (window.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down) ||
+            window.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down)) return;
+
+        // ListViewItem consumes Enter to invoke ItemClick. Handle it during
+        // preview so keyboard confirmation can also collapse the results.
+        args.Handled = true;
+        if (TextEditorCore.NavigateSearchResult(_findAllResults, FindAllList.SelectedIndex))
         {
-            if (TextEditorCore.NavigateSearchResult(_findAllResults, FindAllList.SelectedIndex))
-                TextEditorCore.Focus(FocusState.Programmatic);
-            args.Handled = true;
+            CancelSearch();
+            ClearFindAllResults();
+            TextEditorCore.Focus(FocusState.Programmatic);
         }
     }
 }

@@ -142,7 +142,7 @@
                     </Border>
                     <ListView x:Name="FindAllList" x:Uid="EditorTools_Results" Grid.Row="1" IsItemClickEnabled="True"
                               Margin="0,6,0,4"
-                              ItemClick="FindAllList_ItemClick" KeyDown="FindAllList_KeyDown">
+                              ItemClick="FindAllList_ItemClick" PreviewKeyDown="FindAllList_PreviewKeyDown">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="MinHeight" Value="28"/>

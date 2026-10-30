@@ -1875,12 +1875,10 @@ try {
                 $target = Find-ToolsControl $targetId
                 $target.SetFocus()
                 Send-ToolsKey $target 0x1b
-                $closed = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsResultCount -eq '0' -and $state.toolsQueryVisible -eq 'True' } "Escape from $targetId closes results and retains the query"
+                $closed = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsResultCount -eq '0' -and $state.toolsQueryVisible -eq 'False' } "One Escape from $targetId closes results and query together"
                 Assert-Equal $closed.toolsText64 $initial.toolsText64 'Escape leaves document content unchanged'
                 $body = Find-ToolsControl 'EditorToolsEditor'
                 Assert-True $body.Current.HasKeyboardFocus 'Dismissing results restores editor focus'
-                Send-ToolsKey $body 0x1b
-                $null = Wait-ToolsState { param($state) $state.toolsQueryVisible -eq 'False' } 'A second Escape closes the query bar'
                 Send-ToolsKey $body 0x46 $true
                 $null = Wait-ToolsState { param($state) $state.toolsQueryVisible -eq 'True' } 'Ctrl+F reopens the query for the next focus case'
             }
@@ -1896,7 +1894,33 @@ try {
             $body = Find-ToolsControl 'EditorToolsEditor'
             Assert-True $body.Current.HasKeyboardFocus 'Exiting Diff restores source editor focus'
             Send-ToolsKey $body 0x1b
-            $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsQueryVisible -eq 'True' } 'The following Escape dismisses Find All'
+            $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsQueryVisible -eq 'False' } 'The following Escape dismisses results and query together'
+            Send-ToolsKey $body 0x46 $true
+            $null = Wait-ToolsState { param($state) $state.toolsQueryVisible -eq 'True' } 'Ctrl+F reopens search'
+            $query = Find-ToolsControl 'EditorToolsQuery'
+            $query.SetFocus()
+            Send-ToolsKey $query 0x0d $true
+            $null = Wait-ToolsState { param($state) $state.toolsResultCount -eq '3' -and $state.toolsResultFocus -eq 'Pointer' } 'Find All reopens before query editing'
+            $query.SetFocus()
+            $value = $query.GetCurrentPattern([Windows.Automation.ValuePattern]::Pattern)
+            $value.SetValue('cat two')
+            $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsQueryVisible -eq 'True' } 'Changing the query collapses results while keeping search open'
+            Assert-True $query.Current.HasKeyboardFocus 'Editing the query retains typing focus'
+            $value.SetValue('cat')
+            Send-ToolsKey $query 0x0d $true
+            $null = Wait-ToolsState { param($state) $state.toolsResultCount -eq '3' -and $state.toolsResultFocus -eq 'Pointer' } 'Find All reopens before ordinary Enter'
+            $query.SetFocus()
+            Send-ToolsKey $query 0x0d
+            $null = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsQueryVisible -eq 'True' } 'Ordinary Enter returns to single-match search'
+            $deadline = [DateTime]::UtcNow.AddSeconds(5)
+            while (!$query.Current.HasKeyboardFocus -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 25 }
+            Assert-True $query.Current.HasKeyboardFocus 'Ordinary Enter returns focus to the query'
+            Send-ToolsKey $query 0x0d $true
+            $null = Wait-ToolsState { param($state) $state.toolsResultCount -eq '3' -and $state.toolsResultFocus -eq 'Pointer' } 'Find All reopens before selecting a result'
+            Send-ToolsKey (Find-ToolsControl 'EditorToolsResult') 0x0d
+            $selected = Wait-ToolsState { param($state) $state.toolsResultsVisible -eq 'False' -and $state.toolsQueryVisible -eq 'True' } 'Enter on a result navigates and collapses the list'
+            Assert-Equal $selected.toolsText64 $initial.toolsText64 'Confirming a result does not insert a newline into the document'
+            Assert-True (Find-ToolsControl 'EditorToolsEditor').Current.HasKeyboardFocus 'Selecting a result returns focus to the document'
             $query = Find-ToolsControl 'EditorToolsQuery'
             $query.SetFocus()
             $longQuery = ('long-query-' * 400) + 'END'

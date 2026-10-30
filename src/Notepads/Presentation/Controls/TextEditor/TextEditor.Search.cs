@@ -45,6 +45,7 @@ public sealed partial class TextEditor
         }
 
         CancelSearch();
+        if (request.FindAndReplaceMode != FindAndReplaceMode.FindAll) ClearFindAllResults();
         var version = _searchRequestVersion;
         using var cancellation = new CancellationTokenSource();
         _searchCancellation = cancellation;

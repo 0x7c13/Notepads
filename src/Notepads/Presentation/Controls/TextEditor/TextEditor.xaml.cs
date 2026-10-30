@@ -690,9 +690,8 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             CloseSideBySideDiffViewer();
             return;
         }
-        if (DismissFindAll()) return;
         CancelSearch();
-        if (FindAndReplacePlaceholder != null && FindAndReplacePlaceholder.Visibility == Visibility.Visible)
+        if (FindAllPanel?.Visibility == Visibility.Visible || FindAndReplacePlaceholder?.Visibility == Visibility.Visible)
         {
             HideFindAndReplaceControl();
             TextEditorCore.Focus(FocusState.Programmatic);
@@ -810,6 +809,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     public void HideFindAndReplaceControl()
     {
         CancelSearch();
+        ClearFindAllResults();
         FindAndReplacePlaceholder?.Dismiss();
     }
 
@@ -860,14 +860,14 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     private void FindAndReplacePlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
     {
         CancelSearch();
+        ClearFindAllResults();
         // UnloadObject may have already cleared the lazy XAML field.
         ((InAppNotification)sender).Visibility = Visibility.Collapsed;
     }
 
     private void FindAndReplaceControl_OnDismissKeyDown(object sender, RoutedEventArgs e)
     {
-        CancelSearch();
-        FindAndReplacePlaceholder?.Dismiss();
+        HideFindAndReplaceControl();
         TextEditorCore.Focus(FocusState.Programmatic);
     }
 

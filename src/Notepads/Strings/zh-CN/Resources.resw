@@ -320,8 +320,8 @@
   <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} 处匹配</value></data>
   <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>已显示 {0} 个匹配项。达到数量或时间限制，请缩小查找范围。</value></data>
   <data name="EditorTools_FindAllStale" xml:space="preserve"><value>文档或查找条件已更改，请重新查找全部。</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>关闭查找结果</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>关闭查找结果</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>关闭搜索</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>关闭搜索</value></data>
   <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>当前文档查找结果</value></data>
   <data name="EditorTools_Searching" xml:space="preserve"><value>正在查找…可关闭此面板以取消。</value></data>
   <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} 处匹配</value></data>
@@ -337,4 +337,5 @@
   <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>整词匹配</value></data>
   <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>不限整词</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>显示空格和制表符</value></data>
 </root>

@@ -28,7 +28,6 @@ public static partial class ApplicationPreferences
     public static event EventHandler<int> OnDefaultTabIndentsChanged;
     public static event EventHandler<bool> OnStatusBarVisibilityChanged;
     public static event EventHandler<bool> OnSessionBackupAndRestoreOptionChanged;
-    public static event EventHandler<bool> OnHighlightMisspelledWordsChanged;
 
     private static string _editorFontFamily;
 
@@ -270,19 +269,6 @@ public static partial class ApplicationPreferences
         }
     }
 
-    private static bool _isHighlightMisspelledWordsEnabled;
-
-    public static bool IsHighlightMisspelledWordsEnabled
-    {
-        get => _isHighlightMisspelledWordsEnabled;
-        set
-        {
-            _isHighlightMisspelledWordsEnabled = value;
-            OnHighlightMisspelledWordsChanged?.Invoke(null, value);
-            ApplicationSettingsStore.Write(SettingsKey.EditorHighlightMisspelledWordsBool, value);
-        }
-    }
-
     private static bool _exitWhenLastTabClosed;
 
     public static bool ExitWhenLastTabClosed
@@ -337,8 +323,6 @@ public static partial class ApplicationPreferences
         InitializeFontSettings();
 
         InitializeTextWrappingSettings();
-
-        InitializeSpellingSettings();
 
         InitializeDisplaySettings();
         RefreshReadingAids();
@@ -413,18 +397,6 @@ public static partial class ApplicationPreferences
     {
         var stored = ApplicationSettingsStore.Read(SettingsKey.EditorDefaultTextWrappingStr) as string;
         _editorDefaultTextWrapping = stored == "Wrap" || stored == "WrapWholeWords";
-    }
-
-    private static void InitializeSpellingSettings()
-    {
-        if (ApplicationSettingsStore.Read(SettingsKey.EditorHighlightMisspelledWordsBool) is bool highlightMisspelledWords)
-        {
-            _isHighlightMisspelledWordsEnabled = highlightMisspelledWords;
-        }
-        else
-        {
-            _isHighlightMisspelledWordsEnabled = false;
-        }
     }
 
     private static void InitializeDisplaySettings()

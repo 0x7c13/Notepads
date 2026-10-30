@@ -118,7 +118,6 @@ public sealed partial class App : Application
             { "IsSessionSnapshotEnabled", ApplicationPreferences.IsSessionSnapshotEnabled.ToString() },
             { "IsShadowWindow", (!_bootstrap.IsPrimaryInstance).ToString() },
             { "AlwaysOpenNewWindow", ApplicationPreferences.AlwaysOpenNewWindow.ToString() },
-            { "IsHighlightMisspelledWordsEnabled", ApplicationPreferences.IsHighlightMisspelledWordsEnabled.ToString() },
             { "IsSmartCopyEnabled", ApplicationPreferences.IsSmartCopyEnabled.ToString() },
             { "ExitWhenLastTabClosed", ApplicationPreferences.ExitWhenLastTabClosed.ToString() },
         };

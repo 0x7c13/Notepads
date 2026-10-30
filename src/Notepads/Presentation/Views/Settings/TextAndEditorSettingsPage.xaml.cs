@@ -126,7 +126,6 @@ public sealed partial class TextAndEditorSettingsPage : Page
         _context = context ?? throw new ArgumentNullException(nameof(context));
 
         TextWrappingToggle.IsOn = (ApplicationPreferences.EditorDefaultWordWrap.ToTextWrapping() == TextWrapping.Wrap);
-        HighlightMisspelledWordsToggle.IsOn = ApplicationPreferences.IsHighlightMisspelledWordsEnabled;
         LineHighlighterToggle.IsOn = ApplicationPreferences.EditorDisplayLineHighlighter;
         LineNumbersToggle.IsOn = ApplicationPreferences.EditorDisplayLineNumbers;
         WhitespaceToggle.IsOn = ApplicationPreferences.EditorReadingAids.HasFlag(ReadingAids.Whitespace);
@@ -266,7 +265,6 @@ public sealed partial class TextAndEditorSettingsPage : Page
         if (_eventsBound) return;
         _eventsBound = true;
         TextWrappingToggle.Toggled += TextWrappingToggle_OnToggled;
-        HighlightMisspelledWordsToggle.Toggled += HighlightMisspelledWordsToggle_OnToggled;
         LineHighlighterToggle.Toggled += LineHighlighterToggle_OnToggled;
         WhitespaceToggle.Toggled += ReadingAids_OnToggled;
         IndentGuidesToggle.Toggled += ReadingAids_OnToggled;
@@ -307,7 +305,6 @@ public sealed partial class TextAndEditorSettingsPage : Page
         if (!_eventsBound) return;
         _eventsBound = false;
         TextWrappingToggle.Toggled -= TextWrappingToggle_OnToggled;
-        HighlightMisspelledWordsToggle.Toggled -= HighlightMisspelledWordsToggle_OnToggled;
         LineHighlighterToggle.Toggled -= LineHighlighterToggle_OnToggled;
         WhitespaceToggle.Toggled -= ReadingAids_OnToggled;
         IndentGuidesToggle.Toggled -= ReadingAids_OnToggled;
@@ -482,11 +479,6 @@ public sealed partial class TextAndEditorSettingsPage : Page
     private void TextWrappingToggle_OnToggled(object sender, RoutedEventArgs e)
     {
         ApplicationPreferences.EditorDefaultWordWrap = TextWrappingToggle.IsOn;
-    }
-
-    private void HighlightMisspelledWordsToggle_OnToggled(object sender, RoutedEventArgs e)
-    {
-        ApplicationPreferences.IsHighlightMisspelledWordsEnabled = HighlightMisspelledWordsToggle.IsOn;
     }
 
     private void LineHighlighterToggle_OnToggled(object sender, RoutedEventArgs e)

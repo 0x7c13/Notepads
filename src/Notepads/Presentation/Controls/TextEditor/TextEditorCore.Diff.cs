@@ -19,6 +19,7 @@ namespace Notepads.Presentation.Controls.TextEditor;
 public sealed partial class TextEditorCore
 {
     private bool _diffPreview;
+    private bool _diffWhitespaceVisible;
     private long _diffHighlightRow;
     private long _diffHighlightCount;
     private int _diffHighlightColor;
@@ -38,6 +39,13 @@ public sealed partial class TextEditorCore
         TextWrapping = TextWrapping.NoWrap;
         DisplayLineNumbers = true;
         DisplayLineHighlighter = false;
+    }
+
+    internal void SetDiffWhitespaceVisible(bool visible)
+    {
+        if (_disposed || !_diffPreview) return;
+        _diffWhitespaceVisible = visible;
+        Native.ViewWS = visible ? WhiteSpace.VisibleAlways : WhiteSpace.Invisible;
     }
 
     internal bool CanPrepareDiff(long savedBytes, long savedLines) =>
