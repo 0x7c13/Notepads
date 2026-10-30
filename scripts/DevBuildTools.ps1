@@ -278,10 +278,13 @@ function Register-DevLayout([string] $Layout, [string] $PackageRoot, [string] $P
     # Never uninstall a package, force-close an app, or reset its application data.
     # Packaged, signed frameworks use normal deployment. DependencyPath on a
     # Register call requires DisableDevelopmentMode, which is incompatible with
-    # our loose development layout. Supply siblings for framework dependencies
-    # (for example UI.Xaml -> VCLibs), irrespective of manifest enumeration order.
+    # our loose development layout. AppX rejects unrelated sibling frameworks:
+    # only supply packages that this framework actually declares as dependencies.
     foreach ($path in $dependencyPaths) {
-        $siblings = @($dependencyPaths | Where-Object { $_ -ne $path })
+        $required = @((Read-DevPackageManifest $path).Package.Dependencies.PackageDependency | ForEach-Object Name)
+        $siblings = @($dependencyPaths | Where-Object {
+            $_ -ne $path -and (Read-DevPackageManifest $_).Package.Identity.Name -in $required
+        })
         if ($siblings.Count) { Add-AppxPackage -Path $path -DependencyPath $siblings }
         else { Add-AppxPackage -Path $path }
     }

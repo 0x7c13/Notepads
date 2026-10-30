@@ -29,6 +29,7 @@ namespace Notepads.Controls;
 [TemplatePart(Name = "HeaderDragTranslation", Type = typeof(TranslateTransform))]
 [TemplatePart(Name = "HeaderLayoutTranslation", Type = typeof(TranslateTransform))]
 [TemplatePart(Name = "HeaderDragBackground", Type = typeof(Border))]
+[TemplatePart(Name = "ItemBottomSideShadow", Type = typeof(DropShadowPanel))]
 [TemplatePart(Name = "LayoutRoot", Type = typeof(FrameworkElement))]
 public partial class SetsViewItem : ListViewItem
 {
@@ -54,6 +55,7 @@ public partial class SetsViewItem : ListViewItem
     internal TranslateTransform HeaderLayoutTranslation { get; private set; }
     internal Border HeaderDragBackground { get; private set; }
     internal FrameworkElement HeaderDragRoot { get; private set; }
+    internal FrameworkElement HeaderBottomShadow { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SetsViewItem"/> class.
@@ -125,6 +127,7 @@ public partial class SetsViewItem : ListViewItem
         HeaderLayoutTranslation = GetTemplateChild("HeaderLayoutTranslation") as TranslateTransform;
         HeaderDragBackground = GetTemplateChild("HeaderDragBackground") as Border;
         HeaderDragRoot = GetTemplateChild("LayoutRoot") as FrameworkElement;
+        HeaderBottomShadow = GetTemplateChild("ItemBottomSideShadow") as FrameworkElement;
     }
 
     /// <inheritdoc/>

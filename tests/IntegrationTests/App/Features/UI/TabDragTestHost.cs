@@ -46,7 +46,10 @@ internal static class TabDragTestHost
             throw new ArgumentException("Expected 2–40 tabs and equal/unequal/unequal-tail/rtl/light/adaptive mode.");
         await DisposeAsync();
         _host = await FeatureTestHost.CreateAsync();
-        FeatureUI.Named<Grid>(_host.Page, "RootGrid").RequestedTheme = mode == "light" ? ElementTheme.Light : ElementTheme.Dark;
+        var root = FeatureUI.Named<Grid>(_host.Page, "RootGrid");
+        root.RequestedTheme = mode == "light" ? ElementTheme.Light : ElementTheme.Dark;
+        // A uniform backdrop makes the actual shadow pixels comparable in both themes.
+        root.Background = new SolidColorBrush(mode == "light" ? Colors.White : Color.FromArgb(255, 48, 48, 48));
         _sets = FeatureUI.Named<SetsView>(_host.Page, "Sets");
         _starts = _completions = _nativeStarts = _selections = _unloads = 0;
         _presses = _releases = _pressModifiers = _interactions = 0;
@@ -160,6 +163,9 @@ internal static class TabDragTestHost
             "\ntabPressed=" + _pressedTab + "\ntabInteractions=" + _interactions +
             "\ntabAnimations=" + _animations +
             "\ntabDragOpaque=" + opaque + "\ntabTheme=" + _sets.ActualTheme + "\ntabDropHeld=" + _dropHeld +
+            "\ntabLeftEdgeShadow=" + ((FrameworkElement)_sets.FindDescendant("SetsItemsScrollViewerLeftSideShadow")).Visibility +
+            "\ntabRightEdgeShadow=" + ((FrameworkElement)_sets.FindDescendant("SetsItemsScrollViewerRightSideShadow")).Visibility +
+            "\ntabScale=" + Windows.Graphics.Display.DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel.ToString(CultureInfo.InvariantCulture) +
             "\ntabPublished=" + Transfers.Count(transfer => transfer.HasPublishedData) +
             "\ntabTransferCompleting=" + committing + "\ntabDocuments=" + documents +
             "\ntabText=" + (committing ? "" : Convert.ToBase64String(Encoding.UTF8.GetBytes(_host.Core.GetSelectedReadyEditor()?.GetText() ?? ""))) +

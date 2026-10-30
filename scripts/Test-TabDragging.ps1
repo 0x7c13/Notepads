@@ -4,10 +4,16 @@
 # ---------------------------------------------------------------------------------------------
 
 # Requires an idle interactive desktop. Only exact owned test windows receive input.
-param([ValidateSet('x64', 'ARM64')][string] $Platform = 'ARM64')
+param(
+    [ValidateSet('x64', 'ARM64')][string] $Platform = 'ARM64',
+    [switch] $ShadowsOnly,
+    [ValidateSet(100, 125, 150, 200)][int[]] $ScalePercent = @()
+)
 $ErrorActionPreference = 'Stop'
+if ($ScalePercent.Count -and !$ShadowsOnly) { throw 'Display scaling is only changed by the explicit ShadowsOnly run.' }
 . (Join-Path $PSScriptRoot 'EditorTestSession.ps1')
 . (Join-Path $PSScriptRoot 'TestBuildIdentity.ps1')
+. (Join-Path $PSScriptRoot 'DisplayScaleSettings.ps1')
 $null = Assert-TestBuildIdentity App Release $Platform
 Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
 Add-Type -AssemblyName System.Drawing
@@ -28,6 +34,8 @@ if (!('TabDragRasterCapture' -as [type])) {
     Add-Type -Path (Join-Path $PSScriptRoot 'TabDragRasterCapture.cs') -ReferencedAssemblies ($references | Select-Object -Unique)
 }
 $session = $peer = $driver = $null
+$settings = $null
+$restoreScale = $false
 $raster = $null
 $handles = @{}
 $results = [Collections.Generic.List[object]]::new()
@@ -77,8 +85,13 @@ function Start-Raster([string] $Name) {
         $root.FindFirst([Windows.Automation.TreeScope]::Descendants,
             [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, "DragTab$_")).Current.BoundingRectangle
     })
-    $left = [int](($rects | Measure-Object Left -Minimum).Minimum + 1)
-    $right = [int](($rects | Measure-Object Right -Maximum).Maximum - 1)
+    # Headers may still be settling when a native drag returns to the rail.
+    # Cropping to their transient bounds can permanently cut off a marker that
+    # continues moving toward the edge. Capture the owned window's full rail
+    # band instead; the driver's process/occlusion guards still check every frame.
+    $window = $root.Current.BoundingRectangle
+    $left = [int]($window.Left + 8)
+    $right = [int]($window.Right - 8)
     $text = Header 0
     $script:rasterMinimumWidth = ($rects | Measure-Object Width -Minimum).Minimum
     $script:raster = [TabDragRasterCapture]::new($handles[[uint32]$session.ProcessId], $left,
@@ -212,6 +225,123 @@ function Retain-Source($Owner) {
     }
     catch { $process.Dispose(); throw }
 }
+
+function Check-EdgeShadows([string] $Left, [string] $Right, [string] $Label) {
+    $null = Wait-State { param($s) $s.tabLeftEdgeShadow -eq $Left -and $s.tabRightEdgeShadow -eq $Right } $Label
+    Check $true $Label
+}
+
+function Capture-Shadows([string] $Name, [int] $Index) {
+    $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($session.ProcessId))
+    $window = $root.Current.BoundingRectangle
+    $text = Header $Index
+    $scale = [double](State).tabScale
+    $null = [EditorAutomationInput]::Capture($session.ProcessId, [int]($window.Left + 8),
+        [int]($text.Top - 5 * $scale), [int]($window.Width - 16), [int](40 * $scale),
+        (Join-Path $session.Root "$Name.png"))
+}
+
+function Capture-BottomShadow([string] $Name, $Slot, [double] $Scale) {
+    # Observe the vacated trailing strip of the original slot, away from text,
+    # the moving selected header and both side shadows. Compare the actual DWM
+    # pixels near the bottom with the same columns above the shadow's blur.
+    $null = Invoke-EditorTestCommand $session 'tabs-frame'
+    $path = Join-Path $session.Root "$Name-bottom.png"
+    $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($session.ProcessId))
+    $window = $root.Current.BoundingRectangle
+    $left = [int]($window.Left + 8)
+    # Capture the rail (including text) through the existing guarded helper;
+    # its text-fixture check intentionally rejects a blank light-theme crop.
+    $null = [EditorAutomationInput]::Capture($session.ProcessId,
+        $left, [int]$Slot.Top, [int]($window.Width - 16), [int]$Slot.Height, $path)
+    $bitmap = [Drawing.Bitmap]::new($path)
+    try {
+        $above = $bottom = 0.0
+        $count = 0
+        for ($x = [int]($Slot.Right - 18 * $Scale) - $left; $x -le [int]($Slot.Right - 14 * $Scale) - $left; $x++) {
+            $a = $bitmap.GetPixel($x, $bitmap.Height - [int](12 * $Scale))
+            $b = $bitmap.GetPixel($x, $bitmap.Height - [int](2 * $Scale))
+            $above += ($a.R + $a.G + $a.B) / 3.0
+            $bottom += ($b.R + $b.G + $b.B) / 3.0
+            $count++
+        }
+        $sample = @{ above = $above / $count; bottom = $bottom / $count; contrast = ($above - $bottom) / $count }
+        $sample | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $session.Root "$Name-bottom.json")
+        return $sample
+    }
+    finally { $bitmap.Dispose() }
+}
+
+function Test-EdgeShadows([string] $Mode, [int] $Count, [string] $Label) {
+    Ready $Count $Mode
+    if ($script:requestedScale) {
+        $null = Wait-State { param($s) [Math]::Abs([double]$s.tabScale * 100 - $script:requestedScale) -lt .01 } 'The tab rail must observe the requested Windows DPI'
+    }
+    $last = $Count - 1
+    if ($Count -gt 2) {
+        # Use the actual overflow buttons to reveal the last tab.
+        $arrow = Point (Arrow 'SetsScrollForwardButton')
+        $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($session.ProcessId))
+        $forward = $root.FindFirst([Windows.Automation.TreeScope]::Descendants,
+            [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, 'SetsScrollForwardButton'))
+        $driver.Begin($session.ProcessId, $arrow.X, $arrow.Y, $false)
+        try {
+            $deadline = [DateTime]::UtcNow.AddSeconds(8)
+            while ($forward.Current.IsEnabled -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 25 }
+            Check (!$forward.Current.IsEnabled) 'The overflow arrow reaches the actual end of the rail'
+        }
+        finally { $driver.End($session.ProcessId, $arrow.X, $arrow.Y) }
+    }
+    $start = Point (Header $last)
+    $driver.Begin($session.ProcessId, $start.X, $start.Y, $false)
+    $driver.End($session.ProcessId, $start.X, $start.Y)
+    $null = Wait-State { param($s) $s.tabSelected -eq "$last" } 'The last tab is selected'
+    Check-EdgeShadows 'Collapsed' 'Visible' 'The stationary last tab has its edge shadow'
+    Capture-Shadows "$Label-selected" $last
+    $scale = [double](State).tabScale
+    $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($session.ProcessId))
+    $slot = $root.FindFirst([Windows.Automation.TreeScope]::Descendants,
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, "DragTab$last")).Current.BoundingRectangle
+    $selectedShadow = Capture-BottomShadow "$Label-selected" $slot $scale
+    $neighborSlot = $root.FindFirst([Windows.Automation.TreeScope]::Descendants,
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, "DragTab$($last - 1)")).Current.BoundingRectangle
+    $neighborSample = @{ Right = $neighborSlot.Left + 30 * $scale; Top = $neighborSlot.Top; Height = $neighborSlot.Height }
+    $neighborShadow = Capture-BottomShadow "$Label-neighbor" $neighborSample $scale
+    # Stay before the reorder threshold so no neighbor fills the source's gap.
+    $destinationX = $start.X - [int](32 * $scale)
+    $driver.Begin($session.ProcessId, $start.X, $start.Y, $false)
+    $driver.MoveTo($destinationX, $start.Y, 8)
+    Check-EdgeShadows 'Collapsed' 'Collapsed' 'Dragging the last tab leaves no fixed shadow at its former edge'
+    Capture-Shadows "$Label-drag" $last
+    $gapShadow = Capture-BottomShadow "$Label-drag" $slot $scale
+    Check ($gapShadow.contrast -gt .5 -and [Math]::Abs($gapShadow.contrast - $neighborShadow.contrast) -le 1.5) 'The vacated source slot matches the neighboring bottom shadow in rendered pixels'
+    $movingNeighborShadow = Capture-BottomShadow "$Label-moving-neighbor" $neighborSample $scale
+    Check ([Math]::Abs($movingNeighborShadow.contrast - $neighborShadow.contrast) -le 1.5) 'The shared shadow does not double-darken stationary neighbors'
+    $driver.Escape(); $driver.ReleaseEscape()
+    $driver.End($session.ProcessId, $destinationX, $start.Y)
+    Check-EdgeShadows 'Collapsed' 'Visible' 'Escape restores the stationary edge shadow'
+    Check ((State).tabOrder -eq ((0..$last) -join ',')) 'Escape preserves tab order'
+    Capture-Shadows "$Label-cancel" $last
+    $restoredShadow = Capture-BottomShadow "$Label-cancel" $slot $scale
+    # The upper row crosses the selected close glyph at some fractional DPIs.
+    # Its antialiasing is unrelated to shadow cleanup; compare the clear bottom
+    # row itself against its pre-drag value instead.
+    Check ([Math]::Abs($restoredShadow.bottom - $selectedShadow.bottom) -le 1) 'Escape restores the original selected bottom edge in rendered pixels'
+    $start = Point (Header $last)
+    $neighbor = Point (Header ($last - 1))
+    $driver.Begin($session.ProcessId, $start.X, $start.Y, $false)
+    $driver.MoveTo($neighbor.X, $start.Y, 8)
+    Check-EdgeShadows 'Collapsed' 'Collapsed' 'Reordering has no fixed edge shadow during preview'
+    $driver.End($session.ProcessId, $neighbor.X, $start.Y)
+    $expected = @(0..$last)
+    $expected[$last - 1] = $last
+    $expected[$last] = $last - 1
+    $null = Wait-State { param($s) $s.tabOrder -eq ($expected -join ',') } 'Reorder commits the last tab into its neighbor slot'
+    $left = if ($Count -eq 2) { 'Visible' } else { 'Collapsed' }
+    Check-EdgeShadows $left 'Collapsed' 'Settlement restores shadows at the new selected position'
+    Capture-Shadows "$Label-reordered" $last
+    Finish $Label
+}
 try {
     $session = Start-EditorTestSession -Platform $Platform
     $run = [Guid]::NewGuid().ToString('N')
@@ -227,6 +357,23 @@ try {
     Retain-Source $session
     Retain-Source $peer
     $driver = [EditorDragInput]::new($session.ProcessId, $peer.ProcessId)
+
+    if ($ScalePercent.Count) {
+        $settings = Open-DisplayScaleSettings
+        Assert-DisplayScaleAvailable $settings
+    }
+    foreach ($scale in $(if ($ScalePercent.Count) { $ScalePercent } else { @(0) })) {
+        $script:requestedScale = $scale
+        if ($scale) {
+            $restoreScale = $true
+            Set-DisplayScalePercent $settings $scale
+        }
+        foreach ($mode in @('equal', 'light')) {
+            Test-EdgeShadows $mode 2 "EdgeShadows-$mode-$scale"
+            Test-EdgeShadows $mode 12 "OverflowShadows-$mode-$scale"
+        }
+    }
+    if ($ShadowsOnly) { return }
 
     Ready
     $start = Point (Header 2)
@@ -540,6 +687,14 @@ finally {
         catch { $cleanupErrors.Add($_.ToString()) }
         finally { try { $driver.Dispose() } catch { $cleanupErrors.Add($_.ToString()) } }
     }
+    if ($restoreScale) {
+        try {
+            Set-DisplayScalePercent $settings $settings.Original
+            Check ((Get-DisplayScalePercent $settings) -eq $settings.Original) 'Restore the original Windows scale'
+        }
+        catch { $cleanupErrors.Add("Restoring Windows scale to $($settings.Original)% failed: $_") }
+    }
+    try { Close-DisplayScaleSettings $settings } catch { $cleanupErrors.Add($_.ToString()) }
     if ($session) {
         try {
             @{ checks = $checks; cases = $results } | ConvertTo-Json -Depth 8 |

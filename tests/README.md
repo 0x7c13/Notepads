@@ -22,6 +22,9 @@ configuration, runner setup, Production package checks and hosted reproduction.
 ./scripts/Test.ps1 -Suite Integration -Group Documents -Platform ARM64 -NoBuild
 ./scripts/Test.ps1 -Suite All -Platform ARM64    # Default correctness matrix
 ./scripts/Test.ps1 -Suite Integration -Group NativeFaults -Platform ARM64
+./scripts/Test.ps1 -Suite Integration -Group TabDragging -Platform ARM64
+# Explicit idle-desktop check; restores the original Windows display scale:
+./scripts/Test-TabDragging.ps1 -Platform ARM64 -ShadowsOnly -ScalePercent 100,125,150
 ```
 
 Release Native AOT is the normal App/E2E configuration; `NativeFaults` always
@@ -65,6 +68,15 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 
 `*` denotes a family for orientation, not a selectable wildcard; use exact group
 names from `-List`. Markdown preview is not implemented and has no completion claim.
+
+`TabDragging` also checks the last tab's viewport-edge shadows during preview,
+Escape cancellation and reorder settlement, with and without overflow in both
+themes. Pixel samples verify that the vacated slot retains its bottom shadow,
+neighbors do not acquire a double shadow, and cancellation restores the selected
+edge. The explicit `-ShadowsOnly -ScalePercent` run repeats those cases at actual
+Windows display scales; it requires a current Release AOT test build and an idle
+desktop. Screenshots and observed visibility/DPI are retained with the drag report.
+Choose scales offered by the display; 200% can also be requested when available.
 
 `Test-InternationalKeyboard.ps1` temporarily loads Windows' Polish Programmers
 layout in the owned test window, verifies `ł/Ł` through native and UIA text, then

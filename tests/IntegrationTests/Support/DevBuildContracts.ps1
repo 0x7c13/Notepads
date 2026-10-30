@@ -203,6 +203,14 @@ foreach ($mutation in @(
     function Add-AppxPackage {
         param($Register, $Path, [string[]] $DependencyPath = @())
         if ($Register -and $DependencyPath.Count) { throw 'Dependency packages cannot accompany loose development registration.' }
+        if ($Path) {
+            $declared = @((Read-DevPackageManifest $Path).Package.Dependencies.PackageDependency | ForEach-Object Name)
+            foreach ($dependency in $DependencyPath) {
+                if ((Read-DevPackageManifest $dependency).Package.Identity.Name -notin $declared) {
+                    throw 'Windows rejects an unrelated framework supplied through DependencyPath.'
+                }
+            }
+        }
         if ($Register) { $state.Registered = $true }
         $calls.Add(@{ Manifest = $Register; Path = $Path; Dependencies = @($DependencyPath) })
     }
@@ -229,15 +237,20 @@ foreach ($mutation in @(
         $appManifest.Replace('</Dependencies>', '<PackageDependency Name="Framework.Second" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /></Dependencies>'))
     $null = Register-DevLayout $layout $packages ARM64
     Check ($calls.Count -eq 6 -and $calls[3].Path -eq (Join-Path $packages 'matching.appx') -and
-        $calls[3].Dependencies.Count -eq 1 -and $calls[3].Dependencies[0] -eq $second -and
-        $calls[4].Path -eq $second -and $calls[4].Dependencies[0] -eq (Join-Path $packages 'matching.appx') -and
-        $calls[5].Manifest -and $calls[5].Dependencies.Count -eq 0) 'Frameworks receive sibling dependency packages before the separate main registration'
+        $calls[3].Dependencies.Count -eq 0 -and $calls[4].Path -eq $second -and $calls[4].Dependencies.Count -eq 0 -and
+        $calls[5].Manifest -and $calls[5].Dependencies.Count -eq 0) 'Independent frameworks are installed without unrelated sibling packages'
+    $dependent = '<Package><Identity Name="Framework.Test" Publisher="CN=Microsoft" ProcessorArchitecture="arm64" Version="1.0.0.0" /><Dependencies><PackageDependency Name="Framework.Second" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /></Dependencies></Package>'
+    Remove-Item -LiteralPath (Join-Path $packages 'matching.appx')
+    New-Archive (Join-Path $packages 'matching.appx') @{ 'AppxManifest.xml' = $dependent }
+    $null = Register-DevLayout $layout $packages ARM64
+    Check ($calls.Count -eq 9 -and $calls[6].Dependencies.Count -eq 1 -and $calls[6].Dependencies[0] -eq $second -and
+        $calls[7].Dependencies.Count -eq 0 -and $calls[8].Manifest) 'A declared framework dependency is supplied without creating a reverse dependency'
     [IO.File]::WriteAllText((Join-Path $layout 'AppxManifest.xml'), $appManifest)
     $empty = Join-Path $EvidenceRoot 'no-frameworks'
     $null = New-Item -ItemType Directory -Path $empty
     $state.Enabled = $false
     Reject 'Missing framework fails before system settings or registration change' '*Missing framework package*' { Register-DevLayout $layout $empty ARM64 }
-    Check (!$state.Enabled -and $calls.Count -eq 6) 'Missing dependencies leave OS boundaries untouched'
+    Check (!$state.Enabled -and $calls.Count -eq 9) 'Missing dependencies leave OS boundaries untouched'
 }
 
 # Execute the actual entry script against inert tool discovery. CheckOnly must

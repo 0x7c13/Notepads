@@ -328,9 +328,9 @@ function Assert-RightClickCaret($Glyph, [bool] $RightEdge, [int] $Position, [str
     finally { Close-EditorContextMenu }
 }
 
-function Assert-EditorKeyboardTarget([switch] $AllowMenuFocus) {
+function Assert-EditorKeyboardTarget([switch] $AllowMenuFocus, $Target = $element) {
     Assert-EditorTestAlive $session
-    if (!$AllowMenuFocus -and !$element.Current.HasKeyboardFocus) {
+    if (!$AllowMenuFocus -and (!$Target -or !$Target.Current.HasKeyboardFocus)) {
         throw 'Editor focus changed before physical keyboard input.'
     }
     [EditorAutomationInput]::RequireIdle()
@@ -338,9 +338,10 @@ function Assert-EditorKeyboardTarget([switch] $AllowMenuFocus) {
     # Menu dismissal alone may target a focused menu instead of the editor.
 }
 
-function Send-EditorKey([int] $Key, [bool] $Control = $false, [bool] $Shift = $false) {
-    Assert-EditorKeyboardTarget
-    [PackagedAppDriver]::Key([uint32] $session.ProcessId, [uint16] $Key, $Control, $Shift)
+function Send-EditorKey([int] $Key, [bool] $Control = $false, [bool] $Shift = $false,
+    [bool] $Alt = $false, $Target = $element) {
+    Assert-EditorKeyboardTarget -Target $Target
+    [PackagedAppDriver]::Key([uint32] $session.ProcessId, [uint16] $Key, $Control, $Shift, $Alt)
 }
 
 function Send-EditorText([string] $Text) {
@@ -1842,10 +1843,7 @@ try {
             throw "$Label`: $($state | ConvertTo-Json -Compress)"
         }
         function Send-ToolsKey($Target, [int] $Key, [bool] $Control = $false, [bool] $Alt = $false) {
-            Assert-EditorTestAlive $session
-            [EditorAutomationInput]::RequireIdle()
-            if (!$Target.Current.HasKeyboardFocus) { throw 'The editor tools target lost keyboard focus.' }
-            [PackagedAppDriver]::Key([uint32] $session.ProcessId, [uint16] $Key, $Control, $false, $Alt)
+            Send-EditorKey -Key $Key -Control $Control -Alt $Alt -Target $Target
         }
         try {
             $initial = Invoke-EditorTestCommand $session 'editor-tools-start'

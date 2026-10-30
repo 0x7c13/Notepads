@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Notepads.Controls;
@@ -46,6 +47,7 @@ public partial class SetsView : ListViewBase
     private ScrollViewer _setsScroller;
     private DropShadowPanel _setsItemsScrollViewerLeftSideShadow;
     private DropShadowPanel _setsItemsScrollViewerRightSideShadow;
+    private FrameworkElement _setsItemsScrollViewerDragShadow;
     private ButtonBase _setsScrollBackButton;
     private ButtonBase _setsScrollForwardButton;
     private long _setsScrollBackVisibilityToken;
@@ -170,6 +172,14 @@ public partial class SetsView : ListViewBase
         _setsScrollForwardButton = _setsScroller.FindDescendant(SetsScrollForwardButtonName) as ButtonBase;
         _setsItemsScrollViewerLeftSideShadow = _setsScroller.FindDescendant(SetsItemsScrollViewerLeftSideShadowName) as DropShadowPanel;
         _setsItemsScrollViewerRightSideShadow = _setsScroller.FindDescendant(SetsItemsScrollViewerRightSideShadowName) as DropShadowPanel;
+        _setsItemsScrollViewerDragShadow = _setsScroller.FindDescendant("SetsItemsScrollViewerDragShadow") as FrameworkElement;
+        if (_setsItemsScrollViewerDragShadow != null)
+        {
+            // The compositor follows the viewport size without a per-frame
+            // layout callback, and keeps the blur out of the editor/overflow buttons.
+            var visual = ElementCompositionPreview.GetElementVisual(_setsItemsScrollViewerDragShadow);
+            visual.Clip = visual.Compositor.CreateInsetClip();
+        }
 
         if (_setsScrollBackButton != null)
         {
@@ -568,9 +578,23 @@ public partial class SetsView : ListViewBase
     /// TODO This method should be removed when better solution is available in the future
     private void UpdateScrollViewerShadows()
     {
+        if (_setsItemsScrollViewerDragShadow != null)
+            _setsItemsScrollViewerDragShadow.Visibility =
+                _mouseDrag is { Preview: true } || _headerSettlement?.Item != null ? Visibility.Visible : Visibility.Collapsed;
+
         if (_setsItemsScrollViewerLeftSideShadow == null ||
             _setsItemsScrollViewerRightSideShadow == null)
         {
+            return;
+        }
+
+        // These shadows replace the selected header's clipped shadow at a viewport
+        // edge. During preview/settlement the header moves independently of its
+        // collection index; a fixed replacement would leave a ghost at its old slot.
+        if (_mouseDrag is { Preview: true } || _headerSettlement != null)
+        {
+            _setsItemsScrollViewerLeftSideShadow.Visibility = Visibility.Collapsed;
+            _setsItemsScrollViewerRightSideShadow.Visibility = Visibility.Collapsed;
             return;
         }
 

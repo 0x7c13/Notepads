@@ -1040,6 +1040,18 @@
                                 </controls:DropShadowPanel.Clip>
                             </controls:DropShadowPanel>
 
+                            <!-- Keep the bottom edge continuous across vacated slots
+                                 while headers move. The selected header's opaque
+                                 drag background covers this shared shadow. -->
+                            <Grid x:Name="SetsItemsScrollViewerDragShadow"
+                                  Grid.Column="1"
+                                  Visibility="Collapsed"
+                                  IsHitTestVisible="False">
+                                <controls:DropShadowPanel Style="{StaticResource BottomEdgeShadowStyle}">
+                                    <Grid Height="1" />
+                                </controls:DropShadowPanel>
+                            </Grid>
+
                             <ScrollContentPresenter x:Name="ScrollContentPresenter"
                                                     Grid.Column="1"
                                                     TabFocusNavigation="Once"

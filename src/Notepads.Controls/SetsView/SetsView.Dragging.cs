@@ -54,11 +54,22 @@ public partial class SetsView
         private double _target;
         private Storyboard _animation;
         private readonly FrameworkElement _root = item.HeaderDragRoot;
+        private readonly FrameworkElement _bottomShadow = item.HeaderBottomShadow;
+        private readonly double _bottomShadowOpacity = item.HeaderBottomShadow?.Opacity ?? 1;
+        private bool _bottomShadowHidden;
         private double _layoutX;
         private double _axis;
 
-        internal void Move(double offset, bool animate)
+        internal void Move(double offset, bool animate, bool sharedBottomShadow)
         {
+            // A stationary viewport shadow fills the gaps between moving tabs.
+            // Suppress each moving copy without competing with selection's
+            // Visibility storyboard; retain the original opacity for cleanup.
+            if (sharedBottomShadow && !_bottomShadowHidden && _bottomShadow != null)
+            {
+                _bottomShadow.Opacity = 0;
+                _bottomShadowHidden = true;
+            }
             if (_target == offset) return;
             _target = offset;
             double from = _translation.X;
@@ -107,6 +118,11 @@ public partial class SetsView
 
         internal void Restore()
         {
+            if (_bottomShadowHidden)
+            {
+                _bottomShadow.Opacity = _bottomShadowOpacity;
+                _bottomShadowHidden = false;
+            }
             _animation?.Stop();
             _animation = null;
             _translation.X = _original;
@@ -427,8 +443,11 @@ public partial class SetsView
             drag.Target = TabDragGeometry.TargetIndex(drag.Centers, drag.Source, start, source.Width);
             for (int index = 0; index < drag.Headers.Length; index++)
                 drag.Headers[index].Move(drag.Direction * (index == drag.Source ? start - source.Start :
-                    TabDragGeometry.NeighborOffset(index, drag.Source, drag.Target, source.Width)), index != drag.Source && drag.Animate);
+                    TabDragGeometry.NeighborOffset(index, drag.Source, drag.Target, source.Width)), index != drag.Source && drag.Animate,
+                    _setsItemsScrollViewerDragShadow != null);
+            bool wasPreview = drag.Preview;
             drag.Preview = true;
+            if (!wasPreview) UpdateScrollViewerShadows();
             if (RailEdgeVelocity(drag) != 0) StartRailRendering();
             else StopRailRendering();
         }
@@ -482,6 +501,7 @@ public partial class SetsView
         if (drag.Headers != null) foreach (var entry in drag.Headers) entry?.Restore();
         if (!ReferenceEquals(_headerSettlement?.Item, drag.Item)) RestoreHeaderAppearance(drag.Item, drag.OriginalZ);
         drag.Preview = false;
+        UpdateScrollViewerShadows();
     }
 
     private static void RestoreHeaderAppearance(SetsViewItem item, int originalZ)
@@ -500,6 +520,7 @@ public partial class SetsView
         var settlement = new HeaderSettlement(this, drag);
         foreach (var header in settlement.Headers) header.Capture(_setItemsPresenter);
         _headerSettlement = settlement;
+        UpdateScrollViewerShadows();
         if (drag != null)
         {
             drag.Headers = null; // Settlement now owns the retained preview transforms.
@@ -566,6 +587,7 @@ public partial class SetsView
         foreach (var header in settlement.Headers) header.Restore();
         if (settlement.Item != null) RestoreHeaderAppearance(settlement.Item, settlement.OriginalZ);
         settlement.RestoreTransitions(this);
+        UpdateScrollViewerShadows();
     }
 
     private void ResetMouseDrag()

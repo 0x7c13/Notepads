@@ -63,6 +63,7 @@ packaging design and corresponding validation.
 | DirectWrite / Direct2D / D3D11 | OS components | Text layout, painting and compositing. No separately bundled rendering engine. |
 | Microsoft.Windows.CppWinRT | 3.0.260818.1 | Upgraded with cancellation/lifetime AOT regression coverage. Retain the existing C++20 projection headers/PCH; modules remain disabled. |
 | Microsoft.Windows.SDK.BuildTools, native project | 10.0.28000.2705 | Updated build tools; packages.config, imports and missing-package guards use the same version. SDK headers and the runtime OS floor are unchanged. |
+| Microsoft.Windows.SDK.BuildTools.MSIX | 1.7.260930100 | Override the UWP SDK's implicit 1.7.20250806.1 through Directory.Packages.props for product and test hosts. Other SDK/build/runtime packages retain their existing selection. |
 | .NET SDK | global.json: 10.0.401, latestPatch | Local installed patches can roll forward; CI bootstraps the explicit version. Runtime/ILCompiler versions follow that SDK through NativeAot.targets. |
 | Windows SDK headers / managed target | 10.0.26100.0 | Compilation target, not the minimum runtime OS. |
 | MSVC / UWP libraries | VS or Build Tools 2026, v145 | Required to build; not an end-user installation requirement. |
@@ -77,6 +78,38 @@ Microsoft.NET.Test.Sdk 18.11.0. The Test SDK update includes a TRX non-BMP
 character fix; the existing VSTest/xUnit adapter configuration is retained.
 These packages do not ship in Notepads.
 
+### MSIX BuildTools validation (2026-10-31)
+
+The MSIX-only upgrade from 1.7.20250806.1 to 1.7.260930100 passed Production
+Native AOT packaging for ARM64, x64 and x86. The side-edge shadow fix was then
+included in a second complete packaging matrix. Package checks covered native
+payload architectures, framework dependencies, resources/symbols and the absence
+of managed assemblies/CoreCLR; regenerated offline distributions passed integrity
+and dependency checks. No other dependency or minimum OS version changed.
+
+On the ARM64 Windows 11 host, each architecture's unchanged Production binaries
+also passed isolated loose registration, Unicode input, normal close/cold restart
+and a version update preserving an unsaved draft. x64/x86 used Windows emulation;
+the private package identities avoided replacing installed user applications.
+This does not establish signed-bundle installation under the original identity,
+physical x64/x86 execution or Windows 10 17763 runtime compatibility. Hosted CI
+must still validate the pushed revision.
+
+Installation testing also exposed an existing offline installer defect: supplying
+unrelated framework packages through `DependencyPath` causes AppX deployment to
+fail when multiple frameworks are missing. `Register-DevLayout` now supplies only
+declared framework dependencies. Regression fixtures cover both independent and
+dependent frameworks and pass in PowerShell 5.1 and 7.
+
+Local evidence (ignored artifacts, before the bottom-shadow follow-up): CI builds
+`ARM64/529d511b68714ca4a39d0fd613f7d6f2`,
+`x64/a793ab2b11b74500897f48323d21a840`, and
+`x86/2ba82392d7f64d459dc92b84a9fb0d51` under `artifacts/ci/`;
+installation reports under `artifacts/package-install-smoke/`:
+`ARM64-69e11c1a9cfe4efa82e96049ad5ce0a9`,
+`x64-a6d436a6b8de4432a0dad456675ad350`, and
+`x86-f1df7e5378494b4da9f9630940761ea5`.
+
 ## Platform decision
 
 Preserve the current minimum of **Windows 10 version 1809, build 17763**, and
@@ -87,7 +120,7 @@ target; it is not a claim that every OS/architecture combination has been tested
 | Boundary | Current evidence / requirement |
 | --- | --- |
 | Build and package | CI publishes Production Native AOT for all three architectures. App manifests declare 17763; actual framework packages must also satisfy that floor. |
-| Runtime execution | Hosted E2E and installed-Production checks run x64. Local AOT tests run ARM64. x86 package builds are not x86 runtime coverage. |
+| Runtime execution | Hosted E2E and installed-Production checks run x64. Local AOT tests run ARM64; isolated Production installation smoke also covers x64/x86 emulation on ARM64. This does not replace physical-machine or memory-heavy x86 validation. |
 | Oldest OS | Real Windows 10 17763 execution is still pending. API checks, package manifests and successful Windows 11 tests do not replace it. |
 | OS servicing | Microsoft .NET support follows the supported Windows edition/lifecycle. A package's minimum build is not a promise of Microsoft support for every old Windows installation. |
 | Installation | Offline artifacts include the required WinUI, VCLibs and Engagement framework packages. The Store client and a separate .NET runtime are not installation prerequisites. AppX deployment/UWP platform components, permitted sideloading and Developer Mode for the loose preview remain prerequisites. |

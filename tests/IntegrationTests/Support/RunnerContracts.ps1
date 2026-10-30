@@ -426,9 +426,9 @@ finally {
         if (!$this.Idle) { throw 'Fixture physical input is held.' }
     }
     $keyboardBoundary | Add-Member ScriptMethod Key {
-        param($ProcessId, $Key, $Control, $Shift)
+        param($ProcessId, $Key, $Control, $Shift, $Alt = $false)
         if (!$this.Foreground) { throw 'Fixture foreground was interrupted.' }
-        $this.Inputs.Add("key|$ProcessId|$Key|$Control|$Shift")
+        $this.Inputs.Add("key|$ProcessId|$Key|$Control|$Shift|$Alt")
         if ($Key -eq 0x1b) { $this.PopupCount = 0 }
     }
     $keyboardBoundary | Add-Member ScriptMethod Type {
@@ -450,6 +450,7 @@ finally {
     }
     $session = @{ ProcessId = 42 }
     $element = [pscustomobject]@{ Current = [pscustomobject]@{ HasKeyboardFocus = $true } }
+    $toolsTarget = [pscustomobject]@{ Current = [pscustomobject]@{ HasKeyboardFocus = $true } }
     foreach ($name in @('Assert-EditorKeyboardTarget', 'Send-EditorKey', 'Send-EditorText', 'Close-EditorContextMenu')) {
         $functions = @($automation.FindAll({
             param($node)
@@ -461,9 +462,11 @@ finally {
         . ([scriptblock]::Create($body))
     }
     foreach ($case in @(
-        @{ Name = 'Editor key'; Action = { Send-EditorKey 0x27 $true $true }; Expected = 'key|42|39|True|True'; EditorFocus = $true },
+        @{ Name = 'Editor key'; Action = { Send-EditorKey 0x27 $true $true }; Expected = 'key|42|39|True|True|False'; EditorFocus = $true },
         @{ Name = 'Editor text'; Action = { Send-EditorText 'אX' }; Expected = 'text|42|אX'; EditorFocus = $true },
-        @{ Name = 'Menu Escape'; Action = { Close-EditorContextMenu }; Expected = 'key|42|27|False|False'; EditorFocus = $false }
+        @{ Name = 'Tools Ctrl+Enter'; Action = { Send-EditorKey 0x0d $true -Target $toolsTarget }; Expected = 'key|42|13|True|False|False'; EditorFocus = $false; Target = $toolsTarget },
+        @{ Name = 'Tools Alt+D'; Action = { Send-EditorKey 0x44 -Alt $true -Target $toolsTarget }; Expected = 'key|42|68|False|False|True'; EditorFocus = $false; Target = $toolsTarget },
+        @{ Name = 'Menu Escape'; Action = { Close-EditorContextMenu }; Expected = 'key|42|27|False|False|False'; EditorFocus = $false }
     )) {
         $element.Current.HasKeyboardFocus = $case.EditorFocus
         $keyboardBoundary.Idle = $false
@@ -479,6 +482,11 @@ finally {
             $element.Current.HasKeyboardFocus = $false
             Expect-Rejection "$($case.Name) rejects lost child focus" '*Editor focus changed*' $case.Action
             $element.Current.HasKeyboardFocus = $true
+        }
+        if ($case.Target) {
+            $case.Target.Current.HasKeyboardFocus = $false
+            Expect-Rejection "$($case.Name) rejects lost tools focus" '*Editor focus changed*' $case.Action
+            $case.Target.Current.HasKeyboardFocus = $true
         }
         if ($keyboardBoundary.Inputs.Count) { throw "$($case.Name) injected input before rejecting interruption." }
         $keyboardBoundary.PopupObservations.Clear()
