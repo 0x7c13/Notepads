@@ -125,12 +125,11 @@
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Jaettavaa ei ole, koska yhtään tekstiä ei ole valittu ja nykyinen tiedosto on tyhjä.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>Muutostesi jälkeen</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Muutoksiasi ennen</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads ei tällä hetkellä tue tiedostoja, joiden koko on suurempi kuin 1MB.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Tiedostoa "{0}" ei voitu avata: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Virhe avattaessa tiedostoa</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Tiedostoa "{0}" ei voitu tallentaa: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Virhe tallennettaessa tiedostoa</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Sulje</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Etsi</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>
@@ -184,27 +183,27 @@
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>Muokattu</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>Kopioitu</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>Tallennettu</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
-  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Painamalla F11 poistua koko näytön tilasta</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
+  <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Poistu koko näytön tilasta painamalla F11</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Lataa tiedosto uudelleen levyltä</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve"><value>Tiedostoa on muokattu ulkopuolella!</value><comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment></data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve"><value>Tiedosto on siirretty, nimetty uudelleen tai poistettu!</value><comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve"><value>Tiedosto on avattu uudelleen</value><comment>TextEditor: Notification message when file has been reloaded successfully.</comment></data>
-  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve"><value>Kompakti päällystys</value><comment>App: "Compact Overlay" display text</comment></data>
+  <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve"><value>Pienoisnäkymä</value><comment>App: "Compact Overlay" display text</comment></data>
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve"><value>Koko näyttö</value><comment>App: "Full Screen" display text</comment></data>
-  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve"><value>Poistu kompaktista päällystyksestä</value><comment>App: "Exit Compact Overlay" display text</comment></data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve"><value>Poistu pienoisnäkymästä</value><comment>App: "Exit Compact Overlay" display text</comment></data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve"><value>Poistu koko näytöstä</value><comment>App: "Exit Full Screen" display text</comment></data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve"><value>valittu</value><comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment></data>
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>valittu</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Siirrä välilehti tähän</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Avaa Notepads-sovelluksella</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Tämä on Notepads-sovelluksen varjoikkuna.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Tämä on Notepads-sovelluksen lisäikkuna.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Tiedosto on jo avattu!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Uusi ikkuna</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Avaa äskettäin käytetyt</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Siirry riville</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Siirry kohtaan:</value><comment>GoTo:Go to bar label</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Rivinumero ylittää kokonaisrivien määrän!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Voit kirjoittaa vain numeron!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Rivinumeron on oltava vähintään 1 ja enintään asiakirjan rivien kokonaismäärä.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Anna kelvollinen rivinumero.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Siirry riville</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Etsi verkosta</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Palauta oletuszoomaus</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
@@ -212,12 +211,12 @@
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Zoomaa ulos</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>Käytä säännöllistä lauseketta</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Tulosta kaikki...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Voi hyväksyä vain yhden desimaalin</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Käytä enintään yhtä desimaalia</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Arvo alueen ulkopuolella</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Alatunniste</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Ylätunniste</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Vaakamarginaali (prosentteina)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Prosenttia paperin leveydestä</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Prosenttia paperin leveydestä tai korkeudesta</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Virhe tulostettaessa:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Tulostus epäonnistui</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Tulostusta ei tueta tällä laitteella</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -260,7 +259,7 @@
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Tyhjää tiedostopäätettä ei tueta tällä hetkellä</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Tiedostopääte "{0}" ei ole tuettu tällä hetkellä</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Sulje</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Tietojen palauttaminen viime istunnosta epäonnistui korruptoituneiden tietojen vuoksi. Tee varmuuskopio kaikista tallentamattomista tiedostoistasi (*.txt) istunnon kansiosta.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Istuntoa ei voitu palauttaa turvallisesti. Olemassa olevat palautustiedostot on säilytetty. Avaa palautuskansio ja tee erillinen kopio ennen tiedostojen korjaamista tai poistamista.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Istunnon palautuksen estävät palautustiedostot, joita Notepads ei voi vahvistaa, joten tämä toiminto peruttiin asiakirjojesi suojaamiseksi. Avaa palautuskansio ja tee erillinen kopio ennen kuin korjaat tai poistat tiedostoja.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Avaa istunnon varmuuskopion kansio</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Varoitus</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Vanha teksti, tallennettu versio</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Edellinen muutos (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Vertailua ei voitu valmistella käytettävissä olevilla resursseilla. Asiakirjaa ei ole muutettu.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Yli 1 MB:n asiakirjoja ei voi tulostaa.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Yli 1 MiB:n asiakirjoja ei voi tulostaa.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Ladataan asiakirjaa…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Asiakirjaa ei voitu ladata</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>Asiakirjaa ”{0}” ei ole ladattu. Ladataanko ja tallennetaanko se ennen sulkemista vai poistetaanko sen palautuskopio?</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Muunna sisennys välilyönneiksi</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Muunna sisennys sarkaimiksi</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Sisennystä ei voitu muuntaa.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Valitut rivit</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Lajittele nousevasti (kirjainkoko huomioidaan)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Lajittele laskevasti (kirjainkoko huomioidaan)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Poista päällekkäiset rivit</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Valitse tätä komentoa varten enintään 100 000 riviä ja 4 MiB tekstiä.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Rivitoimintoa ei voitu suorittaa.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Etsi kaikki osumat tästä asiakirjasta</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} osumaa</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Näytetään {0} osumaa. Tulos- tai aikaraja saavutettiin. Tarkenna hakua.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Asiakirja tai hakuehdot ovat muuttuneet. Etsi kaikki osumat uudelleen.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Sulje haku</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Sulje haku</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Tämän asiakirjan hakutulokset</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Haetaan… Peruuta sulkemalla tämä paneeli.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} osuma</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>Näytetään {0} (keskeneräinen)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Haetaan…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Tulokset ovat vanhentuneet</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Haku epäonnistui</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>Tämä asiakirja</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Teksti</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Säännöllinen lauseke</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Huomioi kirjainkoko</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ohita kirjainkoko</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Vain kokonaiset sanat</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Myös sanojen osat</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Näytä välilyönnit ja sarkaimet</value></data>
 </root>

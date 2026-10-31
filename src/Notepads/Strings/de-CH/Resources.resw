@@ -118,20 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Abbrechen</value><comment>AppCloseSaveReminderDialog: CloseButtonText.</comment></data>
-  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>Es exisitieren nicht gespeicherte Änderungen.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
-  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Speichern</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
-  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Nicht speichern</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>Es gibt ungespeicherte Änderungen.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Alle speichern und beenden</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Verwerfen und beenden</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve"><value>Änderungen speichern?</value><comment>AppCloseSaveReminderDialog: "Title" display text.</comment></data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Nichts zu teilen, da kein Text markiert wurde und das Dokument leer ist.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>Nach den Änderungen</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Vor den Änderungen</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads unterstützt zurzeit keine Dateien grösser als 1MB.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Die Datei "{0}" konnte leider nicht geöffnet werden: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
-  <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Fehler beim öffnen der Datei</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Fehler beim Öffnen der Datei</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Die Datei "{0}" konnte leider nicht gespeichert werden: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
-  <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Fehler beim speichern der Datei</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Fehler beim Speichern der Datei</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Schliessen</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Suchen</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>
   <data name="FindAndReplace_NotificationMsg_NotFound" xml:space="preserve"><value>Nicht gefunden</value><comment>FindAndReplace: Notification message when target not found .</comment></data>
@@ -197,28 +196,28 @@
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>ausgewählt</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Tab hierher verschieben</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Mit Notepads öffnen</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Dies ist eine Kopie von Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Dies ist ein zusätzliches Notepads-Fenster.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Datei ist bereits offen!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Neues Fenster</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Zuletzt geöffnet</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Zu Zeile springen</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Gehe zu:</value><comment>GoTo:Go to bar label</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Die Zeilennummer ist grösser als die Anzahl der Zeilen!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Nur Zahlen sind erlaubt!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Die Zeilennummer muss zwischen 1 und der Gesamtzahl der Zeilen im Dokument liegen.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Geben Sie eine gültige Zeilennummer ein.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Zu Zeile springen</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Im Web suchen</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Standard Zoom wiederherstellen</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Standardzoom wiederherstellen</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve"><value>Hereinzoomen</value><comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Herauszoomen</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>Reguläre Ausdrücke verwenden</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Alle drucken...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Nur eine Dezimalstelle erlaubt</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Höchstens eine Nachkommastelle verwenden</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Wert ausserhalb des zulässigen Bereiches</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Fusszeile</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Kopfzeile</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Horizontaler Abstand (in %)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>In % der Papierbreite</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
-  <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Fehler beim drucken:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Prozentualer Anteil der Papierbreite oder -höhe</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Fehler beim Drucken:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Drucken fehlgeschlagen</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Drucken wird von diesem Gerät nicht unterstützt</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve"><value>Vertikaler Abstand (in %)</value><comment>Print: PrintManager custom option "TopMargin" title.</comment></data>
@@ -226,7 +225,7 @@
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve"><value>Weitere Codierungen</value><comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve"><value>Mit Codierung erneut öffnen</value><comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve"><value>Mit Codierung speichern</value><comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment></data>
-  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>Ungültiger Regulärer Ausdruck!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>Ungültiger regulärer Ausdruck!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>Codierung automatisch erkennen</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve"><value>Codierung konnte nicht bestimmt werden</value><comment>TextEditor: Notification message when file's encoding cannot be determined.</comment></data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Vorherige finden (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
@@ -248,10 +247,10 @@
   <data name="FontWeight_Thin" xml:space="preserve"><value>Dünn</value><comment>FontWeight: "Thin"</comment></data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve"><value>Abbrechen</value><comment>FileRenameDialog: CloseButtonText.</comment></data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve"><value>Speichern</value><comment>FileRenameDialog: PrimaryButtonText.</comment></data>
-  <data name="FileRenameDialog_Title" xml:space="preserve"><value>Umbennen</value><comment>FileRenameDialog: "Title" display text.</comment></data>
+  <data name="FileRenameDialog_Title" xml:space="preserve"><value>Umbenennen</value><comment>FileRenameDialog: "Title" display text.</comment></data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve"><value>Der Dateiname sollte keine ungültigen Zeichen enthalten</value><comment>InvalidFilenameError: Filename contains invalid characters.</comment></data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve"><value>Der Dateiname sollte keine führenden Leerzeichen enthalten</value><comment>InvalidFilenameError: Filename contains leading spaces.</comment></data>
-  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve"><value>Der Dateiname sollte keine abschließenden Leerzeichen enthalten</value><comment>InvalidFilenameError: Filename contains trailing spaces.</comment></data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve"><value>Der Dateiname sollte keine abschliessenden Leerzeichen enthalten</value><comment>InvalidFilenameError: Filename contains trailing spaces.</comment></data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve"><value>Der Dateiname darf nicht leer sein oder nur aus Leerzeichen bestehen</value><comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment></data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve"><value>Der Dateiname ist ungültig oder nicht erlaubt</value><comment>InvalidFilenameError: Filename is invalid or not allowed.</comment></data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve"><value>Der Dateiname darf nicht länger als 255 Zeichen sein</value><comment>InvalidFilenameError: Filename is longer than 255 characters.</comment></data>
@@ -259,8 +258,8 @@
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve"><value>Umbenannt</value><comment>TextEditor: Notification message when file has been renamed successfully.</comment></data>
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Eine leere Dateierweiterung wird momentan nicht unterstützt</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Die Dateierweiterung "{0}" wird momentan nicht unterstützt</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
-  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Schließen</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Daten aus der letzten Sitzung konnten aufgrund beschädigter Daten nicht wiederhergestellt werden. Bitte sichern Sie alle Ihre nicht gespeicherten Dateien (*.txt) im Ordner der Sitzung.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Schliessen</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Die Sitzung konnte nicht sicher wiederhergestellt werden. Vorhandene Wiederherstellungsdateien wurden aufbewahrt. Öffnen Sie den Wiederherstellungsordner und erstellen Sie eine separate Kopie, bevor Sie Dateien reparieren oder entfernen.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Die Sitzungswiederherstellung wird durch Wiederherstellungsdateien blockiert, die Notepads nicht überprüfen kann. Daher wurde diese Aktion abgebrochen, um Ihre Dokumente zu schützen. Öffnen Sie den Wiederherstellungsordner und erstellen Sie eine separate Kopie, bevor Sie Dateien reparieren oder entfernen.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ordner für Sitzungssicherung öffnen</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Warnung</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Alter Text, gespeicherte Version</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Vorherige Änderung (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Der Vergleich konnte mit den verfügbaren Ressourcen nicht vorbereitet werden. Ihr Dokument ist unverändert.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Dokumente, die grösser als 1 MB sind, können nicht gedruckt werden.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Dokumente, die grösser als 1 MiB sind, können nicht gedruckt werden.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Dokument wird geladen…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Dokument konnte nicht geladen werden</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>«{0}» ist nicht geladen. Vor dem Schliessen laden und speichern oder die Wiederherstellungskopie verwerfen?</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Einzug in Leerzeichen umwandeln</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Einzug in Tabulatoren umwandeln</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Der Einzug konnte nicht umgewandelt werden.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Ausgewählte Zeilen</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Aufsteigend sortieren (Gross-/Kleinschreibung beachten)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Absteigend sortieren (Gross-/Kleinschreibung beachten)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Doppelte Zeilen entfernen</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Wählen Sie für diesen Befehl höchstens 100.000 Zeilen und 4 MiB Text aus.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Die Zeilenoperation konnte nicht abgeschlossen werden.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Alle Treffer in diesem Dokument suchen</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} Treffer</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>{0} Treffer werden angezeigt. Die Ergebnis- oder Zeitgrenze wurde erreicht. Grenzen Sie die Suche ein.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Das Dokument oder die Suchbedingungen wurden geändert. Suchen Sie erneut nach allen Treffern.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Suche schliessen</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Suche schliessen</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Suchergebnisse in diesem Dokument</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Suche läuft… Schliessen Sie diesen Bereich zum Abbrechen.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} Treffer</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} angezeigt (unvollständig)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Suche läuft…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Ergebnisse veraltet</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Suche fehlgeschlagen</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>Dieses Dokument</value></data>
   <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regulärer Ausdruck</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Gross-/Kleinschreibung beachten</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Gross-/Kleinschreibung ignorieren</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Nur ganze Wörter</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Auch Teile von Wörtern</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Leerzeichen und Tabulatoren anzeigen</value></data>
 </root>

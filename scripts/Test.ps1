@@ -234,7 +234,10 @@ try {
                     & (Join-Path $PSScriptRoot 'Test-Headers.ps1')
                     & (Join-Path $repo 'tests/IntegrationTests/Support/HeaderContracts.ps1') -EvidenceRoot (Join-Path $reportRoot 'headers')
                 }
-                elseif ($name -eq 'Localization') { & (Join-Path $PSScriptRoot 'Test-Localization.ps1') }
+                elseif ($name -eq 'Localization') {
+                    & (Join-Path $PSScriptRoot 'Test-Localization.ps1')
+                    & (Join-Path $repo 'tests/IntegrationTests/Support/LocalizationContracts.ps1') -EvidenceRoot (Join-Path $reportRoot 'localization')
+                }
                 elseif ($name -eq 'Package') { & (Join-Path $PSScriptRoot 'Test-AppPackage.ps1') -Path $PackagePath }
                 elseif ($name -eq 'PackagedApp') {
                     if ($Platform -ne 'x64') { throw 'PackagedApp currently validates x64 on a hosted desktop.' }

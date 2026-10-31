@@ -12,11 +12,13 @@ using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Theming;
 using Notepads.Presentation.Views.Settings;
+using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using WinUIEditor;
 using static NotepadsIntegrationTests.FeatureUI;
@@ -113,6 +115,99 @@ internal static class AppearanceFeatureTests
             ThemeSettingsService.SetTheme(originalTheme);
             ThemeSettingsService.UseWindowsTheme = originalUseWindowsTheme;
         }
+        var textSettings = await SettingsAsync<TextAndEditorSettingsPage>(page, "TextAndEditor");
+        foreach (var (name, resourceKey) in new[]
+        {
+            ("LineHighlighterToggle", "TextAndEditorPage_LineHighlighterSettings_ToggleSwitch"),
+            ("LineNumbersToggle", "TextAndEditorPage_LineNumbersSettings_ToggleSwitch"),
+            ("WhitespaceToggle", "EditorWhitespace"),
+            ("IndentGuidesToggle", "EditorIndentGuides"),
+            ("BraceMatchingToggle", "EditorBraceMatching"),
+            ("OccurrencesToggle", "EditorOccurrences")
+        })
+            CheckLocalizedToggleLayout(textSettings, name, resourceKey, log);
+    }
+
+    private static void CheckLocalizedToggleLayout(Page settings, string name, string resourceKey, StringBuilder log)
+    {
+        var toggle = Named<ToggleSwitch>(settings, name);
+        var scroll = Descendants(settings).OfType<ScrollViewer>().First();
+        var viewport = Descendants(scroll).OfType<FrameworkElement>()
+            .First(element => element.Name == "ScrollContentPresenter");
+        var verticalBar = Descendants(scroll).OfType<ScrollBar>()
+            .First(bar => bar.Orientation == Orientation.Vertical);
+        var resources = ResourceManager.Current.MainResourceMap.GetSubtree("Settings");
+        var context = ResourceContext.GetForCurrentView().Clone();
+        var originalOn = toggle.OnContent;
+        var originalOff = toggle.OffContent;
+        var originalSize = toggle.FontSize;
+        var originalState = toggle.IsOn;
+        var originalWidth = settings.Width;
+        var originalDirection = settings.FlowDirection;
+        try
+        {
+            foreach (var width in new[] { double.NaN, 280d })
+            foreach (var language in new[] { "en-US", "zh-CN", "fr-FR", "pt-BR", "de-DE", "ja-JP", "ar-YE" })
+            foreach (var fontSize in new[] { 14d, 28d })
+            {
+                settings.Width = width;
+                settings.FlowDirection = language == "ar-YE" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+                context.Languages = new[] { language };
+                toggle.OnContent = resources.GetValue(resourceKey + "/OnContent", context).ValueAsString;
+                toggle.OffContent = resources.GetValue(resourceKey + "/OffContent", context).ValueAsString;
+                toggle.FontSize = fontSize;
+                foreach (var isOn in new[] { false, true })
+                {
+                    toggle.IsOn = isOn;
+                    settings.UpdateLayout();
+                    var presenter = Descendants(toggle).OfType<ContentPresenter>().Single(element =>
+                        element.Name == (isOn ? "OnContentPresenter" : "OffContentPresenter"));
+                    var bounds = presenter.TransformToVisual(viewport).TransformBounds(
+                        new Rect(0, 0, presenter.ActualWidth, presenter.ActualHeight));
+                    var left = 0d;
+                    var right = viewport.ActualWidth;
+                    if (scroll.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+                    {
+                        var barBounds = verticalBar.TransformToVisual(viewport).TransformBounds(
+                            new Rect(0, 0, verticalBar.ActualWidth, verticalBar.ActualHeight));
+                        // Overlay scrollbars can occupy part of the content viewport.
+                        if (barBounds.Left + barBounds.Width / 2 >= viewport.ActualWidth / 2)
+                            right = Math.Min(right, barBounds.Left);
+                        else
+                            left = Math.Max(left, barBounds.Right);
+                    }
+                    var description = $"{name}/{language}/{fontSize}/{width}/{isOn}";
+                    Check(presenter.ActualWidth > 0 && bounds.Left >= left - 1 && bounds.Right <= right + 1,
+                        "Translated toggle text stays inside the content viewport and clear of the scrollbar: " + description);
+                    var probe = new TextBlock
+                    {
+                        Text = (string)presenter.Content,
+                        FontFamily = presenter.FontFamily,
+                        FontSize = presenter.FontSize,
+                        FontWeight = presenter.FontWeight,
+                        TextWrapping = TextWrapping.Wrap,
+                        FlowDirection = settings.FlowDirection
+                    };
+                    probe.Measure(new Size(presenter.ActualWidth, double.PositiveInfinity));
+                    Check(presenter.ActualHeight >= probe.DesiredSize.Height - 1,
+                        "Translated toggle text has enough height for every wrapped line: " + description);
+                    if (language == "fr-FR" && name == "BraceMatchingToggle")
+                        Check(presenter.ActualHeight > fontSize * 1.5,
+                            "The long French caption wraps onto multiple lines: " + description);
+                }
+            }
+        }
+        finally
+        {
+            toggle.OnContent = originalOn;
+            toggle.OffContent = originalOff;
+            toggle.FontSize = originalSize;
+            toggle.IsOn = originalState;
+            settings.Width = originalWidth;
+            settings.FlowDirection = originalDirection;
+            settings.UpdateLayout();
+        }
+        log.AppendLine($"PASS: Appearance.LocalizedToggleLayout/{name} — seven packaged translations fit the actual content viewport without overlapping the scrollbar in both switch states, at normal/narrow widths and 14/28-DIP text, including RTL.");
     }
 
     // Calls the production resource/palette branch with the current system colors;

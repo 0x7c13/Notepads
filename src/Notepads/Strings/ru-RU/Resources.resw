@@ -118,14 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Отмена</value><comment>AppCloseSaveReminderDialog: CloseButtonText.</comment></data>
-  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>У вас есть не сохраненные изменения.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
-  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Сохранить все</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
-  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Не сохранять</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>Есть несохранённые изменения.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Сохранить всё и выйти</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Не сохранять и выйти</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve"><value>Вы хотите сохранить изменения?</value><comment>AppCloseSaveReminderDialog: "Title" display text.</comment></data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Нет информации для отправки: текст не выбран, а текущий документ пустой.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>С вашими изменениями</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>До ваших изменений</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads на текущий момент не поддерживает файлы более 1МБ.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Извините, файл "{0}" не может быть открыт: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>ОК</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Ошибка открытия файла</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
@@ -173,7 +172,7 @@
   <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve"><value>Вернуть</value><comment>TextEditor: ContextFlyout "Redo" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve"><value>Выбрать всё</value><comment>TextEditor: ContextFlyout "Select All" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve"><value>Поделиться</value><comment>TextEditor: ContextFlyout "Share" button display text.</comment></data>
-  <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve"><value>Поделиться выбраным</value><comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve"><value>Поделиться выбранным</value><comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve"><value>Отменить</value><comment>TextEditor: ContextFlyout "Undo" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve"><value>Перенос по словам</value><comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment></data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve"><value>Безымянный.txt</value><comment>TextEditor: Default file name for new document.</comment></data>
@@ -197,14 +196,14 @@
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>выбрано</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Переместить вкладку сюда</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Открыть в Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Это теневое окно Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Это дополнительное окно Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Файл уже открыт!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Новое окно</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Последние документы</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Перейти к строке</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Перейти к:</value><comment>GoTo:Go to bar label</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Номер строки превышает общее количество строк!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Вы можете вводить только числа!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Номер строки должен быть от 1 до общего количества строк в документе.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Введите допустимый номер строки.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Перейти к строке</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Поиск в интернете</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Масштаб по умолчанию</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
@@ -212,12 +211,12 @@
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Уменьшить</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>Использовать регулярные выражения</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Печатать все...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Можно принять с точностью только до одного знака после запятой</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Используйте не более одного знака после запятой</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Значение не входит в диапазон</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Нижний колонтитул</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Верхний колонтитул</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Горизонтальный отступ (в %)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>В % от ширины листа</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Процент от ширины или высоты бумаги</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Ошибка печати:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>При печати произошла ошибка</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Это устройство не поддерживает печать</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -229,7 +228,7 @@
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>Некорректное регулярное выражение!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>Автоматическое определение кодировки</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve"><value>Не удается определить кодировку</value><comment>TextEditor: Notification message when file's encoding cannot be determined.</comment></data>
-  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Найти раннее (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Найти предыдущее (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve"><value>Режим замены</value><comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve"><value>Порядок чтения: справа налево</value><comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment></data>
   <data name="FontStyle_Italic" xml:space="preserve"><value>Курсив</value><comment>FontStyle: "Italic"</comment></data>
@@ -252,15 +251,15 @@
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve"><value>Имя файла не должно содержать некорректные символы</value><comment>InvalidFilenameError: Filename contains invalid characters.</comment></data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve"><value>Имя файла не должно начинаться с пробелов</value><comment>InvalidFilenameError: Filename contains leading spaces.</comment></data>
   <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve"><value>Имя файла не должно заканчиваться пробелами</value><comment>InvalidFilenameError: Filename contains trailing spaces.</comment></data>
-  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve"><value>Имя файла не может быть пустым</value><comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment></data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve"><value>Имя файла не может быть пустым или состоять только из пробелов</value><comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment></data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve"><value>Некорректное имя файла</value><comment>InvalidFilenameError: Filename is invalid or not allowed.</comment></data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve"><value>Имя файла не может превышать 255 символов</value><comment>InvalidFilenameError: Filename is longer than 255 characters.</comment></data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve"><value>Переименовать</value><comment>TextEditor: ContextFlyout "Rename" button display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve"><value>Файл переименован</value><comment>TextEditor: Notification message when file has been renamed successfully.</comment></data>
-  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Пустое расширение файла неподдерживается</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Пустое расширение файла не поддерживается</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Расширение файла "{0}" не поддерживается</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Закрыть</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Не удалось восстановить данные из последней сессии из-за поврежденных данных. Пожалуйста, сделайте резервную копию всех ваших несохраненных файлов (*.txt) в папке сессии.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Не удалось безопасно восстановить сессию. Существующие файлы восстановления сохранены. Откройте папку восстановления и сделайте отдельную копию перед исправлением или удалением файлов.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Восстановление сеанса заблокировано файлами восстановления, которые Notepads не может проверить, поэтому это действие отменено, чтобы сохранить ваши документы в безопасности. Откройте папку восстановления и создайте отдельную копию, прежде чем исправлять или удалять какие-либо файлы.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Открыть папку резервной копии сессии</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Предупреждение</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Старый текст, сохранённая версия</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Предыдущее изменение (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Не удалось подготовить сравнение в пределах доступных ресурсов. Документ не изменён.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Документы размером более 1 МБ нельзя распечатать.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Документы размером более 1 MiB нельзя распечатать.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Загрузка документа…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Не удалось загрузить документ</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>Документ «{0}» не загружен. Загрузить и сохранить его перед закрытием или удалить его копию для восстановления?</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Преобразовать отступы в пробелы</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Преобразовать отступы в табуляцию</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Не удалось преобразовать отступы.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Выбранные строки</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Сортировать по возрастанию (с учётом регистра)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Сортировать по убыванию (с учётом регистра)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Удалить повторяющиеся строки</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Для этой команды выберите не более 100 000 строк и 4 MiB текста.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Не удалось выполнить операцию со строками.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Найти все совпадения в этом документе</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>Совпадений: {0}</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Показано совпадений: {0}. Достигнут предел результатов или времени. Уточните условия поиска.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Документ или условия поиска изменились. Выполните поиск всех совпадений заново.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Закрыть поиск</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Закрыть поиск</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Результаты поиска в этом документе</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Идёт поиск… Закройте эту панель для отмены.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} совпадение</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>Показано: {0} (неполный результат)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Идёт поиск…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Результаты устарели</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Ошибка поиска</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>Этот документ</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Текст</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Регулярное выражение</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Учитывать регистр</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Не учитывать регистр</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Только целые слова</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Включая части слов</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Показывать пробелы и табуляцию</value></data>
 </root>

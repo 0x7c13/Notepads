@@ -122,15 +122,14 @@
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>全て保存して終了</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>破棄して終了</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve"><value>変更内容を保存しますか？</value><comment>AppCloseSaveReminderDialog: "Title" display text.</comment></data>
-  <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>テキストが選択されていないか、または文書が空のため共有する物がありません。</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
+  <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>テキストが選択されておらず、現在のドキュメントも空のため、共有する内容がありません。</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>変更後</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>変更前</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads は現時点では1MBを超えるファイルをサポートしていません。</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>ファイル "{0}" を開けませんでした: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>ファイルオープンエラー</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>ファイル "{0}" を保存できませんでした: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>ファイル保存エラー</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>閉じる</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>検索</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>
@@ -197,14 +196,14 @@
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>文字選択済み</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>タブをここに移動</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Notepads で開く</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>これはシャドウ ウィンドウ（2番目以降のウィンドウ）です。</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>これは追加の Notepads ウィンドウです。</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>ファイルは既に開いています！</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>新規ウィンドウ</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>最近開いたファイル</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>指定行へ移動</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>行番号:</value><comment>GoTo:Go to bar label</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>行番号が行数を超えてます</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>数字のみ入力できます</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>行番号は 1 からドキュメントの総行数までの範囲で指定してください。</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>有効な行番号を入力してください。</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>指定行へ移動</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>ウェブ検索</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>拡大率を戻す</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
@@ -217,7 +216,7 @@
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>フッター</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>ヘッダー</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>左右の余白(単位：％)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>用紙サイズの比率</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>用紙の幅または高さに対する割合（%）</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>印刷エラー:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>印刷に失敗しました</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>このデバイスでは印刷はサポートされていません</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -231,7 +230,7 @@
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve"><value>エンコードが判別できません</value><comment>TextEditor: Notification message when file's encoding cannot be determined.</comment></data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>前を検索 (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve"><value>置換モードの切り替え</value><comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment></data>
-  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve"><value>右から左へ書く</value><comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve"><value>右から左の読み取り順</value><comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment></data>
   <data name="FontStyle_Italic" xml:space="preserve"><value>イタリック体</value><comment>FontStyle: "Italic"</comment></data>
   <data name="FontStyle_Normal" xml:space="preserve"><value>標準</value><comment>FontStyle: "Normal"</comment></data>
   <data name="FontStyle_Oblique" xml:space="preserve"><value>斜体</value><comment>FontStyle: "Oblique"</comment></data>
@@ -260,7 +259,7 @@
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>現時点では空のファイル拡張子はサポートされていません</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>現時点ではファイル拡張子 "{0}" はサポートされていません</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>閉じる</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>破損したデータのため、最後のセッションからデータを回復できませんでした。セッションフォルダ内のすべての未保存ファイル（*.txt）をバックアップしてください。</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>セッションを安全に復元できませんでした。既存の復元ファイルは保持されています。修復や削除を行う前に、復元フォルダーを開いて別の場所にコピーしてください。</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Notepads が検証できない復元用ファイルによってセッションの復元がブロックされているため、ドキュメントを保護するためにこの操作は取り消されました。ファイルを修復または削除する前に、復元フォルダーを開いて別のコピーを作成してください。</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>セッションバックアップフォルダを開く</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>警告</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>古いテキスト、保存済みのバージョン</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>前の変更 (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>利用可能なリソースの範囲内で比較を準備できませんでした。文書は変更されていません。</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB を超えるドキュメントは印刷できません。</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MiB を超えるドキュメントは印刷できません。</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>ドキュメントを読み込み中…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>ドキュメントを読み込めません</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>「{0}」は読み込まれていません。閉じる前に読み込んで保存しますか、それとも復元用コピーを破棄しますか？</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>インデントをスペースに変換</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>インデントをタブに変換</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>インデントを変換できませんでした。</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>選択した行</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>昇順に並べ替え（大文字と小文字を区別）</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>降順に並べ替え（大文字と小文字を区別）</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>重複行を削除</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>このコマンドでは、100,000 行以下かつ 4 MiB 以下のテキストを選択してください。</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>行の操作を完了できませんでした。</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>このドキュメント内をすべて検索</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} 件の一致</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>{0} 件の一致を表示しています。件数または時間の上限に達しました。検索範囲を絞ってください。</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>ドキュメントまたは検索条件が変更されました。すべて検索を再実行してください。</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>検索を閉じる</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>検索を閉じる</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>このドキュメント内の検索結果</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>検索中…このパネルを閉じるとキャンセルします。</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} 件の一致</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} 件を表示（未完了）</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>検索中…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>結果が古くなっています</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>検索に失敗しました</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>このドキュメント</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>テキスト</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>正規表現</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>大文字と小文字を区別</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>大文字と小文字を区別しない</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>単語全体に一致</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>単語全体の一致に限定しない</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>スペースとタブを表示</value></data>
 </root>

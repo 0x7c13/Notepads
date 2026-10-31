@@ -133,7 +133,7 @@
   <data name="CFileDisplayName" xml:space="preserve"><value>C-tiedosto</value><comment>.c, .m, .i</comment></data>
   <data name="CgiFileDisplayName" xml:space="preserve"><value>CGI-tiedosto</value><comment>.cgi</comment></data>
   <data name="ClojureFileDisplayName" xml:space="preserve"><value>Clojure-tiedosto</value><comment>.clj, .cljs, .cljc, .cljx, .clojure, .edn</comment></data>
-  <data name="CmakeFileDisplayName" xml:space="preserve"><value>Cmake-tiedosto</value><comment>.cmake</comment></data>
+  <data name="CmakeFileDisplayName" xml:space="preserve"><value>CMake-tiedosto</value><comment>.cmake</comment></data>
   <data name="CoffeeScriptFileDisplayName" xml:space="preserve"><value>CoffeeScript-tiedosto</value><comment>.coffee, .cson, .iced</comment></data>
   <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve"><value>CSV-tiedosto</value><comment>.csv</comment></data>
   <data name="ConfigFileDisplayName" xml:space="preserve"><value>CONFIG-tiedosto</value><comment>.cfg, .config, .cnf, .conf, .properties, .directory</comment></data>
@@ -159,13 +159,13 @@
   <data name="InitializationFileDisplayName" xml:space="preserve"><value>INI-tiedosto</value><comment>.ini</comment></data>
   <data name="InstallFileDisplayName" xml:space="preserve"><value>INSTALL-tiedosto</value><comment>.install</comment></data>
   <data name="JavaFileDisplayName" xml:space="preserve"><value>Java-tiedosto</value><comment>.java, .jav</comment></data>
-  <data name="JavascriptFileDisplayName" xml:space="preserve"><value>Javascript File</value><comment>.js, .jsx, .es6, .mjs, .cjs, .pac</comment></data>
+  <data name="JavascriptFileDisplayName" xml:space="preserve"><value>JavaScript-tiedosto</value><comment>.js, .jsx, .es6, .mjs, .cjs, .pac</comment></data>
   <data name="JsonFileDisplayName" xml:space="preserve"><value>JSON-tiedosto</value><comment>.json, .hintrc, .jsonc, .jsonld, .babelrc, .eslintrc, .jslintrc, .bowerrc, .jscsrc, .webmanifest, .har</comment></data>
   <data name="JspFileDisplayName" xml:space="preserve"><value>JSP-tiedosto</value><comment>.jsp, .jspx</comment></data>
   <data name="LessFileDisplayName" xml:space="preserve"><value>Less-tiedosto</value><comment>.less</comment></data>
   <data name="LogFileDisplayName" xml:space="preserve"><value>Log-tiedosto</value><comment>.log</comment></data>
   <data name="LrcFileDisplayName" xml:space="preserve"><value>LRC-tiedosto</value><comment>.lrc</comment></data>
-  <data name="LuaFileDisplayName" xml:space="preserve"><value>LUA-tiedosto</value><comment>.lua</comment></data>
+  <data name="LuaFileDisplayName" xml:space="preserve"><value>Lua-tiedosto</value><comment>.lua</comment></data>
   <data name="MapFileDisplayName" xml:space="preserve"><value>Map-tiedosto</value><comment>.map</comment></data>
   <data name="MarkdownFileDisplayName" xml:space="preserve"><value>Markdown-tiedosto</value><comment>.md, .markdown, .mkd, .mdwn, .mdown, .markn, .mdtxt</comment></data>
   <data name="NfoFileDisplayName" xml:space="preserve"><value>NFO-tiedosto</value><comment>.nfo</comment></data>
@@ -187,7 +187,7 @@
   <data name="ShaderFileDisplayName" xml:space="preserve"><value>Shader-tiedosto</value><comment>.shader</comment></data>
   <data name="ShellScriptFileDisplayName" xml:space="preserve"><value>Shell-tiedosto</value><comment>.sh</comment></data>
   <data name="SqlFileDisplayName" xml:space="preserve"><value>SQL-tiedosto</value><comment>.sql, .dsql</comment></data>
-  <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve"><value>Sub Station Alpha Subtitle File</value><comment>.ssa</comment></data>
+  <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve"><value>SubStation Alpha -tekstitystiedosto</value><comment>.ssa</comment></data>
   <data name="SubtitleFileDisplayName" xml:space="preserve"><value>SRT-tiedosto</value><comment>.srt</comment></data>
   <data name="SwiftFileDisplayName" xml:space="preserve"><value>Swift-tiedosto</value><comment>.swift</comment></data>
   <data name="TextFileDisplayName" xml:space="preserve"><value>Tekstiasiakirja</value><comment>.txt</comment></data>

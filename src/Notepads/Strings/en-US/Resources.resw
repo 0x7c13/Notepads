@@ -125,12 +125,11 @@
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Nothing to share because no text is selected and current document is empty.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>After your changes</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Before your changes</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads does not support file greater than 1MB at this moment.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Sorry, file "{0}" couldn't be opened: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>File Open Error</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Sorry, file "{0}" couldn't be saved: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>File Save Error</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Close</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Find</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>
@@ -154,7 +153,7 @@
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve"><value>Cancel</value><comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>All changes including text, line ending and encoding made to "{0}" will be reverted!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve"><value>Yes</value><comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment></data>
-  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>Are you sure to revert all changes?</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>Revert all changes?</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Cancel</value><comment>SetCloseSaveReminderDialog: CloseButtonText.</comment></data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve"><value>Save file "{0}"?</value><comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Save</value><comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
@@ -202,21 +201,21 @@
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>New Window</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Open Recent</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Go To Line</value><comment>GoTo: Go to bar placeholder text.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Line number exceeds beyond the total number of lines!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>You can only type a number!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Line number must be between 1 and the document&apos;s total line count.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Enter a valid line number.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Go To Line</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
-  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Search in web</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Search the web</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Restore Default Zoom</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve"><value>Zoom In</value><comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Zoom Out</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Go To:</value><comment>GoTo: Go to bar label</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Print All...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Can only accept upto one decimal place</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Use no more than one decimal place</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Value out of range</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Footer</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Header</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Horizontal Margin (in %)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>In % of paper width</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Percentage of paper width or height</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Error printing:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Failed to print</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Printing is not supported on this device</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Old text, saved version</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Previous change (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>The comparison could not be prepared within the available resources. Your document is unchanged.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Documents larger than 1 MB can't be printed.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Documents larger than 1 MiB can&apos;t be printed.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Loading document…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Unable to load document</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>“{0}” is not loaded. Load and save it before closing, or discard its recovery copy?</value></data>
@@ -314,7 +313,7 @@
   <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
   <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
   <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MiB of text for this command.</value></data>
   <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
   <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
   <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>

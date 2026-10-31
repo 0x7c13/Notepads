@@ -133,7 +133,7 @@
   <data name="CFileDisplayName" xml:space="preserve"><value>C ფაილი</value><comment>.c, .m, .i</comment></data>
   <data name="CgiFileDisplayName" xml:space="preserve"><value>CGI ფაილი</value><comment>.cgi</comment></data>
   <data name="ClojureFileDisplayName" xml:space="preserve"><value>Clojure ფაილი</value><comment>.clj, .cljs, .cljc, .cljx, .clojure, .edn</comment></data>
-  <data name="CmakeFileDisplayName" xml:space="preserve"><value>Cmake ფაილი</value><comment>.cmake</comment></data>
+  <data name="CmakeFileDisplayName" xml:space="preserve"><value>CMake ფაილი</value><comment>.cmake</comment></data>
   <data name="CoffeeScriptFileDisplayName" xml:space="preserve"><value>CoffeeScript ფაილი</value><comment>.coffee, .cson, .iced</comment></data>
   <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve"><value>CSV ფაილი</value><comment>.csv</comment></data>
   <data name="ConfigFileDisplayName" xml:space="preserve"><value>CONFIG ფაილი</value><comment>.cfg, .config, .cnf, .conf, .properties, .directory</comment></data>
@@ -159,13 +159,13 @@
   <data name="InitializationFileDisplayName" xml:space="preserve"><value>INI ფაილი</value><comment>.ini</comment></data>
   <data name="InstallFileDisplayName" xml:space="preserve"><value>INSTALL ფაილი</value><comment>.install</comment></data>
   <data name="JavaFileDisplayName" xml:space="preserve"><value>Java ფაილი</value><comment>.java, .jav</comment></data>
-  <data name="JavascriptFileDisplayName" xml:space="preserve"><value>Javascript File</value><comment>.js, .jsx, .es6, .mjs, .cjs, .pac</comment></data>
+  <data name="JavascriptFileDisplayName" xml:space="preserve"><value>JavaScript ფაილი</value><comment>.js, .jsx, .es6, .mjs, .cjs, .pac</comment></data>
   <data name="JsonFileDisplayName" xml:space="preserve"><value>JSON ფაილი</value><comment>.json, .hintrc, .jsonc, .jsonld, .babelrc, .eslintrc, .jslintrc, .bowerrc, .jscsrc, .webmanifest, .har</comment></data>
   <data name="JspFileDisplayName" xml:space="preserve"><value>JSP ფაილი</value><comment>.jsp, .jspx</comment></data>
   <data name="LessFileDisplayName" xml:space="preserve"><value>Less ფაილი</value><comment>.less</comment></data>
   <data name="LogFileDisplayName" xml:space="preserve"><value>Log ფაილი</value><comment>.log</comment></data>
   <data name="LrcFileDisplayName" xml:space="preserve"><value>LRC ფაილი</value><comment>.lrc</comment></data>
-  <data name="LuaFileDisplayName" xml:space="preserve"><value>LUA ფაილი</value><comment>.lua</comment></data>
+  <data name="LuaFileDisplayName" xml:space="preserve"><value>Lua ფაილი</value><comment>.lua</comment></data>
   <data name="MapFileDisplayName" xml:space="preserve"><value>Map ფაილი</value><comment>.map</comment></data>
   <data name="MarkdownFileDisplayName" xml:space="preserve"><value>Markdown ფაილი</value><comment>.md, .markdown, .mkd, .mdwn, .mdown, .markn, .mdtxt</comment></data>
   <data name="NfoFileDisplayName" xml:space="preserve"><value>NFO ფაილი</value><comment>.nfo</comment></data>
@@ -187,7 +187,7 @@
   <data name="ShaderFileDisplayName" xml:space="preserve"><value>Shader ფაილი</value><comment>.shader</comment></data>
   <data name="ShellScriptFileDisplayName" xml:space="preserve"><value>Shell ფაილი</value><comment>.sh</comment></data>
   <data name="SqlFileDisplayName" xml:space="preserve"><value>SQL ფაილი</value><comment>.sql, .dsql</comment></data>
-  <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve"><value>Sub Station Alpha Subtitle File</value><comment>.ssa</comment></data>
+  <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve"><value>SubStation Alpha სუბტიტრების ფაილი</value><comment>.ssa</comment></data>
   <data name="SubtitleFileDisplayName" xml:space="preserve"><value>SRT ფაილი</value><comment>.srt</comment></data>
   <data name="SwiftFileDisplayName" xml:space="preserve"><value>Swift ფაილი</value><comment>.swift</comment></data>
   <data name="TextFileDisplayName" xml:space="preserve"><value>ტექსტური დოკუმენტი</value><comment>.txt</comment></data>

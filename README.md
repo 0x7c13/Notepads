@@ -55,7 +55,17 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 
 * You won't be able to save files to system folders due to UWP restriction (windows, system32, etc.).
 * You cannot associate potentially harmful file types (.cmd, .bat etc.) with Notepads.
-* Notepads does not work well with large files; the file size limit is set to 1MB for now. I will add large file support later.
+
+## File sizes in V2:
+
+V2 removes the old 1 MB file-opening limit. Its internal UTF-8 text, after line-ending
+normalization, is limited to 2,147,483,647 bytes (2 GiB minus one byte); this may differ
+from the size of the encoded file on disk. This is a code boundary, not a tested or
+recommended maximum file size. The document and undo history remain in memory, so
+practical limits depend on available memory, process architecture and document layout.
+Syntax highlighting, selected-line operations and printing have separate, lower
+limits. The [document size boundary](src/Notepads/Features/Documents/Contracts/DocumentLimits.cs)
+is defined independently of those features.
 
 ## Downloads:
 

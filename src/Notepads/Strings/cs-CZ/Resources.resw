@@ -129,12 +129,11 @@
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Nic ke sdílení, protože nebyl vybrán text a vybraný dokument je prázdný.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>Po vašich změnách</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Před vašimi změnami</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads zatím nepodporuje souory větší, než 1MB.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Omlouváme se, soubor "{0}" nemohl být otevřen: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Chyba při otevírání souboru</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Omlouváme se, soubor "{0}" nemohl být uložen: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Chyba při ukládání souboru</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Zavřít</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Najít</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>
@@ -180,7 +179,7 @@
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve"><value>Sdílet vybrané</value><comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve"><value>Zpět</value><comment>TextEditor: ContextFlyout "Undo" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve"><value>Zalamovat řádky</value><comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment></data>
-  <data name="TextEditor_DefaultNewFileName" xml:space="preserve"><value>Untitled.txt</value><comment>TextEditor: Default file name for new document.</comment></data>
+  <data name="TextEditor_DefaultNewFileName" xml:space="preserve"><value>Bez názvu.txt</value><comment>TextEditor: Default file name for new document.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve"><value>Soubor byl modifikován vně aplikace!</value><comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Znovu načíst soubor z disku</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve"><value>Soubor byl přesunut, přejmenován nebo odstraněn!</value><comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment></data>
@@ -197,27 +196,27 @@
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>vybrán</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Přesunout kartu sem</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Otevřít v Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Toto je kopie okna Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Toto je další okno Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Soubor je již otevřen!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Nové Okno</value><comment>MainMenu: "New Window" button display text.</comment></data>
-  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Otevřít nedávno zavřené</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
+  <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Otevřít nedávné soubory</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Jít na řádek</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Jít na:</value><comment>GoTo:Go to bar label</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Číslo řádku je mimo aktuální počet řádků!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Lze psát pouze čísla!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Číslo řádku musí být mezi 1 a celkovým počtem řádků dokumentu.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Zadejte platné číslo řádku.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Jít na řádek</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Hledat na webu</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Obnovit původní zvětšní</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Obnovit výchozí přiblížení</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve"><value>Přiblížit</value><comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Oddálit</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>Použít regulární výraz</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Tisknout vše...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Lze akceptovat pouze hodnoty do jednoho desetinného místa</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Použijte nejvýše jedno desetinné místo</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Hodnota je mimo rozsah</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Patička</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Hlavička</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Vodorovný okraj (v %)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>V % šířky papíru</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Procento šířky nebo výšky papíru</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Chyba při tisku:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Tisk selhal</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Tisk není podporován na tomto zařízení</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -230,8 +229,8 @@
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>Odhadnout kódování automaticky</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve"><value>Kódování nebylo možné určit</value><comment>TextEditor: Notification message when file's encoding cannot be determined.</comment></data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Najít předešlé (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
-  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve"><value>Přepnout nahrazovácí mód</value><comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment></data>
-  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve"><value>Zarovnání zprava do leva</value><comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment></data>
+  <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve"><value>Přepnout režim nahrazování</value><comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_RightToLeftReadingOrderButtonDisplayText" xml:space="preserve"><value>Pořadí čtení zprava doleva</value><comment>TextEditor: ContextFlyout "Right-to-Left Reading order" toggle button display text.</comment></data>
   <data name="FontStyle_Italic" xml:space="preserve"><value>Kurzíva</value><comment>FontStyle: "Italic"</comment></data>
   <data name="FontStyle_Normal" xml:space="preserve"><value>Normální</value><comment>FontStyle: "Normal"</comment></data>
   <data name="FontStyle_Oblique" xml:space="preserve"><value>Šikmé</value><comment>FontStyle: "Oblique"</comment></data>
@@ -248,19 +247,19 @@
   <data name="FontWeight_Thin" xml:space="preserve"><value>Štíhlý</value><comment>FontWeight: "Thin"</comment></data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve"><value>Zrušit</value><comment>FileRenameDialog: CloseButtonText.</comment></data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve"><value>Uložit</value><comment>FileRenameDialog: PrimaryButtonText.</comment></data>
-  <data name="FileRenameDialog_Title" xml:space="preserve"><value>Přejumenovat</value><comment>FileRenameDialog: "Title" display text.</comment></data>
+  <data name="FileRenameDialog_Title" xml:space="preserve"><value>Přejmenovat</value><comment>FileRenameDialog: "Title" display text.</comment></data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve"><value>Název souboru nesmí obsahovat nevalidní znaky</value><comment>InvalidFilenameError: Filename contains invalid characters.</comment></data>
   <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve"><value>Název souboru nesmí obsahovat na začátku mezery</value><comment>InvalidFilenameError: Filename contains leading spaces.</comment></data>
   <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve"><value>Název souboru nesmí obsahovat na konci mezery</value><comment>InvalidFilenameError: Filename contains trailing spaces.</comment></data>
-  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve"><value>Název souboru nesmí být prázdný nebo mezera</value><comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment></data>
+  <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve"><value>Název souboru nesmí být prázdný ani obsahovat pouze mezery</value><comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment></data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve"><value>Název souboru není validní nebo není povolen</value><comment>InvalidFilenameError: Filename is invalid or not allowed.</comment></data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve"><value>Název souboru nesmí být delší 255 znaků</value><comment>InvalidFilenameError: Filename is longer than 255 characters.</comment></data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve"><value>Přejmenovat</value><comment>TextEditor: ContextFlyout "Rename" button display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve"><value>Přejmenován</value><comment>TextEditor: Notification message when file has been renamed successfully.</comment></data>
-  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Prázdné souborvé přípony nejsou v tento moment podporovány</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Prázdné přípony souborů nejsou v tuto chvíli podporovány</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Souborová přípona "{0}" není v tento moment podporována</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Zavřít</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Nepodařilo se obnovit data z poslední relace kvůli poškozeným datům. Zazálohujte prosím všechny vaše neuložené soubory (*.txt) ve složce relace.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Relaci se nepodařilo bezpečně obnovit. Existující soubory pro obnovení byly zachovány. Před opravou nebo odstraněním souborů otevřete složku pro obnovení a vytvořte samostatnou kopii.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Obnovení relace blokují soubory pro obnovení, které Notepads nemůže ověřit, proto byla tato akce zrušena, aby vaše dokumenty zůstaly v bezpečí. Otevřete složku pro obnovení a vytvořte samostatnou kopii dříve, než budete jakékoli soubory opravovat nebo odstraňovat.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Otevřít složku zálohování relace</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Varování</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Starý text, uložená verze</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Předchozí změna (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Porovnání nelze připravit s dostupnými prostředky. Dokument zůstává nezměněný.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Dokumenty větší než 1 MB nelze vytisknout.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Dokumenty větší než 1 MiB nelze vytisknout.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Načítání dokumentu…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Dokument se nepodařilo načíst</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>Dokument „{0}“ není načten. Načíst a uložit jej před zavřením, nebo zahodit jeho kopii pro obnovení?</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Převést odsazení na mezery</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Převést odsazení na tabulátory</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Odsazení se nepodařilo převést.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Vybrané řádky</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Seřadit vzestupně (rozlišovat velikost písmen)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Seřadit sestupně (rozlišovat velikost písmen)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Odstranit duplicitní řádky</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Pro tento příkaz vyberte nejvýše 100 000 řádků a 4 MiB textu.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Operaci s řádky se nepodařilo dokončit.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Najít všechny výskyty v tomto dokumentu</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>Počet shod: {0}</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Zobrazené shody: {0}. Byl dosažen limit výsledků nebo času. Upřesněte hledání.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Dokument nebo podmínky hledání se změnily. Spusťte hledání všech výskytů znovu.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Zavřít hledání</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Zavřít hledání</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Výsledky hledání v tomto dokumentu</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Hledání… Zrušíte ho zavřením tohoto panelu.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} shoda</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>Zobrazeno: {0} (neúplné výsledky)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Hledání…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Výsledky jsou zastaralé</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Hledání se nezdařilo</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>Tento dokument</value></data>
   <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regulární výraz</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Rozlišovat velikost písmen</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Nerozlišovat velikost písmen</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Pouze celá slova</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Včetně částí slov</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Zobrazovat mezery a tabulátory</value></data>
 </root>

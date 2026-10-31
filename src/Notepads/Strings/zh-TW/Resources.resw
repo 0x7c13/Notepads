@@ -125,7 +125,6 @@
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>找不到任何可以分享的內容。請確認是否有已經選取好文字或者檔案內存在著內容。</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>變更後</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>變更前</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads 尚未支援開啟超過 1MB 以上的檔案。</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>抱歉，檔案「{0}」開啟時發生錯誤：{1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>確定</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>檔案開啟錯誤</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
@@ -177,8 +176,8 @@
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve"><value>復原</value><comment>TextEditor: ContextFlyout "Undo" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve"><value>自動換行</value><comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment></data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve"><value>未命名.txt</value><comment>TextEditor: Default file name for new document.</comment></data>
-  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve"><value>第 {0} 列，第 {1} 行（{3} {2}）</value><comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve"><value>第 {0} 列，第 {1} 行</value><comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve"><value>第 {0} 行，第 {1} 欄（{3} {2}）</value><comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve"><value>第 {0} 行，第 {1} 欄</value><comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>預覽文字變更</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>還原所有變更</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>已變更</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
@@ -202,16 +201,16 @@
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>新增視窗</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>開啟最近的檔案</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>跳至此行</value><comment>GoTo: Go to bar placeholder text.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>行數超過當前文件之總行數！</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>請輸入有效的數字！</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>行號必須介於 1 與文件總行數之間。</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>請輸入有效的行號。</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>跳至行</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
-  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>在網路中搜尋</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>在網路上搜尋</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>重設回預設縮放</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve"><value>放大</value><comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>縮小</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>跳至：</value><comment>GoTo:Go to bar label</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>列印全部...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>僅支援至小數點後一位</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>小數點後最多保留一位</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>數值超出範圍</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>頁尾</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>頁首</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
@@ -260,9 +259,9 @@
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>目前尚未支援空白副檔名</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>目前尚未支援「{0}」副檔名</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>關閉</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>由於數據損壞，無法從上一個會話中恢復數據。請在會話文件夾中備份所有未保存的文件（*.txt）。</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>無法安全地復原工作階段，既有的復原檔案已保留。請先開啟復原資料夾另外複製一份，再修復或移除任何檔案。</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>工作階段復原遭到 Notepads 無法驗證的復原檔案封鎖，因此已取消此動作以確保文件安全。請先開啟復原資料夾另外複製一份，再修復或移除任何檔案。</value></data>
-  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>打開會話備份文件夾</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>開啟工作階段備份資料夾</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>警告</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_NotificationMsg_InvalidReplacement" xml:space="preserve"><value>取代內容包含無效文字。</value></data>
   <data name="FindAndReplace_NotificationMsg_SearchTimedOut" xml:space="preserve"><value>搜尋耗時過長，請嘗試更簡單的運算式。</value></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>舊文字，上次儲存的版本</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>上一處變更 (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>目前資源不足，無法準備文字比較。文件內容未變更。</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>無法列印大於 1 MB 的文件。</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>無法列印大於 1 MiB 的文件。</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>正在載入文件…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>無法載入文件</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>尚未載入「{0}」。關閉前載入並儲存，還是捨棄其復原副本？</value></data>
@@ -303,39 +302,39 @@
   <data name="Tabs_ScrollBack_AutomationName" xml:space="preserve"><value>向前捲動索引標籤列</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>向後捲動索引標籤列</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>移動到新視窗</value></data>
-  <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>未能完成移動，原分頁已保留。請檢查是否已有新視窗開啟。</value></data>
+  <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>未能完成移動，原索引標籤已保留。請檢查是否已有新視窗開啟。</value></data>
   <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>定位字元</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>空格：{0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>目前文件的縮排</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>將縮排轉換為空格</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>將縮排轉換為定位字元</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>無法轉換縮排。</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>選取的行</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>遞增排序（區分大小寫）</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>遞減排序（區分大小寫）</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>移除重複行</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>此命令最多可處理 100,000 行及 4 MiB 的選取文字。</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>無法完成行操作。</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>尋找此文件中的所有相符項目</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} 個相符項目</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>已顯示 {0} 個相符項目。已達數量或時間限制，請縮小搜尋範圍。</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>文件或搜尋條件已變更。請重新尋找全部。</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>關閉搜尋</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>關閉搜尋</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>此文件中的搜尋結果</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>搜尋中…關閉此面板即可取消。</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} 個相符項目</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>已顯示 {0} 個（未完成）</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>搜尋中…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>結果已過期</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>搜尋失敗</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>此文件</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>文字</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>規則運算式</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>區分大小寫</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>不區分大小寫</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>全字相符</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>不限全字相符</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>顯示空格與定位字元</value></data>
 </root>

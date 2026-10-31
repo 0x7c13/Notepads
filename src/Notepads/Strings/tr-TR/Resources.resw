@@ -120,12 +120,11 @@
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>İptal Et</value><comment>AppCloseSaveReminderDialog: CloseButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>Kaydedilmemiş değişiklikler var.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
   <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Tümünü Kaydet ve Çık</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
-  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>İptal Et ve Çık</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Kaydetmeden çık</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve"><value>Değişiklikleri kaydetmek istiyor musunuz?</value><comment>AppCloseSaveReminderDialog: "Title" display text.</comment></data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Hiçbir metin seçilmediğinden ve geçerli belge boş olduğundan paylaşılacak bir şey yok.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>Değişikliklerden sonra</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Değişikliklerden önce</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads şu anda 1MB üzeri dosyaları desteklemiyor.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Üzgünüm, "{0}" dosyası açılamıyor: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Tamam</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Dosya Açma Hatası</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
@@ -140,7 +139,7 @@
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve"><value>Değiştir (Alt+R)</value><comment>FindAndReplace: "Replace" button tool tip display text.</comment></data>
   <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Sonrakini Bul (F3)</value><comment>FindAndReplace: "Find Next" button tool tip display text.</comment></data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve"><value>Arama Ayarları</value><comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment></data>
-  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve"><value>Eşleştir</value><comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve"><value>Büyük/küçük harfe duyarlı</value><comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve"><value>Tüm Kelimeyi Eşleştir</value><comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve"><value>Ara...</value><comment>MainMenu: "Find" button display text.</comment></data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve"><value>Yeni</value><comment>MainMenu: "New" button display text.</comment></data>
@@ -152,7 +151,7 @@
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve"><value>Farklı Kaydet...</value><comment>MainMenu: "Save As" button display text.</comment></data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve"><value>Ayarlar</value><comment>MainMenu: "Settings" button display text.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve"><value>İptal Et</value><comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment></data>
-  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>"{0}" dosyasına yapılan tüm değişiklikler geri alınacak!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>&quot;{0}&quot; dosyasındaki metin, satır sonu ve kodlama dahil tüm değişiklikler geri alınacak!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve"><value>Evet</value><comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>Tüm değişiklikleri geri almak istediğinizden emin misiniz?</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>İptal Et</value><comment>SetCloseSaveReminderDialog: CloseButtonText.</comment></data>
@@ -162,14 +161,14 @@
   <data name="SetCloseSaveReminderDialog_Title" xml:space="preserve"><value>Değişiklikler kaydedilsin mi?</value><comment>SetCloseSaveReminderDialog: "Title" display text.</comment></data>
   <data name="Tab_ContextFlyout_CloseButtonDisplayText" xml:space="preserve"><value>Kapat</value><comment>Tab: ContextFlyout "Close" button display text.</comment></data>
   <data name="Tab_ContextFlyout_CloseOthersButtonDisplayText" xml:space="preserve"><value>Diğerlerini Kapat</value><comment>Tab: ContextFlyout "Close Others" button display text.</comment></data>
-  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve"><value>Sağdakini Kapat</value><comment>Tab: ContextFlyout "Close to the Right" button display text.</comment></data>
-  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve"><value>Kaydedileni Kapat</value><comment>Tab: ContextFlyout "Close Saved" button display text.</comment></data>
+  <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve"><value>Sağdaki sekmeleri kapat</value><comment>Tab: ContextFlyout "Close to the Right" button display text.</comment></data>
+  <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve"><value>Kaydedilenleri kapat</value><comment>Tab: ContextFlyout "Close Saved" button display text.</comment></data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve"><value>Dosya Yolunu Kopyala</value><comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment></data>
   <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve"><value>İçeren Klasörü Aç</value><comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve"><value>Kopyala</value><comment>TextEditor: ContextFlyout "Copy" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve"><value>Kes</value><comment>TextEditor: ContextFlyout "Cut" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve"><value>Yapıştır</value><comment>TextEditor: ContextFlyout "Paste" button display text.</comment></data>
-  <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve"><value>Geçiş Önizlemesi</value><comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_PreviewToggleDisplay_Text" xml:space="preserve"><value>Önizlemeyi aç/kapat</value><comment>TextEditor: ContextFlyout "Toggle Preview" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_RedoButtonDisplayText" xml:space="preserve"><value>Yinele</value><comment>TextEditor: ContextFlyout "Redo" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_SelectAllButtonDisplayText" xml:space="preserve"><value>Tümünü Seç</value><comment>TextEditor: ContextFlyout "Select All" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_ShareButtonDisplayText" xml:space="preserve"><value>Paylaş</value><comment>TextEditor: ContextFlyout "Share" button display text.</comment></data>
@@ -185,7 +184,7 @@
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>Kopyalandı</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>Kaydedildi</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Tam ekrandan çıkmak için F11 tuşuna basın</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
-  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Var olan dosyadan geri yükle</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
+  <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Dosyayı diskten yeniden yükle</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve"><value>Dosya dışarıda değişikliğe uğradı!</value><comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment></data>
   <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve"><value>Dosya taşınmış, yeniden adlandırılmış veya silinmiş!</value><comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve"><value>Dosya yeniden yüklendi</value><comment>TextEditor: Notification message when file has been reloaded successfully.</comment></data>
@@ -197,14 +196,14 @@
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>seçildi</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Sekmeyi buraya taşı</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Notepads ile aç</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Bu bir Notepads gölge penceresidir.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Bu, ek bir Notepads penceresidir.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Dosya zaten açık!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Yeni Pencere</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>En Son Açılanlar</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Satıra Git</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Git:</value><comment>GoTo:Go to bar label</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Satır sayısı toplam satır sayısından fazla!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Sadece sayı yazabilirsiniz!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Satır numarası 1 ile belgedeki toplam satır sayısı arasında olmalıdır.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Geçerli bir satır numarası girin.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Satıra Git</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Web'de ara</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Yakınlaştırma Ayarını Varsayılan Hale Getir</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
@@ -212,12 +211,12 @@
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Uzaklaştır</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>Düzenli İfade Kullan</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Tümünü Yazdır...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Yalnızca bir ondalık basamağa kadar kabul edilebilir</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>En fazla bir ondalık basamak kullanın</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Değer sınırın dışında</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Alt Bilgi</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Üst Bilgi</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Yatay Kenar Boşluğu (yüzde olarak)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Kağıt genişliğinin yüzdesi olarak</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Kağıt genişliğinin veya yüksekliğinin yüzdesi</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Yazdırma hatası:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Yazdırılamadı</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Bu cihazda yazdırma desteklenmiyor</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -227,7 +226,7 @@
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve"><value>Kodlama ile Yeniden Aç</value><comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve"><value>Kodlama ile Kaydet</value><comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment></data>
   <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>Geçersiz düzenli ifade!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>Otomatik Tahmin Kodlaması</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>Kodlamayı otomatik algıla</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve"><value>Kodlama belirlenemiyor</value><comment>TextEditor: Notification message when file's encoding cannot be determined.</comment></data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Öncekini Bul (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve"><value>Değiştirme Modunu Değiştir</value><comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment></data>
@@ -245,7 +244,7 @@
   <data name="FontWeight_Normal" xml:space="preserve"><value>Normal</value><comment>FontWeight: "Normal"</comment></data>
   <data name="FontWeight_SemiBold" xml:space="preserve"><value>Yarı Kalın</value><comment>FontWeight: "SemiBold"</comment></data>
   <data name="FontWeight_SemiLight" xml:space="preserve"><value>Yarı İnce</value><comment>FontWeight: "SemiLight"</comment></data>
-  <data name="FontWeight_Thin" xml:space="preserve"><value>İnce</value><comment>FontWeight: "Thin"</comment></data>
+  <data name="FontWeight_Thin" xml:space="preserve"><value>En ince</value><comment>FontWeight: "Thin"</comment></data>
   <data name="FileRenameDialog_CloseButtonText" xml:space="preserve"><value>İptal Et</value><comment>FileRenameDialog: CloseButtonText.</comment></data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve"><value>Kaydet</value><comment>FileRenameDialog: PrimaryButtonText.</comment></data>
   <data name="FileRenameDialog_Title" xml:space="preserve"><value>Yeniden Adlandır</value><comment>FileRenameDialog: "Title" display text.</comment></data>
@@ -260,7 +259,7 @@
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Boş dosya uzantısı şu anda desteklenmiyor</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>"{0}" dosya uzantısı şu anda desteklenmiyor</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Kapat</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Veri bozulması nedeniyle son oturumdan veri kurtarılamadı. Lütfen oturumun klasöründe bulunan tüm kaydedilmemiş dosyalarınızı (*.txt) yedekleyin.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Oturum güvenli bir şekilde kurtarılamadı. Mevcut kurtarma dosyaları korundu. Dosyaları onarmadan veya kaldırmadan önce kurtarma klasörünü açıp ayrı bir kopya oluşturun.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Oturum kurtarma, Notepads'in doğrulayamadığı kurtarma dosyaları tarafından engellendiğinden belgelerinizi korumak için bu işlem iptal edildi. Herhangi bir dosyayı onarmadan veya kaldırmadan önce ayrı bir kopya oluşturmak için kurtarma klasörünü açın.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Oturum yedekleme klasörünü aç</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Uyarı</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Eski metin, kaydedilmiş sürüm</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Önceki değişiklik (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Karşılaştırma kullanılabilir kaynaklarla hazırlanamadı. Belgeniz değişmedi.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MB'tan büyük belgeler yazdırılamaz.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1 MiB&apos;tan büyük belgeler yazdırılamaz.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Belge yükleniyor…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Belge yüklenemedi</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>“{0}” yüklenmedi. Kapatmadan önce yükleyip kaydetmek mi, kurtarma kopyasını silmek mi istiyorsunuz?</value></data>
@@ -304,38 +303,38 @@
   <data name="Tabs_ScrollForward_AutomationName" xml:space="preserve"><value>Sekmeleri ileriye kaydır</value><comment>Accessible name of the menu or tab-strip scroll action.</comment></data>
   <data name="Tab_ContextFlyout_MoveToNewWindowDisplayText" xml:space="preserve"><value>Yeni pencereye taşı</value></data>
   <data name="Tab_NotificationMsg_MoveToNewWindowFailed" xml:space="preserve"><value>Taşıma tamamlanamadı. Özgün sekme korundu. Yeni bir pencere açılıp açılmadığını kontrol edin.</value></data>
-  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>Sekmeler</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_Tabs" xml:space="preserve"><value>Sekme karakterleri</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Spaces" xml:space="preserve"><value>Boşluklar: {0}</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Select" xml:space="preserve"><value>Bu belge için girinti</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Girintiyi boşluklara dönüştür</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
-  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Girintiyi sekmelere dönüştür</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
+  <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Girintiyi sekme karakterlerine dönüştür</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Girinti dönüştürülemedi.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Seçili satırlar</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Artan sırada sırala (büyük/küçük harfe duyarlı)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Azalan sırada sırala (büyük/küçük harfe duyarlı)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Yinelenen satırları kaldır</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Bu komut için en fazla 100.000 satır ve 4 MiB metin seçin.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Satır işlemi tamamlanamadı.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Bu belgedeki tüm eşleşmeleri bul</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} eşleşme</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>{0} eşleşme gösteriliyor. Sonuç veya süre sınırına ulaşıldı. Aramanızı daraltın.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Belge veya arama koşulları değişti. Tüm eşleşmeleri yeniden arayın.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Aramayı kapat</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Aramayı kapat</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Bu belgedeki arama sonuçları</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Aranıyor… İptal etmek için bu paneli kapatın.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} eşleşme</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} gösteriliyor (tamamlanmadı)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Aranıyor…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Sonuçlar güncel değil</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Arama başarısız</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>Bu belge</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Metin</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Düzenli ifade</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Büyük/küçük harfe duyarlı</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Büyük/küçük harfi yoksay</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Yalnızca tam sözcükler</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Sözcük parçaları dahil</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Boşlukları ve sekme karakterlerini göster</value></data>
 </root>

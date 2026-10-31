@@ -119,13 +119,12 @@
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Откажи</value><comment>AppCloseSaveReminderDialog: CloseButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>Постоје несачуване промене.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
-  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Сачувај и затвори</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Сачувај све и затвори</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Одбаци и затвори</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve"><value>Сачувати промене?</value><comment>AppCloseSaveReminderDialog: "Title" display text.</comment></data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Нема шта да се подели, јер никакав текст није означен и тренутни документ је празан.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>Након промена</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Пре промена</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads тренутно не подржава датотеке веће од 1 МБ.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Нажалост, датотека „{0}” се не може отворити: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>У реду</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Грешка при отварању датотеке</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
@@ -155,7 +154,7 @@
   <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>Поништиће се све промене у датотеци „{0}” – укључујући текст, преломе редова и кодирање!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve"><value>Да</value><comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>Поништити све промене?</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
-  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Немој да сачуваш</value><comment>SetCloseSaveReminderDialog: CloseButtonText.</comment></data>
+  <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Откажи</value><comment>SetCloseSaveReminderDialog: CloseButtonText.</comment></data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve"><value>Сачувати датотеку „{0}”?</value><comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Сачувај</value><comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
   <data name="SetCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Немој чувати</value><comment>SetCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
@@ -197,13 +196,13 @@
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>означено</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Премести картицу овамо</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Отвори помоћу Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Ово је копија прозора Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Ово је додатни прозор програма Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Датотека је већ отворена!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Нови прозор</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Отвори недавне</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Иди на ред</value><comment>GoTo: Go to bar placeholder text.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Број реда је већи од укупног броја редова!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Прихватају се само бројеви!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Број реда мора бити између 1 и укупног броја редова у документу.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Унесите важећи број реда.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Иди на ред</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Претражи на вебу</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Врати подразумевани зум</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
@@ -211,12 +210,12 @@
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Умањи</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Иди на:</value><comment>GoTo:Go to bar label</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Одштампај све...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Дозвољено је само једно децимално место</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Користите највише једно децимално место</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Вредност је изван распона</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Подножје</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Заглавље</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Водоравна маргина (у %)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>У % ширине папира</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Проценат ширине или висине папира</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Грешка при штампању:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Штампање није успело</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Овај уређај не подржава штампање</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -260,7 +259,7 @@
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Празна екстензија датотеке тренутно није подржана</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Екстензија датотеке "{0}" тренутно није подржана</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Затворите</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Неуспешно је опорављање података из последње сесије због оштећених података. Молимо вас да направите резервну копију свих ваших несачуваних фајлова (*.txt) у фасцикли сесије.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Није могуће безбедно опоравити сесију. Постојеће датотеке за опоравак су сачуване. Отворите фасциклу за опоравак и направите засебну копију пре поправљања или уклањања датотека.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Опоравак сесије блокирају датотеке за опоравак које Notepads не може да провери, па је ова радња отказана да би ваши документи остали безбедни. Отворите фасциклу за опоравак и направите засебну копију пре него што поправите или уклоните било коју датотеку.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Отворите фасциклу за резервну копију сесије</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Упозорење</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Стари текст, сачувана верзија</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Претходна измена (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Поређење није могуће припремити са доступним ресурсима. Документ није промењен.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Документи већи од 1 МБ не могу да се одштампају.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Документи већи од 1 MiB не могу да се одштампају.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Учитавање документа…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Није могуће учитати документ</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>„{0}” није учитан. Учитати и сачувати пре затварања или одбацити његову копију за опоравак?</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Претвори увлачење у размаке</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Претвори увлачење у табулаторе</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Није могуће претворити увлачење.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Изабрани редови</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Поређај растуће (разликуј велика и мала слова)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Поређај опадајуће (разликуј велика и мала слова)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Уклони поновљене редове</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>За ову команду изаберите највише 100.000 редова и 4 MiB текста.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Није могуће довршити операцију над редовима.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Пронађи сва подударања у овом документу</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>Број подударања: {0}</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Приказана подударања: {0}. Достигнуто је ограничење броја резултата или времена. Сузите претрагу.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Документ или услови претраге су промењени. Поновите претрагу свих подударања.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Затвори претрагу</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Затвори претрагу</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Резултати претраге у овом документу</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Претрага… Затворите овај панел да бисте отказали.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} подударање</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>Приказано: {0} (непотпуно)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Претрага…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Застарели резултати</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Претрага није успела</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>Овај документ</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Текст</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Регуларни израз</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Разликуј велика и мала слова</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Занемари велика и мала слова</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Само целе речи</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Укључујући делове речи</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Прикажи размаке и табулаторе</value></data>
 </root>

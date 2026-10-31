@@ -125,7 +125,6 @@
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Niets te delen omdat er geen tekst is geselecteerd en het document leeg is.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>Ná de wijzigingen</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Vóór de wijzigingen</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads ondersteunt op het moment geen bestanden groter dan 1 MB.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Sorry, bestand "{0}" kon niet worden geopend: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Fout bij bestand openen</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
@@ -139,7 +138,7 @@
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve"><value>Vervangen</value><comment>FindAndReplace: Replace bar placeholder text.</comment></data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve"><value>Vervangen (Alt+R)</value><comment>FindAndReplace: "Replace" button tool tip display text.</comment></data>
   <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Volgende zoeken (F3)</value><comment>FindAndReplace: "Find Next" button tool tip display text.</comment></data>
-  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve"><value>Zoek opties</value><comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve"><value>Zoekopties</value><comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve"><value>Identieke hoofdletters/kleine letters</value><comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve"><value>Heel woord</value><comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve"><value>Zoeken...</value><comment>MainMenu: "Find" button display text.</comment></data>
@@ -165,7 +164,7 @@
   <data name="Tab_ContextFlyout_CloseRightButtonDisplayText" xml:space="preserve"><value>Rechts sluiten</value><comment>Tab: ContextFlyout "Close to the Right" button display text.</comment></data>
   <data name="Tab_ContextFlyout_CloseSavedButtonDisplayText" xml:space="preserve"><value>Opgeslagen sluiten</value><comment>Tab: ContextFlyout "Close Saved" button display text.</comment></data>
   <data name="Tab_ContextFlyout_CopyFullPathButtonDisplayText" xml:space="preserve"><value>Volledig pad kopiëren</value><comment>Tab: ContextFlyout "Copy Full Path" button display text.</comment></data>
-  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve"><value>Onderliggende map openen</value><comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment></data>
+  <data name="Tab_ContextFlyout_OpenContainingFolderButtonDisplayText" xml:space="preserve"><value>Map van het bestand openen</value><comment>Tab: ContextFlyout "Open Containing Folder" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_CopyButtonDisplayText" xml:space="preserve"><value>Kopiëren</value><comment>TextEditor: ContextFlyout "Copy" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_CutButtonDisplayText" xml:space="preserve"><value>Knippen</value><comment>TextEditor: ContextFlyout "Cut" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_PasteButtonDisplayText" xml:space="preserve"><value>Plakken</value><comment>TextEditor: ContextFlyout "Paste" button display text.</comment></data>
@@ -176,7 +175,7 @@
   <data name="TextEditor_ContextFlyout_ShareSelectedButtonDisplayText" xml:space="preserve"><value>Selectie delen</value><comment>TextEditor: ContextFlyout "Share Selected" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve"><value>Ongedaan maken</value><comment>TextEditor: ContextFlyout "Undo" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve"><value>Tekstterugloop</value><comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment></data>
-  <data name="TextEditor_DefaultNewFileName" xml:space="preserve"><value>Untitled.txt</value><comment>TextEditor: Default file name for new document.</comment></data>
+  <data name="TextEditor_DefaultNewFileName" xml:space="preserve"><value>Naamloos.txt</value><comment>TextEditor: Default file name for new document.</comment></data>
   <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve"><value>Rg {0}, Kol {1} {2} {3}</value><comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve"><value>Rg {0}, Kol {1}</value><comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>Tekstwijzigingen bekijken</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
@@ -191,19 +190,19 @@
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve"><value>Bestand opnieuw geladen</value><comment>TextEditor: Notification message when file has been reloaded successfully.</comment></data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve"><value>Compact venster</value><comment>App: "Compact Overlay" display text</comment></data>
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve"><value>Volledig scherm</value><comment>App: "Full Screen" display text</comment></data>
-  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve"><value>Compact vernster afsluiten</value><comment>App: "Exit Compact Overlay" display text</comment></data>
+  <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve"><value>Compact venster afsluiten</value><comment>App: "Exit Compact Overlay" display text</comment></data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve"><value>Volledig scherm afsluiten</value><comment>App: "Exit Full Screen" display text</comment></data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve"><value>geselecteerd</value><comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment></data>
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>geselecteerd</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Tab hierheen verplaatsen</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Open met Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Dit is een schaduwvenster van Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Dit is een extra venster van Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Bestand is al geopend!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Nieuw venster</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Recente bestanden</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Ga naar regel</value><comment>GoTo: Go to bar placeholder text.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Regelnummer is groter dan het totaal aantal regels!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Voer alleen een nummer in!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Het regelnummer moet tussen 1 en het totale aantal regels van het document liggen.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Voer een geldig regelnummer in.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Ga naar regel</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Zoeken op het web</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Standaardzoom herstellen</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
@@ -214,9 +213,9 @@
   <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Hoogstens één decimaal toegestaan</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Waarde buiten bereik</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Voettekst</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
-  <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Kptekst</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
+  <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Koptekst</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Horizontale marge (in %)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>In % van papierbreedte</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Percentage van de papierbreedte of -hoogte</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Fout bij afdrukken:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Afdruk mislukt</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Afdrukken is niet ondersteund op dit apparaat</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -260,7 +259,7 @@
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Lege extensie wordt op dit moment niet ondersteund</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>Bestandsextensie "{0}" wordt op dit moment niet ondersteund</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Sluiten</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Kan gegevens van de laatste sessie niet herstellen vanwege beschadigde gegevens. Maak een back-up van al uw niet-opgeslagen bestanden (* .txt) in de map van de sessie.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>De sessie kon niet veilig worden hersteld. Bestaande herstelbestanden zijn bewaard. Open de herstelmap en maak een afzonderlijke kopie voordat u bestanden repareert of verwijdert.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Sessieherstel wordt geblokkeerd door herstelbestanden die Notepads niet kan verifiëren, dus deze actie is geannuleerd om je documenten te beschermen. Open de herstelmap om een aparte kopie te maken voordat je bestanden repareert of verwijdert.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Map met sessie-backups openen</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Waarschuwing</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Oude tekst, opgeslagen versie</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Vorige wijziging (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>De vergelijking kon niet worden voorbereid met de beschikbare middelen. Je document is ongewijzigd.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Documenten groter dan 1 MB kunnen niet worden afgedrukt.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Documenten groter dan 1 MiB kunnen niet worden afgedrukt.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Document laden…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>Document kan niet worden geladen</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>‘{0}’ is niet geladen. Laden en opslaan vóór het sluiten, of de herstelkopie verwijderen?</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Inspringing omzetten naar spaties</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Inspringing omzetten naar tabs</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>De inspringing kan niet worden omgezet.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Geselecteerde regels</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Oplopend sorteren (hoofdlettergevoelig)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Aflopend sorteren (hoofdlettergevoelig)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Dubbele regels verwijderen</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Selecteer voor deze opdracht maximaal 100.000 regels en 4 MiB tekst.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>De regelbewerking kon niet worden voltooid.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Alle overeenkomsten in dit document zoeken</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} overeenkomsten</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>{0} overeenkomsten weergegeven. De limiet voor resultaten of tijd is bereikt. Verfijn uw zoekopdracht.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Het document of de zoekcriteria zijn gewijzigd. Zoek opnieuw naar alle overeenkomsten.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Zoeken sluiten</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Zoeken sluiten</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Zoekresultaten in dit document</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Bezig met zoeken… Sluit dit paneel om te annuleren.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} overeenkomst</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} weergegeven (onvolledig)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Bezig met zoeken…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Resultaten verouderd</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Zoeken mislukt</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>Dit document</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Tekst</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Reguliere expressie</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Hoofdlettergevoelig</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Niet hoofdlettergevoelig</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Hele woorden</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Ook delen van woorden</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Spaties en tabs weergeven</value></data>
 </root>

@@ -133,7 +133,7 @@
   <data name="CFileDisplayName" xml:space="preserve"><value>C ファイル</value><comment>.c, .m, .i</comment></data>
   <data name="CgiFileDisplayName" xml:space="preserve"><value>CGI ファイル</value><comment>.cgi</comment></data>
   <data name="ClojureFileDisplayName" xml:space="preserve"><value>Clojure ファイル</value><comment>.clj, .cljs, .cljc, .cljx, .clojure, .edn</comment></data>
-  <data name="CmakeFileDisplayName" xml:space="preserve"><value>Cmake ファイル</value><comment>.cmake</comment></data>
+  <data name="CmakeFileDisplayName" xml:space="preserve"><value>CMake ファイル</value><comment>.cmake</comment></data>
   <data name="CoffeeScriptFileDisplayName" xml:space="preserve"><value>CoffeeScript ファイル</value><comment>.coffee, .cson, .iced</comment></data>
   <data name="CommaSeparatedValuesFileDisplayName" xml:space="preserve"><value>CSV ファイル</value><comment>.csv</comment></data>
   <data name="ConfigFileDisplayName" xml:space="preserve"><value>CONFIG ファイル</value><comment>.cfg, .config, .cnf, .conf, .properties, .directory</comment></data>
@@ -159,13 +159,13 @@
   <data name="InitializationFileDisplayName" xml:space="preserve"><value>INI ファイル</value><comment>.ini</comment></data>
   <data name="InstallFileDisplayName" xml:space="preserve"><value>INSTALL ファイル</value><comment>.install</comment></data>
   <data name="JavaFileDisplayName" xml:space="preserve"><value>Java ファイル</value><comment>.java, .jav</comment></data>
-  <data name="JavascriptFileDisplayName" xml:space="preserve"><value>Javascript File</value><comment>.js, .jsx, .es6, .mjs, .cjs, .pac</comment></data>
+  <data name="JavascriptFileDisplayName" xml:space="preserve"><value>JavaScript ファイル</value><comment>.js, .jsx, .es6, .mjs, .cjs, .pac</comment></data>
   <data name="JsonFileDisplayName" xml:space="preserve"><value>JSON ファイル</value><comment>.json, .hintrc, .jsonc, .jsonld, .babelrc, .eslintrc, .jslintrc, .bowerrc, .jscsrc, .webmanifest, .har</comment></data>
   <data name="JspFileDisplayName" xml:space="preserve"><value>JSP ファイル</value><comment>.jsp, .jspx</comment></data>
   <data name="LessFileDisplayName" xml:space="preserve"><value>Less ファイル</value><comment>.less</comment></data>
   <data name="LogFileDisplayName" xml:space="preserve"><value>Log ファイル</value><comment>.log</comment></data>
   <data name="LrcFileDisplayName" xml:space="preserve"><value>LRC ファイル</value><comment>.lrc</comment></data>
-  <data name="LuaFileDisplayName" xml:space="preserve"><value>LUA ファイル</value><comment>.lua</comment></data>
+  <data name="LuaFileDisplayName" xml:space="preserve"><value>Lua ファイル</value><comment>.lua</comment></data>
   <data name="MapFileDisplayName" xml:space="preserve"><value>Map ファイル</value><comment>.map</comment></data>
   <data name="MarkdownFileDisplayName" xml:space="preserve"><value>Markdown ファイル</value><comment>.md, .markdown, .mkd, .mdwn, .mdown, .markn, .mdtxt</comment></data>
   <data name="NfoFileDisplayName" xml:space="preserve"><value>NFO ファイル</value><comment>.nfo</comment></data>
@@ -187,7 +187,7 @@
   <data name="ShaderFileDisplayName" xml:space="preserve"><value>Shader ファイル</value><comment>.shader</comment></data>
   <data name="ShellScriptFileDisplayName" xml:space="preserve"><value>Shell ファイル</value><comment>.sh</comment></data>
   <data name="SqlFileDisplayName" xml:space="preserve"><value>SQL ファイル</value><comment>.sql, .dsql</comment></data>
-  <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve"><value>Sub Station Alpha Subtitle File</value><comment>.ssa</comment></data>
+  <data name="SubStationAlphaSubtitleFileDisplayName" xml:space="preserve"><value>SubStation Alpha 字幕ファイル</value><comment>.ssa</comment></data>
   <data name="SubtitleFileDisplayName" xml:space="preserve"><value>SRT ファイル</value><comment>.srt</comment></data>
   <data name="SwiftFileDisplayName" xml:space="preserve"><value>Swift ファイル</value><comment>.swift</comment></data>
   <data name="TextFileDisplayName" xml:space="preserve"><value>テキスト文書</value><comment>.txt</comment></data>

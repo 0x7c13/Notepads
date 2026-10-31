@@ -119,18 +119,17 @@
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Mégse</value><comment>AppCloseSaveReminderDialog: CloseButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>Önnek nem mentett módosításai vannak.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
-  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Mentés &amp; Kilépés</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>Összes mentése és kilépés</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>Elvetés &amp; Kilépés</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve"><value>El akarod menteni a módosításokat?</value><comment>AppCloseSaveReminderDialog: "Title" display text.</comment></data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>Nincs mit megosztani mert nincs szöveg kijelölve és a dokumentum üres.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>Módosítások után</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
-  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Módosítások elött</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>A Notepads nem támogatja az 1MB-nál nagyobb fájlokat jelenleg.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
+  <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>Módosítások előtt</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>Sajnos a(z) "{0}" nem nyitható meg: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Fájl Megnyitási Hiba</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Sajnos a fájl "{0}" nem menthető el: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Ok</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Fájl Mentési Hiba</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Bezárás</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Keresendő</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>
@@ -141,7 +140,7 @@
   <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Következő Keresése (F3)</value><comment>FindAndReplace: "Find Next" button tool tip display text.</comment></data>
   <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve"><value>Keresési Beállítások</value><comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve"><value>Kis- és nagybetűk megkülönböztetése</value><comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment></data>
-  <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve"><value>Teljes szó megkülönböztetése</value><comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve"><value>Csak egész szavak</value><comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve"><value>Keresés...</value><comment>MainMenu: "Find" button display text.</comment></data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve"><value>Új</value><comment>MainMenu: "New" button display text.</comment></data>
   <data name="MainMenu_Button_Open.Text" xml:space="preserve"><value>Megnyitás...</value><comment>MainMenu: "Open" button display text.</comment></data>
@@ -152,7 +151,7 @@
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve"><value>Mentés Másként...</value><comment>MainMenu: "Save As" button display text.</comment></data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve"><value>Beállítások</value><comment>MainMenu: "Settings" button display text.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve"><value>Mégse</value><comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment></data>
-  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>Minden szöveg, sor végződés és kódolás-i módosítás "{0}"-ről vissza lesz vonva!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>A(z) „{0}” összes módosítása vissza lesz vonva, beleértve a szöveget, a sorvégeket és a kódolást!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve"><value>Igen</value><comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>Biztosan visszavonja az összes módosítást?</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>Mégse</value><comment>SetCloseSaveReminderDialog: CloseButtonText.</comment></data>
@@ -197,14 +196,14 @@
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>Kiválasztva</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>Fül mozgatása ide</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Megnyitás Notepads-el</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Ez egy árnyék ablaka a Notepads-nek.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>Ez a Notepads egy további ablaka.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>Fájl már meg van nyitva!</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>Új Ablak</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>Legutóbbi Megnyitása</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>Ugrás Sorhoz</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>Ugrás:</value><comment>GoTo:Go to bar label</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>Sorszám meghaladja az összes sor számát!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Csak számot írhat be!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>A sorszámnak 1 és a dokumentum sorainak teljes száma közé kell esnie.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>Adjon meg egy érvényes sorszámot.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>Ugrás Sorhoz</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>Keresés a weben</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>Nagyítás Visszaállítása</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
@@ -212,12 +211,12 @@
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>Kicsinyítés</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>Reguláris Kifejezés Használata</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>Összes Nyomtatása...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Csak egy tizedesjegyig fogadható el</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>Legfeljebb egy tizedesjegyet használjon</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>Érték a tartományon kívül</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>Lábléc</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>Fejléc</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>Vízszintes Margó (%-ban)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>Papír Szélesség (%-ban)</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>A papír szélességének vagy magasságának százaléka</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>Nyomtatási hiba:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>Nyomtatás sikertelen</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>Nyomtatás nem támogatott ezen az eszközön</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -225,9 +224,9 @@
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve"><value>Legutóbb Megnyitottak Törlése</value><comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve"><value>Több Kódolás</value><comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve"><value>Újranyitás adott kódolással</value><comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment></data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve"><value>Kitalálva a tartalomból</value><comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment></data>
-  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>Hibás általános kifejezés!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
-  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>Autómatikus Kódolás Kitalálás</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve"><value>Mentés adott kódolással</value><comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment></data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>Érvénytelen reguláris kifejezés!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
+  <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>Kódolás automatikus felismerése</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve"><value>Kódolást nem lehet meghatározni</value><comment>TextEditor: Notification message when file's encoding cannot be determined.</comment></data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>Előző Keresése (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
   <data name="FindAndReplace_ToggleReplaceModeButton.ToolTipService.ToolTip" xml:space="preserve"><value>Csere Mód Kapcsolása</value><comment>FindAndReplace: "Toggle Replace Mode" button tool tip display text.</comment></data>
@@ -245,22 +244,22 @@
   <data name="FontWeight_Normal" xml:space="preserve"><value>Normál</value><comment>FontWeight: "Normal"</comment></data>
   <data name="FontWeight_SemiBold" xml:space="preserve"><value>Félkövér</value><comment>FontWeight: "SemiBold"</comment></data>
   <data name="FontWeight_SemiLight" xml:space="preserve"><value>Félvékony</value><comment>FontWeight: "SemiLight"</comment></data>
-  <data name="FontWeight_Thin" xml:space="preserve"><value>Kicsi</value><comment>FontWeight: "Thin"</comment></data>
-  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve"><value>Törlés</value><comment>FileRenameDialog: CloseButtonText.</comment></data>
+  <data name="FontWeight_Thin" xml:space="preserve"><value>Hajszálvékony</value><comment>FontWeight: "Thin"</comment></data>
+  <data name="FileRenameDialog_CloseButtonText" xml:space="preserve"><value>Mégse</value><comment>FileRenameDialog: CloseButtonText.</comment></data>
   <data name="FileRenameDialog_PrimaryButtonText" xml:space="preserve"><value>Mentés</value><comment>FileRenameDialog: PrimaryButtonText.</comment></data>
   <data name="FileRenameDialog_Title" xml:space="preserve"><value>Átnevezés</value><comment>FileRenameDialog: "Title" display text.</comment></data>
   <data name="InvalidFilenameError_ContainsInvalidCharacters" xml:space="preserve"><value>A fájl neve nem tartalmazhat érvénytelen karaktereket</value><comment>InvalidFilenameError: Filename contains invalid characters.</comment></data>
-  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve"><value>A fájl neve nem tartalmazhat szóközöket</value><comment>InvalidFilenameError: Filename contains leading spaces.</comment></data>
-  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve"><value>A fájl neve nem tartalmazhat szóközöket</value><comment>InvalidFilenameError: Filename contains trailing spaces.</comment></data>
+  <data name="InvalidFilenameError_ContainsLeadingSpaces" xml:space="preserve"><value>A fájl neve nem kezdődhet szóközzel</value><comment>InvalidFilenameError: Filename contains leading spaces.</comment></data>
+  <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve"><value>A fájl neve nem végződhet szóközzel</value><comment>InvalidFilenameError: Filename contains trailing spaces.</comment></data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve"><value>A fájl neve nem lehet üres, és nem tartalmazhat csak szóközöket</value><comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment></data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve"><value>A fájl neve érvénytelen vagy nem engedélyezett</value><comment>InvalidFilenameError: Filename is invalid or not allowed.</comment></data>
   <data name="InvalidFilenameError_TooLong" xml:space="preserve"><value>A fájl neve nem lehet 255 karakternél hosszabb</value><comment>InvalidFilenameError: Filename is longer than 255 characters.</comment></data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve"><value>Átnevezés</value><comment>TextEditor: ContextFlyout "Rename" button display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve"><value>Átnevezve</value><comment>TextEditor: Notification message when file has been renamed successfully.</comment></data>
-  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>Fájformátum nélküli fájlok jelenleg nem engedélyezettek</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>A kiterjesztés nélküli fájlok jelenleg nem támogatottak</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>A(z) "{0}" fájlkiterjesztés jelenleg nem támogatott</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>Bezárás</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>Nem sikerült visszaállítani az adatokat az utolsó munkamenetből a sérült adatok miatt. Kérjük, készítsen biztonsági másolatot az összes nem mentett fájlról (*.txt) a munkamenet mappájában.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>A munkamenet nem állítható helyre biztonságosan. A meglévő helyreállítási fájlok megmaradtak. A fájlok javítása vagy eltávolítása előtt nyissa meg a helyreállítási mappát, és készítsen külön másolatot.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>A munkamenet helyreállítását olyan helyreállítási fájlok blokkolják, amelyeket a Notepads nem tud ellenőrizni, ezért ez a művelet a dokumentumai védelme érdekében megszakadt. Nyissa meg a helyreállítási mappát, és készítsen külön másolatot, mielőtt bármely fájlt javítana vagy eltávolítana.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Nyissa meg a munkamenet biztonsági mentésének mappáját</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>Figyelmeztetés</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>Régi szöveg, mentett verzió</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>Előző módosítás (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>Az összehasonlítás nem készíthető elő a rendelkezésre álló erőforrásokkal. A dokumentum változatlan.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Az 1 MB-nál nagyobb dokumentumok nem nyomtathatók ki.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>Az 1 MiB-nál nagyobb dokumentumok nem nyomtathatók ki.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>Dokumentum betöltése…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>A dokumentum nem tölthető be</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>A(z) „{0}” nincs betöltve. Betölti és menti bezárás előtt, vagy elveti a helyreállítási másolatát?</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>Behúzás átalakítása szóközökké</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>Behúzás átalakítása tabulátorokká</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>Nem sikerült átalakítani a behúzást.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Kijelölt sorok</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Növekvő rendezés (kis- és nagybetűk megkülönböztetésével)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Csökkenő rendezés (kis- és nagybetűk megkülönböztetésével)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Ismétlődő sorok eltávolítása</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Ehhez a parancshoz legfeljebb 100 000 sort és 4 MiB szöveget jelöljön ki.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>A sorművelet nem hajtható végre.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Összes találat keresése ebben a dokumentumban</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} találat</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>{0} találat látható. Elérte az eredmények számának vagy a keresési időnek a korlátját. Szűkítse a keresést.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>A dokumentum vagy a keresési feltételek megváltoztak. Ismételje meg az összes találat keresését.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Keresés bezárása</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Keresés bezárása</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Keresési eredmények ebben a dokumentumban</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>Keresés… A megszakításhoz zárja be ezt a panelt.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} találat</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} megjelenítve (nem teljes)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Keresés…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Elavult eredmények</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Sikertelen keresés</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>Ez a dokumentum</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Szöveg</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Reguláris kifejezés</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Kis- és nagybetűk megkülönböztetése</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Kis- és nagybetűk figyelmen kívül hagyása</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Csak egész szavak</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Szórészletek is</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Szóközök és tabulátorok megjelenítése</value></data>
 </root>

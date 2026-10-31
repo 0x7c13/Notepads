@@ -119,13 +119,12 @@
   </resheader>
   <data name="AppCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>취소</value><comment>AppCloseSaveReminderDialog: CloseButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Content" xml:space="preserve"><value>저장하지 않은 변경 사항이 있습니다.</value><comment>AppCloseSaveReminderDialog: "Content" display text.</comment></data>
-  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>모두 저장</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
+  <data name="AppCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>모두 저장하고 종료</value><comment>AppCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_SecondaryButtonText" xml:space="preserve"><value>저장하지 않고 종료</value><comment>AppCloseSaveReminderDialog: SecondaryButtonText.</comment></data>
   <data name="AppCloseSaveReminderDialog_Title" xml:space="preserve"><value>변경 사항을 저장하시겠습니까?</value><comment>AppCloseSaveReminderDialog: "Title" display text.</comment></data>
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>선택된 텍스트가 없고 현재 문서가 비어 있기 때문에 공유할 것이 없습니다.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>변경 후</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>변경 전</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads 는 현재 1MB 이상의 파일을 지원하지 않습니다.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>파일 "{0}" 을 열 수 없습니다: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>확인</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>파일 열기 오류</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
@@ -152,7 +151,7 @@
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve"><value>다른 이름으로 저장...</value><comment>MainMenu: "Save As" button display text.</comment></data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve"><value>설정</value><comment>MainMenu: "Settings" button display text.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve"><value>취소</value><comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment></data>
-  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>파일 "{0}" 의 모든 변경 사항이 원래대로 돌아갑니다!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>&quot;{0}&quot;의 텍스트, 줄 끝 및 인코딩을 포함한 모든 변경 사항이 원래대로 돌아갑니다!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve"><value>확인</value><comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>정말 모든 변경 사항을 취소하시겠습니까?</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>취소</value><comment>SetCloseSaveReminderDialog: CloseButtonText.</comment></data>
@@ -177,11 +176,11 @@
   <data name="TextEditor_ContextFlyout_UndoButtonDisplayText" xml:space="preserve"><value>실행 취소</value><comment>TextEditor: ContextFlyout "Undo" button display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WordWrapButtonDisplayText" xml:space="preserve"><value>자동 줄바꿈</value><comment>TextEditor: ContextFlyout "Word Wrap" toggle button display text.</comment></data>
   <data name="TextEditor_DefaultNewFileName" xml:space="preserve"><value>새 텍스트 문서.txt</value><comment>TextEditor: Default file name for new document.</comment></data>
-  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve"><value>Ln {0}, Col {1} ({2} {3})</value><comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment></data>
-  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve"><value>Ln {0}, Col {1}</value><comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_FullText" xml:space="preserve"><value>{0}행, {1}열 ({2}자 {3})</value><comment>TextEditor: LineColumnIndicator display text when character(s) is(are) selected. {0} stands for line number, {1} stands for column index, {2} stands for number of selected characters, {3} stands for "selected" (based on singular and plural). You can change the order but DO NOT REMOVE them from the string.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_ShortText" xml:space="preserve"><value>{0}행, {1}열</value><comment>TextEditor: LineColumnIndicator display text when no character is selected. {0} stands for line number, {1} stands for column index. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>변경 내용 미리보기</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>모든 변경 사항 취소</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
-  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>수정 후</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
+  <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>수정됨</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>복사됨</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>저장됨</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>전체 화면을 종료하려면 F11을 누르세요</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
@@ -193,8 +192,8 @@
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve"><value>전체화면</value><comment>App: "Full Screen" display text</comment></data>
   <data name="App_ExitCompactOverlayMode_Text" xml:space="preserve"><value>간결히 보기 종료</value><comment>App: "Exit Compact Overlay" display text</comment></data>
   <data name="App_ExitFullScreenMode_Text" xml:space="preserve"><value>전체 화면 종료</value><comment>App: "Exit Full Screen" display text</comment></data>
-  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve"><value>선택한 문자</value><comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment></data>
-  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>선택한 문자</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve"><value>선택됨</value><comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment></data>
+  <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>선택됨</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>탭을 여기로 이동</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>Notepads로 열기</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
   <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>이 창은 Notepads의 추가 창입니다.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
@@ -203,11 +202,11 @@
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>최근 항목</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>이동할 줄 번호</value><comment>GoTo: Go to bar placeholder text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>이동: </value><comment>GoTo:Go to bar label</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>줄 번호가 이 파일의 줄 수를 초과합니다!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>숫자만 입력할 수 있습니다!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>줄 번호는 1부터 문서의 전체 줄 수 사이여야 합니다.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>유효한 줄 번호를 입력하세요.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>줄 번호로 이동</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
   <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>웹에서 검색</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
-  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>기본 확대/ 복원</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
+  <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>기본 확대/축소 복원</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve"><value>확대</value><comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>축소</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>정규식 사용</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
@@ -217,7 +216,7 @@
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>꼬리말</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>머리말</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>가로 여백 (%)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>용지 너비의 %</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>용지 너비 또는 높이의 백분율</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>출력 중 오류:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>출력에 실패했습니다</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>이 장치에서 인쇄가 지원되지 않습니다</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
@@ -260,7 +259,7 @@
   <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>현재는 빈 파일 확장자를 지원하지 않습니다</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
   <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value> "{0}" 파일 확장자를 지원하지 않습니다</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>닫기</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>데이터 손상으로 인해 지난 세션에서 데이터를 복구하지 못했습니다. 세션 폴더 내의 모든 저장되지 않은 파일 (*.txt)을 백업해 주십시오.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>세션을 안전하게 복구할 수 없습니다. 기존 복구 파일은 보존되었습니다. 파일을 복구하거나 삭제하기 전에 복구 폴더를 열어 별도로 복사해 두세요.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>Notepads에서 확인할 수 없는 복구 파일 때문에 세션 복구가 차단되어, 문서를 안전하게 보호하기 위해 이 작업이 취소되었습니다. 파일을 수정하거나 제거하기 전에 복구 폴더를 열어 별도의 사본을 만드세요.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>세션 백업 폴더 열기</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>경고</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>이전 텍스트, 저장된 버전</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>이전 변경 (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>사용 가능한 리소스로 비교를 준비할 수 없습니다. 문서는 변경되지 않았습니다.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1MB보다 큰 문서는 인쇄할 수 없습니다.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>1MiB보다 큰 문서는 인쇄할 수 없습니다.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>문서를 불러오는 중…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>문서를 불러올 수 없음</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>“{0}” 문서를 불러오지 않았습니다. 닫기 전에 불러와서 저장하거나 복구 사본을 삭제하시겠습니까?</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>들여쓰기를 공백으로 변환</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>들여쓰기를 탭으로 변환</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>들여쓰기를 변환할 수 없습니다.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>선택한 줄</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>오름차순 정렬(대소문자 구분)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>내림차순 정렬(대소문자 구분)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>중복 줄 제거</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>이 명령에는 100,000줄 이하이면서 4 MiB 이하인 텍스트를 선택하세요.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>줄 작업을 완료할 수 없습니다.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>이 문서에서 모두 찾기</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>일치 항목 {0}개</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>일치 항목 {0}개를 표시합니다. 결과 수 또는 시간 제한에 도달했습니다. 검색 범위를 좁혀 주세요.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>문서 또는 검색 조건이 변경되었습니다. 모두 찾기를 다시 실행하세요.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>검색 닫기</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>검색 닫기</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>이 문서의 검색 결과</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>검색 중…취소하려면 이 패널을 닫으세요.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>일치 항목 {0}개</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0}개 표시(미완료)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>검색 중…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>오래된 결과</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>검색 실패</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>이 문서</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>텍스트</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>정규식</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>대소문자 구분</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>대소문자 구분 안 함</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>단어 단위로 일치</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>단어 일부도 일치</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>공백과 탭 표시</value></data>
 </root>

@@ -125,7 +125,6 @@
   <data name="ContentSharing_FailureDisplayText" xml:space="preserve"><value>لا يوجد شيء لمشاركته لأنك لم تحدد نص والمستند الحالي فارغ.</value><comment>ContentSharing: Failure message when user trying to share empty content.</comment></data>
   <data name="DiffViewer_Header_NewTextTittle.Text" xml:space="preserve"><value>بعد التغييرات</value><comment>DiffViewer: Header's text for new text (After changes).</comment></data>
   <data name="DiffViewer_Header_OldTextTittle.Text" xml:space="preserve"><value>قبل التغييرات</value><comment>DiffViewer: Header's text for old text (Before changes).</comment></data>
-  <data name="ErrorMessage_NotepadsFileSizeLimit" xml:space="preserve"><value>Notepads لا يدعم الملفات ذات الحجم 1 م.ب أو أكثر.</value><comment>ErrorMessage: NotepadsFileSizeLimit text.</comment></data>
   <data name="FileOpenErrorDialog_Content" xml:space="preserve"><value>عذراً, الملف "{0}" تعذّر فتحه: {1}</value><comment>FileOpenErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileOpenErrorDialog_PrimaryButtonText" xml:space="preserve"><value>موافق</value><comment>FileOpenErrorDialog: PrimaryButtonText.</comment></data>
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>خطأ فتح ملف</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
@@ -139,8 +138,8 @@
   <data name="FindAndReplace_ReplaceBar.PlaceholderText" xml:space="preserve"><value>استبدال</value><comment>FindAndReplace: Replace bar placeholder text.</comment></data>
   <data name="FindAndReplace_ReplaceButton.ToolTipService.ToolTip" xml:space="preserve"><value>استبدال (Alt+R)</value><comment>FindAndReplace: "Replace" button tool tip display text.</comment></data>
   <data name="FindAndReplace_SearchForwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>بحث التالي (F3)</value><comment>FindAndReplace: "Find Next" button tool tip display text.</comment></data>
-  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve"><value>خيارت البحث</value><comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment></data>
-  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve"><value>طابق الحالة</value><comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionButton.ToolTipService.ToolTip" xml:space="preserve"><value>خيارات البحث</value><comment>FindAndReplace: "SearchOptions" button tool tip display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionToggleButton_MatchCase.Text" xml:space="preserve"><value>مراعاة حالة الأحرف</value><comment>FindAndReplace: "Match Case" OptionToggleButton display text.</comment></data>
   <data name="FindAndReplace_SearchOptionToggleButton_MatchWholeWord.Text" xml:space="preserve"><value>طابق الكلمة كاملة</value><comment>FindAndReplace: "Match Whole Word" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_Find.Text" xml:space="preserve"><value>بحث...</value><comment>MainMenu: "Find" button display text.</comment></data>
   <data name="MainMenu_Button_New.Text" xml:space="preserve"><value>جديد</value><comment>MainMenu: "New" button display text.</comment></data>
@@ -152,9 +151,9 @@
   <data name="MainMenu_Button_SaveAs.Text" xml:space="preserve"><value>حفظ باسم...</value><comment>MainMenu: "Save As" button display text.</comment></data>
   <data name="MainMenu_Button_Settings.Text" xml:space="preserve"><value>الإعدادات</value><comment>MainMenu: "Settings" button display text.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_CloseButtonText" xml:space="preserve"><value>إلغاء</value><comment>RevertAllChangesConfirmationDialog: CloseButtonText.</comment></data>
-  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>جميع التغييرات مثل النص ونهاية السطر ووضع الترميز التي تمت على "{0}" سوف تعاد!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_Content" xml:space="preserve"><value>سيتم التراجع عن جميع التغييرات التي أُجريت على &quot;{0}&quot;، بما فيها النص ونهايات الأسطر والترميز!</value><comment>RevertAllChangesConfirmationDialog: "Content" display text, {0} stands for file name. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="RevertAllChangesConfirmationDialog_PrimaryButtonText" xml:space="preserve"><value>نعم</value><comment>RevertAllChangesConfirmationDialog: PrimaryButtonText.</comment></data>
-  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>هل تريد بالفعل إعادة التغييرات؟</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
+  <data name="RevertAllChangesConfirmationDialog_Title" xml:space="preserve"><value>هل تريد بالتأكيد التراجع عن جميع التغييرات؟</value><comment>RevertAllChangesConfirmationDialog: "Title" display text.</comment></data>
   <data name="SetCloseSaveReminderDialog_CloseButtonText" xml:space="preserve"><value>إلغاء</value><comment>SetCloseSaveReminderDialog: CloseButtonText.</comment></data>
   <data name="SetCloseSaveReminderDialog_Content" xml:space="preserve"><value>هل تريد حفظ الملف "{0}"؟</value><comment>SetCloseSaveReminderDialog: "Content" display text.  {0} stands for file name/path. You can change the order but DO NOT REMOVE it from the string.</comment></data>
   <data name="SetCloseSaveReminderDialog_PrimaryButtonText" xml:space="preserve"><value>حفظ</value><comment>SetCloseSaveReminderDialog: PrimaryButtonText.</comment></data>
@@ -187,7 +186,7 @@
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>اضغط F11 للخروج من الشاشة الكاملة</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>إعادة تحميل الملف من القرص</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_ToolTip" xml:space="preserve"><value>تم تعديل محتوى الملف من الخارج!</value><comment>TextEditor: FileModifiedOutsideIndicator tool tip display text.</comment></data>
-  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve"><value>تم نقل إعادة تسمية أو حذف الملف!</value><comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment></data>
+  <data name="TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip" xml:space="preserve"><value>تم نقل الملف أو إعادة تسميته أو حذفه!</value><comment>TextEditor: FileRenamedMovedOrDeletedIndicator tool tip display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve"><value>تم إعادة تحميل الملف</value><comment>TextEditor: Notification message when file has been reloaded successfully.</comment></data>
   <data name="App_EnterCompactOverlayMode_Text" xml:space="preserve"><value>وضع النافذة الصغيرة</value><comment>App: "Compact Overlay" display text</comment></data>
   <data name="App_EnterFullScreenMode_Text" xml:space="preserve"><value>شاشة كاملة</value><comment>App: "Full Screen" display text</comment></data>
@@ -197,36 +196,36 @@
   <data name="TextEditor_LineColumnIndicator_FullText_SingularSelectedWord" xml:space="preserve"><value>محدد</value><comment>TextEditor: Singular form for the selected word count indicator.</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_MoveTabHere" xml:space="preserve"><value>نقل التبويب هنا</value><comment>App: DragAndDrop UIOverride Caption: "Move tab here" display text</comment></data>
   <data name="App_DragAndDrop_UIOverride_Caption_OpenWithNotepads" xml:space="preserve"><value>فتح باستخدام Notepads</value><comment>App: DragAndDrop UIOverride Caption: "Open with Notepads" display text</comment></data>
-  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>هذه نافذة ظل لـ Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
+  <data name="App_ShadowWindowIndicator_Description" xml:space="preserve"><value>هذه نافذة إضافية لـ Notepads.</value><comment>App: ShadowWindowIndicator Description display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileAlreadyOpened" xml:space="preserve"><value>الملف مفتوح مسبقاً</value><comment>TextEditor: Notification message when file has been opened in current app instance.</comment></data>
   <data name="MainMenu_Button_New_Window.Text" xml:space="preserve"><value>نافذة جديدة</value><comment>MainMenu: "New Window" button display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent.Text" xml:space="preserve"><value>ملفات مفتوحة مؤخراً</value><comment>MainMenu: "Open Recent" button display text.</comment></data>
   <data name="GoTo_GoToBar.PlaceholderText" xml:space="preserve"><value>ذهاب إلى سطر</value><comment>GoTo: Go to bar placeholder text.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>رقم السطر تخطى مجموع عدد الأسطر!</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
-  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>يمكنك كتابة أرقام فقط!</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_ExceedInputLimit" xml:space="preserve"><value>يجب أن يكون رقم السطر بين 1 وإجمالي عدد أسطر المستند.</value><comment>GoTo: Notification message when input exceeds input limit.</comment></data>
+  <data name="GoTo_NotificationMsg_InputError_InvalidInput" xml:space="preserve"><value>أدخل رقم سطر صالحًا.</value><comment>GoTo: Notification message when invalid input entered.</comment></data>
   <data name="GoTo_SearchButton.ToolTipService.ToolTip" xml:space="preserve"><value>ذهاب إلى سطر</value><comment>GoTo: "Search" button tool tip display text.</comment></data>
-  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>البحث في الانترنت</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
+  <data name="TextEditor_ContextFlyout_WebSearchButtonDisplayText" xml:space="preserve"><value>البحث في الويب</value><comment>TextEditor: ContextFlyout "Web Search" button display text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_RestoreDefaultZoom.Label" xml:space="preserve"><value>استعادة التكبير الإفتراضي</value><comment>TextEditor: FontZoomIndicator "Restore Default Zoom" FlyoutItem display text. Restores to default zoom for selected text editor.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomIn.Label" xml:space="preserve"><value>تكبير</value><comment>TextEditor: FontZoomIndicator "ZoomIn" FlyoutItem display text. Zooms in selected text editor text.</comment></data>
   <data name="TextEditor_FontZoomIndicator_FlyoutItem_ZoomOut.Label" xml:space="preserve"><value>تصغير</value><comment>TextEditor: FontZoomIndicator "ZoomOut" FlyoutItem display text. Zooms out selected text editor text.</comment></data>
   <data name="GoTo_GoToBarLabel.Text" xml:space="preserve"><value>ذهاب إلى:</value><comment>GoTo: Go to bar label</comment></data>
   <data name="MainMenu_Button_PrintAll.Text" xml:space="preserve"><value>طباعة الكل...</value><comment>MainMenu: "Print All" button display text.</comment></data>
-  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>يمكن أن يقبل إلى عدد عشري واحد</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
+  <data name="Print_ErrorMsg_DecimalOutOfRange" xml:space="preserve"><value>استخدم منزلة عشرية واحدة على الأكثر</value><comment>Print: Error message when decimal places for margin entry exceeds limit.</comment></data>
   <data name="Print_ErrorMsg_ValueOutOfRange" xml:space="preserve"><value>القيمة خارج النطاق</value><comment>Print: Error message when value for margin entry exceeds limit.</comment></data>
   <data name="Print_FooterEntry_Title" xml:space="preserve"><value>التذييل</value><comment>Print: PrintManager custom option "FooterText" title.</comment></data>
   <data name="Print_HeaderEntry_Title" xml:space="preserve"><value>الرأس</value><comment>Print: PrintManager custom option "HeaderText" title.</comment></data>
   <data name="Print_LeftMarginEntry_Title" xml:space="preserve"><value>الهامش الأفقي (نسبة مئوية %)</value><comment>Print: PrintManager custom option "LeftMargin" title.</comment></data>
-  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>بنسبة مئوية % من عرض الصفحة</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
+  <data name="Print_MarginEntry_Description" xml:space="preserve"><value>نسبة مئوية من عرض الورقة أو ارتفاعها</value><comment>Print: PrintManager custom option "LeftMargin" and "TopMargin" description.</comment></data>
   <data name="Print_NotificationMsg_PrintError" xml:space="preserve"><value>خطأ الطباعة:</value><comment>Print: Notification message when error occurs while showing print ui.</comment></data>
   <data name="Print_NotificationMsg_PrintFailed" xml:space="preserve"><value>فشلت الطباعة</value><comment>Print: Notification message on print failure.</comment></data>
   <data name="Print_NotificationMsg_PrintNotSupported" xml:space="preserve"><value>الطباعة غير مدعومة بواسطة هذا الجهاز</value><comment>Print: Notification message when printing attempted in a non-supported device.</comment></data>
   <data name="Print_TopMarginEntry_Title" xml:space="preserve"><value>الهامش العمودي (نسبة مئوية %)</value><comment>Print: PrintManager custom option "TopMargin" title.</comment></data>
-  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>استخدم Regular Expression</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
+  <data name="FindAndReplace_SearchOptionToggleButton_UseRegex.Text" xml:space="preserve"><value>استخدام تعبير نمطي</value><comment>FindAndReplace: "Use Regular Expression" OptionToggleButton display text.</comment></data>
   <data name="MainMenu_Button_Open_Recent_ClearRecentlyOpenedSubItem_Text" xml:space="preserve"><value>حذف قائمة الملفات المفتوحة مؤخراً</value><comment>MainMenu: "Open Recent" button ClearRecentlyOpenedSubItem display text.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_MoreEncodings" xml:space="preserve"><value>ترميزات أكثر</value><comment>TextEditor: EncodingIndicator "More Encodings" FlyoutItem display text.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_ReopenWithEncoding" xml:space="preserve"><value>إعادة فتح بترميز</value><comment>TextEditor: EncodingIndicator "Reopen with Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_SaveWithEncoding" xml:space="preserve"><value>حفظ بترميز</value><comment>TextEditor: EncodingIndicator "Save with Encoding" FlyoutItem display text.</comment></data>
-  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>Regular Expression غير صحيح!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
+  <data name="FindAndReplace_NotificationMsg_InvalidRegex" xml:space="preserve"><value>تعبير نمطي غير صالح!</value><comment>FindAndReplace: Notification message when regular expression text is invalid.</comment></data>
   <data name="TextEditor_EncodingIndicator_FlyoutItem_AutoGuessEncoding" xml:space="preserve"><value>التخمين التلقائي للترميز</value><comment>TextEditor: EncodingIndicator "Auto Guess Encoding" FlyoutItem display text.</comment></data>
   <data name="TextEditor_NotificationMsg_EncodingCannotBeDetermined" xml:space="preserve"><value>لم نتمكن من تحديد الترميز</value><comment>TextEditor: Notification message when file's encoding cannot be determined.</comment></data>
   <data name="FindAndReplace_SearchBackwardButton.ToolTipService.ToolTip" xml:space="preserve"><value>بحث السابق (Shift+F3)</value><comment>FindAndReplace: "Find Previous" button tool tip display text.</comment></data>
@@ -254,13 +253,13 @@
   <data name="InvalidFilenameError_ContainsTrailingSpaces" xml:space="preserve"><value>اسم الملف لا يمكن أن يحتوي مسافات في نهايته</value><comment>InvalidFilenameError: Filename contains trailing spaces.</comment></data>
   <data name="InvalidFilenameError_EmptyOrAllWhitespace" xml:space="preserve"><value>اسم الملف لا يمكن أن يكون فارغ أو مكون مسافات فقط</value><comment>InvalidFilenameError: Filename is empty or contains all whitespace.</comment></data>
   <data name="InvalidFilenameError_InvalidOrNotAllowed" xml:space="preserve"><value>اسم الملف غير صالح أو غير مسموح به</value><comment>InvalidFilenameError: Filename is invalid or not allowed.</comment></data>
-  <data name="InvalidFilenameError_TooLong" xml:space="preserve"><value>اسم الملف لا يمكن أن يخطى 255 حرف</value><comment>InvalidFilenameError: Filename is longer than 255 characters.</comment></data>
+  <data name="InvalidFilenameError_TooLong" xml:space="preserve"><value>لا يمكن أن يتجاوز اسم الملف 255 حرفًا</value><comment>InvalidFilenameError: Filename is longer than 255 characters.</comment></data>
   <data name="Tab_ContextFlyout_RenameButtonDisplayText" xml:space="preserve"><value>إعادة تسمية</value><comment>TextEditor: ContextFlyout "Rename" button display text.</comment></data>
   <data name="TextEditor_NotificationMsg_FileRenamed" xml:space="preserve"><value>تمت إعادة التسمية</value><comment>TextEditor: Notification message when file has been renamed successfully.</comment></data>
-  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>صيغة الملف الفارغة غير مدعوم في الوقت الحالي</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
-  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>صيغة الملف "{0}" غير مدعومة في الوقت الحاضر.</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
+  <data name="FileRenameError_EmptyFileExtension" xml:space="preserve"><value>امتداد الملف الفارغ غير مدعوم حاليًا</value><comment>FileRenameError: Empty file extension is not currently supported.</comment></data>
+  <data name="FileRenameError_UnsupportedFileExtension" xml:space="preserve"><value>امتداد الملف &quot;{0}&quot; غير مدعوم حاليًا</value><comment>FileRenameError: Extension is not currently supported. {0} stands for the file extension string.</comment></data>
   <data name="SessionCorruptionErrorDialog_CloseButtonText" xml:space="preserve"><value>إغلاق</value><comment>SessionCorruptionErrorDialog: CloseButtonText.</comment></data>
-  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>فشل في استعادة البيانات من الجلسة الأخيرة بسبب تلف البيانات. يرجى الاحتفاظ بنسخة احتياطية من جميع الملفات غير المحفوظة (*.txt) في مجلد الجلسة.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
+  <data name="SessionCorruptionErrorDialog_Content" xml:space="preserve"><value>تعذرت استعادة الجلسة بأمان. تم الاحتفاظ بملفات الاستعادة الموجودة. افتح مجلد الاستعادة وأنشئ نسخة منفصلة قبل إصلاح أي ملفات أو إزالتها.</value><comment>SessionCorruptionErrorDialog: "Content" display text.</comment></data>
   <data name="SessionCorruptionErrorDialog_BlockedContent" xml:space="preserve"><value>استعادة الجلسة محظورة بسبب ملفات استعادة لا يستطيع Notepads التحقق منها، لذا أُلغي هذا الإجراء للحفاظ على مستنداتك. افتح مجلد الاستعادة لإنشاء نسخة منفصلة قبل إصلاح أي ملفات أو إزالتها.</value></data>
   <data name="SessionCorruptionErrorDialog_PrimaryButtonText" xml:space="preserve"><value>افتح مجلد النسخ الاحتياطية للجلسة</value><comment>SessionCorruptionErrorDialog: PrimaryButtonText.</comment></data>
   <data name="SessionCorruptionErrorDialog_Title" xml:space="preserve"><value>تحذير</value><comment>SessionCorruptionErrorDialog: "Title" display text.</comment></data>
@@ -293,7 +292,7 @@
   <data name="DiffViewer_OldDocument" xml:space="preserve"><value>النص القديم، النسخة المحفوظة</value></data>
   <data name="DiffViewer_Previous" xml:space="preserve"><value>التغيير السابق (Shift+F7)</value></data>
   <data name="DiffViewer_Unavailable" xml:space="preserve"><value>تعذر إعداد المقارنة ضمن الموارد المتاحة. لم يتغير مستندك.</value></data>
-  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>لا يمكن طباعة المستندات التي يتجاوز حجمها 1 ميغابايت.</value></data>
+  <data name="Print_NotificationMsg_DocumentTooLarge" xml:space="preserve"><value>لا يمكن طباعة المستندات التي يتجاوز حجمها 1 MiB.</value></data>
   <data name="WorkspaceTab_Loading" xml:space="preserve"><value>جارٍ تحميل المستند…</value></data>
   <data name="WorkspaceTab_LoadFailed" xml:space="preserve"><value>تعذر تحميل المستند</value></data>
   <data name="WorkspaceTab_CloseUnloaded" xml:space="preserve"><value>لم يتم تحميل «{0}». هل تريد تحميله وحفظه قبل الإغلاق، أم تجاهل نسخة الاسترداد؟</value></data>
@@ -310,32 +309,32 @@
   <data name="TextEditor_Indentation_ConvertSpaces" xml:space="preserve"><value>تحويل المسافة البادئة إلى مسافات</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_ConvertTabs" xml:space="preserve"><value>تحويل المسافة البادئة إلى علامات جدولة</value><comment>Document indentation status and commands. {0} is the number of spaces per indentation unit.</comment></data>
   <data name="TextEditor_Indentation_Failed" xml:space="preserve"><value>تعذر تحويل المسافة البادئة.</value><comment>Notification when an indentation conversion cannot be completed.</comment></data>
-  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>Selected lines</value></data>
-  <data name="EditorTools_SortAscending" xml:space="preserve"><value>Sort ascending (case-sensitive)</value></data>
-  <data name="EditorTools_SortDescending" xml:space="preserve"><value>Sort descending (case-sensitive)</value></data>
-  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>Remove duplicate lines</value></data>
-  <data name="EditorTools_LineLimit" xml:space="preserve"><value>Select no more than 100,000 lines and 4 MB of text for this command.</value></data>
-  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>Unable to complete the line operation.</value></data>
-  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>Find all in this document</value></data>
-  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>{0} matches</value></data>
-  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>Showing {0} matches. Result or time limit reached; narrow your search.</value></data>
-  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>Document or search changed. Run Find all again.</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Close search</value></data>
-  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Search results in this document</value></data>
-  <data name="EditorTools_Searching" xml:space="preserve"><value>Searching… Close this panel to cancel.</value></data>
-  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>{0} match</value></data>
-  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>{0} shown (incomplete)</value></data>
-  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>Searching…</value></data>
-  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>Results outdated</value></data>
-  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>Search failed</value></data>
-  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>This document</value></data>
-  <data name="EditorTools_FindAllText" xml:space="preserve"><value>Text</value></data>
-  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>Regular expression</value></data>
-  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>Match case</value></data>
-  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>Ignore case</value></data>
-  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>Whole words</value></data>
-  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Not limited to whole words</value></data>
+  <data name="EditorTools_SelectedLines" xml:space="preserve"><value>الأسطر المحددة</value></data>
+  <data name="EditorTools_SortAscending" xml:space="preserve"><value>ترتيب تصاعدي (مع مراعاة حالة الأحرف)</value></data>
+  <data name="EditorTools_SortDescending" xml:space="preserve"><value>ترتيب تنازلي (مع مراعاة حالة الأحرف)</value></data>
+  <data name="EditorTools_RemoveDuplicates" xml:space="preserve"><value>إزالة الأسطر المكررة</value></data>
+  <data name="EditorTools_LineLimit" xml:space="preserve"><value>حدد ما لا يزيد عن 100,000 سطر و4 MiB من النص لهذا الأمر.</value></data>
+  <data name="EditorTools_OperationFailed" xml:space="preserve"><value>تعذر إكمال العملية على الأسطر.</value></data>
+  <data name="EditorTools_FindAll.Text" xml:space="preserve"><value>البحث عن جميع التطابقات في هذا المستند</value></data>
+  <data name="EditorTools_FindAllCount" xml:space="preserve"><value>عدد التطابقات: {0}</value></data>
+  <data name="EditorTools_FindAllLimited" xml:space="preserve"><value>عدد التطابقات المعروضة: {0}. تم بلوغ حد النتائج أو الوقت. ضيّق نطاق البحث.</value></data>
+  <data name="EditorTools_FindAllStale" xml:space="preserve"><value>تغير المستند أو شروط البحث. ابحث عن جميع التطابقات مرة أخرى.</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>إغلاق البحث</value></data>
+  <data name="EditorTools_CloseResults.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>إغلاق البحث</value></data>
+  <data name="EditorTools_Results.[using:Windows.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>نتائج البحث في هذا المستند</value></data>
+  <data name="EditorTools_Searching" xml:space="preserve"><value>جارٍ البحث… أغلق هذه اللوحة للإلغاء.</value></data>
+  <data name="EditorTools_FindAllOne" xml:space="preserve"><value>عدد التطابقات: {0}</value></data>
+  <data name="EditorTools_FindAllPartialCount" xml:space="preserve"><value>عدد النتائج المعروضة: {0} (غير مكتمل)</value></data>
+  <data name="EditorTools_FindAllSearchingTitle" xml:space="preserve"><value>جارٍ البحث…</value></data>
+  <data name="EditorTools_FindAllStaleTitle" xml:space="preserve"><value>النتائج قديمة</value></data>
+  <data name="EditorTools_FindAllErrorTitle" xml:space="preserve"><value>فشل البحث</value></data>
+  <data name="EditorTools_FindAllScope" xml:space="preserve"><value>هذا المستند</value></data>
+  <data name="EditorTools_FindAllText" xml:space="preserve"><value>نص</value></data>
+  <data name="EditorTools_FindAllRegex" xml:space="preserve"><value>تعبير نمطي</value></data>
+  <data name="EditorTools_FindAllCaseSensitive" xml:space="preserve"><value>مراعاة حالة الأحرف</value></data>
+  <data name="EditorTools_FindAllCaseInsensitive" xml:space="preserve"><value>تجاهل حالة الأحرف</value></data>
+  <data name="EditorTools_FindAllWholeWord" xml:space="preserve"><value>كلمات كاملة فقط</value></data>
+  <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>يشمل أجزاء الكلمات</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
-  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Show spaces and tabs</value></data>
+  <data name="DiffViewer_Whitespace" xml:space="preserve"><value>إظهار المسافات وعلامات الجدولة</value></data>
 </root>
