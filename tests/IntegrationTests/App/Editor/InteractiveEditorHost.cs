@@ -384,6 +384,11 @@ internal static class InteractiveEditorHost
                 if (!_disposed) _editor.Dispose();
                 _disposed = true;
                 break;
+            case "raster-state" when command.Length == 1:
+                // Reading aids normally debounce selection changes. Settle
+                // their real indicators before the external pixel comparison.
+                _editor.RefreshReadingAids();
+                break;
             case "state" when command.Length == 1:
                 break;
             case "wheel-metrics" when command.Length == 1:

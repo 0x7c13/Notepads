@@ -360,7 +360,8 @@ function Close-EditorContextMenu {
 
 function Read-StableInk([string] $Name, [int] $Rows = 1, $Frame = $null) {
     $deadline = [DateTime]::UtcNow.AddSeconds(6)
-    $state = Invoke-EditorTestCommand $session 'state'
+    # Two equal frames can precede the delayed occurrence-highlight refresh.
+    $state = Invoke-EditorTestCommand $session 'raster-state'
     $previous = $null
     do {
         Assert-EditorTestAlive $session
