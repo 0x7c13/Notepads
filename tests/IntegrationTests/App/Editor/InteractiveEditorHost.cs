@@ -43,6 +43,11 @@ internal static class InteractiveEditorHost
     private static int _dragResult;
     private static int _sequence;
     private static int _scrollStarts;
+    private static bool _observeWheel;
+    private static readonly Queue<string> _wheelTrace = new();
+    private static int _wheelEvents;
+    private static long _horizontalWheelDelta;
+    private static long _verticalWheelDelta;
     private static DateTime _lastCommand;
     private static DocumentBaseline _preparedReplacement;
     private static string _preparedReplacementCase;
@@ -382,6 +387,10 @@ internal static class InteractiveEditorHost
             case "state" when command.Length == 1:
                 break;
             case "wheel-metrics" when command.Length == 1:
+                _observeWheel = true;
+                _wheelTrace.Clear();
+                _wheelEvents = 0;
+                _horizontalWheelDelta = _verticalWheelDelta = 0;
                 // Font measurement creates a layout; keep it out of state polling.
                 var horizontal = (Windows.UI.Xaml.Controls.Primitives.ScrollBar)FindElement(_view, "HorizontalScrollBar");
                 return "averageCharWidth=" + (Native.TextWidth(32, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") / 52.0).ToString(CultureInfo.InvariantCulture) +
@@ -589,6 +598,17 @@ internal static class InteractiveEditorHost
         _view = (WinUIEditor.EditorBaseControl)((Grid)_editor.Content).Children[0];
         _scrollStarts = 0;
         _view.ScrollStarted += (_, _) => ++_scrollStarts;
+        _view.PointerWheelChanged += (_, args) =>
+        {
+            if (!_observeWheel) return;
+            var point = args.GetCurrentPoint(_view);
+            var properties = point.Properties;
+            ++_wheelEvents;
+            if (properties.IsHorizontalMouseWheel) _horizontalWheelDelta += properties.MouseWheelDelta;
+            else _verticalWheelDelta += properties.MouseWheelDelta;
+            if (_wheelTrace.Count == 32) _wheelTrace.Dequeue();
+            _wheelTrace.Enqueue($"{point.Timestamp}:{point.FrameId}:{properties.MouseWheelDelta}:{properties.IsHorizontalMouseWheel}");
+        };
         AutomationProperties.SetAutomationId(_view, "InteractiveEditor");
         AutomationProperties.SetName(_view, "Isolated editor automation test");
         _view.PreviewKeyDown += (_, args) =>
@@ -763,6 +783,7 @@ internal static class InteractiveEditorHost
 
     private static async Task ResetAsync(string text, bool wrap, double width, double height, double fontSize)
     {
+        _observeWheel = false;
         if (width < 120 || width > 700 || height < 100 || height > 440 || fontSize < 10 || fontSize > 40)
             throw new ArgumentOutOfRangeException(nameof(width), "Invalid fixture dimensions.");
         await DiscardPreparedReplacementAsync();
@@ -820,6 +841,8 @@ internal static class InteractiveEditorHost
             "\nverticalOffset=" + _view.DisplayVerticalOffset.ToString(CultureInfo.InvariantCulture) +
             "\nscrollAnimating=" + _view.IsScrollAnimating +
             "\nscrollStarts=" + _scrollStarts +
+            "\nwheelEvents=" + _wheelEvents + "\nhorizontalWheelDelta=" + _horizontalWheelDelta +
+            "\nverticalWheelDelta=" + _verticalWheelDelta + "\nwheelTrace=" + string.Join(',', _wheelTrace) +
             "\nscale=" + DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel.ToString(CultureInfo.InvariantCulture) +
             "\nlinesOnScreen=" + Native.LinesOnScreen + "\nlineHeight=" + Native.TextHeight(0) +
             "\ndisplayRows=" + Native.VisibleFromDocLine(Native.LineCount) + "\ndocumentLines=" + Native.LineCount +

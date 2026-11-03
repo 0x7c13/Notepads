@@ -651,8 +651,9 @@ try {
             Assert-EditorForeground
             [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, 120, $true)
             $detent = Wait-EditorState {
-                param($s) [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
+                param($s) [int] $s.wheelEvents -gt 0 -and [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
             } 'A physical horizontal wheel detent finishes'
+            Assert-Equal ([long] $detent.horizontalWheelDelta) 120 'The editor receives the full horizontal detent'
             $step = [int] $detent.xOffset - 200
             $unclampedStep = [double] $step
             $measurementError = 0.0
@@ -671,6 +672,14 @@ try {
             $fineEvents = [int] [Math]::Clamp([Math]::Floor(120.0 * $bounds.Width * 0.2 / $unclampedStep), 1, 12)
             for ($wheelEvent = 0; $wheelEvent -lt $fineEvents; $wheelEvent++) {
                 [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, 1, $true)
+                # SendInput queues input; XAML can coalesce a burst on a busy
+                # runner. Acknowledge each event before sending the next one so
+                # this exact injected-distance oracle also knows what arrived.
+                $expectedEvents = [int] $detent.wheelEvents + $wheelEvent + 1
+                $received = Wait-EditorState {
+                    param($s) [int] $s.wheelEvents -ge $expectedEvents
+                } 'A single fine horizontal wheel event reaches the editor'
+                Assert-Equal ([long] $received.horizontalWheelDelta - [long] $detent.horizontalWheelDelta) ($wheelEvent + 1) 'Every acknowledged fine input contributes exactly one wheel unit'
             }
             $fine = Wait-EditorState {
                 param($s) [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
@@ -678,7 +687,7 @@ try {
             $pixels = [int] $fine.xOffset - 200
             $minimumFine = [Math]::Min($availableTravel, ($unclampedStep - $measurementError) * $fineEvents / 120.0)
             $maximumFine = [Math]::Min($availableTravel, ($unclampedStep + $measurementError) * $fineEvents / 120.0)
-            Assert-True ($pixels -ge $minimumFine - 1 -and $pixels -le $maximumFine + 1) 'Fine horizontal input retains the same displacement per wheel unit'
+            Assert-True ($pixels -ge $minimumFine - 1 -and $pixels -le $maximumFine + 1) "Fine horizontal input retains the same displacement per wheel unit: expected [$minimumFine,$maximumFine] +/- 1, actual $pixels; trace=$($fine.wheelTrace)"
             Assert-Equal $fine.firstVisible 10 'Horizontal input leaves the vertical row unchanged'
             Assert-Equal $fine.verticalOffset 0 'Horizontal input leaves the vertical fraction unchanged'
             $after = Read-StableInk "horizontal-$rtl-after" 4
@@ -702,11 +711,40 @@ try {
                 Assert-True ($unshifted -gt $ink * 0.25) 'The unchanged-image control rejects a missing horizontal scroll'
             }
             else { Write-Output 'SKIP: Pixel overlap check; one wheel unit exceeds the fixture overlap at this Windows scroll setting.' }
+
+            # Also retain the unpaced burst. Its oracle uses independently
+            # observed routed-event deltas rather than assuming one XAML event
+            # per SendInput call. Wait for delivery to become quiet, as well as
+            # the animation, so a gap between packets cannot end the test early.
+            $null = Invoke-EditorTestCommand $session 'x-offset|200'
+            for ($wheelEvent = 0; $wheelEvent -lt $fineEvents; $wheelEvent++) {
+                [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, 1, $true)
+            }
+            $quiet = @{ Events = -1; Since = [DateTime]::UtcNow }
+            $burst = Wait-EditorState {
+                param($s)
+                if ([int] $s.wheelEvents -ne $quiet.Events) {
+                    $quiet.Events = [int] $s.wheelEvents
+                    $quiet.Since = [DateTime]::UtcNow
+                }
+                [int] $s.wheelEvents -gt [int] $fine.wheelEvents -and $s.scrollAnimating -eq 'False' -and
+                    ([DateTime]::UtcNow - $quiet.Since).TotalMilliseconds -ge 150
+            } 'Burst horizontal input and its animation finish'
+            $burstUnits = [long] $burst.horizontalWheelDelta - [long] $fine.horizontalWheelDelta
+            $burstPixels = [int] $burst.xOffset - 200
+            Assert-True ($burstUnits -gt 0 -and $burstUnits -lt 120) 'The burst delivers sub-detent horizontal input'
+            $minimumBurst = [Math]::Min($availableTravel, ($unclampedStep - $measurementError) * $burstUnits / 120.0)
+            $maximumBurst = [Math]::Min($availableTravel, ($unclampedStep + $measurementError) * $burstUnits / 120.0)
+            Write-Output "Horizontal wheel burst: rtl=$rtl, sent=$fineEvents, delivered=$burstUnits, pixels=$burstPixels, expected=[$minimumBurst,$maximumBurst], trace=$($burst.wheelTrace)"
+            Assert-True ($burstPixels -ge $minimumBurst - 1 -and $burstPixels -le $maximumBurst + 1) "Burst horizontal displacement matches delivered wheel units: expected [$minimumBurst,$maximumBurst] +/- 1, actual $burstPixels; trace=$($burst.wheelTrace)"
+            Assert-Equal $burst.firstVisible 10 'Burst horizontal input leaves the vertical row unchanged'
+            Assert-Equal $burst.verticalOffset 0 'Burst horizontal input leaves the vertical fraction unchanged'
             $null = Invoke-EditorTestCommand $session 'x-offset|200'
             [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, -120, $false, $true)
             $shifted = Wait-EditorState {
-                param($s) [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
+                param($s) [int] $s.wheelEvents -gt [int] $burst.wheelEvents -and [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
             } 'Shift wheel uses the same smooth horizontal path'
+            Assert-Equal ([long] $shifted.verticalWheelDelta - [long] $burst.verticalWheelDelta) (-120) 'Shift wheel reaches the editor with its original vertical delta'
             Assert-True ([Math]::Abs([int] $shifted.xOffset - 200 - $step) -le 1) 'Shift wheel preserves horizontal direction and full detent distance'
             Assert-Equal $shifted.firstVisible 10 'Shift wheel does not leak into vertical scrolling'
             Assert-Equal $pattern.DocumentRange.GetText(-1) $text 'Horizontal wheel preserves document content'

@@ -88,6 +88,36 @@ size_t CheckVerticalScrollGeometry() {
 
 	for (const double scale : {1.0, 1.25, 1.5, 3.0}) {
 		HorizontalScrollGeometry horizontal(20000, scale);
+		// The same delivered wheel distance must survive event coalescing,
+		// intervening frames and reduced motion. The editor feeds back integer
+		// pixels; use an independent total-distance oracle, rounded only once.
+		for (const bool rightToLeft : {false, true}) {
+			const HorizontalScrollGeometry wheelGeometry(20000, scale, rightToLeft, 20000);
+			for (const bool animate : {false, true}) {
+				for (const int packetUnits : {1, 2, 3, 4, 6, 12}) {
+					for (const double frameDelay : {0.0, 0.008, 0.3}) {
+						for (const int direction : {-1, 1}) {
+							constexpr double pixelsPerUnit = 6.0 * (515.0 / 52) / 120;
+							SmoothScrollAnimation<HorizontalScrollGeometry> wheel;
+							int pixels = 10000;
+							double now = 0;
+							for (int units = 0; units < 12; units += packetUnits) {
+								const auto current = wheelGeometry.FromPixels(pixels);
+								const double delta = direction * packetUnits * pixelsPerUnit / scale * (rightToLeft ? -1 : 1);
+								wheel.Retarget(wheelGeometry, current, delta, now, animate);
+								const auto position = animate ? wheel.Advance(wheelGeometry, current, now + frameDelay, scale) :
+									wheel.Finish(wheelGeometry, current);
+								pixels = wheelGeometry.PixelOffset(position);
+								now += frameDelay + 0.001;
+							}
+							pixels = wheelGeometry.PixelOffset(wheel.Finish(wheelGeometry, wheelGeometry.FromPixels(pixels)));
+							require(pixels == 10000 + static_cast<int>(std::round(direction * 12 * pixelsPerUnit)));
+							require(!wheel.Active());
+						}
+					}
+				}
+			}
+		}
 		for (const double frequency : {30.0, 60.0, 144.0}) {
 			SmoothScrollAnimation<HorizontalScrollGeometry> pan;
 			double current = 100 / scale;
