@@ -159,7 +159,7 @@ namespace winrt::WinUIEditor::implementation
 		_rangeEnd = range.end;
 	}
 
-	ITextRangeProvider TextRangeProvider::FindAttribute(int32_t attributeId, IInspectable const &value, bool backward)
+	ITextRangeProvider TextRangeProvider::FindAttribute(int32_t /*attributeId*/, IInspectable const &/*value*/, bool /*backward*/)
 	{
 		throw hresult_not_implemented{};
 	}
@@ -400,7 +400,7 @@ namespace winrt::WinUIEditor::implementation
 		}
 	}
 
-	void TextRangeProvider::ScrollIntoView(bool alignToTop)
+	void TextRangeProvider::ScrollIntoView(bool /*alignToTop*/)
 	{
 		const auto editor{ _editor.get() };
 		if (!editor)

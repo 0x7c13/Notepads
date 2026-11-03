@@ -51,6 +51,7 @@ internal static class ScrollRestorationTests
             await CheckLogAppendAsync(log, wrapping, pending: true);
             await CheckLogAppendAsync(log, wrapping, pending: false);
         }
+        await CheckLogAppendAsync(log, TextWrapping.NoWrap, pending: true, resetWidth: true);
         await CheckBlockedLogAppendAsync(log, readOnly: true);
         await CheckBlockedLogAppendAsync(log, readOnly: false);
     }
@@ -570,12 +571,7 @@ internal static class ScrollRestorationTests
         var observed = new List<bool>();
         void Painted(WinUIEditor.Editor sender, WinUIEditor.PaintedEventArgs args)
         {
-            var y = sender.PointYFromPosition(sender.CurrentPos);
-            var x = sender.PointXFromPosition(sender.CurrentPos);
-            var surface = FindNamed<Border>(View(core), "ImageTarget");
-            var scale = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
-            observed.Add(y >= 0 && y < sender.LinesOnScreen * sender.TextHeight(0) &&
-                x >= 0 && x < surface.ActualWidth * scale);
+            observed.Add(CaretVisible(core));
         }
         native.Painted += Painted;
         try
@@ -603,13 +599,16 @@ internal static class ScrollRestorationTests
         var x = native.PointXFromPosition(native.CurrentPos);
         var surface = FindNamed<Border>(View(core), "ImageTarget");
         var scale = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
-        return y >= 0 && y < native.LinesOnScreen * native.TextHeight(0) &&
+        // The last line can start within the viewport yet be clipped at its
+        // bottom. Check its full height against the actual rendered surface.
+        var viewportHeight = Math.Round(surface.ActualHeight * scale, MidpointRounding.AwayFromZero);
+        return y >= 0 && y + native.TextHeight(0) <= viewportHeight &&
             x >= 0 && x < surface.ActualWidth * scale;
     }
 
-    private static async Task CheckLogAppendAsync(StringBuilder log, TextWrapping wrapping, bool pending)
+    private static async Task CheckLogAppendAsync(StringBuilder log, TextWrapping wrapping, bool pending, bool resetWidth = false)
     {
-        var scenario = $".LOG {wrapping}, {(pending ? "pending" : "completed")} restore";
+        var scenario = $".LOG {wrapping}, {(pending ? "pending" : "completed")} restore{(resetWidth ? ", unmeasured width" : "")}";
         using var core = Create(wrapping);
         var before = LongLogText();
         await core.LoadTextAsync(before);
@@ -618,12 +617,15 @@ internal static class ScrollRestorationTests
         var view = View(core);
         var native = view.Editor;
         var observed = new List<bool>();
-        var positions = new List<(long Row, long X, long Y)>();
+        var positions = new List<string>();
+        double lastPaintedHeight = 0;
         void Painted(WinUIEditor.Editor sender, WinUIEditor.PaintedEventArgs args)
         {
             observed.Add(CaretVisible(core));
-            positions.Add((sender.FirstVisibleLine, sender.PointXFromPosition(sender.CurrentPos),
-                sender.PointYFromPosition(sender.CurrentPos)));
+            var surface = FindNamed<Border>(view, "ImageTarget");
+            var scale = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+            lastPaintedHeight = surface.ActualHeight;
+            positions.Add(FormattableString.Invariant($"row={sender.FirstVisibleLine}, x={sender.PointXFromPosition(sender.CurrentPos)}, y={sender.PointYFromPosition(sender.CurrentPos)}, lineHeight={sender.TextHeight(0)}, wholeLines={sender.LinesOnScreen}, surface={surface.ActualWidth}x{surface.ActualHeight}, scale={scale}, offset={view.DisplayVerticalOffset}"));
         }
         try
         {
@@ -643,6 +645,9 @@ internal static class ScrollRestorationTests
                 // No await between this assertion and the append: force the ordering
                 // that can occur when Loaded runs during scrollbar layout deferral.
                 core.TryInsertNewLogEntry();
+                // A newly loaded document may not have measured its long history
+                // lines yet. Keep that state deterministic before the first paint.
+                if (resetWidth) native.ScrollWidth = 1;
                 core.GetViewportAnchor(out pendingLine, out pendingSubLine);
                 core.GetScrollViewerPosition(out pendingX, out pendingY);
                 after = core.GetText();
@@ -656,13 +661,32 @@ internal static class ScrollRestorationTests
             // .LOG, timestamp and final empty line are short; the 160 identical
             // history lines give an independent idle-wrap completion condition.
             await UntilFrameAsync(() => native.VisibleFromDocLine(native.LineCount) == 3 + 160 * native.WrapCount(1));
+            if (wrapping == TextWrapping.NoWrap)
+            {
+                var horizontal = FindNamed<ScrollBar>(view, "HorizontalScrollBar");
+                var surface = FindNamed<Border>(view, "ImageTarget");
+                // Width tracking can publish the scrollbar after the first
+                // paint. Include its completed layout and resulting paint.
+                await UntilFrameAsync(() => horizontal.Visibility == Visibility.Visible && horizontal.ActualHeight > 0 &&
+                    lastPaintedHeight == surface.ActualHeight);
+            }
             Check(observed.Count > 0 && observed.All(visible => visible),
-                scenario + $": every paint must show the appended EOF caret; row/X/Y: {string.Join(", ", positions.Take(12))}");
+                scenario + $": every paint must show the appended EOF caret; {string.Join("; ", positions.Take(12))}");
             Check(pendingLine == null && pendingSubLine == 0 && pendingX == 0 && pendingY == 0,
                 scenario + ": metadata must not retain the superseded anchor before first paint");
             core.TryInsertNewLogEntry();
             Check(core.GetText() == after && !view.IsViewportRestorePending,
                 scenario + ": only one automatic append and caret-follow request");
+            if (resetWidth)
+            {
+                // Moving up one device pixel leaves the caret's top visible
+                // while clipping its bottom. The visibility check must reject it.
+                var scale = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+                await EditorTestLayout.AfterPaintAsync(native, () =>
+                    view.SetVerticalViewport(native.FirstVisibleLine, view.DisplayVerticalOffset - 1 / scale));
+                Check(native.PointYFromPosition(native.CurrentPos) >= 0 && !CaretVisible(core),
+                    scenario + ": a caret clipped at the bottom must fail visibility");
+            }
         }
         finally
         {

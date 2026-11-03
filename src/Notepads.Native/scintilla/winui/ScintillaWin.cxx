@@ -11,6 +11,7 @@
 #include "pch.h"
 #include "NativeSyntax.h"
 #include "DisplayLineMap.h"
+#include "TextStoreConversions.h"
 
 
 
@@ -624,16 +625,16 @@ namespace Scintilla::Internal {
 
 			if (_tsfCore || _tfTextStoreACPSink)
 			{
-				TS_TEXTCHANGE chg;
-				chg.acpStart = DocPositionToAcp(SelectionStart().Position());
-				chg.acpOldEnd = DocPositionToAcp(SelectionEnd().Position());
+				TS_TEXTCHANGE chg{};
+				if (!TextStoreConversions::TryAcp(DocPositionToAcp(SelectionStart().Position()), chg.acpStart) ||
+					!TextStoreConversions::TryAcp(DocPositionToAcp(SelectionEnd().Position()), chg.acpOldEnd) ||
+					!TextStoreConversions::TryAcpAdd(chg.acpStart, wclen, chg.acpNewEnd)) return;
 				_shouldNotifyTsf = false;
 				AddWString(std::wstring_view(wcs, wclen), CharacterSource::DirectInput);
-				chg.acpNewEnd = chg.acpOldEnd + wclen;
 				_shouldNotifyTsf = true;
 				if (_tsfCore)
 				{
-					_editContext.NotifyTextChanged(winrt::Windows::UI::Text::Core::CoreTextRange{ chg.acpStart, chg.acpNewEnd }, chg.acpNewEnd - chg.acpStart, winrt::Windows::UI::Text::Core::CoreTextRange{ chg.acpNewEnd, chg.acpNewEnd });
+					_editContext.NotifyTextChanged(winrt::Windows::UI::Text::Core::CoreTextRange{ chg.acpStart, chg.acpOldEnd }, chg.acpNewEnd - chg.acpStart, winrt::Windows::UI::Text::Core::CoreTextRange{ chg.acpNewEnd, chg.acpNewEnd });
 					//_editContext.NotifySelectionChanged(winrt::Windows::UI::Text::Core::CoreTextRange{ static_cast<int32_t>(DocPositionToAcp(SelectionStart().Position())), static_cast<int32_t>(DocPositionToAcp(SelectionEnd().Position())) });
 				}
 				else if (_tfTextStoreACPSink)
@@ -1170,33 +1171,58 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::OnTextUpdating(winrt::Windows::UI::Text::Core::CoreTextEditContext const &sender, winrt::Windows::UI::Text::Core::CoreTextTextUpdatingEventArgs const &args)
 	{
+		args.Result(winrt::Windows::UI::Text::Core::CoreTextTextUpdatingResult::Failed);
 		if (!TsfCoreLock(READWRITE))
 		{
 			return;
 		}
 
-		TS_TEXTCHANGE chg;
-		const auto hr{ SetText(0, args.Range().StartCaretPosition, args.Range().EndCaretPosition, args.Text().c_str(), args.Text().size(), &chg) };
+		const auto range = args.Range();
+		const auto selection = args.NewSelection();
+		const auto text = args.Text();
+		const auto oldLength = DocPositionToAcp(pdoc->Length());
+		TextStoreConversions::Replacement replacement{};
+		if (!TryTextStoreReplacement(oldLength, range.StartCaretPosition, range.EndCaretPosition, text.size(), replacement) ||
+			!TextStoreConversions::ValidRange(selection.StartCaretPosition, selection.EndCaretPosition, replacement.length)) {
+			TsfCoreUnlock();
+			return;
+		}
+		TS_TEXTCHANGE chg{};
+		const auto hr{ SetText(0, range.StartCaretPosition, range.EndCaretPosition, text.c_str(), text.size(), &chg) };
+		if (FAILED(hr)) {
+			TsfCoreUnlock();
+			return;
+		}
 
-		auto start{ args.NewSelection().StartCaretPosition };
-		auto end{ args.NewSelection().EndCaretPosition };
+		LONG start{ selection.StartCaretPosition };
+		LONG end{ selection.EndCaretPosition };
+		LONG documentEnd = 0;
+		bool validSelection = TextStoreConversions::TryAcp(DocPositionToAcp(pdoc->Length()), documentEnd);
 
 		if (_multiCorrect != 0 && start == _multiInsert)
 		{
-			start += _multiCorrect;
-			end += _multiCorrect;
+			validSelection = validSelection && TextStoreConversions::TryAcpAdd(start, _multiCorrect, start) &&
+				TextStoreConversions::TryAcpAdd(end, _multiCorrect, end);
 
 			// Todo: Figure out which parts actually changed instead of doing the WHOLE document
 			// Notify selection instead does not work
-			sender.NotifyTextChanged({ 0, static_cast<int>(DocPositionToAcp(pdoc->Length())) }, 0, { start, end });
+			if (validSelection && TextStoreConversions::ValidRange(start, end, documentEnd))
+				sender.NotifyTextChanged({ 0, documentEnd }, 0, { start, end });
 		}
 		_multiInsert = 0;
 		_multiCorrect = 0;
-		SetTextStoreSelection(AcpToDocPosition(start), AcpToDocPosition(end));
+		validSelection = validSelection && TextStoreConversions::ValidRange(start, end, documentEnd);
+		if (validSelection) SetTextStoreSelection(AcpToDocPosition(start), AcpToDocPosition(end));
+		else {
+			// The text was already accepted. Keep the native edit's selection
+			// and resynchronize it instead of reporting the whole edit as failed.
+			TS_SELECTION_ACP current{};
+			ULONG fetched = 0;
+			if (SUCCEEDED(GetSelection(TS_DEFAULT_SELECTION, 1, &current, &fetched)) && fetched == 1)
+				sender.NotifySelectionChanged({ current.acpStart, current.acpEnd });
+		}
 
-		args.Result(SUCCEEDED(hr)
-			? winrt::Windows::UI::Text::Core::CoreTextTextUpdatingResult::Succeeded
-			: winrt::Windows::UI::Text::Core::CoreTextTextUpdatingResult::Failed);
+		args.Result(winrt::Windows::UI::Text::Core::CoreTextTextUpdatingResult::Succeeded);
 
 		// The update is fully applied before queued UI observers run. Recovery
 		// may checkpoint visible preedit between keys, while undo still treats
@@ -1559,25 +1585,29 @@ namespace Scintilla::Internal {
 		{
 			return E_INVALIDARG;
 		}
-		*pcFetched = 1;
+		*pcFetched = 0;
 		if (ulCount == 0)
 		{
 			return S_OK;
 		}
 		auto &range{ sel.RangeMain() };
+		LONG caretAcp = 0, anchorAcp = 0;
+		if (!TextStoreConversions::TryAcp(DocPositionToAcp(range.caret.Position()), caretAcp) ||
+			!TextStoreConversions::TryAcp(DocPositionToAcp(range.anchor.Position()), anchorAcp)) return TS_E_INVALIDPOS;
 		if (range.caret < range.anchor)
 		{
-			pSelection->acpStart = DocPositionToAcp(range.caret.Position());
-			pSelection->acpEnd = DocPositionToAcp(range.anchor.Position());
+			pSelection->acpStart = caretAcp;
+			pSelection->acpEnd = anchorAcp;
 			pSelection->style.ase = caret.active ? TS_AE_START : TS_AE_NONE;
 		}
 		else
 		{
-			pSelection->acpStart = DocPositionToAcp(range.anchor.Position());
-			pSelection->acpEnd = DocPositionToAcp(range.caret.Position());
+			pSelection->acpStart = anchorAcp;
+			pSelection->acpEnd = caretAcp;
 			pSelection->style.ase = caret.active ? TS_AE_END : TS_AE_NONE;
 		}
 		pSelection->style.fInterimChar = 0;
+		*pcFetched = 1;
 #ifdef EnableTsfDebugMessages
 		DebugOut(L"GetSelection, ACP: %d, Sci: %d; ACP: %d, Sci: %d, Mode: %d\n", DocPositionToAcp(SelectionStart().Position()), SelectionStart().Position(), DocPositionToAcp(SelectionEnd().Position()), SelectionEnd().Position(), pSelection->style.ase);
 #endif
@@ -1634,9 +1664,10 @@ namespace Scintilla::Internal {
 
 		if (_multiCorrect != 0 && start == _multiInsert)
 		{
-			start += _multiCorrect;
-			end += _multiCorrect;
+			if (!TextStoreConversions::TryAcpAdd(start, _multiCorrect, start) ||
+				!TextStoreConversions::TryAcpAdd(end, _multiCorrect, end)) return TS_E_INVALIDPOS;
 		}
+		if (!TextStoreConversions::ValidRange(start, end, DocPositionToAcp(pdoc->Length()))) return TS_E_INVALIDPOS;
 
 		switch (pSelection->style.ase)
 		{
@@ -1667,7 +1698,8 @@ namespace Scintilla::Internal {
 			return TS_E_NOLOCK;
 		}
 
-		const auto lastAcp{ DocPositionToAcp(pdoc->Length()) };
+		LONG lastAcp = 0;
+		if (!TextStoreConversions::TryAcp(DocPositionToAcp(pdoc->Length()), lastAcp)) return TS_E_INVALIDPOS;
 
 		// acpEnd can be -1, initialize it properly.
 		if (acpEnd == -1)
@@ -1858,7 +1890,23 @@ namespace Scintilla::Internal {
 		return S_OK;
 	}
 
+	bool ScintillaWinUI::TryTextStoreReplacement(Sci::Position documentLength, LONG start, LONG end, ULONG length,
+		TextStoreConversions::Replacement &result)
+	{
+		return TextStoreConversions::TryInputReplacement(*pdoc, sel, inOverstrike, documentLength, start, end, length,
+			[this](LONG acp, bool *withinSurrogatePair) { return AcpToDocPosition(acp, withinSurrogatePair); }, result);
+	}
+
 	IFACEMETHODIMP ScintillaWinUI::SetText(DWORD /*dwFlags*/, LONG acpStart, LONG acpEnd, const WCHAR *pchText, ULONG cch, TS_TEXTCHANGE *pChange)
+	{
+		TextStoreConversions::TextChangeResult result{};
+		const auto hr = SetTextWithResult(acpStart, acpEnd, pchText, cch, result);
+		if (SUCCEEDED(hr) && pChange) *pChange = result.change;
+		return hr;
+	}
+
+	HRESULT ScintillaWinUI::SetTextWithResult(LONG acpStart, LONG acpEnd, const WCHAR *pchText, ULONG cch,
+		TextStoreConversions::TextChangeResult &result)
 	{
 		// Todo: Problem with inserting characters like Right Single Quotation Mark
 		// Todo: Problems with Cyrillic Small Letter Short I (cursor in wrong spot + same problem as above)
@@ -1876,6 +1924,10 @@ namespace Scintilla::Internal {
 			return TS_E_READONLY;
 		}
 
+		const auto documentLength = DocPositionToAcp(pdoc->Length());
+		TextStoreConversions::Replacement replacement{};
+		if (!TryTextStoreReplacement(documentLength, acpStart, acpEnd, cch, replacement)) return TS_E_INVALIDPOS;
+
 		// Begin on the first accepted edit, not the start notification: an IME
 		// can start while a read lease temporarily prevents document mutations.
 		if (_tsfCore && IsComposing() && !_coreTextComposition) _coreTextComposition = std::make_unique<CoreTextComposition>(pdoc, sel);
@@ -1883,8 +1935,8 @@ namespace Scintilla::Internal {
 		const auto startPos{ AcpToDocPosition(acpStart) };
 		const auto endPos{ AcpToDocPosition(acpEnd) };
 
-		const auto utf16Len{ pdoc->CountUTF16(startPos, endPos) };
-		LONG newAcpStart{ acpStart };
+		const auto utf16Len{ pdoc->CountUTF16(startPos, endPos) + replacement.overwritten };
+		Sci::Position actualEnd{ replacement.end };
 		_multiInsert = 0;
 		_multiCorrect = 0;
 		if (cch == 0)
@@ -1911,21 +1963,15 @@ namespace Scintilla::Internal {
 			// Rectangle islands coalesce into one insertion per row, and
 			// overtype also deletes at empty row carets. Use the completed edit,
 			// not a forecast based on how many selection ranges it started with.
-			const auto actualEnd{ DocPositionToAcp(sel.MainCaret()) };
-			newAcpStart = actualEnd - cch;
-			_multiInsert = acpStart + cch;
+			actualEnd = DocPositionToAcp(sel.MainCaret());
+			_multiInsert = replacement.end;
 			_multiCorrect = actualEnd - _multiInsert;
 		}
 
-		if (pChange)
-		{
-			pChange->acpStart = newAcpStart;
-			pChange->acpOldEnd = newAcpStart + utf16Len;
-			pChange->acpNewEnd = newAcpStart + cch;
+		if (!TextStoreConversions::TryTextChange(documentLength, acpEnd, actualEnd, utf16Len, cch, result)) return E_FAIL;
 #ifdef EnableTsfDebugMessages
-			DebugOut(L"SetText, Start: %d, Old End: %d, New End: %d\n", pChange->acpStart, pChange->acpOldEnd, pChange->acpNewEnd);
+		DebugOut(L"SetText, Start: %d, Old End: %d, New End: %d\n", result.change.acpStart, result.change.acpOldEnd, result.change.acpNewEnd);
 #endif
-		}
 
 		return S_OK;
 	}
@@ -2003,16 +2049,18 @@ namespace Scintilla::Internal {
 		{
 			return E_POINTER;
 		}
-		hr = SetText(0, acpResultStart, acpResultEnd, pchText, cch, pChange);
+		TextStoreConversions::TextChangeResult result{};
+		hr = SetTextWithResult(acpResultStart, acpResultEnd, pchText, cch, result);
 
 		if (hr != S_OK)
 			return hr;
 
+		*pChange = result.change;
 		if (!(dwFlags & TS_IAS_NOQUERY) && pChange)
 		{
-			*pacpStart = pChange->acpStart;
-			*pacpEnd = pChange->acpNewEnd;
-			SelectionPosition position(AcpToDocPosition(pChange->acpNewEnd));
+			*pacpStart = result.insertionStart;
+			*pacpEnd = result.change.acpNewEnd;
+			SelectionPosition position(AcpToDocPosition(result.change.acpNewEnd));
 			if (position.Position() == sel.MainCaret())
 				position.SetTrailingEdge(sel.RangeMain().caret.TrailingEdge());
 			SetEmptySelection(position);
@@ -2117,10 +2165,7 @@ namespace Scintilla::Internal {
 				bounds.bottom = std::max(bounds.bottom, rectangle.bottom);
 			}
 			if (!_mainWrapper->TransformToScreen(bounds)) return TS_E_NOLAYOUT;
-			prc->left = static_cast<LONG>(std::floor(bounds.left));
-			prc->top = static_cast<LONG>(std::floor(bounds.top));
-			prc->right = static_cast<LONG>(std::ceil(bounds.right));
-			prc->bottom = static_cast<LONG>(std::ceil(bounds.bottom));
+			if (!TextStoreConversions::EnclosingRect(bounds.left, bounds.top, bounds.right, bounds.bottom, *prc)) return TS_E_NOLAYOUT;
 			return S_OK;
 		} catch (...) {
 			return winrt::to_hresult();
@@ -2138,12 +2183,10 @@ namespace Scintilla::Internal {
 			return TS_E_NOLOCK;
 		}
 
+		*prc = {};
 		auto pr{ GetTextRectangle() };
 		if (!_mainWrapper->TransformToScreen(pr)) return TS_E_NOLAYOUT;
-		prc->left = pr.left;
-		prc->top = pr.top;
-		prc->right = pr.right;
-		prc->bottom = pr.bottom;
+		if (!TextStoreConversions::EnclosingRect(pr.left, pr.top, pr.right, pr.bottom, *prc)) return TS_E_NOLAYOUT;
 
 		return S_OK;
 	}
@@ -2208,6 +2251,11 @@ namespace Scintilla::Internal {
 
 	Sci::Position ScintillaWinUI::DocPositionToAcp(Sci::Position docPosition)
 	{
+		// The maintained UTF-16 index includes the end sentinel. Range validation
+		// must not rescan a potentially huge final line on every IME keystroke.
+		if (docPosition == pdoc->Length() && IsUnicodeMode() &&
+			FlagSet(pdoc->LineCharacterIndex(), Scintilla::LineCharacterIndexType::Utf16))
+			return pdoc->IndexLineStart(pdoc->LinesTotal(), Scintilla::LineCharacterIndexType::Utf16);
 		const auto line{ pdoc->LineFromPosition(docPosition) };
 		return pdoc->CountUTF16(pdoc->LineStart(line), docPosition) + pdoc->IndexLineStart(pdoc->LineFromPosition(docPosition), Scintilla::LineCharacterIndexType::Utf16);
 	}
@@ -3087,8 +3135,12 @@ namespace Scintilla::Internal {
 			if (vs.wrap.state != Wrap::None || charsPerScroll == 0) {
 				return;
 			}
+			// A character is much narrower than a line is tall. Give horizontal
+			// wheel input a modest speed boost without changing vertical input,
+			// the Windows character count, or page-at-a-time scrolling.
+			constexpr double horizontalWheelGain = 2.0;
 			const double widthPerStep = charsPerScroll == WHEEL_PAGESCROLL
-				? GetTextRectangle().Width() : charsPerScroll * vs.aveCharWidth;
+				? GetTextRectangle().Width() : charsPerScroll * vs.aveCharWidth * horizontalWheelGain;
 			ScrollBy(static_cast<double>(delta) / WHEEL_DELTA * widthPerStep * (horizontal ? 1 : -1) / viewportScale, 0, true);
 			return;
 		}
@@ -3452,7 +3504,12 @@ namespace Scintilla::Internal {
 			// A previously wrapped control may still have wrapped display heights.
 			WrapLines(WrapScope::wsVisible);
 		}
-		SetTopLine(pcs->DisplayFromDocSub(line, subLine), 0);
+		// Measure the viewport that will actually be painted, including preceding
+		// long rows when the anchor is near EOF. Measuring from the EOF row alone
+		// can reveal a horizontal scrollbar only after completing the restore,
+		// shrinking the viewport and clipping the caret on the next paint.
+		const auto initialPosition = ScrollGeometry().Clamp({pcs->DisplayFromDocSub(line, subLine), request.documentLine < 0 ? 0 : request.verticalOffset});
+		SetTopLine(initialPosition.row, initialPosition.offset);
 		scrollToAfterWrap.reset();
 		// Establish the shared canvas before following the caret. A wider later
 		// visible line must not move an RTL caret offscreen after X is calculated.
@@ -4000,10 +4057,10 @@ namespace Scintilla::Internal {
 			pdoc->SetUndoCollection(true);
 		}
 		const auto newLen{ DocPositionToAcp(pdoc->Length()) };
-		TS_TEXTCHANGE chg;
+		TS_TEXTCHANGE chg{};
 		chg.acpStart = 0;
-		chg.acpOldEnd = oldLen;
-		chg.acpNewEnd = newLen;
+		if (!TextStoreConversions::TryAcp(oldLen, chg.acpOldEnd) ||
+			!TextStoreConversions::TryAcp(newLen, chg.acpNewEnd)) return ret;
 		if (_tsfCore)
 		{
 			_editContext.NotifyTextChanged(winrt::Windows::UI::Text::Core::CoreTextRange{ chg.acpStart, chg.acpOldEnd }, chg.acpNewEnd - chg.acpStart, winrt::Windows::UI::Text::Core::CoreTextRange{ static_cast<int32_t>(DocPositionToAcp(SelectionStart().Position())), static_cast<int32_t>(DocPositionToAcp(SelectionEnd().Position())) });

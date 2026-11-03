@@ -629,7 +629,8 @@ try {
     }
 
     Test-Case 'Horizontal fine wheel and Shift wheel preserve pixels and both axis targets' {
-        if ([EditorAutomationInput]::WheelCharacters() -eq 0) {
+        $characters = [EditorAutomationInput]::WheelCharacters()
+        if ($characters -eq 0) {
             Write-Output 'SKIP: Windows disables horizontal wheel scrolling.'
             return
         }
@@ -642,6 +643,7 @@ try {
             $null = Invoke-EditorTestCommand $session 'raster|False'
             $null = Invoke-EditorTestCommand $session 'vertical-viewport|10|0'
             $state = Invoke-EditorTestCommand $session 'x-offset|200'
+            $metrics = Invoke-EditorTestCommand $session 'wheel-metrics'
             $bounds = $element.Current.BoundingRectangle
             $height = [int] $state.lineHeight
             $x = [int] ($bounds.Left + $bounds.Width / 2)
@@ -652,16 +654,31 @@ try {
                 param($s) [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
             } 'A physical horizontal wheel detent finishes'
             $step = [int] $detent.xOffset - 200
+            $unclampedStep = [double] $step
+            $measurementError = 0.0
+            $availableTravel = [Math]::Max(0.0, [double] $metrics.horizontalMaximum - 200)
+            if ($characters -ne [uint32]::MaxValue) {
+                $unclampedStep = 2.0 * $characters * [double] $metrics.averageCharWidth
+                # SCI_TEXTWIDTH rounds the 52-character sample to an integer.
+                $measurementError = 2.0 * $characters / 52.0
+                $minimumStep = [Math]::Min($availableTravel, $unclampedStep - $measurementError)
+                $maximumStep = [Math]::Min($availableTravel, $unclampedStep + $measurementError)
+                Assert-True ($step -ge $minimumStep - 1 -and $step -le $maximumStep + 1) 'Horizontal wheel doubles character-based travel and respects the trailing boundary'
+            }
             $null = Invoke-EditorTestCommand $session 'x-offset|200'
             $before = Read-StableInk "horizontal-$rtl-before" 4
-            for ($wheelEvent = 0; $wheelEvent -lt 12; $wheelEvent++) {
+            # Keep image overlap with large Windows character-count preferences.
+            $fineEvents = [int] [Math]::Clamp([Math]::Floor(120.0 * $bounds.Width * 0.2 / $unclampedStep), 1, 12)
+            for ($wheelEvent = 0; $wheelEvent -lt $fineEvents; $wheelEvent++) {
                 [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, 1, $true)
             }
             $fine = Wait-EditorState {
                 param($s) [int] $s.xOffset -gt 200 -and $s.scrollAnimating -eq 'False'
             } 'Sub-detent horizontal events move without accumulating to 120'
             $pixels = [int] $fine.xOffset - 200
-            Assert-True ([Math]::Abs($pixels - $step / 10.0) -le 1) 'Fine horizontal input retains the same displacement per wheel unit'
+            $minimumFine = [Math]::Min($availableTravel, ($unclampedStep - $measurementError) * $fineEvents / 120.0)
+            $maximumFine = [Math]::Min($availableTravel, ($unclampedStep + $measurementError) * $fineEvents / 120.0)
+            Assert-True ($pixels -ge $minimumFine - 1 -and $pixels -le $maximumFine + 1) 'Fine horizontal input retains the same displacement per wheel unit'
             Assert-Equal $fine.firstVisible 10 'Horizontal input leaves the vertical row unchanged'
             Assert-Equal $fine.verticalOffset 0 'Horizontal input leaves the vertical fraction unchanged'
             $after = Read-StableInk "horizontal-$rtl-after" 4
@@ -679,9 +696,12 @@ try {
                     }
                 }
             }
-            Assert-True ($ink -gt 100) 'The horizontal raster reference contains real glyph ink'
-            Assert-True ($different -le $ink * 0.03) 'Horizontal wheel pixels translate exactly with the native viewport'
-            Assert-True ($unshifted -gt $ink * 0.25) 'The unchanged-image control rejects a missing horizontal scroll'
+            if ($pixels -lt $bounds.Width * 0.4) {
+                Assert-True ($ink -gt 100) 'The horizontal raster reference contains real glyph ink'
+                Assert-True ($different -le $ink * 0.03) 'Horizontal wheel pixels translate exactly with the native viewport'
+                Assert-True ($unshifted -gt $ink * 0.25) 'The unchanged-image control rejects a missing horizontal scroll'
+            }
+            else { Write-Output 'SKIP: Pixel overlap check; one wheel unit exceeds the fixture overlap at this Windows scroll setting.' }
             $null = Invoke-EditorTestCommand $session 'x-offset|200'
             [EditorAutomationInput]::Wheel([uint32] $session.ProcessId, $x, $y, -120, $false, $true)
             $shifted = Wait-EditorState {

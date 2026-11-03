@@ -381,6 +381,11 @@ internal static class InteractiveEditorHost
                 break;
             case "state" when command.Length == 1:
                 break;
+            case "wheel-metrics" when command.Length == 1:
+                // Font measurement creates a layout; keep it out of state polling.
+                var horizontal = (Windows.UI.Xaml.Controls.Primitives.ScrollBar)FindElement(_view, "HorizontalScrollBar");
+                return "averageCharWidth=" + (Native.TextWidth(32, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") / 52.0).ToString(CultureInfo.InvariantCulture) +
+                    "\nhorizontalMaximum=" + horizontal.Maximum.ToString(CultureInfo.InvariantCulture) + "\n";
             case "editor-tools-start" when command.Length == 1:
                 if (_editorTools != null) throw new InvalidOperationException("An editor tools fixture already exists.");
                 _editorTools = await NotepadsIntegrationTests.EditorToolsKeyboardFixture.CreateAsync();

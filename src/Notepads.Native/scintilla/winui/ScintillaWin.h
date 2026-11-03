@@ -22,6 +22,7 @@ namespace WinUIEditor { class NativeDocumentJournal; class NativeJournalFile; st
 namespace WinUIEditor { class SyntaxHighlightingState; }
 
 namespace Scintilla::Internal {
+	namespace TextStoreConversions { struct Replacement; struct TextChangeResult; }
 	enum class ScrollEventType : int32_t
 	{
 		SmallDecrement = 0,
@@ -255,6 +256,10 @@ namespace Scintilla::Internal {
 		bool TsfCoreLock(DWORD lock);
 		void TsfCoreUnlock();
 		void SetTextStoreSelection(Sci::Position caretPosition, Sci::Position anchorPosition);
+		bool TryTextStoreReplacement(Sci::Position documentLength, LONG start, LONG end, ULONG length,
+			TextStoreConversions::Replacement &result);
+		HRESULT SetTextWithResult(LONG acpStart, LONG acpEnd, const WCHAR *text, ULONG length,
+			TextStoreConversions::TextChangeResult &result);
 		void FinishCoreTextComposition();
 
 		winrt::com_ptr<ITfThreadMgr2> _tfThreadManager{ nullptr };

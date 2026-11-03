@@ -52,6 +52,7 @@
     <ClCompile Include="DocumentSearchTests.cpp" />
     <ClCompile Include="..\..\..\..\src\Notepads.Native\WinUIEditor\NativeEditorState.cpp" />
     <ClCompile Include="VerticalScrollTests.cpp" />
+    <ClCompile Include="TextStoreConversionTests.cpp" />
     <ClCompile Include="GutterGeometryTests.cpp" />
     <ClCompile Include="HeadlessPlatform.cpp" />
     <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\CaseConvert.cxx" />

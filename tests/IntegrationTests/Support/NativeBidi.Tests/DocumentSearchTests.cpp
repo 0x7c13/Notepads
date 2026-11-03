@@ -32,6 +32,166 @@
 #include "Decoration.h"
 #include "CaseFolder.h"
 #include "Document.h"
+#include "Selection.h"
+#include "TextStoreConversions.h"
+
+size_t CheckTextStoreOvertypeAdmission() {
+    using namespace Scintilla;
+    using namespace Scintilla::Internal;
+    using namespace Scintilla::Internal::TextStoreConversions;
+    size_t checks = 0;
+    const auto require = [&](bool valid) {
+        if (!valid) throw std::runtime_error("Text-store overtype admission regression.");
+        ++checks;
+    };
+    struct Fixture { std::string_view bytes; Sci::Position position; LONG removed; };
+    for (const auto fixture : std::array{
+        Fixture{"x", 0, 1}, Fixture{"p\xe4\xb8\xadz", 1, 1},
+        Fixture{"p\xf0\x9f\x98\x80z", 1, 2}, Fixture{"pe\xcc\x81z", 1, 1},
+        Fixture{"p\tz", 1, 1}, Fixture{"p\x80z", 1, 1},
+        Fixture{"p\r\nz", 1, 0}, Fixture{"p\r\nz", 2, 0},
+        Fixture{"p\rz", 1, 0}, Fixture{"p\nz", 1, 0}, Fixture{"p", 1, 0}}) {
+        struct Input { std::string_view bytes; LONG units; };
+        for (const auto input : std::array{Input{"q", 1}, Input{"\xf0\x9f\x98\x80", 2}, Input{"abc", 3}}) {
+            for (const LONG headroom : {0L, 1L, 3L}) {
+                for (const bool nearEnd : {false, true}) {
+                    Document document(DocumentOption::Default);
+                    document.SetDBCSCodePage(CpUtf8);
+                    document.InsertString(0, fixture.bytes);
+                    const auto smallLength = document.CountUTF16(0, document.Length());
+                    // Model the unchanged prefix/suffix numerically, while
+                    // using a real Document for the overwritten scalar and edit.
+                    // This reaches the ACP boundary without allocating 2 GiB.
+                    const auto length = MaximumAcp - headroom;
+                    const auto prefix = nearEnd ? length - smallLength : 0;
+                    const auto suffix = length - prefix - smallLength;
+                    const auto start = static_cast<LONG>(prefix + document.CountUTF16(0, fixture.position));
+                    Selection selection;
+                    selection.SetSelection(SelectionRange(SelectionPosition(fixture.position)));
+                    size_t mapped = 0;
+                    const auto map = [&](LONG acp, bool *withinSurrogatePair) {
+                        require(acp == start);
+                        *withinSurrogatePair = false;
+                        ++mapped;
+                        return fixture.position;
+                    };
+                    Replacement result{42, 43, 44};
+                    const bool admitted = TryInputReplacement(document, selection, true,
+                        length, start, start, input.units, map, result);
+                    const bool expected = input.units - fixture.removed <= headroom;
+                    require(admitted == expected);
+                    if (!admitted) {
+                        require(result.end == 42 && result.length == 43 && result.overwritten == 44);
+                        continue;
+                    }
+                    const bool fallback = input.units > headroom;
+                    require(mapped == (fallback ? 1U : 0U));
+                    require(result.overwritten == (fallback ? fixture.removed : 0));
+                    require(result.end == start + input.units);
+                    require(result.length == length + input.units - result.overwritten);
+                    if (fixture.removed) document.DelChar(fixture.position);
+                    document.InsertString(fixture.position, input.bytes);
+                    const auto actualLength = prefix + document.CountUTF16(0, document.Length()) + suffix;
+                    require(actualLength == length + input.units - fixture.removed && actualLength <= MaximumAcp);
+                    if (fallback) {
+                        require(result.length == actualLength && ValidRange(result.end, result.end, result.length));
+                        TextChangeResult change{};
+                        require(TryTextChange(length, start, result.end, result.overwritten, input.units, change));
+                        require(change.change.acpStart == start && change.change.acpOldEnd == start + fixture.removed &&
+                            change.change.acpNewEnd == result.end && change.insertionStart == start);
+                    }
+                }
+            }
+        }
+    }
+
+    Document document(DocumentOption::Default);
+    document.SetDBCSCodePage(CpUtf8);
+    document.InsertString(0, "abc");
+    // A single main-caret deletion must not hide growth from extra carets,
+    // rectangle reprojection, or realization of virtual spaces.
+    for (int shape = 0; shape < 7; ++shape) {
+        Selection selection;
+        selection.SetSelection(SelectionRange(SelectionPosition(0)));
+        if (shape == 1) selection.AddSelection(SelectionRange(SelectionPosition(2)));
+        if (shape == 2) selection.selType = Selection::SelTypes::rectangle;
+        if (shape == 3) selection.selType = Selection::SelTypes::thin;
+        if (shape == 4) selection.SetSelection(SelectionRange(SelectionPosition(0, 2)));
+        if (shape == 5) selection.SetSelection(SelectionRange(SelectionPosition(0, 2), SelectionPosition(0, 1)));
+        if (shape == 6) selection.SetSelection(SelectionRange(SelectionPosition(1), SelectionPosition(0)));
+        size_t mapped = 0;
+        const auto unexpectedMap = [&](LONG, bool *withinPair) {
+            ++mapped;
+            *withinPair = false;
+            return Sci::Position{0};
+        };
+        Replacement result{42, 43, 44};
+        require(!TryInputReplacement(document, selection, shape != 0,
+            MaximumAcp, 0, 0, 1, unexpectedMap, result));
+        require(result.end == 42 && result.length == 43 && result.overwritten == 44);
+        require(TryInputReplacement(document, selection, true, 3, 0, 0, 1, unexpectedMap, result));
+        require(result.end == 1 && result.length == 4 && result.overwritten == 0);
+        require(TryInputReplacement(document, selection, true, MaximumAcp, 0, 1, 1, unexpectedMap, result));
+        require(result.end == 1 && result.length == MaximumAcp && result.overwritten == 0);
+        require(mapped == 0);
+    }
+    // A half-surrogate ACP maps beyond the scalar. It cannot justify deleting
+    // that next character, nor can any invalid range reach the mapper.
+    Selection selection;
+    selection.SetSelection(SelectionRange(SelectionPosition(0)));
+    Replacement result{42, 43, 44};
+    require(!TryInputReplacement(document, selection, true, MaximumAcp, 1, 1, 1,
+        [](LONG, bool *withinPair) { *withinPair = true; return Sci::Position{1}; }, result));
+    require(result.end == 42 && result.length == 43 && result.overwritten == 44);
+    struct Invalid { std::int64_t length; LONG start, end; std::int64_t inserted; };
+    for (const auto invalid : std::array{
+        Invalid{-1, 0, 0, 1}, Invalid{MaximumAcp + 1, 0, 0, 1}, Invalid{3, -1, -1, 1},
+        Invalid{3, 4, 4, 1}, Invalid{3, 2, 1, 1}, Invalid{3, 0, 0, -1},
+        Invalid{MaximumAcp, 0, 0, INT64_MAX}, Invalid{MaximumAcp, 2147483647, 2147483647, 1}}) {
+        size_t mapped = 0;
+        require(!TryInputReplacement(document, selection, true, invalid.length, invalid.start, invalid.end, invalid.inserted,
+            [&](LONG, bool *withinPair) { ++mapped; *withinPair = false; return Sci::Position{0}; }, result));
+        require(result.end == 42 && result.length == 43 && result.overwritten == 44);
+        require(mapped == 0);
+    }
+    return checks;
+}
+
+size_t CheckUtf16EndIndex() {
+    using namespace Scintilla;
+    using namespace Scintilla::Internal;
+    size_t checks = 0;
+    const auto require = [&](bool valid) {
+        if (!valid) throw std::runtime_error("The maintained UTF-16 end index must match document contents.");
+        ++checks;
+    };
+    struct Fixture { std::string_view bytes; Sci::Position units; };
+    for (const auto fixture : std::array{
+        Fixture{"", 0}, Fixture{"a", 1}, Fixture{"one\rtwo\n", 8},
+        Fixture{"\xe4\xb8\xad\xf0\x9f\x98\x80" "e\xcc\x81\r\n\xd7\x91", 8},
+        Fixture{"\x80", 1}}) {
+        Document document(DocumentOption::Default);
+        document.SetDBCSCodePage(CpUtf8);
+        document.AllocateLineCharacterIndex(LineCharacterIndexType::Utf16);
+        document.InsertString(0, fixture.bytes);
+        document.DeleteUndoHistory();
+        const auto checkLength = [&](Sci::Position expected) {
+            require(document.IndexLineStart(document.LinesTotal(), LineCharacterIndexType::Utf16) == expected);
+            require(document.CountUTF16(0, document.Length()) == expected);
+        };
+        checkLength(fixture.units);
+        document.InsertString(document.Length(), "\xf0\x9f\x98\x80");
+        checkLength(fixture.units + 2);
+        document.Undo();
+        checkLength(fixture.units);
+        document.Redo();
+        checkLength(fixture.units + 2);
+        document.DeleteChars(document.Length() - 4, 4);
+        checkLength(fixture.units);
+        document.ReleaseLineCharacterIndex(LineCharacterIndexType::Utf16);
+    }
+    return checks;
+}
 
 size_t CheckPreparedReplacementDecorations() {
     using namespace Scintilla;

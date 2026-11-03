@@ -40,6 +40,9 @@ size_t CheckEditorStateTransfer();
 size_t CheckDocumentSearchBounds();
 size_t CheckPreparedReplacementDecorations();
 size_t CheckVerticalScrollGeometry();
+size_t CheckTextStoreConversions();
+size_t CheckUtf16EndIndex();
+size_t CheckTextStoreOvertypeAdmission();
 
 namespace {
 using Microsoft::WRL::ComPtr;
@@ -1211,6 +1214,10 @@ int wmain(int argc, wchar_t **argv) {
         checks += CheckPreparedReplacementDecorations();
         std::cout << "PASS: bounded literal search across buffer gaps, directions, case modes and NUL/EOF boundaries.\n";
         checks += CheckVerticalScrollGeometry();
+        checks += CheckTextStoreConversions();
+        checks += CheckUtf16EndIndex();
+        checks += CheckTextStoreOvertypeAdmission();
+        std::cout << "PASS: checked ACP narrowing, selection arithmetic and enclosing screen rectangles.\n";
         std::cout << "PASS: undo/redo caret edges survive grouped replacements, coalesced deletion and container actions.\n";
         CheckDrawSession(env);
         CheckRenderer(env);
