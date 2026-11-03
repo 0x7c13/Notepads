@@ -291,7 +291,11 @@ finally {
 
 & {
     . (Join-Path $repo 'scripts/EditorTestSession.ps1')
-    function Complete-IsolatedTestPackage { param($Session); $Session.Completed = $true }
+    function Complete-IsolatedTestPackage {
+        param($Session)
+        [IO.File]::WriteAllText((Join-Path $Session.RunRoot 'results.txt'), 'PASS: fixture cleanup')
+        $Session.Completed = $true
+    }
     function Get-IsolatedTestProcess {
         param($Identity)
         $publication.Checks++
@@ -312,22 +316,25 @@ finally {
         @{ Name = 'Exit ACK published during exit observation succeeds'; Command = 'exit'; ExitCode = 0; Response = "OK`n" },
         @{ Name = 'Exit observation without an ACK is rejected'; Command = 'exit'; ExitCode = 0; Error = '*Isolated editor process exited*' },
         @{ Name = 'Exit observation cannot reuse a prior command ACK'; Command = 'exit'; ExitCode = 0; Response = "OK`n"; StaleResponse = $true; Error = '*Isolated editor process exited*' },
-        @{ Name = 'Late exit ACK cannot hide nonzero exit'; Command = 'exit'; ExitCode = 31; Response = "OK`n"; Error = '*exited with code 31*' },
+        @{ Name = 'Late exit ACK cannot hide nonzero exit'; Command = 'exit'; ExitCode = 31; Response = "OK`n"; Result = 'FAIL: unhandled fixture exception'; Error = '*exited with code 31*' },
         @{ Name = 'Late exit response must acknowledge success'; Command = 'exit'; ExitCode = 0; Response = "ERROR`nFixture command failure"; Error = '*Fixture command failure*' },
         @{ Name = 'Late exit ACK cannot hide fatal evidence'; Command = 'exit'; ExitCode = 0; Response = "OK`n"; Fatal = $true; Error = '*Fixture fatal failure*' },
         @{ Name = 'Ordinary command response cannot authorize process exit'; Command = 'snapshot'; ExitCode = 0; Response = "OK`n"; Error = '*Isolated editor process exited*' }
     )) {
         $channel = Join-Path $fixtureRoot ('interactive-publication-' + [Guid]::NewGuid().ToString('N'))
         New-Item -ItemType Directory -Path $channel -Force | Out-Null
+        $runRoot = Join-Path $channel 'data'
+        New-Item -ItemType Directory -Path $runRoot -Force | Out-Null
         $interactive = @{
             ProcessIdentity = New-ExitedProcessFixture $case.ExitCode
             Processes = [Collections.Generic.List[object]]::new()
-            Channel = $channel; Root = $channel; Sequence = 0
+            Channel = $channel; Root = $channel; RunRoot = $runRoot; Sequence = 0
         }
         $interactive.Processes.Add($interactive.ProcessIdentity)
         $publication = $case.Clone()
         $publication.Checks = 0
         $publication.ExitCheck = if ($case.Command -ceq 'exit') { 3 } else { 2 }
+        if ($case.Result) { [IO.File]::WriteAllText((Join-Path $runRoot 'results.txt'), $case.Result) }
         try {
             $action = {
                 if ($case.Command -ceq 'exit') { Stop-EditorTestSession $interactive }
@@ -340,6 +347,19 @@ finally {
                 $checks.Add($case.Name)
             }
             if ($publication.Checks -ne $publication.ExitCheck) { throw 'Interactive fixture missed its exact exit-observation boundary.' }
+            if ($case.Command -ceq 'exit') {
+                $preserved = Join-Path $channel 'interactive-results.txt'
+                if ($case.Result) {
+                    if ((Get-Content -LiteralPath $preserved -Raw) -cne $case.Result) {
+                        throw 'Interactive exception evidence was not preserved before cleanup.'
+                    }
+                    $checks.Add('Interactive exception evidence survives cleanup replacing results.txt')
+                }
+                elseif (Test-Path -LiteralPath $preserved) { throw 'Cleanup evidence was mistaken for an interactive exception.' }
+                if ((Get-Content -LiteralPath (Join-Path $runRoot 'results.txt') -Raw) -cne 'PASS: fixture cleanup') {
+                    throw 'Interactive fixture did not exercise cleanup replacing results.txt.'
+                }
+            }
         }
         finally { foreach ($pending in $interactive.Processes.ToArray()) { Close-IsolatedTestProcess $interactive $pending } }
     }
