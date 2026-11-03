@@ -162,9 +162,12 @@ internal static partial class BidiTests
         var units = scalars.Select(Encoding.UTF8.GetBytes).Concat(new byte[][] { [0xf0], [0xf0, 0x9f], [0xf0, 0x9f, 0x98] });
         try
         {
+            // Paint waits must be satisfied by the operation being tested.
+            native.CaretPeriod = 0;
             await AfterPaintAsync(native, () => Window.Current.Content = core);
             foreach (var unit in units)
             {
+                Progress($"screen-line fonts {Convert.ToHexString(unit)}: split styles");
                 var truncated = unit[0] == 0xf0 && unit.Length < 4;
                 byte[] bytes = truncated ? [0x41, .. unit] : [0x41, .. unit, 0x5a];
                 await AfterPaintAsync(native, () =>
@@ -182,13 +185,19 @@ internal static partial class BidiTests
                     native.SetSel(0, bytes.Length);
                 });
                 var splitGeometry = Capture();
-                await AfterPaintAsync(native, () =>
+                // A one-byte truncated unit already has a uniform style, so
+                // assigning it again would not request another paint.
+                if (unit.Length > 1)
                 {
-                    // Changing only continuation-byte styles must not change
-                    // the converted unit's font or shift following characters.
-                    native.StartStyling(1, 0);
-                    native.SetStyling(unit.Length, 2);
-                });
+                    Progress($"screen-line fonts {Convert.ToHexString(unit)}: uniform styles");
+                    await AfterPaintAsync(native, () =>
+                    {
+                        // Changing only continuation-byte styles must not change
+                        // the converted unit's font or shift following characters.
+                        native.StartStyling(1, 0);
+                        native.SetStyling(unit.Length, 2);
+                    });
+                }
                 Check(splitGeometry.SequenceEqual(Capture()),
                     "Screen-line geometry uses the leading byte's font for each UTF-16 conversion unit.");
                 Check(native.Length == bytes.Length && bytes.Select((value, index) =>
