@@ -56,7 +56,7 @@ internal static class DiffSourceViewportTests
             var changedText = editor.GetText();
             var sequence = editor.DocumentSequence;
             var caret = native.CurrentPos;
-            var oldRow = native.FirstVisibleLine;
+            var oldWrapCount = native.WrapCount(targetLine);
             var oldX = native.XOffset;
             var surface = Descendants(view).OfType<Border>().Single(element => element.Name == "ImageTarget");
 
@@ -111,7 +111,14 @@ internal static class DiffSourceViewportTests
                         label + ": every returning paint preserves the source anchor and leading geometry; observed " +
                         string.Join(", ", observations.Take(6)));
                     if (wrap)
-                        Check(native.FirstVisibleLine != oldRow, label + ": zoom changes the display row behind the retained document anchor.");
+                    {
+                        // Preceding offscreen rows wrap lazily, so their old
+                        // heights can keep the global display index unchanged.
+                        // The restored visible line must already use the new font.
+                        var newWrapCount = native.WrapCount(targetLine);
+                        Check(newWrapCount > oldWrapCount, label +
+                            $": zoom reflows the visible source line; wraps before={oldWrapCount}, after={newWrapCount}.");
+                    }
                     else if (rtl)
                         Check(native.XOffset != oldX, label + ": zoom changes the physical X behind the retained leading offset.");
                     Check(editor.GetText() == changedText && editor.DocumentSequence == sequence,
