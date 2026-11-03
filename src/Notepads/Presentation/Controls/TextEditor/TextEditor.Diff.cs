@@ -103,6 +103,7 @@ public sealed partial class TextEditor
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
             generation.Preparing = false;
             Mode = TextEditorMode.DiffPreview;
+            ApplyFindAllHeight();
             published = true;
             generation.Viewer.FocusEditor();
         }
@@ -141,6 +142,7 @@ public sealed partial class TextEditor
         SideBySideDiffViewRowDefinition.Height = new GridLength(0);
         EditorRowDefinition.Height = new GridLength(1, GridUnitType.Star);
         Mode = TextEditorMode.Editing;
+        ApplyFindAllHeight();
         if (generation.Preparing) return; // Its coordinator operation drains and disposes it.
         generation.Dispose();
         if (!_disposed)

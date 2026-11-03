@@ -74,6 +74,7 @@
 #include "DirectWriteParagraph.h"
 #include "DirectWriteRenderer.h"
 #include "DirectWriteTextLayoutCache.h"
+#include "Utf8PositionIndex.h"
 #endif
 
 #include "Wrapper.h"
@@ -353,6 +354,7 @@ public:
 	void Copy(PRectangle rc, Point from, Surface &surfaceSource) override;
 
 	std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) override;
+	const void *LayoutCacheIdentity() const noexcept override { return pIDWriteFactory; }
 	bool NeedsParagraphLayout(std::string_view text) const override;
 	std::shared_ptr<IParagraphLayout> LayoutParagraph(const IScreenLine *line, bool rightToLeft, Wrap wrap,
 		XYPOSITION leadingPadding, XYPOSITION trailingPadding) override;
@@ -1017,12 +1019,14 @@ COM_DECLSPEC_NOTHROW HRESULT STDMETHODCALLTYPE BlobInline::GetBreakConditions(
 class ScreenLineLayout : public IScreenLineLayout {
 	std::string text;
 	std::wstring buffer;
+	Utf8PositionIndex positions;
 	std::vector<BlobInline> blobs;
 	// textLayout depends on blobs so must be declared after blobs so it is destroyed before blobs.
 	TextLayout textLayout;
-	static void FillTextLayoutFormats(const IScreenLine *screenLine, IDWriteTextLayout *textLayout, std::vector<BlobInline> &blobs);
+	bool cacheable = false;
+	static bool FillTextLayoutFormats(const IScreenLine *screenLine, IDWriteTextLayout *textLayout, std::vector<BlobInline> &blobs);
 	static std::wstring ReplaceRepresentation(std::string_view text);
-	static UINT32 GetPositionInLayout(std::string_view text, size_t position);
+	UINT32 GetPositionInLayout(size_t position) const;
 public:
 	explicit ScreenLineLayout(const IScreenLine *screenLine);
 	// Deleted so ScreenLineLayout objects can not be copied
@@ -1031,6 +1035,7 @@ public:
 	ScreenLineLayout &operator=(const ScreenLineLayout &) = delete;
 	ScreenLineLayout &operator=(ScreenLineLayout &&) = delete;
 	~ScreenLineLayout() noexcept override = default;
+	bool IsCacheable() const noexcept override { return cacheable; }
 	size_t PositionFromX(XYPOSITION xDistance, bool charPosition) override;
 	XYPOSITION XFromPosition(size_t caretPosition) override;
 	std::vector<Interval> FindRangeIntervals(size_t start, size_t end) override;
@@ -1038,16 +1043,68 @@ public:
 
 // Each char can have its own style, so we fill the textLayout with the textFormat of each char
 
-void ScreenLineLayout::FillTextLayoutFormats(const IScreenLine *screenLine, IDWriteTextLayout *textLayout, std::vector<BlobInline> &blobs) {
+bool ScreenLineLayout::FillTextLayoutFormats(const IScreenLine *screenLine, IDWriteTextLayout *textLayout, std::vector<BlobInline> &blobs) {
 	// Reserve enough entries up front so they are not moved and the pointers handed
 	// to textLayout remain valid.
 	const ptrdiff_t numRepresentations = screenLine->RepresentationCount();
 	std::string_view text = screenLine->Text();
 	const ptrdiff_t numTabs = std::count(std::begin(text), std::end(text), '\t');
 	blobs.reserve(numRepresentations + numTabs);
+	bool complete = true;
 
+	// Apply font properties once per contiguous font run. Resolve all fonts
+	// before measuring tabs, so their positions use the actual preceding text.
 	UINT32 layoutPosition = 0;
+	for (size_t bytePosition = 0; bytePosition < text.size();) {
+		const FontDirectWrite *pfm =
+			dynamic_cast<const FontDirectWrite *>(screenLine->FontOfPosition(bytePosition));
+		if (!pfm) {
+			throw std::runtime_error("FillTextLayoutFormats: wrong Font type.");
+		}
+		if (!pfm->pTextFormat) return false;
 
+		// TextWide uses the conversion units, including noncharacters and a
+		// truncated final unit. Drawing-byte classification splits these units.
+		size_t runEnd = bytePosition + UTF8BytesOfLead[static_cast<unsigned char>(text[bytePosition])];
+		while (runEnd < text.size() && screenLine->FontOfPosition(runEnd) == pfm)
+			runEnd += UTF8BytesOfLead[static_cast<unsigned char>(text[runEnd])];
+		const auto units = static_cast<UINT32>(UTF16Length(text.substr(bytePosition, runEnd - bytePosition)));
+		const DWRITE_TEXT_RANGE fontRange{ layoutPosition, units };
+
+		const unsigned int fontFamilyNameSize = pfm->pTextFormat->GetFontFamilyNameLength();
+		std::wstring fontFamilyName(fontFamilyNameSize, 0);
+		const HRESULT hrFamily = pfm->pTextFormat->GetFontFamilyName(fontFamilyName.data(), fontFamilyNameSize + 1);
+		complete &= SUCCEEDED(hrFamily);
+		if (SUCCEEDED(hrFamily)) {
+			complete &= SUCCEEDED(textLayout->SetFontFamilyName(fontFamilyName.c_str(), fontRange));
+		}
+
+		complete &= SUCCEEDED(textLayout->SetFontSize(pfm->pTextFormat->GetFontSize(), fontRange));
+		complete &= SUCCEEDED(textLayout->SetFontWeight(pfm->pTextFormat->GetFontWeight(), fontRange));
+		complete &= SUCCEEDED(textLayout->SetFontStyle(pfm->pTextFormat->GetFontStyle(), fontRange));
+
+		const unsigned int localeNameSize = pfm->pTextFormat->GetLocaleNameLength();
+		std::wstring localeName(localeNameSize, 0);
+		const HRESULT hrLocale = pfm->pTextFormat->GetLocaleName(localeName.data(), localeNameSize + 1);
+		complete &= SUCCEEDED(hrLocale);
+		if (SUCCEEDED(hrLocale)) {
+			complete &= SUCCEEDED(textLayout->SetLocaleName(localeName.c_str(), fontRange));
+		}
+
+		complete &= SUCCEEDED(textLayout->SetFontStretch(pfm->pTextFormat->GetFontStretch(), fontRange));
+
+		winrt::com_ptr<IDWriteFontCollection> fontCollection;
+		const HRESULT hrCollection = pfm->pTextFormat->GetFontCollection(fontCollection.put());
+		complete &= SUCCEEDED(hrCollection);
+		if (SUCCEEDED(hrCollection)) {
+			complete &= SUCCEEDED(textLayout->SetFontCollection(fontCollection.get(), fontRange));
+		}
+
+		bytePosition = runEnd;
+		layoutPosition += units;
+	}
+
+	layoutPosition = 0;
 	for (size_t bytePosition = 0; bytePosition < screenLine->Length();) {
 		const unsigned char uch = screenLine->Text()[bytePosition];
 		const unsigned int byteCount = UTF8BytesOfLead[uch];
@@ -1058,57 +1115,26 @@ void ScreenLineLayout::FillTextLayoutFormats(const IScreenLine *screenLine, IDWr
 		if ((representationWidth == 0.0f) && (screenLine->Text()[bytePosition] == '\t')) {
 			D2D1_POINT_2F realPt {};
 			DWRITE_HIT_TEST_METRICS realCaretMetrics {};
-			textLayout->HitTestTextPosition(
+			complete &= SUCCEEDED(textLayout->HitTestTextPosition(
 				layoutPosition,
 				false, // trailing if false, else leading edge
 				&realPt.x,
 				&realPt.y,
 				&realCaretMetrics
-			);
+			));
 
 			const XYPOSITION nextTab = screenLine->TabPositionAfter(realPt.x);
 			representationWidth = nextTab - realPt.x;
 		}
 		if (representationWidth > 0.0f) {
 			blobs.emplace_back(representationWidth);
-			textLayout->SetInlineObject(&blobs.back(), textRange);
+			complete &= SUCCEEDED(textLayout->SetInlineObject(&blobs.back(), textRange));
 		};
-
-		const FontDirectWrite *pfm =
-			dynamic_cast<const FontDirectWrite *>(screenLine->FontOfPosition(bytePosition));
-		if (!pfm) {
-			throw std::runtime_error("FillTextLayoutFormats: wrong Font type.");
-		}
-
-		const unsigned int fontFamilyNameSize = pfm->pTextFormat->GetFontFamilyNameLength();
-		std::wstring fontFamilyName(fontFamilyNameSize, 0);
-		const HRESULT hrFamily = pfm->pTextFormat->GetFontFamilyName(fontFamilyName.data(), fontFamilyNameSize + 1);
-		if (SUCCEEDED(hrFamily)) {
-			textLayout->SetFontFamilyName(fontFamilyName.c_str(), textRange);
-		}
-
-		textLayout->SetFontSize(pfm->pTextFormat->GetFontSize(), textRange);
-		textLayout->SetFontWeight(pfm->pTextFormat->GetFontWeight(), textRange);
-		textLayout->SetFontStyle(pfm->pTextFormat->GetFontStyle(), textRange);
-
-		const unsigned int localeNameSize = pfm->pTextFormat->GetLocaleNameLength();
-		std::wstring localeName(localeNameSize, 0);
-		const HRESULT hrLocale = pfm->pTextFormat->GetLocaleName(localeName.data(), localeNameSize + 1);
-		if (SUCCEEDED(hrLocale)) {
-			textLayout->SetLocaleName(localeName.c_str(), textRange);
-		}
-
-		textLayout->SetFontStretch(pfm->pTextFormat->GetFontStretch(), textRange);
-
-		IDWriteFontCollection *fontCollection = nullptr;
-		if (SUCCEEDED(pfm->pTextFormat->GetFontCollection(&fontCollection))) {
-			textLayout->SetFontCollection(fontCollection, textRange);
-		}
 
 		bytePosition += byteCount;
 		layoutPosition += codeUnits;
 	}
-
+	return complete;
 }
 
 /* Convert to a wide character string and replace tabs with X to stop DirectWrite tab expansion */
@@ -1122,9 +1148,8 @@ std::wstring ScreenLineLayout::ReplaceRepresentation(std::string_view text) {
 
 // Finds the position in the wide character version of the text.
 
-UINT32 ScreenLineLayout::GetPositionInLayout(std::string_view text, size_t position) {
-	const std::string_view textUptoPosition = text.substr(0, position);
-	return static_cast<UINT32>(UTF16Length(textUptoPosition));
+UINT32 ScreenLineLayout::GetPositionInLayout(size_t position) const {
+	return static_cast<UINT32>(positions.Utf16Position(position));
 }
 
 ScreenLineLayout::ScreenLineLayout(const IScreenLine *screenLine) {
@@ -1133,6 +1158,7 @@ ScreenLineLayout::ScreenLineLayout(const IScreenLine *screenLine) {
 		return;
 
 	text = screenLine->Text();
+	positions = Utf8PositionIndex(text);
 
 	// Get textFormat
 	const FontDirectWrite *pfm = FontDirectWrite::Cast(screenLine->FontOfPosition(0));
@@ -1143,18 +1169,17 @@ ScreenLineLayout::ScreenLineLayout(const IScreenLine *screenLine) {
 	// Convert the string to wstring and replace the original control characters with their representative chars.
 	buffer = ReplaceRepresentation(screenLine->Text());
 
-	// Create a text layout
-	textLayout = LayoutCreate(
-		buffer,
-		pfm->pTextFormat.get(),
+	// Retain only fully configured layouts, while preserving the current
+	// query's fallback behavior after a creation or typography failure.
+	textLayout.attach(CreateDrawingTextLayout(pIDWriteFactory, pfm->pTextFormat.get(), buffer,
 		static_cast<FLOAT>(screenLine->Width()),
-		static_cast<FLOAT>(screenLine->Height()));
+		static_cast<FLOAT>(screenLine->Height()), &cacheable).Detach());
 	if (!textLayout) {
 		return;
 	}
 
 	// Fill the textLayout chars with their own formats
-	FillTextLayoutFormats(screenLine, textLayout.get(), blobs);
+	cacheable &= FillTextLayoutFormats(screenLine, textLayout.get(), blobs);
 }
 
 // Get the position from the provided x
@@ -1207,7 +1232,7 @@ size_t ScreenLineLayout::PositionFromX(XYPOSITION xDistance, bool charPosition) 
 	}
 
 	// Get the character position in original string
-	return UTF8PositionFromUTF16Position(text, pos);
+	return positions.BytePosition(pos);
 }
 
 // Finds the point of the caret position
@@ -1217,7 +1242,7 @@ XYPOSITION ScreenLineLayout::XFromPosition(size_t caretPosition) {
 		return 0.0;
 	}
 	// Convert byte positions to wchar_t positions
-	const UINT32 position = GetPositionInLayout(text, caretPosition);
+	const UINT32 position = GetPositionInLayout(caretPosition);
 
 	// Translate text character offset to point x,y.
 	DWRITE_HIT_TEST_METRICS caretMetrics {};
@@ -1244,8 +1269,8 @@ std::vector<Interval> ScreenLineLayout::FindRangeIntervals(size_t start, size_t 
 	}
 
 	// Convert byte positions to wchar_t positions
-	const UINT32 startPos = GetPositionInLayout(text, start);
-	const UINT32 endPos = GetPositionInLayout(text, end);
+	const UINT32 startPos = GetPositionInLayout(start);
+	const UINT32 endPos = GetPositionInLayout(end);
 
 	// Find selection range length
 	const UINT32 rangeLength = (endPos > startPos) ? (endPos - startPos) : (startPos - endPos);
@@ -1303,6 +1328,7 @@ public:
 	explicit ParagraphScreenLineLayout(const IScreenLine *screenLine) :
 		paragraph(screenLine->Paragraph()), start(screenLine->ParagraphStart()),
 		line(paragraph->Lines()[screenLine->ParagraphLine()]) {}
+	bool IsCacheable() const noexcept override { return true; }
 	size_t PositionFromX(XYPOSITION x, bool charPosition) override {
 		const auto hit = paragraph->HitTest(static_cast<float>(x), line.top + line.height / 2, charPosition);
 		return std::clamp(hit.position, start, start + line.length) - start;

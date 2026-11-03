@@ -5,6 +5,9 @@
 // Copyright 1998-2007 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+// See LICENSE.txt in the project root for the Notepads modifications.
+
 #include <cstddef>
 #include <cstdlib>
 #include <cstdint>
@@ -124,6 +127,7 @@ LineLayout::LineLayout(Sci::Line lineNumber_, int maxLineLength_) :
 
 void LineLayout::Resize(int maxLineLength_) {
 	if (maxLineLength_ > maxLineLength) {
+		ClearScreenLayouts();
 		const size_t lineAllocation = maxLineLength_ + 1;
 		chars = std::make_unique<char[]>(lineAllocation);
 		styles = std::make_unique<unsigned char []>(lineAllocation);
@@ -153,6 +157,7 @@ void LineLayout::EnsureBidiData() {
 }
 
 void LineLayout::ClearPositions() {
+	ClearScreenLayouts();
 	Clear(maxLineLength + 2);
 }
 
@@ -164,8 +169,31 @@ void LineLayout::Invalidate(ValidLevel validity_) noexcept {
 		(validity == ValidLevel::lines || validity == ValidLevel::checkTextAndStyle);
 	if (validity > validity_)
 		validity = validity_;
-	if (validity_ < ValidLevel::lines && !checkParagraph)
+	if (validity_ < ValidLevel::lines && !checkParagraph) {
+		ClearScreenLayouts();
 		paragraph.reset();
+	}
+}
+
+void LineLayout::ClearScreenLayouts() const noexcept {
+	for (auto &entry : screenLayouts) entry.layout.reset();
+}
+
+std::shared_ptr<IScreenLineLayout> LineLayout::CachedScreenLayout(const ScreenLineLayoutKey &key) const noexcept {
+	if (!key.backend) return {};
+	for (size_t index = 0; index < screenLayouts.size(); ++index) {
+		if (screenLayouts[index].layout && screenLayouts[index].key == key) {
+			if (index != 0) std::swap(screenLayouts[0], screenLayouts[index]);
+			return screenLayouts[0].layout;
+		}
+	}
+	return {};
+}
+
+void LineLayout::CacheScreenLayout(const ScreenLineLayoutKey &key, std::shared_ptr<IScreenLineLayout> layout) const noexcept {
+	if (!key.backend || !layout || !layout->IsCacheable()) return;
+	screenLayouts[1] = std::move(screenLayouts[0]);
+	screenLayouts[0] = {key, std::move(layout)};
 }
 
 Sci::Line LineLayout::LineNumber() const noexcept {
@@ -248,6 +276,8 @@ void LineLayout::AddLineStart(Sci::Position start) {
 
 void LineLayout::SetBracesHighlight(ForwardRange rangeLine, const Sci::Position braces[],
                                     char bracesMatchStyle, int xHighlight, bool ignoreStyle) {
+	if (!ignoreStyle && (rangeLine.ContainsCharacter(braces[0]) || rangeLine.ContainsCharacter(braces[1])))
+		ClearScreenLayouts();
 	if (!ignoreStyle && rangeLine.ContainsCharacter(braces[0])) {
 		const Sci::Position braceOffset = braces[0] - rangeLine.First();
 		bracePreviousStyles[0] = styles[braceOffset];
@@ -265,6 +295,8 @@ void LineLayout::SetBracesHighlight(ForwardRange rangeLine, const Sci::Position 
 }
 
 void LineLayout::RestoreBracesHighlight(ForwardRange rangeLine, const Sci::Position braces[], bool ignoreStyle) {
+	if (!ignoreStyle && (rangeLine.ContainsCharacter(braces[0]) || rangeLine.ContainsCharacter(braces[1])))
+		ClearScreenLayouts();
 	if (!ignoreStyle && rangeLine.ContainsCharacter(braces[0])) {
 		const Sci::Position braceOffset = braces[0] - rangeLine.First();
 		styles[braceOffset] = bracePreviousStyles[0];
@@ -427,6 +459,7 @@ void LineLayout::SetParagraphLines(const IParagraphLayout &candidate) {
 	}
 	for (int i = 1; i < lineCount; ++i)
 		lineStarts[i] = static_cast<int>(rows[i].start);
+	ClearScreenLayouts();
 	lines = lineCount;
 	wrapIndent = 0;
 }
@@ -488,6 +521,15 @@ ScreenLine::ScreenLine(
 }
 
 ScreenLine::~ScreenLine() = default;
+
+std::shared_ptr<IScreenLineLayout> ScreenLine::Layout(Surface *surface) const {
+	const ScreenLineLayoutKey key{surface->LayoutCacheIdentity(), &viewStyle, start, len,
+		width, height, baseline, tabWidth, tabWidthMinimumPixels, ll->paragraph.get(), paragraphLine};
+	if (auto cached = ll->CachedScreenLayout(key)) return cached;
+	std::shared_ptr<IScreenLineLayout> candidate = surface->Layout(this);
+	ll->CacheScreenLayout(key, candidate);
+	return candidate;
+}
 
 std::string_view ScreenLine::Text() const {
 	return std::string_view(&ll->chars[start], len);

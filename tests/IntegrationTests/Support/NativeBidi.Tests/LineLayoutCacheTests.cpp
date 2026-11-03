@@ -72,6 +72,104 @@ size_t CheckLineLayoutCache(IDWriteFactory *factory, IDWriteTextFormat *format) 
         return total;
     };
 
+    // Geometry layouts are owned by the physical line, with two immutable
+    // contexts and no render-target state. Verify admission, keys and release.
+    {
+        class Geometry final : public IScreenLineLayout {
+            bool cacheable;
+        public:
+            explicit Geometry(bool cacheable_ = true) : cacheable(cacheable_) {}
+            bool IsCacheable() const noexcept override { return cacheable; }
+            size_t PositionFromX(XYPOSITION, bool) override { return 0; }
+            XYPOSITION XFromPosition(size_t) override { return 0; }
+            std::vector<Interval> FindRangeIntervals(size_t, size_t) override { return {}; }
+        };
+        LineLayout row(0, 32);
+        std::fill_n(row.styles.get(), 33, static_cast<unsigned char>(0));
+        row.validity = LineLayout::ValidLevel::lines;
+        const ScreenLineLayoutKey first{factory, format, 0, 16, 500, 20, 15, 40, 2, nullptr, 0};
+        int creations = 0;
+        auto get = [&](const ScreenLineLayoutKey &key) {
+            if (auto cached = row.CachedScreenLayout(key)) return cached;
+            ++creations;
+            std::shared_ptr<IScreenLineLayout> layout = std::make_shared<Geometry>();
+            row.CacheScreenLayout(key, layout);
+            return layout;
+        };
+        const std::weak_ptr<IScreenLineLayout> firstWeak = get(first);
+        for (int i = 0; i < 2000; ++i) require(get(first) == firstWeak.lock(), "Repeated geometry queries reuse one layout");
+        require(creations == 1, "Geometry construction count is independent of indicator/query count");
+        auto second = first;
+        second.width = 600;
+        const std::weak_ptr<IScreenLineLayout> secondWeak = get(second);
+        require(get(first) == firstWeak.lock(), "Caret and indicator widths coexist");
+        auto third = first;
+        third.width = 700;
+        get(third);
+        require(secondWeak.expired() && !firstWeak.expired(), "Only two contexts are retained and least recent geometry is released");
+        for (int field = 0; field < 11; ++field) {
+            auto changed = first;
+            switch (field) {
+            case 0: changed.backend = &row; break;
+            case 1: changed.style = &row; break;
+            case 2: changed.start++; break;
+            case 3: changed.length++; break;
+            case 4: changed.width++; break;
+            case 5: changed.height++; break;
+            case 6: changed.baseline++; break;
+            case 7: changed.tabWidth++; break;
+            case 8: changed.tabMinimum++; break;
+            case 9: changed.paragraph = reinterpret_cast<const IParagraphLayout *>(&row); break;
+            case 10: changed.paragraphLine++; break;
+            }
+            row.ClearScreenLayouts();
+            get(first);
+            require(!row.CachedScreenLayout(changed), "Every geometry dependency participates in the key");
+        }
+        row.ClearScreenLayouts();
+        auto uncached = first;
+        uncached.backend = nullptr;
+        get(uncached);
+        require(!row.CachedScreenLayout(uncached), "Backends must explicitly opt into immutable geometry retention");
+        auto healthy = get(first);
+        auto failed = std::make_shared<Geometry>(false);
+        const std::weak_ptr<IScreenLineLayout> failedWeak = failed;
+        row.CacheScreenLayout(second, failed);
+        require(!row.CachedScreenLayout(second) && row.CachedScreenLayout(first) == healthy,
+            "Failed or incomplete geometry neither poisons a slot nor evicts a healthy layout");
+        failed.reset();
+        require(failedWeak.expired(), "A failed geometry fallback is released after its caller finishes");
+        auto recovered = get(second);
+        require(row.CachedScreenLayout(second) == recovered,
+            "The next successful geometry construction is admitted and reused after a failure");
+        healthy.reset();
+        auto borrowed = get(first);
+        row.Invalidate(LineLayout::ValidLevel::checkTextAndStyle);
+        require(row.CachedScreenLayout(first) == borrowed, "An unchanged style-clock validation can retain geometry");
+        row.Invalidate(LineLayout::ValidLevel::invalid);
+        require(!row.CachedScreenLayout(first) && borrowed.use_count() == 1, "Invalidation releases the cache while in-flight queries remain owned");
+        get(first);
+        row.ClearPositions();
+        require(!row.CachedScreenLayout(first), "Remeasuring text clears geometry");
+        get(first);
+        row.Resize(64);
+        require(!row.CachedScreenLayout(first), "Growing source storage clears geometry");
+        get(first);
+        row.ReSet(1, 32);
+        require(!row.CachedScreenLayout(first), "Reusing a cache slot for another line clears geometry");
+        std::fill_n(row.styles.get(), 65, static_cast<unsigned char>(0));
+        const Sci::Position braces[2]{2, 6};
+        get(first);
+        row.SetBracesHighlight(ForwardRange(0, 16), braces, StyleBraceLight, 0, false);
+        require(!row.CachedScreenLayout(first), "Temporary brace fonts invalidate geometry");
+        get(first);
+        row.RestoreBracesHighlight(ForwardRange(0, 16), braces, false);
+        require(!row.CachedScreenLayout(first), "Restoring brace fonts invalidates geometry");
+        auto stable = get(first);
+        row.SetBracesHighlight(ForwardRange(0, 16), braces, StyleBraceLight, 0, true);
+        require(row.CachedScreenLayout(first) == stable, "Indicator-only brace changes retain geometry");
+    }
+
     // Independent cumulative-width oracle for the compact 5.6.7 positions.
     // Include coordinates beyond float's exact integer range, tabs and an
     // empty terminal row; callers must never read a synthetic character -1.

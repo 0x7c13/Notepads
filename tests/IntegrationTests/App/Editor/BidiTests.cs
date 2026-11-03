@@ -94,6 +94,8 @@ internal static partial class BidiTests
             log.AppendLine("PASS: mixed-direction click positions, styled runs and logical replacement remain aligned.");
             await CheckDrawingByteBoundariesAsync();
             log.AppendLine("PASS: byte-split styles, noncharacters and truncated UTF-8 retain their bytes and complete real-control layout and paint.");
+            await CheckScreenLineFontBoundariesAsync();
+            log.AppendLine("PASS: LTR screen-line fonts follow conversion units across noncharacters, supplementary characters and truncated UTF-8.");
             await CheckLongParagraphAsync(core, native, view);
             log.AppendLine("PASS: long mixed paragraphs retain distant UIA ranges, replacement/undo geometry and wrap transitions in both directions.");
             await CheckStreamSelectionEdgesAsync(core, native, view);
@@ -143,6 +145,61 @@ internal static partial class BidiTests
         for (var index = 0; index < VisualTreeHelper.GetChildrenCount(root); index++)
             if (FindElement<T>(VisualTreeHelper.GetChild(root, index), name) is { } found) return found;
         return null;
+    }
+
+    private static async Task CheckScreenLineFontBoundariesAsync()
+    {
+        var previousContent = Window.Current.Content;
+        using var core = new TextEditorCore
+        {
+            Width = 620, Height = 240, FontFamily = new FontFamily("Consolas"),
+            DisplayLineNumbers = false, TextWrapping = TextWrapping.NoWrap
+        };
+        var native = ((EditorBaseControl)((Grid)core.Content).Children[0]).Editor;
+        // These fixtures stay on the LTR screen-line path. A Hebrew/Arabic
+        // character would instead exercise the separately shaped paragraph path.
+        var scalars = new[] { "中", "😀", "\uFDD0", "\uFDEF", "\uFFFE", "\uFFFF", "\U0001FFFE", "\U0010FFFF" };
+        var units = scalars.Select(Encoding.UTF8.GetBytes).Concat(new byte[][] { [0xf0], [0xf0, 0x9f], [0xf0, 0x9f, 0x98] });
+        try
+        {
+            await AfterPaintAsync(native, () => Window.Current.Content = core);
+            foreach (var unit in units)
+            {
+                var truncated = unit[0] == 0xf0 && unit.Length < 4;
+                byte[] bytes = truncated ? [0x41, .. unit] : [0x41, .. unit, 0x5a];
+                await AfterPaintAsync(native, () =>
+                {
+                    core.SetText(string.Empty);
+                    native.AddTextFromBuffer(bytes.Length, bytes.AsBuffer());
+                    native.StyleSetSizeFractional(1, 1200);
+                    native.StyleSetSizeFractional(2, 3000);
+                    native.StyleSetSizeFractional(3, 1800);
+                    native.StartStyling(0, 0);
+                    native.SetStyling(bytes.Length, 1);
+                    native.StartStyling(1, 0);
+                    native.SetStyling(1, 2);
+                    native.SetStyling(unit.Length - 1, 3);
+                    native.SetSel(0, bytes.Length);
+                });
+                var splitGeometry = Capture();
+                await AfterPaintAsync(native, () =>
+                {
+                    // Changing only continuation-byte styles must not change
+                    // the converted unit's font or shift following characters.
+                    native.StartStyling(1, 0);
+                    native.SetStyling(unit.Length, 2);
+                });
+                Check(splitGeometry.SequenceEqual(Capture()),
+                    "Screen-line geometry uses the leading byte's font for each UTF-16 conversion unit.");
+                Check(native.Length == bytes.Length && bytes.Select((value, index) =>
+                    unchecked((byte)native.GetCharAt(index)) == value).All(matches => matches),
+                    "Font normalization preserves the exact source bytes.");
+            }
+        }
+        finally { Window.Current.Content = previousContent; }
+
+        (long X, long Y)[] Capture() => Enumerable.Range(0, checked((int)native.Length + 1))
+            .Select(position => ((long)native.PointXFromPosition(position), (long)native.PointYFromPosition(position))).ToArray();
     }
 
     private static async Task CheckDrawingByteBoundariesAsync()

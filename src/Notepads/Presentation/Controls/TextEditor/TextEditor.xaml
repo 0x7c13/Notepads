@@ -9,6 +9,7 @@
     xmlns:findAndReplace="using:Notepads.Presentation.Controls.FindAndReplace"
     xmlns:goTo="using:Notepads.Presentation.Controls.GoTo"
     mc:Ignorable="d"
+    SizeChanged="FindAllArea_SizeChanged"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
     <UserControl.Resources>
@@ -94,12 +95,12 @@
                 <ColumnDefinition x:Name="EditorColumnDefinition" Width="*" MinWidth="100"/>
                 <ColumnDefinition x:Name="SplitPanelColumnDefinition" Width="0"/>
             </Grid.ColumnDefinitions>
-            <Grid>
+            <Grid x:Name="FindAllHost" SizeChanged="FindAllArea_SizeChanged">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition x:Name="FindAllEditorRow" Height="*"/>
+                    <RowDefinition x:Name="FindAllResultsRow" Height="0"/>
                 </Grid.RowDefinitions>
-                <Grid x:Name="FindAllPanel" x:Load="False" Grid.Row="1" MaxHeight="220"
+                <Grid x:Name="FindAllPanel" x:Load="False" Grid.Row="1" Loaded="FindAllPanel_Loaded"
                       Background="{ThemeResource FindAllBackgroundBrush}" CornerRadius="8,8,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -157,6 +158,18 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+                    <controls:GridSplitter x:Name="FindAllResizeGrip" x:Uid="EditorTools_Results"
+                                           Style="{StaticResource CustomGridSplitterStyle}"
+                                           Height="6" Margin="8,0,8,0" VerticalAlignment="Top"
+                                           Canvas.ZIndex="1" ParentLevel="1"
+                                           ResizeDirection="Rows" ResizeBehavior="PreviousAndCurrent"
+                                           CursorBehavior="ChangeOnSplitterHover">
+                        <controls:GridSplitter.Template>
+                            <ControlTemplate TargetType="controls:GridSplitter">
+                                <Grid Background="Transparent"/>
+                            </ControlTemplate>
+                        </controls:GridSplitter.Template>
+                    </controls:GridSplitter>
                 </Grid>
                 <textEditor:TextEditorCore x:Name="TextEditorCore" 
                                            Style="{StaticResource TextEditorCore}" 

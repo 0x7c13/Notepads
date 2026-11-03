@@ -5,6 +5,7 @@
 
 using System;
 using System.Globalization;
+using System.Threading;
 using Notepads.Presentation.Controls.FindAndReplace;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -20,6 +21,43 @@ public sealed partial class TextEditor
     private DocumentSearchResults _findAllResults;
     private SearchContext _findAllContext;
     private bool _findAllRunning;
+    // Shared across editors for this process, including views on other UI threads.
+    private static double _preferredFindAllHeight = 220;
+    private long _findAllHeightCallback;
+    private bool _applyingFindAllHeight;
+
+    private void FindAllHeightChanged(DependencyObject sender, DependencyProperty property)
+    {
+        if (_disposed || _applyingFindAllHeight || FindAllPanel?.Visibility != Visibility.Visible ||
+            !FindAllResultsRow.Height.IsAbsolute) return;
+        Volatile.Write(ref _preferredFindAllHeight, Math.Clamp(FindAllResultsRow.Height.Value,
+            FindAllResultsRow.MinHeight, FindAllResultsRow.MaxHeight));
+    }
+
+    private void FindAllArea_SizeChanged(object sender, SizeChangedEventArgs args) => ApplyFindAllHeight();
+
+    private void FindAllPanel_Loaded(object sender, RoutedEventArgs args) => ApplyFindAllHeight();
+
+    private void ApplyFindAllHeight()
+    {
+        if (_disposed) return;
+        _applyingFindAllHeight = true;
+        try
+        {
+            var visible = FindAllPanel?.Visibility == Visibility.Visible && Mode != TextEditorMode.DiffPreview;
+            var height = Math.Max(0, Math.Min(ActualHeight, FindAllHost.ActualHeight));
+            // Keep editing space in short windows without overwriting the user's
+            // preferred height when a resize, tab switch or Diff temporarily clamps it.
+            FindAllEditorRow.MinHeight = visible ? Math.Min(96, height / 2) : 0;
+            var maximum = visible ? Math.Max(0, height - FindAllEditorRow.MinHeight) : 0;
+            FindAllResultsRow.MinHeight = Math.Min(72, maximum);
+            FindAllResultsRow.MaxHeight = maximum;
+            FindAllResultsRow.Height = new GridLength(Math.Clamp(Volatile.Read(ref _preferredFindAllHeight),
+                FindAllResultsRow.MinHeight, maximum));
+        }
+        finally { _applyingFindAllHeight = false; }
+    }
+
     private void FindAllDocumentChanged(object sender, RoutedEventArgs args)
     {
         if (_findAllResults == null && !_findAllRunning) return;
@@ -31,6 +69,7 @@ public sealed partial class TextEditor
     {
         FindName(nameof(FindAllPanel));
         FindAllPanel.Visibility = Visibility.Visible;
+        ApplyFindAllHeight();
         _findAllResults = null;
         _findAllContext = context;
         _findAllRunning = true;
@@ -43,6 +82,7 @@ public sealed partial class TextEditor
     {
         FindName(nameof(FindAllPanel));
         FindAllPanel.Visibility = Visibility.Visible;
+        ApplyFindAllHeight();
         _findAllResults = results;
         _findAllRunning = false;
         FindAllList.ItemsSource = results.Rows;
@@ -130,6 +170,7 @@ public sealed partial class TextEditor
         _findAllContext = null;
         if (FindAllList != null) FindAllList.ItemsSource = null;
         if (FindAllPanel != null) FindAllPanel.Visibility = Visibility.Collapsed;
+        ApplyFindAllHeight();
     }
 
     private void FindAllList_ItemClick(object sender, ItemClickEventArgs args)

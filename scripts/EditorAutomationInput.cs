@@ -30,6 +30,7 @@ public static class EditorAutomationInput
     [DllImport("user32.dll")] private static extern short GetAsyncKeyState(int key);
     [DllImport("user32.dll")] private static extern bool GetCursorPos(out Point point);
     [DllImport("user32.dll")] private static extern int GetSystemMetrics(int index);
+    [DllImport("kernel32.dll")] private static extern void Sleep(uint milliseconds);
     [DllImport("user32.dll")] private static extern IntPtr SetThreadDpiAwarenessContext(IntPtr context);
     [DllImport("user32.dll", SetLastError = true)] private static extern uint SendInput(uint count, Input[] input, int size);
     [DllImport("user32.dll", SetLastError = true)] private static extern bool SystemParametersInfoW(uint action, uint parameter, out uint value, uint flags);
@@ -107,8 +108,46 @@ public static class EditorAutomationInput
 
     public static void Move(uint process, int x, int y)
     {
-        if (IntPtr.Size != 8) throw new PlatformNotSupportedException("The editor driver requires a 64-bit process.");
         RequireIdle();
+        MovePointer(process, x, y);
+    }
+
+    public static void DragVertical(uint process, int x, int y, int distance)
+    {
+        RequireIdle();
+        var dpi = SetThreadDpiAwarenessContext(new IntPtr(-4));
+        if (dpi == IntPtr.Zero) throw new InvalidOperationException("Could not establish physical-coordinate DPI awareness.");
+        bool down = false;
+        try
+        {
+            Move(process, x, y);
+            RequirePoint(process, x, y);
+            if (SendInput(1, new[] { new Input { MouseFlags = 2 } }, 40) != 1)
+                throw new InvalidOperationException("Mouse-down injection failed.");
+            down = true;
+            for (int step = 1; step <= 10; step++)
+            {
+                // Pace movement through the real input queue; callers wait on
+                // observed layout changes to determine completion.
+                Sleep(16);
+                if (GetAsyncKeyState(1) >= 0) throw new InvalidOperationException("The owned mouse press was released.");
+                MovePointer(process, x, y + (int)Math.Round(distance * step / 10.0));
+            }
+        }
+        finally
+        {
+            try
+            {
+                if (down && SendInput(1, new[] { new Input { MouseFlags = 4 } }, 40) != 1)
+                    throw new InvalidOperationException("Mouse-up cleanup failed.");
+            }
+            finally { SetThreadDpiAwarenessContext(dpi); }
+        }
+    }
+
+    private static void MovePointer(uint process, int x, int y)
+    {
+        if (IntPtr.Size != 8) throw new PlatformNotSupportedException("The editor driver requires a 64-bit process.");
         var dpi = SetThreadDpiAwarenessContext(new IntPtr(-4));
         try
         {

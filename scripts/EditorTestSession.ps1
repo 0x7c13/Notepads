@@ -126,6 +126,12 @@ function Stop-EditorTestSession {
                 $evidence = Join-Path $Session.Root 'commands'
                 New-Item -ItemType Directory -Path $evidence -Force | Out-Null
                 Get-ChildItem -LiteralPath $Session.Channel -File | Copy-Item -Destination $evidence -Force
+                # Cleanup runs in a fresh process and replaces results.txt.
+                # Preserve any unhandled exception from the interactive host first.
+                $results = Join-Path $Session.RunRoot 'results.txt'
+                if (Test-Path -LiteralPath $results) {
+                    Copy-Item -LiteralPath $results -Destination (Join-Path $Session.Root 'interactive-results.txt')
+                }
             }
             catch { $errors.Add($_.ToString()) }
         }

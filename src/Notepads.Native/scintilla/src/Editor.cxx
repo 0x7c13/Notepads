@@ -9293,7 +9293,8 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case Message::SetRepresentation:
 		reprs->SetRepresentation(ConstCharPtrFromUPtr(wParam), ConstCharPtrFromSPtr(lParam));
-		view.InvalidateSingles();
+		// Inline-object widths also affect retained line/selection geometry and wrapping.
+		InvalidateStyleRedraw();
 		break;
 
 	case Message::GetRepresentation: {
@@ -9307,16 +9308,17 @@ sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 
 	case Message::ClearRepresentation:
 		reprs->ClearRepresentation(ConstCharPtrFromUPtr(wParam));
-		view.InvalidateSingles();
+		InvalidateStyleRedraw();
 		break;
 
 	case Message::ClearAllRepresentations:
 		SetRepresentations();
+		InvalidateStyleRedraw();
 		break;
 
 	case Message::SetRepresentationAppearance:
 		reprs->SetRepresentationAppearance(ConstCharPtrFromUPtr(wParam), static_cast<RepresentationAppearance>(lParam));
-		view.InvalidateSingles();
+		InvalidateStyleRedraw();
 		break;
 
 	case Message::GetRepresentationAppearance: {

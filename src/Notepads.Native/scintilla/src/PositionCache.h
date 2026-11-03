@@ -5,8 +5,13 @@
 // Copyright 1998-2009 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+// See LICENSE.txt in the project root for the Notepads modifications.
+
 #ifndef POSITIONCACHE_H
 #define POSITIONCACHE_H
+
+#include <array>
 
 namespace Scintilla::Internal {
 
@@ -78,8 +83,30 @@ public:
 
 /**
  */
+struct ScreenLineLayoutKey {
+	const void *backend = nullptr;
+	const void *style = nullptr;
+	size_t start = 0;
+	size_t length = 0;
+	XYPOSITION width = 0;
+	XYPOSITION height = 0;
+	XYPOSITION baseline = 0;
+	XYPOSITION tabWidth = 0;
+	int tabMinimum = 0;
+	const IParagraphLayout *paragraph = nullptr;
+	int paragraphLine = 0;
+	bool operator==(const ScreenLineLayoutKey &) const noexcept = default;
+};
+
 class LineLayout : public XPositions {
 private:
+	struct ScreenLayoutEntry {
+		ScreenLineLayoutKey key;
+		std::shared_ptr<IScreenLineLayout> layout;
+	};
+	// Two entries cover the text/indicator and caret/query widths. Their lifetime
+	// and source capacity are bounded by the existing physical-line cache.
+	mutable std::array<ScreenLayoutEntry, 2> screenLayouts;
 	std::unique_ptr<int []>lineStarts;
 	int lenLineStarts = 0;
 	/// Drawing is only performed for @a maxLineLength characters on each line.
@@ -119,6 +146,9 @@ public:
 	void EnsureBidiData();
 	void ClearPositions();
 	void Invalidate(ValidLevel validity_) noexcept;
+	void ClearScreenLayouts() const noexcept;
+	std::shared_ptr<IScreenLineLayout> CachedScreenLayout(const ScreenLineLayoutKey &key) const noexcept;
+	void CacheScreenLayout(const ScreenLineLayoutKey &key, std::shared_ptr<IScreenLineLayout> layout) const noexcept;
 	Sci::Line LineNumber() const noexcept;
 	bool CanHold(Sci::Line lineDoc, int lineLength_) const noexcept;
 	int LineStart(int line) const noexcept;
@@ -163,6 +193,7 @@ struct ScreenLine : public IScreenLine {
 	void operator=(const ScreenLine &) = delete;
 	void operator=(ScreenLine &&) = delete;
 	virtual ~ScreenLine();
+	std::shared_ptr<IScreenLineLayout> Layout(Surface *surface) const;
 
 	std::string_view Text() const override;
 	size_t Length() const override;

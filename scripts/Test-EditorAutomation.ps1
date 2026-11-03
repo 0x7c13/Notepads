@@ -1882,7 +1882,7 @@ try {
         }
     }
 
-    Test-Case 'Find All physical Escape from results, editor and query' {
+    Test-Case 'Find All resizing, runtime height and physical Escape' {
         function Find-ToolsControl([string] $Id, [switch] $Optional) {
             $condition = [Windows.Automation.AndCondition]::new(
                 [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ProcessIdProperty, [int] $session.ProcessId),
@@ -1905,7 +1905,8 @@ try {
         }
         try {
             $initial = Invoke-EditorTestCommand $session 'editor-tools-start'
-            foreach ($targetId in @('EditorToolsResult', 'EditorToolsEditor', 'EditorToolsQuery')) {
+            $resizedHeight = $null
+            foreach ($targetId in @('EditorToolsResult', 'EditorToolsEditor', 'EditorToolsQuery', 'FindAllResizeGrip')) {
                 $query = Find-ToolsControl 'EditorToolsQuery'
                 $query.SetFocus()
                 Send-ToolsKey $query 0x0d $true
@@ -1915,6 +1916,9 @@ try {
                 while (!$result.Current.HasKeyboardFocus -and [DateTime]::UtcNow -lt $deadline) { Start-Sleep -Milliseconds 25 }
                 Assert-True $result.Current.HasKeyboardFocus 'Find All completion focuses the first result'
                 $null = Wait-ToolsState { param($state) $state.toolsSelectedResult -eq '0' -and $state.toolsResultFocus -eq 'Pointer' } 'The initial result has selection without a keyboard focus rectangle'
+                if ($null -ne $resizedHeight) {
+                    $null = Wait-ToolsState { param($state) [Math]::Abs([double] $state.toolsResultsHeight - $resizedHeight) -lt 1 } 'Reopened Find All retains the runtime height'
+                }
                 if ($targetId -eq 'EditorToolsResult') {
                     $listBounds = (Find-ToolsControl 'FindAllList').Current.BoundingRectangle
                     $closeBounds = (Find-ToolsControl 'FindAllCloseButton').Current.BoundingRectangle
@@ -1923,6 +1927,34 @@ try {
                         [int] [Math]::Ceiling($listBounds.Left), [int] [Math]::Ceiling($closeBounds.Top),
                         [int] [Math]::Floor($listBounds.Width), [int] [Math]::Floor($listBounds.Bottom - $closeBounds.Top),
                         (Join-Path $session.Root 'find-all-initial-selection.png'))
+                    $beforeResize = Invoke-EditorTestCommand $session 'editor-tools-state'
+                    $grip = Find-ToolsControl 'FindAllResizeGrip'
+                    $gripBounds = $grip.Current.BoundingRectangle
+                    $scale = $gripBounds.Height / 6
+                    [EditorAutomationInput]::DragVertical([uint32] $session.ProcessId,
+                        [int] $gripBounds.X + [int] ($gripBounds.Width / 2),
+                        [int] $gripBounds.Y + [int] ($gripBounds.Height / 2), [int] (-40 * $scale))
+                    $resized = Wait-ToolsState { param($state) [double] $state.toolsResultsHeight -gt [double] $beforeResize.toolsResultsHeight + 15 } 'Dragging the top edge upwards grows the results pane'
+                    Assert-Equal $resized.toolsText64 $initial.toolsText64 'Dragging the boundary preserves document text'
+                    Assert-Equal $resized.toolsSelectedResult $beforeResize.toolsSelectedResult 'Dragging preserves the selected match'
+                    $listBounds = (Find-ToolsControl 'FindAllList').Current.BoundingRectangle
+                    $gripBounds = $grip.Current.BoundingRectangle
+                    $null = [EditorAutomationInput]::Capture([uint32] $session.ProcessId,
+                        [int] [Math]::Ceiling($listBounds.Left), [int] [Math]::Ceiling($gripBounds.Top),
+                        [int] [Math]::Floor($listBounds.Width), [int] [Math]::Floor($listBounds.Bottom - $gripBounds.Top),
+                        (Join-Path $session.Root 'find-all-resized.png'))
+                    $draggedHeight = [double] $resized.toolsResultsHeight
+                    $grip.SetFocus()
+                    Send-ToolsKey $grip 0x28
+                    $resized = Wait-ToolsState { param($state) [Math]::Abs([double] $state.toolsResultsHeight - ($draggedHeight - 1)) -lt 0.5 } 'Down on the boundary shrinks results by one DIP'
+                    $keyboardHeight = [double] $resized.toolsResultsHeight
+                    $gripBounds = $grip.Current.BoundingRectangle
+                    [EditorAutomationInput]::DragVertical([uint32] $session.ProcessId,
+                        [int] $gripBounds.X + [int] ($gripBounds.Width / 2),
+                        [int] $gripBounds.Y + [int] ($gripBounds.Height / 2), [int] (24 * $scale))
+                    $resized = Wait-ToolsState { param($state) [double] $state.toolsResultsHeight -lt $keyboardHeight - 5 } 'Dragging the top edge downwards shrinks the results pane'
+                    $resizedHeight = [double] $resized.toolsResultsHeight
+                    $result.SetFocus()
                     Send-ToolsKey $result 0x28
                     $null = Wait-ToolsState { param($state) $state.toolsSelectedResult -eq '1' -and $state.toolsResultFocus -eq 'Keyboard' } 'Arrow navigation restores keyboard focus on the next result'
                     Send-ToolsKey ([Windows.Automation.AutomationElement]::FocusedElement) 0x26

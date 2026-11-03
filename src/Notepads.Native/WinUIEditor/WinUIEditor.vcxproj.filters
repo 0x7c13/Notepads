@@ -218,6 +218,7 @@
     <ClInclude Include="..\scintilla\winui\DirectWriteRunLayout.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteRenderer.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteTextLayoutCache.h" />
+    <ClInclude Include="..\scintilla\winui\Utf8PositionIndex.h" />
     <ClInclude Include="..\scintilla\winui\SurfaceDrawSession.h" />
     <ClInclude Include="..\scintilla\winui\WinTypes.h" />
     <ClInclude Include="..\scintilla\include\ILexer.h">

@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Media;
 using WinUIEditor;
 using WinRT;
 using static NotepadsIntegrationTests.FeatureUI;
@@ -57,6 +58,10 @@ internal static class EditorToolsFeatureTests
             ApplicationPreferences.EditorReadingAids = ReadingAids.Whitespace | ReadingAids.IndentGuides | ReadingAids.Braces | ReadingAids.Occurrences;
             await UntilAsync(() => native.ViewWS == WhiteSpace.VisibleAlways && native.IndentationGuides == IndentView.LookBoth,
                 "Reading aid settings reach the actual native editor.");
+            await VerifyLongLineFindAllAsync(editor, log, "ASCII", "needle 0123456789 ", "", "needle");
+            await VerifyLongLineFindAllAsync(editor, log, "CJK-tail", "needle 0123456789 ", "中", "needle");
+            await VerifyLongLineFindAllAsync(editor, log, "Unicode", "needle 中文😀e\u0301 ", "", "中文😀");
+            await VerifyGeometryInvalidationAsync(editor);
             await VerifyBraceStyleInvalidationAsync(editor);
             await VerifyOccurrenceReflowAsync(editor);
             core.SelectAll();
@@ -112,6 +117,7 @@ internal static class EditorToolsFeatureTests
             Check(iconBounds.Width > 0 && iconBounds.Height > 0 && iconBounds.Left >= 0 && iconBounds.Top >= 0 &&
                 iconBounds.Right <= closeButton.ActualWidth && iconBounds.Bottom <= closeButton.ActualHeight,
                 "The close glyph fits inside its compact button without being clipped by template padding.");
+            await VerifyFindAllSizingAsync(host, editor);
             await VerifyFindAllDiffEscapeAsync(editor);
             // This checks the dismissal command only. The UIAutomation desktop
             // case sends real Escape keys through all three focused controls.
@@ -165,6 +171,308 @@ internal static class EditorToolsFeatureTests
         }
         finally { ApplicationPreferences.EditorReadingAids = preferences; }
         log.AppendLine("PASS: reading aids, Unicode brace/occurrence geometry, line undo, find-all Unicode/regex/bounds/stale guards.");
+    }
+
+    private static async Task VerifyFindAllSizingAsync(FeatureTestHost host, TextEditor editor)
+    {
+        var grip = Named<Notepads.Controls.GridSplitter>(editor, "FindAllResizeGrip");
+        var gripSurface = (Grid)VisualTreeHelper.GetChild(grip, 0);
+        foreach (var state in new[] { "PointerOver", "Pressed", "Normal" })
+        {
+            VisualStateManager.GoToState(grip, state, false);
+            Check(gripSurface.Background is SolidColorBrush brush && brush.Color.A == 0,
+                $"The Find All boundary stays transparent in the {state} state.");
+        }
+        var panel = Named<Grid>(editor, "FindAllPanel");
+        var rows = Named<Grid>(editor, "FindAllHost").RowDefinitions;
+        var row = rows[1];
+        var initialHeight = row.Height.Value;
+        var editorHeight = editor.Height;
+        var originalTab = host.Core.GetTab(editor);
+        var query = Named<TextBox>(Named<FindAndReplaceControl>(editor, "FindAndReplaceControl"), "FindBar").Text;
+        var native = editor.TestNativeCore.TestFeatureNative;
+        var selection = (native.CurrentPos, native.Anchor, native.DocumentRevision);
+        var results = editor.TestFindAllList.ItemsSource;
+        Notepads.Presentation.Workspace.WorkspaceTab otherTab = null;
+        TextEditor other = null;
+        try
+        {
+            var preferred = Math.Max(row.MinHeight, initialHeight - 24);
+            Check(preferred < initialHeight, "The resize fixture has space to adjust its result panel.");
+            row.Height = new GridLength(preferred);
+            editor.UpdateLayout();
+            await UntilAsync(() => Math.Abs(panel.ActualHeight - preferred) < 1,
+                "Changing the result row applies the chosen height.");
+            Check(selection == (native.CurrentPos, native.Anchor, native.DocumentRevision) &&
+                ReferenceEquals(results, editor.TestFindAllList.ItemsSource),
+                "Resizing preserves the document, selection and search results.");
+
+            editor.TestEscape();
+            editor.UpdateLayout();
+            Check(row.Height.Value == 0 && row.MinHeight == 0 && row.ActualHeight == 0,
+                "Closing results returns their entire row to the editor.");
+            await UntilAsync(() => !editor.TestFindVisible, "The query close animation completes before reopening.");
+            await OpenAsync(editor, query, 2);
+            await UntilAsync(() => Math.Abs(panel.ActualHeight - preferred) < 1,
+                "Reopening results restores the last chosen height.");
+
+            editor.Height = 160;
+            editor.UpdateLayout();
+            await UntilAsync(() => panel.ActualHeight <= 80 && row.MaxHeight <= 80,
+                "A small editor clamps the result panel and retains editing space.");
+            Check(editor.TestNativeCore.ActualHeight >= 79,
+                "A constrained result panel leaves half the small editor available for text.");
+            editor.TestEscape();
+            await UntilAsync(() => !editor.TestFindVisible, "The small query panel finishes closing before reopening.");
+            await OpenAsync(editor, query, 2);
+            editor.Height = editorHeight;
+            editor.UpdateLayout();
+            await UntilAsync(() => Math.Abs(panel.ActualHeight - preferred) < 1,
+                "Temporary size limits and reopening in a small window preserve the preferred height.");
+
+            otherTab = await NewTabAsync(host.Page);
+            other = (TextEditor)otherTab.ReadyEditor;
+            other.TypeText("cat");
+            await OpenAsync(other, "cat", 1);
+            var otherPanel = Named<Grid>(other, "FindAllPanel");
+            await UntilAsync(() => Math.Abs(otherPanel.ActualHeight - preferred) < 1,
+                "New tabs inherit the current run's result height.");
+            var nextHeight = preferred + 8;
+            Named<Grid>(other, "FindAllHost").RowDefinitions[1].Height = new GridLength(nextHeight);
+            host.Core.SwitchTo(originalTab);
+            await UntilAsync(() => editor.IsLoaded && Math.Abs(panel.ActualHeight - nextHeight) < 1,
+                "Returning to an existing tab uses the most recently adjusted height.");
+        }
+        finally
+        {
+            if (otherTab != null) host.Core.DeleteTab(otherTab);
+            if (other != null) await other.DisposalCompletion;
+            host.Core.SwitchTo(originalTab);
+            editor.Height = editorHeight;
+            editor.UpdateLayout();
+            row.Height = new GridLength(initialHeight);
+        }
+
+        static async Task OpenAsync(TextEditor target, string text, int count)
+        {
+            target.ShowFindAndReplaceControl(false);
+            var find = Named<FindAndReplaceControl>(target, "FindAndReplaceControl");
+            var query = Named<TextBox>(find, "FindBar");
+            query.Text = text;
+            var command = Named<MenuFlyoutItem>(find, "FindAllButton");
+            await UntilAsync(() => query.IsLoaded && query.FocusState != FocusState.Unfocused && command.IsEnabled,
+                "The query is loaded and focused before invoking Find All.");
+            Invoke(command);
+            await UntilAsync(() => target.TestFindAllList?.Items.Count == count &&
+                target.TestFindAllList.SelectedIndex == 0 &&
+                target.TestFindAllList.ContainerFromIndex(0) is ListViewItem first && first.FocusState == FocusState.Pointer,
+                "The result panel finishes opening before the next sizing action.");
+        }
+    }
+
+    private static async Task VerifyLongLineFindAllAsync(TextEditor editor, StringBuilder log,
+        string fixture, string unit, string suffix, string query)
+    {
+        var core = editor.TestNativeCore;
+        var native = core.TestFeatureNative;
+        var wrapping = core.TextWrapping;
+        var originalText = editor.GetText();
+        var readingAids = ApplicationPreferences.EditorReadingAids;
+        var payload = string.Concat(Enumerable.Repeat(unit, 2000)) + suffix;
+        var text = "[\r" + string.Join(",\r", Enumerable.Range(0, 1500).Select(i =>
+            "{\"value\":\"" + (i % 50 == 0 ? payload : "short") + "\"}")) + "\r]";
+        try
+        {
+            core.TextWrapping = TextWrapping.NoWrap;
+            core.SelectAll();
+            editor.TypeText(text);
+            editor.SetLanguageOverride("json");
+            native.SetSel(0, 0);
+            await EditorTestLayout.AfterPaintAsync(native, () => native.FirstVisibleLine = 45);
+            var baselineCpu = await MeasureScrollAsync("closed");
+
+            editor.ShowFindAndReplaceControl(false);
+            var find = Named<FindAndReplaceControl>(editor, "FindAndReplaceControl");
+            Named<TextBox>(find, "FindBar").Text = query;
+            var findAll = Named<MenuFlyoutItem>(find, "FindAllButton");
+            await UntilAsync(() => findAll.IsEnabled, "The loaded query enables Find All.");
+            Invoke(findAll);
+            await UntilAsync(() => editor.TestFindAllList.Items.Count == TextEditorCore.MaximumSearchResults,
+                "Find All bounds a long-line JSON result set.");
+            Check(editor.TestFindAllList.Items.Cast<DocumentSearchRow>().All(row => row.Label.Length < 280),
+                "Long-line result previews remain bounded before XAML layout.");
+            await MeasureScrollAsync("results");
+
+            var matches = await core.FindAllAsync(new SearchContext(query, true), CancellationToken.None);
+            Check(core.NavigateSearchResult(matches, 0) && core.GetSelectedText() == query,
+                "Long-line results navigate to the exact match.");
+            await EditorTestLayout.AfterPaintAsync(native, () => native.FirstVisibleLine = 45);
+            core.RefreshReadingAids();
+            var offsetInLine = matches.Rows[0].Start - native.PositionFromLine(1);
+            Check(native.IndicatorValueAt(8, native.PositionFromLine(51) + offsetInLine) != 0,
+                "Occurrences on a visible long JSON line remain highlighted.");
+            var selection = (native.CurrentPos, native.Anchor, native.DocumentRevision);
+            var selectedCpu = await MeasureScrollAsync("selected-result");
+            await EditorTestLayout.AfterPaintAsync(native, () => native.FirstVisibleLine = 0);
+            ApplicationPreferences.EditorReadingAids = readingAids & ~ReadingAids.Occurrences;
+            core.RefreshReadingAids();
+            var selectionOnlyCpu = await MeasureScrollAsync("selected-line-baseline");
+            ApplicationPreferences.EditorReadingAids = readingAids;
+            core.RefreshReadingAids();
+            var visibleCpu = await MeasureScrollAsync("selected-line-visible");
+            // CPU time excludes waits caused by other processes. Warm each phase
+            // and use medians to tolerate transient work in the test application.
+            // The relative allowance scales with the machine; the absolute floor
+            // accommodates coarse process counters and a very cheap baseline.
+            var cpuBudget = Math.Max(500, baselineCpu * 8);
+            // A visible selection has its own shaping cost. Compare its highlights
+            // against the same selection and viewport with occurrences disabled.
+            var visibleBudget = Math.Max(500, selectionOnlyCpu * 3);
+            Check(selectedCpu <= cpuBudget && visibleCpu <= visibleBudget,
+                $"{fixture} long-line highlight CPU budget: through={selectedCpu:F1}/{cpuBudget:F1}, visible={visibleCpu:F1}/{visibleBudget:F1} ms per four paints.");
+            Check(selection == (native.CurrentPos, native.Anchor, native.DocumentRevision),
+                "Scrolling long-line search results preserves selection and document revision.");
+            // Pan to a distant match so inverse hit testing must resolve a long
+            // Unicode prefix. Use the real caret and mouse-coordinate APIs.
+            var distant = matches.Rows[^1];
+            var lineStart = native.PositionFromLine(native.LineFromPosition(distant.Start));
+            var pan = Math.Max(0, native.PointXFromPosition(distant.Start) - native.PointXFromPosition(lineStart) - 40);
+            await EditorTestLayout.AfterPaintAsync(native, () => native.XOffset = pan);
+            using var geometryProcess = System.Diagnostics.Process.GetCurrentProcess();
+            var geometryCpu = geometryProcess.TotalProcessorTime;
+            var geometryWatch = System.Diagnostics.Stopwatch.StartNew();
+            for (var i = 0; i < 16; i++)
+            {
+                var position = i % 2 == 0 ? distant.Start : distant.End;
+                var x = (int)native.PointXFromPosition(position);
+                var y = (int)(native.PointYFromPosition(position) + native.TextHeight(1) / 2);
+                Check(native.PositionFromPointClose(x, y) == position,
+                    "Distant mouse hits round-trip through actual long-line caret geometry.");
+            }
+            var geometryMilliseconds = (geometryProcess.TotalProcessorTime - geometryCpu).TotalMilliseconds;
+            log.AppendLine($"MEASURE: long-line {fixture}/geometry, 16 caret/hit pairs, wall={geometryWatch.Elapsed.TotalMilliseconds:F1} ms, CPU={geometryMilliseconds:F1} ms.");
+            Check(geometryMilliseconds <= Math.Max(500, baselineCpu * 8),
+                $"{fixture} long-line geometry CPU budget exceeded: {geometryMilliseconds:F1} ms.");
+            Check(selection == (native.CurrentPos, native.Anchor, native.DocumentRevision),
+                "Hit testing leaves the document and selection unchanged.");
+        }
+        finally
+        {
+            ApplicationPreferences.EditorReadingAids = readingAids;
+            native.XOffset = 0;
+            editor.HideFindAndReplaceControl();
+            native.SetSel(0, 0);
+            core.RefreshReadingAids();
+            core.SelectAll();
+            editor.TypeText(originalText);
+            core.TextWrapping = wrapping;
+        }
+
+        async Task<double> MeasureScrollAsync(string phase)
+        {
+            using var process = System.Diagnostics.Process.GetCurrentProcess();
+            await PaintBatchAsync();
+            var cpuSamples = new double[3];
+            var wallSamples = new double[3];
+            for (var sample = 0; sample < cpuSamples.Length; sample++)
+            {
+                var cpu = process.TotalProcessorTime;
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                await PaintBatchAsync();
+                cpuSamples[sample] = (process.TotalProcessorTime - cpu).TotalMilliseconds;
+                wallSamples[sample] = watch.Elapsed.TotalMilliseconds;
+            }
+            Array.Sort(cpuSamples);
+            Array.Sort(wallSamples);
+            log.AppendLine($"MEASURE: long-line Find All {fixture}/{phase}, median of 3 four-paint batches, wall={wallSamples[1]:F1} ms, CPU={cpuSamples[1]:F1} ms.");
+            return cpuSamples[1];
+        }
+
+        async Task PaintBatchAsync()
+        {
+            for (var i = 0; i < 4; i++)
+                await EditorTestLayout.AfterPaintAsync(native, () => native.LineScroll(0, i % 2 == 0 ? 1 : -1));
+        }
+    }
+
+    private static async Task VerifyGeometryInvalidationAsync(TextEditor editor)
+    {
+        var core = editor.TestNativeCore;
+        var native = core.TestFeatureNative;
+        var originalText = editor.GetText();
+        var width = core.Width;
+        var fontSize = core.FontSize;
+        var wrapping = core.TextWrapping;
+        var tabWidth = native.TabWidth;
+        var zoom = native.Zoom;
+        var cache = native.LayoutCache;
+        var representation = native.GetRepresentation("\u0001");
+        var representationAppearance = native.GetRepresentationAppearance("\u0001");
+        try
+        {
+            editor.SetLanguageOverride("plaintext");
+            core.TextWrapping = TextWrapping.NoWrap;
+            core.SelectAll();
+            editor.TypeText("a\t中文😀e\u0301\u0001 tail " + new string('x', 80) + "\rsecond");
+            native.SetSel(0, 0);
+            Verify("initial geometry");
+            native.ClearRepresentation("\u0001");
+            Verify("clear representation");
+            native.SetRepresentation("\u0001", representation);
+            Verify("restore representation");
+            native.SetRepresentation("\u0001", "CONTROL");
+            Verify("wider representation");
+            native.SetRepresentationAppearance("\u0001", RepresentationAppearance.Plain);
+            Verify("representation appearance");
+            native.ClearAllRepresentations();
+            Verify("reset representations");
+            foreach (var change in new (string Name, Action Apply)[]
+            {
+                ("edit", () => { native.SetSel(0, 1); editor.TypeText("WWW"); }),
+                ("undo", () => core.Undo()),
+                ("font size", () => core.FontSize = fontSize + 4),
+                ("tab width", () => native.TabWidth = tabWidth + 3),
+                ("zoom", () => native.Zoom = zoom + 2),
+                ("wrap", () => { core.TextWrapping = TextWrapping.Wrap; core.Width = 250; core.UpdateLayout(); }),
+                ("resize", () => { core.Width = 500; core.UpdateLayout(); }),
+                ("horizontal pan", () => { core.TextWrapping = TextWrapping.NoWrap; native.XOffset = 17; })
+            })
+            {
+                await EditorTestLayout.AfterPaintAsync(native, change.Apply);
+                Verify(change.Name);
+            }
+        }
+        finally
+        {
+            native.LayoutCache = cache;
+            native.TabWidth = tabWidth;
+            native.Zoom = zoom;
+            native.XOffset = 0;
+            if (string.IsNullOrEmpty(representation)) native.ClearRepresentation("\u0001");
+            else native.SetRepresentation("\u0001", representation);
+            native.SetRepresentationAppearance("\u0001", representationAppearance);
+            core.Width = width;
+            core.FontSize = fontSize;
+            core.TextWrapping = wrapping;
+            core.SelectAll();
+            editor.TypeText(originalText);
+            core.UpdateLayout();
+        }
+
+        void Verify(string change)
+        {
+            // Compare the actual warmed geometry with independently rebuilt
+            // layouts. Include interior UTF-8 offsets as well as valid boundaries.
+            var cached = Capture();
+            native.LayoutCache = LineCache.None;
+            var fresh = Capture();
+            native.LayoutCache = cache;
+            Check(cached.SequenceEqual(fresh), $"Cached geometry matches fresh layouts after {change}.");
+            _ = Capture();
+        }
+
+        (long X, long Y)[] Capture() => Enumerable.Range(0, checked((int)native.Length + 1))
+            .Select(position => ((long)native.PointXFromPosition(position), (long)native.PointYFromPosition(position))).ToArray();
     }
 
     private static async Task VerifyFindAllSlicesAsync(TextEditor editor, StringBuilder log)
@@ -272,6 +580,12 @@ internal static class EditorToolsFeatureTests
                     ? "EditorTools_FindAllOne" : "EditorTools_FindAllCount"), count);
             await UntilAsync(() => status.Text == expected && list.Items.Count == (count ?? 0),
                 "The result summary reflects the completed search, including singular, zero, partial and error states.");
+            // The command restores focus after publishing its results. Start
+            // the next interaction only after that completion step has run.
+            if (count > 0)
+                await UntilAsync(() => list.SelectedIndex == 0 && list.ContainerFromIndex(0) is ListViewItem first &&
+                    first.FocusState != FocusState.Unfocused,
+                    "The completed Find All command has focused its first result before the next interaction.");
         }
 
         try

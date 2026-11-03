@@ -16,12 +16,12 @@ public partial class GridSplitter
 {
     private static bool IsStarColumn(ColumnDefinition definition)
     {
-        return ((GridLength)definition.GetValue(ColumnDefinition.WidthProperty)).IsStar;
+        return definition.Width.IsStar;
     }
 
     private static bool IsStarRow(RowDefinition definition)
     {
-        return ((GridLength)definition.GetValue(RowDefinition.HeightProperty)).IsStar;
+        return definition.Height.IsStar;
     }
 
     private bool SetColumnWidth(ColumnDefinition columnDefinition, double horizontalChange, GridUnitType unitType)

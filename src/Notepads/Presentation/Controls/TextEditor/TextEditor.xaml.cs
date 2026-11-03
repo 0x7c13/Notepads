@@ -187,6 +187,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     public TextEditor()
     {
         InitializeComponent();
+        _findAllHeightCallback = FindAllResultsRow.RegisterPropertyChangedCallback(RowDefinition.HeightProperty, FindAllHeightChanged);
 
         TextEditorCore.TextChanging += TextEditorCore_OnTextChanging;
         TextEditorCore.TextChanged += TextEditorCore_OnTitleTextChanged;
@@ -263,6 +264,9 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private void DisposeUserInterface()
     {
+        FindAllResultsRow.UnregisterPropertyChangedCallback(RowDefinition.HeightProperty, _findAllHeightCallback);
+        base.SizeChanged -= FindAllArea_SizeChanged;
+        FindAllHost.SizeChanged -= FindAllArea_SizeChanged;
         TextEditorCore.IsEnabled = false;
 
         TextEditorCore.TextChanging -= TextEditorCore_OnTextChanging;

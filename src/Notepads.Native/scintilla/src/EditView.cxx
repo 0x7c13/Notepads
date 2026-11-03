@@ -775,7 +775,7 @@ Point EditView::LocationFromPosition(Surface *surface, const EditModel &model, S
 
 			// Get the point from current position
 			const ScreenLine screenLine(ll.get(), subLine, vs, rcClient.right, tabWidthMinimumPixels);
-			std::unique_ptr<IScreenLineLayout> slLayout = surface->Layout(&screenLine);
+			const auto slLayout = screenLine.Layout(surface);
 			pt.x = slLayout->XFromPosition(caretPosition);
 
 			pt.x += vs.TextStart(model.BidirectionalR2L()) - model.xOffset;
@@ -898,7 +898,7 @@ SelectionPosition EditView::SPositionFromTextLocation(Surface *surface, const Ed
 				UpdateBidiData(model, vs, ll.get());
 
 				const ScreenLine screenLine(ll.get(), subLine, vs, rcClient.right, tabWidthMinimumPixels);
-				std::unique_ptr<IScreenLineLayout> slLayout = surface->Layout(&screenLine);
+				const auto slLayout = screenLine.Layout(surface);
 				positionInLine = slLayout->PositionFromX(pt.x, charPosition) +
 					rangeSubLine.start;
 			} else {
@@ -1736,7 +1736,7 @@ void EditView::DrawCarets(Surface *surface, const EditModel &model, const ViewSt
 
 				const int caretPosition = offset - ll->LineStart(subLine);
 
-				std::unique_ptr<IScreenLineLayout> slLayout = surface->Layout(&screenLine);
+				const auto slLayout = screenLine.Layout(surface);
 				const XYPOSITION caretLeft = slLayout->XFromPosition(caretPosition);
 
 				// In case of start of line, the cursor should be at the right
@@ -2049,7 +2049,7 @@ void DrawTranslucentSelection(Surface *surface, const EditModel &model, const Vi
 					const SelectionSegment portionInSubLine = portionInLine.Subtract(lineRange.First());
 
 					const ScreenLine screenLine(ll, subLine, vsDraw, rcLine.right, tabWidthMinimumPixels);
-					std::unique_ptr<IScreenLineLayout> slLayout = surface->Layout(&screenLine);
+					const auto slLayout = screenLine.Layout(surface);
 
 					if (slLayout) {
 						const std::vector<Interval> intervals = slLayout->FindRangeIntervals(
@@ -2194,7 +2194,7 @@ void DrawTabArrow(Surface *surface, PRectangle rcTab, int ymid,
 
 void DrawIndicator(int indicNum, Sci::Position startPos, Sci::Position endPos, Surface *surface, const ViewStyle &vsDraw,
 	const LineLayout *ll, int xStart, PRectangle rcLine, Sci::Position secondCharacter, int subLine, Indicator::State state,
-	int value, bool bidiEnabled, int tabWidthMinimumPixels) {
+	int value, bool bidiEnabled, int tabWidthMinimumPixels, std::shared_ptr<IScreenLineLayout> &indicatorLayout) {
 
 	const XYPOSITION subLineStart = ll->GetPosition(ll->LineStart(subLine));
 	const XYPOSITION horizontalOffset = xStart - subLineStart;
@@ -2207,11 +2207,13 @@ void DrawIndicator(int indicNum, Sci::Position startPos, Sci::Position endPos, S
 		std::max(rcLine.top + vsDraw.maxAscent + 3, rcLine.bottom));
 
 	if (bidiEnabled) {
-		ScreenLine screenLine(ll, subLine, vsDraw, rcLine.right - xStart, tabWidthMinimumPixels);
+		if (!indicatorLayout) {
+			ScreenLine screenLine(ll, subLine, vsDraw, rcLine.right - xStart, tabWidthMinimumPixels);
+			indicatorLayout = screenLine.Layout(surface);
+		}
 		const ForwardRange lineRange = ForwardRange(ll->SubLineRange(subLine, LineLayout::Scope::visibleOnly));
 
-		std::unique_ptr<IScreenLineLayout> slLayout = surface->Layout(&screenLine);
-		std::vector<Interval> intervals = slLayout->FindRangeIntervals(
+		std::vector<Interval> intervals = indicatorLayout->FindRangeIntervals(
 			startPos - lineRange.First(), endPos - lineRange.First());
 		for (const Interval &interval : intervals) {
 			PRectangle rcInterval = rcIndic;
@@ -2243,6 +2245,10 @@ void DrawIndicators(Surface *surface, const EditModel &model, const ViewStyle &v
 	const Sci::Position posLineStart = model.pdoc->LineStart(line);
 	const Sci::Position lineStart = ll->LineStart(subLine);
 	const Sci::Position posLineEnd = posLineStart + lineEnd;
+	// Every indicator in this paint pass uses the same screen line and fonts.
+	// Shape it lazily once, rather than once per occurrence on a long line.
+	// The physical-line cache handles reuse between paints and its invalidation.
+	std::shared_ptr<IScreenLineLayout> indicatorLayout;
 
 	for (const IDecoration *deco : model.pdoc->decorations->View()) {
 		if (under == vsDraw.indicators[deco->Indicator()].under) {
@@ -2258,7 +2264,7 @@ void DrawIndicators(Surface *surface, const EditModel &model, const ViewStyle &v
 					const Sci::Position posSecond = model.pdoc->MovePositionOutsideChar(rangeRun.First() + 1, 1);
 					DrawIndicator(deco->Indicator(), startPos - posLineStart, endPos - posLineStart,
 						surface, vsDraw, ll, xStart, rcLine, posSecond - posLineStart, subLine, state,
-						value, model.BidirectionalEnabled(), tabWidthMinimumPixels);
+						value, model.BidirectionalEnabled(), tabWidthMinimumPixels, indicatorLayout);
 				}
 				startPos = endPos;
 			}
@@ -2278,7 +2284,7 @@ void DrawIndicators(Surface *surface, const EditModel &model, const ViewStyle &v
 						const Sci::Position braceEnd = model.pdoc->MovePositionOutsideChar(model.braces[brace] + 1, 1) - posLineStart;
 						DrawIndicator(braceIndicator, braceOffset, braceEnd,
 							surface, vsDraw, ll, xStart, rcLine, braceEnd, subLine, Indicator::State::normal,
-							1, model.BidirectionalEnabled(), tabWidthMinimumPixels);
+							1, model.BidirectionalEnabled(), tabWidthMinimumPixels, indicatorLayout);
 					}
 				}
 			}
@@ -2300,7 +2306,7 @@ void DrawIndicators(Surface *surface, const EditModel &model, const ViewStyle &v
 					const Sci::Position posSecond = model.pdoc->MovePositionOutsideChar(rangeRun.First() + 1, 1);
 					DrawIndicator(indicator, startPos - posLineStart, endPos - posLineStart,
 						surface, vsDraw, ll, xStart, rcLine, posSecond - posLineStart, subLine, Indicator::State::normal,
-						1, model.BidirectionalEnabled(), tabWidthMinimumPixels);
+						1, model.BidirectionalEnabled(), tabWidthMinimumPixels, indicatorLayout);
 				}
 				startPos = endPos;
 			}
@@ -2316,7 +2322,7 @@ void DrawIndicators(Surface *surface, const EditModel &model, const ViewStyle &v
 						const int indicator = (edition * 2) + indexHistory + 1;
 						DrawIndicator(indicator, startPos - posLineStart, posSecond - posLineStart,
 							surface, vsDraw, ll, xStart, rcLine, posSecond - posLineStart, subLine, Indicator::State::normal,
-							1, model.BidirectionalEnabled(), tabWidthMinimumPixels);
+							1, model.BidirectionalEnabled(), tabWidthMinimumPixels, indicatorLayout);
 					}
 				}
 				startPos = model.pdoc->EditionNextDelete(startPos);

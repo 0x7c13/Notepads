@@ -40,6 +40,7 @@ size_t CheckEditorStateTransfer();
 size_t CheckDocumentSearchBounds();
 size_t CheckPreparedReplacementDecorations();
 size_t CheckVerticalScrollGeometry();
+size_t CheckUtf8PositionIndex();
 size_t CheckTextStoreConversions();
 size_t CheckUtf16EndIndex();
 size_t CheckTextStoreOvertypeAdmission();
@@ -1214,6 +1215,8 @@ int wmain(int argc, wchar_t **argv) {
         checks += CheckPreparedReplacementDecorations();
         std::cout << "PASS: bounded literal search across buffer gaps, directions, case modes and NUL/EOF boundaries.\n";
         checks += CheckVerticalScrollGeometry();
+        checks += CheckUtf8PositionIndex();
+        std::cout << "PASS: Unicode position lookup preserves byte geometry with bounded scan work.\n";
         checks += CheckTextStoreConversions();
         checks += CheckUtf16EndIndex();
         checks += CheckTextStoreOvertypeAdmission();

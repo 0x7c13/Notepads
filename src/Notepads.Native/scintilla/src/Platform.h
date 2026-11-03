@@ -6,6 +6,9 @@
 // Copyright 1998-2009 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+// See LICENSE.txt in the project root for the Notepads modifications.
+
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
@@ -171,6 +174,9 @@ public:
 class IScreenLineLayout {
 public:
 	virtual ~IScreenLineLayout() noexcept = default;
+	// A failed or partially configured layout may serve the current fallback,
+	// but must be rebuilt on the next query.
+	virtual bool IsCacheable() const noexcept { return false; }
 	virtual size_t PositionFromX(XYPOSITION xDistance, bool charPosition) = 0;
 	virtual XYPOSITION XFromPosition(size_t caretPosition) = 0;
 	virtual std::vector<Interval> FindRangeIntervals(size_t start, size_t end) = 0;
@@ -244,6 +250,9 @@ public:
 	virtual void Copy(PRectangle rc, Point from, Surface &surfaceSource)=0;
 
 	virtual std::unique_ptr<IScreenLineLayout> Layout(const IScreenLine *screenLine) = 0;
+	// Opt in only for immutable, device-independent geometry. A backend/factory
+	// identity prevents sharing geometry with a different rendering implementation.
+	virtual const void *LayoutCacheIdentity() const noexcept { return nullptr; }
 	virtual bool NeedsParagraphLayout(std::string_view text) const = 0;
 	// Return a complete, non-null layout; report creation failure by exception.
 	virtual std::shared_ptr<IParagraphLayout> LayoutParagraph(const IScreenLine *line, bool rightToLeft, Scintilla::Wrap wrap,

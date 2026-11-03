@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Notepads.Presentation.Controls.FindAndReplace;
@@ -67,7 +68,9 @@ internal sealed class EditorToolsKeyboardFixture : IAsyncDisposable
         var first = list?.ContainerFromIndex(0) as ListViewItem;
         var selected = list?.ContainerFromIndex(list.SelectedIndex) as ListViewItem;
         if (first != null) AutomationProperties.SetAutomationId(first, "EditorToolsResult");
+        var resultHeight = (list?.Parent as FrameworkElement)?.ActualHeight ?? 0;
         return $"toolsMode={_editor.Mode}\ntoolsResultsVisible={_editor.TestFindAllVisible}\ntoolsResultCount={list?.Items.Count ?? 0}\n" +
+            $"toolsResultsHeight={resultHeight.ToString(CultureInfo.InvariantCulture)}\n" +
             $"toolsResultReady={first?.IsLoaded == true}\n" +
             $"toolsSelectedResult={list?.SelectedIndex ?? -1}\ntoolsResultFocus={selected?.FocusState}\n" +
             $"toolsQueryVisible={_editor.TestFindVisible}\ntoolsText64=" +
