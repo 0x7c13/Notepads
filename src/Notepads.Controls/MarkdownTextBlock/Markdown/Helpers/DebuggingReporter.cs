@@ -3,25 +3,25 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Parsers/Markdown/Helpers
 
-namespace Notepads.Controls.Markdown
-{
-    using System.Diagnostics;
 
+using System.Diagnostics;
+
+namespace Notepads.Controls.Markdown;
+
+/// <summary>
+/// Reports an error during debugging.
+/// </summary>
+internal class DebuggingReporter
+{
     /// <summary>
-    /// Reports an error during debugging.
+    /// Reports a critical error.
     /// </summary>
-    internal class DebuggingReporter
+    public static void ReportCriticalError(string errorText)
     {
-        /// <summary>
-        /// Reports a critical error.
-        /// </summary>
-        public static void ReportCriticalError(string errorText)
+        Debug.WriteLine(errorText);
+        if (Debugger.IsAttached)
         {
-            Debug.WriteLine(errorText);
-            if (Debugger.IsAttached)
-            {
-                Debugger.Break();
-            }
+            Debugger.Break();
         }
     }
 }

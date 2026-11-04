@@ -1,0 +1,242 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: pwsh
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  NUGET_XMLDOC_MODE: skip
+
+jobs:
+  checks:
+    name: Managed Tests
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-dotnet
+        with:
+          cache: true
+          cache-dependency-path: |
+            global.json
+            Directory.Packages.props
+            tests/UnitTests/UnitTests.csproj
+            tests/IntegrationTests/IntegrationTests.csproj
+      - name: Validate workflows
+        run: ./scripts/Test-Workflows.ps1
+      - name: Run unit and headless integration tests
+        run: |
+          ./scripts/Test.ps1 -Suite All -Configuration Release -Group Runner,Headers,Localization,Storage,MetricsInitialization,MetricsCounter,MetricsDuration,ArchitectureSelfTest
+      - name: Preserve test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-results
+          path: artifacts/test-runs/
+          retention-days: 14
+          if-no-files-found: warn
+
+  native:
+    name: Native Tests
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-dotnet
+      - name: Verify native toolchain
+        run: ./scripts/Initialize-BuildTools.ps1 -InstallMissing
+      - name: Run native comparison, paragraph and regex tests
+        run: ./scripts/Test.ps1 -Suite Integration -Group NativeDiff,NativeBidi,RegexText -Configuration Release -Platform x64
+      - name: Preserve native test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-test-results
+          path: artifacts/test-runs/
+          retention-days: 14
+          if-no-files-found: warn
+
+  package:
+    name: Native AOT / ${{ matrix.platform }}
+    needs: [checks, native]
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x86, x64, ARM64]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-dotnet
+        with:
+          cache: true
+          cache-dependency-path: |
+            global.json
+            Directory.Packages.props
+            src/**/*.csproj
+            src/**/packages.config
+            tests/IntegrationTests/IntegrationTests.csproj
+      - name: Verify native toolchain
+        run: ./scripts/Initialize-BuildTools.ps1 -InstallMissing
+      - name: Publish and validate unsigned production package
+        id: build
+        env:
+          BUILD_PLATFORM: ${{ matrix.platform }}
+        run: ./scripts/Build-CI.ps1 -Platform $env:BUILD_PLATFORM
+      - name: Prepare installed application desktop
+        if: matrix.platform == 'x64'
+        run: ./scripts/Initialize-CIDesktop.ps1 -Platform x64 -Production
+      - name: Test installed Production application
+        if: matrix.platform == 'x64'
+        run: |
+          $packages = @(Get-ChildItem artifacts/ci/x64 -Recurse -File -Filter *.msixupload)
+          if ($packages.Count -ne 1) { throw 'Expected exactly one fresh Production upload package.' }
+          ./scripts/Test.ps1 -Suite Integration -Group PackagedApp -Platform x64 -PackagePath $packages[0].FullName
+      - name: Upload installable offline preview
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: notepads-offline-${{ matrix.platform }}
+          path: ${{ steps.build.outputs.offline-path }}
+          retention-days: 14
+          if-no-files-found: error
+      - name: Preserve build and package evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-aot-${{ matrix.platform }}
+          path: |
+            artifacts/ci/
+            artifacts/ci-desktop/
+            artifacts/packaged-app/
+            artifacts/test-runs/
+          retention-days: 14
+          compression-level: 0
+          if-no-files-found: warn
+
+  ui:
+    name: ${{ matrix.name }}
+    needs: [checks, native]
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: E2E Tests
+            lane: E2E
+            configuration: Release
+            artifact: ui-test-results
+          - name: Resilience Tests
+            lane: Faults
+            configuration: Debug
+            artifact: native-fault-results
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-dotnet
+        with:
+          cache: true
+          cache-dependency-path: |
+            global.json
+            Directory.Packages.props
+            src/**/*.csproj
+            src/**/packages.config
+            tests/IntegrationTests/**/*.csproj
+      - name: Verify native toolchain
+        run: ./scripts/Initialize-BuildTools.ps1 -InstallMissing
+      - name: Restore managed and native dependencies
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $vs = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
+          if ($LASTEXITCODE -ne 0 -or !$vs) { throw 'Visual Studio 2026 is required.' }
+          & (Join-Path $vs 'MSBuild/Current/Bin/MSBuild.exe') ./src/Notepads.sln /t:Restore /p:RestorePackagesConfig=true /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /nologo /v:minimal
+          if ($LASTEXITCODE -ne 0) { throw "Solution restore failed: $LASTEXITCODE" }
+      - name: Prepare interactive desktop
+        run: ./scripts/Initialize-CIDesktop.ps1 -Platform x64
+      - name: Run ${{ matrix.name }}
+        run: ./scripts/Test-CIUI.ps1 -Lane ${{ matrix.lane }}
+      - name: Capture desktop failure diagnostics
+        if: failure()
+        run: |
+          $evidence = Join-Path $PWD 'artifacts/ci-desktop'
+          New-Item -ItemType Directory -Path $evidence -Force | Out-Null
+          try {
+            Add-Type -AssemblyName System.Windows.Forms
+            Add-Type -AssemblyName System.Drawing
+            $bounds = [Windows.Forms.SystemInformation]::VirtualScreen
+            $bitmap = [Drawing.Bitmap]::new($bounds.Width, $bounds.Height)
+            try {
+              $graphics = [Drawing.Graphics]::FromImage($bitmap)
+              try { $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.Size) }
+              finally { $graphics.Dispose() }
+              $bitmap.Save((Join-Path $evidence 'desktop.png'))
+            }
+            finally { $bitmap.Dispose() }
+          } catch { Write-Warning "Screenshot unavailable: $_" }
+          foreach ($channel in @('Application', 'Microsoft-Windows-AppModel-Runtime/Admin', 'Microsoft-Windows-AppXDeploymentServer/Operational')) {
+            try {
+              Get-WinEvent -FilterHashtable @{ LogName = $channel; StartTime = (Get-Date).AddMinutes(-45) } -MaxEvents 40 -ErrorAction Stop |
+                Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 3 |
+                Set-Content -LiteralPath (Join-Path $evidence ($channel.Replace('/', '-') + '.json'))
+            } catch { Write-Warning "Event log unavailable ($channel): $_" }
+          }
+      - name: Preserve UI test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            artifacts/ci-desktop/
+            artifacts/test-runs/
+            artifacts/isolated-uwp/*/*.json
+            artifacts/isolated-uwp/*/*.jsonl
+            artifacts/isolated-uwp/*/*.txt
+            artifacts/isolated-uwp/*/*.png
+            artifacts/isolated-uwp/*/commands/
+            artifacts/isolated-uwp/*/lease-protocol/
+            artifacts/isolated-uwp/*/peer/
+          retention-days: 14
+          if-no-files-found: warn
+
+  required:
+    name: CI Gate
+    if: always()
+    needs: [checks, native, package, ui]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Require every check
+        env:
+          CHECKS: ${{ needs.checks.result }}
+          NATIVE: ${{ needs.native.result }}
+          PACKAGE: ${{ needs.package.result }}
+          UI: ${{ needs.ui.result }}
+        run: |
+          printf 'Tests: %s\nNative: %s\nPackages: %s\nUI: %s\n' "$CHECKS" "$NATIVE" "$PACKAGE" "$UI" >> "$GITHUB_STEP_SUMMARY"
+          test "$CHECKS" = success && test "$NATIVE" = success && test "$PACKAGE" = success && test "$UI" = success

@@ -1,0 +1,15 @@
+#include "Defines.idl"
+import "EditorBaseControl.idl";
+
+namespace WinUIEditor
+{
+    [default_interface]
+    [webhosthidden]
+    runtimeclass EditorBaseControlAutomationPeer : DUX.Automation.Peers.FrameworkElementAutomationPeer,
+        DUX.Automation.Provider.ITextEditProvider,
+        DUX.Automation.Provider.ITextProvider2,
+        DUX.Automation.Provider.IValueProvider
+    {
+        EditorBaseControlAutomationPeer(EditorBaseControl owner);
+    }
+}

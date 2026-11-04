@@ -59,7 +59,7 @@
 
   <Target Name="UpdateAppxManifest" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Production'">
     <UpdateNotepadsPackageManifest ManifestPath="%(AppxManifest.FullPath)"
-                            OutDir="$(ProjectDir)$(BaseIntermediateOutputPath)"
+                            OutDir="$(ProjectDir)$(IntermediateOutputPath)"
                             Configuration="$(Configuration)">
       <Output TaskParameter="ManifestPath" PropertyName="GeneratedAppxManifest" />
     </UpdateNotepadsPackageManifest>
@@ -68,6 +68,12 @@
       <AppxManifest Include="$(GeneratedAppxManifest)" />
     </ItemGroup>
   </Target>
+
+  <!-- The UWP upload/bundle path can reach symbol packaging without the
+       GenerateMsixPackage dependency chain that normally resolves this tool. -->
+  <Target Name="EnsureNotepadsSymbolPackagingTools"
+          BeforeTargets="_GenerateAppxUploadSymbolPackage"
+          DependsOnTargets="_EnsurePdbCmfExeFullPath" />
 
   <!-- Manually set resource qualifiers after removing `Language` qualifier from Resource Package Qualifiers-->
   <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->

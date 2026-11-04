@@ -47,15 +47,31 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Ctrl+(Shift)+Tab to switch between tabs.
 * Ctrl+Num(1-9) to quickly switch to specified tab.
 * Ctrl+"+"/"-" for zooming. Ctrl+"0" to reset zooming to default.
-* Ctrl+L/R to change text flow direction. (LTR/RTL)
+* Ctrl+L/R changed text flow direction in V1. V2 keeps these commands disabled until native RTL paragraph layout is ready; mixed Arabic/Hebrew rendering remains enabled.
 * Alt+P to toggle preview split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
+
+## System requirements for V2
+
+Notepads V2 requires **Windows 11 version 21H2 (build 22000) or later**.
+Packages are available for x86, x64 and ARM64. The offline installer selects a
+compatible architecture and includes the required framework dependencies.
 
 ## Platform limitations (UWP):
 
 * You won't be able to save files to system folders due to UWP restriction (windows, system32, etc.).
 * You cannot associate potentially harmful file types (.cmd, .bat etc.) with Notepads.
-* Notepads does not work well with large files; the file size limit is set to 1MB for now. I will add large file support later.
+
+## File sizes in V2:
+
+V2 removes the old 1 MB file-opening limit. Its internal UTF-8 text, after line-ending
+normalization, is limited to 2,147,483,647 bytes (2 GiB minus one byte); this may differ
+from the size of the encoded file on disk. This is a code boundary, not a tested or
+recommended maximum file size. The document and undo history remain in memory, so
+practical limits depend on available memory, process architecture and document layout.
+Syntax highlighting, selected-line operations and printing have separate, lower
+limits. The [document size boundary](src/Notepads/Features/Documents/Contracts/DocumentLimits.cs)
+is defined independently of those features.
 
 ## Downloads:
 
@@ -90,6 +106,7 @@ TL;DR: You might notice that I work for Microsoft but Notepads is my personal pr
 ## Contributing:
 
 * [How to contribute?](CONTRIBUTING.md)
+* V2 development: [build and CI](CI.md), [dependencies and platform scope](DEPENDENCIES.md), [tests and coverage boundaries](tests/README.md).
 * Notepads is free and open source, if you like my work, please consider:
    * Star this project on GitHub
    * Leave me a review [here](https://www.microsoft.com/store/apps/9nhl4nsc67wm)
@@ -136,8 +153,6 @@ TL;DR: You might notice that I work for Microsoft but Notepads is my personal pr
     * [sr-Latn][Serbian (Latin)]: [bzzrak](https://github.com/bzzrak)
     * [sr-cyrl][Serbian (Cyrillic)]: [bzzrak](https://github.com/bzzrak)
     * [nl-NL][Dutch (Netherlands)]: [Stephan Paternotte](https://github.com/Stephan-P)
-
-* Notepads CI/CD pipeline: Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
 
 [![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/0)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/0)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/1)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/1)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/2)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/2)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/3)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/3)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/4)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/4)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/5)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/5)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/6)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/6)[![](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/images/7)](https://sourcerer.io/fame/0x7c13/0x7c13/Notepads/links/7)
 

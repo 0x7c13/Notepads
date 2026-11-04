@@ -1,0 +1,10 @@
+#include "Defines.idl"
+
+namespace WinUIEditor
+{
+    [default_interface]
+    [webhosthidden]
+    runtimeclass CallTipControl : DUX.Controls.ToolTip
+	{
+    }
+}

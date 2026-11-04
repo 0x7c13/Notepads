@@ -8,13 +8,14 @@
         <Setter Property="Foreground" Value="{ThemeResource ApplicationForegroundThemeBrush}" />
         <Setter Property="Width" Value="40" />
         <Setter Property="Height" Value="40" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="HighContrastAdjustment" Value="None" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
-                    <Grid x:Name="RootGrid" Margin="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
-                        <Border x:Name="TextBorder" BorderThickness="2" BorderBrush="Transparent">
+                    <Grid x:Name="RootGrid" Margin="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border x:Name="TextBorder" BorderThickness="2" BorderBrush="Transparent" CornerRadius="{TemplateBinding CornerRadius}">
                             <ContentPresenter x:Name="Text"
                                                       Content="{TemplateBinding Content}"
                                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"

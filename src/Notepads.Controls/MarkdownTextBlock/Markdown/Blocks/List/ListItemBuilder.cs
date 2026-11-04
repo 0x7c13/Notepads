@@ -3,17 +3,17 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Parsers/Markdown/Blocks/List
 
-namespace Notepads.Controls.Markdown
+
+using System.Text;
+
+namespace Notepads.Controls.Markdown;
+
+internal class ListItemBuilder : MarkdownBlock
 {
-    using System.Text;
+    public StringBuilder Builder { get; } = new StringBuilder();
 
-    internal class ListItemBuilder : MarkdownBlock
+    public ListItemBuilder()
+        : base(MarkdownBlockType.ListItemBuilder)
     {
-        public StringBuilder Builder { get; } = new StringBuilder();
-
-        public ListItemBuilder()
-            : base(MarkdownBlockType.ListItemBuilder)
-        {
-        }
     }
 }

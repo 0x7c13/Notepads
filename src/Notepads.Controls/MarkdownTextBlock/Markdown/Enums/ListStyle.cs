@@ -3,21 +3,20 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Parsers/Markdown/Enums
 
-namespace Notepads.Controls.Markdown
+namespace Notepads.Controls.Markdown;
+
+/// <summary>
+/// This specifies the type of style the List will be.
+/// </summary>
+public enum ListStyle
 {
     /// <summary>
-    /// This specifies the type of style the List will be.
+    /// A list with bullets
     /// </summary>
-    public enum ListStyle
-    {
-        /// <summary>
-        /// A list with bullets
-        /// </summary>
-        Bulleted,
+    Bulleted,
 
-        /// <summary>
-        /// A numbered list
-        /// </summary>
-        Numbered,
-    }
+    /// <summary>
+    /// A numbered list
+    /// </summary>
+    Numbered,
 }

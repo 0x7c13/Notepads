@@ -3,152 +3,152 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Uwp.UI.Controls/GridSplitter
 
-namespace Notepads.Controls
+
+using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Input;
+
+namespace Notepads.Controls;
+
+internal class GripperHoverWrapper
 {
-    using Windows.UI.Core;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Input;
+    private readonly GridSplitter.GridResizeDirection _gridSplitterDirection;
 
-    internal class GripperHoverWrapper
+    private CoreCursor _splitterPreviousPointer;
+    private CoreCursor _previousCursor;
+    private GridSplitter.GripperCursorType _gripperCursor;
+    private int _gripperCustomCursorResource;
+    private bool _isDragging;
+    private UIElement _element;
+
+    internal GridSplitter.GripperCursorType GripperCursor
     {
-        private readonly GridSplitter.GridResizeDirection _gridSplitterDirection;
+        get => _gripperCursor;
+        set => _gripperCursor = value;
+    }
 
-        private CoreCursor _splitterPreviousPointer;
-        private CoreCursor _previousCursor;
-        private GridSplitter.GripperCursorType _gripperCursor;
-        private int _gripperCustomCursorResource;
-        private bool _isDragging;
-        private UIElement _element;
+    internal int GripperCustomCursorResource
+    {
+        get => _gripperCustomCursorResource;
+        set => _gripperCustomCursorResource = value;
+    }
 
-        internal GridSplitter.GripperCursorType GripperCursor
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GripperHoverWrapper"/> class that add cursor change on hover functionality for GridSplitter.
+    /// </summary>
+    /// <param name="element">UI element to apply cursor change on hover</param>
+    /// <param name="gridSplitterDirection">GridSplitter resize direction</param>
+    /// <param name="gripperCursor">GridSplitter gripper on hover cursor type</param>
+    /// <param name="gripperCustomCursorResource">GridSplitter gripper custom cursor resource number</param>
+    internal GripperHoverWrapper(UIElement element, GridSplitter.GridResizeDirection gridSplitterDirection, GridSplitter.GripperCursorType gripperCursor, int gripperCustomCursorResource)
+    {
+        _gridSplitterDirection = gridSplitterDirection;
+        _gripperCursor = gripperCursor;
+        _gripperCustomCursorResource = gripperCustomCursorResource;
+        _element = element;
+        UnhookEvents();
+        _element.PointerEntered += Element_PointerEntered;
+        _element.PointerExited += Element_PointerExited;
+    }
+
+    internal void UpdateHoverElement(UIElement element)
+    {
+        UnhookEvents();
+        _element = element;
+        _element.PointerEntered += Element_PointerEntered;
+        _element.PointerExited += Element_PointerExited;
+    }
+
+    private void Element_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        if (_isDragging)
         {
-            get => _gripperCursor;
-            set => _gripperCursor = value;
+            // if dragging don't update the curser just update the splitter cursor with the last window cursor,
+            // because the splitter is still using the arrow cursor and will revert to original case when drag completes
+            _splitterPreviousPointer = _previousCursor;
+        }
+        else
+        {
+            Window.Current.CoreWindow.PointerCursor = _previousCursor;
+        }
+    }
+
+    private void Element_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        // if not dragging
+        if (!_isDragging)
+        {
+            _previousCursor = _splitterPreviousPointer = Window.Current.CoreWindow.PointerCursor;
+            UpdateDisplayCursor();
         }
 
-        internal int GripperCustomCursorResource
+        // if dragging
+        else
         {
-            get => _gripperCustomCursorResource;
-            set => _gripperCustomCursorResource = value;
+            _previousCursor = _splitterPreviousPointer;
         }
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GripperHoverWrapper"/> class that add cursor change on hover functionality for GridSplitter.
-        /// </summary>
-        /// <param name="element">UI element to apply cursor change on hover</param>
-        /// <param name="gridSplitterDirection">GridSplitter resize direction</param>
-        /// <param name="gripperCursor">GridSplitter gripper on hover cursor type</param>
-        /// <param name="gripperCustomCursorResource">GridSplitter gripper custom cursor resource number</param>
-        internal GripperHoverWrapper(UIElement element, GridSplitter.GridResizeDirection gridSplitterDirection, GridSplitter.GripperCursorType gripperCursor, int gripperCustomCursorResource)
+    private void UpdateDisplayCursor()
+    {
+        if (_gripperCursor == GridSplitter.GripperCursorType.Default)
         {
-            _gridSplitterDirection = gridSplitterDirection;
-            _gripperCursor = gripperCursor;
-            _gripperCustomCursorResource = gripperCustomCursorResource;
-            _element = element;
-            UnhookEvents();
-            _element.PointerEntered += Element_PointerEntered;
-            _element.PointerExited += Element_PointerExited;
-        }
-
-        internal void UpdateHoverElement(UIElement element)
-        {
-            UnhookEvents();
-            _element = element;
-            _element.PointerEntered += Element_PointerEntered;
-            _element.PointerExited += Element_PointerExited;
-        }
-
-        private void Element_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-            if (_isDragging)
+            if (_gridSplitterDirection == GridSplitter.GridResizeDirection.Columns)
             {
-                // if dragging don't update the curser just update the splitter cursor with the last window cursor,
-                // because the splitter is still using the arrow cursor and will revert to original case when drag completes
-                _splitterPreviousPointer = _previousCursor;
+                Window.Current.CoreWindow.PointerCursor = GridSplitter.ColumnsSplitterCursor;
+            }
+            else if (_gridSplitterDirection == GridSplitter.GridResizeDirection.Rows)
+            {
+                Window.Current.CoreWindow.PointerCursor = GridSplitter.RowSplitterCursor;
+            }
+        }
+        else
+        {
+            var coreCursor = (CoreCursorType)((int)_gripperCursor);
+            if (_gripperCursor == GridSplitter.GripperCursorType.Custom)
+            {
+                if (_gripperCustomCursorResource > GridSplitter.GripperCustomCursorDefaultResource)
+                {
+                    Window.Current.CoreWindow.PointerCursor = new CoreCursor(coreCursor, (uint)_gripperCustomCursorResource);
+                }
             }
             else
             {
-                Window.Current.CoreWindow.PointerCursor = _previousCursor;
+                Window.Current.CoreWindow.PointerCursor = new CoreCursor(coreCursor, 1);
             }
         }
+    }
 
-        private void Element_PointerEntered(object sender, PointerRoutedEventArgs e)
+    internal void SplitterManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+    {
+        if (sender is not GridSplitter splitter)
         {
-            // if not dragging
-            if (!_isDragging)
-            {
-                _previousCursor = _splitterPreviousPointer = Window.Current.CoreWindow.PointerCursor;
-                UpdateDisplayCursor();
-            }
-
-            // if dragging
-            else
-            {
-                _previousCursor = _splitterPreviousPointer;
-            }
+            return;
         }
 
-        private void UpdateDisplayCursor()
+        _splitterPreviousPointer = splitter.PreviousCursor;
+        _isDragging = true;
+    }
+
+    internal void SplitterManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+    {
+        if (sender is not GridSplitter splitter)
         {
-            if (_gripperCursor == GridSplitter.GripperCursorType.Default)
-            {
-                if (_gridSplitterDirection == GridSplitter.GridResizeDirection.Columns)
-                {
-                    Window.Current.CoreWindow.PointerCursor = GridSplitter.ColumnsSplitterCursor;
-                }
-                else if (_gridSplitterDirection == GridSplitter.GridResizeDirection.Rows)
-                {
-                    Window.Current.CoreWindow.PointerCursor = GridSplitter.RowSplitterCursor;
-                }
-            }
-            else
-            {
-                var coreCursor = (CoreCursorType)((int)_gripperCursor);
-                if (_gripperCursor == GridSplitter.GripperCursorType.Custom)
-                {
-                    if (_gripperCustomCursorResource > GridSplitter.GripperCustomCursorDefaultResource)
-                    {
-                        Window.Current.CoreWindow.PointerCursor = new CoreCursor(coreCursor, (uint)_gripperCustomCursorResource);
-                    }
-                }
-                else
-                {
-                    Window.Current.CoreWindow.PointerCursor = new CoreCursor(coreCursor, 1);
-                }
-            }
+            return;
         }
 
-        internal void SplitterManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        Window.Current.CoreWindow.PointerCursor = splitter.PreviousCursor = _splitterPreviousPointer;
+        _isDragging = false;
+    }
+
+    internal void UnhookEvents()
+    {
+        if (_element == null)
         {
-            if (!(sender is GridSplitter splitter))
-            {
-                return;
-            }
-
-            _splitterPreviousPointer = splitter.PreviousCursor;
-            _isDragging = true;
+            return;
         }
 
-        internal void SplitterManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            if (!(sender is GridSplitter splitter))
-            {
-                return;
-            }
-
-            Window.Current.CoreWindow.PointerCursor = splitter.PreviousCursor = _splitterPreviousPointer;
-            _isDragging = false;
-        }
-
-        internal void UnhookEvents()
-        {
-            if (_element == null)
-            {
-                return;
-            }
-
-            _element.PointerEntered -= Element_PointerEntered;
-            _element.PointerExited -= Element_PointerExited;
-        }
+        _element.PointerEntered -= Element_PointerEntered;
+        _element.PointerExited -= Element_PointerExited;
     }
 }

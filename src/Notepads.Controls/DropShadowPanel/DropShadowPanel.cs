@@ -3,189 +3,189 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Uwp.UI.Controls/DropShadowPanel
 
-namespace Notepads.Controls
+
+using System.Numerics;
+using Windows.UI;
+using Windows.UI.Composition;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Shapes;
+
+namespace Notepads.Controls;
+
+/// <summary>
+/// The <see cref="DropShadowPanel"/> control allows the creation of a DropShadow for any Xaml FrameworkElement in markup
+/// making it easier to add shadows to Xaml without having to directly drop down to Windows.UI.Composition APIs.
+/// </summary>
+[TemplatePart(Name = PartShadow, Type = typeof(Border))]
+public partial class DropShadowPanel : ContentControl
 {
-    using System.Numerics;
-    using Windows.UI;
-    using Windows.UI.Composition;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Hosting;
-    using Windows.UI.Xaml.Shapes;
+    private const string PartShadow = "ShadowElement";
+
+    private readonly DropShadow _dropShadow;
+    private readonly SpriteVisual _shadowVisual;
+    private Border _border;
 
     /// <summary>
-    /// The <see cref="DropShadowPanel"/> control allows the creation of a DropShadow for any Xaml FrameworkElement in markup
-    /// making it easier to add shadows to Xaml without having to directly drop down to Windows.UI.Composition APIs.
+    /// Initializes a new instance of the <see cref="DropShadowPanel"/> class.
     /// </summary>
-    [TemplatePart(Name = PartShadow, Type = typeof(Border))]
-    public partial class DropShadowPanel : ContentControl
+    public DropShadowPanel()
     {
-        private const string PartShadow = "ShadowElement";
+        DefaultStyleKey = typeof(DropShadowPanel);
 
-        private readonly DropShadow _dropShadow;
-        private readonly SpriteVisual _shadowVisual;
-        private Border _border;
+        Compositor compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DropShadowPanel"/> class.
-        /// </summary>
-        public DropShadowPanel()
+        _shadowVisual = compositor.CreateSpriteVisual();
+
+        _dropShadow = compositor.CreateDropShadow();
+        _shadowVisual.Shadow = _dropShadow;
+    }
+
+    /// <summary>
+    /// Update the visual state of the control when its template is changed.
+    /// </summary>
+    protected override void OnApplyTemplate()
+    {
+        _border = GetTemplateChild(PartShadow) as Border;
+
+        if (_border != null)
         {
-            DefaultStyleKey = typeof(DropShadowPanel);
-
-            Compositor compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-
-            _shadowVisual = compositor.CreateSpriteVisual();
-
-            _dropShadow = compositor.CreateDropShadow();
-            _shadowVisual.Shadow = _dropShadow;
+            ElementCompositionPreview.SetElementChildVisual(_border, _shadowVisual);
         }
 
-        /// <summary>
-        /// Update the visual state of the control when its template is changed.
-        /// </summary>
-        protected override void OnApplyTemplate()
-        {
-            _border = GetTemplateChild(PartShadow) as Border;
+        ConfigureShadowVisualForCastingElement();
 
-            if (_border != null)
+        base.OnApplyTemplate();
+    }
+
+    /// <inheritdoc/>
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+        if (oldContent != null)
+        {
+            if (oldContent is FrameworkElement oldElement)
             {
-                ElementCompositionPreview.SetElementChildVisual(_border, _shadowVisual);
-            }
-
-            ConfigureShadowVisualForCastingElement();
-
-            base.OnApplyTemplate();
-        }
-
-        /// <inheritdoc/>
-        protected override void OnContentChanged(object oldContent, object newContent)
-        {
-            if (oldContent != null)
-            {
-                if (oldContent is FrameworkElement oldElement)
-                {
-                    oldElement.SizeChanged -= OnSizeChanged;
-                }
-            }
-
-            if (newContent != null)
-            {
-                if (newContent is FrameworkElement newElement)
-                {
-                    newElement.SizeChanged += OnSizeChanged;
-                }
-            }
-
-            base.OnContentChanged(oldContent, newContent);
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateShadowSize();
-        }
-
-        private void ConfigureShadowVisualForCastingElement()
-        {
-            UpdateShadowMask();
-            UpdateShadowSize();
-        }
-
-        private void OnBlurRadiusChanged(double newValue)
-        {
-            if (_dropShadow != null)
-            {
-                _dropShadow.BlurRadius = (float)newValue;
+                oldElement.SizeChanged -= OnSizeChanged;
             }
         }
 
-        private void OnColorChanged(Color newValue)
+        if (newContent != null)
         {
-            if (_dropShadow != null)
+            if (newContent is FrameworkElement newElement)
             {
-                _dropShadow.Color = newValue;
+                newElement.SizeChanged += OnSizeChanged;
             }
         }
 
-        private void OnOffsetXChanged(double newValue)
+        base.OnContentChanged(oldContent, newContent);
+    }
+
+    private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        UpdateShadowSize();
+    }
+
+    private void ConfigureShadowVisualForCastingElement()
+    {
+        UpdateShadowMask();
+        UpdateShadowSize();
+    }
+
+    private void OnBlurRadiusChanged(double newValue)
+    {
+        if (_dropShadow != null)
         {
-            if (_dropShadow != null)
-            {
-                UpdateShadowOffset((float)newValue, _dropShadow.Offset.Y, _dropShadow.Offset.Z);
-            }
+            _dropShadow.BlurRadius = (float)newValue;
         }
+    }
 
-        private void OnOffsetYChanged(double newValue)
+    private void OnColorChanged(Color newValue)
+    {
+        if (_dropShadow != null)
         {
-            if (_dropShadow != null)
-            {
-                UpdateShadowOffset(_dropShadow.Offset.X, (float)newValue, _dropShadow.Offset.Z);
-            }
+            _dropShadow.Color = newValue;
         }
+    }
 
-        private void OnOffsetZChanged(double newValue)
+    private void OnOffsetXChanged(double newValue)
+    {
+        if (_dropShadow != null)
         {
-            if (_dropShadow != null)
-            {
-                UpdateShadowOffset(_dropShadow.Offset.X, _dropShadow.Offset.Y, (float)newValue);
-            }
+            UpdateShadowOffset((float)newValue, _dropShadow.Offset.Y, _dropShadow.Offset.Z);
         }
+    }
 
-        private void OnShadowOpacityChanged(double newValue)
+    private void OnOffsetYChanged(double newValue)
+    {
+        if (_dropShadow != null)
         {
-            if (_dropShadow != null)
-            {
-                _dropShadow.Opacity = (float)newValue;
-            }
+            UpdateShadowOffset(_dropShadow.Offset.X, (float)newValue, _dropShadow.Offset.Z);
         }
+    }
 
-        private void UpdateShadowMask()
+    private void OnOffsetZChanged(double newValue)
+    {
+        if (_dropShadow != null)
         {
-            if (Content != null && IsMasked)
-            {
-                CompositionBrush mask = null;
-
-                if (Content is Image image)
-                {
-                    mask = image.GetAlphaMask();
-                }
-                else if (Content is Shape shape)
-                {
-                    mask = shape.GetAlphaMask();
-                }
-                else if (Content is TextBlock textBlock)
-                {
-                    mask = textBlock.GetAlphaMask();
-                }
-
-                _dropShadow.Mask = mask;
-            }
-            else
-            {
-                _dropShadow.Mask = null;
-            }
+            UpdateShadowOffset(_dropShadow.Offset.X, _dropShadow.Offset.Y, (float)newValue);
         }
+    }
 
-        private void UpdateShadowOffset(float x, float y, float z)
+    private void OnShadowOpacityChanged(double newValue)
+    {
+        if (_dropShadow != null)
         {
-            if (_dropShadow != null)
-            {
-                _dropShadow.Offset = new Vector3(x, y, z);
-            }
+            _dropShadow.Opacity = (float)newValue;
         }
+    }
 
-        private void UpdateShadowSize()
+    private void UpdateShadowMask()
+    {
+        if (Content != null && IsMasked)
         {
-            if (_shadowVisual != null)
-            {
-                Vector2 newSize = new Vector2(0, 0);
-                if (Content is FrameworkElement content)
-                {
-                    newSize = new Vector2((float)content.ActualWidth, (float)content.ActualHeight);
-                }
+            CompositionBrush mask = null;
 
-                _shadowVisual.Size = newSize;
+            if (Content is Image image)
+            {
+                mask = image.GetAlphaMask();
             }
+            else if (Content is Shape shape)
+            {
+                mask = shape.GetAlphaMask();
+            }
+            else if (Content is TextBlock textBlock)
+            {
+                mask = textBlock.GetAlphaMask();
+            }
+
+            _dropShadow.Mask = mask;
+        }
+        else
+        {
+            _dropShadow.Mask = null;
+        }
+    }
+
+    private void UpdateShadowOffset(float x, float y, float z)
+    {
+        if (_dropShadow != null)
+        {
+            _dropShadow.Offset = new Vector3(x, y, z);
+        }
+    }
+
+    private void UpdateShadowSize()
+    {
+        if (_shadowVisual != null)
+        {
+            Vector2 newSize = new Vector2(0, 0);
+            if (Content is FrameworkElement content)
+            {
+                newSize = new Vector2((float)content.ActualWidth, (float)content.ActualHeight);
+            }
+
+            _shadowVisual.Size = newSize;
         }
     }
 }

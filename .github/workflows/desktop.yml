@@ -1,0 +1,75 @@
+name: Desktop integration
+
+# Run only trusted code on a dedicated, disposable Windows desktop.
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Native architecture of the desktop runner
+        type: choice
+        options: [ARM64, x64]
+        default: ARM64
+      input-tests:
+        description: Also run external UI Automation and physical drag tests (exclusive desktop)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notepads-desktop
+  cancel-in-progress: false
+
+jobs:
+  desktop:
+    if: >-
+      github.repository == '0x7c13/Notepads' &&
+      (github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/master')
+    environment: desktop-tests
+    runs-on: [self-hosted, Windows, "${{ inputs.platform }}", notepads-desktop]
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify preinstalled toolchain
+        run: ./scripts/Initialize-BuildTools.ps1
+      - name: Restore managed and native dependencies
+        env:
+          TEST_PLATFORM: ${{ inputs.platform }}
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+          $vs = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
+          if ($LASTEXITCODE -ne 0 -or !$vs) { throw 'Visual Studio 2026 is required.' }
+          $hostDirectory = if ([Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64/' } else { '' }
+          $msbuild = Join-Path $vs "MSBuild/Current/Bin/${hostDirectory}MSBuild.exe"
+          & $msbuild ./src/Notepads.sln /t:Restore /p:RestorePackagesConfig=true /p:Configuration=Release "/p:Platform=$env:TEST_PLATFORM" /nologo /v:minimal
+          if ($LASTEXITCODE -ne 0) { throw "Solution restore failed: $LASTEXITCODE" }
+      - name: Run isolated application tests
+        env:
+          TEST_PLATFORM: ${{ inputs.platform }}
+        run: ./scripts/Test.ps1 -Suite All -Configuration Release -Platform $env:TEST_PLATFORM
+      - name: Run external input tests
+        if: inputs.input-tests
+        env:
+          TEST_PLATFORM: ${{ inputs.platform }}
+        run: ./scripts/Test.ps1 -Suite Integration -Group UIAutomation,DragDrop -Configuration Release -Platform $env:TEST_PLATFORM
+      - name: Preserve test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: desktop-${{ inputs.platform }}-${{ github.run_attempt }}
+          path: |
+            artifacts/test-runs/
+            artifacts/isolated-uwp/*/*.json
+            artifacts/isolated-uwp/*/*.jsonl
+            artifacts/isolated-uwp/*/*.txt
+            artifacts/isolated-uwp/*/commands/
+            artifacts/isolated-uwp/*/lease-protocol/
+            artifacts/isolated-uwp/*/peer/
+          retention-days: 14
+          if-no-files-found: warn

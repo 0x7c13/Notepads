@@ -3,244 +3,244 @@
 // See the LICENSE file in the project root for more information.
 // Source: https://github.com/windows-toolkit/WindowsCommunityToolkit/tree/master/Microsoft.Toolkit.Uwp.UI.Controls/GridSplitter
 
-namespace Notepads.Controls
+
+using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
+
+namespace Notepads.Controls;
+
+/// <summary>
+/// Represents the control that redistributes space between columns or rows of a Grid control.
+/// </summary>
+public partial class GridSplitter : Control
 {
-    using Windows.UI.Core;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Automation;
-    using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Input;
+    internal const int GripperCustomCursorDefaultResource = -1;
+    internal static readonly CoreCursor ColumnsSplitterCursor = new(CoreCursorType.SizeWestEast, 1);
+    internal static readonly CoreCursor RowSplitterCursor = new(CoreCursorType.SizeNorthSouth, 1);
+
+    internal CoreCursor PreviousCursor { get; set; }
+
+    private GridResizeDirection _resizeDirection;
+    private GridResizeBehavior _resizeBehavior;
+    private GripperHoverWrapper _hoverWrapper;
+    private TextBlock _gripperDisplay;
+
+    private bool _pressed = false;
+    private bool _dragging = false;
+    private bool _pointerEntered = false;
 
     /// <summary>
-    /// Represents the control that redistributes space between columns or rows of a Grid control.
+    /// Gets the target parent grid from level
     /// </summary>
-    public partial class GridSplitter : Control
+    private FrameworkElement TargetControl
     {
-        internal const int GripperCustomCursorDefaultResource = -1;
-        internal static readonly CoreCursor ColumnsSplitterCursor = new CoreCursor(CoreCursorType.SizeWestEast, 1);
-        internal static readonly CoreCursor RowSplitterCursor = new CoreCursor(CoreCursorType.SizeNorthSouth, 1);
-
-        internal CoreCursor PreviousCursor { get; set; }
-
-        private GridResizeDirection _resizeDirection;
-        private GridResizeBehavior _resizeBehavior;
-        private GripperHoverWrapper _hoverWrapper;
-        private TextBlock _gripperDisplay;
-
-        private bool _pressed = false;
-        private bool _dragging = false;
-        private bool _pointerEntered = false;
-
-        /// <summary>
-        /// Gets the target parent grid from level
-        /// </summary>
-        private FrameworkElement TargetControl
+        get
         {
-            get
+            if (ParentLevel == 0)
             {
-                if (ParentLevel == 0)
-                {
-                    return this;
-                }
-
-                var parent = Parent;
-                for (int i = 2; i < ParentLevel; i++)
-                {
-                    if (parent is FrameworkElement frameworkElement)
-                    {
-                        parent = frameworkElement.Parent;
-                    }
-                }
-
-                return parent as FrameworkElement;
+                return this;
             }
-        }
 
-        /// <summary>
-        /// Gets GridSplitter Container Grid
-        /// </summary>
-        private Grid Resizable => TargetControl?.Parent as Grid;
-
-        /// <summary>
-        /// Gets the current Column definition of the parent Grid
-        /// </summary>
-        private ColumnDefinition CurrentColumn
-        {
-            get
+            var parent = Parent;
+            for (int i = 2; i < ParentLevel; i++)
             {
-                if (Resizable == null)
+                if (parent is FrameworkElement frameworkElement)
                 {
-                    return null;
+                    parent = frameworkElement.Parent;
                 }
+            }
 
-                var gridSplitterTargetedColumnIndex = GetTargetedColumn();
+            return parent as FrameworkElement;
+        }
+    }
 
-                if ((gridSplitterTargetedColumnIndex >= 0)
-                    && (gridSplitterTargetedColumnIndex < Resizable.ColumnDefinitions.Count))
-                {
-                    return Resizable.ColumnDefinitions[gridSplitterTargetedColumnIndex];
-                }
+    /// <summary>
+    /// Gets GridSplitter Container Grid
+    /// </summary>
+    private Grid Resizable => TargetControl?.Parent as Grid;
 
+    /// <summary>
+    /// Gets the current Column definition of the parent Grid
+    /// </summary>
+    private ColumnDefinition CurrentColumn
+    {
+        get
+        {
+            if (Resizable == null)
+            {
                 return null;
             }
-        }
 
-        /// <summary>
-        /// Gets the Sibling Column definition of the parent Grid
-        /// </summary>
-        private ColumnDefinition SiblingColumn
-        {
-            get
+            var gridSplitterTargetedColumnIndex = GetTargetedColumn();
+
+            if ((gridSplitterTargetedColumnIndex >= 0)
+                && (gridSplitterTargetedColumnIndex < Resizable.ColumnDefinitions.Count))
             {
-                if (Resizable == null)
-                {
-                    return null;
-                }
+                return Resizable.ColumnDefinitions[gridSplitterTargetedColumnIndex];
+            }
 
-                var gridSplitterSiblingColumnIndex = GetSiblingColumn();
+            return null;
+        }
+    }
 
-                if ((gridSplitterSiblingColumnIndex >= 0)
-                    && (gridSplitterSiblingColumnIndex < Resizable.ColumnDefinitions.Count))
-                {
-                    return Resizable.ColumnDefinitions[gridSplitterSiblingColumnIndex];
-                }
-
+    /// <summary>
+    /// Gets the Sibling Column definition of the parent Grid
+    /// </summary>
+    private ColumnDefinition SiblingColumn
+    {
+        get
+        {
+            if (Resizable == null)
+            {
                 return null;
             }
-        }
 
-        /// <summary>
-        /// Gets the current Row definition of the parent Grid
-        /// </summary>
-        private RowDefinition CurrentRow
-        {
-            get
+            var gridSplitterSiblingColumnIndex = GetSiblingColumn();
+
+            if ((gridSplitterSiblingColumnIndex >= 0)
+                && (gridSplitterSiblingColumnIndex < Resizable.ColumnDefinitions.Count))
             {
-                if (Resizable == null)
-                {
-                    return null;
-                }
+                return Resizable.ColumnDefinitions[gridSplitterSiblingColumnIndex];
+            }
 
-                var gridSplitterTargetedRowIndex = GetTargetedRow();
+            return null;
+        }
+    }
 
-                if ((gridSplitterTargetedRowIndex >= 0)
-                    && (gridSplitterTargetedRowIndex < Resizable.RowDefinitions.Count))
-                {
-                    return Resizable.RowDefinitions[gridSplitterTargetedRowIndex];
-                }
-
+    /// <summary>
+    /// Gets the current Row definition of the parent Grid
+    /// </summary>
+    private RowDefinition CurrentRow
+    {
+        get
+        {
+            if (Resizable == null)
+            {
                 return null;
             }
-        }
 
-        /// <summary>
-        /// Gets the Sibling Row definition of the parent Grid
-        /// </summary>
-        private RowDefinition SiblingRow
-        {
-            get
+            var gridSplitterTargetedRowIndex = GetTargetedRow();
+
+            if ((gridSplitterTargetedRowIndex >= 0)
+                && (gridSplitterTargetedRowIndex < Resizable.RowDefinitions.Count))
             {
-                if (Resizable == null)
-                {
-                    return null;
-                }
+                return Resizable.RowDefinitions[gridSplitterTargetedRowIndex];
+            }
 
-                var gridSplitterSiblingRowIndex = GetSiblingRow();
+            return null;
+        }
+    }
 
-                if ((gridSplitterSiblingRowIndex >= 0)
-                    && (gridSplitterSiblingRowIndex < Resizable.RowDefinitions.Count))
-                {
-                    return Resizable.RowDefinitions[gridSplitterSiblingRowIndex];
-                }
-
+    /// <summary>
+    /// Gets the Sibling Row definition of the parent Grid
+    /// </summary>
+    private RowDefinition SiblingRow
+    {
+        get
+        {
+            if (Resizable == null)
+            {
                 return null;
             }
-        }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GridSplitter"/> class.
-        /// </summary>
-        public GridSplitter()
-        {
-            DefaultStyleKey = typeof(GridSplitter);
-            Loaded += GridSplitter_Loaded;
-            string automationName = "GridSpliter";
-            AutomationProperties.SetName(this, automationName);
-        }
+            var gridSplitterSiblingRowIndex = GetSiblingRow();
 
-        /// <inheritdoc />
-        protected override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            // Unhook registered events
-            Loaded -= GridSplitter_Loaded;
-            PointerEntered -= GridSplitter_PointerEntered;
-            PointerExited -= GridSplitter_PointerExited;
-            PointerPressed -= GridSplitter_PointerPressed;
-            PointerReleased -= GridSplitter_PointerReleased;
-            ManipulationStarted -= GridSplitter_ManipulationStarted;
-            ManipulationCompleted -= GridSplitter_ManipulationCompleted;
-
-            _hoverWrapper?.UnhookEvents();
-
-            // Register Events
-            Loaded += GridSplitter_Loaded;
-            PointerEntered += GridSplitter_PointerEntered;
-            PointerExited += GridSplitter_PointerExited;
-            PointerPressed += GridSplitter_PointerPressed;
-            PointerReleased += GridSplitter_PointerReleased;
-            ManipulationStarted += GridSplitter_ManipulationStarted;
-            ManipulationCompleted += GridSplitter_ManipulationCompleted;
-
-            _hoverWrapper?.UpdateHoverElement(Element);
-
-            ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
-        }
-
-        private void GridSplitter_PointerReleased(object sender, PointerRoutedEventArgs e)
-        {
-            _pressed = false;
-            VisualStateManager.GoToState(this, _pointerEntered ? "PointerOver" : "Normal", true);
-        }
-
-        private void GridSplitter_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            _pressed = true;
-            VisualStateManager.GoToState(this, "Pressed", true);
-        }
-
-        private void GridSplitter_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-            _pointerEntered = false;
-
-            if (!_pressed && !_dragging)
+            if ((gridSplitterSiblingRowIndex >= 0)
+                && (gridSplitterSiblingRowIndex < Resizable.RowDefinitions.Count))
             {
-                VisualStateManager.GoToState(this, "Normal", true);
+                return Resizable.RowDefinitions[gridSplitterSiblingRowIndex];
             }
-        }
 
-        private void GridSplitter_PointerEntered(object sender, PointerRoutedEventArgs e)
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridSplitter"/> class.
+    /// </summary>
+    public GridSplitter()
+    {
+        DefaultStyleKey = typeof(GridSplitter);
+        Loaded += GridSplitter_Loaded;
+        string automationName = "GridSpliter";
+        AutomationProperties.SetName(this, automationName);
+    }
+
+    /// <inheritdoc />
+    protected override void OnApplyTemplate()
+    {
+        base.OnApplyTemplate();
+
+        // Unhook registered events
+        Loaded -= GridSplitter_Loaded;
+        PointerEntered -= GridSplitter_PointerEntered;
+        PointerExited -= GridSplitter_PointerExited;
+        PointerPressed -= GridSplitter_PointerPressed;
+        PointerReleased -= GridSplitter_PointerReleased;
+        ManipulationStarted -= GridSplitter_ManipulationStarted;
+        ManipulationCompleted -= GridSplitter_ManipulationCompleted;
+
+        _hoverWrapper?.UnhookEvents();
+
+        // Register Events
+        Loaded += GridSplitter_Loaded;
+        PointerEntered += GridSplitter_PointerEntered;
+        PointerExited += GridSplitter_PointerExited;
+        PointerPressed += GridSplitter_PointerPressed;
+        PointerReleased += GridSplitter_PointerReleased;
+        ManipulationStarted += GridSplitter_ManipulationStarted;
+        ManipulationCompleted += GridSplitter_ManipulationCompleted;
+
+        _hoverWrapper?.UpdateHoverElement(Element);
+
+        ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY;
+    }
+
+    private void GridSplitter_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        _pressed = false;
+        VisualStateManager.GoToState(this, _pointerEntered ? "PointerOver" : "Normal", true);
+    }
+
+    private void GridSplitter_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        _pressed = true;
+        VisualStateManager.GoToState(this, "Pressed", true);
+    }
+
+    private void GridSplitter_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        _pointerEntered = false;
+
+        if (!_pressed && !_dragging)
         {
-            _pointerEntered = true;
-
-            if (!_pressed && !_dragging)
-            {
-                VisualStateManager.GoToState(this, "PointerOver", true);
-            }
+            VisualStateManager.GoToState(this, "Normal", true);
         }
+    }
 
-        private void GridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+    private void GridSplitter_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        _pointerEntered = true;
+
+        if (!_pressed && !_dragging)
         {
-            _dragging = false;
-            _pressed = false;
-            VisualStateManager.GoToState(this, _pointerEntered ? "PointerOver" : "Normal", true);
+            VisualStateManager.GoToState(this, "PointerOver", true);
         }
+    }
 
-        private void GridSplitter_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
-        {
-            _dragging = true;
-            VisualStateManager.GoToState(this, "Pressed", true);
-        }
+    private void GridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+    {
+        _dragging = false;
+        _pressed = false;
+        VisualStateManager.GoToState(this, _pointerEntered ? "PointerOver" : "Normal", true);
+    }
+
+    private void GridSplitter_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+    {
+        _dragging = true;
+        VisualStateManager.GoToState(this, "Pressed", true);
     }
 }

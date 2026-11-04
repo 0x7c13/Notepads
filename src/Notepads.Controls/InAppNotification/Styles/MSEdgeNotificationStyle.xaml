@@ -21,6 +21,7 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <Style x:Key="DismissTextBlockButtonStyle" TargetType="ButtonBase">
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Background" Value="{ThemeResource HyperlinkButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ApplicationForegroundThemeBrush}" />
         <Setter Property="Width" Value="40" />
@@ -30,8 +31,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
-                    <Grid x:Name="RootGrid" Margin="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
-                        <Border x:Name="TextBorder" BorderThickness="2" BorderBrush="{ThemeResource SystemControlMSEdgeNotificationButtonBorderBrush}">
+                    <Grid x:Name="RootGrid" Margin="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border x:Name="TextBorder" BorderThickness="2" BorderBrush="{ThemeResource SystemControlMSEdgeNotificationButtonBorderBrush}" CornerRadius="{TemplateBinding CornerRadius}">
                             <ContentPresenter x:Name="Text"
                                               Content="{TemplateBinding Content}"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -145,6 +146,7 @@
                   Background="{TemplateBinding Background}" 
                   BorderBrush="{TemplateBinding BorderBrush}" 
                   BorderThickness="{TemplateBinding BorderThickness}">
+                <Grid.CornerRadius>4</Grid.CornerRadius>
                 
                 <Grid.RenderTransform>
                     <CompositeTransform />

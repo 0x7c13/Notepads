@@ -1,19 +1,29 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    # default location of `.github/workflows`
     directory: "/"
+    target-branch: "v2"
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: 'action-deps: '
+      prefix: "ci(deps)"
+    groups:
+      actions:
+        patterns: ["*"]
 
   - package-ecosystem: "nuget"
-    # location of package manifests
-    directory: "/src/Notepads"
+    # The solution covers product projects and native packages.config. Standalone
+    # test/tool projects need their own discovery roots; / alone is insufficient.
+    directories:
+      - "/"
+      - "/src"
+      - "/src/Notepads.Native/Tools/Tool"
+      - "/tests/UnitTests"
+      - "/tests/IntegrationTests"
+      - "/tests/IntegrationTests/Support/DragDrop.Peer"
+    target-branch: "v2"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    open-pull-requests-limit: 5
     commit-message:
-      prefix: 'nuget-deps: '
-
-# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
+      prefix: "build(deps)"
