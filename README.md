@@ -51,6 +51,12 @@ So here comes the “Notepads” 🎉 (s stands for Sets).
 * Alt+P to toggle preview split view for Markdown file.
 * Alt+D to toggle side-by-side diff viewer.
 
+## System requirements for V2
+
+Notepads V2 requires **Windows 11 version 21H2 (build 22000) or later**.
+Packages are available for x86, x64 and ARM64. The offline installer selects a
+compatible architecture and includes the required framework dependencies.
+
 ## Platform limitations (UWP):
 
 * You won't be able to save files to system folders due to UWP restriction (windows, system32, etc.).

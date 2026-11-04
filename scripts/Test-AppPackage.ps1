@@ -55,7 +55,9 @@ function Test-Package($Archive, [string] $Name) {
             'Microsoft.Services.Store.Engagement' -notin $dependencies -or !$hasVCLibs) {
             throw "Missing native framework dependency: $Name"
         }
-        if ($manifest.Package.Dependencies.TargetDeviceFamily.MinVersion -ne '10.0.17763.0') {
+        $families = @($manifest.Package.Dependencies.TargetDeviceFamily)
+        if ($families.Count -ne 1 -or $families[0].Name -ne 'Windows.Desktop' -or
+            $families[0].MinVersion -ne '10.0.22000.0') {
             throw "Unexpected minimum Windows version: $Name"
         }
     }

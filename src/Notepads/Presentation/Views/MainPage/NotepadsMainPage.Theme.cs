@@ -16,14 +16,14 @@ public sealed partial class NotepadsMainPage
 {
     private void InitializeThemeSettings()
     {
-        ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
+        ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar, Resources);
     }
 
     private async void ThemeSettingsService_OnAccentColorChanged(object sender, Color color)
     {
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
-            if (_viewEventsBound) ThemeSettingsService.SetRequestedAccentColor();
+            if (_viewEventsBound) ThemeSettingsService.SetRequestedAccentColor(Resources);
         });
     }
 
@@ -32,7 +32,7 @@ public sealed partial class NotepadsMainPage
         await Dispatcher.CallOnUIThreadAsync(() =>
         {
             if (!_viewEventsBound) return;
-            ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar);
+            ThemeSettingsService.SetRequestedTheme(RootGrid, Window.Current.Content, ApplicationView.GetForCurrentView().TitleBar, Resources);
         });
     }
 

@@ -127,7 +127,7 @@ Architectures: $($builds.Platform -join ', ')
 
 No internet, Visual Studio, Build Tools, .NET installation or signing certificate
 is needed on the test machine. All framework dependencies are included.
-Windows 10 build 17763+ or Windows 11; a compatible architecture is selected automatically.
+Windows 11 version 21H2 (build 22000) or later. A compatible architecture is selected automatically.
 The script makes no download requests. Windows certificate/security policy can
 still prevent deployment on a particular offline or managed machine.
 

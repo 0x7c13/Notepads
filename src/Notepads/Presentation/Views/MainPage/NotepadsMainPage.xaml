@@ -11,6 +11,49 @@
     KeyboardAcceleratorPlacementMode="Hidden"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="ComboBoxItemPillFillBrush" Color="{ThemeResource SystemAccentColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorBrush" Color="{ThemeResource SystemAccentColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPointerOverBrush" Color="{ThemeResource SystemAccentColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPressedBrush" Color="{ThemeResource SystemAccentColor}"/>
+                    <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="{ThemeResource SystemAccentColor}"/>
+                    <LinearGradientBrush x:Key="TextControlBorderBrushFocused" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+                        <LinearGradientBrush.RelativeTransform>
+                            <ScaleTransform ScaleY="-1" CenterY="0.5"/>
+                        </LinearGradientBrush.RelativeTransform>
+                        <GradientStop Offset="1" Color="{ThemeResource SystemAccentColor}"/>
+                        <GradientStop Offset="1" Color="{ThemeResource ControlStrokeColorDefault}"/>
+                    </LinearGradientBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ComboBoxItemPillFillBrush" Color="{ThemeResource SystemAccentColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorBrush" Color="{ThemeResource SystemAccentColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPointerOverBrush" Color="{ThemeResource SystemAccentColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPressedBrush" Color="{ThemeResource SystemAccentColor}"/>
+                    <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="{ThemeResource SystemAccentColor}"/>
+                    <LinearGradientBrush x:Key="TextControlBorderBrushFocused" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+                        <LinearGradientBrush.RelativeTransform>
+                            <ScaleTransform ScaleY="-1" CenterY="0.5"/>
+                        </LinearGradientBrush.RelativeTransform>
+                        <GradientStop Offset="1" Color="{ThemeResource SystemAccentColor}"/>
+                        <GradientStop Offset="1" Color="{ThemeResource ControlStrokeColorDefault}"/>
+                    </LinearGradientBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <SolidColorBrush x:Key="ComboBoxItemPillFillBrush" Color="{ThemeResource SystemColorHighlightColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorBrush" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPointerOverBrush" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                    <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPressedBrush" Color="{ThemeResource SystemColorHighlightTextColor}"/>
+                    <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="{ThemeResource SystemColorHighlightColor}"/>
+                    <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{ThemeResource SystemColorHighlightColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
     <Page.KeyboardAccelerators>
         <KeyboardAccelerator Key="D" Modifiers="Menu" Invoked="DiffPreviewAccelerator_OnInvoked"/>
     </Page.KeyboardAccelerators>

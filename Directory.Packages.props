@@ -6,10 +6,14 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Apply the test-host dependency updates only to the unit test executable. -->
+    <CentralPackageTransitivePinningEnabled Condition="'$(MSBuildProjectName)' == 'UnitTests'">true</CentralPackageTransitivePinningEnabled>
     <!-- Override the UWP SDK's implicit packaging tools for product and test hosts. -->
-    <MicrosoftWindowsSdkBuildToolsMSIXPackageVersion>1.7.260930100</MicrosoftWindowsSdkBuildToolsMSIXPackageVersion>
+    <MicrosoftWindowsSdkBuildToolsPackageVersion>10.0.28000.2957</MicrosoftWindowsSdkBuildToolsPackageVersion>
+    <MicrosoftWindowsSdkBuildToolsMSIXPackageVersion>1.7.261102100</MicrosoftWindowsSdkBuildToolsMSIXPackageVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="CommunityToolkit.Common" Version="8.4.2" />
     <PackageVersion Include="CommunityToolkit.Uwp.Converters" Version="8.2.251219" />
     <PackageVersion Include="CommunityToolkit.Uwp.Extensions" Version="8.2.251219" />
     <PackageVersion Include="CommunityToolkit.Uwp.Helpers" Version="8.2.251219" />
@@ -22,5 +26,39 @@
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'UnitTests'">
+    <PackageVersion Include="Azure.Core" Version="1.64.0" />
+    <PackageVersion Include="Microsoft.ApplicationInsights" Version="3.2.0" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.Abstractions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Primitives" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.92.0" />
+    <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.92.0" />
+    <PackageVersion Include="Microsoft.IdentityModel.Abstractions" Version="8.23.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.Telemetry" Version="2.5.2" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport.Abstractions" Version="2.5.2" />
+    <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="2.5.2" />
+    <PackageVersion Include="OpenTelemetry" Version="1.20.1" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.20.1" />
+    <PackageVersion Include="OpenTelemetry.Api.ProviderBuilderExtensions" Version="1.20.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.20.1" />
+    <PackageVersion Include="OpenTelemetry.PersistentStorage.Abstractions" Version="1.1.3" />
+    <PackageVersion Include="OpenTelemetry.PersistentStorage.FileSystem" Version="1.1.3" />
+    <PackageVersion Include="System.Memory.Data" Version="10.0.14" />
+    <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="10.0.14" />
   </ItemGroup>
 </Project>

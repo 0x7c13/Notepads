@@ -54,7 +54,7 @@ Assert-DevManifest $manifest $platform '19282JackieLiu.Notepads-Beta'
 if ($manifest.Package.Identity.Version -ne $info.Version -or
     $manifest.Package.Applications.Application.VisualElements.DisplayName -ne 'Notepads') { throw 'Offline version or display name does not match Production.' }
 $minimum = [version]$manifest.Package.Dependencies.TargetDeviceFamily.MinVersion
-if ([Environment]::OSVersion.Version -lt $minimum) { throw "This package requires Windows $minimum or later." }
+if ([Environment]::OSVersion.Version -lt $minimum) { throw "This package requires Windows 11 (minimum OS version $minimum) or later." }
 foreach ($dependency in $manifest.Package.Dependencies.PackageDependency) {
     # Require the ZIP to be self-contained even when this machine already has it.
     $null = Find-DevFrameworkPackage $dependency $dependencies $platform

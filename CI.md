@@ -98,9 +98,10 @@ This checks symbol presence, not source indexing or successful crash symbolicati
 The managed architecture guard inspects the actual compiled product assembly
 before AOT rather than a separate source-only model.
 
-The build preserves the current x86/x64/ARM64 scope and Windows 10 build 17763
-minimum. A platform change must update projects, package assertions and CI
-together. Generated unsigned packages are validation artifacts. The x64 job
+The build targets Windows 11 version 21H2 (build 22000) or later and produces
+x86/x64/ARM64 packages. Package assertions enforce this exact desktop minimum,
+including rejection of a higher minimum that would exclude Windows 11 21H2.
+Generated unsigned packages are validation artifacts. The x64 job
 installs a test-signed copy; this does not verify Store certification. Artifacts from a PR remain
 untrusted build output and are not automatically promoted to a release.
 

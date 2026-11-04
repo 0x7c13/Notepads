@@ -6,7 +6,7 @@
   <Identity Name="Notepads.Editor.Tests" Publisher="CN=40E66D07-5A3A-4954-9CA3-A1EB15ED0804" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="21681a31-174c-4e57-989c-6c54d7662de3" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties><DisplayName>Notepads Integration Tests</DisplayName><PublisherDisplayName>Notepads</PublisherDisplayName><Logo>Assets\StoreLogo.png</Logo></Properties>
-  <Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" /></Dependencies>
+  <Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" /></Dependencies>
   <Resources><Resource Language="en-US" /></Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Notepads.App" desktop4:SupportsMultipleInstances="true">

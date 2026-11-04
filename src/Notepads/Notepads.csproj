@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.22000.0</TargetPlatformMinVersion>
+    <EnableAppxWindowsUniversalTargetDeviceFamilyItem>false</EnableAppxWindowsUniversalTargetDeviceFamilyItem>
+    <AppxAddDefaultTargetDeviceFamilyItem>false</AppxAddDefaultTargetDeviceFamilyItem>
     <UseUwp>true</UseUwp>
     <EnableMsixTooling>true</EnableMsixTooling>
     <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
@@ -47,6 +49,10 @@
     <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <TargetDeviceFamily Include="Windows.Desktop">
+      <TargetPlatformMinVersion>$(TargetPlatformMinVersion)</TargetPlatformMinVersion>
+      <TargetPlatformVersion>$(TargetPlatformVersion)</TargetPlatformVersion>
+    </TargetDeviceFamily>
     <PackageReference Include="Microsoft.Windows.CsWinRT" />
     <PackageReference Include="Microsoft.UI.Xaml" />
     <PackageReference Include="Microsoft.Services.Store.Engagement" />

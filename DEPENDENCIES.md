@@ -1,8 +1,8 @@
 # V2 dependencies and platform scope
 
-Audit baseline: `c93d3268`, 2026-10-28. Versions below are a dated inventory;
-`Directory.Packages.props`, native `packages.config`, and the selected .NET SDK
-remain the build inputs. V2 is unreleased.
+Dependency inventory checked on 2026-11-04. The original audit baseline is
+`c93d3268`, 2026-10-28. Build inputs are `Directory.Packages.props`, native
+`packages.config`, and the selected .NET SDK. V2 is unreleased.
 
 ## Runtime dependencies
 
@@ -14,7 +14,7 @@ remain the build inputs. V2 is unreleased.
 | CommunityToolkit.Uwp.Extensions | 8.2.251219 | Visual-tree lookup, tab ancestor bindings, cursor attached properties and color conversion. |
 | CommunityToolkit.Uwp.Converters | 8.2.251219 | SetsView visibility and size bindings. |
 | CommunityToolkit.Uwp.Helpers | 8.2.251219 | Theme color serialization. |
-| CommunityToolkit.Common | 8.2.1, transitive | Shared Toolkit code; resolved once in the product dependency graph. |
+| CommunityToolkit.Common | 8.4.2 | Shared Toolkit code, explicitly pinned through Notepads.Controls. |
 | UTF.Unknown | 2.8.0 | Stream-based encoding detection in DocumentEncodingPolicy; upgraded from 2.7.0 with matched stream-detector samples and production decoding regression coverage. |
 | Microsoft.Services.Store.Engagement | 10.2307.3001 | Best-effort custom diagnostic events in AnalyticsService. Retained as a package framework; this is not the Microsoft Store client application. |
 | Microsoft.Windows.CsWinRT | 2.3.1 | Native editor/Engagement projections, WinRT interop and AOT code generation. |
@@ -62,9 +62,9 @@ packaging design and corresponding validation.
 | Windows ICU | OS component | Regex uses `icuuc.dll` and `icuin.dll`, not the newer combined `icu.dll`; servicing follows Windows. |
 | DirectWrite / Direct2D / D3D11 | OS components | Text layout, painting and compositing. No separately bundled rendering engine. |
 | Microsoft.Windows.CppWinRT | 3.0.260818.1 | Upgraded with cancellation/lifetime AOT regression coverage. Retain the existing C++20 projection headers/PCH; modules remain disabled. |
-| Microsoft.Windows.SDK.BuildTools, native project | 10.0.28000.2705 | Updated build tools; packages.config, imports and missing-package guards use the same version. SDK headers and the runtime OS floor are unchanged. |
-| Microsoft.Windows.SDK.BuildTools.MSIX | 1.7.260930100 | Override the UWP SDK's implicit 1.7.20250806.1 through Directory.Packages.props for product and test hosts. Other SDK/build/runtime packages retain their existing selection. |
-| .NET SDK | global.json: 10.0.401, latestPatch | Local installed patches can roll forward; CI bootstraps the explicit version. Runtime/ILCompiler versions follow that SDK through NativeAot.targets. |
+| Microsoft.Windows.SDK.BuildTools | 10.0.28000.2957 | Native packages.config, imports and missing-package guards use this version. Directory.Packages.props selects the same version for managed UWP builds. Compilation targets SDK 26100 and the runtime minimum is build 22000. |
+| Microsoft.Windows.SDK.BuildTools.MSIX | 1.7.261102100 | Overrides the UWP SDK's implicit packaging tools through Directory.Packages.props for product and test hosts. |
+| .NET SDK | global.json: 10.0.403, latestPatch | Local installed patches can roll forward; CI bootstraps the explicit version. Runtime/ILCompiler versions follow that SDK through NativeAot.targets. |
 | Windows SDK headers / managed target | 10.0.26100.0 | Compilation target, not the minimum runtime OS. |
 | MSVC / UWP libraries | VS or Build Tools 2026, v145 | Required to build; not an end-user installation requirement. |
 
@@ -77,6 +77,15 @@ Test-only direct packages are xunit.v3 4.0.2, xunit.runner.visualstudio 4.0.1 an
 Microsoft.NET.Test.Sdk 18.11.0. The Test SDK update includes a TRX non-BMP
 character fix; the existing VSTest/xUnit adapter configuration is retained.
 These packages do not ship in Notepads.
+
+The unit test host also pins its transitive dependencies to the stable releases
+checked on 2026-11-04. These include Microsoft.Testing.Platform and extensions
+2.5.2, ApplicationInsights 3.2.0, OpenTelemetry 1.20.1, Azure.Core 1.64.0,
+Microsoft.Identity.Client 4.92.0, and the .NET support packages at 10.0.14.
+Central transitive pinning applies only to `UnitTests`. The UWP product and
+packaged integration hosts retain their independent runtime dependency graph.
+An isolated compatibility check constructs MTP's existing telemetry client with
+ApplicationInsights 3.2.0, and the full 611-test suite passes with the updated graph.
 
 ### MSIX BuildTools validation (2026-10-31)
 
@@ -112,16 +121,39 @@ installation reports under `artifacts/package-install-smoke/`:
 
 ## Platform decision
 
-Preserve the current minimum of **Windows 10 version 1809, build 17763**, and
-**x86, x64 and ARM64**. The audit found no demonstrated reason to raise the
-minimum or remove an architecture. This preserves the existing compatibility
-target; it is not a claim that every OS/architecture combination has been tested.
+The 2026-11-04 product decision sets **Windows 11 version 21H2, build 22000**
+as the minimum, with **x86, x64 and ARM64** packages. The product, control library,
+native component, projection and packaged test hosts declare this baseline.
+The source and generated manifests target the Windows Desktop device family.
+
+The direct and resolved NuGet dependencies were checked against stable releases.
+Updates are Windows SDK BuildTools 10.0.28000.2957 for native and managed builds,
+MSIX BuildTools 1.7.261102100, CommunityToolkit.Common 8.4.2, .NET SDK 10.0.403,
+and the test-host dependencies described above. All 68 unique packages in the
+restored product, controls, unit-test and App-host graphs match the stable versions
+checked on 2026-11-04. The native C++/WinRT pin also matches its latest stable release.
+Runtime and ILCompiler packs follow the selected .NET SDK at 10.0.14.
+
+The final Production matrix passes Native AOT, architecture/package validation
+and offline integrity checks for ARM64, x64 and x86. The bundled WinUI, VCLibs
+and Engagement framework manifests all accept build 22000. Isolated loose
+registration of each Production payload passes native-editor rendering, normal
+close and cold restart on the ARM64 Windows 11 build 26300 host, using Windows
+emulation for x64/x86 and private test identities.
+
+Managed contracts, all 611 unit tests, native Diff/Bidi/regex tests and Release
+ARM64 Appearance, Preferences, Editor, Documents, Search, Diff, WorkspaceCommands
+and WindowMove pass. Desktop UIAutomation passes 39 cases and 2,768 assertions.
+NuGet reports no known vulnerable packages in the restored product or unit-test
+graphs. Local validation records are under `artifacts/windows11-20261104`.
+Original-identity signed-bundle installation and build 22000 runtime execution
+remain separate checks.
 
 | Boundary | Current evidence / requirement |
 | --- | --- |
-| Build and package | CI publishes Production Native AOT for all three architectures. App manifests declare 17763; actual framework packages must also satisfy that floor. |
+| Build and package | CI publishes Production Native AOT for all three architectures. Package checks require desktop build 22000 exactly and reject both older and newer declared minimums. Framework packages must also support that floor. |
 | Runtime execution | Hosted E2E and installed-Production checks run x64. Local AOT tests run ARM64; isolated Production installation smoke also covers x64/x86 emulation on ARM64. This does not replace physical-machine or memory-heavy x86 validation. |
-| Oldest OS | Real Windows 10 17763 execution is still pending. API checks, package manifests and successful Windows 11 tests do not replace it. |
+| Oldest OS | Windows 11 21H2 build 22000 execution remains a separate runtime validation requirement. |
 | OS servicing | Microsoft .NET support follows the supported Windows edition/lifecycle. A package's minimum build is not a promise of Microsoft support for every old Windows installation. |
 | Installation | Offline artifacts include the required WinUI, VCLibs and Engagement framework packages. The Store client and a separate .NET runtime are not installation prerequisites. AppX deployment/UWP platform components, permitted sideloading and Developer Mode for the loose preview remain prerequisites. |
 | Windows Server / stripped images | No support claim from the .NET compatibility table alone; the required UWP/AppX desktop components and actual installation must be validated. |
@@ -137,9 +169,8 @@ target; it is not a claim that every OS/architecture combination has been tested
 2. **UTF.Unknown 2.8.0** changes byte/span detection batching to match stream
    detection. The maintenance upgrade is now applied. Notepads still calls
    DetectFromStream; no file-opening speed or detection-accuracy gain is claimed.
-3. Preserve OS/architecture scope while collecting the missing runtime evidence.
-   Raising the minimum or dropping x86 is a product decision requiring coordinated
-   project, manifest, installer and CI changes.
+3. Collect Windows 11 21H2 and physical x86/x64 runtime evidence. Future platform
+   decisions require coordinated project, manifest, installer and CI changes.
 4. NuGet transitive resolution is not locked. Keep this limitation explicit;
    adding lock files must account for all target RIDs and the existing SDK patch
    roll-forward policy instead of freezing mismatched AOT/runtime packs.
@@ -361,7 +392,10 @@ Primary references: [WinUI](https://www.nuget.org/packages/Microsoft.UI.Xaml),
 [C++/WinRT pinned release](https://github.com/microsoft/cppwinrt/releases/tag/3.0.260818.1),
 [cancellation fix](https://github.com/microsoft/cppwinrt/pull/1609),
 [WebView2 SDK](https://www.nuget.org/packages/Microsoft.Web.WebView2/1.0.4314.35),
-[Windows SDK BuildTools](https://www.nuget.org/packages/Microsoft.Windows.SDK.BuildTools/10.0.28000.2705),
+[Windows SDK BuildTools](https://www.nuget.org/packages/Microsoft.Windows.SDK.BuildTools/10.0.28000.2957),
+[MSIX BuildTools](https://www.nuget.org/packages/Microsoft.Windows.SDK.BuildTools.MSIX/1.7.261102100),
+[Toolkit Common](https://www.nuget.org/packages/CommunityToolkit.Common/8.4.2),
+[.NET 10 release metadata](https://builds.dotnet.microsoft.com/dotnet/release-metadata/10.0/releases.json),
 [Test SDK 18.11 release](https://github.com/microsoft/vstest/releases/tag/v18.11.0),
 [.NET Windows support](https://learn.microsoft.com/en-us/dotnet/core/install/windows),
 [Windows ICU](https://learn.microsoft.com/en-us/windows/win32/intl/international-components-for-unicode--icu-).

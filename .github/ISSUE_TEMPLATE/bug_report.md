@@ -20,7 +20,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. Windows 10 1809 17763.593]
+ - OS: [e.g. Windows 11 21H2 22000.318]
  - Version [e.g. v0.9.3.0]
 
 **Additional context**

@@ -38,10 +38,10 @@ function Start-Process { throw 'UNEXPECTED process launch' }
 function Save-DevDownload { throw 'UNEXPECTED network access' }
 '@
 [IO.File]::WriteAllText((Join-Path $root 'DevBuildTools.ps1'), ($helper + "`r`n" + $boundary))
-$minimumWindows = '10.0.17763.0'
+$minimumWindows = '10.0.22000.0'
 $manifest = @"
 <Package><Identity Name="19282JackieLiu.Notepads-Beta" Publisher="CN=40E66D07-5A3A-4954-9CA3-A1EB15ED0804" Version="2.0.0.0" ProcessorArchitecture="$architecture" />
-<Dependencies><TargetDeviceFamily MinVersion="$minimumWindows" /><PackageDependency Name="Framework.Test" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /></Dependencies>
+<Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="$minimumWindows" /><PackageDependency Name="Framework.Test" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /></Dependencies>
 <Applications><Application Id="App" Executable="Notepads.exe" EntryPoint="Notepads.App"><VisualElements DisplayName="Notepads" /></Application></Applications></Package>
 "@
 [IO.File]::WriteAllText((Join-Path $layout 'AppxManifest.xml'), $manifest)
@@ -92,6 +92,10 @@ $info.Platforms = @('unsupported')
 Write-Receipt
 Reject 'Unsupported host architecture is rejected' '*does not include*'
 $info.Platforms = @($architecture)
+$newerWindows = "10.0.$([Environment]::OSVersion.Version.Build + 1).0"
+[IO.File]::WriteAllText((Join-Path $layout 'AppxManifest.xml'), $manifest.Replace($minimumWindows, $newerWindows))
+Write-Receipt
+Reject 'An unsupported Windows build is rejected before registration' '*requires Windows 11*'
 # Modify the dependency identity inside the private fixture instead of deleting
 # outside a known path. Rehashing keeps the corruption guard from masking this oracle.
 [IO.File]::WriteAllText((Join-Path $layout 'AppxManifest.xml'), $manifest.Replace('Framework.Test', 'Missing.Framework'))
@@ -158,12 +162,29 @@ $payloadManifest = $manifest.Replace('<PackageDependency Name="Framework.Test" P
 # Exercise the actual package validator with mixed-machine and missing-framework
 # payloads as well as valid PE32/PE32+ images for every shipping architecture.
 foreach ($target in @('x86', 'x64', 'ARM64')) {
-    foreach ($case in @('valid', 'wrong-dll', 'wrong-header', 'managed-dll', 'missing-winui', 'missing-vclibs', 'missing-engagement')) {
+    foreach ($case in @('valid', 'wrong-dll', 'wrong-header', 'managed-dll', 'missing-winui', 'missing-vclibs', 'missing-engagement',
+        'windows-10-minimum', 'newer-windows-minimum', 'wrong-device-family', 'extra-device-family')) {
         $targetManifest = $payloadManifest.Replace("ProcessorArchitecture=`"$architecture`"", "ProcessorArchitecture=`"$target`"")
         $targetImage = New-TestNativeImage $target
         $library = New-TestNativeImage $target
         $expectedError = ''
         switch ($case) {
+            'windows-10-minimum' {
+                $targetManifest = $targetManifest.Replace('MinVersion="10.0.22000.0"', 'MinVersion="10.0.19041.0"')
+                $expectedError = '*Unexpected minimum Windows version*'
+            }
+            'newer-windows-minimum' {
+                $targetManifest = $targetManifest.Replace('MinVersion="10.0.22000.0"', 'MinVersion="10.0.22621.0"')
+                $expectedError = '*Unexpected minimum Windows version*'
+            }
+            'wrong-device-family' {
+                $targetManifest = $targetManifest.Replace('Name="Windows.Desktop"', 'Name="Windows.Universal"')
+                $expectedError = '*Unexpected minimum Windows version*'
+            }
+            'extra-device-family' {
+                $targetManifest = $targetManifest.Replace('</Dependencies>', '<TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.22000.0" /></Dependencies>')
+                $expectedError = '*Unexpected minimum Windows version*'
+            }
             'wrong-dll' {
                 $other = if ($target -eq 'x86') { 'x64' } else { 'x86' }
                 $library = New-TestNativeImage $other

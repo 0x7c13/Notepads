@@ -218,7 +218,8 @@ public static class ThemeSettingsService
         }
     }
 
-    public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar)
+    public static void SetRequestedTheme(Panel backgroundPanel, UIElement currentContent, ApplicationViewTitleBar titleBar,
+        ResourceDictionary controlResources = null)
     {
         // Set requested theme for app background
         if (backgroundPanel != null)
@@ -247,12 +248,24 @@ public static class ThemeSettingsService
         }
 
         // Set accent color
-        UpdateSystemAccentColorAndBrushes(AppAccentColor);
+        SetRequestedAccentColor(controlResources);
     }
 
-    public static void SetRequestedAccentColor()
+    public static void SetRequestedAccentColor(ResourceDictionary controlResources = null)
     {
         UpdateSystemAccentColorAndBrushes(AppAccentColor);
+        if (controlResources == null) return;
+        // View-scoped overrides take precedence over WinUI's merged resources.
+        // Retain each brush so open popups and focused controls update in place.
+        foreach (var theme in new[] { "Default", "Light" })
+        {
+            var resources = (ResourceDictionary)controlResources.ThemeDictionaries[theme];
+            foreach (var key in new[] { "ComboBoxItemPillFillBrush", "ListViewItemSelectionIndicatorBrush",
+                "ListViewItemSelectionIndicatorPointerOverBrush", "ListViewItemSelectionIndicatorPressedBrush",
+                "TextControlSelectionHighlightColor" })
+                ((SolidColorBrush)resources[key]).Color = AppAccentColor;
+            ((LinearGradientBrush)resources["TextControlBorderBrushFocused"]).GradientStops[0].Color = AppAccentColor;
+        }
     }
 
     public static ElementTheme ToElementTheme(this ApplicationTheme theme)

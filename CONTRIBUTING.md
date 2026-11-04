@@ -109,9 +109,9 @@ exclusive desktop. Changes to WinRT, XAML, trimming or serialization also need a
 actual Release Native AOT application test run.
 
 [CI.md](CI.md) documents the required GitHub checks, local reproduction commands,
-unsigned package artifacts, hosted UI tests and optional desktop workflow. CI retains the
-current Windows build 17763 minimum and x86/x64/ARM64 package matrix; a future
-platform decision must update the projects, package checks and CI together.
+unsigned package artifacts, hosted UI tests and optional desktop workflow. CI validates
+the Windows 11 version 21H2 (build 22000) minimum and x86/x64/ARM64 package matrix.
+Platform changes must update the projects, package checks and CI together.
 
 # TL;DR:
 This is my first UWP project and I learn as I go. As a result, the code base is not well organized, and it is not well written. The philosophy here is to create a text editor that is easy to use, lightweight and yet stylish instead of creating another Notepad++ or VS Code in anyway. If you are looking for a code/programming editor, you might want to use VS Code instead. If you are looking for a lightweight text editor, you come to the right place. Notepads is here to help you do small things quicker and you should always install and use other editors that suit your need.

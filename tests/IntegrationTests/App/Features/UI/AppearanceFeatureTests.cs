@@ -104,6 +104,7 @@ internal static class AppearanceFeatureTests
             Check(ThemeSettingsService.CustomAccentColor == Color.FromArgb(255, 20, 100, 160),
                 "Custom color is retained independently from the Windows accent selection.");
             log.AppendLine("PASS: Appearance.ThemeAndAccent — actual personalization controls update MainPage, native selections and Light/Dark horizontal/vertical slider hover states.");
+            await AccentColorFeatureTests.RunAsync(host, editor, log);
             CheckContrastPalettes(log);
         }
         finally
