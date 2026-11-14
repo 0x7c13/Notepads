@@ -333,6 +333,7 @@ internal sealed partial class SessionController
             else if (prepared.InitializeFromFile)
             {
                 await candidate.InitAsync(prepared.SavedSnapshot, prepared.EditingFile);
+                token.ThrowIfCancellationRequested();
                 candidate.ResetEditorState(prepared.Metadata);
             }
             else

@@ -116,7 +116,7 @@ internal static class SmoothScrollingTests
         var scale = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
         var height = native.TextHeight(0);
         var offset = height / scale * 0.375;
-        var pixels = Math.Round(offset * scale);
+        var pixels = Math.Round(offset * scale, MidpointRounding.AwayFromZero);
         var row = native.VisibleFromDocLine(100);
         var position = native.PositionFromLine(101);
         var provider = (ITextProvider)FrameworkElementAutomationPeer.CreatePeerForElement(view).GetPattern(PatternInterface.Text);
@@ -491,7 +491,7 @@ internal static class SmoothScrollingTests
         view.ScrollBy(100, 0, true);
         view.ScrollBy(0, 3.5 * height, true);
         await UntilAsync(() => !view.IsScrollAnimating);
-        Check(native.XOffset == (int)Math.Round(start + 100 * scale) && native.FirstVisibleLine == 23 &&
+        Check(native.XOffset == (int)Math.Round(start + 100 * scale, MidpointRounding.AwayFromZero) && native.FirstVisibleLine == 23 &&
             Math.Abs(view.DisplayVerticalOffset - height / 2) < 1e-8,
             "Orthogonal input retains both independent axis targets");
         await AfterPaintAsync(native, () => native.XOffset = start);
@@ -500,7 +500,7 @@ internal static class SmoothScrollingTests
             view.ScrollBy(300, 8 * height, true);
             view.ScrollBy(-10, 0, true);
             await UntilAsync(() => !view.IsScrollAnimating);
-            Check(native.XOffset == (int)Math.Round(start - 10 * scale) && native.FirstVisibleLine == 31 &&
+            Check(native.XOffset == (int)Math.Round(start - 10 * scale, MidpointRounding.AwayFromZero) && native.FirstVisibleLine == 31 &&
                 Math.Abs(view.DisplayVerticalOffset - height / 2) < 1e-8,
                 "Reversing X immediately replaces its old target while preserving Y motion");
         }

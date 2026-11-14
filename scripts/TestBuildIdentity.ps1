@@ -3,7 +3,7 @@
 #  See LICENSE.txt in the project root for license information.
 # ---------------------------------------------------------------------------------------------
 
-# Build identity uses content, not mtimes: --NoBuild must never run a stale binary.
+# Build identity uses content, not mtimes: -NoBuild must never run a stale binary.
 
 function Get-TestSourceFiles {
     param([string] $Profile)
@@ -41,7 +41,7 @@ function Get-TestSourceFiles {
     if ($Profile -eq 'Unit') { $projectInputs += 'tests/Shared/TestProcessLifetime.cs' }
     if ($Profile -in @('App', 'Lifecycle', 'Product')) { $projectInputs += 'scripts/NativeAot.targets' }
     if ($Profile -in @('App', 'Lifecycle')) { $projectInputs += 'tests/IntegrationTests/Package.appxmanifest' }
-    foreach ($relative in (@('Directory.Packages.props', 'global.json', '.editorconfig') + $projectInputs)) {
+    foreach ($relative in (@('Directory.Packages.props', 'global.json', '.editorconfig', 'scripts/TestBuildIdentity.ps1') + $projectInputs)) {
         $path = Join-Path $repo $relative
         if (Test-Path -LiteralPath $path -PathType Leaf) { $null = $files.Add([IO.Path]::GetFullPath($path)) }
     }

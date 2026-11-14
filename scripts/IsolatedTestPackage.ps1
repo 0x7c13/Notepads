@@ -330,7 +330,7 @@ function Invoke-LeaseProbe([hashtable] $Session, [int] $TimeoutSeconds = 60) {
 
 function Start-IsolatedTestPackage {
     param(
-        [ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64',
+        [ValidateSet('x86', 'x64', 'ARM64')] [string] $Platform = 'ARM64',
         [ValidateSet('Debug', 'Release')] [string] $Configuration = 'Release',
         [ValidateSet('App', 'Lifecycle')] [string] $IntegrationHost = 'App',
         [string] $SourceLayout = '', [string] $ExpectedRegistration = ''

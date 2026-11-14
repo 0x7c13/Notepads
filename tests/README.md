@@ -17,7 +17,7 @@ configuration, runner setup, Production package checks and hosted reproduction.
 ./scripts/Test.ps1                              # Fast default: Unit
 ./scripts/Test.ps1 -Filter 'FullyQualifiedName~DocumentOperation'
 ./scripts/Test.ps1 -Suite Integration -List |
-    Format-Table Group,Profile,Default,Configuration,Performance -AutoSize
+    Format-Table Group,Profile,Platforms,Default,Configuration,Performance -AutoSize
 ./scripts/Test.ps1 -Suite Integration -Group Documents,Clipboard -Platform ARM64
 ./scripts/Test.ps1 -Suite Integration -Group Documents -Platform ARM64 -NoBuild
 ./scripts/Test.ps1 -Suite All -Platform ARM64    # Default correctness matrix
@@ -38,6 +38,10 @@ configuration, platform and binary identity rather than accepting stale outputs.
 Results/durations live in `artifacts/test-runs`; App phase, exit and preservation
 receipts live in `artifacts/isolated-uwp`. Free-form PASS counts are not coverage.
 Use `-List` for defaults: desktop, package and performance groups are explicit.
+The list also shows supported platforms. App/isolated phases support x86, x64
+and ARM64. Lifecycle and physical desktop drivers currently support x64/ARM64;
+the hosted installed-app driver requires x64. Unsupported group/platform pairs
+are rejected before any build, identity check or test starts.
 App/desktop runs serialize behind a shared mutex; run physical input and A/B
 measurements on an idle desktop, with no concurrent builds during A/B.
 

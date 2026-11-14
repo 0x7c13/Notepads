@@ -10,7 +10,7 @@ param(
     [switch] $List,
     [switch] $NoBuild,
     [ValidateSet('Debug', 'Release')] [string] $Configuration = 'Release',
-    [ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64',
+    [ValidateSet('x86', 'x64', 'ARM64')] [string] $Platform = 'ARM64',
     [int] $TimeoutSeconds = 180,
     [string] $PackagePath = ''
 )
@@ -84,13 +84,22 @@ $groups = [ordered]@{
     PackagedApp = @{ Profile = 'PackageDesktop'; Default = $false }
 }
 
+function Get-TestProfilePlatforms([string] $Profile) {
+    switch ($Profile) {
+        { $_ -in @('Desktop', 'Lifecycle') } { return @('x64', 'ARM64') }
+        'PackageDesktop' { return @('x64') }
+        default { return @('x86', 'x64', 'ARM64') }
+    }
+}
+
 if ($List) {
     if ($Suite -ne 'Integration') { Write-Output 'Unit: discover/filter with dotnet test tests/UnitTests/UnitTests.csproj --list-tests or -Filter <VSTest expression>.' }
     if ($Suite -ne 'Unit') {
         foreach ($name in $groups.Keys) {
             [pscustomobject]@{ Group = $name; Profile = $groups[$name].Profile; Default = [bool]$groups[$name].Default;
                 Configuration = $(if ($groups[$name].Configuration) { $groups[$name].Configuration } else { $Configuration });
-                Performance = [bool]$groups[$name].Performance; Phases = ($groups[$name].Arguments -join ', ') }
+                Performance = [bool]$groups[$name].Performance; Phases = ($groups[$name].Arguments -join ', ');
+                Platforms = ((Get-TestProfilePlatforms $groups[$name].Profile) -join ', ') }
         }
     }
     return
@@ -102,6 +111,12 @@ if ($Group.Count -and @($Group | Where-Object { !$groups.Contains($_) }).Count) 
 }
 $selected = if ($Group.Count) { @($Group | Select-Object -Unique) } else { @($groups.Keys | Where-Object { $groups[$_].Default }) }
 if ($Suite -ne 'Unit' -and !$selected.Count) { throw 'No integration groups selected.' }
+if ($Suite -ne 'Unit') {
+    $unsupported = @($selected | Where-Object { $Platform -notin (Get-TestProfilePlatforms $groups[$_].Profile) })
+    if ($unsupported.Count) {
+        throw "Platform $Platform is not supported by integration group(s): $($unsupported -join ', '). Use -List to inspect supported platforms."
+    }
+}
 if (('Package' -in $selected -or 'PackagedApp' -in $selected) -and !$PackagePath) { throw '-Group Package/PackagedApp requires -PackagePath pointing to the actual packaged product.' }
 $reportRoot = Join-Path $repo ('artifacts/test-runs/' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $reportRoot -Force | Out-Null
@@ -140,7 +155,7 @@ function Ensure-TestBuild([string] $Profile, [string] $BuildConfiguration = $Con
         else {
             $msbuild = Get-TestMSBuild
             $solutionDirectory = [IO.Path]::GetFullPath((Join-Path $repo 'src/'))
-            $buildArguments = @('/restore', "/p:Configuration=$BuildConfiguration", "/p:Platform=$buildPlatform", "/p:SolutionDir=$solutionDirectory", '/v:minimal', '/nologo')
+            $buildArguments = @('/restore', '/p:RestorePackagesConfig=true', "/p:Configuration=$BuildConfiguration", "/p:Platform=$buildPlatform", "/p:SolutionDir=$solutionDirectory", '/v:minimal', '/nologo')
             $project = if ($Profile -eq 'Product') { Join-Path $repo 'src/Notepads.App/Notepads.App.csproj' }
                 elseif ($Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) { Join-Path $repo "tests/IntegrationTests/Support/$Profile.Tests/$Profile.Tests.vcxproj" }
                 else { $integration }

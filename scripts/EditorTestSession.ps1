@@ -34,7 +34,7 @@ function Read-EditorTestFile {
 }
 
 function Start-EditorTestSession {
-    param([ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64', [int] $TimeoutSeconds = 40,
+    param([ValidateSet('x86', 'x64', 'ARM64')] [string] $Platform = 'ARM64', [int] $TimeoutSeconds = 40,
         [string] $SourceLayout = '')
     $session = Start-IsolatedTestPackage -Platform $Platform -Configuration Release -SourceLayout $SourceLayout
     try {

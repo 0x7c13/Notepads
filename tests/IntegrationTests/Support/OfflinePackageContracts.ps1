@@ -129,8 +129,10 @@ foreach ($name in @('New-OfflinePackage.ps1', 'Install-Offline.ps1', 'DevBuildTo
 }
 Copy-Item -LiteralPath (Join-Path $repo 'LICENSE.txt') -Destination $fixture
 [IO.File]::WriteAllText((Join-Path $fixture 'src/fixture.cs'), '// inert product source')
-@{ 'src/fixture.cs' = (Get-FileHash (Join-Path $fixture 'src/fixture.cs')).Hash } | ConvertTo-Json |
-    Set-Content -LiteralPath (Join-Path $fixture 'sources.json') -Encoding utf8
+& {
+    . (Join-Path $scripts 'TestBuildIdentity.ps1')
+    Get-TestSourceHashes Product
+} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $fixture 'sources.json') -Encoding utf8
 [IO.File]::WriteAllText((Join-Path $scripts 'Run-Dev.ps1'), "throw 'UNEXPECTED rebuild'")
 function New-TestArchive([string] $Path, [hashtable] $Files) {
     $archive = [IO.Compression.ZipFile]::Open($Path, 'Create')

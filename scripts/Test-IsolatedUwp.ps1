@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------------------------------
 
 param(
-    [ValidateSet('x64', 'ARM64')] [string] $Platform = 'ARM64',
+    [ValidateSet('x86', 'x64', 'ARM64')] [string] $Platform = 'ARM64',
     [ValidateSet('Debug', 'Release')] [string] $Configuration = 'Release',
     [string[]] $TestArguments = @('--workspace-seed', '--workspace', '--workspace-window-close', '--workspace-restart'),
     [int] $TimeoutSeconds = 180,
