@@ -1,0 +1,10 @@
+import "EditorWrapper.idl";
+
+namespace WinUIEditor
+{
+	interface IEditorAccess
+	{
+		Int64 SendMessage(ScintillaMessage message, UInt64 wParam, Int64 lParam);
+		event Windows.Foundation.EventHandler<Int64> NotifyMessageReceived;
+	}
+}

@@ -1,0 +1,11 @@
+#include "Defines.idl"
+
+namespace WinUIEditor
+{
+    [default_interface]
+    [webhosthidden]
+    runtimeclass DummyPage : DUX.Controls.Page
+    {
+        DummyPage();
+    }
+}
