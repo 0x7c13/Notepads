@@ -4,7 +4,7 @@
     <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
     <LangVersion>14.0</LangVersion>
-    <NotepadsSourceRoot Condition="'$(NotepadsSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\src\Notepads</NotepadsSourceRoot>
+    <NotepadsSourceRoot Condition="'$(NotepadsSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\src\Notepads.App</NotepadsSourceRoot>
   </PropertyGroup>
   <PropertyGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle')">
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
@@ -41,7 +41,7 @@
     <RootNamespace>Notepads</RootNamespace>
     <EnableTypeInfoReflection>false</EnableTypeInfoReflection>
     <!-- Allows an isolated source checkout to use this same boundary for A/B measurements. -->
-    <NotepadsSourceRoot Condition="'$(NotepadsSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\src\Notepads</NotepadsSourceRoot>
+    <NotepadsSourceRoot Condition="'$(NotepadsSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\src\Notepads.App</NotepadsSourceRoot>
     <Win32Resource>$(NotepadsSourceRoot)\Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
   </PropertyGroup>
   <PropertyGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle') and ('$(Platform)' != '' and '$(Platform)' != 'AnyCPU')">
@@ -54,20 +54,21 @@
     </TargetDeviceFamily>
     <PackageReference Include="Microsoft.Windows.CsWinRT" />
     <PackageReference Include="Microsoft.UI.Xaml" />
+    <PackageReference Include="Microsoft.Web.WebView2" />
+    <PackageReference Include="CommunityToolkit.Common" />
     <PackageReference Include="UTF.Unknown" />
     <PackageReference Include="Win2D.uwp" />
     <PackageReference Include="CommunityToolkit.Uwp.Extensions" />
     <PackageReference Include="CommunityToolkit.Uwp.Converters" />
     <PackageReference Include="CommunityToolkit.Uwp.Helpers" />
-    <ProjectReference Include="..\..\src\Notepads.Native\Projection\Notepads.Native.Projection.csproj" />
-    <ProjectReference Include="..\..\src\Notepads.Controls\Notepads.Controls.csproj" />
+    <ProjectReference Include="..\..\src\Notepads.Editor\Projection\Notepads.Editor.Projection.csproj" />
   </ItemGroup>
   <ItemGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle')">
-    <Compile Include="$(NotepadsSourceRoot)\**\*.cs" Exclude="$(NotepadsSourceRoot)\bin\**;$(NotepadsSourceRoot)\obj\**;$(NotepadsSourceRoot)\App.xaml.cs;$(NotepadsSourceRoot)\Program.cs;$(NotepadsSourceRoot)\Composition\BootstrapContext.cs;$(NotepadsSourceRoot)\Composition\InstanceRouter.cs;$(NotepadsSourceRoot)\Composition\WindowContextFactory.cs;$(NotepadsSourceRoot)\Infrastructure\Shell\MRUService.cs;$(NotepadsSourceRoot)\Infrastructure\Diagnostics\AnalyticsService.cs;$(NotepadsSourceRoot)\Presentation\Controls\Markdown\**">
+    <Compile Include="$(NotepadsSourceRoot)\**\*.cs" Exclude="$(NotepadsSourceRoot)\bin\**;$(NotepadsSourceRoot)\obj\**;$(NotepadsSourceRoot)\App.xaml.cs;$(NotepadsSourceRoot)\Program.cs;$(NotepadsSourceRoot)\Composition\BootstrapContext.cs;$(NotepadsSourceRoot)\Composition\InstanceRouter.cs;$(NotepadsSourceRoot)\Composition\WindowContextFactory.cs;$(NotepadsSourceRoot)\Infrastructure\Shell\MRUService.cs;$(NotepadsSourceRoot)\Infrastructure\Diagnostics\AnalyticsService.cs;$(NotepadsSourceRoot)\Presentation\Controls\Markdown\**;$(NotepadsSourceRoot)\Controls\MarkdownTextBlock\**">
       <Link>Product\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
     <ApplicationDefinition Include="$(NotepadsSourceRoot)\App.xaml" Link="App.xaml" />
-    <Page Include="$(NotepadsSourceRoot)\**\*.xaml" Exclude="$(NotepadsSourceRoot)\bin\**;$(NotepadsSourceRoot)\obj\**;$(NotepadsSourceRoot)\App.xaml;$(NotepadsSourceRoot)\Presentation\Controls\Markdown\**">
+    <Page Include="$(NotepadsSourceRoot)\**\*.xaml" Exclude="$(NotepadsSourceRoot)\bin\**;$(NotepadsSourceRoot)\obj\**;$(NotepadsSourceRoot)\App.xaml;$(NotepadsSourceRoot)\Presentation\Controls\Markdown\**;$(NotepadsSourceRoot)\Controls\MarkdownTextBlock\**">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Page>
     <Page Update="$(NotepadsSourceRoot)\Presentation\Theming\*Themes.xaml">
@@ -92,21 +93,21 @@
   </PropertyGroup>
   <ItemGroup Condition="'$(IntegrationHost)' == 'Headless'">
     <Compile Include="Headless\**\*.cs" />
-    <Compile Include="../../src/Notepads/Infrastructure/Diagnostics/OperationMetrics.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentMetadata.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentLimits.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTitle.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/*.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Legacy/*.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Recovery/RecoverySelection.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Validation/RecoveryRecordCodec.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Validation/SessionRecoveryReferences.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Validation/RecoveryRecordValidator.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Validation/SessionRecoveryAuthority.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Validation/SessionRecoverySelector.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryRecordStore.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryStoragePaths.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Storage/RecoveryStorageFaults.cs" />
+    <Compile Include="../../src/Notepads.App/Infrastructure/Diagnostics/OperationMetrics.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Contracts/DocumentMetadata.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Contracts/DocumentLimits.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Text/DocumentTitle.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Contracts/*.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Contracts/Legacy/*.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Contracts/Recovery/RecoverySelection.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Validation/RecoveryRecordCodec.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Validation/SessionRecoveryReferences.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Validation/RecoveryRecordValidator.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Validation/SessionRecoveryAuthority.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Validation/SessionRecoverySelector.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Storage/RecoveryRecordStore.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Storage/RecoveryStoragePaths.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Storage/RecoveryStorageFaults.cs" />
   </ItemGroup>
   <ItemGroup Condition="('$(IntegrationHost)' == 'App' or '$(IntegrationHost)' == 'Lifecycle')">
     <Compile Include="App\**\*.cs" Exclude="App\App.Host.cs;App\Program.cs" />

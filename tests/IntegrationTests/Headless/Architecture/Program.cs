@@ -54,7 +54,7 @@ internal static class ArchitectureSuite
                 if (!LayerRules.Allows(source, target)) failures.Add(source + " -> " + target);
                 var from = LayerRules.Module(source);
                 var to = LayerRules.Module(target);
-                if (from == null || to == null || from == to || to is "Native" or "ExternalControls") continue;
+                if (from == null || to == null || from == to || to == "Native") continue;
                 if (!graph.TryGetValue(from, out var edges)) graph[from] = edges = new HashSet<string>();
                 edges.Add(to);
             }

@@ -143,7 +143,7 @@ Invoke-Contract 'foreign-xml-declaration' '' {
 # a block comment. A short hash range once protected only their description.
 $actualPolicy = Get-Content (Join-Path $PSScriptRoot 'HeaderPolicy.json') -Raw | ConvertFrom-Json
 foreach ($suffix in @('cxx', 'h')) {
-    $actualPath = "src/Notepads.Native/scintilla/winui/ScintillaWin.$suffix"
+    $actualPath = "src/Notepads.Editor/scintilla/winui/ScintillaWin.$suffix"
     $actualHeader = @($actualPolicy.preserved.headers | Where-Object { $actualPath -in $_.paths })
     if ($actualHeader.Count -ne 1) { throw "Missing unique notice policy for $actualPath" }
     foreach ($credit in @('upstream', 'modification')) {

@@ -17,7 +17,7 @@ updates:
     directories:
       - "/"
       - "/src"
-      - "/src/Notepads.Native/Tools/Tool"
+      - "/src/Notepads.Editor/Tools/Tool"
       - "/tests/UnitTests"
       - "/tests/IntegrationTests"
       - "/tests/IntegrationTests/Support/DragDrop.Peer"

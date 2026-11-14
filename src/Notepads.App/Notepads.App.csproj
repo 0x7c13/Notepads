@@ -1,0 +1,111 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.22000.0</TargetPlatformMinVersion>
+    <EnableAppxWindowsUniversalTargetDeviceFamilyItem>false</EnableAppxWindowsUniversalTargetDeviceFamilyItem>
+    <AppxAddDefaultTargetDeviceFamilyItem>false</AppxAddDefaultTargetDeviceFamilyItem>
+    <UseUwp>true</UseUwp>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <LangVersion>14.0</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Copyright>Copyright © 2019-2026 Jiaqi (0x7c13) Liu</Copyright>
+    <Description>A modern, lightweight text editor with a minimalist design.</Description>
+    <CsWinRTGenerateProjection>false</CsWinRTGenerateProjection>
+    <Configurations>Debug;Release;Production</Configurations>
+    <OutputType>WinExe</OutputType>
+    <PublishAot>true</PublishAot>
+    <GenerateAppxPackageOnBuild>false</GenerateAppxPackageOnBuild>
+    <PublishAppxPackage>true</PublishAppxPackage>
+    <IncludePublishItemsOutputGroup Condition="'$(Configuration)' != 'Debug'">true</IncludePublishItemsOutputGroup>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <SelfContained>true</SelfContained>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxAutoIncrementPackageRevision>false</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Never</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxSymbolPackageEnabled>true</AppxSymbolPackageEnabled>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <AssemblyName>Notepads</AssemblyName>
+    <XamlProjectName>Notepads</XamlProjectName>
+    <Win32Resource>Resource\MiddleClickScrolling-CursorType.res</Win32Resource>
+    <DevLabel>-dev</DevLabel>
+    <RootNamespace>Notepads</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' != '' and '$(Platform)' != 'AnyCPU'">
+    <RuntimeIdentifier>win-$([System.String]::Copy('$(Platform)').ToLowerInvariant())</RuntimeIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Production'">
+    <Optimize>true</Optimize>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <TargetDeviceFamily Include="Windows.Desktop">
+      <TargetPlatformMinVersion>$(TargetPlatformMinVersion)</TargetPlatformMinVersion>
+      <TargetPlatformVersion>$(TargetPlatformVersion)</TargetPlatformVersion>
+    </TargetDeviceFamily>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" />
+    <PackageReference Include="Microsoft.UI.Xaml" />
+    <PackageReference Include="Microsoft.Web.WebView2" />
+    <PackageReference Include="CommunityToolkit.Common" />
+    <PackageReference Include="Microsoft.Services.Store.Engagement" />
+    <PackageReference Include="UTF.Unknown" />
+    <PackageReference Include="Win2D.uwp" />
+    <PackageReference Include="CommunityToolkit.Uwp.Extensions" />
+    <PackageReference Include="CommunityToolkit.Uwp.Converters" />
+    <PackageReference Include="CommunityToolkit.Uwp.Helpers" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Notepads.Editor\Projection\Notepads.Editor.Projection.csproj" />
+    <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
+      <Name>Microsoft Engagement Framework</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The legacy Markdown renderer remains disabled pending its replacement. -->
+    <Compile Remove="Presentation\Controls\Markdown\**\*.cs" />
+    <Page Remove="Presentation\Controls\Markdown\**\*.xaml" />
+    <Compile Remove="Controls\MarkdownTextBlock\**\*.cs" />
+    <Page Remove="Controls\MarkdownTextBlock\**\*.xaml" />
+    <Page Update="Presentation\Theming\DiffThemes.xaml"><Link>Theming\DiffThemes.xaml</Link></Page>
+    <Page Update="Presentation\Theming\EditorThemes.xaml"><Link>Theming\EditorThemes.xaml</Link></Page>
+    <Page Update="Presentation\Theming\SyntaxThemes.xaml">
+      <Link>Theming\SyntaxThemes.xaml</Link>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Select the normal or development assets explicitly before mapping their package names. -->
+    <Content Remove="Assets\**\*" />
+    <Content Include="Resource\MiddleClickScrolling-CursorType.res" />
+    <Content Include="Resource\Text Document.txt" />
+    <Content Include="Assets\**\*$(DevLabel).png" Condition="'$(Configuration)' != 'Production'">
+      <Link>$([System.String]::new('%(Identity)').Replace('$(DevLabel)',''))</Link>
+    </Content>
+    <Content Include="Assets\LockScreenLogo.scale-200.png" Condition="'$(Configuration)' != 'Production'" />
+    <Content Include="Assets\*noise*.png" Condition="'$(Configuration)' != 'Production'" />
+    <Content Include="Assets\search_*.png" Condition="'$(Configuration)' != 'Production'" />
+    <Content Include="Assets\FileIcons\*.png" Condition="'$(Configuration)' != 'Production'" />
+    <Content Include="Assets\**\*.png" Exclude="Assets\**\*$(DevLabel).png" Condition="'$(Configuration)' == 'Production'" />
+    <Content Include="..\Notepads.Editor\LICENSE">
+      <Link>ThirdPartyNotices\WinUIEdit.txt</Link>
+    </Content>
+    <Content Include="..\Notepads.Editor\scintilla\License.txt">
+      <Link>ThirdPartyNotices\Scintilla.txt</Link>
+    </Content>
+    <Content Include="..\Notepads.Editor\lexilla\License.txt">
+      <Link>ThirdPartyNotices\Lexilla.txt</Link>
+    </Content>
+  </ItemGroup>
+  <Import Project="Package.targets" />
+  <Import Project="..\..\scripts\NativeAot.targets" />
+</Project>

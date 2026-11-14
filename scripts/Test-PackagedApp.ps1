@@ -85,7 +85,7 @@ try {
         finally { $payload.Dispose() }
     }
     finally { $archive.Dispose() }
-    [xml]$sourceManifest = Get-Content -LiteralPath (Join-Path $repo 'src/Notepads/Package.appxmanifest')
+    [xml]$sourceManifest = Get-Content -LiteralPath (Join-Path $repo 'src/Notepads.App/Package.appxmanifest')
     $identity = $manifest.Package.Identity
     if ($identity.Name -ne $sourceManifest.Package.Identity.Name -or
         $identity.Publisher -ne $sourceManifest.Package.Identity.Publisher -or

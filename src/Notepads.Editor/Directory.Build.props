@@ -1,0 +1,19 @@
+<!--
+  Copyright 2026 by Breece Walker
+  See src/Notepads.Editor/LICENSE for the original WinUIEdit license.
+
+  Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE.txt in the project root for the Notepads modifications.
+-->
+<Project>
+	<PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
+        <!-- Managed consumers can query native deployment assets with x86 even
+             when the actual C++ build is mapped to Win32. Both must name one directory. -->
+        <NotepadsNativeOutputPlatform>$(Platform)</NotepadsNativeOutputPlatform>
+        <NotepadsNativeOutputPlatform Condition="'$(Platform)' == 'x86'">Win32</NotepadsNativeOutputPlatform>
+        <BuildOutDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', '_buildUwp', '$(NotepadsNativeOutputPlatform)', '$(Configuration)'))</BuildOutDir>
+		<OutDir>$([MSBuild]::NormalizeDirectory('$(BuildOutDir)', '$(TargetName)', 'bin'))</OutDir>
+		<IntDir>$([MSBuild]::NormalizeDirectory('$(BuildOutDir)', '$(TargetName)', 'obj'))</IntDir>
+		<GeneratedFilesDir>$(IntDir)Generated Files\</GeneratedFilesDir>
+	</PropertyGroup>
+</Project>

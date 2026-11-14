@@ -48,6 +48,7 @@ $groups = [ordered]@{
     Clipboard = @{ Profile = 'App'; Arguments = @('--clipboard'); Default = $true }
     ClipboardRejectedCut = @{ Profile = 'App'; Arguments = @('--clipboard-rejected-cut'); Default = $true }
     WorkspaceCommands = @{ Profile = 'App'; Arguments = @('--workspace-commands'); Default = $true }
+    ControlsMigration = @{ Profile = 'App'; Arguments = @('--controls-migration'); Default = $false }
     PrintState = @{ Profile = 'App'; Arguments = @('--print-state'); Default = $true }
     Preferences = @{ Profile = 'App'; Arguments = @('--preferences'); Default = $true }
     PreferencesStore = @{ Profile = 'App'; Arguments = @('--preferences-store'); Default = $true }
@@ -140,7 +141,7 @@ function Ensure-TestBuild([string] $Profile, [string] $BuildConfiguration = $Con
             $msbuild = Get-TestMSBuild
             $solutionDirectory = [IO.Path]::GetFullPath((Join-Path $repo 'src/'))
             $buildArguments = @('/restore', "/p:Configuration=$BuildConfiguration", "/p:Platform=$buildPlatform", "/p:SolutionDir=$solutionDirectory", '/v:minimal', '/nologo')
-            $project = if ($Profile -eq 'Product') { Join-Path $repo 'src/Notepads/Notepads.csproj' }
+            $project = if ($Profile -eq 'Product') { Join-Path $repo 'src/Notepads.App/Notepads.App.csproj' }
                 elseif ($Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) { Join-Path $repo "tests/IntegrationTests/Support/$Profile.Tests/$Profile.Tests.vcxproj" }
                 else { $integration }
             if ($Profile -in @('App', 'Lifecycle')) {
@@ -203,7 +204,7 @@ try {
                 elseif ($name -eq 'Architecture') {
                     Ensure-TestBuild Headless
                     Ensure-TestBuild Product
-                    $assembly = Join-Path $repo "src/Notepads/obj/$Platform/$Configuration/net10.0-windows10.0.26100.0/win-$($Platform.ToLowerInvariant())/Notepads.dll"
+                    $assembly = Join-Path $repo "src/Notepads.App/obj/$Platform/$Configuration/net10.0-windows10.0.26100.0/win-$($Platform.ToLowerInvariant())/Notepads.dll"
                     & dotnet (Join-Path $repo "tests/IntegrationTests/bin/Headless/$Configuration/net10.0/NotepadsIntegrationTests.Headless.dll") --architecture $assembly
                     if ($LASTEXITCODE -ne 0) { throw 'The actual compiled product violates architecture boundaries.' }
                 }

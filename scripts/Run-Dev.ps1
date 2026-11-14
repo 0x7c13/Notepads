@@ -72,7 +72,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Restore failed ($LASTEXITCODE). See $run/restore.log" }
     $target = if ($Configuration -eq 'Debug') { '/t:Build' } else { '/t:Publish' }
     Write-Host "Building $packageName ($Configuration / $Platform)..."
-    & $build.Path (Join-Path $repo 'src/Notepads/Notepads.csproj') /restore $target @common `
+    & $build.Path (Join-Path $repo 'src/Notepads.App/Notepads.App.csproj') /restore $target @common `
         /p:GenerateAppxPackageOnBuild=true /p:PublishAppxPackage=false /p:AppxBundle=Never `
         /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false /p:AppxSymbolPackageEnabled=false `
         "/p:AppxPackageDir=$packages\" *> (Join-Path $run 'build.log')

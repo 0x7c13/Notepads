@@ -33,7 +33,7 @@
 #include "CaseFolder.h"
 #include "Document.h"
 #include "UndoHistory.h"
-#include "../../../../src/Notepads.Native/WinUIEditor/NativeEditorState.h"
+#include "../../../../src/Notepads.Editor/WinUIEditor/NativeEditorState.h"
 
 namespace {
 using namespace Scintilla;

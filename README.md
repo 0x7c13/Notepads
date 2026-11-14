@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="128" align="center" src="src/Notepads/Assets/appicon_ws.gif">
+  <img width="128" align="center" src="src/Notepads.App/Assets/appicon_ws.gif">
 </p>
 <h1 align="center">
   Notepads
@@ -70,7 +70,7 @@ from the size of the encoded file on disk. This is a code boundary, not a tested
 recommended maximum file size. The document and undo history remain in memory, so
 practical limits depend on available memory, process architecture and document layout.
 Syntax highlighting, selected-line operations and printing have separate, lower
-limits. The [document size boundary](src/Notepads/Features/Documents/Contracts/DocumentLimits.cs)
+limits. The [document size boundary](src/Notepads.App/Features/Documents/Contracts/DocumentLimits.cs)
 is defined independently of those features.
 
 ## Downloads:

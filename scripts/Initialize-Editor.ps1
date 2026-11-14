@@ -6,7 +6,7 @@
 param([string] $NuGetExe = 'nuget.exe')
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
-$editor = Join-Path $repo 'src\Notepads.Native'
+$editor = Join-Path $repo 'src\Notepads.Editor'
 $packageFile = Join-Path $editor 'WinUIEditor\packages.config'
 if (!(Test-Path -LiteralPath $packageFile)) { throw 'Internal editor source is missing from this checkout.' }
 [xml] $packages = Get-Content -LiteralPath $packageFile -Raw

@@ -16,7 +16,7 @@ public sealed class DocumentLanguageTests
     [Theory]
     [InlineData("csharp", "Code.CS", "")]
     [InlineData("cpp", "header.H", "")]
-    [InlineData("xml", "Notepads.csproj", "")]
+    [InlineData("xml", "Notepads.App.csproj", "")]
     [InlineData("json", "settings.jsonc", "")]
     [InlineData("markdown", "README.mdown", "")]
     [InlineData("toml", "Cargo.lock", "")]

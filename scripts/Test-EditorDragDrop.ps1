@@ -732,7 +732,7 @@ try {
         !$script:editorProcess.Path.StartsWith($script:session.Layout + '\', [StringComparison]::OrdinalIgnoreCase)) {
         throw 'The retained editor handle does not match the owned session process.'
     }
-    $nativeBuild = Join-Path $repo "src\_buildUwp\$Platform\Release\WinUIEditor\bin\WinUIEditor\WinUIEditor.dll"
+    $nativeBuild = Join-Path $repo "src\_buildUwp\$Platform\Release\WinUIEditor\bin\Notepads.Editor\WinUIEditor.dll"
     if ($SourceLayout) {
         $sourceNative = @(Get-ChildItem -LiteralPath ([IO.Path]::GetFullPath($SourceLayout)) -Filter WinUIEditor.dll -File -Recurse)
         Assert-DragEqual $sourceNative.Count 1 'The explicit source layout contains exactly one native editor'

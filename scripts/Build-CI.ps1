@@ -38,7 +38,7 @@ try {
 
     # Solution restore also restores the native packages.config into src/packages.
     Invoke-BuildStep Restore $msbuild (@((Join-Path $repo 'src/Notepads.sln'), '/t:Restore', '/p:RestorePackagesConfig=true') + $common)
-    Invoke-BuildStep Publish $msbuild (@((Join-Path $repo 'src/Notepads/Notepads.csproj'), '/restore', '/t:Publish',
+    Invoke-BuildStep Publish $msbuild (@((Join-Path $repo 'src/Notepads.App/Notepads.App.csproj'), '/restore', '/t:Publish',
         "/p:CustomAfterMicrosoftCommonTargets=$(Join-Path $PSScriptRoot 'OfflinePackage.targets')",
         "/p:OfflineFrameworkOutput=$packageRoot\Dependencies\",
         '/p:GenerateAppxPackageOnBuild=true', '/p:PublishAppxPackage=false',

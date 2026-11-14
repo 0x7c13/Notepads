@@ -105,6 +105,7 @@ public sealed partial class App : Application
         "--clipboard" => ClipboardContractTests.RunAsync(log),
         "--clipboard-rejected-cut" => ClipboardContractTests.RunRejectedCutAsync(log),
         "--workspace-commands" => WorkspaceCommandFeatureTests.RunAsync(log),
+        "--controls-migration" => ControlsMigrationTests.RunAsync(log),
         "--print-state" => WorkspaceCommandFeatureTests.RunPrintStateAsync(log),
         "--preferences" => PreferenceFeatureTests.RunAsync(log),
         "--preferences-store" => PreferenceFeatureTests.RunStoreAsync(log),

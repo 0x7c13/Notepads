@@ -11,7 +11,7 @@ if (!$EvidenceRoot) { $EvidenceRoot = Join-Path $repo ('artifacts/localization-c
 $fixtureRoot = Join-Path $EvidenceRoot ('Strings-' + [Guid]::NewGuid().ToString('N'))
 $null = New-Item -ItemType Directory -Path $fixtureRoot -Force
 foreach ($locale in @('en-US', 'zh-CN', 'fr-FR', 'de-DE')) {
-    Copy-Item -LiteralPath (Join-Path $repo "src/Notepads/Strings/$locale") -Destination $fixtureRoot -Recurse
+    Copy-Item -LiteralPath (Join-Path $repo "src/Notepads.App/Strings/$locale") -Destination $fixtureRoot -Recurse
 }
 $checks = [Collections.Generic.List[string]]::new()
 & $checker -StringsRoot $fixtureRoot | Out-Null

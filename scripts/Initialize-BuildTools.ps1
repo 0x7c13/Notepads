@@ -9,7 +9,7 @@ $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer
 $installation = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
 if (!$installation) { throw 'Visual Studio 2026 18.0 or later is required by .NET SDK 10.0.404.' }
 $msbuild = Join-Path $installation 'MSBuild\Current\Bin\MSBuild.exe'
-$project = Join-Path $PSScriptRoot '..\src\Notepads.Native\WinUIEditor\WinUIEditor.vcxproj'
+$project = Join-Path $PSScriptRoot '..\src\Notepads.Editor\WinUIEditor\Notepads.Editor.vcxproj'
 $solutionDirectory = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\src\'))
 
 function Test-UwpCppTools {

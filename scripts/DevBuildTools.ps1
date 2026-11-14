@@ -160,7 +160,7 @@ function Find-DevMSBuild([string] $Repo, [string] $Platform, [string] $HostPlatf
         if (!(Test-Path -LiteralPath $msbuild -PathType Leaf)) { continue }
         $nativePlatform = if ($Platform -eq 'x86') { 'Win32' } else { $Platform }
         try {
-            $output = & $msbuild (Join-Path $Repo 'src/Notepads.Native/WinUIEditor/WinUIEditor.vcxproj') /nologo /v:q /p:Configuration=Release "/p:Platform=$nativePlatform" /getProperty:MSBuildVersion,PlatformToolset,VCToolsInstallDir,VCTargetsPath,WindowsSdkDir,WindowsTargetPlatformVersion 2>&1
+            $output = & $msbuild (Join-Path $Repo 'src/Notepads.Editor/WinUIEditor/Notepads.Editor.vcxproj') /nologo /v:q /p:Configuration=Release "/p:Platform=$nativePlatform" /getProperty:MSBuildVersion,PlatformToolset,VCToolsInstallDir,VCTargetsPath,WindowsSdkDir,WindowsTargetPlatformVersion 2>&1
             if ($LASTEXITCODE -ne 0) { throw ($output -join "`n") }
             $properties = ($output -join "`n" | ConvertFrom-Json).Properties
             # SDK 10.0.404's minimumMSBuildVersion is 18.0.0.

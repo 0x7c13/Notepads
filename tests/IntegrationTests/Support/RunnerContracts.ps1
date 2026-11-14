@@ -706,8 +706,8 @@ $manifestSource = Join-Path $repo 'tests/IntegrationTests/Package.appxmanifest'
 if ($manifestSource -notin @(Get-TestSourceFiles App)) { throw 'App build discovery omits Package.appxmanifest.' }
 $checks.Add('App source discovery includes its package manifest')
 foreach ($relative in @('tests/IntegrationTests/Package.appxmanifest', 'tests/IntegrationTests/IntegrationTests.csproj',
-    'tests/IntegrationTests/Directory.Build.props', 'src/Notepads/Composition/InstanceRouter.cs',
-    'src/Notepads/App.xaml.cs', 'tests/IntegrationTests/Lifecycle/LifecycleProgram.cs')) {
+    'tests/IntegrationTests/Directory.Build.props', 'src/Notepads.App/Composition/InstanceRouter.cs',
+    'src/Notepads.App/App.xaml.cs', 'tests/IntegrationTests/Lifecycle/LifecycleProgram.cs')) {
     if ((Join-Path $repo $relative) -notin @(Get-TestSourceFiles Lifecycle)) {
         throw "Lifecycle build discovery omits $relative."
     }
@@ -727,20 +727,20 @@ $checks.Add('Lifecycle source discovery includes the real activation path and pa
         'src/x64/Debug/WinUIEditor/WinUIEditor.pdb',
         'src/Win32/Release/WinUIEditor/WinUIEditor.lib',
         'src/Release/WinUIEditor/WinUIEditor.dll',
-        'src/Notepads.Native/WinUIEditor/ARM64/Release/Editor.obj',
-        'src/Notepads.Native/WinUIEditor/Generated Files/Editor.g.h',
+        'src/Notepads.Editor/WinUIEditor/ARM64/Release/Editor.obj',
+        'src/Notepads.Editor/WinUIEditor/Generated Files/Editor.g.h',
         'src/_buildUwp/ARM64/Release/Editor.obj',
         'src/_buildWinUI3/x64/Debug/Editor.obj',
-        'src/Notepads/AppPackages/Product.msix',
-        'src/Notepads/BundleArtifacts/Product.msixbundle',
-        'src/Notepads/bin/Release/Product.dll',
-        'src/Notepads/obj/Release/Product.g.cs')
+        'src/Notepads.App/AppPackages/Product.msix',
+        'src/Notepads.App/BundleArtifacts/Product.msixbundle',
+        'src/Notepads.App/bin/Release/Product.dll',
+        'src/Notepads.App/obj/Release/Product.g.cs')
     $realInputs = @(
-        'src/Notepads.Native/scintilla/win32/ScintillaWin.cxx',
-        'src/Notepads.Native/scintilla/winui/ScintillaWin.cxx',
-        'src/Notepads.Native/WinUIEditor/Editor.cpp',
-        'src/Notepads/Assets/ARM64/Release/icon.png',
-        'src/Notepads/Assets/x64/icon.png')
+        'src/Notepads.Editor/scintilla/win32/ScintillaWin.cxx',
+        'src/Notepads.Editor/scintilla/winui/ScintillaWin.cxx',
+        'src/Notepads.Editor/WinUIEditor/Editor.cpp',
+        'src/Notepads.App/Assets/ARM64/Release/icon.png',
+        'src/Notepads.App/Assets/x64/icon.png')
     foreach ($relative in $generatedInputs + $realInputs) {
         $fixturePath = Join-Path $inputRepo $relative
         New-Item -ItemType Directory -Path (Split-Path $fixturePath) -Force | Out-Null
@@ -760,7 +760,7 @@ $checks.Add('Lifecycle source discovery includes the real activation path and pa
     $null = Write-TestBuildIdentity App Release ARM64 $beforeManifest
     $null = Assert-TestBuildIdentity App Release ARM64
     foreach ($relative in $generatedInputs) { [IO.File]::WriteAllText((Join-Path $inputRepo $relative), 'rebuilt-output') }
-    [IO.File]::WriteAllText((Join-Path $inputRepo 'src/Notepads/AppPackages/new-package.msix'), 'new-package')
+    [IO.File]::WriteAllText((Join-Path $inputRepo 'src/Notepads.App/AppPackages/new-package.msix'), 'new-package')
     $null = Assert-TestBuildIdentity App Release ARM64
     $checks.Add('Rebuilt and newly published outputs do not invalidate source identity')
     foreach ($relative in @($realInputs[0], $realInputs[3])) {

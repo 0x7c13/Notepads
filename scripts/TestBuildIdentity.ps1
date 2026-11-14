@@ -9,16 +9,16 @@ function Get-TestSourceFiles {
     param([string] $Profile)
     $repo = Split-Path $PSScriptRoot -Parent
     $roots = switch ($Profile) {
-        'Unit' { @('tests/UnitTests', 'src/Notepads/Features/Documents', 'src/Notepads/Features/Sessions/Contracts',
-            'src/Notepads/Features/Sessions/Validation', 'src/Notepads/Features/WebSearch', 'src/Notepads.Controls/SetsView') }
-        'Headless' { @('tests/IntegrationTests/Headless', 'src/Notepads/Features/Documents', 'src/Notepads/Features/Sessions',
-            'src/Notepads/Infrastructure/Diagnostics') }
+        'Unit' { @('tests/UnitTests', 'src/Notepads.App/Features/Documents', 'src/Notepads.App/Features/Sessions/Contracts',
+            'src/Notepads.App/Features/Sessions/Validation', 'src/Notepads.App/Features/WebSearch', 'src/Notepads.App/Controls/SetsView') }
+        'Headless' { @('tests/IntegrationTests/Headless', 'src/Notepads.App/Features/Documents', 'src/Notepads.App/Features/Sessions',
+            'src/Notepads.App/Infrastructure/Diagnostics') }
         'App' { @('src', 'tests/IntegrationTests/App', 'tests/Shared') }
         'Lifecycle' { @('src', 'tests/IntegrationTests/App', 'tests/IntegrationTests/Lifecycle', 'tests/Shared') }
         'Product' { @('src') }
-        'NativeDiff' { @('tests/IntegrationTests/Support/NativeDiff.Tests', 'src/Notepads.Native') }
-        'NativeBidi' { @('tests/IntegrationTests/Support/NativeBidi.Tests', 'src/Notepads.Native') }
-        'RegexText' { @('tests/IntegrationTests/Support/RegexText.Tests', 'src/Notepads.Native') }
+        'NativeDiff' { @('tests/IntegrationTests/Support/NativeDiff.Tests', 'src/Notepads.Editor') }
+        'NativeBidi' { @('tests/IntegrationTests/Support/NativeBidi.Tests', 'src/Notepads.Editor') }
+        'RegexText' { @('tests/IntegrationTests/Support/RegexText.Tests', 'src/Notepads.Editor') }
         'DragPeer' { @('tests/IntegrationTests/Support/DragDrop.Peer') }
         default { throw "Unknown build profile: $Profile" }
     }
@@ -27,7 +27,7 @@ function Get-TestSourceFiles {
     # Legacy VC builds wrote beside the solution/project before _buildUwp was
     # introduced. Scope these paths: architecture folders can also hold real
     # platform sources or assets and must not be excluded by name alone.
-    foreach ($relative in @('src', 'src/Notepads.Native/WinUIEditor')) {
+    foreach ($relative in @('src', 'src/Notepads.Editor/WinUIEditor')) {
         foreach ($configuration in @('Debug', 'Release', 'Production')) {
             $null = $generatedDirectories.Add([IO.Path]::GetFullPath((Join-Path $repo "$relative/$configuration")))
             foreach ($architecture in @('ARM', 'ARM64', 'x64', 'x86', 'Win32')) {
@@ -79,7 +79,7 @@ function Get-TestArtifactFiles {
         'Headless' { Join-Path $repo "tests/IntegrationTests/bin/Headless/$Configuration/net10.0" }
         'App' { Join-Path $repo "tests/IntegrationTests/bin/App/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
         'Lifecycle' { Join-Path $repo "tests/IntegrationTests/bin/Lifecycle/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
-        'Product' { Join-Path $repo "src/Notepads/obj/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
+        'Product' { Join-Path $repo "src/Notepads.App/obj/$Platform/$Configuration/net10.0-windows10.0.26100.0/$runtime" }
         'NativeDiff' { Join-Path $repo "tests/IntegrationTests/Support/NativeDiff.Tests/bin/x64/$Configuration" }
         'NativeBidi' { Join-Path $repo "tests/IntegrationTests/Support/NativeBidi.Tests/bin/x64/$Configuration" }
         'RegexText' { Join-Path $repo "tests/IntegrationTests/Support/RegexText.Tests/bin/x64/$Configuration" }

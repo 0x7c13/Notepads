@@ -26,7 +26,7 @@ internal static class LayerRules
         foreach (var part in new[] { "Diagnostics", "Storage", "Settings", "Threading", "Runtime", "Shell", "Fonts", "Localization", "Resources" })
             if (name.StartsWith("Notepads.Infrastructure." + part + ".")) return "Infrastructure." + part;
         if (name.StartsWith("WinUIEditor.")) return "Native";
-        if (name.StartsWith("Notepads.Controls.")) return "ExternalControls";
+        if (name.StartsWith("Notepads.Controls.")) return "Controls";
         if (name.StartsWith("Windows.UI.Xaml.") || name.StartsWith("Microsoft.UI.Xaml.") ||
             name.StartsWith("CommunityToolkit.WinUI."))
         {
@@ -47,7 +47,7 @@ internal static class LayerRules
         var source = Module(sourceType);
         var target = Module(targetType);
         if (source == "UnknownApp" || target == "UnknownApp") return false;
-        if (target == "XamlPlatform") return source == "Composition" || source == "Presentation";
+        if (target == "XamlPlatform") return source is "Composition" or "Presentation" or "Controls";
         if (source == null || target == null || source == target || source == "Composition") return true;
         if (target == "Composition") return false;
         if (target == "Native")
@@ -65,7 +65,7 @@ internal static class LayerRules
             return false;
         }
         if (source == "Presentation") return true;
-        if (target == "ExternalControls" || target == "Presentation") return false;
+        if (target == "Controls" || target == "Presentation") return false;
         if (source.StartsWith("Infrastructure."))
         {
             if (!target.StartsWith("Infrastructure.")) return false;

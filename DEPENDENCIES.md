@@ -9,18 +9,18 @@ Dependency inventory checked on 2026-11-04. The original audit baseline is
 | Dependency | Retained version | Actual use / decision |
 | --- | --- | --- |
 | Microsoft.UI.Xaml | 2.8.7 | WinUI 2 controls, styles and resources. Keep the UWP product on WinUI 2. |
-| Microsoft.Web.WebView2 | 1.0.4314.35 | WinUI dependency. Explicitly pinned through Notepads.Controls to fix ARM64 cross-compilation; see below. The editor does not instantiate WebView2. |
+| Microsoft.Web.WebView2 | 1.0.4314.35 | WinUI dependency. Explicitly pinned by Notepads.App to fix ARM64 cross-compilation; see below. The editor does not instantiate WebView2. |
 | Win2D.uwp | 1.28.3 | HostBackdropAcrylicBrush composition effects and localized system-font enumeration. It is not an unused Markdown dependency. |
 | CommunityToolkit.Uwp.Extensions | 8.2.251219 | Visual-tree lookup, tab ancestor bindings, cursor attached properties and color conversion. |
 | CommunityToolkit.Uwp.Converters | 8.2.251219 | SetsView visibility and size bindings. |
 | CommunityToolkit.Uwp.Helpers | 8.2.251219 | Theme color serialization. |
-| CommunityToolkit.Common | 8.4.2 | Shared Toolkit code, explicitly pinned through Notepads.Controls. |
+| CommunityToolkit.Common | 8.4.2 | Shared Toolkit code, explicitly pinned by Notepads.App. |
 | UTF.Unknown | 2.8.0 | Stream-based encoding detection in DocumentEncodingPolicy; upgraded from 2.7.0 with matched stream-detector samples and production decoding regression coverage. |
 | Microsoft.Services.Store.Engagement | 10.2307.3001 | Best-effort custom diagnostic events in AnalyticsService. Retained as a package framework; this is not the Microsoft Store client application. |
 | Microsoft.Windows.CsWinRT | 2.3.1 | Native editor/Engagement projections, WinRT interop and AOT code generation. |
 
-The first-party project references are Notepads.Controls and
-Notepads.Native.Projection. Multiple references to the same NuGet package across
+The first-party project reference is Notepads.Editor.Projection. App controls
+are compiled by Notepads.App. Multiple references to the same NuGet package across
 these projects resolve to one version, not multiple runtime copies. There was no
 confirmed unused runtime package to remove in this audit. The old Markdown source
 is excluded from compilation and is not evidence that its old packages still ship.
@@ -374,9 +374,9 @@ Restore using the repository build scripts, then inspect the resolved graph,
 not only direct PackageReference entries:
 
 ```powershell
-dotnet list src/Notepads/Notepads.csproj package --include-transitive --no-restore
-dotnet list src/Notepads/Notepads.csproj package --vulnerable --include-transitive --no-restore
-dotnet list src/Notepads/Notepads.csproj package --deprecated --include-transitive --no-restore
+dotnet list src/Notepads.App/Notepads.App.csproj package --include-transitive --no-restore
+dotnet list src/Notepads.App/Notepads.App.csproj package --vulnerable --include-transitive --no-restore
+dotnet list src/Notepads.App/Notepads.App.csproj package --deprecated --include-transitive --no-restore
 dotnet list tests/Tests.slnx package --vulnerable --include-transitive --no-restore
 ```
 
@@ -385,7 +385,7 @@ resolved product/test graphs and no deprecated packages in the product graph.
 This is a NuGet advisory result, not a scan of vendored native source, Windows
 components, unused package versions or all possible vulnerabilities. Repeat it
 for release candidates. Retained upstream source licenses remain under
-Notepads.Native; resolved NuGet metadata supplies package license/provenance data.
+Notepads.Editor; resolved NuGet metadata supplies package license/provenance data.
 
 Primary references: [WinUI](https://www.nuget.org/packages/Microsoft.UI.Xaml),
 [Win2D](https://www.nuget.org/packages/Win2D.uwp),

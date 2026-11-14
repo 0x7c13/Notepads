@@ -3,7 +3,7 @@
 #  See LICENSE.txt in the project root for license information.
 # ---------------------------------------------------------------------------------------------
 
-param([string] $StringsRoot = (Join-Path $PSScriptRoot '../src/Notepads/Strings'))
+param([string] $StringsRoot = (Join-Path $PSScriptRoot '../src/Notepads.App/Strings'))
 $ErrorActionPreference = 'Stop'
 $resourceFiles = @('Resources.resw', 'Settings.resw', 'Manifest.resw')
 $formatItem = [regex]::new('(?<!\{)\{[0-9]+(?:,-?[0-9]+)?(?::[^{}]+)?\}(?!\})')

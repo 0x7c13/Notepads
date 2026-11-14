@@ -13,7 +13,7 @@
     <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../../src/Notepads.Controls/SetsView/TabDragGeometry.cs" />
+    <Compile Include="../../src/Notepads.App/Controls/SetsView/TabDragGeometry.cs" />
     <Compile Include="../Shared/TestProcessLifetime.cs" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
@@ -21,24 +21,24 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="../../src/Notepads/Features/Documents/Contracts/LineEnding.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentMetadata.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Contracts/DocumentLimits.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/DocumentLanguage.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/DocumentLanguages.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/FileTypes/FileTypeUtility.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Text/LineEndingUtility.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTextCodec.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Text/DocumentTitle.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Text/SelectedLineOperations.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Text/IndentationDetector.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Text/IndentationConverter.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/Operations/DocumentOperationCoordinator.cs" />
-    <Compile Include="../../src/Notepads/Features/Documents/IO/FileNameRules.cs" />
-    <Compile Include="../../src/Notepads/Features/WebSearch/SearchUrls.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/*.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Legacy/*.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Contracts/Recovery/RecoverySelection.cs" />
-    <Compile Include="../../src/Notepads/Features/Sessions/Validation/*.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Contracts/LineEnding.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Contracts/DocumentMetadata.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Contracts/DocumentLimits.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/FileTypes/DocumentLanguage.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/FileTypes/DocumentLanguages.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/FileTypes/FileTypeUtility.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Text/LineEndingUtility.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Text/DocumentTextCodec.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Text/DocumentTitle.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Text/SelectedLineOperations.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Text/IndentationDetector.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Text/IndentationConverter.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/Operations/DocumentOperationCoordinator.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Documents/IO/FileNameRules.cs" />
+    <Compile Include="../../src/Notepads.App/Features/WebSearch/SearchUrls.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Contracts/*.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Contracts/Legacy/*.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Contracts/Recovery/RecoverySelection.cs" />
+    <Compile Include="../../src/Notepads.App/Features/Sessions/Validation/*.cs" />
   </ItemGroup>
 </Project>

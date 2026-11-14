@@ -24,16 +24,16 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\src\Notepads.Native\WinUIEditor;$(ProjectDir)..\..\..\..\src\Notepads.Native\scintilla\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\src\Notepads.Editor\WinUIEditor;$(ProjectDir)..\..\..\..\src\Notepads.Editor\scintilla\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="..\..\..\..\src\Notepads.Native\WinUIEditor\NativeDiff.cpp" />
-    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\ContractionState.cxx" />
-    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\DisplayLineMap.cxx" />
-    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\RunStyles.cxx" />
-    <ClCompile Include="..\..\..\..\src\Notepads.Native\scintilla\src\UniqueString.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Editor\WinUIEditor\NativeDiff.cpp" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Editor\scintilla\src\ContractionState.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Editor\scintilla\src\DisplayLineMap.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Editor\scintilla\src\RunStyles.cxx" />
+    <ClCompile Include="..\..\..\..\src\Notepads.Editor\scintilla\src\UniqueString.cxx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
