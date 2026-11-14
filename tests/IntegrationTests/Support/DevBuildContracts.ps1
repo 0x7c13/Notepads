@@ -25,16 +25,67 @@ function New-Sdk([string] $Version, [string] $Rid = 'win-arm64', [string] $Hash 
     [pscustomobject]@{ version = $Version; files = @([pscustomobject]@{ rid = $Rid; url = "https://example.invalid/$Version.zip"; hash = $Hash }) }
 }
 $metadata = [pscustomobject]@{ releases = @([pscustomobject]@{ sdks = @(
-    (New-Sdk '10.0.400'), (New-Sdk '10.0.401'), (New-Sdk '10.0.402'), (New-Sdk '10.0.403-preview.1'),
-    (New-Sdk '10.0.500'), (New-Sdk '10.1.401')); sdk = $null }) }
-$sdk = Get-DevSdkDownload $metadata ([version]'10.0.401') ARM64
-Check ($sdk.Version -eq '10.0.402' -and $sdk.Hash -eq ('a' * 128)) 'SDK selection respects latestPatch and excludes previews, older patches and other feature bands'
-Reject 'Missing SDK host architecture is rejected' '*No verified win-x64 SDK*' { Get-DevSdkDownload $metadata ([version]'10.0.401') x64 }
-Reject 'No compatible SDK is rejected' '*No verified*' { Get-DevSdkDownload $metadata ([version]'11.0.100') ARM64 }
-$invalid = [pscustomobject]@{ releases = @([pscustomobject]@{ sdk = New-Sdk '10.0.401' 'win-arm64' 'bad'; sdks = @() }) }
-Reject 'Missing SDK integrity hash is rejected' '*No verified*' { Get-DevSdkDownload $invalid ([version]'10.0.401') ARM64 }
+    (New-Sdk '10.0.403'), (New-Sdk '10.0.404'), (New-Sdk '10.0.405'), (New-Sdk '10.0.406-preview.1'),
+    (New-Sdk '10.0.500'), (New-Sdk '10.1.404')); sdk = $null }) }
+$sdk = Get-DevSdkDownload $metadata ([version]'10.0.404') ARM64
+Check ($sdk.Version -eq '10.0.405' -and $sdk.Hash -eq ('a' * 128)) 'SDK selection respects latestPatch and excludes previews, older patches and other feature bands'
+Reject 'Missing SDK host architecture is rejected' '*No verified win-x64 SDK*' { Get-DevSdkDownload $metadata ([version]'10.0.404') x64 }
+Reject 'No compatible SDK feature band is rejected' '*No verified*' { Get-DevSdkDownload $metadata ([version]'10.0.600') ARM64 }
+$invalid = [pscustomobject]@{ releases = @([pscustomobject]@{ sdk = New-Sdk '10.0.404' 'win-arm64' 'bad'; sdks = @() }) }
+Reject 'Missing SDK integrity hash is rejected' '*No verified*' { Get-DevSdkDownload $invalid ([version]'10.0.404') ARM64 }
 Reject 'HTTP download is rejected before network or file writes' '*absolute HTTPS*' { Save-DevDownload 'http://example.invalid/a' (Join-Path $EvidenceRoot 'blocked') }
 Reject 'Relative download is rejected before network or file writes' '*absolute HTTPS*' { Save-DevDownload 'relative.zip' (Join-Path $EvidenceRoot 'blocked') }
+
+# Fake tool commands exercise discovery/selection without starting MSBuild or setup.
+& {
+    $toolRoot = Join-Path $EvidenceRoot 'msbuild-version'
+    $null = New-Item -ItemType Directory -Path $toolRoot -Force
+    $fakeInstallation = Join-Path $toolRoot 'BuildTools'
+    $vswhereStub = Join-Path $toolRoot 'vswhere.ps1'
+    $msbuildStub = Join-Path $toolRoot 'msbuild.ps1'
+    [IO.File]::WriteAllText($vswhereStub, @'
+param([switch] $all, [string] $products, [string] $version, [string] $format)
+if ($version -ne '[18.0,19.0)') { throw 'Discovery must retain the Visual Studio 2026 range for in-place component updates.' }
+$global:LASTEXITCODE = 0
+$fixtureInstances | ConvertTo-Json -Depth 3
+'@)
+    [IO.File]::WriteAllText($msbuildStub, @'
+$global:LASTEXITCODE = 0
+@{ Properties = @{ MSBuildVersion = $fixtureVersion; PlatformToolset = 'v145';
+    VCToolsInstallDir = $fakeInstallation + '\VC\'; VCTargetsPath = $fakeInstallation + '\Targets\';
+    WindowsSdkDir = $fakeInstallation + '\SDK\'; WindowsTargetPlatformVersion = '10.0.26100.0' } } | ConvertTo-Json
+'@)
+    function Join-Path {
+        param($Path, $ChildPath)
+        if ($ChildPath -eq 'Microsoft Visual Studio/Installer/vswhere.exe') { return $vswhereStub }
+        if ($ChildPath -eq 'MSBuild/Current/Bin/MSBuild.exe') { return $msbuildStub }
+        Microsoft.PowerShell.Management\Join-Path $Path $ChildPath
+    }
+    function Test-Path {
+        param($LiteralPath, $PathType)
+        if ($LiteralPath.StartsWith($fakeInstallation, [StringComparison]::OrdinalIgnoreCase)) { return $true }
+        Microsoft.PowerShell.Management\Test-Path -LiteralPath $LiteralPath -PathType Leaf
+    }
+    foreach ($fixtureVersion in @('17.14.0', '18.0.0', '18.12.2')) {
+        $fixtureInstances = @([pscustomobject]@{ isComplete = $true; isRebootRequired = $false;
+            installationVersion = $fixtureVersion; installationPath = $fakeInstallation;
+            productId = 'Microsoft.VisualStudio.Product.BuildTools' })
+        $selected = Find-DevMSBuild $repo x64 x64
+        Check (($null -ne $selected) -eq ([version]$fixtureVersion -ge [version]'18.0.0')) "SDK 10 MSBuild boundary: $fixtureVersion"
+    }
+    $fixtureInstances[0].installationVersion = '18.0.0'
+    Check (@(Get-DevVSInstances)[0].installationVersion -eq '18.0.0') 'Discovery retains compatible Build Tools for component installation'
+    function Save-DevDownload { param($Uri, $Path) }
+    function Get-AuthenticodeSignature {
+        param($LiteralPath)
+        [pscustomobject]@{ Status = 'Valid'; SignerCertificate = [pscustomobject]@{ Subject = 'O=Microsoft Corporation' } }
+    }
+    $setupCalls = [Collections.Generic.List[object]]::new()
+    function Invoke-DevElevatedProcess { param($Executable, $Arguments); $setupCalls.Add($Arguments) }
+    Install-DevBuildTools $toolRoot x64
+    Check ($setupCalls.Count -eq 1 -and $setupCalls[0][0] -eq 'modify' -and
+        $setupCalls[0][2] -eq $fakeInstallation) 'Compatible Build Tools are augmented in place without a separate engine update'
+}
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 function New-Archive([string] $Path, [hashtable] $Entries) {
@@ -62,9 +113,9 @@ Check (!(Test-Path -LiteralPath (Join-Path $EvidenceRoot 'escaped.txt'))) 'Unsaf
     $sdkRoot = Join-Path $EvidenceRoot 'sdk'
     $fixtureArchive = $archive
     $null = New-Item -ItemType Directory -Path $sdkRoot
-    [IO.File]::WriteAllText((Join-Path $sdkRoot 'global.json'), '{"sdk":{"version":"10.0.401","rollForward":"latestPatch","allowPrerelease":false}}')
+    [IO.File]::WriteAllText((Join-Path $sdkRoot 'global.json'), '{"sdk":{"version":"10.0.404","rollForward":"latestPatch","allowPrerelease":false}}')
     $sdkHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA512).Hash
-    $response = [pscustomobject]@{ releases = @([pscustomobject]@{ sdk = New-Sdk '10.0.401' 'win-arm64' ('0' * 128) }) }
+    $response = [pscustomobject]@{ releases = @([pscustomobject]@{ sdk = New-Sdk '10.0.404' 'win-arm64' ('0' * 128) }) }
     function Invoke-RestMethod { param($Uri); return $response }
     function Save-DevDownload { param($Uri, $Path); Copy-Item -LiteralPath $fixtureArchive -Destination $Path }
     function Find-DevDotnet { return 'verified local SDK' }
@@ -144,7 +195,7 @@ try {
     $instances = @([pscustomobject]@{ productId = 'Microsoft.VisualStudio.Product.Community'; installationPath = 'IDE must stay untouched' })
     Install-DevBuildTools $EvidenceRoot x64
     Check ($calls[1].Arguments -notcontains 'modify') 'Missing Build Tools never modifies an installed IDE'
-    $instances += [pscustomobject]@{ productId = 'Microsoft.VisualStudio.Product.BuildTools'; installationPath = 'Existing Build Tools' }
+    $instances += [pscustomobject]@{ productId = 'Microsoft.VisualStudio.Product.BuildTools'; installationPath = 'Existing Build Tools'; installationVersion = '18.12.0.0' }
     Install-DevBuildTools $EvidenceRoot x64
     Check ($calls[2].Arguments[0] -eq 'modify' -and $calls[2].Arguments[2] -eq 'Existing Build Tools') 'Existing Build Tools are augmented in place'
     $instances[1] | Add-Member NoteProperty isRebootRequired $true
@@ -260,10 +311,10 @@ foreach ($mutation in @(
     $scripts = Join-Path $fixture 'scripts'
     $null = New-Item -ItemType Directory -Path $scripts -Force
     Copy-Item -LiteralPath (Join-Path $repo 'scripts/Run-Dev.ps1') -Destination $scripts
-    [IO.File]::WriteAllText((Join-Path $fixture 'global.json'), '{"sdk":{"version":"10.0.401"}}')
+    [IO.File]::WriteAllText((Join-Path $fixture 'global.json'), '{"sdk":{"version":"10.0.404"}}')
     $stubs = @'
 function Get-DevHostPlatform { 'ARM64' }
-function Find-DevDotnet { if (!$env:NOTEPADS_CONTRACT_MISSING) { [pscustomobject]@{ Path = 'inert dotnet'; Version = '10.0.401' } } }
+function Find-DevDotnet { if (!$env:NOTEPADS_CONTRACT_MISSING) { [pscustomobject]@{ Path = 'inert dotnet'; Version = '10.0.404' } } }
 function Find-DevMSBuild { if (!$env:NOTEPADS_CONTRACT_MISSING) { [pscustomobject]@{ Path = 'inert MSBuild'; Version = '18.0' } } }
 function Test-DevRegistrationEnabled { $false }
 function Install-DevDotnet { throw 'UNEXPECTED installation' }

@@ -171,7 +171,7 @@ jobs:
         run: |
           $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
           $vs = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
-          if ($LASTEXITCODE -ne 0 -or !$vs) { throw 'Visual Studio 2026 is required.' }
+          if ($LASTEXITCODE -ne 0 -or !$vs) { throw 'Visual Studio 2026 18.0 or later is required by .NET SDK 10.0.404.' }
           & (Join-Path $vs 'MSBuild/Current/Bin/MSBuild.exe') ./src/Notepads.sln /t:Restore /p:RestorePackagesConfig=true /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /nologo /v:minimal
           if ($LASTEXITCODE -ne 0) { throw "Solution restore failed: $LASTEXITCODE" }
       - name: Prepare interactive desktop

@@ -35,8 +35,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Run-Dev.ps1
 ```
 
 The script reuses a complete toolchain when available. Otherwise it downloads the
-native-host .NET SDK selected by `global.json` into `.tools/notepads-dev` and installs
-**Build Tools 2026** with v145 C++/UWP, managed UWP tasks and Windows SDK 10.0.26100.
+native-host .NET 10 LTS SDK selected by `global.json` (10.0.404 baseline, compatible patches allowed) into `.tools/notepads-dev` and installs
+**Build Tools 2026 18.0 or later** with v145 C++/UWP, managed UWP tasks and Windows SDK 10.0.26100.
 Visual Studio IDE and PowerShell 7 are unnecessary. Initial setup needs internet,
 several GB of free space and administrator approval for Build Tools or Windows
 Developer Mode. Microsoft installers come from official HTTPS endpoints; the script

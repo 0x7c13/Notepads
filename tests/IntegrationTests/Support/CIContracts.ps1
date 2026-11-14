@@ -56,8 +56,8 @@ $priorOutput = $env:GITHUB_OUTPUT
 Push-Location -LiteralPath $sdkRoot
 try {
     $env:GITHUB_OUTPUT = Join-Path $sdkRoot 'output.txt'
-    foreach ($version in @('10.0.401', '11.0.102', '10.0.4xx', '10.0.403-preview.1', '')) {
-        $valid = $version -in @('10.0.401', '11.0.102')
+    foreach ($version in @('10.0.404', '10.0.405', '11.0.100', '10.0.4xx', '10.0.404-preview.1', '')) {
+        $valid = $version -in @('10.0.404', '10.0.405')
         @{ sdk = @{ version = $version; rollForward = 'latestPatch'; allowPrerelease = $false } } |
             ConvertTo-Json | Set-Content -LiteralPath 'global.json'
         $before = (Get-FileHash -LiteralPath 'global.json').Hash

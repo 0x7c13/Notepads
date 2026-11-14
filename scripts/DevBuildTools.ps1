@@ -145,6 +145,7 @@ function Get-DevBuildComponents([string] $Platform) {
 function Get-DevVSInstances {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     if (!(Test-Path -LiteralPath $vswhere -PathType Leaf)) { return @() }
+    # Include existing instances so installation can add components in place.
     $json = & $vswhere -all -products '*' -version '[18.0,19.0)' -format json
     if ($LASTEXITCODE -ne 0) { throw 'Visual Studio Installer discovery failed.' }
     return @($json -join "`n" | ConvertFrom-Json)
@@ -159,9 +160,13 @@ function Find-DevMSBuild([string] $Repo, [string] $Platform, [string] $HostPlatf
         if (!(Test-Path -LiteralPath $msbuild -PathType Leaf)) { continue }
         $nativePlatform = if ($Platform -eq 'x86') { 'Win32' } else { $Platform }
         try {
-            $output = & $msbuild (Join-Path $Repo 'src/Notepads.Native/WinUIEditor/WinUIEditor.vcxproj') /nologo /v:q /p:Configuration=Release "/p:Platform=$nativePlatform" /getProperty:PlatformToolset,VCToolsInstallDir,VCTargetsPath,WindowsSdkDir,WindowsTargetPlatformVersion 2>&1
+            $output = & $msbuild (Join-Path $Repo 'src/Notepads.Native/WinUIEditor/WinUIEditor.vcxproj') /nologo /v:q /p:Configuration=Release "/p:Platform=$nativePlatform" /getProperty:MSBuildVersion,PlatformToolset,VCToolsInstallDir,VCTargetsPath,WindowsSdkDir,WindowsTargetPlatformVersion 2>&1
             if ($LASTEXITCODE -ne 0) { throw ($output -join "`n") }
             $properties = ($output -join "`n" | ConvertFrom-Json).Properties
+            # SDK 10.0.404's minimumMSBuildVersion is 18.0.0.
+            if ([version]$properties.MSBuildVersion -lt [version]'18.0.0') {
+                throw '.NET SDK 10.0.404 requires MSBuild 18.0 or later. Update Visual Studio / Build Tools 2026.'
+            }
             $installationRoot = [IO.Path]::GetFullPath($root).TrimEnd('\') + '\'
             foreach ($directory in @($properties.VCToolsInstallDir, $properties.VCTargetsPath)) {
                 if (!$directory -or ![IO.Path]::GetFullPath($directory).StartsWith($installationRoot, [StringComparison]::OrdinalIgnoreCase)) {

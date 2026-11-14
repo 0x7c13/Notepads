@@ -38,10 +38,12 @@ the Release `Editor` group. Each desktop runs its groups sequentially. The matri
 does not cancel one lane when the other fails, and CI Gate requires both.
 Package jobs do not build the test host again.
 
-The Windows image is `windows-2025-vs2026`, with Visual Studio 2026/v145 and Windows
-SDK 10.0.26100.0. The shared SDK setup action installs the explicit version from
-`global.json`, avoiding a remote latest-patch download during bootstrap. Builds
-still follow `global.json`'s roll-forward policy for newer installed SDK patches.
+The Windows image is `windows-2025-vs2026`, with Visual Studio 2026 18.0+/v145 and
+Windows SDK 10.0.26100.0. The shared SDK setup action installs the explicit .NET 10
+LTS SDK from `global.json` (10.0.404 baseline), including the net10 runtime required
+by Unit and Headless tests. No additional runtime installation is needed. Bootstrap
+avoids a remote latest-patch SDK lookup; builds still follow `global.json`'s
+roll-forward policy within the 10.0.4xx SDK feature band.
 `Initialize-BuildTools.ps1` checks the
 actual compiler/UWP library paths and installs missing native components on hosted
 runners. NuGet downloads are cached against project/dependency inputs. Build
@@ -200,7 +202,7 @@ runner access to personal files, production credentials or other repositories.
 
 Runner setup:
 
-1. Install PowerShell 7.4+, Git, the `global.json` SDK, Visual Studio 2026 with
+1. Install PowerShell 7.4+, Git, the .NET 10 LTS SDK from `global.json` (10.0.404 baseline), Visual Studio 2026 18.0+ with
    .NET UWP tools, Windows SDK 10.0.26100.0, and v145 native/UWP tools. Run
    `./scripts/Initialize-BuildTools.ps1` to verify the native toolchain.
 2. Enable Windows Developer Mode and prepare the test package's framework

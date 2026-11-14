@@ -1,5 +1,5 @@
 name: Set up repository .NET SDK
-description: Install the explicit SDK baseline without resolving a remote latest-patch channel.
+description: Install the explicit .NET 10 LTS SDK baseline from global.json without resolving a remote latest-patch SDK channel.
 inputs:
   cache:
     description: Cache NuGet packages.
@@ -15,12 +15,13 @@ runs:
       shell: pwsh
       run: |
         [string] $version = (Get-Content -LiteralPath global.json -Raw | ConvertFrom-Json).sdk.version
-        if ($version -notmatch '\A\d+\.\d+\.\d+\z') { throw 'global.json must specify a stable SDK version.' }
+        if ($version -notmatch '\A10\.0\.\d+\z') { throw 'global.json must specify a stable .NET 10 SDK version (10.0.x).' }
         "version=$version" >> $env:GITHUB_OUTPUT
     # Passing global-json-file to setup-dotnet translates latestPatch into a
     # remote channel lookup, even if a compatible SDK is already installed.
     # Install the declared baseline; global.json still selects newer installed
     # patches during builds, preserving the local/VS SDK selection policy.
+    # The .NET 10 SDK also supplies the net10 runtime needed by Unit/Headless tests.
     - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
       with:
         dotnet-version: ${{ steps.sdk.outputs.version }}

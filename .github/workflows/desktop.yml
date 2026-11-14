@@ -44,7 +44,7 @@ jobs:
         run: |
           $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
           $vs = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
-          if ($LASTEXITCODE -ne 0 -or !$vs) { throw 'Visual Studio 2026 is required.' }
+          if ($LASTEXITCODE -ne 0 -or !$vs) { throw 'Visual Studio 2026 18.0 or later is required by .NET SDK 10.0.404.' }
           $hostDirectory = if ([Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64/' } else { '' }
           $msbuild = Join-Path $vs "MSBuild/Current/Bin/${hostDirectory}MSBuild.exe"
           & $msbuild ./src/Notepads.sln /t:Restore /p:RestorePackagesConfig=true /p:Configuration=Release "/p:Platform=$env:TEST_PLATFORM" /nologo /v:minimal

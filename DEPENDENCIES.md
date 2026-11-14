@@ -64,9 +64,9 @@ packaging design and corresponding validation.
 | Microsoft.Windows.CppWinRT | 3.0.260818.1 | Upgraded with cancellation/lifetime AOT regression coverage. Retain the existing C++20 projection headers/PCH; modules remain disabled. |
 | Microsoft.Windows.SDK.BuildTools | 10.0.28000.2957 | Native packages.config, imports and missing-package guards use this version. Directory.Packages.props selects the same version for managed UWP builds. Compilation targets SDK 26100 and the runtime minimum is build 22000. |
 | Microsoft.Windows.SDK.BuildTools.MSIX | 1.7.261102100 | Overrides the UWP SDK's implicit packaging tools through Directory.Packages.props for product and test hosts. |
-| .NET SDK | global.json: 10.0.403, latestPatch | Local installed patches can roll forward; CI bootstraps the explicit version. Runtime/ILCompiler versions follow that SDK through NativeAot.targets. |
+| .NET SDK | global.json: 10.0.404, latestPatch | .NET 10 LTS, supported through 2028-11-14. Local installed patches can roll forward within the 10.0.4xx feature band; CI bootstraps the explicit version. Requires MSBuild 18.0+. Runtime/ILCompiler versions follow the selected SDK through NativeAot.targets. |
 | Windows SDK headers / managed target | 10.0.26100.0 | Compilation target, not the minimum runtime OS. |
-| MSVC / UWP libraries | VS or Build Tools 2026, v145 | Required to build; not an end-user installation requirement. |
+| MSVC / UWP libraries | VS or Build Tools 2026 18.0+, v145 | Required to build; not an end-user installation requirement. |
 
 The managed SDK also injects its own Windows SDK BuildTools/MSIX tasks and
 ILLink/ILCompiler packs. These are build inputs, not a second runtime UI stack.
@@ -126,13 +126,16 @@ as the minimum, with **x86, x64 and ARM64** packages. The product, control libra
 native component, projection and packaged test hosts declare this baseline.
 The source and generated manifests target the Windows Desktop device family.
 
-The direct and resolved NuGet dependencies were checked against stable releases.
+The direct and resolved NuGet dependencies were checked against stable releases on 2026-11-04.
 Updates are Windows SDK BuildTools 10.0.28000.2957 for native and managed builds,
-MSIX BuildTools 1.7.261102100, CommunityToolkit.Common 8.4.2, .NET SDK 10.0.403,
+MSIX BuildTools 1.7.261102100, CommunityToolkit.Common 8.4.2,
 and the test-host dependencies described above. All 68 unique packages in the
 restored product, controls, unit-test and App-host graphs match the stable versions
 checked on 2026-11-04. The native C++/WinRT pin also matches its latest stable release.
-Runtime and ILCompiler packs follow the selected .NET SDK at 10.0.14.
+That validation used runtime and ILCompiler packs 10.0.14. The current .NET 10 LTS
+SDK 10.0.404 baseline retains net10 targets and resolves their runtime and ILCompiler
+packs at 10.0.15; it requires MSBuild 18.0 or later. Unit and Headless tests use the
+same net10 runtime supplied by this SDK.
 
 The final Production matrix passes Native AOT, architecture/package validation
 and offline integrity checks for ARM64, x64 and x86. The bundled WinUI, VCLibs

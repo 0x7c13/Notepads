@@ -7,7 +7,7 @@ param([switch] $InstallMissing)
 $ErrorActionPreference = 'Stop'
 $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
 $installation = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
-if (!$installation) { throw 'Visual Studio 2026 is required.' }
+if (!$installation) { throw 'Visual Studio 2026 18.0 or later is required by .NET SDK 10.0.404.' }
 $msbuild = Join-Path $installation 'MSBuild\Current\Bin\MSBuild.exe'
 $project = Join-Path $PSScriptRoot '..\src\Notepads.Native\WinUIEditor\WinUIEditor.vcxproj'
 $solutionDirectory = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\src\'))

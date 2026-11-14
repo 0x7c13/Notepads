@@ -29,7 +29,7 @@ try {
     $before | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath (Join-Path $runRoot 'sources.json')
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $installation = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
-    if ($LASTEXITCODE -ne 0 -or !$installation) { throw 'Visual Studio 2026 with UWP/native tools is required.' }
+    if ($LASTEXITCODE -ne 0 -or !$installation) { throw 'Visual Studio 2026 18.0 or later with UWP/native tools is required by .NET SDK 10.0.404.' }
     $hostDirectory = if ([Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') { 'arm64/' } else { '' }
     $msbuild = Join-Path $installation "MSBuild/Current/Bin/${hostDirectory}MSBuild.exe"
     $env:PATH = (Split-Path $vswhere -Parent) + ';' + $priorPath

@@ -28,8 +28,8 @@ configuration, runner setup, Production package checks and hosted reproduction.
 ```
 
 Release Native AOT is the normal App/E2E configuration; `NativeFaults` always
-uses Debug. App builds need 2026 UWP/native build tools and the SDK in
-`global.json`; [source setup](../CONTRIBUTING.md#how-to-build-and-run-notepads-from-source)
+uses Debug. App builds need 2026 18.0+ UWP/native build tools and the .NET 10 LTS SDK in
+`global.json` (10.0.404 baseline; also supplies the Unit/Headless net10 runtime); [source setup](../CONTRIBUTING.md#how-to-build-and-run-notepads-from-source)
 also supports Build Tools without the IDE. `tests/Tests.slnx` contains both projects; Headless and App outputs
 are separate. The runner selects matching product assemblies for architecture checks.
 

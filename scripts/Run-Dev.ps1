@@ -50,7 +50,7 @@ try {
     $requiredSdk = (Get-Content -LiteralPath (Join-Path $repo 'global.json') -Raw | ConvertFrom-Json).sdk.version
     if (!$dotnet) { Write-Host "Missing .NET SDK compatible with global.json ($requiredSdk)." }
     else { Write-Host ".NET SDK $($dotnet.Version): $($dotnet.Path)" }
-    if (!$build) { Write-Host 'Missing Build Tools 2026 with v145, UWP .NET/C++, and Windows SDK 10.0.26100.' }
+    if (!$build) { Write-Host 'Missing Build Tools 2026 18.0+ with v145, UWP .NET/C++, and Windows SDK 10.0.26100 (.NET SDK 10.0.404 requires MSBuild 18.0+).' }
     else { Write-Host "MSBuild $($build.Version): $($build.Path)" }
     if (Test-DevRegistrationEnabled) { Write-Host 'Windows Developer Mode: enabled.' }
     else { Write-Host 'Windows Developer Mode: disabled (required for launch; enabled with administrator approval before registration).' }

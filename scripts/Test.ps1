@@ -110,7 +110,7 @@ $built = @{}
 function Get-TestMSBuild {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $installation = & $vswhere -latest -products '*' -version '[18.0,19.0)' -property installationPath
-    if (!$installation) { throw 'Visual Studio 2026 with UWP/native build tools is required.' }
+    if (!$installation) { throw 'Visual Studio 2026 18.0 or later with UWP/native build tools is required by .NET SDK 10.0.404.' }
     $hostDirectory = if ([Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString() -eq 'Arm64') { 'arm64/' } else { '' }
     $build = Join-Path $installation "MSBuild/Current/Bin/${hostDirectory}MSBuild.exe"
     if (!(Test-Path -LiteralPath $build)) { throw "MSBuild is missing: $build" }
