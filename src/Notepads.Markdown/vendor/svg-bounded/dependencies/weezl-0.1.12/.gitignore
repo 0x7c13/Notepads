@@ -1,0 +1,10 @@
+target
+Cargo.lock
+
+# Notepads.Markdown integration: retain vendored metadata and standalone locks.
+# Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu, under the module MIT license.
+!Cargo.lock
+!.cargo_vcs_info.json
+!.gitignore
+!.github/
+!.github/**

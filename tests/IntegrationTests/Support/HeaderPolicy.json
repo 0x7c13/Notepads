@@ -69,6 +69,82 @@
       "sha256": "645FE3ACD17F0EC18B05A5CBC8071C16FC888BFA8356D9087C265DF69464D893"
     },
     {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/harfrust-0.12.0/LICENSE",
+      "sha256": "3A7C3F0B887ABB7C638FAF022D29257418458614C6724B120CEEFFB279F9C7D2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/hashbrown-0.17.1/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/hashbrown-0.17.1/LICENSE-MIT",
+      "sha256": "FF8F68CB076CAF8CEFE7A6430D4AC086CE6AF2CA8CE2C4E5A2004D4552EF52A2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/kurbo-0.13.1/LICENSE-APACHE",
+      "sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/kurbo-0.13.1/LICENSE-MIT",
+      "sha256": "23C23145F6EAC25C28CDCC03D38506A5712A9A8CFFB5BD5301457F6173EA696E"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/read-fonts-0.41.0/LICENSE-APACHE",
+      "sha256": "EBA684204073ED715C4ABB48129ACDFD2BFF8AE48339E6A7DA3B341D3027B7F0"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/read-fonts-0.41.0/LICENSE-MIT",
+      "sha256": "7B4C9A3946DFCEA7967582760E963E27799E225DCF20565C8EF55324BB017427"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/resvg-0.49.0/LICENSE-APACHE",
+      "sha256": "A6CBA85BC92E0CFF7A450B1D873C0EAA2E9FC96BF472DF0247A26BEC77BF3FF9"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/resvg-0.49.0/LICENSE-MIT",
+      "sha256": "F5D934DC281B44E0003EE461AC740B18B6629A454DECD872C774D34E4EE0B21D"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/roxmltree-0.21.1/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/roxmltree-0.21.1/LICENSE-MIT",
+      "sha256": "FFFE218C1E349E1D482A05677F2CE850502F88298174D77F6AC7C04821DB7899"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/skrifa-0.44.0/LICENSE-APACHE",
+      "sha256": "EBA684204073ED715C4ABB48129ACDFD2BFF8AE48339E6A7DA3B341D3027B7F0"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/skrifa-0.44.0/LICENSE-MIT",
+      "sha256": "7B4C9A3946DFCEA7967582760E963E27799E225DCF20565C8EF55324BB017427"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/LICENSE",
+      "sha256": "8107B452F68818578BE6D479208C2F4806B4C4807A5FA075E6D4A98CC876BFF9"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/unicode-bidi-0.3.18/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/unicode-bidi-0.3.18/LICENSE-MIT",
+      "sha256": "7B63ECD5F1902AF1B63729947373683C32745C16A10E8E6292E2E2DCD7E90AE0"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/usvg-0.49.0/LICENSE-APACHE",
+      "sha256": "A6CBA85BC92E0CFF7A450B1D873C0EAA2E9FC96BF472DF0247A26BEC77BF3FF9"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/usvg-0.49.0/LICENSE-MIT",
+      "sha256": "F5D934DC281B44E0003EE461AC740B18B6629A454DECD872C774D34E4EE0B21D"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/xmlwriter-0.1.0/LICENSE",
+      "sha256": "2CDCE1FF4CA8F455EF169691EA493407E23C32ECDEA5FD9B3A6FC82BE5B49B5A"
+    },
+    {
       "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/adler2-2.0.1/LICENSE-0BSD",
       "sha256": "861399F8C21C042B110517E76DC6B63A2B334276C8CF17412FC3C8908CA8DC17"
     },
@@ -89,12 +165,52 @@
       "sha256": "592DC80F1A865D20D61A2006A2D29CE34A2BC28CD7E868AB300FDEED6DA154CA"
     },
     {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/data-url-0.3.2/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/data-url-0.3.2/LICENSE-MIT",
+      "sha256": "B38F11F6096706E6DE553DABE2A7ED142D59B6FA8C97E290C67496154745CDD5"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/png/fdeflate-0.3.7/LICENSE-APACHE",
+      "sha256": "0D542E0C8804E39AA7F37EB00DA5A762149DC682D7829451287E11B938E94594"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/png/fdeflate-0.3.7/LICENSE-MIT",
+      "sha256": "C77A4CF9DA729987D0FE7CCD811E3BD27393914DDF3D23467C18CC22954513B3"
+    },
+    {
       "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/flate2-1.1.10/LICENSE-APACHE",
       "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
     },
     {
       "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/flate2-1.1.10/LICENSE-MIT",
       "sha256": "025436EDFF4CFCDDE17A5811FDEA78892D8482EFD1ABDEC5A17872D07A4F2112"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/fontdb-0.24.0/LICENSE",
+      "sha256": "59A1FDAC3BD550043599BD159FD70F09A1108C2B09E3751D39B11E1FF8E51F00"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/fontdb-0.24.0/tests/fonts/LICENSE.txt",
+      "sha256": "B84FDD2C3DA5DB56385CDBB639795E90AA3E035C53BC3591135F18DF3331451F"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/gif-0.14.2/LICENSE-APACHE",
+      "sha256": "769F80B5BCB42ED0AF4E4D2FD74E1AC9BF843CB80C5A29219D1EF3544428A6BB"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/gif-0.14.2/LICENSE-MIT",
+      "sha256": "77257F3D2181236B1AEE78920238062AE64EFE13C5D858B2DB126E79C9E1B14F"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/image-webp-0.2.4/LICENSE-APACHE",
+      "sha256": "0D542E0C8804E39AA7F37EB00DA5A762149DC682D7829451287E11B938E94594"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/image-webp-0.2.4/LICENSE-MIT",
+      "sha256": "C77A4CF9DA729987D0FE7CCD811E3BD27393914DDF3D23467C18CC22954513B3"
     },
     {
       "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE",
@@ -129,12 +245,80 @@
       "sha256": "0A54E647FE54104658B5E563C04C6F9EDF251710E47BCE692E0BD990A4DDAA39"
     },
     {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/png/png-0.18.1/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/png/png-0.18.1/LICENSE-MIT",
+      "sha256": "EAF40297C75DA471F7CDA1F3458E8D91B4B2EC866E609527A13ACFA93B638652"
+    },
+    {
       "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/quick-error-2.0.1/LICENSE-APACHE",
       "sha256": "C6596EB7BE8581C18BE736C846FB9173B69ECCF6EF94C5135893EC56BD92BA08"
     },
     {
       "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/quick-error-2.0.1/LICENSE-MIT",
       "sha256": "058F01FE181608D027FCDE7E528FC03EA3CF90F30903C407644B0A9BBC54F500"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/simplecss-0.2.2/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/simplecss-0.2.2/LICENSE-MIT",
+      "sha256": "0B5F24524360E15BCF9FB79BCA875F5AA62F01F94F2988E23238C7EC0E6E8784"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/slotmap-1.1.1/LICENSE",
+      "sha256": "6CEC81441B2AB2B5090954C1FB5D0BCCA81B86487B5849061FA8952D20EF67D4"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/svgtypes-0.16.1/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/svgtypes-0.16.1/LICENSE-MIT",
+      "sha256": "F3C9FE731C701ED77FD5FBAAC573872AF04DC5869385EB9BD5E3C73C42713814"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/tiny-skia-0.12.0/LICENSE",
+      "sha256": "6D41E05F1D54FE726997CB0334EC539F1DFF50600B1D5D90462EC2B392770CED"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/tiny-skia-path-0.12.0/LICENSE",
+      "sha256": "6D41E05F1D54FE726997CB0334EC539F1DFF50600B1D5D90462EC2B392770CED"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/weezl-0.1.12/LICENSE-APACHE",
+      "sha256": "769F80B5BCB42ED0AF4E4D2FD74E1AC9BF843CB80C5A29219D1EF3544428A6BB"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/weezl-0.1.12/LICENSE-MIT",
+      "sha256": "573F5227DB835CD30BBDD3AED3F82615F80119A4D5C82B4DAF642DBFE2B6AFDE"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/zune-core-0.5.3/LICENSE-APACHE",
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/zune-core-0.5.3/LICENSE-MIT",
+      "sha256": "D30047BCA3B516639339A3C279BB84C3483124FB5A9DAFE3C75056A85090E745"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/zune-core-0.5.3/LICENSE-ZLIB",
+      "sha256": "D201D14804D3BCD3B944147173175E4ABFBD838B7C8069B6BD3452496BF13E6C"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/zune-jpeg-0.5.15/LICENSE-APACHE",
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/zune-jpeg-0.5.15/LICENSE-MIT",
+      "sha256": "D30047BCA3B516639339A3C279BB84C3483124FB5A9DAFE3C75056A85090E745"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/zune-jpeg-0.5.15/LICENSE-ZLIB",
+      "sha256": "D201D14804D3BCD3B944147173175E4ABFBD838B7C8069B6BD3452496BF13E6C"
     },
     {
       "path": "src/Notepads.Markdown/tests/baselines/comrak-0.56.0/COPYING",
@@ -1440,6 +1624,21 @@
       "path": "src/Notepads.Markdown/vendor/syntect",
       "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
       "license": "src/Notepads.Markdown/vendor/syntect/LICENSE.txt"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/fork",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/vendor/svg-bounded/fork/harfrust-0.12.0/LICENSE"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/dependencies",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/vendor/svg-bounded/dependencies/data-url-0.3.2/LICENSE-APACHE"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/svg-bounded/png",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/vendor/svg-bounded/png/fdeflate-0.3.7/LICENSE-APACHE"
     },
     {
       "path": "src/Notepads.Markdown/tests/baselines/comrak-0.56.0",

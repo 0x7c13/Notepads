@@ -1,0 +1,504 @@
+{
+  "copyright": "2026, Jiaqi (0x7c13) Liu",
+  "license": "MIT",
+  "sourceGenerators": [
+    "Original generator record retained outside repository; originalManifestSha256=a1760de1399a50822d0d20b65e2123adc8fd96133bf3d644323a51add6239c4f",
+    "Original generator record retained outside repository; originalManifestSha256=a1760de1399a50822d0d20b65e2123adc8fd96133bf3d644323a51add6239c4f",
+    "Original generator record retained outside repository; originalManifestSha256=a1760de1399a50822d0d20b65e2123adc8fd96133bf3d644323a51add6239c4f"
+  ],
+  "fonts": [
+    {
+      "source": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-normal-v1.ttf",
+        "bytes": 7808,
+        "sha256": "EAEC0787209CDA1D485CD437CC20507CAA9126530F3E7C46CE0A55806E29A624",
+        "original_import": {
+          "bytes": 7700,
+          "sha256": "9C211EC94E6E4A7DD8BF4F22A96304DAE42BC460F8092CDCCC93B6725A23B3B9"
+        }
+      },
+      "imported": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-normal-v1.ttf",
+        "bytes": 7808,
+        "sha256": "EAEC0787209CDA1D485CD437CC20507CAA9126530F3E7C46CE0A55806E29A624",
+        "original_import": {
+          "bytes": 7700,
+          "sha256": "9C211EC94E6E4A7DD8BF4F22A96304DAE42BC460F8092CDCCC93B6725A23B3B9"
+        }
+      }
+    },
+    {
+      "source": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-var-v1.ttf",
+        "bytes": 12492,
+        "sha256": "BA3C8F17BDD7916D28298ED97B5849111489F30DD6EE7AB8DE8CF11A4CE8B373",
+        "original_import": {
+          "bytes": 12384,
+          "sha256": "1F54C58F5BDC062F15289936F8AEEA17E4C32B1EDC1422B288A1ECF72FA9190B"
+        }
+      },
+      "imported": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-var-v1.ttf",
+        "bytes": 12492,
+        "sha256": "BA3C8F17BDD7916D28298ED97B5849111489F30DD6EE7AB8DE8CF11A4CE8B373",
+        "original_import": {
+          "bytes": 12384,
+          "sha256": "1F54C58F5BDC062F15289936F8AEEA17E4C32B1EDC1422B288A1ECF72FA9190B"
+        }
+      }
+    },
+    {
+      "source": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-pad-v1.ttf",
+        "bytes": 7756,
+        "sha256": "95B3ED252348E22DCD101BCBE0A9D1C5057713BDD784C6596E921C4BBA6ADD3D",
+        "original_import": {
+          "bytes": 7648,
+          "sha256": "54B886DD7E37C22EA7A65C24385D11CD91C9F3E4B44A7BBE1DB7A3D1597E08ED"
+        }
+      },
+      "imported": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-pad-v1.ttf",
+        "bytes": 7756,
+        "sha256": "95B3ED252348E22DCD101BCBE0A9D1C5057713BDD784C6596E921C4BBA6ADD3D",
+        "original_import": {
+          "bytes": 7648,
+          "sha256": "54B886DD7E37C22EA7A65C24385D11CD91C9F3E4B44A7BBE1DB7A3D1597E08ED"
+        }
+      }
+    },
+    {
+      "source": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-graph-v1.ttf",
+        "bytes": 2512,
+        "sha256": "34F4B753BAC11526D4DDB519B406E2107BE35E02F86A0270CCA0128BC5175C1C",
+        "original_import": {
+          "bytes": 2404,
+          "sha256": "7807605DD83B8AB019E3571619015474AFC2570A7381AF95620ECCC6DBB368B6"
+        }
+      },
+      "imported": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-graph-v1.ttf",
+        "bytes": 2512,
+        "sha256": "34F4B753BAC11526D4DDB519B406E2107BE35E02F86A0270CCA0128BC5175C1C",
+        "original_import": {
+          "bytes": 2404,
+          "sha256": "7807605DD83B8AB019E3571619015474AFC2570A7381AF95620ECCC6DBB368B6"
+        }
+      }
+    },
+    {
+      "source": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-width-v0.ttf",
+        "bytes": 2808,
+        "sha256": "F8180579529540D6ABBD4F5B81862C8D3DBC28E36E4899B441D1592366F51425",
+        "family": "Notepads.Markdown Fixture Width V0",
+        "cmap": [
+          {
+            "codepoint": "U+E600",
+            "glyph": "wide",
+            "gid": 2
+          }
+        ],
+        "tables": [
+          {
+            "tag": "COLR",
+            "checksum": "020202A6",
+            "offset": 1728,
+            "bytes": 1048,
+            "sha256": "8BA162591E2B0ABBEFD0504F53080BFD36CA02A550DC27C31A3DE3BEBCAD98B0"
+          },
+          {
+            "tag": "CPAL",
+            "checksum": "01FE0114",
+            "offset": 2776,
+            "bytes": 30,
+            "sha256": "A8C3EAC7EDF4D91BCC808F77A0E17AC484036680FDC52636072FB74C69875026"
+          },
+          {
+            "tag": "OS/2",
+            "checksum": "3FEF4B28",
+            "offset": 328,
+            "bytes": 96,
+            "sha256": "E4596D1D2AB29E0E82AFD9304FB3C8C732C03281EC0B47DDE24F34231B6ED491"
+          },
+          {
+            "tag": "cmap",
+            "checksum": "000DE653",
+            "offset": 432,
+            "bytes": 52,
+            "sha256": "212BA712E9F02E9D4FC52EAB318B83EE0A7CF01C80B488E3CCEBBE6F6178724C"
+          },
+          {
+            "tag": "glyf",
+            "checksum": "39277F73",
+            "offset": 492,
+            "bytes": 26,
+            "sha256": "EF585EEF46EA35F9632429523043C2BE7BABCD8B4CDD8A33C23F3495F51A63A4"
+          },
+          {
+            "tag": "head",
+            "checksum": "266BA6C8",
+            "offset": 204,
+            "bytes": 54,
+            "sha256": "91FFFB49D0DCE947347B99A2D6B56240B0263F2AEC46A52F0C3CDC499754A024"
+          },
+          {
+            "tag": "hhea",
+            "checksum": "070904B2",
+            "offset": 260,
+            "bytes": 36,
+            "sha256": "C75233FF2AE186F59FF7FA5E0891F1C5060E83CDA1DB5C78EA58F811885F35A3"
+          },
+          {
+            "tag": "hmtx",
+            "checksum": "03E80000",
+            "offset": 424,
+            "bytes": 8,
+            "sha256": "87ADCC33517E54D5FCCD4DED9DA314408FC129723EEC08990CB6C47D0D892CE5"
+          },
+          {
+            "tag": "loca",
+            "checksum": "000D000D",
+            "offset": 484,
+            "bytes": 8,
+            "sha256": "7521EA833E6F74AF8A31E6062B6F8D64F3403B180F4305DB8AB1EFEDE18972C2"
+          },
+          {
+            "tag": "maxp",
+            "checksum": "00050006",
+            "offset": 296,
+            "bytes": 32,
+            "sha256": "7121E02BD1A1B567714824D85EAECC855FA3E90FF756530BE8FC552357E584EE"
+          },
+          {
+            "tag": "name",
+            "checksum": "A032DB64",
+            "offset": 520,
+            "bytes": 1146,
+            "sha256": "B6BACA983518CC9C0994093202B6E15C9FEAC69D1AC6BE885DDCF71C0BD42364"
+          },
+          {
+            "tag": "post",
+            "checksum": "3CBFA9B8",
+            "offset": 1668,
+            "bytes": 57,
+            "sha256": "D09EB84D5268FC0FC0F358D203C507ADCE07C7B8A25CF063C494682EA019078F"
+          }
+        ],
+        "expectedLayerActions": 257,
+        "original_import": {
+          "bytes": 2700,
+          "sha256": "1259BF581CBC4347BD089A17BFB8487BB4AE4A8991FBA78B721C04C16986ED66",
+          "tables": [
+            {
+              "tag": "COLR",
+              "checksum": "020202A6",
+              "offset": 1620,
+              "bytes": 1048,
+              "sha256": "8BA162591E2B0ABBEFD0504F53080BFD36CA02A550DC27C31A3DE3BEBCAD98B0"
+            },
+            {
+              "tag": "CPAL",
+              "checksum": "01FE0114",
+              "offset": 2668,
+              "bytes": 30,
+              "sha256": "A8C3EAC7EDF4D91BCC808F77A0E17AC484036680FDC52636072FB74C69875026"
+            },
+            {
+              "tag": "OS/2",
+              "checksum": "3FEF4B28",
+              "offset": 328,
+              "bytes": 96,
+              "sha256": "E4596D1D2AB29E0E82AFD9304FB3C8C732C03281EC0B47DDE24F34231B6ED491"
+            },
+            {
+              "tag": "cmap",
+              "checksum": "000DE653",
+              "offset": 432,
+              "bytes": 52,
+              "sha256": "212BA712E9F02E9D4FC52EAB318B83EE0A7CF01C80B488E3CCEBBE6F6178724C"
+            },
+            {
+              "tag": "glyf",
+              "checksum": "39277F73",
+              "offset": 492,
+              "bytes": 26,
+              "sha256": "EF585EEF46EA35F9632429523043C2BE7BABCD8B4CDD8A33C23F3495F51A63A4"
+            },
+            {
+              "tag": "head",
+              "checksum": "266BA6C8",
+              "offset": 204,
+              "bytes": 54,
+              "sha256": "46D138FC17673B23C8EDDE962EB38132049F34F077D3C4EC41DC8B4ECB673418"
+            },
+            {
+              "tag": "hhea",
+              "checksum": "070904B2",
+              "offset": 260,
+              "bytes": 36,
+              "sha256": "C75233FF2AE186F59FF7FA5E0891F1C5060E83CDA1DB5C78EA58F811885F35A3"
+            },
+            {
+              "tag": "hmtx",
+              "checksum": "03E80000",
+              "offset": 424,
+              "bytes": 8,
+              "sha256": "87ADCC33517E54D5FCCD4DED9DA314408FC129723EEC08990CB6C47D0D892CE5"
+            },
+            {
+              "tag": "loca",
+              "checksum": "000D000D",
+              "offset": 484,
+              "bytes": 8,
+              "sha256": "7521EA833E6F74AF8A31E6062B6F8D64F3403B180F4305DB8AB1EFEDE18972C2"
+            },
+            {
+              "tag": "maxp",
+              "checksum": "00050006",
+              "offset": 296,
+              "bytes": 32,
+              "sha256": "7121E02BD1A1B567714824D85EAECC855FA3E90FF756530BE8FC552357E584EE"
+            },
+            {
+              "tag": "name",
+              "checksum": "7F953723",
+              "offset": 520,
+              "bytes": 1038,
+              "sha256": "BC4A8E4B801DFAF9972C72590C8A246C636D756C32EC647CCA97892FB6E83ACA"
+            },
+            {
+              "tag": "post",
+              "checksum": "3CBFA9B8",
+              "offset": 1560,
+              "bytes": 57,
+              "sha256": "D09EB84D5268FC0FC0F358D203C507ADCE07C7B8A25CF063C494682EA019078F"
+            }
+          ],
+          "fonttoolsEnsureDecompiled": true,
+          "twoSerializationsIdentical": true
+        }
+      },
+      "imported": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-width-v0.ttf",
+        "bytes": 2808,
+        "sha256": "F8180579529540D6ABBD4F5B81862C8D3DBC28E36E4899B441D1592366F51425",
+        "original_import": {
+          "bytes": 2700,
+          "sha256": "1259BF581CBC4347BD089A17BFB8487BB4AE4A8991FBA78B721C04C16986ED66"
+        }
+      }
+    },
+    {
+      "source": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-width-v1.ttf",
+        "bytes": 2896,
+        "sha256": "74B5F6A987E7AE1694AFE77E5C1823B522D3053582517F44FB8765ABFF094B09",
+        "family": "Notepads.Markdown Fixture Width V1",
+        "cmap": [
+          {
+            "codepoint": "U+E601",
+            "glyph": "wide",
+            "gid": 2
+          }
+        ],
+        "tables": [
+          {
+            "tag": "COLR",
+            "checksum": "3D509A92",
+            "offset": 1728,
+            "bytes": 1136,
+            "sha256": "762759AD9CDE56E66314C2CBA15C290679FD4C288A645EB230350DD3CB116CE3"
+          },
+          {
+            "tag": "CPAL",
+            "checksum": "01FE0114",
+            "offset": 2864,
+            "bytes": 30,
+            "sha256": "A8C3EAC7EDF4D91BCC808F77A0E17AC484036680FDC52636072FB74C69875026"
+          },
+          {
+            "tag": "OS/2",
+            "checksum": "3FF04B29",
+            "offset": 328,
+            "bytes": 96,
+            "sha256": "3056279FA5187FEC1514E0C65A4A249C112431F9B30994BD7D0B3130403BAFC6"
+          },
+          {
+            "tag": "cmap",
+            "checksum": "000DE654",
+            "offset": 432,
+            "bytes": 52,
+            "sha256": "E00705AE4E83BFDE2E9045C0B44B92F404817C842787A77243094A401B984A1E"
+          },
+          {
+            "tag": "glyf",
+            "checksum": "39277F73",
+            "offset": 492,
+            "bytes": 26,
+            "sha256": "EF585EEF46EA35F9632429523043C2BE7BABCD8B4CDD8A33C23F3495F51A63A4"
+          },
+          {
+            "tag": "head",
+            "checksum": "266BA6C8",
+            "offset": 204,
+            "bytes": 54,
+            "sha256": "0E68FE9EBCE9071C6C9A6207AECA68E9E4440C44FCB56784A66841952006F61B"
+          },
+          {
+            "tag": "hhea",
+            "checksum": "070904B2",
+            "offset": 260,
+            "bytes": 36,
+            "sha256": "C75233FF2AE186F59FF7FA5E0891F1C5060E83CDA1DB5C78EA58F811885F35A3"
+          },
+          {
+            "tag": "hmtx",
+            "checksum": "03E80000",
+            "offset": 424,
+            "bytes": 8,
+            "sha256": "87ADCC33517E54D5FCCD4DED9DA314408FC129723EEC08990CB6C47D0D892CE5"
+          },
+          {
+            "tag": "loca",
+            "checksum": "000D000D",
+            "offset": 484,
+            "bytes": 8,
+            "sha256": "7521EA833E6F74AF8A31E6062B6F8D64F3403B180F4305DB8AB1EFEDE18972C2"
+          },
+          {
+            "tag": "maxp",
+            "checksum": "00050006",
+            "offset": 296,
+            "bytes": 32,
+            "sha256": "7121E02BD1A1B567714824D85EAECC855FA3E90FF756530BE8FC552357E584EE"
+          },
+          {
+            "tag": "name",
+            "checksum": "A037DB67",
+            "offset": 520,
+            "bytes": 1146,
+            "sha256": "D76F659C6E11FFDCCAF081C98E3E9AEA91C939187DF2FB8AAA6D6D4DCB1F4BE5"
+          },
+          {
+            "tag": "post",
+            "checksum": "3CBFA9B8",
+            "offset": 1668,
+            "bytes": 57,
+            "sha256": "D09EB84D5268FC0FC0F358D203C507ADCE07C7B8A25CF063C494682EA019078F"
+          }
+        ],
+        "expectedLayerActions": 257,
+        "original_import": {
+          "bytes": 2788,
+          "sha256": "0E4E19551CC33012F1B19CD63B172BA546969AEA99BAAFEF99F130CC7AF9FF7F",
+          "tables": [
+            {
+              "tag": "COLR",
+              "checksum": "3D509A92",
+              "offset": 1620,
+              "bytes": 1136,
+              "sha256": "762759AD9CDE56E66314C2CBA15C290679FD4C288A645EB230350DD3CB116CE3"
+            },
+            {
+              "tag": "CPAL",
+              "checksum": "01FE0114",
+              "offset": 2756,
+              "bytes": 30,
+              "sha256": "A8C3EAC7EDF4D91BCC808F77A0E17AC484036680FDC52636072FB74C69875026"
+            },
+            {
+              "tag": "OS/2",
+              "checksum": "3FF04B29",
+              "offset": 328,
+              "bytes": 96,
+              "sha256": "3056279FA5187FEC1514E0C65A4A249C112431F9B30994BD7D0B3130403BAFC6"
+            },
+            {
+              "tag": "cmap",
+              "checksum": "000DE654",
+              "offset": 432,
+              "bytes": 52,
+              "sha256": "E00705AE4E83BFDE2E9045C0B44B92F404817C842787A77243094A401B984A1E"
+            },
+            {
+              "tag": "glyf",
+              "checksum": "39277F73",
+              "offset": 492,
+              "bytes": 26,
+              "sha256": "EF585EEF46EA35F9632429523043C2BE7BABCD8B4CDD8A33C23F3495F51A63A4"
+            },
+            {
+              "tag": "head",
+              "checksum": "266BA6C8",
+              "offset": 204,
+              "bytes": 54,
+              "sha256": "BD5B1ED73DF78A2D8887FA1C4EEA8F6DC277F49CC58B6B2814080662643C8BF1"
+            },
+            {
+              "tag": "hhea",
+              "checksum": "070904B2",
+              "offset": 260,
+              "bytes": 36,
+              "sha256": "C75233FF2AE186F59FF7FA5E0891F1C5060E83CDA1DB5C78EA58F811885F35A3"
+            },
+            {
+              "tag": "hmtx",
+              "checksum": "03E80000",
+              "offset": 424,
+              "bytes": 8,
+              "sha256": "87ADCC33517E54D5FCCD4DED9DA314408FC129723EEC08990CB6C47D0D892CE5"
+            },
+            {
+              "tag": "loca",
+              "checksum": "000D000D",
+              "offset": 484,
+              "bytes": 8,
+              "sha256": "7521EA833E6F74AF8A31E6062B6F8D64F3403B180F4305DB8AB1EFEDE18972C2"
+            },
+            {
+              "tag": "maxp",
+              "checksum": "00050006",
+              "offset": 296,
+              "bytes": 32,
+              "sha256": "7121E02BD1A1B567714824D85EAECC855FA3E90FF756530BE8FC552357E584EE"
+            },
+            {
+              "tag": "name",
+              "checksum": "7F9B3725",
+              "offset": 520,
+              "bytes": 1038,
+              "sha256": "E84355C69F8D96A009A5EEC58FA525B78F988827F341A9A2B34386EE498D0D31"
+            },
+            {
+              "tag": "post",
+              "checksum": "3CBFA9B8",
+              "offset": 1560,
+              "bytes": 57,
+              "sha256": "D09EB84D5268FC0FC0F358D203C507ADCE07C7B8A25CF063C494682EA019078F"
+            }
+          ],
+          "fonttoolsEnsureDecompiled": true,
+          "twoSerializationsIdentical": true
+        }
+      },
+      "imported": {
+        "path": "vendor/svg-bounded/fork/skrifa-0.44.0/tests/fixtures/color-control-v1/colr-width-v1.ttf",
+        "bytes": 2896,
+        "sha256": "74B5F6A987E7AE1694AFE77E5C1823B522D3053582517F44FB8765ABFF094B09",
+        "original_import": {
+          "bytes": 2788,
+          "sha256": "0E4E19551CC33012F1B19CD63B172BA546969AEA99BAAFEF99F130CC7AF9FF7F"
+        }
+      }
+    }
+  ],
+  "expectedGenerated": false,
+  "path_semantics": "source.path and imported.path locate the retained current module inputs; the original import record is preserved by the sourceGenerators receipt.",
+  "namespace_migration": {
+    "date": "2026-11-15",
+    "tool": "fontTools 4.68.0",
+    "scope": "Name tables and required checksum adjustment only; cmap, glyph data, metrics, color tables and expected layer actions are unchanged. Current table offsets and input hashes rebound; original generation records retained separately."
+  }
+}

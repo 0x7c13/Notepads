@@ -1,0 +1,19 @@
+# Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+# See LICENSE file in the project root for license information.
+[package]
+name = "markdown-svg-budget"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT"
+
+[lib]
+path = "src/lib.rs"
+
+[features]
+default = []
+
+[dependencies.allocator-api2]
+version = "=0.2.21"
+default-features = false
+features = ["alloc"]

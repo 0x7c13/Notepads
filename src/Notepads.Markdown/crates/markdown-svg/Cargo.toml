@@ -1,0 +1,34 @@
+[package]
+name = "markdown-svg"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[features]
+quality-observation = ["dep:sha2"]
+
+[dependencies]
+sha2 = { version = "=0.11.1", default-features = false, optional = true }
+markdown-core = { path = "../markdown-core" }
+markdown-svg-budget = { path = "../markdown-svg-budget" }
+resvg = { path = "../../vendor/svg-bounded/fork/resvg-0.49.0", default-features = false, features = ["text", "raster-images"] }
+usvg = { path = "../../vendor/svg-bounded/fork/usvg-0.49.0", default-features = false, features = ["text", "font-svg-gzip"] }
+tiny-skia = { path = "../../vendor/svg-bounded/dependencies/tiny-skia-0.12.0" }
+tiny-skia-path = { path = "../../vendor/svg-bounded/dependencies/tiny-skia-path-0.12.0" }
+roxmltree = { path = "../../vendor/svg-bounded/fork/roxmltree-0.21.1", features = ["notepads-markdown-resources"] }
+log = "=0.4.34"
+fontdb = { path = "../../vendor/svg-bounded/dependencies/fontdb-0.24.0", default-features = false, features = ["notepads-markdown-resources"] }
+harfrust = { path = "../../vendor/svg-bounded/fork/harfrust-0.12.0" }
+read-fonts = "=0.41.0"
+unicode-bidi = { version = "=0.3.18", features = ["notepads-markdown-resources"] }
+unicode-script = "=0.5.8"
+unicode-segmentation = "=1.13.3"
+
+[lints]
+workspace = true
