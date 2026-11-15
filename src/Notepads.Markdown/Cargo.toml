@@ -1,0 +1,33 @@
+[workspace]
+members = ["crates/markdown-memory", "vendor/svg-bounded/fork/usvg-0.49.0", "crates/markdown-svg-budget", "crates/markdown-svg", "crates/markdown-core", "crates/markdown-ffi", "crates/markdown-mermaid", "windows/markdown-diagram-platform"]
+exclude = ["vendor/svg-bounded/fork", "vendor/svg-bounded/dependencies", "vendor/svg-bounded/png", "vendor/comrak-0.56.0", "vendor/syntect", "crates/markdown-math", "artifacts", "vendor/merman-bounded"]
+resolver = "3"
+default-members = ["crates/markdown-core", "crates/markdown-ffi", "crates/markdown-mermaid", "windows/markdown-diagram-platform", "crates/markdown-svg", "crates/markdown-svg-budget"]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.99"
+license = "MIT"
+authors = ["Jiaqi (0x7c13) Liu"]
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[patch.crates-io]
+xmlwriter = { path = "vendor/svg-bounded/fork/xmlwriter-0.1.0" }
+read-fonts = { path = "vendor/svg-bounded/fork/read-fonts-0.41.0" }
+skrifa = { path = "vendor/svg-bounded/fork/skrifa-0.44.0" }
+unicode-bidi = { path = "vendor/svg-bounded/fork/unicode-bidi-0.3.18" }
+ratex-types = { path = "vendor/ratex-bounded/ratex-types" }
+ratex-font = { path = "vendor/ratex-bounded/ratex-font" }
+ratex-lexer = { path = "vendor/ratex-bounded/ratex-lexer" }
+ratex-parser = { path = "vendor/ratex-bounded/ratex-parser" }
+ratex-layout = { path = "vendor/ratex-bounded/ratex-layout" }
+merman-core = { path = "vendor/merman-bounded/merman-core" }
+merman-render = { path = "vendor/merman-bounded/merman-render" }
+lalrpop-util = { path = "vendor/merman-bounded/lalrpop-util" }
+
+[profile.release]
+panic = "unwind"
+codegen-units = 1

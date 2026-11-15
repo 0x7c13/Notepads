@@ -1,0 +1,30 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE file in the project root for license information.
+-->
+<Project>
+  <Import Project="Notepads.Markdown.props" />
+  <Target Name="ValidateNotepadsMarkdownConsumerConfiguration" BeforeTargets="PrepareForBuild;ComputeFilesToPublish;_GetPackageFiles">
+    <Error Condition="'$(Configuration)' == 'Production' and '$(NotepadsMarkdownEnableDiagnostics)' == 'true'"
+           Text="Production packages cannot enable Notepads.Markdown diagnostics." />
+  </Target>
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0" KeepDuplicates="false" Condition="'$(UseUwpTools)' == 'true'" />
+    <WindowsMetadataReference Include="$(NotepadsMarkdownNativeDir)Notepads.Markdown.winmd" Implementation="Notepads.Markdown.dll" />
+    <Content Include="$(NotepadsMarkdownNativeDir)Notepads.Markdown.dll" Link="Notepads.Markdown.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="$(NotepadsMarkdownNativeDir)Notepads.Markdown.pri" Link="Notepads.Markdown.pri" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="$(NotepadsMarkdownRoot)LICENSE" Link="ThirdPartyNotices\Notepads.Markdown\LICENSE" ExcludeFromResourceIndex="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="$(NotepadsMarkdownRoot)third-party-notices\**\*" Link="ThirdPartyNotices\Notepads.Markdown\%(RecursiveDir)%(Filename)%(Extension)" ExcludeFromResourceIndex="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <!-- Native assets do not exist during evaluation on a clean build. Enumerate
+       templates after project references and before the host's resource/copy items. -->
+  <Target Name="CollectNotepadsMarkdownResources" AfterTargets="ResolveProjectReferences" BeforeTargets="AssignTargetPaths;PrepareResources;GetCopyToOutputDirectoryItems;_GetPackageFiles;ComputeFilesToPublish" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="'$(NotepadsMarkdownNativePlatform)' == ''" Text="Notepads.Markdown requires x86, x64 or ARM64." />
+    <Error Condition="!Exists('$(NotepadsMarkdownNativeDir)Notepads.Markdown.dll') or !Exists('$(NotepadsMarkdownNativeDir)Notepads.Markdown.winmd') or !Exists('$(NotepadsMarkdownNativeDir)Notepads.Markdown.pri')" Text="The matching Notepads.Markdown native project must build before packaging." />
+    <ItemGroup>
+      <_NotepadsMarkdownTemplate Include="$(NotepadsMarkdownNativeDir)Notepads.Markdown\**\*" />
+      <Content Include="@(_NotepadsMarkdownTemplate)" Link="Notepads.Markdown\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+    <Error Condition="'@(_NotepadsMarkdownTemplate)' == ''" Text="Notepads.Markdown compiled template assets are missing." />
+  </Target>
+</Project>

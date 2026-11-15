@@ -35,6 +35,11 @@ function Get-TestSourceFiles {
             }
         }
     }
+    foreach ($relative in @('src/Notepads.Markdown/target', 'src/Notepads.Markdown/artifacts',
+        'src/Notepads.Markdown/.tools')) {
+        $null = $generatedDirectories.Add([IO.Path]::GetFullPath((Join-Path $repo $relative)))
+    }
+    $markdownSourceRoot = [IO.Path]::GetFullPath((Join-Path $repo 'src/Notepads.Markdown')).TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
     $generatedNames = @('bin', 'obj', '.git', '.vs', 'packages', '__pycache__', 'TestResults',
         '_buildUwp', '_buildWinUI3', 'Generated Files', 'AppPackages', 'BundleArtifacts')
     $projectInputs = if ($Profile -in @('Headless', 'App', 'Lifecycle')) { @('tests/IntegrationTests/IntegrationTests.csproj', 'tests/IntegrationTests/Directory.Build.props') } else { @() }
@@ -51,7 +56,12 @@ function Get-TestSourceFiles {
         $directory = $pending.Pop()
         if (!(Test-Path -LiteralPath $directory -PathType Container)) { throw "Missing source directory: $directory" }
         foreach ($entry in Get-ChildItem -LiteralPath $directory -Force) {
-            if ($entry.PSIsContainer -and ($entry.Name -in $generatedNames -or $generatedDirectories.Contains($entry.FullName))) { continue }
+            # Cargo src/bin directories contain checked-in binary entry points.
+            # Keep them while still omitting generated bin outputs elsewhere.
+            $sourceBin = $entry.PSIsContainer -and $entry.Name -eq 'bin' -and
+                [IO.Path]::GetFileName($directory) -eq 'src' -and
+                $entry.FullName.StartsWith($markdownSourceRoot, [StringComparison]::OrdinalIgnoreCase)
+            if ($entry.PSIsContainer -and (($entry.Name -in $generatedNames -and !$sourceBin) -or $generatedDirectories.Contains($entry.FullName))) { continue }
             if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw "Source fingerprint refuses a reparse point: $($entry.FullName)" }
             if ($entry.PSIsContainer) { $pending.Push($entry.FullName) }
             elseif ($entry.Name -notin @('.git', '.DS_Store')) { $null = $files.Add($entry.FullName) }

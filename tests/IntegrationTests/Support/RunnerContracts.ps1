@@ -713,6 +713,13 @@ foreach ($relative in @('tests/IntegrationTests/Package.appxmanifest', 'tests/In
     }
 }
 $checks.Add('Lifecycle source discovery includes the real activation path and package/project inputs')
+$markdownSourceRoot = [IO.Path]::GetFullPath((Join-Path $repo 'src/Notepads.Markdown')) + [IO.Path]::DirectorySeparatorChar
+foreach ($profile in @('Unit', 'Headless')) {
+    if (@(Get-TestSourceFiles $profile | Where-Object { $_.StartsWith($markdownSourceRoot, [StringComparison]::OrdinalIgnoreCase) }).Count) {
+        throw "$profile source discovery entered the native Markdown module."
+    }
+}
+$checks.Add('Unit and Headless source identity remain independent of the native Markdown module')
 & {
     $inputRepo = Join-Path $fixtureRoot 'manifest-inputs'
     foreach ($relative in @('scripts', 'src', 'tests/Shared', 'tests/IntegrationTests/App')) {
@@ -734,13 +741,29 @@ $checks.Add('Lifecycle source discovery includes the real activation path and pa
         'src/Notepads.App/AppPackages/Product.msix',
         'src/Notepads.App/BundleArtifacts/Product.msixbundle',
         'src/Notepads.App/bin/Release/Product.dll',
-        'src/Notepads.App/obj/Release/Product.g.cs')
+        'src/Notepads.App/obj/Release/Product.g.cs',
+        'src/Notepads.Markdown/target/x86_64-pc-windows-msvc/release/core.lib',
+        'src/Notepads.Markdown/artifacts/native/component.dll',
+        'src/Notepads.Markdown/.tools/cargo/bin/cargo.exe',
+        'src/Notepads.Markdown/crates/markdown-core/bin/Release/generated.dll')
     $realInputs = @(
         'src/Notepads.Editor/scintilla/win32/ScintillaWin.cxx',
         'src/Notepads.Editor/scintilla/winui/ScintillaWin.cxx',
         'src/Notepads.Editor/WinUIEditor/Editor.cpp',
         'src/Notepads.App/Assets/ARM64/Release/icon.png',
-        'src/Notepads.App/Assets/x64/icon.png')
+        'src/Notepads.App/Assets/x64/icon.png',
+        'src/Notepads.Markdown/Cargo.toml',
+        'src/Notepads.Markdown/Cargo.lock',
+        'src/Notepads.Markdown/.cargo/config.toml',
+        'src/Notepads.Markdown/build/Notepads.Markdown.Consumer.targets',
+        'src/Notepads.Markdown/crates/markdown-core/src/lib.rs',
+        'src/Notepads.Markdown/vendor/example/src/lib.rs',
+        'src/Notepads.Markdown/tests/fixtures/unchanged.md')
+    $sourceBinInputs = @(
+        'src/Notepads.Markdown/vendor/ratex-bounded/ratex-layout/src/bin/layout.rs',
+        'src/Notepads.Markdown/vendor/ratex-bounded/ratex-lexer/src/bin/lex.rs',
+        'src/Notepads.Markdown/vendor/ratex-bounded/ratex-parser/src/bin/parse.rs')
+    $realInputs += $sourceBinInputs
     foreach ($relative in $generatedInputs + $realInputs) {
         $fixturePath = Join-Path $inputRepo $relative
         New-Item -ItemType Directory -Path (Split-Path $fixturePath) -Force | Out-Null
@@ -763,7 +786,7 @@ $checks.Add('Lifecycle source discovery includes the real activation path and pa
     [IO.File]::WriteAllText((Join-Path $inputRepo 'src/Notepads.App/AppPackages/new-package.msix'), 'new-package')
     $null = Assert-TestBuildIdentity App Release ARM64
     $checks.Add('Rebuilt and newly published outputs do not invalidate source identity')
-    foreach ($relative in @($realInputs[0], $realInputs[3])) {
+    foreach ($relative in (@($realInputs[0], $realInputs[3], $realInputs[6], $realInputs[9], $realInputs[10]) + $sourceBinInputs)) {
         [IO.File]::WriteAllText((Join-Path $inputRepo $relative), 'changed-source')
         Expect-Rejection "Changed retained input $relative" '*Source changed since build:*' { Assert-TestBuildIdentity App Release ARM64 }
         [IO.File]::WriteAllText((Join-Path $inputRepo $relative), 'before')
@@ -954,3 +977,4 @@ Write-Output "PASS: Runner contracts ($($checks.Count) checks); private evidence
 & (Join-Path $PSScriptRoot 'OfflinePackageContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'offline-package')
 & (Join-Path $PSScriptRoot 'SourceBackupContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'source-backup')
 & (Join-Path $PSScriptRoot 'TestPlatformContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'platforms')
+& (Join-Path $PSScriptRoot 'MarkdownAssetContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'markdown-assets')
