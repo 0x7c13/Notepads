@@ -42,7 +42,7 @@ $minimumWindows = '10.0.22000.0'
 $manifest = @"
 <Package><Identity Name="19282JackieLiu.Notepads-Beta" Publisher="CN=40E66D07-5A3A-4954-9CA3-A1EB15ED0804" Version="2.0.0.0" ProcessorArchitecture="$architecture" />
 <Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="$minimumWindows" /><PackageDependency Name="Framework.Test" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /></Dependencies>
-<Applications><Application Id="App" Executable="Notepads.exe" EntryPoint="Notepads.App"><VisualElements DisplayName="Notepads" /></Application></Applications></Package>
+<Applications><Application Id="App" Executable="Notepads.exe" EntryPoint="Notepads.App"><VisualElements DisplayName="Notepads" /><Extensions><Extension Category="windows.protocol" /></Extensions></Application></Applications><Capabilities><Capability Name="internetClient" /></Capabilities></Package>
 "@
 [IO.File]::WriteAllText((Join-Path $layout 'AppxManifest.xml'), $manifest)
 $exe = Join-Path $layout 'Notepads.exe'
@@ -129,6 +129,14 @@ foreach ($name in @('New-OfflinePackage.ps1', 'Install-Offline.ps1', 'DevBuildTo
 }
 Copy-Item -LiteralPath (Join-Path $repo 'LICENSE.txt') -Destination $fixture
 [IO.File]::WriteAllText((Join-Path $fixture 'src/fixture.cs'), '// inert product source')
+# Export identifies HEAD; keep this fixture independent of any enclosing checkout.
+$emptyGitTemplate = Join-Path $EvidenceRoot 'empty-git-template'
+[IO.Directory]::CreateDirectory($emptyGitTemplate) | Out-Null
+& git -C $fixture init --quiet ("--template=$emptyGitTemplate")
+if ($LASTEXITCODE) { throw 'Private offline fixture git init failed.' }
+& git -C $fixture -c user.name=Fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false `
+    -c "core.hooksPath=$emptyGitTemplate" commit --quiet --allow-empty -m 'Offline package fixture'
+if ($LASTEXITCODE) { throw 'Private offline fixture commit failed.' }
 & {
     . (Join-Path $scripts 'TestBuildIdentity.ps1')
     Get-TestSourceHashes Product
@@ -157,6 +165,15 @@ function New-TestNativeImage([string] $Architecture) {
     return ,$image
 }
 $image = New-TestNativeImage $architecture
+function New-MarkdownPackagePayload([string] $Manifest, [byte[]] $Application, [byte[]] $Library) {
+    return @{
+        'AppxManifest.xml' = $Manifest; 'Notepads.exe' = $Application; 'fixture.dll' = $Library
+        'Notepads.Markdown.dll' = $Application; 'Notepads.Markdown.winmd' = 'Notepads.Markdown.MarkdownView'
+        'Notepads.Markdown.pri' = 'inert resource fixture'; 'Notepads.Markdown/Themes/Generic.xaml' = 'inert template fixture'
+        'ThirdPartyNotices/Notepads.Markdown/LICENSE' = 'inert module license fixture'
+        'ThirdPartyNotices/Notepads.Markdown/NativeSvg/fixture/LICENSE' = 'inert upstream license fixture'
+    }
+}
 $payloadManifest = $manifest.Replace('<PackageDependency Name="Framework.Test" Publisher="CN=Microsoft" MinVersion="1.0.0.0" />',
     '<PackageDependency Name="Microsoft.UI.Xaml.2.8" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /><PackageDependency Name="Microsoft.VCLibs.140.00" Publisher="CN=Microsoft" MinVersion="1.0.0.0" /><PackageDependency Name="Microsoft.Services.Store.Engagement" Publisher="CN=Microsoft" MinVersion="1.0.0.0" />')
 
@@ -165,7 +182,11 @@ $payloadManifest = $manifest.Replace('<PackageDependency Name="Framework.Test" P
 # payloads as well as valid PE32/PE32+ images for every shipping architecture.
 foreach ($target in @('x86', 'x64', 'ARM64')) {
     foreach ($case in @('valid', 'wrong-dll', 'wrong-header', 'managed-dll', 'missing-winui', 'missing-vclibs', 'missing-engagement',
-        'windows-10-minimum', 'newer-windows-minimum', 'wrong-device-family', 'extra-device-family')) {
+        'windows-10-minimum', 'newer-windows-minimum', 'wrong-device-family', 'extra-device-family',
+        'missing-markdown-dll', 'missing-markdown-winmd', 'missing-markdown-pri', 'missing-markdown-template',
+        'missing-markdown-license', 'missing-markdown-notices', 'markdown-diagnostics',
+        'store-broker-file', 'store-broker-file-mixed-case', 'store-broker-file-nested',
+        'store-fulltrust-extension', 'store-fulltrust-capability')) {
         $targetManifest = $payloadManifest.Replace("ProcessorArchitecture=`"$architecture`"", "ProcessorArchitecture=`"$target`"")
         $targetImage = New-TestNativeImage $target
         $library = New-TestNativeImage $target
@@ -202,7 +223,7 @@ foreach ($target in @('x86', 'x64', 'ARM64')) {
                 $expectedError = '*Managed image in Native AOT package*fixture.dll*'
             }
         }
-        if ($case -like 'missing-*') {
+        if ($case -in @('missing-winui', 'missing-vclibs', 'missing-engagement')) {
             $dependency = switch ($case) {
                 'missing-winui' { 'Microsoft.UI.Xaml.2.8' }
                 'missing-vclibs' { 'Microsoft.VCLibs.140.00' }
@@ -212,7 +233,43 @@ foreach ($target in @('x86', 'x64', 'ARM64')) {
             $expectedError = '*Missing native framework dependency*'
         }
         $package = Join-Path $fixture "$target-$case.msix"
-        New-TestArchive $package @{ 'AppxManifest.xml' = $targetManifest; 'Notepads.exe' = $targetImage; 'fixture.dll' = $library }
+        $assets = New-MarkdownPackagePayload $targetManifest $targetImage $library
+        if ($case -like 'missing-markdown-*') {
+            $missing = switch ($case) {
+                'missing-markdown-dll' { 'Notepads.Markdown.dll' }
+                'missing-markdown-winmd' { 'Notepads.Markdown.winmd' }
+                'missing-markdown-pri' { 'Notepads.Markdown.pri' }
+                'missing-markdown-template' { 'Notepads.Markdown/Themes/Generic.xaml' }
+                'missing-markdown-license' { 'ThirdPartyNotices/Notepads.Markdown/LICENSE' }
+                'missing-markdown-notices' { 'ThirdPartyNotices/Notepads.Markdown/NativeSvg/fixture/LICENSE' }
+            }
+            $assets.Remove($missing)
+            $expectedError = '*Missing Markdown*'
+        }
+        if ($case -eq 'markdown-diagnostics') {
+            $assets['Notepads.Markdown.winmd'] = 'Notepads.Markdown.CoreValidationProbe'
+            $expectedError = '*Markdown diagnostics leaked*'
+        }
+        if ($case -like 'store-*') {
+            switch ($case) {
+                'store-broker-file' { $assets['Notepads.DocumentAssets.exe'] = $targetImage }
+                'store-broker-file-mixed-case' { $assets['notepads.documentassets.exe'] = $targetImage }
+                'store-broker-file-nested' { $assets['tools/Notepads.DocumentAssets.exe'] = $targetImage }
+                'store-fulltrust-extension' {
+                    $assets['AppxManifest.xml'] = $targetManifest.Replace('</Extensions>', '<Extension Category="windows.fullTrustProcess" /></Extensions>')
+                }
+                'store-fulltrust-capability' {
+                    $assets['AppxManifest.xml'] = $targetManifest.Replace('</Capabilities>', '<Capability Name="runFullTrust" /></Capabilities>')
+                }
+            }
+            $expectedError = '*forbidden in Store uploads*'
+        }
+        New-TestArchive $package $assets
+        if ($case -like 'store-*') {
+            $upload = Join-Path $fixture "$target-$case.msixupload"
+            New-TestArchive $upload @{ 'app.msix' = [IO.File]::ReadAllBytes($package); 'app.appxsym' = 'inert symbol fixture' }
+            $package = $upload
+        }
         $failure = $null
         try { & (Join-Path $repo 'scripts/Test-AppPackage.ps1') -Path $package -ExpectedArchitectures $target | Out-Null }
         catch { $failure = $_ }
@@ -220,11 +277,16 @@ foreach ($target in @('x86', 'x64', 'ARM64')) {
             ($expectedError -and $failure -and $failure.Exception.Message -like $expectedError)) "Native package validation: $target/$case ($failure)"
     }
 }
-foreach ($case in @('complete', 'split-resources', 'wrong-architecture', 'stale-source')) {
+foreach ($case in @('complete', 'split-resources', 'wrong-architecture', 'wrong-bridge-architecture', 'stale-source')) {
     $caseRoot = Join-Path $fixture $case
     $null = New-Item -ItemType Directory -Path $caseRoot
     $app = Join-Path $caseRoot 'app.msix'
-    New-TestArchive $app @{ 'AppxManifest.xml' = $payloadManifest; 'Notepads.exe' = $image }
+    New-TestArchive $app (New-MarkdownPackagePayload $payloadManifest $image $image)
+    $bridge = Join-Path $caseRoot 'DocumentAssets'
+    $null = New-Item -ItemType Directory -Path $bridge
+    $otherArchitecture = if ($architecture -eq 'x64') { 'ARM64' } else { 'x64' }
+    $bridgeImage = if ($case -eq 'wrong-bridge-architecture') { New-TestNativeImage $otherArchitecture } else { $image }
+    [IO.File]::WriteAllBytes((Join-Path $bridge 'Notepads.DocumentAssets.exe'), $bridgeImage)
     foreach ($name in @('Microsoft.UI.Xaml.2.8', 'Microsoft.VCLibs.140.00', 'Microsoft.Services.Store.Engagement')) {
         New-TestArchive (Join-Path $caseRoot ($name + '.appx')) @{
             'AppxManifest.xml' = "<Package><Identity Name=`"$name`" Publisher=`"CN=Microsoft`" Version=`"1.0.0.0`" ProcessorArchitecture=`"$architecture`" /></Package>"
@@ -242,13 +304,34 @@ foreach ($case in @('complete', 'split-resources', 'wrong-architecture', 'stale-
     try { $export = & (Join-Path $scripts 'New-OfflinePackage.ps1') -PackageRoot $caseRoot -Platform $architecture -OutputDirectory $destination -AsDirectory }
     catch { $failure = $_ }
     if ($case -eq 'complete') {
-        Check (!$failure -and $export -eq $destination -and (Test-Path (Join-Path $destination 'Start.cmd'))) 'CI export creates a ready-to-extract installer without rebuilding'
+        Check (!$failure -and $export -eq $destination -and (Test-Path (Join-Path $destination 'Start.cmd'))) "CI export creates a ready-to-extract installer without rebuilding ($failure)"
         Check ([Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $destination "App/$architecture/Notepads.exe"))) -ceq
             [Convert]::ToBase64String($image)) 'CI export preserves the native application payload bytes'
+        $offlineApp = Join-Path $destination "App/$architecture"
+        [xml]$offlineManifest = Get-Content -LiteralPath (Join-Path $offlineApp 'AppxManifest.xml') -Raw
+        Check ((Test-Path -LiteralPath (Join-Path $offlineApp 'Notepads.DocumentAssets.exe')) -and
+            @($offlineManifest.Package.Capabilities.ChildNodes | Where-Object Name -eq 'runFullTrust').Count -eq 1 -and
+            @($offlineManifest.Package.Applications.Application.Extensions.ChildNodes |
+                Where-Object Category -eq 'windows.fullTrustProcess').Count -eq 1) 'Only the offline layout receives the bridge and full-trust activation'
+        & (Join-Path $destination 'Install.ps1') -CheckOnly -Platform $architecture | Out-Null
+        $offlineBridge = Join-Path $offlineApp 'Notepads.DocumentAssets.exe'
+        [IO.File]::WriteAllBytes($offlineBridge, (New-TestNativeImage $otherArchitecture))
+        $receiptPath = Join-Path $destination 'bundle.json'
+        $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
+        $bridgeEntry = $receipt.Files | Where-Object Path -like '*Notepads.DocumentAssets.exe'
+        $bridgeEntry.Sha256 = (Get-FileHash -LiteralPath $offlineBridge).Hash
+        $receipt | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $receiptPath -Encoding utf8
+        $checkFailure = $null
+        try { & (Join-Path $destination 'Install.ps1') -CheckOnly -Platform $architecture | Out-Null }
+        catch { $checkFailure = $_ }
+        Check ($checkFailure -and $checkFailure.ToString() -like '*Native image architecture does not match*Notepads.DocumentAssets.exe*') 'Offline installer rejects a mismatched helper even with a matching receipt'
         $duplicate = $null
         try { & (Join-Path $scripts 'New-OfflinePackage.ps1') -PackageRoot $caseRoot -Platform $architecture -OutputDirectory $destination -AsDirectory }
         catch { $duplicate = $_ }
         Check ($duplicate -and $duplicate.ToString() -like '*already exists*') 'An existing offline output is never mixed with a later build'
+    }
+    elseif ($case -eq 'wrong-bridge-architecture') {
+        Check ($failure -and $failure.ToString() -like '*Native image architecture does not match*Notepads.DocumentAssets.exe*') 'Offline export rejects a mismatched helper'
     }
     elseif ($case -eq 'stale-source') { Check ($failure -and $failure.ToString() -like '*do not match the current product sources*') 'Stale CI builds cannot be relabeled with current source metadata' }
     else { Check ($failure -and $failure.ToString() -like '*disable auto resource splitting*') "CI export rejects $case before producing an incomplete installer" }

@@ -7,6 +7,7 @@
 param([Parameter(Mandatory)][ValidateSet('x86', 'x64', 'ARM64')][string] $Platform)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'TestBuildIdentity.ps1')
+. (Join-Path $PSScriptRoot 'DevBuildTools.ps1')
 $repo = Split-Path $PSScriptRoot -Parent
 $runRoot = Join-Path $repo ("artifacts/ci/$Platform/" + [Guid]::NewGuid().ToString('N'))
 $packageRoot = Join-Path $runRoot 'packages'
@@ -63,8 +64,11 @@ try {
     $report.Packages = @($uploads | ForEach-Object {
         [ordered]@{ Name = $_.Name; Length = $_.Length; Sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
     })
+    $null = Build-DevDocumentAssetBroker $msbuild $repo $Platform (Join-Path $packageRoot 'DocumentAssets')
     $offline = & (Join-Path $PSScriptRoot 'New-OfflinePackage.ps1') -PackageRoot $packageRoot -Platform $Platform `
         -OutputDirectory (Join-Path $runRoot 'offline') -AsDirectory
+    & (Join-Path $repo 'src/Notepads.Markdown/scripts/Test-FixedAssets.ps1') -Check Licenses -DeploymentRoot (Join-Path $offline "App/$Platform") |
+        Tee-Object -FilePath (Join-Path $runRoot 'MarkdownLicenses.log')
     $report['OfflineDirectory'] = $offline
     if ($env:GITHUB_OUTPUT) { "offline-path=$offline" | Add-Content -LiteralPath $env:GITHUB_OUTPUT }
     $report.Status = 'PASS'

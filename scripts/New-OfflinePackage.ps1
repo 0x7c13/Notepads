@@ -84,6 +84,9 @@ foreach ($architecture in $Platform | Select-Object -Unique) {
     $frameworks = Join-Path $bundle "Dependencies/$architecture"
     $null = New-Item -ItemType Directory -Path $frameworks -Force
     Copy-Item -LiteralPath $build.Layout -Destination $app -Recurse
+    if ($PackageRoot) {
+        Add-DevDocumentAssetBroker $app (Join-Path $packages 'DocumentAssets/Notepads.DocumentAssets.exe')
+    }
     [xml]$manifest = Get-Content -LiteralPath (Join-Path $app 'AppxManifest.xml') -Raw
     Assert-DevManifest $manifest $architecture '19282JackieLiu.Notepads-Beta'
     if ($builds.Count -and $manifest.Package.Identity.Version -ne $version) { throw 'Offline architectures must have the same version.' }

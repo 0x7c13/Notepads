@@ -321,13 +321,27 @@ function Install-DevDotnet { throw 'UNEXPECTED installation' }
 function Install-DevBuildTools { throw 'UNEXPECTED installation' }
 '@
     [IO.File]::WriteAllText((Join-Path $scripts 'DevBuildTools.ps1'), $stubs)
+    [IO.File]::WriteAllText((Join-Path $scripts 'Initialize-RustToolchain.ps1'), @'
+param([switch] $InstallMissing)
+if ($InstallMissing) { throw 'UNEXPECTED Rust installation' }
+if ($env:NOTEPADS_CONTRACT_MISSING_RUST) { throw 'Pinned Rust fixture is missing.' }
+$env:NOTEPADS_CONTRACT_RUST_CHECKED = 'true'
+Write-Output 'Verified fixture Rust toolchain.'
+'@)
     $oldPin = $env:MSBuildSDKsPath
     $oldMissing = $env:NOTEPADS_CONTRACT_MISSING
+    $oldMissingRust = $env:NOTEPADS_CONTRACT_MISSING_RUST
+    $oldRustChecked = $env:NOTEPADS_CONTRACT_RUST_CHECKED
     try {
         $env:MSBuildSDKsPath = 'inherited SDK pin'
         $env:NOTEPADS_CONTRACT_MISSING = $null
+        $env:NOTEPADS_CONTRACT_MISSING_RUST = $null
+        $env:NOTEPADS_CONTRACT_RUST_CHECKED = $null
         $result = & (Join-Path $scripts 'Run-Dev.ps1') -CheckOnly
-        Check ($result -like 'READY:*') 'CheckOnly discovers a complete toolchain without invoking it'
+        Check ($result -like 'READY:*' -and $env:NOTEPADS_CONTRACT_RUST_CHECKED -eq 'true') 'CheckOnly verifies the pinned Rust toolchain before READY without installing it'
+        $env:NOTEPADS_CONTRACT_MISSING_RUST = '1'
+        Reject 'CheckOnly refuses READY when the pinned Rust toolchain is missing' '*Pinned Rust fixture is missing*' { & (Join-Path $scripts 'Run-Dev.ps1') -CheckOnly }
+        $env:NOTEPADS_CONTRACT_MISSING_RUST = $null
         $env:NOTEPADS_CONTRACT_MISSING = '1'
         Reject 'CheckOnly does not install a missing toolchain' '*Toolchain is incomplete*' { & (Join-Path $scripts 'Run-Dev.ps1') -CheckOnly }
         Check ($env:MSBuildSDKsPath -eq 'inherited SDK pin') 'Entry script restores inherited SDK environment after success and failure'
@@ -339,7 +353,12 @@ function Install-DevBuildTools { throw 'UNEXPECTED installation' }
             Reject 'Concurrent invocation cannot take over the checkout' '*Another Run-Dev invocation*' { & (Join-Path $scripts 'Run-Dev.ps1') -NoInstall -BuildOnly }
         } finally { $held.Dispose() }
         Check (!(Test-Path -LiteralPath (Join-Path $fixture 'artifacts'))) 'Failed tool discovery never starts a build'
-    } finally { $env:MSBuildSDKsPath = $oldPin; $env:NOTEPADS_CONTRACT_MISSING = $oldMissing }
+    } finally {
+        $env:MSBuildSDKsPath = $oldPin
+        $env:NOTEPADS_CONTRACT_MISSING = $oldMissing
+        $env:NOTEPADS_CONTRACT_MISSING_RUST = $oldMissingRust
+        $env:NOTEPADS_CONTRACT_RUST_CHECKED = $oldRustChecked
+    }
 }
 $checks | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'checks.json') -Encoding utf8
 Write-Output "PASS: Developer build contracts ($($checks.Count) checks); evidence: $EvidenceRoot"

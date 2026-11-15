@@ -230,6 +230,97 @@ function Assert-DevManifest([xml] $Manifest, [string] $Platform,
     }
 }
 
+function Invoke-DevNativeLogged([string] $Executable, [string[]] $Arguments, [string] $Log) {
+    # Windows PowerShell 5.1 wraps redirected stderr as ErrorRecords.
+    # Log them and let the native exit code decide whether the build failed.
+    $ErrorActionPreference = 'Continue'
+    $previousExitCode = Get-Variable LASTEXITCODE -Scope Global -ValueOnly -ErrorAction Ignore
+    try {
+        $global:LASTEXITCODE = $null
+        & $Executable @Arguments 2>&1 | Out-File -LiteralPath $Log -ErrorAction Stop
+        if ($null -eq $global:LASTEXITCODE) { throw "No native exit code from $Executable. See $Log" }
+        return $global:LASTEXITCODE
+    }
+    finally { $global:LASTEXITCODE = $previousExitCode }
+}
+
+function Build-DevDocumentAssetBroker([string] $MSBuild, [string] $Repo, [string] $Platform, [string] $Output) {
+    $nativePlatform = if ($Platform -eq 'x86') { 'Win32' } else { $Platform }
+    $directory = [IO.Path]::GetFullPath($Output).TrimEnd('\') + '\'
+    $null = New-Item -ItemType Directory -Path $directory -Force
+    $log = Join-Path $directory 'desktop-bridge.log'
+    $project = Join-Path $Repo 'src/Notepads.DocumentAssets/Notepads.DocumentAssets.vcxproj'
+    # A forward slash preserves the directory suffix through PS5's native quoting.
+    $outputArgument = $directory.TrimEnd('\') + '/'
+    $code = Invoke-DevNativeLogged $MSBuild @($project, '/nologo', '/v:minimal', '/t:Build',
+        '/p:Configuration=Release', "/p:Platform=$nativePlatform", "/p:OutDir=$outputArgument") $log
+    if ($code -ne 0) { throw "Desktop bridge build failed ($code). See $log" }
+    $exe = Join-Path $directory 'Notepads.DocumentAssets.exe'
+    if (!(Test-Path -LiteralPath $exe -PathType Leaf)) { throw "Desktop bridge executable is missing: $exe" }
+    return $exe
+}
+
+function Assert-DevNativeImage([IO.Stream] $Stream, [string] $Name, [string] $Architecture) {
+    $reader = [IO.BinaryReader]::new($Stream)
+    try {
+        if ($reader.ReadUInt16() -ne 0x5A4D) { throw "Invalid PE image: $Name" }
+        $null = $reader.ReadBytes(58)
+        $offset = $reader.ReadUInt32()
+        if ($offset -lt 64 -or $offset -gt 1048576) { throw 'Invalid PE header offset.' }
+        $null = $reader.ReadBytes($offset - 64)
+        if ($reader.ReadUInt32() -ne 0x4550) { throw 'Invalid PE signature.' }
+        $machine = $reader.ReadUInt16()
+        $expectedMachine = switch ($Architecture) {
+            'x86' { 0x014c }
+            'x64' { 0x8664 }
+            'arm64' { 0xaa64 }
+            default { throw "Unsupported package architecture: $Architecture" }
+        }
+        if ($machine -ne $expectedMachine) {
+            throw "Native image architecture does not match ${Architecture}: $Name"
+        }
+        $null = $reader.ReadBytes(18)
+        $magic = $reader.ReadUInt16()
+        $expectedMagic = if ($Architecture -eq 'x86') { 0x10B } else { 0x20B }
+        if ($magic -ne $expectedMagic) { throw "Invalid optional header for ${Architecture}: $Name" }
+        $directoryOffset = switch ($magic) { 0x10B { 96 } 0x20B { 112 } default { throw 'Invalid optional header.' } }
+        $null = $reader.ReadBytes($directoryOffset - 2 + 14 * 8)
+        if ($reader.ReadUInt32() -ne 0) { throw "Managed image in Native AOT package: $Name" }
+    } finally { $reader.Dispose() }
+}
+
+function Add-DevDocumentAssetBroker([string] $Layout, [string] $Executable) {
+    $name = 'Notepads.DocumentAssets.exe'
+    if (!(Test-Path -LiteralPath $Executable -PathType Leaf)) { throw "Desktop bridge executable is missing: $Executable" }
+    $manifestPath = Join-Path $Layout 'AppxManifest.xml'
+    [xml]$manifest = Get-Content -LiteralPath $manifestPath -Raw
+    $package = $manifest.DocumentElement
+    Assert-DevNativeImage ([IO.File]::OpenRead($Executable)) $name $package.Identity.ProcessorArchitecture
+    $application = $package.Applications.Application
+    $extensions = $application.Extensions
+    $capabilities = $package.Capabilities
+    if (!$extensions -or !$capabilities -or
+        @($extensions.ChildNodes | Where-Object Category -eq 'windows.fullTrustProcess').Count -or
+        @($capabilities.ChildNodes | Where-Object Name -eq 'runFullTrust').Count) {
+        throw 'The loose layout must have an unmodified Notepads application manifest.'
+    }
+    $desktop = 'http://schemas.microsoft.com/appx/manifest/desktop/windows10'
+    $restricted = 'http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities'
+    $extension = $manifest.CreateElement('desktop', 'Extension', $desktop)
+    $extension.SetAttribute('Category', 'windows.fullTrustProcess')
+    $extension.SetAttribute('Executable', $name)
+    $null = $extensions.AppendChild($extension)
+    $capability = $manifest.CreateElement('rescap', 'Capability', $restricted)
+    $capability.SetAttribute('Name', 'runFullTrust')
+    $null = $capabilities.AppendChild($capability)
+    if (($package.GetAttribute('IgnorableNamespaces') -split '\s+') -notcontains 'desktop') {
+        $package.SetAttribute('xmlns:desktop', $desktop)
+        $package.SetAttribute('IgnorableNamespaces', ($package.GetAttribute('IgnorableNamespaces') + ' desktop').Trim())
+    }
+    Copy-Item -LiteralPath $Executable -Destination (Join-Path $Layout $name)
+    $manifest.Save($manifestPath)
+}
+
 function Test-DevRegistrationEnabled {
     $path = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock'
     $settings = Get-ItemProperty -LiteralPath $path -ErrorAction SilentlyContinue

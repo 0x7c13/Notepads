@@ -1,7 +1,9 @@
 {
   "ownedXml": [
     "Directory.Packages.props",
-    "src/Notepads.Editor/Projection/Notepads.Editor.Projection.csproj"
+    "src/Notepads.Editor/Projection/Notepads.Editor.Projection.csproj",
+    "src/Notepads.DocumentAssets/Notepads.DocumentAssets.vcxproj",
+    "src/Notepads.DocumentAssets/build/Notepads.DocumentAssets.Consumer.targets"
   ],
   "licenses": [
     {

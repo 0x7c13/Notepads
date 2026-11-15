@@ -55,6 +55,7 @@ try {
     if (Test-DevRegistrationEnabled) { Write-Host 'Windows Developer Mode: enabled.' }
     else { Write-Host 'Windows Developer Mode: disabled (required for launch; enabled with administrator approval before registration).' }
     if (!$dotnet -or !$build) { throw 'Toolchain is incomplete. Run without -CheckOnly/-NoInstall to install missing tools.' }
+    & (Join-Path $PSScriptRoot 'Initialize-RustToolchain.ps1') | Write-Host
     if ($CheckOnly) { Write-Output "READY: $Configuration / $Platform (no installation, build or deployment performed)."; return }
 
     $dotnetRoot = Split-Path $dotnet.Path -Parent
@@ -65,24 +66,30 @@ try {
     $packages = Join-Path $run 'packages'
     $null = New-Item -ItemType Directory -Path $packages -Force
     $common = @('/nologo', '/v:minimal', "/p:Configuration=$Configuration", "/p:Platform=$Platform",
-        "/p:SolutionDir=$([IO.Path]::GetFullPath((Join-Path $repo 'src/')))")
+        "/p:SolutionDir=$([IO.Path]::GetFullPath((Join-Path $repo 'src')).TrimEnd('\'))/")
     if ($Configuration -eq 'Debug') { $common += '/p:PublishAot=false' }
     Write-Host "Restoring native and managed packages. Logs: $run"
-    & $build.Path (Join-Path $repo 'src/Notepads.sln') /t:Restore /p:RestorePackagesConfig=true @common *> (Join-Path $run 'restore.log')
-    if ($LASTEXITCODE -ne 0) { throw "Restore failed ($LASTEXITCODE). See $run/restore.log" }
+    $restoreArguments = @((Join-Path $repo 'src/Notepads.sln'), '/t:Restore', '/p:RestorePackagesConfig=true') + $common
+    $code = Invoke-DevNativeLogged $build.Path $restoreArguments (Join-Path $run 'restore.log')
+    if ($code -ne 0) { throw "Restore failed ($code). See $run/restore.log" }
     $target = if ($Configuration -eq 'Debug') { '/t:Build' } else { '/t:Publish' }
     Write-Host "Building $packageName ($Configuration / $Platform)..."
-    & $build.Path (Join-Path $repo 'src/Notepads.App/Notepads.App.csproj') /restore $target @common `
-        /p:GenerateAppxPackageOnBuild=true /p:PublishAppxPackage=false /p:AppxBundle=Never `
-        /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxPackageSigningEnabled=false /p:AppxSymbolPackageEnabled=false `
-        "/p:AppxPackageDir=$packages\" *> (Join-Path $run 'build.log')
-    if ($LASTEXITCODE -ne 0) { throw "Build failed ($LASTEXITCODE). See $run/build.log" }
+    $buildArguments = @((Join-Path $repo 'src/Notepads.App/Notepads.App.csproj'), '/restore', $target) + $common +
+        @('/p:GenerateAppxPackageOnBuild=true', '/p:PublishAppxPackage=false', '/p:AppxBundle=Never',
+          '/p:UapAppxPackageBuildMode=SideloadOnly', '/p:AppxPackageSigningEnabled=false', '/p:AppxSymbolPackageEnabled=false',
+          "/p:AppxPackageDir=$packages/")
+    $code = Invoke-DevNativeLogged $build.Path $buildArguments (Join-Path $run 'build.log')
+    if ($code -ne 0) { throw "Build failed ($code). See $run/build.log" }
     $app = @(Get-ChildItem -LiteralPath $packages -Recurse -File | Where-Object { $_.Extension -in @('.msix', '.appx') } |
         Where-Object { (Read-DevPackageManifest $_.FullName).Package.Identity.Name -eq $packageName })
     if ($app.Count -ne 1) { throw "Expected one fresh $packageName package; found $($app.Count). See $packages" }
     Assert-DevManifest (Read-DevPackageManifest $app[0].FullName) $Platform $packageName
     $layout = Join-Path $run 'app'
     Expand-DevArchive $app[0].FullName $layout
+    if ($Configuration -eq 'Production') {
+        $bridge = Build-DevDocumentAssetBroker $build.Path $repo $Platform (Join-Path $run 'desktop-bridge')
+        Add-DevDocumentAssetBroker $layout $bridge
+    }
     Write-Host "Built development layout: $layout"
     $result = [pscustomobject]@{ Platform = $Platform; Configuration = $Configuration; Layout = $layout; Package = $app[0].FullName; PackageRoot = $packages; RunRoot = $run }
     if ($BuildOnly) { if ($PassThru) { $result }; return }

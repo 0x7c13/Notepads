@@ -8,41 +8,18 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $architectures = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 
-function Test-NativeImage($Entry, [string] $Architecture) {
-    $stream = $Entry.Open()
-    $reader = [IO.BinaryReader]::new($stream)
-    try {
-        if ($reader.ReadUInt16() -ne 0x5A4D) { throw "Invalid PE image: $($Entry.FullName)" }
-        $null = $reader.ReadBytes(58)
-        $offset = $reader.ReadUInt32()
-        if ($offset -lt 64 -or $offset -gt 1048576) { throw 'Invalid PE header offset.' }
-        $null = $reader.ReadBytes($offset - 64)
-        if ($reader.ReadUInt32() -ne 0x4550) { throw 'Invalid PE signature.' }
-        $machine = $reader.ReadUInt16()
-        $expectedMachine = switch ($Architecture) {
-            'x86' { 0x014c }
-            'x64' { 0x8664 }
-            'arm64' { 0xaa64 }
-            default { throw "Unsupported package architecture: $Architecture" }
-        }
-        if ($machine -ne $expectedMachine) {
-            throw "Native image architecture does not match ${Architecture}: $($Entry.FullName)"
-        }
-        $null = $reader.ReadBytes(18)
-        $magic = $reader.ReadUInt16()
-        $expectedMagic = if ($Architecture -eq 'x86') { 0x10B } else { 0x20B }
-        if ($magic -ne $expectedMagic) { throw "Invalid optional header for ${Architecture}: $($Entry.FullName)" }
-        $directoryOffset = switch ($magic) { 0x10B { 96 } 0x20B { 112 } default { throw 'Invalid optional header.' } }
-        $null = $reader.ReadBytes($directoryOffset - 2 + 14 * 8)
-        if ($reader.ReadUInt32() -ne 0) { throw "Managed image in Native AOT package: $($Entry.FullName)" }
-    } finally { $reader.Dispose() }
-}
+. (Join-Path $PSScriptRoot 'DevBuildTools.ps1')
 
-function Test-Package($Archive, [string] $Name) {
+function Test-Package($Archive, [string] $Name, [bool] $StoreUpload) {
     $entry = $Archive.GetEntry('AppxManifest.xml')
     if (!$entry) { throw "Missing manifest: $Name" }
     $reader = [IO.StreamReader]::new($entry.Open())
     try { [xml]$manifest = $reader.ReadToEnd() } finally { $reader.Dispose() }
+    if ($StoreUpload -and (($Archive.Entries | Where-Object Name -ieq 'Notepads.DocumentAssets.exe' | Select-Object -First 1) -or
+        $manifest.SelectNodes("//*[local-name()='Extension' and @Category='windows.fullTrustProcess']").Count -or
+        $manifest.SelectNodes("//*[local-name()='Capability' and @Name='runFullTrust']").Count)) {
+        throw "DocumentAssets/full-trust declarations are forbidden in Store uploads: $Name"
+    }
     $applications = $manifest.SelectNodes("/*[local-name()='Package']/*[local-name()='Applications']/*[local-name()='Application']")
     if ($applications.Count -eq 0) { return } # Resource package.
     $identity = $manifest.SelectSingleNode("/*[local-name()='Package']/*[local-name()='Identity']")
@@ -60,19 +37,36 @@ function Test-Package($Archive, [string] $Name) {
             $families[0].MinVersion -ne '10.0.22000.0') {
             throw "Unexpected minimum Windows version: $Name"
         }
+        foreach ($required in @('Notepads.Markdown.dll', 'Notepads.Markdown.winmd', 'Notepads.Markdown.pri',
+            'Notepads.Markdown/Themes/Generic.xaml', 'ThirdPartyNotices/Notepads.Markdown/LICENSE')) {
+            if (!$Archive.GetEntry($required)) { throw "Missing Markdown package asset ${required}: $Name" }
+        }
+        if (!@($Archive.Entries | Where-Object {
+            $_.FullName -like 'ThirdPartyNotices/Notepads.Markdown/*/*' -and $_.Name -like '*LICENSE*'
+        }).Count) { throw "Missing Markdown third-party notices: $Name" }
+        $metadata = [IO.MemoryStream]::new()
+        try {
+            $input = $Archive.GetEntry('Notepads.Markdown.winmd').Open()
+            try { $input.CopyTo($metadata) }
+            finally { $input.Dispose() }
+            if ([Text.Encoding]::UTF8.GetString($metadata.ToArray()).Contains('CoreValidation')) {
+                throw "Markdown diagnostics leaked into a product package: $Name"
+            }
+        } finally { $metadata.Dispose() }
     }
     foreach ($app in $applications) {
         if (!$Archive.GetEntry($app.GetAttribute('Executable'))) { throw "Missing executable: $Name" }
     }
     foreach ($file in $Archive.Entries) {
         if ($file.Name -match '^(coreclr|clrjit)\.dll$') { throw "Managed runtime in Native AOT package: $Name" }
-        if ($file.Name -match '\.(exe|dll)$') { Test-NativeImage $file $architecture }
+        if ($file.Name -match '\.(exe|dll)$') { Assert-DevNativeImage ($file.Open()) $file.FullName $architecture }
     }
     Write-Output "PASS: $Name contains native executables and libraries without managed assemblies or CoreCLR."
 }
 
-function Test-Archive($Archive, [string] $Name) {
-    if ($Archive.GetEntry('AppxManifest.xml')) { Test-Package $Archive $Name }
+function Test-Archive($Archive, [string] $Name, [bool] $StoreUpload = $false) {
+    $StoreUpload = $StoreUpload -or $Name -match '\.(msixupload|appxupload)$'
+    if ($Archive.GetEntry('AppxManifest.xml')) { Test-Package $Archive $Name $StoreUpload }
     else {
         $packages = @($Archive.Entries | Where-Object { $_.Name -match '\.(msixbundle|appxbundle|msix|appx)$' })
         if (!$packages.Count) { throw "No packages found in $Name." }
@@ -81,7 +75,7 @@ function Test-Archive($Archive, [string] $Name) {
         }
         foreach ($entry in $packages) {
             $package = [IO.Compression.ZipArchive]::new($entry.Open(), [IO.Compression.ZipArchiveMode]::Read)
-            try { Test-Archive $package $entry.Name } finally { $package.Dispose() }
+            try { Test-Archive $package $entry.Name $StoreUpload } finally { $package.Dispose() }
         }
     }
 }

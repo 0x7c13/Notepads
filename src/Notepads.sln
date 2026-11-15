@@ -18,6 +18,8 @@ Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "Notepads.Markdown", "Notepa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notepads.Markdown.Projection", "Notepads.Markdown\windows\Notepads.Markdown.Projection\Notepads.Markdown.Projection.csproj", "{892A6CB6-26D2-4817-A2FB-194C3C3B1036}"
 EndProject
+Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "Notepads.DocumentAssets", "Notepads.DocumentAssets\Notepads.DocumentAssets.vcxproj", "{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -31,6 +33,15 @@ Global
 		Production|x86 = Production|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Debug|ARM64.ActiveCfg = Release|ARM64
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Debug|x64.ActiveCfg = Release|x64
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Debug|x86.ActiveCfg = Release|Win32
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Release|ARM64.ActiveCfg = Release|ARM64
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Release|x64.ActiveCfg = Release|x64
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Release|x86.ActiveCfg = Release|Win32
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Production|ARM64.ActiveCfg = Release|ARM64
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Production|x64.ActiveCfg = Release|x64
+		{E46B6E5F-525C-436B-BC2A-DFE4AE144C44}.Production|x86.ActiveCfg = Release|Win32
 		{D6DBBF35-E2F3-4949-A62D-D56B919346C1}.Debug|x86.ActiveCfg = Release|Win32
 		{892A6CB6-26D2-4817-A2FB-194C3C3B1036}.Debug|x86.ActiveCfg = Debug|x86
 		{D6DBBF35-E2F3-4949-A62D-D56B919346C1}.Debug|x86.Build.0 = Release|Win32

@@ -51,6 +51,16 @@ $layout = Join-Path $root "App/$platform"
 $dependencies = Join-Path $root "Dependencies/$platform"
 [xml]$manifest = Get-Content -LiteralPath (Join-Path $layout 'AppxManifest.xml') -Raw
 Assert-DevManifest $manifest $platform '19282JackieLiu.Notepads-Beta'
+$bridge = $manifest.Package.Applications.Application.Extensions.ChildNodes |
+    Where-Object Category -eq 'windows.fullTrustProcess'
+if ($bridge) {
+    $bridgeName = 'Notepads.DocumentAssets.exe'
+    $bridgePath = Join-Path $layout $bridgeName
+    if (@($bridge).Count -ne 1 -or $bridge.Executable -ne $bridgeName -or !$listed.Contains($bridgePath)) {
+        throw 'Invalid offline desktop bridge declaration or missing executable.'
+    }
+    Assert-DevNativeImage ([IO.File]::OpenRead($bridgePath)) $bridgeName $platform
+}
 if ($manifest.Package.Identity.Version -ne $info.Version -or
     $manifest.Package.Applications.Application.VisualElements.DisplayName -ne 'Notepads') { throw 'Offline version or display name does not match Production.' }
 $minimum = [version]$manifest.Package.Dependencies.TargetDeviceFamily.MinVersion
