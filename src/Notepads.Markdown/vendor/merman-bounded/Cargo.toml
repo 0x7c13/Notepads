@@ -1,0 +1,17 @@
+# ---------------------------------------------------------------------------------------------
+#  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+#  See LICENSE file in the project root for license information.
+# ---------------------------------------------------------------------------------------------
+[workspace]
+members = ["merman-core", "merman-render", "lalrpop-util"]
+default-members = ["merman-core", "merman-render", "lalrpop-util"]
+resolver = "3"
+
+[patch.crates-io]
+merman-core = { path = "merman-core" }
+merman-render = { path = "merman-render" }
+lalrpop-util = { path = "lalrpop-util" }
+
+[profile.release]
+panic = "unwind"
+codegen-units = 1

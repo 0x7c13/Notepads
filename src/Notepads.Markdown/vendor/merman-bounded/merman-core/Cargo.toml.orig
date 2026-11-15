@@ -1,0 +1,137 @@
+[package]
+name = "merman-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "Mermaid parser + semantic model (headless; parity-focused)."
+documentation = "https://docs.rs/merman-core"
+readme = "README.md"
+keywords = ["mermaid", "diagrams", "parser", "ast"]
+categories = ["parser-implementations", "visualization"]
+
+[package.metadata.merman]
+artifact-profile-required = true
+
+[features]
+# Diagram selection is independent of output formats and optional layout engines.
+all-diagrams = [
+    "diagram-agentflow",
+    "diagram-architecture",
+    "diagram-block",
+    "diagram-c4",
+    "diagram-class",
+    "diagram-cynefin",
+    "diagram-er",
+    "diagram-event-modeling",
+    "diagram-flowchart",
+    "diagram-gantt",
+    "diagram-git-graph",
+    "diagram-info",
+    "diagram-ishikawa",
+    "diagram-journey",
+    "diagram-kanban",
+    "diagram-mindmap",
+    "diagram-packet",
+    "diagram-pie",
+    "diagram-quadrant-chart",
+    "diagram-radar",
+    "diagram-railroad",
+    "diagram-requirement",
+    "diagram-sankey",
+    "diagram-sequence",
+    "diagram-state",
+    "diagram-swimlane",
+    "diagram-timeline",
+    "diagram-tree-view",
+    "diagram-treemap",
+    "diagram-usecase",
+    "diagram-venn",
+    "diagram-wardley",
+    "diagram-xychart",
+    "diagram-zenuml",
+]
+diagram-architecture = []
+diagram-block = ["dep:indexmap"]
+diagram-c4 = []
+diagram-class = ["dep:lalrpop-util", "dep:indexmap"]
+diagram-cynefin = []
+diagram-er = ["dep:lalrpop-util", "dep:indexmap"]
+diagram-event-modeling = []
+diagram-agentflow = ["dep:rustc-hash", "dep:indexmap"]
+diagram-usecase = ["dep:indexmap"]
+diagram-flowchart = ["dep:lalrpop-util", "dep:rustc-hash", "dep:indexmap"]
+diagram-gantt = []
+diagram-git-graph = []
+diagram-info = []
+diagram-ishikawa = []
+diagram-journey = []
+diagram-kanban = []
+diagram-mindmap = []
+diagram-packet = []
+diagram-pie = []
+diagram-quadrant-chart = []
+diagram-radar = []
+diagram-railroad = []
+diagram-requirement = []
+diagram-sankey = []
+diagram-sequence = ["dep:lalrpop-util", "dep:rustc-hash"]
+diagram-state = ["dep:lalrpop-util", "dep:indexmap"]
+diagram-swimlane = ["dep:lalrpop-util", "dep:rustc-hash", "dep:indexmap"]
+diagram-timeline = []
+diagram-tree-view = []
+diagram-treemap = []
+diagram-venn = []
+diagram-wardley = ["dep:indexmap"]
+diagram-xychart = []
+diagram-zenuml = ["dep:unicode-general-category", "dep:indexmap"]
+# Configuration, sanitization, detection, and family identity remain unconditional.
+# Parsers and typed models are selected independently from explicit system adapters.
+default = []
+operation-deadlines = ["dep:web-time"]
+test-support = []
+system-clock = []
+system-timezone = [
+    "dep:jiff",
+    "dep:sha2",
+    "jiff/std",
+    "jiff/tz-system",
+    "jiff/tz-fat",
+    "jiff/tzdb-bundle-platform",
+    "jiff/tzdb-zoneinfo",
+    "jiff/tzdb-concatenated",
+    "jiff/perf-inline",
+]
+system-random = ["dep:getrandom", "getrandom/std"]
+system-timing = ["dep:web-time"]
+
+[dependencies]
+cssparser.workspace = true
+euclid.workspace = true
+htmlize.workspace = true
+indexmap = { workspace = true, features = ["serde"], optional = true }
+lalrpop-util = { workspace = true, optional = true }
+serde.workspace = true
+serde_json = { workspace = true, features = ["preserve_order", "float_roundtrip"] }
+granit-parser.workspace = true
+json5.workspace = true
+thiserror.workspace = true
+unicode-general-category = { workspace = true, optional = true }
+unicode-segmentation.workspace = true
+unicode-width.workspace = true
+lol_html.workspace = true
+url.workspace = true
+jiff = { workspace = true, optional = true }
+getrandom = { workspace = true, optional = true }
+ryu-js.workspace = true
+rustc-hash = { workspace = true, optional = true }
+sha2 = { workspace = true, optional = true }
+web-time = { workspace = true, optional = true }
+
+[dev-dependencies]
+futures = { workspace = true, features = ["executor"] }
+merman-fixture-render-context = { path = "../merman-fixture-render-context" }
+regex.workspace = true

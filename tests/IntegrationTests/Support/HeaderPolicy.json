@@ -61,12 +61,88 @@
       "sha256": "6A349742A6CB219D5A2FC8D0844F6D89A6EFC62E20C664450D884FC7FF2D6015"
     },
     {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/lalrpop-util/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/lalrpop-util/LICENSE-MIT",
+      "sha256": "73CB5F952615BC21D11487CD7E0CF091967CC71D2E7D6CB93F96B36D47B250ED"
+    },
+    {
       "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/merman-0.9.2/LICENSE-APACHE",
       "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
     },
     {
       "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/merman-0.9.2/LICENSE-MIT",
       "sha256": "645FE3ACD17F0EC18B05A5CBC8071C16FC888BFA8356D9087C265DF69464D893"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-core/LICENSE-APACHE",
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-core/LICENSE-MIT",
+      "sha256": "645FE3ACD17F0EC18B05A5CBC8071C16FC888BFA8356D9087C265DF69464D893"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-core/THIRD_PARTY_LICENSES/dompurify/LICENSE",
+      "sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-core/THIRD_PARTY_LICENSES/mermaid/LICENSE",
+      "sha256": "EC9FB67DCB25ECCC416ED56E1AAB819222C805A2A4BFE4CB19E7556BF2FFDE80"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-core/THIRD_PARTY_LICENSES/sanitize-url/LICENSE",
+      "sha256": "0984740E0C3D725C8044DEC7EDCEFE1DBCE180EF5A7BC710C251E19607000158"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-core/THIRD_PARTY_LICENSES/zenuml-core/LICENSE",
+      "sha256": "D4A77CBF1DC0975CD4BE7266972DC6D3A6C6D68D43235384D6E4B6F12934E978"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/assets/zenuml/LICENSE",
+      "sha256": "D4A77CBF1DC0975CD4BE7266972DC6D3A6C6D68D43235384D6E4B6F12934E978"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/LICENSE-APACHE",
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/LICENSE-MIT",
+      "sha256": "645FE3ACD17F0EC18B05A5CBC8071C16FC888BFA8356D9087C265DF69464D893"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/THIRD_PARTY_LICENSES/d3-shape/LICENSE",
+      "sha256": "FAA682E3E430941F958D26180458F5934A62F58DAC4D70CCDD15608C15D0F884"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/THIRD_PARTY_LICENSES/fmin/LICENSE",
+      "sha256": "E4503E78185BFF178D3EE91835F082D05771DA1B3A2D795F17E03A40251BAB77"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/THIRD_PARTY_LICENSES/mermaid/LICENSE",
+      "sha256": "EC9FB67DCB25ECCC416ED56E1AAB819222C805A2A4BFE4CB19E7556BF2FFDE80"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/THIRD_PARTY_LICENSES/rough-rs/LICENSE",
+      "sha256": "0BEF4264AF5B4AF4DE4B01700F27AFB7BDAF7498949692FF272EBF24489B0531"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/THIRD_PARTY_LICENSES/roughjs/LICENSE",
+      "sha256": "DCA9A392272606AC748AC0976A2A1133F14EEF841C27BEAA51A844D53C56A09D"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/THIRD_PARTY_LICENSES/unicode-linebreak/LICENSE",
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/THIRD_PARTY_LICENSES/venn-js/LICENSE",
+      "sha256": "6A3508FEBF2CFCCFEE96597394543A6154A4BB0B1F91F28404BE42C09E9FCB54"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded/merman-render/THIRD_PARTY_LICENSES/zenuml-core/LICENSE",
+      "sha256": "D4A77CBF1DC0975CD4BE7266972DC6D3A6C6D68D43235384D6E4B6F12934E978"
     },
     {
       "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/RaTeX-LICENSE.txt",
@@ -1876,6 +1952,11 @@
       "path": "src/Notepads.Markdown/vendor/syntect",
       "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
       "license": "src/Notepads.Markdown/vendor/syntect/LICENSE.txt"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/merman-bounded",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/vendor/merman-bounded/merman-core/LICENSE-APACHE"
     },
     {
       "path": "src/Notepads.Markdown/vendor/ratex-bounded",

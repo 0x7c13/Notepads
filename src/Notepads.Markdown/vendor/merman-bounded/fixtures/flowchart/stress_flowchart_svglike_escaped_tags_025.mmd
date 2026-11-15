@@ -1,0 +1,22 @@
+---
+title: Stress flowchart svg-like escaped tags
+config:
+  htmlLabels: false
+  flowchart:
+    htmlLabels: false
+---
+flowchart LR
+%% Authored stress fixture (Mermaid@11.12.2): SVG-like labels with escaped HTML-ish tags and long words.
+
+accTitle: Flowchart stress - svg-like escaped tags
+accDescr: Exercises svg-like tokenization for escaped tag wrappers and long words in nodes, edges, and subgraph titles.
+
+A["<strong>Haiya</strong> and <em>em</em>"] -->|"Edge <b>label</b> wrappers"| B[supercalifragilisticexpialidocious]
+
+subgraph SG["<strong>Subgraph</strong> title"]
+  direction TB
+  C["x < y and y > z"] --> D["<u>under</u> and <i>italic</i>"]
+end
+
+B --> SG --> E["<span>tail</span>"]
+

@@ -1,0 +1,2864 @@
+{
+  "oracleCases": [
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(240, 100%, 76.2745098039%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "hsl(60, 100%, 86.2745098039%)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(240, 100%, 61.2745098039%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "rgba(232,232,232, 0.8)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(240, 100%, 46.2745098039%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "hsl(60, 100%, 3.7254901961%)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#ECECFF"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#333333"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(240, 100%, 97.2745098039%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(240, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "black"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(270, 100%, 91.2745098039%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(270, 100%, 89.2745098039%)"
+        }
+      },
+      "status": "ok",
+      "theme": "default"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "default"
+    },
+    {
+      "error": "Cannot create property 'l' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "default"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "default"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(240, 100%, 76.2745098039%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "hsl(60, 100%, 86.2745098039%)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(240, 100%, 61.2745098039%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "rgba(232,232,232, 0.8)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(240, 100%, 96.2745098039%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "hsl(60, 100%, 3.7254901961%)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#333333"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 21.3921568627%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 95.3921568627%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "black"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(270, 100%, 91.2745098039%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(270, 100%, 89.2745098039%)"
+        }
+      },
+      "status": "ok",
+      "theme": "default"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "base"
+    },
+    {
+      "error": "Cannot create property 'h' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "base"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "base"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 0%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 10%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(90, 65.3846153846%, 0%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 45.3921568627%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(214.9326923077, 139.2500000001, 63.5673076925)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 10.3921568627%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 15.3921568627%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(30, 50.3846153846%, 0.3921568627%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(30, 50.3846153846%, 0%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "#1f2020"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "lightgrey"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 22.3529411765%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(0, 0%, 34.4117647059%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 48.3529411765%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(133.6571428571, 129.7428571428, 129.7428571428)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#1f2020"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "lightgrey"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 2.3529411765%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 17.3529411765%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "lightgrey"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(210, 0%, 22.3529411765%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(210, 0%, 19.3529411765%)"
+        }
+      },
+      "status": "ok",
+      "theme": "dark"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "dark"
+    },
+    {
+      "error": "Cannot create property 'h' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "dark"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "dark"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#edcba9"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "black"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 30.3921568627%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(0, 0%, 34.4117647059%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 48.3529411765%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(133.6571428571, 129.7428571428, 129.7428571428)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "lightgrey"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 2.3529411765%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 17.3529411765%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "black"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(210, 0%, 22.3529411765%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(210, 0%, 19.3529411765%)"
+        }
+      },
+      "status": "ok",
+      "theme": "dark"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(78.1578947368, 58.4615384615%, 64.5098039216%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "hsl(258.1578947368, 58.4615384615%, 64.5098039216%)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "black"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(78.1578947368, 58.4615384615%, 39.5098039216%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "#e8e8e8"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(78.1578947368, 58.4615384615%, 49.5098039216%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(99.6153846152, 54.9423076922, 202.5576923076)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#cde498"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#000000"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(78.1578947368, 58.4615384615%, 94.5098039216%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(78.1578947368, 58.4615384615%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "black"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(108.1578947368, 28.4615384615%, 69.5098039216%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(108.1578947368, 28.4615384615%, 66.5098039216%)"
+        }
+      },
+      "status": "ok",
+      "theme": "forest"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "forest"
+    },
+    {
+      "error": "Cannot create property 'h' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "forest"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "forest"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 10.3921568627%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "hsl(30, 65.3846153846%, 10.3921568627%)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "black"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 0%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "#e8e8e8"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 45.3921568627%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(214.9326923077, 139.2500000001, 63.5673076925)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#000000"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(78.1578947368, 58.4615384615%, 94.5098039216%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(78.1578947368, 58.4615384615%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "black"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(108.1578947368, 28.4615384615%, 69.5098039216%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(108.1578947368, 28.4615384615%, 66.5098039216%)"
+        }
+      },
+      "status": "ok",
+      "theme": "forest"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "#555"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#aaaaaa"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#F4F4F4"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 23.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "white"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 70.6862745098%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(74.75, 74.75, 74.75)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#666"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "#f4f4f4"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(0, 0%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "neutral"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "neutral"
+    },
+    {
+      "error": "Cannot create property 'h' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "neutral"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "neutral"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "#555"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#aaaaaa"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#F4F4F4"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 43.3333333333%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "white"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 70.6862745098%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(74.75, 74.75, 74.75)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#666"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "#f4f4f4"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(0, 0%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "black"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "neutral"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 71.0784313725%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(140.1250000002, 140.1250000002, 7.375)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 61.0784313725%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-120, 0%, 80%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 71.0784313725%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(140.1250000002, 140.1250000002, 7.375)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#cccccc"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 95%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 92%)"
+        }
+      },
+      "status": "ok",
+      "theme": "neo"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "neo"
+    },
+    {
+      "error": "Cannot create property 'h' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "neo"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "neo"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 21.0784313725%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(249.625, 249.625, 152.8750000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 31.0784313725%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(90, 65.3846153846%, 0%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 100%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 0, 0)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 80%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 68%)"
+        }
+      },
+      "status": "ok",
+      "theme": "neo"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 28.3529411765%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(0, 100%, 27.1568627451%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(116.5, 255, 255)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#1f2020"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 9.5098039216%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 6.5098039216%)"
+        }
+      },
+      "status": "ok",
+      "theme": "neo-dark"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "neo-dark"
+    },
+    {
+      "error": "Cannot create property 'l' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "neo-dark"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "neo-dark"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 0%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 10%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(0, 100%, 27.1568627451%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(116.5, 255, 255)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 0%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 0%)"
+        }
+      },
+      "status": "ok",
+      "theme": "neo-dark"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 75%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(63.75, 63.75, 63.75)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#28253D"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 65%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-120, 0%, 80%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"Recursive Variable\", arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 71.0784313725%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(140.1250000002, 140.1250000002, 7.375)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#cccccc"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#28253D"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 95%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 92%)"
+        }
+      },
+      "status": "ok",
+      "theme": "redux"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "redux"
+    },
+    {
+      "error": "Cannot create property 'h' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "redux"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "redux"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 25%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(191.25, 191.25, 191.25)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(0, 0%, 35%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(90, 65.3846153846%, 0%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"Recursive Variable\", arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 100%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 0, 0)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 80%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 68%)"
+        }
+      },
+      "status": "ok",
+      "theme": "redux"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 28.3529411765%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"Recursive Variable\", arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#1f2020"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(60, 0%, 2.0588235294%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(60, 0%, 0%)"
+        }
+      },
+      "status": "ok",
+      "theme": "redux-dark"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "redux-dark"
+    },
+    {
+      "error": "Cannot create property 'l' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "redux-dark"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "redux-dark"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 0%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 10%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"Recursive Variable\", arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 45.3921568627%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(214.9326923077, 139.2500000001, 63.5673076925)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(60, 0%, 0%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(60, 0%, 0%)"
+        }
+      },
+      "status": "ok",
+      "theme": "redux-dark"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "#f4a8ff"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#0b5700"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#28253D"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(292.4137931034, 100%, 72.9411764706%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-120, 0%, 80%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"Recursive Variable\", arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 71.0784313725%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(140.1250000002, 140.1250000002, 7.375)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#cccccc"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#28253D"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 95%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 92%)"
+        }
+      },
+      "status": "ok",
+      "theme": "redux-color"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "redux-color"
+    },
+    {
+      "error": "Cannot create property 'h' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "redux-color"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "redux-color"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "#f4a8ff"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#0b5700"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(292.4137931034, 100%, 92.9411764706%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(90, 65.3846153846%, 0%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"Recursive Variable\", arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(240, 90%, 100%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 0, 0)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 80%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(180, 0%, 68%)"
+        }
+      },
+      "status": "ok",
+      "theme": "redux-color"
+    },
+    {
+      "id": "primary-null",
+      "overrides": {
+        "primaryColor": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "#f4a8ff"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#0b5700"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "hsl(292.4137931034, 100%, 7.9411764706%)"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(292.4137931034, 100%, 72.9411764706%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 28.3529411765%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"Recursive Variable\", arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "#ffffff"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#1f2020"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(60, 0%, 2.0588235294%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(60, 0%, 0%)"
+        }
+      },
+      "status": "ok",
+      "theme": "redux-dark-color"
+    },
+    {
+      "error": "Unsupported color format: \"\"",
+      "id": "primary-empty",
+      "overrides": {
+        "primaryColor": ""
+      },
+      "status": "error",
+      "theme": "redux-dark-color"
+    },
+    {
+      "error": "Cannot create property 'l' on number '17'",
+      "id": "primary-number",
+      "overrides": {
+        "primaryColor": 17
+      },
+      "status": "error",
+      "theme": "redux-dark-color"
+    },
+    {
+      "error": "Cannot read properties of undefined (reading 'is')",
+      "id": "primary-object",
+      "overrides": {
+        "primaryColor": {
+          "invalid": true
+        }
+      },
+      "status": "error",
+      "theme": "redux-dark-color"
+    },
+    {
+      "id": "dark-and-primary",
+      "overrides": {
+        "darkMode": true,
+        "primaryColor": "#123456"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "#f4a8ff"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "#0b5700"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "hsl(292.4137931034, 100%, 7.9411764706%)"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(292.4137931034, 100%, 92.9411764706%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": true
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(180, 1.5873015873%, 0%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"Recursive Variable\", arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "14px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(210, 65.3846153846%, 45.3921568627%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(214.9326923077, 139.2500000001, 63.5673076925)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#123456"
+        },
+        "radar.axisColor": {
+          "state": "missing"
+        },
+        "rowEven": {
+          "state": "missing"
+        },
+        "rowOdd": {
+          "state": "missing"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#e0dfdf"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(60, 0%, 0%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(60, 0%, 0%)"
+        }
+      },
+      "status": "ok",
+      "theme": "redux-dark-color"
+    },
+    {
+      "id": "font-null",
+      "overrides": {
+        "fontFamily": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "font-empty",
+      "overrides": {
+        "fontFamily": ""
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": ""
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "font-number",
+      "overrides": {
+        "fontFamily": 17
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": 17
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "font-size-null",
+      "overrides": {
+        "fontSize": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "scale-null",
+      "overrides": {
+        "cScale0": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "dark-null",
+      "overrides": {
+        "darkMode": null
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "dark-empty",
+      "overrides": {
+        "darkMode": ""
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": ""
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "dark-number-zero",
+      "overrides": {
+        "darkMode": 0
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": 0
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "dark-number-one",
+      "overrides": {
+        "darkMode": 1
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 18.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(161.5000000002, 191.7500000001, 255)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 28.3333333333%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": 1
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 63.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "#000000"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 83.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 88.3333333333%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 73.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 61.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "dark-string",
+      "overrides": {
+        "darkMode": "false"
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 18.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(161.5000000002, 191.7500000001, 255)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 28.3333333333%)"
+        },
+        "darkMode": {
+          "state": "value",
+          "value": "false"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 63.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "#000000"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": "#0b0b0b"
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 83.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 88.3333333333%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#eee"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 73.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 61.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    },
+    {
+      "id": "radar-axis-null",
+      "overrides": {
+        "radar": {
+          "axisColor": null
+        }
+      },
+      "selected": {
+        "cScale0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "cScaleInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "cScaleLabel0": {
+          "state": "value",
+          "value": "#333"
+        },
+        "cScalePeer0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 58.3333333333%)"
+        },
+        "darkMode": {
+          "state": "missing"
+        },
+        "edgeLabelBackground": {
+          "state": "value",
+          "value": "hsl(-79.4117647059, 100%, 93.3333333333%)"
+        },
+        "fontFamily": {
+          "state": "value",
+          "value": "\"trebuchet ms\", verdana, arial, sans-serif"
+        },
+        "fontSize": {
+          "state": "value",
+          "value": "16px"
+        },
+        "git0": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 68.3333333333%)"
+        },
+        "gitInv0": {
+          "state": "value",
+          "value": "rgb(0, 52.2500000001, 161.5000000002)"
+        },
+        "primaryColor": {
+          "state": "value",
+          "value": "#fff4dd"
+        },
+        "radar.axisColor": {
+          "state": "value",
+          "value": null
+        },
+        "rowEven": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 98.3333333333%)"
+        },
+        "rowOdd": {
+          "state": "value",
+          "value": "hsl(40.5882352941, 100%, 100%)"
+        },
+        "scaleLabelColor": {
+          "state": "value",
+          "value": "#333"
+        },
+        "surface0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 88.3333333333%)"
+        },
+        "surfacePeer0": {
+          "state": "value",
+          "value": "hsl(220.5882352941, 85%, 85.3333333333%)"
+        }
+      },
+      "status": "ok",
+      "theme": "base"
+    }
+  ],
+  "provenance": {
+    "generator": "cargo run -p xtask -- gen-theme-snapshot",
+    "mermaidPackageSha256": "2000f7182c400392b380043fc28079831302cff6a0bf8722762351185178b4e2",
+    "mermaidSourceCommit": "21f72f07ea22c0af48a3149c550654e80d8e40cb",
+    "mermaidSourceTag": "mermaid@12.1.0",
+    "mermaidVersion": "12.1.0"
+  },
+  "schemaVersion": 1
+}

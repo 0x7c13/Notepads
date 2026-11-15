@@ -1,0 +1,148 @@
+[package]
+name = "merman-render"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "Headless layout + SVG renderer for Mermaid (parity-focused; upstream SVG goldens)."
+documentation = "https://docs.rs/merman-render"
+readme = "README.md"
+keywords = ["mermaid", "diagrams", "svg", "layout", "headless"]
+categories = ["visualization"]
+exclude = [
+  "examples/*_debug_svg.rs",
+  "examples/ratex_math_audit.rs",
+  "tests/**",
+]
+
+[package.metadata.merman]
+artifact-profile-required = true
+fixed-capabilities = ["svg"]
+wasm-inputs = ["assets/zenuml"]
+
+[features]
+# Diagram selection is independent of output formats and optional layout engines.
+all-diagrams = [
+    "diagram-agentflow",
+    "diagram-architecture",
+    "diagram-block",
+    "diagram-c4",
+    "diagram-class",
+    "diagram-cynefin",
+    "diagram-er",
+    "diagram-event-modeling",
+    "diagram-flowchart",
+    "diagram-gantt",
+    "diagram-git-graph",
+    "diagram-info",
+    "diagram-ishikawa",
+    "diagram-journey",
+    "diagram-kanban",
+    "diagram-mindmap",
+    "diagram-packet",
+    "diagram-pie",
+    "diagram-quadrant-chart",
+    "diagram-radar",
+    "diagram-railroad",
+    "diagram-requirement",
+    "diagram-sankey",
+    "diagram-sequence",
+    "diagram-state",
+    "diagram-swimlane",
+    "diagram-timeline",
+    "diagram-tree-view",
+    "diagram-treemap",
+    "diagram-usecase",
+    "diagram-venn",
+    "diagram-wardley",
+    "diagram-xychart",
+    "diagram-zenuml",
+]
+diagram-architecture = ["merman-core/diagram-architecture"]
+diagram-block = ["merman-core/diagram-block"]
+diagram-c4 = ["merman-core/diagram-c4"]
+diagram-class = ["merman-core/diagram-class"]
+diagram-cynefin = ["merman-core/diagram-cynefin"]
+diagram-er = ["merman-core/diagram-er"]
+diagram-event-modeling = ["merman-core/diagram-event-modeling"]
+diagram-agentflow = ["merman-core/diagram-agentflow"]
+diagram-usecase = ["merman-core/diagram-usecase"]
+diagram-flowchart = ["merman-core/diagram-flowchart"]
+diagram-gantt = ["merman-core/diagram-gantt"]
+diagram-git-graph = ["merman-core/diagram-git-graph"]
+diagram-info = ["merman-core/diagram-info"]
+diagram-ishikawa = ["merman-core/diagram-ishikawa"]
+diagram-journey = ["merman-core/diagram-journey"]
+diagram-kanban = ["merman-core/diagram-kanban"]
+diagram-mindmap = ["merman-core/diagram-mindmap"]
+diagram-packet = ["merman-core/diagram-packet"]
+diagram-pie = ["merman-core/diagram-pie"]
+diagram-quadrant-chart = ["merman-core/diagram-quadrant-chart"]
+diagram-radar = ["merman-core/diagram-radar"]
+diagram-railroad = ["merman-core/diagram-railroad"]
+diagram-requirement = ["merman-core/diagram-requirement"]
+diagram-sankey = ["merman-core/diagram-sankey"]
+diagram-sequence = ["merman-core/diagram-sequence"]
+diagram-state = ["merman-core/diagram-state"]
+diagram-swimlane = ["merman-core/diagram-swimlane"]
+diagram-timeline = ["merman-core/diagram-timeline"]
+diagram-tree-view = ["merman-core/diagram-tree-view"]
+diagram-treemap = ["merman-core/diagram-treemap"]
+diagram-venn = ["merman-core/diagram-venn"]
+diagram-wardley = ["merman-core/diagram-wardley"]
+diagram-xychart = ["merman-core/diagram-xychart"]
+diagram-zenuml = ["merman-core/diagram-zenuml"]
+default = []
+system-clock = ["merman-core/system-clock"]
+system-timezone = ["merman-core/system-timezone"]
+system-random = ["merman-core/system-random"]
+system-timing = ["merman-core/system-timing"]
+layout-cytoscape = ["dep:manatee"]
+layout-elk = ["dep:merman-layout-elk"]
+math = [
+  "dep:ratex-layout",
+  "dep:ratex-parser",
+  "dep:ratex-svg",
+  "dep:ratex-types",
+  "ratex-svg/embed-fonts",
+]
+
+[dependencies]
+base64.workspace = true
+cssparser.workspace = true
+data-url.workspace = true
+dugong.workspace = true
+indexmap = { workspace = true, features = ["serde"] }
+kurbo.workspace = true
+libm.workspace = true
+manatee = { workspace = true, optional = true }
+merman-layout-elk = { workspace = true, optional = true }
+merman-core.workspace = true
+pulldown-cmark.workspace = true
+ratex-layout = { workspace = true, optional = true }
+ratex-parser = { workspace = true, optional = true }
+ratex-svg = { workspace = true, optional = true }
+ratex-types = { workspace = true, optional = true }
+rustc-hash.workspace = true
+roxmltree.workspace = true
+quick-xml.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+svgtypes.workspace = true
+thiserror.workspace = true
+roughr = { workspace = true, default-features = false }
+ryu-js.workspace = true
+unicode-width.workspace = true
+unicode-linebreak.workspace = true
+unicode-segmentation.workspace = true
+
+[dev-dependencies]
+# Browser geometry replays require the exact captured IEEE-754 values.
+serde_json = { workspace = true, features = ["float_roundtrip"] }
+futures = { workspace = true, features = ["executor"] }
+merman-core = { workspace = true, features = ["test-support"] }
+merman-fixture-render-context = { path = "../merman-fixture-render-context" }
+regex.workspace = true

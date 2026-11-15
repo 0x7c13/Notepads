@@ -36,9 +36,10 @@ are not runtime dependencies on that old repository or its artifacts.
 
 The migration manifest and this index are authored MIT metadata. They describe
 file preservation and input recovery; they grant no new renderer, UI or product
-qualification. Diagram platform test diagnostics go to a unique current-run
-directory below `LOCALAPPDATA/Notepads.Build/Markdown/tests`, or below the optional
-`NOTEPADS_MARKDOWN_TEST_OUTPUT` directory. Old artifacts are not required.
+qualification. Diagram platform failure diagnostics go to a unique run directory
+under `LOCALAPPDATA/Notepads.Build/Markdown/tests` by default. Set
+`NOTEPADS_MARKDOWN_TEST_OUTPUT` to choose an output root and export SVGs from the
+passing cases too. Each run uses only its current inputs and artifacts.
 
 Research-only provenance V2/V3, experiment descriptions and acquisition generators
 were archived outside the source tree. The 2026-11-15 namespace migration changed

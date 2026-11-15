@@ -1,0 +1,26 @@
+# ---------------------------------------------------------------------------------------------
+#  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+#  See LICENSE file in the project root for license information.
+# ---------------------------------------------------------------------------------------------
+[package]
+name = "markdown-diagram-platform"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.99"
+license = "MIT"
+publish = false
+
+[dependencies]
+markdown-mermaid = { path = "../../crates/markdown-mermaid", version = "=0.0.1" }
+markdown-memory = { path = "../../crates/markdown-memory", version = "=0.0.1" }
+merman-core = { version = "=0.9.2", default-features = false, features = ["diagram-flowchart"] }
+windows-numerics = "=0.3.1"
+windows = { version = "=0.62.2", default-features = false, features = ["Win32_Foundation", "Win32_Graphics_DirectWrite", "Win32_Graphics_Direct2D", "Win32_Graphics_Direct2D_Common", "Win32_System_Com"] }
+
+[dev-dependencies]
+merman = { version = "=0.9.2", default-features = false, features = ["diagram-flowchart", "svg"] }
+merman-render = { version = "=0.9.2", default-features = false, features = ["diagram-flowchart"] }
+unicode-segmentation = "=1.13.3"
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"

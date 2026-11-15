@@ -1,0 +1,54 @@
+{
+  "scope": "Current retained third-party forks; exact upstream comparison is vendor/forks.json",
+  "original_import_record_sha256": "94DC96AC2CE0E27307823BFAF6C6EBFE69483915B8958FDADC1B117744B92DFF",
+  "packages": [
+    {
+      "name": "lalrpop-util",
+      "version": "0.23.2",
+      "path": "vendor/merman-bounded/lalrpop-util",
+      "scope": "product",
+      "upstream": {
+        "archive_url": "https://static.crates.io/crates/lalrpop-util/lalrpop-util-0.23.2.crate",
+        "archive_sha256": "364B49D1C98C07972E16FE1346463BECC08BCD663DA04E6E37AB1BEA068DCE6A",
+        "vcs": {
+          "git": {
+            "sha1": "8abaee08d0751c9616448cab64e2b476717c66b4"
+          },
+          "path_in_vcs": "lalrpop-util"
+        }
+      }
+    },
+    {
+      "name": "merman-core",
+      "version": "0.9.2",
+      "path": "vendor/merman-bounded/merman-core",
+      "scope": "product",
+      "upstream": {
+        "archive_url": "https://static.crates.io/crates/merman-core/merman-core-0.9.2.crate",
+        "archive_sha256": "F1D2AFE2084C0223B772756489A5DA51AD0ECBD195AEF90268F3037648738796",
+        "vcs": {
+          "git": {
+            "sha1": "8e303a43b548c9e40e73f0bc657925d66e7d4fb5"
+          },
+          "path_in_vcs": "crates/merman-core"
+        }
+      }
+    },
+    {
+      "name": "merman-render",
+      "version": "0.9.2",
+      "path": "vendor/merman-bounded/merman-render",
+      "scope": "development-test-only",
+      "upstream": {
+        "archive_url": "https://static.crates.io/crates/merman-render/merman-render-0.9.2.crate",
+        "archive_sha256": "321C4CA6F834E07B01790C1BC2591DC3A51F450C56C4C71A8111000A50EFEC0F",
+        "vcs": {
+          "git": {
+            "sha1": "8e303a43b548c9e40e73f0bc657925d66e7d4fb5"
+          },
+          "path_in_vcs": "crates/merman-render"
+        }
+      }
+    }
+  ]
+}
