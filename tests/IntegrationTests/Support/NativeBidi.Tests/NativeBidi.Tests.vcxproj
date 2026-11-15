@@ -29,11 +29,12 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\src\Notepads.Editor\scintilla\winui;$(ProjectDir)..\..\..\..\src\Notepads.Editor\scintilla\src;$(ProjectDir)..\..\..\..\src\Notepads.Editor\scintilla\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>dwrite.lib;d2d1.lib;windowscodecs.lib;ole32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dwrite.lib;d2d1.lib;d3d11.lib;windowscodecs.lib;ole32.lib;oleaut32.lib;runtimeobject.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="AsyncSourcePixelTests.cpp" />
     <ClInclude Include="RowRenderingTests.h" />
     <ClInclude Include="LegacyColorTests.h" />
     <ClInclude Include="LegacyTarget.h" />

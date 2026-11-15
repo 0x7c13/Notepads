@@ -394,11 +394,13 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void InvalidateSelection(SelectionRange newMain, bool invalidateWholeSelection=false);
 	void InvalidateWholeSelection();
 	SelectionRange LineSelectionRange(SelectionPosition currentPos_, SelectionPosition anchor_) const noexcept;
-	void SetSelection(SelectionPosition currentPos_, SelectionPosition anchor_);
-	void SetSelection(Sci::Position currentPos_, Sci::Position anchor_);
-	void SetSelection(SelectionPosition currentPos_);
-	void SetEmptySelection(SelectionPosition currentPos_);
-	void SetEmptySelection(Sci::Position currentPos_);
+	enum class SelectionOrigin { Ordinary, Scroll };
+	virtual void SelectionWritten(SelectionOrigin) noexcept {}
+	void SetSelection(SelectionPosition currentPos_, SelectionPosition anchor_, SelectionOrigin origin = SelectionOrigin::Ordinary);
+	void SetSelection(Sci::Position currentPos_, Sci::Position anchor_, SelectionOrigin origin = SelectionOrigin::Ordinary);
+	void SetSelection(SelectionPosition currentPos_, SelectionOrigin origin = SelectionOrigin::Ordinary);
+	void SetEmptySelection(SelectionPosition currentPos_, SelectionOrigin origin = SelectionOrigin::Ordinary);
+	void SetEmptySelection(Sci::Position currentPos_, SelectionOrigin origin = SelectionOrigin::Ordinary);
 	void SetSelectionFromSerialized(const char *serialized);
 	enum class AddNumber { one, each };
 	void MultipleSelectAdd(AddNumber addNumber);
@@ -409,8 +411,8 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	SelectionPosition MovePositionOutsideChar(SelectionPosition pos, Sci::Position moveDir, bool checkLineEnd=true) const;
 	void MovedCaret(SelectionPosition newPos, SelectionPosition previousPos,
 		bool ensureVisible, CaretPolicies policies);
-	void MovePositionTo(SelectionPosition newPos, Selection::SelTypes selt=Selection::SelTypes::none, bool ensureVisible=true);
-	void MovePositionTo(Sci::Position newPos, Selection::SelTypes selt=Selection::SelTypes::none, bool ensureVisible=true);
+	void MovePositionTo(SelectionPosition newPos, Selection::SelTypes selt=Selection::SelTypes::none, bool ensureVisible=true, SelectionOrigin origin = SelectionOrigin::Ordinary);
+	void MovePositionTo(Sci::Position newPos, Selection::SelTypes selt=Selection::SelTypes::none, bool ensureVisible=true, SelectionOrigin origin = SelectionOrigin::Ordinary);
 	SelectionPosition MovePositionSoVisible(SelectionPosition pos, int moveDir);
 	SelectionPosition MovePositionSoVisible(Sci::Position pos, int moveDir);
 	Point PointMainCaret();
@@ -427,7 +429,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	void MoveSelectedLines(int lineDelta);
 	void MoveSelectedLinesUp();
 	void MoveSelectedLinesDown();
-	void MoveCaretInsideView(bool ensureVisible=true);
+	void MoveCaretInsideView(bool ensureVisible=true, SelectionOrigin origin = SelectionOrigin::Ordinary);
 	Sci::Line DisplayFromPosition(Sci::Position pos);
 	Sci::Line DisplayFromPosition(SelectionPosition pos);
 

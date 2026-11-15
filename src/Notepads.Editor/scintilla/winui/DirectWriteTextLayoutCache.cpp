@@ -46,10 +46,12 @@ void DirectWriteTextLayoutCache::Evict(Entry &entry) noexcept {
 	entry = {};
 }
 
-ComPtr<IDWriteTextLayout> DirectWriteTextLayoutCache::Get(std::wstring_view text, float width, float height) {
+ComPtr<IDWriteTextLayout> DirectWriteTextLayoutCache::Get(std::wstring_view text, float width, float height,
+	bool *fullyConfigured) {
+	if (fullyConfigured) *fullyConfigured = false;
 	// Oversized/invalid inputs neither consume the budget nor evict useful rows.
 	if (text.empty() || text.size() > MaximumEntryUnits || !std::isfinite(width) || !std::isfinite(height))
-		return CreateDrawingTextLayout(factory.Get(), format.Get(), text, width, height);
+		return CreateDrawingTextLayout(factory.Get(), format.Get(), text, width, height, fullyConfigured);
 	const size_t hash = std::hash<std::wstring_view>{}(text) ^
 		(std::hash<float>{}(width) << 1) ^ (std::hash<float>{}(height) << 2);
 	const size_t first = (hash % (MaximumEntries / Ways)) * Ways;
@@ -57,6 +59,7 @@ ComPtr<IDWriteTextLayout> DirectWriteTextLayoutCache::Get(std::wstring_view text
 	for (size_t i = first; i < first + Ways; ++i) {
 		auto &entry = entries[i];
 		if (entry.layout && entry.width == width && entry.height == height && entry.text == text) {
+			if (fullyConfigured) *fullyConfigured = true;
 			entry.used = ++clock;
 			return entry.layout;
 		}
@@ -67,6 +70,7 @@ ComPtr<IDWriteTextLayout> DirectWriteTextLayoutCache::Get(std::wstring_view text
 	// Preserve the legacy draw after a typography failure, but retry next time
 	// rather than retaining an incompletely configured layout.
 	if (!cacheable) return layout;
+	if (fullyConfigured) *fullyConfigured = true;
 	std::wstring ownedText(text); // Allocate before changing retention/accounting.
 	Evict(*victim);
 	while (textUnits + text.size() > MaximumTextUnits) {

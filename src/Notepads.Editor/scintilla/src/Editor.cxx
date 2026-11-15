@@ -964,7 +964,7 @@ SelectionRange Editor::LineSelectionRange(SelectionPosition currentPos_, Selecti
 	return SelectionRange(currentPos_, anchor_);
 }
 
-void Editor::SetSelection(SelectionPosition currentPos_, SelectionPosition anchor_) {
+void Editor::SetSelection(SelectionPosition currentPos_, SelectionPosition anchor_, SelectionOrigin origin) {
 	currentPos_ = ClampPositionIntoDocument(currentPos_);
 	anchor_ = ClampPositionIntoDocument(anchor_);
 	const Sci::Line currentLine = pdoc->SciLineFromPosition(currentPos_.Position());
@@ -979,6 +979,7 @@ void Editor::SetSelection(SelectionPosition currentPos_, SelectionPosition ancho
 	}
 	sel.RangeMain() = rangeNew;
 	SetRectangularRange();
+	SelectionWritten(origin);
 	ClaimSelection();
 	SetHoverIndicatorPosition(sel.MainCaret());
 
@@ -988,12 +989,12 @@ void Editor::SetSelection(SelectionPosition currentPos_, SelectionPosition ancho
 	QueueIdleWork(WorkItems::updateUI);
 }
 
-void Editor::SetSelection(Sci::Position currentPos_, Sci::Position anchor_) {
-	SetSelection(SelectionPosition(currentPos_), SelectionPosition(anchor_));
+void Editor::SetSelection(Sci::Position currentPos_, Sci::Position anchor_, SelectionOrigin origin) {
+	SetSelection(SelectionPosition(currentPos_), SelectionPosition(anchor_), origin);
 }
 
 // Just move the caret on the main selection
-void Editor::SetSelection(SelectionPosition currentPos_) {
+void Editor::SetSelection(SelectionPosition currentPos_, SelectionOrigin origin) {
 	currentPos_ = ClampPositionIntoDocument(currentPos_);
 	const Sci::Line currentLine = pdoc->SciLineFromPosition(currentPos_.Position());
 	if (sel.Count() > 1 || !(sel.RangeMain().caret == currentPos_) ||
@@ -1010,6 +1011,7 @@ void Editor::SetSelection(SelectionPosition currentPos_) {
 		sel.RangeMain() =
 			SelectionRange(SelectionPosition(currentPos_), sel.RangeMain().anchor);
 	}
+	SelectionWritten(origin);
 	ClaimSelection();
 	SetHoverIndicatorPosition(sel.MainCaret());
 
@@ -1019,7 +1021,7 @@ void Editor::SetSelection(SelectionPosition currentPos_) {
 	QueueIdleWork(WorkItems::updateUI);
 }
 
-void Editor::SetEmptySelection(SelectionPosition currentPos_) {
+void Editor::SetEmptySelection(SelectionPosition currentPos_, SelectionOrigin origin) {
 	const Sci::Line currentLine = pdoc->SciLineFromPosition(currentPos_.Position());
 	SelectionRange rangeNew(ClampPositionIntoDocument(currentPos_));
 	if (sel.Count() > 1 || !(sel.RangeMain() == rangeNew) ||
@@ -1030,6 +1032,7 @@ void Editor::SetEmptySelection(SelectionPosition currentPos_) {
 	sel.Clear();
 	sel.RangeMain() = rangeNew;
 	SetRectangularRange();
+	SelectionWritten(origin);
 	ClaimSelection();
 	SetHoverIndicatorPosition(sel.MainCaret());
 
@@ -1039,8 +1042,8 @@ void Editor::SetEmptySelection(SelectionPosition currentPos_) {
 	QueueIdleWork(WorkItems::updateUI);
 }
 
-void Editor::SetEmptySelection(Sci::Position currentPos_) {
-	SetEmptySelection(SelectionPosition(currentPos_));
+void Editor::SetEmptySelection(Sci::Position currentPos_, SelectionOrigin origin) {
+	SetEmptySelection(SelectionPosition(currentPos_), origin);
 }
 
 void Editor::SetSelectionFromSerialized(const char *serialized) {
@@ -1194,7 +1197,7 @@ void Editor::MovedCaret(SelectionPosition newPos, SelectionPosition previousPos,
 	}
 }
 
-void Editor::MovePositionTo(SelectionPosition newPos, Selection::SelTypes selt, bool ensureVisible) {
+void Editor::MovePositionTo(SelectionPosition newPos, Selection::SelTypes selt, bool ensureVisible, SelectionOrigin origin) {
 	const SelectionPosition spCaret = ((sel.Count() == 1) && sel.Empty()) ?
 		sel.Last() : SelectionPosition(Sci::invalidPosition);
 
@@ -1217,16 +1220,16 @@ void Editor::MovePositionTo(SelectionPosition newPos, Selection::SelTypes selt, 
 		sel.selType = selt;
 	}
 	if (selt != Selection::SelTypes::none || sel.MoveExtends()) {
-		SetSelection(newPos);
+		SetSelection(newPos, origin);
 	} else {
-		SetEmptySelection(newPos);
+		SetEmptySelection(newPos, origin);
 	}
 
 	MovedCaret(newPos, spCaret, ensureVisible, caretPolicies);
 }
 
-void Editor::MovePositionTo(Sci::Position newPos, Selection::SelTypes selt, bool ensureVisible) {
-	MovePositionTo(SelectionPosition(newPos), selt, ensureVisible);
+void Editor::MovePositionTo(Sci::Position newPos, Selection::SelTypes selt, bool ensureVisible, SelectionOrigin origin) {
+	MovePositionTo(SelectionPosition(newPos), selt, ensureVisible, origin);
 }
 
 SelectionPosition Editor::MovePositionSoVisible(SelectionPosition pos, int moveDir) {
@@ -1449,20 +1452,20 @@ void Editor::MoveSelectedLinesDown() {
 	MoveSelectedLines(1);
 }
 
-void Editor::MoveCaretInsideView(bool ensureVisible) {
+void Editor::MoveCaretInsideView(bool ensureVisible, SelectionOrigin origin) {
 	const PRectangle rcClient = GetTextRectangle();
 	const Point pt = PointMainCaret();
 	if (pt.y < rcClient.top) {
 		const auto row = DisplayRowFromY(rcClient.top + vs.lineHeight - 1, vs.lineHeight);
 		MovePositionTo(SPositionFromTextLocation(GetLastXChosen(pt),
 					static_cast<int>(std::max(rcClient.top, DisplayRowY(row, vs.lineHeight))), UserVirtualSpace()),
-					Selection::SelTypes::none, ensureVisible);
+					Selection::SelTypes::none, ensureVisible, origin);
 	} else if ((pt.y + vs.lineHeight - 1) > rcClient.bottom) {
 		const auto row = DisplayRowFromY(rcClient.bottom - vs.lineHeight, vs.lineHeight);
 		const auto yOfLastLineFullyDisplayed = std::max(rcClient.top, DisplayRowY(row, vs.lineHeight));
 		MovePositionTo(SPositionFromTextLocation(GetLastXChosen(pt),
 					static_cast<int>(yOfLastLineFullyDisplayed), UserVirtualSpace()),
-		        Selection::SelTypes::none, ensureVisible);
+		        Selection::SelTypes::none, ensureVisible, origin);
 	}
 }
 
@@ -4570,7 +4573,7 @@ int Editor::KeyCommand(Message iMessage) {
 		break;
 	case Message::LineScrollDown:
 		ScrollTo(topLine + 1);
-		MoveCaretInsideView(false);
+		MoveCaretInsideView(false, SelectionOrigin::Scroll);
 		break;
 	case Message::LineUp:
 		CursorUpOrDown(-1, Selection::SelTypes::none);
@@ -4589,7 +4592,7 @@ int Editor::KeyCommand(Message iMessage) {
 		break;
 	case Message::LineScrollUp:
 		ScrollTo(topLine - 1);
-		MoveCaretInsideView(false);
+		MoveCaretInsideView(false, SelectionOrigin::Scroll);
 		break;
 
 	case Message::CharLeft:

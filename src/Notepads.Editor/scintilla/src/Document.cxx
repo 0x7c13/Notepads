@@ -2755,6 +2755,16 @@ void Document::NotifyStylingCompleted() {
 	}
 }
 
+bool Document::EnsureStyledToWithinLimit(Sci::Position pos, Sci::Position maximumBytes) {
+	if (pos <= GetEndStyled()) return true;
+	// Native lexing restarts the partially styled line, including bytes that
+	// already have styles. Bound that complete range, not just its suffix.
+	const auto stylingStart = LineStartPosition(GetEndStyled());
+	if (maximumBytes < 0 || pos - stylingStart > maximumBytes) return false;
+	EnsureStyledTo(pos);
+	return GetEndStyled() >= pos;
+}
+
 void Document::StyleToAdjustingLineDuration(Sci::Position pos) {
 	const Sci::Position stylingStart = GetEndStyled();
 	ElapsedPeriod epStyling;

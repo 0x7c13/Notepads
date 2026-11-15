@@ -268,6 +268,9 @@ public:
 	virtual void DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
 	virtual void DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore, ColourRGBA back) = 0;
 	virtual void DrawTextTransparent(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, ColourRGBA fore) = 0;
+	// Optional platform lookahead. The caller must install an empty clip and
+	// the backend must suppress ordinary text painting before enabling this.
+	virtual bool CanPrefetchText() const noexcept { return false; }
 	virtual void MeasureWidths(const Font *font_, std::string_view text, XYPOSITION *positions) = 0;
 	virtual XYPOSITION WidthText(const Font *font_, std::string_view text) = 0;
 

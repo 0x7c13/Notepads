@@ -788,7 +788,8 @@
             "src/Notepads.Editor/WinUIEditor/pch.h",
             "src/Notepads.Editor/WinUIEditor/TextRangeProvider.cpp",
             "src/Notepads.Editor/WinUIEditor/Wrapper.cpp",
-            "src/Notepads.Editor/WinUIEditor/Wrapper.h"
+            "src/Notepads.Editor/WinUIEditor/Wrapper.h",
+            "src/Notepads.Editor/WinUIEditor/EditorBaseControl.SourceViewport.cpp"
           ]
         },
         {
@@ -1434,7 +1435,8 @@
           "lines": 9,
           "sha256": "F120428E15890B8B78452F0B944A084C868AD5C08F6C3BD2BA451EE75F574CF4",
           "paths": [
-            "src/Notepads.Editor/scintilla/winui/ScintillaWin.cxx"
+            "src/Notepads.Editor/scintilla/winui/ScintillaWin.cxx",
+            "src/Notepads.Editor/scintilla/winui/ScintillaWin.SourceViewport.cxx"
           ]
         },
         {

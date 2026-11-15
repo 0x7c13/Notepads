@@ -10,6 +10,17 @@ import "IEditorAccess.idl";
 
 namespace WinUIEditor
 {
+    // An immutable snapshot of the first actual display row and its next source boundary.
+    // Byte positions are counted UTF-8; Fraction uses the source's painted physical row.
+    struct SourceViewportSpan
+    {
+        Int64 StartByte;
+        Int64 EndByte;
+        Int64 DisplayRow;
+        Double Fraction;
+        Boolean IsAvailable;
+    };
+
 	[default_interface]
 	[webhosthidden]
 	runtimeclass EditorBaseControl : DUX.Controls.Control, IEditorAccess
@@ -38,6 +49,7 @@ namespace WinUIEditor
 		void ScrollBy(Double horizontalDelta, Double verticalDelta, Boolean animated);
 		Boolean IsScrollAnimating { get; };
 		void CancelScrollAnimation();
+        static UInt32 VerticalWheelScrollLines { get; };
 		// Raised once per user scroll interaction, before the viewport moves.
 		// Horizontal-only input raises it too: observers that share a viewport
 		// should retire their own motion regardless of the axis.
@@ -45,11 +57,26 @@ namespace WinUIEditor
 		// Current or pending DIP offset from the reading-order leading edge.
 		Double DisplayHorizontalOffset { get; };
 		Int64 DisplayFirstVisibleRow { get; };
+		// Counted UTF-8 anchor for the first actual display row, including soft wraps.
+		// Unavailable while a saved viewport or its layout is awaiting paint.
+		Int64 ViewportSourceByte { get; };
+        SourceViewportSpan GetSourceViewport();
+        Boolean SetViewportBetweenSourcePositions(Int64 start, Int64 end, Double progress);
+        // Actual vertical travel; -1 when the view has no usable scroll range.
+        Double VerticalScrollProgress { get; };
+        Double VerticalScrollExtent { get; };
+        Boolean TrySetVerticalScrollProgress(Double progress);
+		// Align the display row containing this UTF-8 byte without moving selection/focus.
+		void RevealSourceByte(Int64 position);
 		Boolean IsViewportRestorePending { get; };
 		// Native gutter in control-relative DIPs, excluding text padding and scrollbars.
 		Windows.Foundation.Rect GutterBounds { get; };
 		// Coalesced after arrangement, including position-only scrollbar-side changes.
 		event Windows.Foundation.EventHandler<Object> ViewportGeometryChanged;
 		event Windows.Foundation.EventHandler<Double> DpiChanged;
+        // Current native selection origin; invalidated by a newer edit or navigation.
+        Boolean IsSelectionFromScroll { get; };
+        UInt64 DocumentAttachmentGeneration { get; };
+        UInt64 SelectionRevision { get; };
 	}
 }

@@ -218,6 +218,8 @@
     <ClInclude Include="..\scintilla\winui\DirectWriteRunLayout.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteRenderer.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteTextLayoutCache.h" />
+    <ClInclude Include="..\scintilla\winui\DirectWriteAsyncTextCache.h" />
+    <ClInclude Include="..\scintilla\src\TextPrefetchPlan.h" />
     <ClInclude Include="..\scintilla\winui\Utf8PositionIndex.h" />
     <ClInclude Include="..\scintilla\winui\SurfaceDrawSession.h" />
     <ClInclude Include="..\scintilla\winui\WinTypes.h" />
@@ -414,5 +416,11 @@
     <ClCompile Include="..\scintilla\src\DisplayLineMap.cxx" />
     <Midl Include="EditorDiffResult.idl" />
     <Midl Include="EditorSyntax.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EditorBaseControl.SourceViewport.cpp" />
+    <ClCompile Include="..\scintilla\winui\ScintillaWin.SourceViewport.cxx">
+      <Filter>Scintilla</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -21,6 +21,7 @@ namespace WinUIEditor
 		void SetMouseCapture(bool on);
 		bool HaveMouseCapture();
 		bool IsEnabled() const noexcept;
+		bool IsDrawingVisible() const noexcept;
 		void SetScrollStarted(std::function<void()> callback) { _scrollStarted = std::move(callback); }
 		void NotifyScrollStarted() { if (_scrollStarted) _scrollStarted(); }
 

@@ -11,6 +11,8 @@
 #ifndef EDITVIEW_H
 #define EDITVIEW_H
 
+#include "TextPrefetchPlan.h"
+
 namespace Scintilla::Internal {
 
 // A text-area coordinate retained across paragraph layout. Right-aligned
@@ -161,6 +163,14 @@ public:
 	Sci::Position StartEndDisplayLine(Surface *surface, const EditModel &model, Sci::Position pos, bool start, const ViewStyle &vs);
 
 private:
+	Sci::Line prefetchForward = -1;
+	Sci::Line prefetchBackward = -1;
+	TextPrefetchPlan expensivePrefetch;
+	uint64_t expensiveAttachment{}, expensiveRevision{};
+	unsigned expensiveNext = 0;
+	bool expensiveValid = false;
+	void PrefetchLine(Surface *surface, const EditModel &model, const ViewStyle &vsDraw,
+		Sci::Line line, int length, Sci::Line row, PRectangle rcClient, bool canonicalY, unsigned &remaining);
 	void DrawDisplayGap(Surface *surfaceWindow, Surface *surface, PRectangle rcGap,
 		ColourRGBA back, ColourRGBA gap, ColourRGBA hatch);
 	void UpdateMaxWidth(XYPOSITION width) noexcept;
@@ -188,6 +198,10 @@ private:
 		Sci::Line line, Sci::Line lineVisible, int xOrigin, PRectangle rcLine, int subLine, DrawPhase phase);
 
 public:
+	void PrefetchText(Surface *surface, const EditModel &model, const ViewStyle &vsDraw,
+		PRectangle rcArea, PRectangle rcClient, bool forward, unsigned &remaining);
+	void PrefetchExpensiveText(Surface *surface, const EditModel &model, const ViewStyle &vsDraw,
+		PRectangle rcClient, uint64_t attachment, uint64_t revision, unsigned &remaining);
 	void PaintText(Surface *surfaceWindow, const EditModel &model, const ViewStyle &vsDraw,
 		PRectangle rcArea, PRectangle rcClient);
 	Sci::Position FormatRange(bool draw, CharacterRangeFull chrg, Rectangle rc, Surface *surface, Surface *surfaceMeasure,

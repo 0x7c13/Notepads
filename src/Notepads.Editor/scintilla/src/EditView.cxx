@@ -2857,6 +2857,101 @@ void EditView::DrawLine(Surface *surface, const EditModel &model, const ViewStyl
 	}
 }
 
+void EditView::PrefetchLine(Surface *surface, const EditModel &model, const ViewStyle &vsDraw,
+	Sci::Line line, int length, Sci::Line row, PRectangle rcClient, bool canonicalY, unsigned &remaining) {
+	if (!remaining || !surface->CanPrefetchText()) return;
+	// Lookahead may reach a native-lexed row before visible styling does.
+	// Rasterizing its temporary default style wastes pixels and worker slots.
+	// Keep this optional catch-up bounded and avoid container style callbacks.
+	const auto lexer = model.pdoc->GetLexInterface();
+	if (lexer && !lexer->UseContainerLexing() &&
+		!model.pdoc->EnsureStyledToWithinLimit(model.pdoc->LineStart(line + 1), TextPrefetchPlan::MaximumBytes)) return;
+	LineLayout layout(line, length);
+	--remaining;
+	LayoutLine(model, surface, vsDraw, &layout, model.wrapWidth);
+	if (layout.paragraph || layout.lines != 1 || layout.GetPosition(layout.numCharsInLine) > 4096) return;
+	auto rectangle = vsDraw.TextRectangle(rcClient, model.BidirectionalR2L());
+	rectangle.top = canonicalY ? 0 : model.DisplayRowY(row, vsDraw.lineHeight);
+	rectangle.bottom = rectangle.top + vsDraw.lineHeight;
+	const auto origin = model.GetVisibleOriginInMain();
+	const int xStart = vsDraw.TextStart(model.BidirectionalR2L()) - model.xOffset + static_cast<int>(origin.x);
+	const auto start = model.pdoc->LineStart(line);
+	const ForwardRange range(layout.SubLineRange(0, LineLayout::Scope::visibleOnly));
+	DrawForeground(surface, model, vsDraw, &layout, xStart, rectangle, 0, row, range, start, {});
+}
+
+void EditView::PrefetchExpensiveText(Surface *surface, const EditModel &model, const ViewStyle &vsDraw,
+	PRectangle rcClient, uint64_t attachment, uint64_t revision, unsigned &remaining) {
+	if (!remaining || bufferedDraw || model.pdoc->dbcsCodePage != CpUtf8 || model.BidirectionalR2L() ||
+		vsDraw.lineHeight <= 0 || !surface->CanPrefetchText()) return;
+	if (model.pdoc->Length() == 0) return;
+	// This startup plan is armed by an accepted semantic follow request. Text
+	// edits cancel outstanding candidates; they never rescan an ASCII document.
+	if (expensiveValid && expensiveAttachment == attachment && expensiveRevision != revision) {
+		expensiveRevision = revision;
+		expensiveNext = static_cast<unsigned>(expensivePrefetch.candidates.size());
+		return;
+	}
+	if (!expensiveValid || expensiveAttachment != attachment) {
+		expensivePrefetch = {};
+		expensiveNext = 0;
+		std::string text;
+		for (Sci::Line line = 0; line < model.pdoc->LinesTotal() && line < TextPrefetchPlan::MaximumLines; ++line) {
+			const auto start = model.pdoc->LineStart(line);
+			const auto end = model.pdoc->LineStart(line + 1);
+			if (start >= static_cast<Sci::Position>(TextPrefetchPlan::MaximumBytes) ||
+				end > static_cast<Sci::Position>(TextPrefetchPlan::MaximumBytes)) break;
+			const auto length = end - start;
+			if (length <= 0 || length > 4096 || !model.pcs->GetVisible(line)) continue;
+			text.resize(static_cast<size_t>(length));
+			model.pdoc->GetCharRange(text.data(), start, length);
+			const auto weight = TextPrefetchPlan::Weight(text);
+			if (weight < 8 || weight <= expensivePrefetch.candidates.back().weight) continue;
+			if (model.BidirectionalEnabled() && surface->NeedsParagraphLayout(text)) continue;
+			expensivePrefetch.Consider(line, static_cast<int>(length), weight);
+		}
+		expensiveAttachment = attachment;
+		expensiveRevision = revision;
+		expensiveValid = true;
+	}
+	while (remaining && expensiveNext < expensivePrefetch.candidates.size() && surface->CanPrefetchText()) {
+		const auto &candidate = expensivePrefetch.candidates[expensiveNext++];
+		if (candidate.line < 0) continue;
+		const auto line = static_cast<Sci::Line>(candidate.line);
+		PrefetchLine(surface, model, vsDraw, line, candidate.bytes, model.pcs->DisplayFromDoc(line), rcClient, true, remaining);
+	}
+}
+
+void EditView::PrefetchText(Surface *surface, const EditModel &model, const ViewStyle &vsDraw,
+	PRectangle rcArea, PRectangle rcClient, bool forward, unsigned &remaining) {
+	if (!remaining || bufferedDraw || model.pdoc->dbcsCodePage != CpUtf8 || model.BidirectionalR2L() ||
+		vsDraw.lineHeight <= 0 || !surface->CanPrefetchText()) return;
+	const auto [first, end] = model.VisibleDisplayRows(rcArea, vsDraw.lineHeight);
+	if (first >= end) return;
+	auto &cursor = forward ? prefetchForward : prefetchBackward;
+	if (cursor < first || cursor >= end) cursor = first;
+	std::string text;
+	for (Sci::Line scanned = 0; scanned < std::min<Sci::Line>(128, end - first) && remaining && surface->CanPrefetchText(); ++scanned) {
+		const Sci::Line row = cursor;
+		cursor = row + 1 < end ? row + 1 : first;
+		if (model.pcs->IsDisplayGap(row)) continue;
+		const auto line = model.pcs->DocFromDisplay(row);
+		if (model.pcs->DisplayFromDoc(line) != row) continue;
+		const auto start = model.pdoc->LineStart(line);
+		const auto length = model.pdoc->LineStart(line + 1) - start;
+		if (length <= 0 || length > 4096) continue;
+		text.resize(static_cast<size_t>(length));
+		model.pdoc->GetCharRange(text.data(), start, length);
+		if (!std::any_of(text.begin(), text.end(), [](unsigned char ch) { return ch >= 0xF0 && ch <= 0xF4; })) continue;
+		if (model.BidirectionalEnabled() && surface->NeedsParagraphLayout(text)) continue;
+		// Lookahead must never evict visible rows from LineCache.Page, whose
+		// page-sized modulo mapping deliberately favours the current viewport.
+		// Reuse the exact style/selection/representation segmenter. This does
+		// not update width tracking, caret ownership or document/viewport state.
+		PrefetchLine(surface, model, vsDraw, line, static_cast<int>(length), row, rcClient, false, remaining);
+	}
+}
+
 void EditView::PaintText(Surface *surfaceWindow, const EditModel &model, const ViewStyle &vsDraw,
 	PRectangle rcArea, PRectangle rcClient) {
 	// Allow text at start of line to overlap 1 pixel into the margin as this displays

@@ -14,6 +14,11 @@ extern void ReleaseD2D() noexcept;
 extern ID2D1Factory1 *pD2DFactory;
 extern IDWriteFactory1 *pIDWriteFactory;
 
+// Called only while the window surface is clipped to an empty area. Normal
+// text dispatch then requests immutable offscreen pixels without painting.
+bool SetTextPrefetch(Surface *surface, bool enabled) noexcept;
+bool CanPrefetchSourceText() noexcept;
+
 using DCRenderTarget = winrt::com_ptr<ID2D1DCRenderTarget>;
 
 using D3D11Device = winrt::com_ptr<ID3D11Device1>;

@@ -624,6 +624,7 @@ public:
 	bool SCI_METHOD SetStyles(Sci_Position length, const char *styles) override;
 	Sci::Position GetEndStyled() const noexcept { return endStyled; }
 	void EnsureStyledTo(Sci::Position pos);
+	bool EnsureStyledToWithinLimit(Sci::Position pos, Sci::Position maximumBytes);
 	void StyleToAdjustingLineDuration(Sci::Position pos);
 	int GetStyleClock() const noexcept { return styleClock; }
 	void IncrementStyleClock() noexcept;

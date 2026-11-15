@@ -24,6 +24,7 @@ namespace winrt::WinUIEditor::implementation
 		static winrt::fire_and_forget final_release(std::unique_ptr<EditorBaseControl> self) noexcept;
 
 		WinUIEditor::Editor Editor();
+        static uint32_t VerticalWheelScrollLines();
 		bool IsComposing() const noexcept { return _scintilla->IsComposing(); }
 		bool HasTextStoreLock() const noexcept { return _scintilla->HasTextStoreLock(); }
 		bool MouseWheelZoomEnabled() const noexcept { return _mouseWheelZoomEnabled; }
@@ -44,6 +45,13 @@ namespace winrt::WinUIEditor::implementation
 		void ScrollStarted(event_token const &token) noexcept { _scrollStarted.remove(token); }
 		double DisplayHorizontalOffset() const noexcept { return _scintilla->DisplayHorizontalOffset(); }
 		int64_t DisplayFirstVisibleRow() const noexcept { return _scintilla->DisplayFirstVisibleRow(); }
+		int64_t ViewportSourceByte();
+        WinUIEditor::SourceViewportSpan GetSourceViewport();
+        bool SetViewportBetweenSourcePositions(int64_t start, int64_t end, double progress);
+        double VerticalScrollProgress();
+        double VerticalScrollExtent();
+        bool TrySetVerticalScrollProgress(double progress);
+		void RevealSourceByte(int64_t position);
 		bool IsViewportRestorePending() const noexcept { return _scintilla->IsViewportRestorePending(); }
 		Windows::Foundation::Rect GutterBounds();
 		bool AutomationPointFromRoot(Windows::Foundation::Point &point) const;
@@ -70,9 +78,12 @@ namespace winrt::WinUIEditor::implementation
 		const Scintilla::Internal::Document &LeasedDocument() const;
 		std::shared_ptr<::WinUIEditor::NativeDocumentJournal> PrepareJournalReplacement();
 		bool IsFinalized() const noexcept { return _uiResourcesFinalized.load(); }
+		bool IsDrawingVisible() noexcept;
 		uint64_t DocumentSequence() const noexcept;
 		uint64_t DocumentRevision() const noexcept;
 		uint64_t SelectionRevision() const noexcept;
+        bool IsSelectionFromScroll() const noexcept;
+        uint64_t DocumentAttachmentGeneration() const noexcept;
 		Scintilla::Internal::Range AutomationUnitRange(int64_t position, bool word)
 		{ return _scintilla->AutomationUnitRange(static_cast<Sci::Position>(position), word); }
 		Scintilla::Internal::Range AutomationFindText(int64_t start, int64_t end, std::wstring_view text, bool backward, bool ignoreCase)
@@ -134,6 +145,13 @@ namespace winrt::WinUIEditor::implementation
 
 	private:
 		bool _viewportGeometryDirty{ true };
+		bool _drawingVisible{ false };
+		bool _drawingVisibilityDirty{};
+		DUX::FrameworkElement::LayoutUpdated_revoker _layoutUpdatedRevoker{};
+		std::vector<std::pair<winrt::weak_ref<DUX::UIElement>, int64_t>> _visibilityCallbacks;
+		void ObserveDrawingVisibility();
+		void StopObservingDrawingVisibility() noexcept;
+		void UpdateDrawingVisibility(bool force = false);
 		event<Windows::Foundation::EventHandler<Windows::Foundation::IInspectable>> _viewportGeometryChanged;
 		event<Windows::Foundation::EventHandler<Windows::Foundation::IInspectable>> _scrollStarted;
 		winrt::apartment_context _owningApartment;

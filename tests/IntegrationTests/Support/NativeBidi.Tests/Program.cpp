@@ -44,6 +44,7 @@ size_t CheckUtf8PositionIndex();
 size_t CheckTextStoreConversions();
 size_t CheckUtf16EndIndex();
 size_t CheckTextStoreOvertypeAdmission();
+size_t CheckAsyncSourcePixels();
 
 namespace {
 using Microsoft::WRL::ComPtr;
@@ -55,7 +56,7 @@ struct CapabilityResult {
     const char *status = "not_run";
     const char *reason = "The capability check was not reached.";
 };
-std::array<CapabilityResult, 3> capabilityResults{{{"COLRv1"}, {"ChromaticEmoji"}, {"CustomRendererErrors"}}};
+std::array<CapabilityResult, 4> capabilityResults{{{"COLRv1"}, {"ChromaticEmoji"}, {"CustomRendererErrors"}, {"AsyncSourcePixels"}}};
 
 void RecordCapability(size_t index, bool verified, const char *unavailableReason) {
     capabilityResults[index].status = verified ? "verified" : "skipped";
@@ -1170,6 +1171,9 @@ int wmain(int argc, wchar_t **argv) {
         CheckRunLayout(env);
         CheckTextRendering(env);
         CheckDrawingLayoutCache(env);
+        const auto sourcePixelChecks = CheckAsyncSourcePixels();
+        checks += sourcePixelChecks;
+        RecordCapability(3, sourcePixelChecks != 0, "A hardware Direct3D device was unavailable.");
         std::cout << "PASS: analyzed paragraph geometry and glyphs match independent whole-paragraph DirectWrite.\n";
         for (const auto fixture : {u8"אבג", u8"ABC אבג 123 DEF", u8"مرحبا بالعالم 123 ABC",
             u8"السَّلَامُ عَلَيْكُمْ", u8"אב😀ג e\u0301", u8"(אבג) [123] ABC", u8"אבג  ", u8"אבג\tABC\t12"}) {

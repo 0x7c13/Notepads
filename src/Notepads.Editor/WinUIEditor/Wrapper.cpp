@@ -13,6 +13,11 @@
 
 namespace WinUIEditor
 {
+	namespace
+	{
+		thread_local std::weak_ptr<ID3D11Device> sharedD3dDevice;
+	}
+
 	Wrapper::Wrapper(winrt::DUXC::Control const &control)
 	{
 		_control = control;
@@ -82,41 +87,35 @@ namespace WinUIEditor
 		_height = value;
 	}
 
-	void Wrapper::CreateGraphicsDevices()
+	void Wrapper::CreateGraphicsDevices(bool replaceDevice)
 	{
-		// Todo: Is there any cleanup that needs to be done when the control is deleted or if the device gets re-created?
-
-		uint32_t creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-
-		D3D_FEATURE_LEVEL featureLevels[] =
+		auto lease = sharedD3dDevice.lock();
+		if (replaceDevice && _d3dLease && lease == _d3dLease)
 		{
-			D3D_FEATURE_LEVEL_11_1,
-			D3D_FEATURE_LEVEL_11_0,
-			D3D_FEATURE_LEVEL_10_1,
-			D3D_FEATURE_LEVEL_10_0,
-			D3D_FEATURE_LEVEL_9_3,
-			D3D_FEATURE_LEVEL_9_2,
-			D3D_FEATURE_LEVEL_9_1,
-		};
-
-		// Create the Direct3D device
-		winrt::com_ptr<ID3D11Device> d3dDevice;
-		D3D_FEATURE_LEVEL supportedFeatureLevel;
-		if (FAILED(D3D11CreateDevice(
-			nullptr,
-			D3D_DRIVER_TYPE_HARDWARE,
-			0,
-			creationFlags,
-			featureLevels,
-			ARRAYSIZE(featureLevels),
-			D3D11_SDK_VERSION,
-			d3dDevice.put(),
-			&supportedFeatureLevel,
-			nullptr)))
+			sharedD3dDevice.reset();
+			lease.reset();
+		}
+		if (!lease || FAILED(lease->GetDeviceRemovedReason()))
 		{
-			winrt::check_hresult(D3D11CreateDevice(
+			uint32_t creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+
+			D3D_FEATURE_LEVEL featureLevels[] =
+			{
+				D3D_FEATURE_LEVEL_11_1,
+				D3D_FEATURE_LEVEL_11_0,
+				D3D_FEATURE_LEVEL_10_1,
+				D3D_FEATURE_LEVEL_10_0,
+				D3D_FEATURE_LEVEL_9_3,
+				D3D_FEATURE_LEVEL_9_2,
+				D3D_FEATURE_LEVEL_9_1,
+			};
+
+			// Create the Direct3D device
+			winrt::com_ptr<ID3D11Device> d3dDevice;
+			D3D_FEATURE_LEVEL supportedFeatureLevel;
+			if (FAILED(D3D11CreateDevice(
 				nullptr,
-				D3D_DRIVER_TYPE_WARP,
+				D3D_DRIVER_TYPE_HARDWARE,
 				0,
 				creationFlags,
 				featureLevels,
@@ -124,23 +123,45 @@ namespace WinUIEditor
 				D3D11_SDK_VERSION,
 				d3dDevice.put(),
 				&supportedFeatureLevel,
-				nullptr));
+				nullptr)))
+			{
+				winrt::check_hresult(D3D11CreateDevice(
+					nullptr,
+					D3D_DRIVER_TYPE_WARP,
+					0,
+					creationFlags,
+					featureLevels,
+					ARRAYSIZE(featureLevels),
+					D3D11_SDK_VERSION,
+					d3dDevice.put(),
+					&supportedFeatureLevel,
+					nullptr));
+			}
+			lease = std::shared_ptr<ID3D11Device>(d3dDevice.detach(),
+				[](ID3D11Device *value) noexcept { value->Release(); });
+			sharedD3dDevice = lease;
 		}
 
 		// Get the Direct3D device.
-		_dxgiDevice = d3dDevice.as<IDXGIDevice3>();
+		winrt::com_ptr<ID3D11Device> d3dDevice;
+		d3dDevice.copy_from(lease.get());
+		auto dxgiDevice = d3dDevice.as<IDXGIDevice3>();
 
 		// Create the Direct2D device and a corresponding context
 		winrt::com_ptr<ID2D1Device> d2dDevice;
-		Scintilla::Internal::pD2DFactory->CreateDevice(_dxgiDevice.get(), d2dDevice.put());
+		winrt::check_hresult(Scintilla::Internal::pD2DFactory->CreateDevice(dxgiDevice.get(), d2dDevice.put()));
+		winrt::com_ptr<ID2D1DeviceContext> context;
 
 		winrt::check_hresult(
 			d2dDevice->CreateDeviceContext(
 				D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
-				_d2dDeviceContext.put()));
+				context.put()));
 
 		// Associate the Direct2D device with the SurfaceImageSource
-		SisNativeWithD2D()->SetDevice(d2dDevice.get());
+		winrt::check_hresult(SisNativeWithD2D()->SetDevice(d2dDevice.get()));
+		_d2dDeviceContext = std::move(context);
+		_dxgiDevice = std::move(dxgiDevice);
+		_d3dLease = std::move(lease);
 	}
 
 	std::shared_ptr<Wrapper> Wrapper::CreateCallTipWindow(Scintilla::Internal::PRectangle /*rc*/, winrt::com_ptr<Scintilla::Internal::ScintillaWinUI> const &scintilla)

@@ -6,6 +6,7 @@
 
 #include "pch.h"
 #include "MainWrapper.h"
+#include "EditorBaseControl.h"
 
 namespace WinUIEditor
 {
@@ -45,6 +46,20 @@ namespace WinUIEditor
 		{
 			const auto control = _control.get();
 			return control && control.IsEnabled();
+		}
+		catch (winrt::hresult_error const &)
+		{
+			return false;
+		}
+	}
+
+	bool MainWrapper::IsDrawingVisible() const noexcept
+	{
+		try
+		{
+			const auto control = _control.get();
+			const auto editor = control ? control.try_as<winrt::WinUIEditor::EditorBaseControl>() : nullptr;
+			return editor && winrt::get_self<winrt::WinUIEditor::implementation::EditorBaseControl>(editor)->IsDrawingVisible();
 		}
 		catch (winrt::hresult_error const &)
 		{

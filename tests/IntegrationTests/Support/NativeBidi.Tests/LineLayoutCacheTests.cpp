@@ -52,8 +52,50 @@
 #include "Selection.h"
 #include "PositionCache.h"
 #include "DirectWriteParagraph.h"
+#include "TextPrefetchPlan.h"
 
 Scintilla::Internal::ViewStyle MakeGeometryTestStyle();
+
+namespace {
+class PrefetchRecordingLexer final : public Scintilla::ILexer5 {
+public:
+    unsigned calls{};
+    Sci_PositionU start{};
+    Sci_Position length{};
+    int SCI_METHOD Version() const override { return Scintilla::lvRelease5; }
+    void SCI_METHOD Release() override { delete this; }
+    const char *SCI_METHOD PropertyNames() override { return ""; }
+    int SCI_METHOD PropertyType(const char *) override { return 0; }
+    const char *SCI_METHOD DescribeProperty(const char *) override { return ""; }
+    Sci_Position SCI_METHOD PropertySet(const char *, const char *) override { return -1; }
+    const char *SCI_METHOD DescribeWordListSets() override { return ""; }
+    Sci_Position SCI_METHOD WordListSet(int, const char *) override { return -1; }
+    void SCI_METHOD Lex(Sci_PositionU first, Sci_Position count, int, Scintilla::IDocument *document) override {
+        ++calls; start = first; length = count;
+        document->StartStyling(static_cast<Sci_Position>(first));
+        document->SetStyleFor(count, 7);
+    }
+    void SCI_METHOD Fold(Sci_PositionU, Sci_Position, int, Scintilla::IDocument *) override {}
+    void *SCI_METHOD PrivateCall(int, void *) override { return nullptr; }
+    int SCI_METHOD LineEndTypesSupported() override { return 0; }
+    int SCI_METHOD AllocateSubStyles(int, int) override { return -1; }
+    int SCI_METHOD SubStylesStart(int) override { return -1; }
+    int SCI_METHOD SubStylesLength(int) override { return 0; }
+    int SCI_METHOD StyleFromSubStyle(int style) override { return style; }
+    int SCI_METHOD PrimaryStyleFromStyle(int style) override { return style; }
+    void SCI_METHOD FreeSubStyles() override {}
+    void SCI_METHOD SetIdentifiers(int, const char *) override {}
+    int SCI_METHOD DistanceToSecondaryStyles() override { return 0; }
+    const char *SCI_METHOD GetSubStyleBases() override { return ""; }
+    int SCI_METHOD NamedStyles() override { return 0; }
+    const char *SCI_METHOD NameOfStyle(int) override { return ""; }
+    const char *SCI_METHOD TagsOfStyle(int) override { return ""; }
+    const char *SCI_METHOD DescriptionOfStyle(int) override { return ""; }
+    const char *SCI_METHOD GetName() override { return "prefetch-recording"; }
+    int SCI_METHOD GetIdentifier() override { return 0; }
+    const char *SCI_METHOD PropertyGet(const char *) override { return ""; }
+};
+}
 
 size_t CheckLineLayoutCache(IDWriteFactory *factory, IDWriteTextFormat *format) {
     using namespace Scintilla;
@@ -71,6 +113,65 @@ size_t CheckLineLayoutCache(IDWriteFactory *factory, IDWriteTextFormat *format) 
             if (const auto live = entry.lock()) total += static_cast<uint64_t>(live->maxLineLength) + 1;
         return total;
     };
+
+    {
+        const auto limit = static_cast<Sci::Position>(TextPrefetchPlan::MaximumBytes);
+        const auto attachLexer = [](Document &document) {
+            auto interface = std::make_unique<LexInterface>(&document);
+            auto lexer = new PrefetchRecordingLexer;
+            interface->SetInstance(lexer);
+            document.SetLexInterface(std::move(interface));
+            return lexer;
+        };
+        Document longLine(DocumentOption::Default);
+        const std::string longText = std::string(2 * 1024 * 1024, 'x') + "\n🧪\n";
+        longLine.InsertString(0, longText.data(), longText.size());
+        longLine.StartStyling(0);
+        longLine.SetStyleFor(2 * 1024 * 1024 - 4, 0);
+        const auto longLexer = attachLexer(longLine);
+        const auto styledBefore = longLine.GetEndStyled();
+        require(!longLine.EnsureStyledToWithinLimit(longLine.LineStart(2), limit),
+            "Lookahead refuses a small suffix that would relex a two MiB preceding line");
+        require(longLexer->calls == 0 && longLine.GetEndStyled() == styledBefore,
+            "Over-budget lookahead invokes no native lexer and preserves styling progress");
+
+        Document exact(DocumentOption::Default);
+        const std::string exactText = std::string(static_cast<size_t>(limit - 1), 'x') + "\n";
+        exact.InsertString(0, exactText.data(), exactText.size());
+        exact.StartStyling(0); exact.SetStyleFor(limit - 4, 0);
+        const auto exactLexer = attachLexer(exact);
+        require(exact.EnsureStyledToWithinLimit(exact.LineStart(1), limit),
+            "Lookahead admits a complete native relex range of exactly 64 KiB");
+        require(exactLexer->calls == 1 && exactLexer->start == 0 && exactLexer->length == limit &&
+            exact.GetEndStyled() == limit && exact.StyleAt(limit - 1) == 7,
+            "Admitted lookahead uses the real EnsureStyledTo and native lexer line-start path");
+        require(exact.EnsureStyledToWithinLimit(exact.LineStart(1), 0) && exactLexer->calls == 1,
+            "Already styled lookahead performs no additional lexing even with zero budget");
+
+        Document over(DocumentOption::Default);
+        const std::string overText = std::string(static_cast<size_t>(limit), 'x') + "\n";
+        over.InsertString(0, overText.data(), overText.size());
+        over.StartStyling(0); over.SetStyleFor(limit - 2, 0);
+        const auto overLexer = attachLexer(over);
+        require(!over.EnsureStyledToWithinLimit(over.LineStart(1), limit) && overLexer->calls == 0,
+            "Lookahead rejects a native relex range one byte beyond the 64 KiB limit");
+    }
+
+    {
+        TextPrefetchPlan plan;
+        const std::string heavy = "😀 😅 🫠 🥹 🫨 🥳 🧪 ✨ · 👍 👍🏻 👍🏽 👍🏿 · 👩🏽‍💻 👨‍👩‍👧‍👦 🧑‍🚀 · 🇨🇳 🇯🇵 🇺🇳 · 🏳️‍🌈 🏴‍☠️ · 1️⃣ #️⃣ *️⃣";
+        require(TextPrefetchPlan::Weight(heavy) == 32, "The real dense Emoji row has a stable UTF-8 priority");
+        require(TextPrefetchPlan::Weight("𝄞𝄞𝄞𝄞𝄞𝄞𝄞𝄞") == 0, "Supplementary musical text does not request colour prefetch");
+        require(!plan.Consider(7, 20, 1), "Small heading icons do not consume startup pixel tasks");
+        require(plan.Consider(200, 40, 8), "An expensive pictographic candidate is admitted");
+        require(plan.Consider(348, static_cast<int>(heavy.size()), TextPrefetchPlan::Weight(heavy)),
+            "A dense row beyond the current viewport lookahead is considered");
+        require(plan.Consider(352, 231, 9), "A second higher-weight candidate replaces a cheaper run");
+        require(plan.candidates[0].line == 348 && plan.candidates[1].line == 352,
+            "Startup priming retains the two heaviest runs across a semantic viewport jump");
+        require(!plan.Consider(400, 4097, 200), "Oversized source lines do not enter the startup plan");
+        require(!plan.Consider(500, 100, 9), "Equal weights retain stable earlier source candidates");
+    }
 
     // Geometry layouts are owned by the physical line, with two immutable
     // contexts and no render-target state. Verify admission, keys and release.

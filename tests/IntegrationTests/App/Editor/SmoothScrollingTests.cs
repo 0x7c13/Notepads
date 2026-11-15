@@ -420,6 +420,13 @@ internal static class SmoothScrollingTests
             await AfterPaintAsync(native, () => view.SetVerticalViewport(50, rowHeight / 4));
             Check(!view.IsScrollAnimating && native.FirstVisibleLine == 50 && view.DisplayVerticalOffset == rowHeight / 4,
                 "Explicit viewport replacement cancels the older frame subscription");
+            Check(view.TrySetVerticalScrollProgress(0), "The source admits an explicit move to the top");
+            view.ScrollBy(0, 20 * rowHeight, true);
+            Check(view.IsScrollAnimating && view.VerticalScrollProgress == 0,
+                "The newly queued animation has not moved the viewport");
+            Check(view.TrySetVerticalScrollProgress(0) && !view.IsScrollAnimating && view.VerticalScrollProgress == 0,
+                "Explicit progress at the current viewport cancels the queued animation");
+
             view.ScrollBy(0, 20 * rowHeight, true);
             await AfterPaintAsync(native, () => core.TypeText("x"));
             Check(!view.IsScrollAnimating, "Document edits retire old wheel motion");

@@ -16,6 +16,9 @@ namespace WinUIEditor
 {
 	class Wrapper
 	{
+		// Outlive this wrapper's private graphics references.
+		std::shared_ptr<ID3D11Device> _d3dLease;
+
 	public:
 		winrt::com_ptr<::IVirtualSurfaceImageSourceNative> VsisNative();
 		void VsisNative(winrt::com_ptr<::IVirtualSurfaceImageSourceNative> const &value);
@@ -29,7 +32,7 @@ namespace WinUIEditor
 		int Height();
 		void Height(int value);
 
-		void CreateGraphicsDevices();
+		void CreateGraphicsDevices(bool replaceDevice = false);
 
 		std::shared_ptr<Wrapper> CreateCallTipWindow(Scintilla::Internal::PRectangle rc, winrt::com_ptr<Scintilla::Internal::ScintillaWinUI> const &scintilla);
 		std::shared_ptr<Wrapper> CreateAutocompletionWindow();

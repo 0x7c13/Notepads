@@ -52,7 +52,8 @@ public:
 	DirectWriteTextLayoutCache(IDWriteFactory *factory_, IDWriteTextFormat *format_) noexcept;
 	DirectWriteTextLayoutCache(const DirectWriteTextLayoutCache &) = delete;
 	DirectWriteTextLayoutCache &operator=(const DirectWriteTextLayoutCache &) = delete;
-	Microsoft::WRL::ComPtr<IDWriteTextLayout> Get(std::wstring_view text, float width, float height);
+	Microsoft::WRL::ComPtr<IDWriteTextLayout> Get(std::wstring_view text, float width, float height,
+		bool *fullyConfigured = nullptr);
 	size_t Size() const noexcept { return count; }
 	size_t TextUnits() const noexcept { return textUnits; }
 };

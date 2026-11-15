@@ -119,6 +119,31 @@
 #endif
 #include "ScintillaWin.h"
 
+#if defined(NOTEPADS_EDITOR_DIAGNOSTICS)
+#include "NativeUiTrace.h"
+// Explicit cdecl on every architecture. x86 aliases export only the stable
+// undecorated ABI names; x64/ARM64 C exports already have those names.
+#if defined(_M_IX86)
+#pragma comment(linker, "/export:NotepadsEditorUiTraceStart=_NotepadsEditorUiTraceStart")
+#pragma comment(linker, "/export:NotepadsEditorUiTraceStop=_NotepadsEditorUiTraceStop")
+#define NOTEPADS_EDITOR_TRACE_EXPORT
+#else
+#define NOTEPADS_EDITOR_TRACE_EXPORT __declspec(dllexport)
+#endif
+extern "C" NOTEPADS_EDITOR_TRACE_EXPORT uint32_t __cdecl NotepadsEditorUiTraceStart(
+    uint32_t abi, uint64_t *generation, uint64_t *frequency) noexcept
+{
+    return ::Notepads::Editor::Diagnostics::UiTrace::Start(abi, generation, frequency);
+}
+extern "C" NOTEPADS_EDITOR_TRACE_EXPORT uint32_t __cdecl NotepadsEditorUiTraceStop(
+    uint32_t abi, uint64_t generation, uint64_t *words, uint32_t capacityWords,
+    uint32_t *writtenWords, uint64_t *droppedScopes) noexcept
+{
+    return ::Notepads::Editor::Diagnostics::UiTrace::Stop(abi, generation, words, capacityWords, writtenWords, droppedScopes);
+}
+#undef NOTEPADS_EDITOR_TRACE_EXPORT
+#endif
+
 namespace Scintilla::Internal {
 	void ScintillaWinUI::SetDisplayLineMap(std::vector<DisplayGap> gaps, std::vector<TintedLineRange> tints) {
 		if (!pdoc->IsReadOnly() || Wrapping() || pcs->HiddenLines())
@@ -1017,6 +1042,9 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::OnIdleTimerTick(winrt::Windows::Foundation::IInspectable const &, winrt::Windows::Foundation::IInspectable const &)
 	{
+#if defined(NOTEPADS_EDITOR_DIAGNOSTICS)
+		::Notepads::Editor::Diagnostics::UiTrace::Scope trace{::Notepads::Editor::Diagnostics::UiTrace::Phase::IdleTick};
+#endif
 		if (_idleSuspended || _idleFinalized) return;
 		if (workNeeded.items != WorkItems::none) IdleWork();
 		const auto more = Idle();
@@ -3081,8 +3109,27 @@ namespace Scintilla::Internal {
 		if (revision == _scrollAnimationRevision && !IsScrollAnimating()) _scrollRenderingRevoker.revoke();
 	}
 
+	void ScintillaWinUI::MarkSelectionFromScroll() noexcept
+	{
+		_scrollSelection = ScrollSelectionStamp{_documentAttachmentGeneration, _documentRevision, selectionRevision};
+	}
+
+	bool ScintillaWinUI::IsSelectionFromScroll() const noexcept
+	{
+		return _scrollSelection && _scrollSelection->attachment == _documentAttachmentGeneration &&
+			_scrollSelection->document == _documentRevision && _scrollSelection->selection == selectionRevision;
+	}
+
+	void ScintillaWinUI::SelectionWritten(SelectionOrigin origin) noexcept
+	{
+		if (origin == SelectionOrigin::Scroll) MarkSelectionFromScroll();
+		else _scrollSelection.reset();
+	}
+
 	bool ScintillaWinUI::BeginScrollInteraction(bool horizontal, bool vertical)
 	{
+		// Input owns the current selection before any reentrant observer runs.
+		MarkSelectionFromScroll();
 		const auto revision = _scrollAnimationRevision;
 		_mainWrapper->NotifyScrollStarted();
 		if (revision != _scrollAnimationRevision || _idleFinalized) return false;
@@ -3273,7 +3320,12 @@ namespace Scintilla::Internal {
 
 	IFACEMETHODIMP ScintillaWinUI::UpdatesNeeded()
 	{
+#if defined(NOTEPADS_EDITOR_DIAGNOSTICS)
+		::Notepads::Editor::Diagnostics::UiTrace::Scope trace{::Notepads::Editor::Diagnostics::UiTrace::Phase::UpdatesNeeded};
+#endif
 		try {
+			if (_idleFinalized || !_mainWrapper->IsDrawingVisible()) return S_OK;
+			_textPrefetchInPaint = !std::exchange(_textPrefetchRequested, false);
 			struct ResetPaintState {
 				PaintState &state;
 				bool &allText;
@@ -3559,6 +3611,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::DrawBit(RECT const &drawingBounds)
 	{
+		if (_idleFinalized || !_mainWrapper->IsDrawingVisible()) return;
 		const auto sisNativeWithD2D{ _mainWrapper->SisNativeWithD2D() };
 		const auto deviceLost = [](HRESULT result) noexcept {
 			return result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET ||
@@ -3593,7 +3646,7 @@ namespace Scintilla::Internal {
 			// That says you do not need to re-create the devices when E_SURFACE_CONTENTS_LOST but in testing it seems necessary
 			// https://learn.microsoft.com/en-us/windows/uwp/gaming/handling-device-lost-scenarios
 
-			_mainWrapper->CreateGraphicsDevices();
+			_mainWrapper->CreateGraphicsDevices(true);
 			InvalidateStyleRedraw(); // just Redraw() does not work
 			return;
 		}
@@ -3629,6 +3682,31 @@ namespace Scintilla::Internal {
 			surf->SetMode(SurfaceMode{ 65001, false }); // Todo: Ensure these values are good
 			rcPaint = Scintilla::Internal::PRectangle(drawingBounds.left, drawingBounds.top, drawingBounds.right, drawingBounds.bottom);
 			Paint(surf.get(), rcPaint);
+			if (!_textPrefetchInPaint && !Wrapping() && !view.bufferedDraw && vs.lineHeight > 0 && CanPrefetchSourceText()) {
+				_textPrefetchInPaint = true;
+				// Collect the same immutable text fragments before they enter the
+				// viewport. The empty clip prevents all ordinary foreground adornments
+				// from affecting the current tile; the backend only requests pixels.
+				surf->SetClip(PRectangle(0, 0, 0, 0));
+				if (SetTextPrefetch(surf.get(), true)) {
+					try {
+						unsigned remaining = 2;
+						view.PrefetchExpensiveText(surf.get(), *this, vs, GetClientRectangle(),
+							_documentAttachmentGeneration, _documentRevision, remaining);
+						auto ahead = GetTextRectangle();
+						const auto height = ahead.Height();
+						ahead.top = ahead.bottom;
+						ahead.bottom += height * 2;
+						view.PrefetchText(surf.get(), *this, vs, ahead, GetClientRectangle(), true, remaining);
+						auto behind = GetTextRectangle();
+						behind.bottom = behind.top;
+						behind.top -= height * 2;
+						view.PrefetchText(surf.get(), *this, vs, behind, GetClientRectangle(), false, remaining);
+					} catch (...) {}
+					SetTextPrefetch(surf.get(), false);
+				}
+				surf->PopClip();
+			}
 
 			// Paint the active diff region with the text so scrolling, gaps and DPI
 			// always share the same geometry. The existing tile clip trims offscreen edges.
@@ -3650,7 +3728,7 @@ namespace Scintilla::Internal {
 		const HRESULT result = draw.Finish();
 		if (deviceLost(result))
 		{
-			_mainWrapper->CreateGraphicsDevices();
+			_mainWrapper->CreateGraphicsDevices(true);
 			InvalidateStyleRedraw();
 			return;
 		}
@@ -4021,6 +4099,8 @@ namespace Scintilla::Internal {
 		if (document == pdoc)
 			return 0;
 		if (_journal) winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
+		++_documentAttachmentGeneration;
+		_scrollSelection.reset();
 		FinishCoreTextComposition();
 		const auto oldLen{ DocPositionToAcp(pdoc->Length()) };
 		auto previous = pdoc;
@@ -4088,8 +4168,6 @@ namespace Scintilla::Internal {
 		case Message::ScrollRange:
 		case Message::ScrollToStart:
 		case Message::ScrollToEnd:
-		case Message::LineScrollUp:
-		case Message::LineScrollDown:
 		case Message::GotoPos:
 		case Message::GotoLine:
 		case Message::SetDocPointer:
@@ -4108,6 +4186,11 @@ namespace Scintilla::Internal {
 		case Message::SetCurrentPos:
 		case Message::SetAnchor:
 			CancelSmoothScroll();
+			break;
+		case Message::LineScrollUp:
+		case Message::LineScrollDown:
+			CancelSmoothScroll();
+			if (!BeginScrollInteraction()) return 0;
 			break;
 		default: break;
 		}
@@ -4812,7 +4895,7 @@ namespace Scintilla::Internal {
 			// That says you do not need to re-create the devices when E_SURFACE_CONTENTS_LOST but in testing it seems necessary
 			// https://learn.microsoft.com/en-us/windows/uwp/gaming/handling-device-lost-scenarios
 
-			_wrapper->CreateGraphicsDevices();
+			_wrapper->CreateGraphicsDevices(true);
 			//InvalidateStyleRedraw(); // just Redraw() does not work
 		}
 		else

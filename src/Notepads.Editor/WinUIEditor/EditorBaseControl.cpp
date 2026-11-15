@@ -35,6 +35,11 @@ using namespace Windows::ApplicationModel::DataTransfer;
 
 namespace winrt::WinUIEditor::implementation
 {
+    uint32_t EditorBaseControl::VerticalWheelScrollLines()
+    {
+        return ::WinUIEditor::WheelScrollUnits(false);
+    }
+
 	// Todo: Something about this control is keeping the WinUI 3 versions from closing.
 	// Note that making this into a blank control fixes the issue, so it is definitely something here.
 	EditorBaseControl::EditorBaseControl()
@@ -45,10 +50,14 @@ namespace winrt::WinUIEditor::implementation
 
 		Loaded({ this, &EditorBaseControl::OnLoaded });
 		Unloaded({ this, &EditorBaseControl::OnUnloaded });
-		LayoutUpdated([this](IInspectable const &, IInspectable const &) {
-			if (!_viewportGeometryDirty || IsFinalized()) return;
-			_viewportGeometryDirty = false;
-			_viewportGeometryChanged(*this, nullptr);
+		_layoutUpdatedRevoker = LayoutUpdated(auto_revoke, [weak = get_weak()](IInspectable const &, IInspectable const &) {
+			auto self = weak.get();
+			if (!self || self->IsFinalized()) return;
+			if (std::exchange(self->_drawingVisibilityDirty, false))
+				self->UpdateDrawingVisibility();
+			if (!self->_viewportGeometryDirty || self->IsFinalized()) return;
+			self->_viewportGeometryDirty = false;
+			self->_viewportGeometryChanged(*self, nullptr);
 		});
 		LosingFocus({ this, &EditorBaseControl::OnLosingFocus });
 
@@ -102,8 +111,10 @@ namespace winrt::WinUIEditor::implementation
 	{
 		if (!_uiResourcesFinalized.load())
 		{
-			_scintilla->Finalize();
 			_uiResourcesFinalized.store(true);
+			_layoutUpdatedRevoker.revoke();
+			StopObservingDrawingVisibility();
+			_scintilla->Finalize();
 		}
 	}
 
@@ -156,6 +167,7 @@ namespace winrt::WinUIEditor::implementation
 	}
 
 	void EditorBaseControl::AcquireReadLease() { _scintilla->AcquireReadLease(); }
+
 	void EditorBaseControl::ReleaseReadLease() noexcept { _scintilla->ReleaseReadLease(); }
 	void EditorBaseControl::ReplaceDocumentWithUndo(Scintilla::Internal::Document &replacement) { _scintilla->ReplaceDocumentWithUndo(replacement); }
 	void EditorBaseControl::SetLoadedDocument(Scintilla::Internal::Document &replacement)
@@ -191,6 +203,8 @@ namespace winrt::WinUIEditor::implementation
 	uint64_t EditorBaseControl::DocumentSequence() const noexcept { return _scintilla->DocumentSequence(); }
 	uint64_t EditorBaseControl::DocumentRevision() const noexcept { return _scintilla->DocumentRevision(); }
 	uint64_t EditorBaseControl::SelectionRevision() const noexcept { return _scintilla->SelectionRevision(); }
+    bool EditorBaseControl::IsSelectionFromScroll() const noexcept { return _scintilla->IsSelectionFromScroll(); }
+    uint64_t EditorBaseControl::DocumentAttachmentGeneration() const noexcept { return _scintilla->DocumentAttachmentGeneration(); }
 	bool EditorBaseControl::HasJournal() const noexcept { return _scintilla->HasJournal(); }
 	Windows::Foundation::IAsyncAction EditorBaseControl::WaitForTextStoreUnlockAsync()
 	{
@@ -211,11 +225,10 @@ namespace winrt::WinUIEditor::implementation
 
 		_isLoaded = true;
 
-		if (!IsLoadedCompat())
+		if (IsFinalized() || !IsLoadedCompat())
 		{
 			return;
 		}
-		_scintilla->ResumeIdleWork();
 		_wrapper->SetScrollStarted([weak = get_weak()] {
 			if (auto self = weak.get()) self->_scrollStarted(*self, nullptr);
 		});
@@ -223,13 +236,23 @@ namespace winrt::WinUIEditor::implementation
 		if (_hasXamlRoot)
 		{
 			UpdateDpi(static_cast<float>(XamlRoot().RasterizationScale()));
-			_xamlRootChangedRevoker = XamlRoot().Changed(auto_revoke, { this, &EditorBaseControl::XamlRoot_Changed });
+			_xamlRootChangedRevoker = XamlRoot().Changed(auto_revoke,
+				[weak = get_weak()](auto const &sender, auto const &args) {
+					if (auto self = weak.get(); self && !self->IsFinalized())
+						self->XamlRoot_Changed(sender, args);
+				});
 		}
 		else
 		{
 			UpdateDpi(static_cast<float>(_displayInformation.RawPixelsPerViewPixel()));
-			_dpiChangedRevoker = _displayInformation.DpiChanged(auto_revoke, { this, &EditorBaseControl::DisplayInformation_DpiChanged });
+			_dpiChangedRevoker = _displayInformation.DpiChanged(auto_revoke,
+				[weak = get_weak()](auto const &sender, auto const &args) {
+					if (auto self = weak.get(); self && !self->IsFinalized())
+						self->DisplayInformation_DpiChanged(sender, args);
+				});
 		}
+		ObserveDrawingVisibility();
+		UpdateDrawingVisibility(true);
 	}
 
 	void EditorBaseControl::OnUnloaded(IInspectable const &/*sender*/, DUX::RoutedEventArgs const &/*args*/)
@@ -250,6 +273,8 @@ namespace winrt::WinUIEditor::implementation
 			_dpiChangedRevoker.revoke();
 		}
 
+		StopObservingDrawingVisibility();
+		_drawingVisible = false;
 		_scintilla->StopTimers();
 		_wrapper->SetScrollStarted({});
 
@@ -285,6 +310,87 @@ namespace winrt::WinUIEditor::implementation
 		else
 		{
 			return _isLoaded;
+		}
+	}
+
+	bool EditorBaseControl::IsDrawingVisible() noexcept
+	{
+		try
+		{
+			if (IsFinalized() || !IsLoadedCompat()) return false;
+			DependencyObject object{ *this };
+			while (object)
+			{
+				if (const auto element = object.try_as<UIElement>(); element && element.Visibility() != Visibility::Visible)
+					return false;
+				object = VisualTreeHelper::GetParent(object);
+			}
+			return true;
+		}
+		catch (winrt::hresult_error const &)
+		{
+			return false;
+		}
+	}
+
+	void EditorBaseControl::ObserveDrawingVisibility()
+	{
+		StopObservingDrawingVisibility();
+		const auto property = UIElement::VisibilityProperty();
+		const auto changed = [weak = get_weak()](DependencyObject const &, DependencyProperty const &) {
+			if (auto self = weak.get(); self && !self->IsFinalized())
+				self->_drawingVisibilityDirty = true;
+		};
+		for (DependencyObject object{ *this }; object; object = VisualTreeHelper::GetParent(object))
+		{
+			if (auto element = object.try_as<UIElement>())
+			{
+				_visibilityCallbacks.emplace_back(winrt::make_weak(element), 0);
+				try
+				{
+					_visibilityCallbacks.back().second = element.RegisterPropertyChangedCallback(property, changed);
+				}
+				catch (...)
+				{
+					_visibilityCallbacks.pop_back();
+					throw;
+				}
+			}
+		}
+	}
+
+	void EditorBaseControl::StopObservingDrawingVisibility() noexcept
+	{
+		_drawingVisibilityDirty = false;
+		for (auto const &[reference, token] : _visibilityCallbacks)
+		{
+			try
+			{
+				if (auto element = reference.get())
+					element.UnregisterPropertyChangedCallback(UIElement::VisibilityProperty(), token);
+			}
+			catch (winrt::hresult_error const &) {}
+		}
+		_visibilityCallbacks.clear();
+	}
+
+	void EditorBaseControl::UpdateDrawingVisibility(bool force)
+	{
+		const bool visible = IsDrawingVisible();
+		if (!force && _drawingVisible == visible) return;
+		// Publish the transition before timer or invalidation callbacks can reenter.
+		_drawingVisible = visible;
+		if (visible)
+		{
+			_scintilla->ResumeIdleWork();
+			// A retained tab can become visible without another Loaded/SizeChanged.
+			// Repaint its pixels without invalidating retained style/wrap caches.
+			if (_vsisNative && _wrapper->Width() > 0 && _wrapper->Height() > 0)
+				_vsisNative->Invalidate(RECT{ 0, 0, _wrapper->Width(), _wrapper->Height() });
+		}
+		else
+		{
+			_scintilla->StopTimers();
 		}
 	}
 
@@ -445,7 +551,24 @@ namespace winrt::WinUIEditor::implementation
 		case Scintilla::Message::SetMarginWidthN:
 		case Scintilla::Message::SetMarginLeft:
 		case Scintilla::Message::SetMarginRight:
+        case Scintilla::Message::SetWrapMode:
+        case Scintilla::Message::SetWrapVisualFlags:
+        case Scintilla::Message::SetWrapStartIndent:
+        case Scintilla::Message::SetWrapIndentMode:
+        case Scintilla::Message::StyleClearAll:
+        case Scintilla::Message::StyleSetFont:
+        case Scintilla::Message::StyleSetSize:
+        case Scintilla::Message::StyleSetSizeFractional:
+        case Scintilla::Message::StyleSetWeight:
+        case Scintilla::Message::StyleSetItalic:
+        case Scintilla::Message::SetZoom:
+        case Scintilla::Message::SetExtraAscent:
+        case Scintilla::Message::SetExtraDescent:
 			_viewportGeometryDirty = true;
+            // A text reflow can keep the same scroll offset and XAML bounds.
+            // Arrange once so the coalesced geometry notification still wakes
+            // consumers even when SCN_UPDATEUI carries no viewport change.
+            InvalidateArrange();
 			break;
 		default: break;
 		}

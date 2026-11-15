@@ -125,6 +125,14 @@
       <AdditionalLibraryDirectories Condition="'$(Platform)' == 'arm64'">%(AdditionalLibraryDirectories);$(VC_LibraryPath_VC_arm64_Desktop)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
+  <Target Name="ValidateEditorDiagnosticsConfiguration" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Configuration)' == 'Production' and '$(NotepadsEditorEnableDiagnostics)' == 'true'" Text="Production builds cannot enable Notepads.Editor diagnostics." />
+  </Target>
+  <ItemDefinitionGroup Condition="'$(NotepadsEditorEnableDiagnostics)' == 'true'">
+    <ClCompile>
+      <PreprocessorDefinitions>NOTEPADS_EDITOR_DIAGNOSTICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)' == 'Debug'">
     <ClCompile>
       <PreprocessorDefinitions>USE_DUMMY_PAGE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -198,6 +206,8 @@
     <ClInclude Include="..\scintilla\winui\DirectWriteRunLayout.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteRenderer.h" />
     <ClInclude Include="..\scintilla\winui\DirectWriteTextLayoutCache.h" />
+    <ClInclude Include="..\scintilla\winui\DirectWriteAsyncTextCache.h" />
+    <ClInclude Include="..\scintilla\src\TextPrefetchPlan.h" />
     <ClInclude Include="..\scintilla\winui\Utf8PositionIndex.h" />
     <ClInclude Include="..\scintilla\winui\SurfaceDrawSession.h" />
     <ClInclude Include="..\scintilla\src\ParagraphLayout.h" />
@@ -247,6 +257,7 @@
     <ClCompile Include="EditorBaseControl.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="EditorBaseControl.SourceViewport.cpp" />
     <ClCompile Include="EditorBaseControlAutomationPeer.cpp">
       <SubType>Code</SubType>
     </ClCompile>
@@ -259,6 +270,7 @@
     <ClCompile Include="..\scintilla\winui\ListBox.cxx" />
     <ClCompile Include="..\scintilla\winui\PlatWin.cxx" />
     <ClCompile Include="..\scintilla\winui\ScintillaWin.cxx" />
+    <ClCompile Include="..\scintilla\winui\ScintillaWin.SourceViewport.cxx" />
     <ClCompile Include="..\scintilla\winui\SurfaceD2D.cxx" />
     <ClCompile Include="TextRangeProvider.cpp" />
     <ClCompile Include="Wrapper.cpp" />

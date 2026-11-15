@@ -74,6 +74,7 @@
 #include "DirectWriteParagraph.h"
 #include "DirectWriteRenderer.h"
 #include "DirectWriteTextLayoutCache.h"
+#include "DirectWriteAsyncTextCache.h"
 #include "Utf8PositionIndex.h"
 #endif
 
@@ -158,6 +159,7 @@ void LoadD2DOnce() noexcept {
 struct FontDirectWrite : public Font {
 	winrt::com_ptr<IDWriteTextFormat> pTextFormat;
 	mutable std::unique_ptr<DirectWriteTextLayoutCache> drawingLayouts;
+	mutable std::unique_ptr<DirectWriteAsyncTextCache> drawingPixels;
 	mutable std::unique_ptr<DirectWriteTextWidthCache> textWidths;
 	FontQuality extraFontFlag = FontQuality::QualityDefault;
 	CharacterSet characterSet = CharacterSet::Ansi;
@@ -296,6 +298,8 @@ class SurfaceD2D : public Surface {
 	winrt::com_ptr<ID2D1RenderTarget> pRenderTarget;
 	winrt::com_ptr<ID2D1BitmapRenderTarget> pBitmapRenderTarget;
 	int clipsActive = 0;
+	bool textPrefetch = false;
+	bool textPrefetchSupported = false;
 
 	BrushSolid pBrush = nullptr;
 
@@ -311,6 +315,14 @@ class SurfaceD2D : public Surface {
 	void SetDeviceScaleFactor(const ID2D1RenderTarget *const pD2D1RenderTarget) noexcept;
 
 public:
+	void SetTextPrefetch(bool enabled) noexcept {
+		textPrefetch = enabled;
+		textPrefetchSupported = enabled && d2dDrawTextOptions == D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT &&
+			DirectWriteAsyncTextCache::SupportsTarget(pRenderTarget.get());
+	}
+	bool CanPrefetchText() const noexcept override {
+		return textPrefetch && textPrefetchSupported && DirectWriteAsyncTextCache::CanRequest();
+	}
 	SurfaceD2D() noexcept = default;
 	SurfaceD2D(ID2D1RenderTarget *pRenderTargetCompatible, int width, int height, SurfaceMode mode_, int logPixelsY_) noexcept;
 	// Deleted so SurfaceD2D objects can not be copied.
@@ -1437,14 +1449,25 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION yba
 	if (pfm->pTextFormat && pRenderTarget && pBrush) {
 		// Use Unicode calls
 		const int codePageDraw = codePageOverride ? codePageOverride : pfm->CodePageText(mode.codePage);
+		if (textPrefetch && (codePageDraw != CpUtf8 || text.size() > 4096 ||
+			!std::any_of(text.begin(), text.end(), [](unsigned char ch) { return ch >= 0xF0 && ch <= 0xF4; }))) return;
 		const TextWide tbuf(text, codePageDraw);
 		if (!pfm->drawingLayouts) {
 			pfm->drawingLayouts = std::make_unique<DirectWriteTextLayoutCache>(pIDWriteFactory, pfm->pTextFormat.get());
 		}
+		bool fullyConfigured = false;
 		const auto pTextLayout = pfm->drawingLayouts->Get(tbuf.AsView(),
-			static_cast<FLOAT>(rc.Width()), static_cast<FLOAT>(rc.Height()));
+			static_cast<FLOAT>(rc.Width()), static_cast<FLOAT>(rc.Height()), &fullyConfigured);
 
 		SetFontQuality(pfm->extraFontFlag);
+		if (textPrefetch) {
+			if (pTextLayout && fullyConfigured && d2dDrawTextOptions == D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT) {
+				if (!pfm->drawingPixels) pfm->drawingPixels = std::make_unique<DirectWriteAsyncTextCache>();
+				pfm->drawingPixels->Request(pRenderTarget.get(), pTextLayout.Get(), pBrush.get(),
+					DPointFromPoint(Point(rc.left, ybase - pfm->yAscent)), tbuf.AsView().size(), tbuf.AsView());
+			}
+			return;
+		}
 		if (fuOptions & ETO_CLIPPED) {
 			const D2D1_RECT_F rcClip = RectangleFromPRectangle(rc);
 			pRenderTarget->PushAxisAlignedClip(rcClip, D2D1_ANTIALIAS_MODE_ALIASED);
@@ -1452,7 +1475,11 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION yba
 
 		if (pTextLayout) {
 			const D2D1_POINT_2F origin = DPointFromPoint(Point(rc.left, ybase - pfm->yAscent));
-			pRenderTarget->DrawTextLayout(origin, pTextLayout.Get(), pBrush.get(), d2dDrawTextOptions);
+			const bool supplementary = pfm->drawingPixels && std::any_of(tbuf.AsView().begin(), tbuf.AsView().end(),
+				[](wchar_t ch) { return ch >= 0xD800 && ch <= 0xDBFF; });
+			if (!supplementary || !fullyConfigured || !pfm->drawingPixels || d2dDrawTextOptions != D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT ||
+				!pfm->drawingPixels->Draw(pRenderTarget.get(), pTextLayout.Get(), pBrush.get(), origin, tbuf.AsView()))
+				pRenderTarget->DrawTextLayout(origin, pTextLayout.Get(), pBrush.get(), d2dDrawTextOptions);
 		}
 
 		if (fuOptions & ETO_CLIPPED) {
@@ -1827,6 +1854,24 @@ std::shared_ptr<Font> Font::Allocate(const FontParameters &fp) {
 std::unique_ptr<Surface> Surface::Allocate([[maybe_unused]] Technology technology) {
 #if defined(USE_D2D)
 	return std::make_unique<SurfaceD2D>();
+#endif
+}
+
+bool SetTextPrefetch(Surface *surface, bool enabled) noexcept {
+#if defined(USE_D2D)
+	if (auto *drawing = dynamic_cast<SurfaceD2D *>(surface)) {
+		drawing->SetTextPrefetch(enabled);
+		return true;
+	}
+#endif
+	return false;
+}
+
+bool CanPrefetchSourceText() noexcept {
+#if defined(USE_D2D)
+	return DirectWriteAsyncTextCache::CanRequest();
+#else
+	return false;
 #endif
 }
 

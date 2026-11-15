@@ -90,6 +90,13 @@ namespace Scintilla::Internal {
 		double DisplayVerticalOffset() const noexcept;
 		double DisplayHorizontalOffset() const noexcept;
 		int64_t DisplayFirstVisibleRow() const noexcept;
+		int64_t ViewportSourceByte();
+        winrt::WinUIEditor::SourceViewportSpan GetSourceViewport();
+        bool SetViewportBetweenSourcePositions(int64_t start, int64_t end, double progress);
+        double VerticalScrollProgress() const;
+        double VerticalScrollExtent() const;
+        bool TrySetVerticalScrollProgress(double progress);
+		void RevealSourceByte(int64_t position);
 		bool IsViewportRestorePending() const noexcept {
 			return _viewportRestore.has_value() || (_displayViewport && _displayViewport->pending);
 		}
@@ -124,6 +131,8 @@ namespace Scintilla::Internal {
 		uint64_t DocumentSequence() const noexcept;
 		uint64_t DocumentRevision() const noexcept { return _documentRevision; }
 		uint64_t SelectionRevision() const noexcept { return selectionRevision; }
+		uint64_t DocumentAttachmentGeneration() const noexcept { return _documentAttachmentGeneration; }
+		bool IsSelectionFromScroll() const noexcept;
 		Range AutomationUnitRange(Sci::Position position, bool word);
 		Range AutomationFindText(Sci::Position start, Sci::Position end, std::wstring_view text, bool backward, bool ignoreCase);
 		std::pair<Range, Sci::Position> FindLiteralSlice(Sci::Position start, std::string_view text, bool matchCase, bool wholeWord);
@@ -176,6 +185,11 @@ namespace Scintilla::Internal {
 		std::vector<std::shared_ptr<WinUIEditor::NativeJournalFile>> _retiringJournals;
 		uint64_t _documentSequence{};
 		uint64_t _documentRevision{};
+		uint64_t _documentAttachmentGeneration{};
+		struct ScrollSelectionStamp { uint64_t attachment, document, selection; };
+		std::optional<ScrollSelectionStamp> _scrollSelection;
+		void MarkSelectionFromScroll() noexcept;
+		void SelectionWritten(SelectionOrigin origin) noexcept override;
 		bool _readOnlyBeforeLease{ false };
 		void UpdateScrollBarLayout();
 		bool _tsfCore;
@@ -333,6 +347,8 @@ namespace Scintilla::Internal {
 		winrt::DUX::DispatcherTimer _idleTimer{};
 		winrt::DUX::DispatcherTimer::Tick_revoker _idleTickRevoker{};
 		bool _idleSuspended{};
+		bool _textPrefetchInPaint{};
+		bool _textPrefetchRequested{};
 		struct ViewportRestore {
 			double horizontalOffset;
 			int64_t documentLine;
