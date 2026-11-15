@@ -1,0 +1,620 @@
+{
+  "scope": "Fixed SVG dependency notices. Original license bodies are self-contained under third-party-notices/NativeSvg and deployed by the common Content glob; registry and retained-fork sources remain pinned.",
+  "packages": [
+    {
+      "name": "adler2",
+      "version": "2.0.1",
+      "license": "0BSD OR MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/adler2-2.0.1/LICENSE-0BSD",
+          "bytes": 665,
+          "sha256": "861399F8C21C042B110517E76DC6B63A2B334276C8CF17412FC3C8908CA8DC17",
+          "upstream_path": "vendor/svg-bounded/dependencies/adler2-2.0.1/LICENSE-0BSD"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/adler2-2.0.1/LICENSE-APACHE",
+          "bytes": 10860,
+          "sha256": "8ADA45CD9F843ACF64E4722AE262C622A2B3B3007C7310EF36AC1061A30F6ADB",
+          "upstream_path": "vendor/svg-bounded/dependencies/adler2-2.0.1/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/adler2-2.0.1/LICENSE-MIT",
+          "bytes": 1023,
+          "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3",
+          "upstream_path": "vendor/svg-bounded/dependencies/adler2-2.0.1/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "320119579FCAD9C21884F5C4861D16174D0E06250625266F50FE6898340ABEFA",
+      "registry": "https://crates.io/crates/adler2/2.0.1"
+    },
+    {
+      "name": "byteorder-lite",
+      "version": "0.1.0",
+      "license": "Unlicense OR MIT",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/byteorder-lite-0.1.0/LICENSE-MIT",
+          "bytes": 1081,
+          "sha256": "0F96A83840E146E43C0EC96A22EC1F392E0680E6C1226E6F3BA87E0740AF850F",
+          "upstream_path": "vendor/svg-bounded/dependencies/byteorder-lite-0.1.0/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "8F1FE948FF07F4BD06C30984E69F5B4899C516A3EF74F34DF92A2DF2AB535495",
+      "registry": "https://crates.io/crates/byteorder-lite/0.1.0"
+    },
+    {
+      "name": "color_quant",
+      "version": "1.1.0",
+      "license": "MIT",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/color_quant-1.1.0/LICENSE",
+          "bytes": 1083,
+          "sha256": "592DC80F1A865D20D61A2006A2D29CE34A2BC28CD7E868AB300FDEED6DA154CA",
+          "upstream_path": "vendor/svg-bounded/dependencies/color_quant-1.1.0/LICENSE"
+        }
+      ],
+      "upstream_archive_sha256": "3D7B894F5411737B7867F4827955924D7C254FC9F4D91A6AAD6B097804B1018B",
+      "registry": "https://crates.io/crates/color_quant/1.1.0"
+    },
+    {
+      "name": "data-url",
+      "version": "0.3.2",
+      "manifest": "vendor/svg-bounded/dependencies/data-url-0.3.2/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/data-url-0.3.2/LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2",
+          "upstream_path": "vendor/svg-bounded/dependencies/data-url-0.3.2/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/data-url-0.3.2/LICENSE-MIT",
+          "bytes": 1072,
+          "sha256": "B38F11F6096706E6DE553DABE2A7ED142D59B6FA8C97E290C67496154745CDD5",
+          "upstream_path": "vendor/svg-bounded/dependencies/data-url-0.3.2/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "BE1E0BCA6C3637F992FC1CC7CBC52A78C1EF6DB076DBF1059C4323D6A2048376"
+    },
+    {
+      "name": "fdeflate",
+      "version": "0.3.7",
+      "manifest": "vendor/svg-bounded/png/fdeflate-0.3.7/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/fdeflate-0.3.7/LICENSE-APACHE",
+          "bytes": 10174,
+          "sha256": "0D542E0C8804E39AA7F37EB00DA5A762149DC682D7829451287E11B938E94594",
+          "upstream_path": "vendor/svg-bounded/png/fdeflate-0.3.7/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/fdeflate-0.3.7/LICENSE-MIT",
+          "bytes": 1036,
+          "sha256": "C77A4CF9DA729987D0FE7CCD811E3BD27393914DDF3D23467C18CC22954513B3",
+          "upstream_path": "vendor/svg-bounded/png/fdeflate-0.3.7/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "1E6853B52649D4AC5C0BD02320CDDC5BA956BDB407C4B75A2C6B75BF51500F8C"
+    },
+    {
+      "name": "flate2",
+      "version": "1.1.10",
+      "license": "MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/flate2-1.1.10/LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2",
+          "upstream_path": "vendor/svg-bounded/dependencies/flate2-1.1.10/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/flate2-1.1.10/LICENSE-MIT",
+          "bytes": 1062,
+          "sha256": "025436EDFF4CFCDDE17A5811FDEA78892D8482EFD1ABDEC5A17872D07A4F2112",
+          "upstream_path": "vendor/svg-bounded/dependencies/flate2-1.1.10/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "6E634E2E0EBAC1EE034020DA1CA582E17FFE4E0F5E985823721E168928136DCB",
+      "registry": "https://crates.io/crates/flate2/1.1.10"
+    },
+    {
+      "name": "fontdb",
+      "version": "0.24.0",
+      "manifest": "vendor/svg-bounded/dependencies/fontdb-0.24.0/Cargo.toml",
+      "license": "MIT",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/fontdb-0.24.0/LICENSE",
+          "bytes": 1083,
+          "sha256": "59A1FDAC3BD550043599BD159FD70F09A1108C2B09E3751D39B11E1FF8E51F00",
+          "upstream_path": "vendor/svg-bounded/dependencies/fontdb-0.24.0/LICENSE"
+        }
+      ],
+      "upstream_archive_sha256": "2660C5E9157BF76D2DB1294E4A9FEBA604EF610819A3B591088D0D8392A3290F"
+    },
+    {
+      "name": "gif",
+      "version": "0.14.2",
+      "manifest": "vendor/svg-bounded/dependencies/gif-0.14.2/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/gif-0.14.2/LICENSE-APACHE",
+          "bytes": 10846,
+          "sha256": "769F80B5BCB42ED0AF4E4D2FD74E1AC9BF843CB80C5A29219D1EF3544428A6BB",
+          "upstream_path": "vendor/svg-bounded/dependencies/gif-0.14.2/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/gif-0.14.2/LICENSE-MIT",
+          "bytes": 1071,
+          "sha256": "77257F3D2181236B1AEE78920238062AE64EFE13C5D858B2DB126E79C9E1B14F",
+          "upstream_path": "vendor/svg-bounded/dependencies/gif-0.14.2/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "EE8CFCC411D9ADBBABA82FB72661CC1BCCA13E8BBA98B364E62B2DBA8F960159"
+    },
+    {
+      "name": "image-webp",
+      "version": "0.2.4",
+      "manifest": "vendor/svg-bounded/dependencies/image-webp-0.2.4/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/image-webp-0.2.4/LICENSE-APACHE",
+          "bytes": 10174,
+          "sha256": "0D542E0C8804E39AA7F37EB00DA5A762149DC682D7829451287E11B938E94594",
+          "upstream_path": "vendor/svg-bounded/dependencies/image-webp-0.2.4/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/image-webp-0.2.4/LICENSE-MIT",
+          "bytes": 1036,
+          "sha256": "C77A4CF9DA729987D0FE7CCD811E3BD27393914DDF3D23467C18CC22954513B3",
+          "upstream_path": "vendor/svg-bounded/dependencies/image-webp-0.2.4/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "525E9FF3E1A4BE2FBEA1FDF0E98686A6D98B4D8F937E1BF7402245AF1909E8C3"
+    },
+    {
+      "name": "miniz_oxide",
+      "version": "0.8.9",
+      "license": "MIT OR Zlib OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE",
+          "bytes": 1213,
+          "sha256": "4108245A1F2DF9D4E94DF8ABED5B4BA0759BB2F9B40A6B939F1BE141077AE50B",
+          "upstream_path": "vendor/svg-bounded/dependencies/miniz_oxide-0.8.9/LICENSE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE-APACHE.md",
+          "bytes": 10174,
+          "sha256": "0D542E0C8804E39AA7F37EB00DA5A762149DC682D7829451287E11B938E94594",
+          "upstream_path": "vendor/svg-bounded/dependencies/miniz_oxide-0.8.9/LICENSE-APACHE.md"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE-MIT.md",
+          "bytes": 1212,
+          "sha256": "799E9CA9D179295EF372F25D3769CDDA7D25BB2668ADD6A6A1E22D1E4C678B8D",
+          "upstream_path": "vendor/svg-bounded/dependencies/miniz_oxide-0.8.9/LICENSE-MIT.md"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE-ZLIB.md",
+          "bytes": 984,
+          "sha256": "0A54E647FE54104658B5E563C04C6F9EDF251710E47BCE692E0BD990A4DDAA39",
+          "upstream_path": "vendor/svg-bounded/dependencies/miniz_oxide-0.8.9/LICENSE-ZLIB.md"
+        }
+      ],
+      "upstream_archive_sha256": "1FA76A2C86F704BDB222D66965FB3D63269CE38518B83CB0575FCA855EBB6316",
+      "registry": "https://crates.io/crates/miniz_oxide/0.8.9"
+    },
+    {
+      "name": "miniz_oxide",
+      "version": "0.9.1",
+      "license": "MIT OR Zlib OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/miniz_oxide-0.9.1/LICENSE",
+          "bytes": 1213,
+          "sha256": "4108245A1F2DF9D4E94DF8ABED5B4BA0759BB2F9B40A6B939F1BE141077AE50B",
+          "upstream_path": "vendor/svg-bounded/dependencies/miniz_oxide-0.9.1/LICENSE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/miniz_oxide-0.9.1/LICENSE-APACHE.md",
+          "bytes": 10174,
+          "sha256": "0D542E0C8804E39AA7F37EB00DA5A762149DC682D7829451287E11B938E94594",
+          "upstream_path": "vendor/svg-bounded/dependencies/miniz_oxide-0.9.1/LICENSE-APACHE.md"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/miniz_oxide-0.9.1/LICENSE-MIT.md",
+          "bytes": 1212,
+          "sha256": "799E9CA9D179295EF372F25D3769CDDA7D25BB2668ADD6A6A1E22D1E4C678B8D",
+          "upstream_path": "vendor/svg-bounded/dependencies/miniz_oxide-0.9.1/LICENSE-MIT.md"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/miniz_oxide-0.9.1/LICENSE-ZLIB.md",
+          "bytes": 984,
+          "sha256": "0A54E647FE54104658B5E563C04C6F9EDF251710E47BCE692E0BD990A4DDAA39",
+          "upstream_path": "vendor/svg-bounded/dependencies/miniz_oxide-0.9.1/LICENSE-ZLIB.md"
+        }
+      ],
+      "upstream_archive_sha256": "B63FBC4A50860E98E7B2AA7804DED1DB5CBC3AFF9193ADAFF57A6931BF7C4B4C",
+      "registry": "https://crates.io/crates/miniz_oxide/0.9.1"
+    },
+    {
+      "name": "png",
+      "version": "0.18.1",
+      "manifest": "vendor/svg-bounded/png/png-0.18.1/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/png-0.18.1/LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2",
+          "upstream_path": "vendor/svg-bounded/png/png-0.18.1/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/png-0.18.1/LICENSE-MIT",
+          "bytes": 1048,
+          "sha256": "EAF40297C75DA471F7CDA1F3458E8D91B4B2EC866E609527A13ACFA93B638652",
+          "upstream_path": "vendor/svg-bounded/png/png-0.18.1/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "60769B8B31B2A9F263DAE2776C37B1B28AE246943CF719EB6946A1DB05128A61"
+    },
+    {
+      "name": "quick-error",
+      "version": "2.0.1",
+      "license": "MIT/Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/quick-error-2.0.1/LICENSE-APACHE",
+          "bytes": 11358,
+          "sha256": "C6596EB7BE8581C18BE736C846FB9173B69ECCF6EF94C5135893EC56BD92BA08",
+          "upstream_path": "vendor/svg-bounded/dependencies/quick-error-2.0.1/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/quick-error-2.0.1/LICENSE-MIT",
+          "bytes": 1070,
+          "sha256": "058F01FE181608D027FCDE7E528FC03EA3CF90F30903C407644B0A9BBC54F500",
+          "upstream_path": "vendor/svg-bounded/dependencies/quick-error-2.0.1/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "A993555F31E5A609F617C12DB6250DEDCAC1B0A85076912C436E6FC9B2C8E6A3",
+      "registry": "https://crates.io/crates/quick-error/2.0.1"
+    },
+    {
+      "name": "simplecss",
+      "version": "0.2.2",
+      "manifest": "vendor/svg-bounded/dependencies/simplecss-0.2.2/Cargo.toml",
+      "license": "Apache-2.0 OR MIT",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/simplecss-0.2.2/AUTHORS",
+          "bytes": 307,
+          "sha256": "29B6467090ED36F94401083B58F40565571E9849047E8059F320A1B877304910",
+          "upstream_path": "vendor/svg-bounded/dependencies/simplecss-0.2.2/AUTHORS"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/simplecss-0.2.2/LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2",
+          "upstream_path": "vendor/svg-bounded/dependencies/simplecss-0.2.2/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/simplecss-0.2.2/LICENSE-MIT",
+          "bytes": 1082,
+          "sha256": "0B5F24524360E15BCF9FB79BCA875F5AA62F01F94F2988E23238C7EC0E6E8784",
+          "upstream_path": "vendor/svg-bounded/dependencies/simplecss-0.2.2/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "7A9C6883CA9C3C7C90E888DE77B7A5C849C779D25D74A1269B0218B14E8B136C"
+    },
+    {
+      "name": "slotmap",
+      "version": "1.1.1",
+      "manifest": "vendor/svg-bounded/dependencies/slotmap-1.1.1/Cargo.toml",
+      "license": "Zlib",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/slotmap-1.1.1/LICENSE",
+          "bytes": 884,
+          "sha256": "6CEC81441B2AB2B5090954C1FB5D0BCCA81B86487B5849061FA8952D20EF67D4",
+          "upstream_path": "vendor/svg-bounded/dependencies/slotmap-1.1.1/LICENSE"
+        }
+      ],
+      "upstream_archive_sha256": "BDD58C3C93C3D278CA835519292445CB4B0D4DC59CCFDF7CEADAAB3F8AEB4038"
+    },
+    {
+      "name": "svgtypes",
+      "version": "0.16.1",
+      "manifest": "vendor/svg-bounded/dependencies/svgtypes-0.16.1/Cargo.toml",
+      "license": "Apache-2.0 OR MIT",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/svgtypes-0.16.1/AUTHORS",
+          "bytes": 305,
+          "sha256": "F49D7E15695022ED1DCD72EB88ADF16C9E3FA7F2DE63CD71963BA233D3D51264",
+          "upstream_path": "vendor/svg-bounded/dependencies/svgtypes-0.16.1/AUTHORS"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/svgtypes-0.16.1/LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2",
+          "upstream_path": "vendor/svg-bounded/dependencies/svgtypes-0.16.1/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/svgtypes-0.16.1/LICENSE-MIT",
+          "bytes": 1061,
+          "sha256": "F3C9FE731C701ED77FD5FBAAC573872AF04DC5869385EB9BD5E3C73C42713814",
+          "upstream_path": "vendor/svg-bounded/dependencies/svgtypes-0.16.1/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "695B5790B3131DAFA99B3BBFD25A216EDB3D216DAD9CA208D4657BFB8F2ABC3D"
+    },
+    {
+      "name": "tiny-skia",
+      "version": "0.12.0",
+      "manifest": "vendor/svg-bounded/dependencies/tiny-skia-0.12.0/Cargo.toml",
+      "license": "BSD-3-Clause",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/tiny-skia-0.12.0/LICENSE",
+          "bytes": 1564,
+          "sha256": "6D41E05F1D54FE726997CB0334EC539F1DFF50600B1D5D90462EC2B392770CED",
+          "upstream_path": "vendor/svg-bounded/dependencies/tiny-skia-0.12.0/LICENSE"
+        }
+      ],
+      "upstream_archive_sha256": "47FFEE5EAAF5527F630FB0E356B90EBDEC84D5D18D937C5E440350F88C5A91EA"
+    },
+    {
+      "name": "tiny-skia-path",
+      "version": "0.12.0",
+      "manifest": "vendor/svg-bounded/dependencies/tiny-skia-path-0.12.0/Cargo.toml",
+      "license": "BSD-3-Clause",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/tiny-skia-path-0.12.0/LICENSE",
+          "bytes": 1564,
+          "sha256": "6D41E05F1D54FE726997CB0334EC539F1DFF50600B1D5D90462EC2B392770CED",
+          "upstream_path": "vendor/svg-bounded/dependencies/tiny-skia-path-0.12.0/LICENSE"
+        }
+      ],
+      "upstream_archive_sha256": "EDCA365C3FACCCA67D06593C5980FA6C57687DE727A03131735BB85F01FDEEB9"
+    },
+    {
+      "name": "weezl",
+      "version": "0.1.12",
+      "manifest": "vendor/svg-bounded/dependencies/weezl-0.1.12/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/weezl-0.1.12/LICENSE-APACHE",
+          "bytes": 10846,
+          "sha256": "769F80B5BCB42ED0AF4E4D2FD74E1AC9BF843CB80C5A29219D1EF3544428A6BB",
+          "upstream_path": "vendor/svg-bounded/dependencies/weezl-0.1.12/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/weezl-0.1.12/LICENSE-MIT",
+          "bytes": 1080,
+          "sha256": "573F5227DB835CD30BBDD3AED3F82615F80119A4D5C82B4DAF642DBFE2B6AFDE",
+          "upstream_path": "vendor/svg-bounded/dependencies/weezl-0.1.12/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "A28AC98DDC8B9274CB41BB4D9D4D5C425B6020C50C46F25559911905610B4A88"
+    },
+    {
+      "name": "zune-core",
+      "version": "0.5.3",
+      "manifest": "vendor/svg-bounded/dependencies/zune-core-0.5.3/Cargo.toml",
+      "license": "MIT OR Apache-2.0 OR Zlib",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/zune-core-0.5.3/LICENSE-APACHE",
+          "bytes": 11357,
+          "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4",
+          "upstream_path": "vendor/svg-bounded/dependencies/zune-core-0.5.3/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/zune-core-0.5.3/LICENSE-MIT",
+          "bytes": 1073,
+          "sha256": "D30047BCA3B516639339A3C279BB84C3483124FB5A9DAFE3C75056A85090E745",
+          "upstream_path": "vendor/svg-bounded/dependencies/zune-core-0.5.3/LICENSE-MIT"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/zune-core-0.5.3/LICENSE-ZLIB",
+          "bytes": 859,
+          "sha256": "D201D14804D3BCD3B944147173175E4ABFBD838B7C8069B6BD3452496BF13E6C",
+          "upstream_path": "vendor/svg-bounded/dependencies/zune-core-0.5.3/LICENSE-ZLIB"
+        }
+      ],
+      "upstream_archive_sha256": "D56377FD46368984A170BC5AAC5567E52CA5DA874CAA60BEA39FCBCA78FB658B"
+    },
+    {
+      "name": "zune-jpeg",
+      "version": "0.5.15",
+      "manifest": "vendor/svg-bounded/dependencies/zune-jpeg-0.5.15/Cargo.toml",
+      "license": "MIT OR Apache-2.0 OR Zlib",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/zune-jpeg-0.5.15/LICENSE-APACHE",
+          "bytes": 11357,
+          "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4",
+          "upstream_path": "vendor/svg-bounded/dependencies/zune-jpeg-0.5.15/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/zune-jpeg-0.5.15/LICENSE-MIT",
+          "bytes": 1073,
+          "sha256": "D30047BCA3B516639339A3C279BB84C3483124FB5A9DAFE3C75056A85090E745",
+          "upstream_path": "vendor/svg-bounded/dependencies/zune-jpeg-0.5.15/LICENSE-MIT"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/zune-jpeg-0.5.15/LICENSE-ZLIB",
+          "bytes": 859,
+          "sha256": "D201D14804D3BCD3B944147173175E4ABFBD838B7C8069B6BD3452496BF13E6C",
+          "upstream_path": "vendor/svg-bounded/dependencies/zune-jpeg-0.5.15/LICENSE-ZLIB"
+        }
+      ],
+      "upstream_archive_sha256": "27BC9D5B815BC103F142AA054F561D9187D191692EC7C2D1E2B4737F8DBD7296"
+    },
+    {
+      "name": "harfrust",
+      "version": "0.12.0",
+      "manifest": "vendor/svg-bounded/fork/harfrust-0.12.0/Cargo.toml",
+      "license": "MIT",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/harfrust-0.12.0/LICENSE",
+          "bytes": 1117,
+          "sha256": "3A7C3F0B887ABB7C638FAF022D29257418458614C6724B120CEEFFB279F9C7D2",
+          "upstream_path": "vendor/svg-bounded/fork/harfrust-0.12.0/LICENSE"
+        }
+      ],
+      "upstream_archive_sha256": "C03D949A14AA089BBB282F7DD76A498A7F684428E4257202EFC119EC010376F9"
+    },
+    {
+      "name": "resvg",
+      "version": "0.49.0",
+      "manifest": "vendor/svg-bounded/fork/resvg-0.49.0/Cargo.toml",
+      "license": "Apache-2.0 OR MIT",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/resvg-0.49.0/LICENSE-APACHE",
+          "bytes": 10173,
+          "sha256": "A6CBA85BC92E0CFF7A450B1D873C0EAA2E9FC96BF472DF0247A26BEC77BF3FF9",
+          "upstream_path": "vendor/svg-bounded/fork/resvg-0.49.0/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/resvg-0.49.0/LICENSE-MIT",
+          "bytes": 1057,
+          "sha256": "F5D934DC281B44E0003EE461AC740B18B6629A454DECD872C774D34E4EE0B21D",
+          "upstream_path": "vendor/svg-bounded/fork/resvg-0.49.0/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "1572844B6727A1BF842190E9947641A68AC44BED83F50AFB4BD1407A2564BEE8"
+    },
+    {
+      "name": "roxmltree",
+      "version": "0.21.1",
+      "manifest": "vendor/svg-bounded/fork/roxmltree-0.21.1/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/roxmltree-0.21.1/LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2",
+          "upstream_path": "vendor/svg-bounded/fork/roxmltree-0.21.1/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/roxmltree-0.21.1/LICENSE-MIT",
+          "bytes": 1083,
+          "sha256": "FFFE218C1E349E1D482A05677F2CE850502F88298174D77F6AC7C04821DB7899",
+          "upstream_path": "vendor/svg-bounded/fork/roxmltree-0.21.1/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "F1964B10C76125C36F8AFE190065A4BF9A87BF324842C05701330BBA9F1CACBB"
+    },
+    {
+      "name": "usvg",
+      "version": "0.49.0",
+      "manifest": "vendor/svg-bounded/fork/usvg-0.49.0/Cargo.toml",
+      "license": "Apache-2.0 OR MIT",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/usvg-0.49.0/LICENSE-APACHE",
+          "bytes": 10173,
+          "sha256": "A6CBA85BC92E0CFF7A450B1D873C0EAA2E9FC96BF472DF0247A26BEC77BF3FF9",
+          "upstream_path": "vendor/svg-bounded/fork/usvg-0.49.0/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/usvg-0.49.0/LICENSE-MIT",
+          "bytes": 1057,
+          "sha256": "F5D934DC281B44E0003EE461AC740B18B6629A454DECD872C774D34E4EE0B21D",
+          "upstream_path": "vendor/svg-bounded/fork/usvg-0.49.0/LICENSE-MIT"
+        }
+      ],
+      "upstream_archive_sha256": "D09B73EE83641D390AD7FFD9000F347B16EB128E437675B6FF277EA5C7FCF22C"
+    },
+    {
+      "name": "unicode-bidi",
+      "version": "0.3.18",
+      "manifest": "vendor/svg-bounded/fork/unicode-bidi-0.3.18/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "upstreamCommit": "580b9c6c68fdb689916017e61d5052be3ed349b5",
+      "upstreamCrateChecksum": "5c1cb5db39152898a79168971543b1cb5020dff7fe43c8dc468b0885f5e29df5",
+      "localModifications": "Shared ordinary/controlled bidi core, request-funded storage and cooperative work checks; original ordinary API retained.",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/unicode-bidi-0.3.18/LICENSE-MIT",
+          "bytes": 1071,
+          "sha256": "7B63ECD5F1902AF1B63729947373683C32745C16A10E8E6292E2E2DCD7E90AE0",
+          "upstream_path": "vendor/svg-bounded/fork/unicode-bidi-0.3.18/LICENSE-MIT"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/unicode-bidi-0.3.18/LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2",
+          "upstream_path": "vendor/svg-bounded/fork/unicode-bidi-0.3.18/LICENSE-APACHE"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/unicode-bidi-0.3.18/COPYRIGHT",
+          "bytes": 412,
+          "sha256": "EDB20B474F6CBD4F4DB066B54A9E0F687D0009D309412A63431189B59B8E2A07",
+          "upstream_path": "vendor/svg-bounded/fork/unicode-bidi-0.3.18/COPYRIGHT"
+        }
+      ],
+      "upstream_archive_sha256": "5C1CB5DB39152898A79168971543B1CB5020DFF7FE43C8DC468B0885F5E29DF5"
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.17.1",
+      "manifest": "vendor/svg-bounded/fork/hashbrown-0.17.1/Cargo.toml",
+      "license": "MIT OR Apache-2.0",
+      "upstreamCommit": "c62a63a61b7caf2de8f9ecb7b06a66b0ab6bdf3d",
+      "upstreamCrateChecksum": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a",
+      "localModifications": "Request-controlled SwissTable probes, initialization, resize and traversal sharing the ordinary core.",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/hashbrown-0.17.1/LICENSE-MIT",
+          "bytes": 1060,
+          "sha256": "FF8F68CB076CAF8CEFE7A6430D4AC086CE6AF2CA8CE2C4E5A2004D4552EF52A2",
+          "upstream_path": "vendor/svg-bounded/fork/hashbrown-0.17.1/LICENSE-MIT"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/hashbrown-0.17.1/LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2",
+          "upstream_path": "vendor/svg-bounded/fork/hashbrown-0.17.1/LICENSE-APACHE"
+        }
+      ],
+      "upstream_archive_sha256": "ED5909B6E89A2DB4456E54CD5F673791D7ECA6732202BBF2A9CC504FE2F9B84A"
+    },
+    {
+      "name": "kurbo",
+      "version": "0.13.1",
+      "manifest": "vendor/svg-bounded/fork/kurbo-0.13.1/Cargo.toml",
+      "license": "Apache-2.0 OR MIT",
+      "upstreamCommit": "838b69ef35f3381cefc007d86aa8364f5a6dc673",
+      "upstreamCrateChecksum": "4b60dfc32f652b926df6192e55525b16d186c69d47876c3ead4da5cc9f8450e2",
+      "localModifications": "Request-controlled curve length/inverse length and safe ITP initialization sharing the ordinary core.",
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/kurbo-0.13.1/LICENSE-MIT",
+          "bytes": 1055,
+          "sha256": "23C23145F6EAC25C28CDCC03D38506A5712A9A8CFFB5BD5301457F6173EA696E",
+          "upstream_path": "vendor/svg-bounded/fork/kurbo-0.13.1/LICENSE-MIT"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/kurbo-0.13.1/LICENSE-APACHE",
+          "bytes": 11358,
+          "sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30",
+          "upstream_path": "vendor/svg-bounded/fork/kurbo-0.13.1/LICENSE-APACHE"
+        }
+      ],
+      "upstream_archive_sha256": "4B60DFC32F652B926DF6192E55525B16D186C69D47876C3EAD4DA5CC9F8450E2"
+    }
+  ]
+}

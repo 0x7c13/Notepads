@@ -8,7 +8,7 @@ param([string] $RepoRoot = (Join-Path $PSScriptRoot '..'))
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $RepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
-$sourceExtensions = @('.cs', '.c', '.cpp', '.cxx', '.h', '.hpp', '.idl', '.inc', '.ps1', '.psm1')
+$sourceExtensions = @('.cs', '.c', '.cpp', '.cxx', '.h', '.hpp', '.idl', '.inc', '.ps1', '.psm1', '.rs')
 $xmlExtensions = @('.xaml', '.csproj', '.vcxproj', '.props', '.targets')
 
 # NUL separation preserves spaces, quotes and non-ASCII filenames. Include new files
@@ -32,14 +32,21 @@ $preserved = [Collections.Generic.Dictionary[string,object]]::new([StringCompare
 $ownedXml = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $licenses = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
 $errors = [Collections.Generic.List[string]]::new()
+$sourceModules = if ($policy.PSObject.Properties.Name -contains 'sourceModules') { @($policy.sourceModules) } else { @() }
+$upstreamTrees = if ($policy.PSObject.Properties.Name -contains 'upstreamTrees') { @($policy.upstreamTrees) } else { @() }
 
-function Register-Path([string] $Path) {
+function Register-Path([string] $Path, [switch] $Directory) {
     if (!$Path -or $Path -match '[:\\*?\[\]]' -or $Path.StartsWith('/') -or
         @($Path.Split('/') | Where-Object { $_ -in @('', '.', '..') }).Count) {
         throw "Policy requires an exact repository-relative path: $Path"
     }
     if (!$registered.Add($Path)) { throw "Duplicate header policy path: $Path" }
-    if (!$files.Contains($Path)) { throw "Stale header policy path (missing or ignored): $Path" }
+    if ($Directory) {
+        if (![IO.Directory]::Exists((Join-Path $RepoRoot $Path)) -or !@($files | Where-Object { $_.StartsWith($Path + '/', [StringComparison]::Ordinal) }).Count) {
+            throw "Stale header policy directory (missing, empty or ignored): $Path"
+        }
+    }
+    elseif (!$files.Contains($Path)) { throw "Stale header policy path (missing or ignored): $Path" }
 }
 
 function Read-Text([string] $Path) {
@@ -60,6 +67,37 @@ foreach ($license in $policy.licenses) {
     Assert-Hash $license.path (Read-Text $license.path) $license.sha256
 }
 if (!$licenses.Contains('LICENSE.txt')) { throw 'Header policy must protect the root LICENSE.txt.' }
+foreach ($module in $sourceModules) {
+    Register-Path $module.path -Directory
+    if (!$licenses.Contains($module.license) -or !$module.license.StartsWith($module.path + '/', [StringComparison]::Ordinal) -or
+        $module.licenseName -cne ([IO.Path]::GetFileName($module.license) + ' file') -or $module.allowCompactBanner -isnot [bool]) {
+        throw 'Each source module needs its protected local license, exact license name and explicit banner spacing policy.'
+    }
+    foreach ($other in $sourceModules) {
+        if ($module.path -cne $other.path -and $module.path.StartsWith($other.path + '/', [StringComparison]::Ordinal)) {
+            throw 'Source module paths must not overlap.'
+        }
+    }
+}
+foreach ($tree in $upstreamTrees) {
+    Register-Path $tree.path -Directory
+    $origins = @($sourceModules | Where-Object {
+        $tree.path.StartsWith($_.path + '/vendor/', [StringComparison]::Ordinal) -or
+        $tree.path.StartsWith($_.path + '/tests/baselines/', [StringComparison]::Ordinal)
+    })
+    if ($origins.Count -ne 1 -or [string]::IsNullOrWhiteSpace($tree.reason) -or !$licenses.Contains($tree.license) -or
+        !$tree.license.StartsWith($tree.path + '/', [StringComparison]::Ordinal)) {
+        throw 'Upstream trees require one declared module vendor/baseline origin, a reason and a protected license within that origin.'
+    }
+}
+
+function Test-UpstreamSourcePath([string] $Path) {
+    foreach ($tree in $upstreamTrees) {
+        if ($Path.StartsWith($tree.path + '/', [StringComparison]::Ordinal)) { return $true }
+    }
+    return $false
+}
+
 foreach ($path in $policy.ownedXml) {
     Register-Path $path
     if ([IO.Path]::GetExtension($path) -notin $xmlExtensions) { throw "Invalid XML notice path: $path" }
@@ -86,12 +124,22 @@ foreach ($group in $policy.preserved) {
         $preserved.Add($path, $null)
     }
 }
+foreach ($path in @($ownedXml) + @($preserved.Keys)) {
+    if (Test-UpstreamSourcePath $path) { throw "Explicit header rule overlaps an upstream tree: $path" }
+}
 
 $ownCount = 0
+$upstreamCount = 0
 $separator = '-' * 93
 foreach ($path in ($files | Sort-Object)) {
     $extension = [IO.Path]::GetExtension($path)
-    if ($extension -notin $sourceExtensions -and !$ownedXml.Contains($path) -and !$preserved.ContainsKey($path)) { continue }
+    $module = @($sourceModules | Where-Object { $path.StartsWith($_.path + '/', [StringComparison]::Ordinal) }) | Select-Object -First 1
+    $xml = $ownedXml.Contains($path) -or ($null -ne $module -and $extension -in $xmlExtensions)
+    if ($extension -notin $sourceExtensions -and !$xml -and !$preserved.ContainsKey($path)) { continue }
+    if (Test-UpstreamSourcePath $path) {
+        $upstreamCount++
+        continue
+    }
     $text = Read-Text $path
     $lines = $text.Split("`n")
     if ($preserved.ContainsKey($path)) {
@@ -106,17 +154,25 @@ foreach ($path in ($files | Sort-Object)) {
         continue
     }
     $ownCount++
-    $xml = $ownedXml.Contains($path)
+    # The imported Markdown projects retain their XML declaration before the
+    # existing banner; application XML keeps its original first-line contract.
+    if ($null -ne $module -and $xml -and $lines[0] -cmatch '^<\?xml .+\?>$') { $lines = $lines[1..($lines.Length - 1)] }
     $prefix = if ($xml) { '' } elseif ($extension -in @('.ps1', '.psm1')) { '#' } else { '//' }
     $yearLine = [regex]::Escape("$prefix  Copyright (c) ") + '(?<from>\d{4})(?:-(?<to>\d{4}))?, Jiaqi \(0x7c13\) Liu\. All rights reserved\.'
     $validYear = $lines.Length -ge 2 -and $lines[1] -cmatch "^$yearLine`$"
     if ($validYear -and $Matches.ContainsKey('to') -and [int]$Matches.from -gt [int]$Matches.to) { $validYear = $false }
     $opening = if ($xml) { '<!--' } else { "$prefix $separator" }
     $closing = if ($xml) { '-->' } else { "$prefix $separator" }
-    $licenseLine = "$prefix  See LICENSE.txt in the project root for license information."
+    $licenseName = if ($null -ne $module) { $module.licenseName } else { 'LICENSE.txt' }
+    $licenseLine = "$prefix  See $licenseName in the project root for license information."
     if ($lines.Length -lt 4 -or $lines[0] -cne $opening -or !$validYear -or
         $lines[2] -cne $licenseLine -or $lines[3] -cne $closing) {
-        $errors.Add("${path}:1: expected the canonical copyright banner (two spaces, original year(s), owner and LICENSE.txt).")
+        $errors.Add("${path}:1: expected the canonical copyright banner (two spaces, original year(s), owner and $licenseName).")
+    }
+    elseif ($null -ne $module -and $module.allowCompactBanner) {
+        if ($lines.Length -gt 5 -and $lines[4] -ceq '' -and $lines[5] -ceq '') {
+            $errors.Add("${path}:5: expected the preserved compact banner or one empty line afterward.")
+        }
     }
     elseif ($lines.Length -lt 6 -or $lines[4] -cne '' -or ($lines.Length -gt 6 -and $lines[5] -ceq '')) {
         $errors.Add("${path}:5: expected exactly one empty line after the copyright banner.")
@@ -124,5 +180,5 @@ foreach ($path in ($files | Sort-Object)) {
 }
 if (!$ownCount) { throw 'Header check selected no first-party source files.' }
 if ($errors.Count) { throw ("Header check failed ($($errors.Count) violations):`n" + ($errors -join "`n")) }
-Write-Output ("PASS Headers: {0} canonical files, {1} preserved exceptions, {2} license files." -f
-    $ownCount, $preserved.Count, $licenses.Count)
+Write-Output ("PASS Headers: {0} canonical files, {1} preserved exceptions, {2} license files, {3} upstream files with retained formats." -f
+    $ownCount, $preserved.Count, $licenses.Count, $upstreamCount)

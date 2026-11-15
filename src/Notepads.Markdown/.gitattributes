@@ -1,0 +1,20 @@
+# Maintain first-party source conventions independently of core.autocrlf.
+*.rs text eol=lf
+*.cs text eol=crlf
+*.cpp text eol=crlf
+*.h text eol=crlf
+*.idl text eol=crlf
+*.xaml text eol=crlf
+*.props text eol=crlf
+*.targets text eol=crlf
+*.items text eol=crlf
+*.ps1 text eol=crlf
+
+# Preserve original upstream notices, vendored sources and fixed validation bytes.
+vendor/** -text !eol
+third-party-notices/** -text !eol
+tests/baselines/** -text !eol
+tests/fixtures/** -text !eol
+crates/markdown-math/assets/** -text !eol
+crates/markdown-core/tests/front-matter-vscode-1.145.2/** -text !eol
+crates/markdown-core/tests/source-baseline-index.tsv -text !eol

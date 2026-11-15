@@ -1,0 +1,22 @@
+| A | table    |
+| ------ | ---- |
+| not   |  in  |
+| a     | list|
+
+* A blockquote:
+  > inside a list item
+* A Heading:
+  # inside a list item
+* A table:
+
+  | inside | a       |
+  | ------ | ------- |
+  | list   | item    |
+  | with   | leading |
+  | empty  | lines   |
+* A table:
+  | inside  | a       |
+  | ------- | ------- |
+  | list    | item    |
+  | without | leading |
+  | empty   | lines   |

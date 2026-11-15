@@ -1,0 +1,222 @@
+{
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          11
+        ]
+      ],
+      "readable_utf8": "￼",
+      "logical_utf16": 1,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            11
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Object",
+          "reasons": [
+            "ImageSyntax"
+          ],
+          "object_id": 0
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "scope": {
+        "kind": "ImageAlt",
+        "object_id": 0
+      },
+      "source_domains": [
+        [
+          2,
+          7
+        ]
+      ],
+      "readable_utf8": "a b",
+      "logical_utf16": 3,
+      "fragments": [
+        {
+          "id": 1,
+          "source": [
+            2,
+            4
+          ],
+          "logical": [
+            0,
+            2
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        },
+        {
+          "id": 2,
+          "source": [
+            4,
+            5
+          ],
+          "logical": [
+            2,
+            2
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "EmphasisDelimiter"
+          ]
+        },
+        {
+          "id": 3,
+          "source": [
+            5,
+            6
+          ],
+          "logical": [
+            2,
+            3
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        },
+        {
+          "id": 4,
+          "source": [
+            6,
+            7
+          ],
+          "logical": [
+            3,
+            3
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "EmphasisDelimiter"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "id": 0,
+      "kind": "Image",
+      "flow_id": 0,
+      "logical_span": [
+        0,
+        1
+      ],
+      "source_envelope": [
+        0,
+        11
+      ],
+      "alt_flow_id": 1,
+      "destination_payload": 0,
+      "title_payload": null,
+      "source_key": {
+        "document_id": "0400000000000000000000000000000b",
+        "revision": 1
+      }
+    }
+  ],
+  "payloads": [
+    {
+      "id": 0,
+      "role": "Destination",
+      "decoded_utf8": "u",
+      "source_parts": [
+        {
+          "source": [
+            9,
+            10
+          ],
+          "payload_utf8": [
+            0,
+            1
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "structures": [
+    {
+      "kind": "Block",
+      "id": 0,
+      "parent": null,
+      "node_kind": "Paragraph",
+      "source_envelope": [
+        0,
+        11
+      ],
+      "flow_id": 0
+    },
+    {
+      "kind": "Inline",
+      "id": 1,
+      "parent": 0,
+      "node_kind": "Image",
+      "flow_id": 0,
+      "logical_span": [
+        0,
+        1
+      ],
+      "source_envelope": [
+        0,
+        11
+      ]
+    },
+    {
+      "kind": "Inline",
+      "id": 2,
+      "parent": null,
+      "node_kind": "AltLabel",
+      "flow_id": 1,
+      "logical_span": [
+        0,
+        3
+      ],
+      "source_envelope": [
+        2,
+        7
+      ]
+    },
+    {
+      "kind": "Inline",
+      "id": 3,
+      "parent": 2,
+      "node_kind": "Emphasis",
+      "flow_id": 1,
+      "logical_span": [
+        2,
+        3
+      ],
+      "source_envelope": [
+        4,
+        7
+      ]
+    }
+  ],
+  "reference_edges": [],
+  "source_key": {
+    "document_id": "0400000000000000000000000000000b",
+    "revision": 1
+  }
+}

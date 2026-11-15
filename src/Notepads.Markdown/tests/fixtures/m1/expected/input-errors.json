@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "expected_error": "invalid_utf8",
+  "derivation": "UTF-8 scalar encoding rules; source admission refuses malformed/incomplete/overlong/surrogate encodings without lossy decoding"
+}

@@ -1,0 +1,167 @@
+{
+  "source_key": {
+    "document_id": "04030000000000000000000000000004",
+    "revision": 1
+  },
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          9
+        ]
+      ],
+      "readable_utf8": "￼",
+      "logical_utf16": 1,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            9
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Object",
+          "reasons": [
+            "ImageSyntax"
+          ],
+          "object_id": 0
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "scope": {
+        "kind": "ImageAlt",
+        "object_id": 0
+      },
+      "source_domains": [
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "readable_utf8": "ab",
+      "logical_utf16": 2,
+      "fragments": [
+        {
+          "id": 1,
+          "source": [
+            2,
+            3
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        },
+        {
+          "id": 2,
+          "source": [
+            4,
+            5
+          ],
+          "logical": [
+            1,
+            2
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "id": 0,
+      "kind": "Image",
+      "flow_id": 0,
+      "logical_span": [
+        0,
+        1
+      ],
+      "source_envelope": [
+        0,
+        9
+      ],
+      "alt_flow_id": 1,
+      "destination_payload": 0,
+      "title_payload": null,
+      "source_edit_action_span": null,
+      "source_key": {
+        "document_id": "04030000000000000000000000000004",
+        "revision": 1
+      }
+    }
+  ],
+  "payloads": [
+    {
+      "id": 0,
+      "role": "Destination",
+      "decoded_utf8": "u",
+      "source_parts": [
+        {
+          "source": [
+            7,
+            8
+          ],
+          "payload_utf8": [
+            0,
+            1
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "structures": [
+    {
+      "kind": "Block",
+      "id": 0,
+      "parent": null,
+      "node_kind": "Paragraph",
+      "source_envelope": [
+        0,
+        9
+      ],
+      "flow_id": 0
+    },
+    {
+      "kind": "Inline",
+      "id": 1,
+      "parent": 0,
+      "node_kind": "Image",
+      "flow_id": 0,
+      "logical_span": [
+        0,
+        1
+      ],
+      "source_envelope": [
+        0,
+        9
+      ]
+    }
+  ],
+  "reference_edges": []
+}

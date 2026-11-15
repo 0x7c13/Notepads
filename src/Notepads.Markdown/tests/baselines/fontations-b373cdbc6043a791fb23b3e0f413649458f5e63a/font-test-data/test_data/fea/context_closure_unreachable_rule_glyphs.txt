@@ -1,0 +1,9 @@
+.notdef
+space
+a
+b
+c
+z
+A
+B
+C

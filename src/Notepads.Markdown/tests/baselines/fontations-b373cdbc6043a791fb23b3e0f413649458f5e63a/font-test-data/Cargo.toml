@@ -1,0 +1,12 @@
+# Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu.
+# Test-only standalone metadata; original source/fonts/expected retained.
+[package]
+name="font-test-data"
+version="0.7.0"
+edition="2021"
+rust-version="1.85"
+license="MIT OR Apache-2.0"
+repository="https://github.com/googlefonts/fontations"
+[workspace]
+[dependencies]
+font-types="=0.12.7"

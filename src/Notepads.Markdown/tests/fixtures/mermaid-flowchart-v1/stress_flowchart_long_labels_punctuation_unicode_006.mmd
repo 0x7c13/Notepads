@@ -1,0 +1,10 @@
+flowchart TD
+%% Authored stress fixture (Mermaid@11.12.2): long labels, punctuation, unicode, and wrapping behavior.
+
+subgraph M["Model – long labels / punctuation"]
+  n1["title-with-dashes -- and spaces"] --> n2["title wwith spaces"]
+  n2 --> n3["Greek: λ, μ, σ; math-ish but no KaTeX"]
+  n3 --> n4["Path: C:\\Temp\\merman\\out.svg (Windows-style)"]
+end
+
+n4 --> done([done])

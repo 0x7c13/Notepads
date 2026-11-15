@@ -1,0 +1,136 @@
+{
+  "scope": "Optional quality-observation feature only; not default product/AOT qualification.",
+  "packages": [
+    {
+      "name": "block-buffer",
+      "version": "0.12.1",
+      "license": "MIT OR Apache-2.0",
+      "archiveSha256": "d2f6c7dbe95a6ed67ad9f18e57daf93a2f034c524b99fd2b76d18fdfeb6660aa",
+      "notices": [
+        {
+          "path": "block-buffer-0.12.1/LICENSE-APACHE",
+          "sha256": "A9040321C3712D8FD0B09CF52B17445DE04A23A10165049AE187CD39E5C86BE5",
+          "bytes": 10849
+        },
+        {
+          "path": "block-buffer-0.12.1/LICENSE-MIT",
+          "sha256": "98181E7249D0C01737645EC982499CE99A0F07EB8F7D625B8840D799D10DBC01",
+          "bytes": 1082
+        }
+      ]
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.3.1",
+      "license": "MIT OR Apache-2.0",
+      "archiveSha256": "5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566",
+      "notices": [
+        {
+          "path": "cpufeatures-0.3.1/LICENSE-APACHE",
+          "sha256": "A9040321C3712D8FD0B09CF52B17445DE04A23A10165049AE187CD39E5C86BE5",
+          "bytes": 10849
+        },
+        {
+          "path": "cpufeatures-0.3.1/LICENSE-MIT",
+          "sha256": "73B9DC2E79C7308998DD30296E073AEFAEFB944A68FB89AA412C23C0EDCABCAA",
+          "bytes": 1082
+        }
+      ]
+    },
+    {
+      "name": "crypto-common",
+      "version": "0.2.2",
+      "license": "MIT OR Apache-2.0",
+      "archiveSha256": "ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453",
+      "notices": [
+        {
+          "path": "crypto-common-0.2.2/LICENSE-APACHE",
+          "sha256": "A9040321C3712D8FD0B09CF52B17445DE04A23A10165049AE187CD39E5C86BE5",
+          "bytes": 10849
+        },
+        {
+          "path": "crypto-common-0.2.2/LICENSE-MIT",
+          "sha256": "D2E7EC5355C96EEADE56B09187CEB48A6A30299DA3CE7531A66D3D11405AB963",
+          "bytes": 1070
+        }
+      ]
+    },
+    {
+      "name": "digest",
+      "version": "0.11.3",
+      "license": "MIT OR Apache-2.0",
+      "archiveSha256": "f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2",
+      "notices": [
+        {
+          "path": "digest-0.11.3/LICENSE-APACHE",
+          "sha256": "A9040321C3712D8FD0B09CF52B17445DE04A23A10165049AE187CD39E5C86BE5",
+          "bytes": 10849
+        },
+        {
+          "path": "digest-0.11.3/LICENSE-MIT",
+          "sha256": "AF59CEA35D7F5E2777A713B8D155D65EFA2C339EB43F3C14E868C6AC8506EDAD",
+          "bytes": 1103
+        }
+      ]
+    },
+    {
+      "name": "hybrid-array",
+      "version": "0.4.15",
+      "license": "MIT OR Apache-2.0",
+      "archiveSha256": "27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17",
+      "notices": [
+        {
+          "path": "hybrid-array-0.4.15/LICENSE-APACHE",
+          "sha256": "A9040321C3712D8FD0B09CF52B17445DE04A23A10165049AE187CD39E5C86BE5",
+          "bytes": 10849
+        },
+        {
+          "path": "hybrid-array-0.4.15/LICENSE-MIT",
+          "sha256": "70C9D40F1F9545C3F133B8A67206E89DA850F6468EED072281BB3701514114A9",
+          "bytes": 1082
+        }
+      ]
+    },
+    {
+      "name": "sha2",
+      "version": "0.11.1",
+      "license": "MIT OR Apache-2.0",
+      "archiveSha256": "47d7069beb7d6ac7b9acd1039986e73443f24234f41074da099d6f994ac9ad19",
+      "notices": [
+        {
+          "path": "sha2-0.11.1/LICENSE-APACHE",
+          "sha256": "A9040321C3712D8FD0B09CF52B17445DE04A23A10165049AE187CD39E5C86BE5",
+          "bytes": 10849
+        },
+        {
+          "path": "sha2-0.11.1/LICENSE-MIT",
+          "sha256": "831E0F43AD0BF014C1C4FEC5767AAE470434C1D66D6E671BE2D823E729063E25",
+          "bytes": 1196
+        }
+      ]
+    },
+    {
+      "name": "typenum",
+      "version": "1.20.1",
+      "license": "MIT OR Apache-2.0",
+      "archiveSha256": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20",
+      "notices": [
+        {
+          "path": "typenum-1.20.1/LICENSE",
+          "sha256": "DB11FEC9946737DF39CA3898D9CD8C10EC6F6C3A884A6802B0AD0B81B4E8F23A",
+          "bytes": 17
+        },
+        {
+          "path": "typenum-1.20.1/LICENSE-APACHE",
+          "sha256": "516B24E051BF5630880EBBD55C40A25CE9552EBAF8970A53E8976EB70E522406",
+          "bytes": 10835
+        },
+        {
+          "path": "typenum-1.20.1/LICENSE-MIT",
+          "sha256": "A825BD853AB71619A4923D7B4311221427848070FF44D990DA39B0B274C1683F",
+          "bytes": 1083
+        }
+      ]
+    }
+  ]
+}

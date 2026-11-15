@@ -1,0 +1,412 @@
+{
+  "data_version": "m1-range.1",
+  "status": "draft",
+  "oracle_frozen": false,
+  "derived_from_candidate_output": false,
+  "models": [
+    {
+      "id": "empty",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04000000000000000000000000000001",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/empty.bin",
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      "model": {
+        "path": "models/empty.json",
+        "bytes": 477,
+        "sha256": "62D69F17ABE9F2C4C1F031BA9907C24C4BE4C6F5AF4E9B56063DA3A2EF032368"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.empty",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.empty.md",
+        "source_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.empty].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "definition",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04000000000000000000000000000002",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/definition.bin",
+        "bytes": 7,
+        "sha256": "F2F11A90A575C3F22247EA8CB514569673F8056E222CB5225B5C0F4001109D8F"
+      },
+      "model": {
+        "path": "models/definition.json",
+        "bytes": 1766,
+        "sha256": "354F8C42880B42A385AA2975007226E4A967A3A8F9DAFC879A61E8B269024AA0"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.definition-only",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.definition-only.md",
+        "source_sha256": "F2F11A90A575C3F22247EA8CB514569673F8056E222CB5225B5C0F4001109D8F",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.definition-only].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "multi-hidden-synthetic",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04000000000000000000000000000003",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/multi-hidden-synthetic.bin",
+        "bytes": 6,
+        "sha256": "BEF57EC7F53A6D40BEB640A780A639C83BC29AC8A9816F1FC6C5C6DCD93C4721"
+      },
+      "model": {
+        "path": "models/multi-hidden-synthetic.json",
+        "bytes": 2201,
+        "sha256": "8838A8E11CCB2E1DC7444488597B78482C7FD5CE0D18B339E77AFF9B4E4FCA80"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.control.multi-hidden-synthetic",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.control.multi-hidden-synthetic.md",
+        "source_sha256": "BEF57EC7F53A6D40BEB640A780A639C83BC29AC8A9816F1FC6C5C6DCD93C4721",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.control.multi-hidden-synthetic].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "normalization",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04000000000000000000000000000004",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/normalization.bin",
+        "bytes": 12,
+        "sha256": "62AC38EFED0CF615EA1A2254C136F39AB13F1400AFD01773E5488590F53BE26C"
+      },
+      "model": {
+        "path": "models/normalization.json",
+        "bytes": 2222,
+        "sha256": "C28AE8D591B464558C9B34DA7A24716FB870DAF807D07ED2132AC48E13396AB0"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.normalization.crlf-nul-unicode-cr",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.normalization.crlf-nul-unicode-cr.md",
+        "source_sha256": "62AC38EFED0CF615EA1A2254C136F39AB13F1400AFD01773E5488590F53BE26C",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.normalization.crlf-nul-unicode-cr].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "entities",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04000000000000000000000000000012",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/entities.bin",
+        "bytes": 10,
+        "sha256": "360D9D079C933408511677541CCD65FECE76A0C52492FF7B4968B321EC254ECD"
+      },
+      "model": {
+        "path": "models/entities.json",
+        "bytes": 1298,
+        "sha256": "985111602C3EE10CCB6D23C3ECF82EAECB93CE7009B84711550984A225AA3D36"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.fidelity.adjacent-entities",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.fidelity.adjacent-entities.md",
+        "source_sha256": "360D9D079C933408511677541CCD65FECE76A0C52492FF7B4968B321EC254ECD",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.fidelity.adjacent-entities].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "partial-tab",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04000000000000000000000000000009",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/partial-tab.bin",
+        "bytes": 7,
+        "sha256": "5EEA125561281E1BE140ADF1BDD2CD483E15BAB175AAF5BC0A6C2B3E428770D5"
+      },
+      "model": {
+        "path": "models/partial-tab.json",
+        "bytes": 1762,
+        "sha256": "B37A0BA85537307800A30CA4DDE3390B7E7B597E57CEF8B06C19D090AF9A5983"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.container.partial-tab-code",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.container.partial-tab-code.md",
+        "source_sha256": "5EEA125561281E1BE140ADF1BDD2CD483E15BAB175AAF5BC0A6C2B3E428770D5",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.container.partial-tab-code].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "code",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04000000000000000000000000000011",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/code.bin",
+        "bytes": 5,
+        "sha256": "999C1001E3761320C3C21461A5FDD44BBC563911A6F65D2567D252E91C4CFDB9"
+      },
+      "model": {
+        "path": "models/code.json",
+        "bytes": 1746,
+        "sha256": "AB543A65DAF2FD6AF3CA12F7FA638738C227973EB856B85886D02F352D7F25DC"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.fidelity.code-copy-interior",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.fidelity.code-copy-interior.md",
+        "source_sha256": "999C1001E3761320C3C21461A5FDD44BBC563911A6F65D2567D252E91C4CFDB9",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.fidelity.code-copy-interior].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "image-alt",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "0400000000000000000000000000000b",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/image-alt.bin",
+        "bytes": 11,
+        "sha256": "B2274238FAA98E9D44699917BBAB3D49AFD029E92B3A498DB43AD352ABF671A0"
+      },
+      "model": {
+        "path": "models/image-alt.json",
+        "bytes": 3885,
+        "sha256": "2F793E137F1DF16482A367CD07DE825FAB5E2DDD9136752230A3C3728EE4BA89"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.image.emphasis-alt",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.image.emphasis-alt.md",
+        "source_sha256": "B2274238FAA98E9D44699917BBAB3D49AFD029E92B3A498DB43AD352ABF671A0",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.image.emphasis-alt].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "empty-alt",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "0400000000000000000000000000000d",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/empty-alt.bin",
+        "bytes": 6,
+        "sha256": "F96B2753D9D6F0368C7F2E3B9E0C0CFBA79B57C33A02A2ED933C8FEE6C2DA5B9"
+      },
+      "model": {
+        "path": "models/empty-alt.json",
+        "bytes": 2556,
+        "sha256": "49C96DC554B9241A4DAD837B2A55A7D6F9B3529F33F63CE842D927AA75511D7C"
+      },
+      "parent": {
+        "data_version": "m1-provenance.1",
+        "case_id": "e04.image.empty-alt-anchor",
+        "source_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/inputs/e04.image.empty-alt-anchor.md",
+        "source_sha256": "F96B2753D9D6F0368C7F2E3B9E0C0CFBA79B57C33A02A2ED933C8FEE6C2DA5B9",
+        "model_path": "artifacts/evidence/m1/e04-b01/frozen-1/tests/fixtures/m1-provenance/expected/independent-goldens.json",
+        "model_sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+        "model_selector": "cases[id=e04.image.empty-alt-anchor].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "compound-image",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04020000000000000000000000000010",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/compound-image.bin",
+        "bytes": 34,
+        "sha256": "18E264A79BED9852D0E03D24847B946DF76CE4B7FC7EED25EE4A972BB07D3DAB"
+      },
+      "model": {
+        "path": "models/compound-image.json",
+        "bytes": 6492,
+        "sha256": "61BC69EC081195FF76C0C685D292B7745AF11B23F6B2B8B3A5FF14E1248C8789"
+      },
+      "parent": {
+        "data_version": "m1-provenance.2",
+        "case_id": "e04v2.image.compound-alt-unicode",
+        "source_path": "artifacts/evidence/m1/e04-expansion/frozen-oracle-v2/tests/fixtures/m1-provenance-v2/inputs/e04v2.image.compound-alt-unicode.md",
+        "source_sha256": "18E264A79BED9852D0E03D24847B946DF76CE4B7FC7EED25EE4A972BB07D3DAB",
+        "model_path": "artifacts/evidence/m1/e04-expansion/frozen-oracle-v2/tests/fixtures/m1-provenance-v2/expected/independent-goldens.json",
+        "model_sha256": "27AE20EDD295A512915C6933662E79D1FB59A3CB69CB007AD8594C7B08AD0FF7",
+        "model_selector": "cases[id=e04v2.image.compound-alt-unicode].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "compound-table",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "0402000000000000000000000000000f",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/compound-table.bin",
+        "bytes": 41,
+        "sha256": "1ED9A35D644DB4EBC7E460632F59D39C15A17632E43212D24AD86F42D7FFB57E"
+      },
+      "model": {
+        "path": "models/compound-table.json",
+        "bytes": 11556,
+        "sha256": "27662BB1F195936EE21BCB50461A1BD36306E570A3A3216F4D58FD1A2A0251D9"
+      },
+      "parent": {
+        "data_version": "m1-provenance.2",
+        "case_id": "e04v2.table.compound-code-image",
+        "source_path": "artifacts/evidence/m1/e04-expansion/frozen-oracle-v2/tests/fixtures/m1-provenance-v2/inputs/e04v2.table.compound-code-image.md",
+        "source_sha256": "1ED9A35D644DB4EBC7E460632F59D39C15A17632E43212D24AD86F42D7FFB57E",
+        "model_path": "artifacts/evidence/m1/e04-expansion/frozen-oracle-v2/tests/fixtures/m1-provenance-v2/expected/independent-goldens.json",
+        "model_sha256": "27AE20EDD295A512915C6933662E79D1FB59A3CB69CB007AD8594C7B08AD0FF7",
+        "model_selector": "cases[id=e04v2.table.compound-code-image].expected_document"
+      },
+      "derivation": "Exact semantic record copied from a frozen independently authored oracle. Range requests are mapping controls; no parser was called."
+    },
+    {
+      "id": "unicode-copy",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04030000000000000000000000000001",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/unicode-copy.bin",
+        "bytes": 24,
+        "sha256": "99DFCEC8C92612F8861B33E4AF5A708FA87B474F85C6283805F7425BC31F27B7"
+      },
+      "model": {
+        "path": "models/unicode-copy.json",
+        "bytes": 780,
+        "sha256": "C9E0F3D4C15E560FBF068ABED220D2E49FC16D276460936632C56DD5F782B987"
+      },
+      "parent": {
+        "data_version": "m1-range.1",
+        "kind": "handwritten_mapping_control",
+        "author_script_path": "artifacts/evidence/m1/e04-lineage-next/b03-author/author_models.py"
+      },
+      "derivation": "Handwritten scalar Copy control. S/L scalar boundaries: A 0/0, 中 1/1, 😀 4/2, e 8/4, combining acute 9/5, woman 11/6, ZWJ 15/8, laptop 18/9, B 22/11, LF 23/12, EOF 24/13. No normalization or grapheme assertion."
+    },
+    {
+      "id": "hidden-run",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04030000000000000000000000000002",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/hidden-run.bin",
+        "bytes": 32,
+        "sha256": "653BB1245E828FCDA4FA53FCD5A3DEF5BD7654E651F54B4132B73D74E64435C4"
+      },
+      "model": {
+        "path": "models/hidden-run.json",
+        "bytes": 9288,
+        "sha256": "A73FF204F4CFABF6E6F846EED4A0F61EC943DCED4B69E4FDE9C7C4E63C0A8EB7"
+      },
+      "parent": {
+        "data_version": "m1-range.1",
+        "kind": "handwritten_mapping_control",
+        "author_script_path": "artifacts/evidence/m1/e04-lineage-next/b03-author/author_models.py"
+      },
+      "derivation": "Handwritten mapping control with 32 distinct one-byte Hidden identities; no parser claim. ControlOnly is the already approved control reason."
+    },
+    {
+      "id": "synthetic-run",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04030000000000000000000000000003",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/synthetic-run.bin",
+        "bytes": 2,
+        "sha256": "38164FBD17603D73F696B8B4D72664D735BB6A7C88577687FD2AE33FD6964153"
+      },
+      "model": {
+        "path": "models/synthetic-run.json",
+        "bytes": 1963,
+        "sha256": "44439DE46605DC2D7B54AAC0BB3B5457D78CD7A3CCDEF141399C4E37AC49DD84"
+      },
+      "parent": {
+        "data_version": "m1-range.1",
+        "kind": "handwritten_mapping_control",
+        "author_script_path": "artifacts/evidence/m1/e04-lineage-next/b03-author/author_models.py"
+      },
+      "derivation": "Handwritten mapping control with three distinct Synthetic identities at S1; no parser claim. The approved ControlSeparator reason records each inserted separator."
+    },
+    {
+      "id": "disjoint-alt",
+      "layer": "mapping_control",
+      "source_key": {
+        "document_id": "04030000000000000000000000000004",
+        "revision": 1
+      },
+      "source": {
+        "path": "inputs/disjoint-alt.bin",
+        "bytes": 9,
+        "sha256": "46BB24D646C372F8A1546FCCD676130DD9CB816676FC6A4957DE33DB317083D8"
+      },
+      "model": {
+        "path": "models/disjoint-alt.json",
+        "bytes": 2913,
+        "sha256": "765919205FA3A8D96D341BA072FECADA49DD1D26AED3B59F46660CE1782163FB"
+      },
+      "parent": {
+        "data_version": "m1-range.1",
+        "kind": "handwritten_mapping_control",
+        "author_script_path": "artifacts/evidence/m1/e04-lineage-next/b03-author/author_models.py"
+      },
+      "derivation": "Handwritten scope control, not a Markdown parser projection. Main owns the full Image syntax. Alt owns only S[2,3) and S[4,5); X is a positive-width hole, explicitly outside that flow. Each domain is fully partitioned. Image/Paragraph/payload metadata is explicit; no cross-gap AltLabel claim."
+    }
+  ]
+}

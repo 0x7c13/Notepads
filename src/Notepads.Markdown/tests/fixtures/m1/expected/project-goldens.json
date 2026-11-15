@@ -1,0 +1,1679 @@
+{
+  "schema_version": 1,
+  "status": "G01 research goldens; production behavior awaits G02",
+  "authorship": {
+    "kind": "project-original",
+    "copyright": "2026, Jiaqi (0x7c13) Liu",
+    "license": "MIT",
+    "oracle_method": "Manual derivation from pinned normative rules and G01 research projection; no candidate parser output used"
+  },
+  "policy": {
+    "source_coordinates": "original UTF-8 bytes; half-open ranges; no input normalization",
+    "logical_coordinates": "readable UTF-16 code-unit boundaries; surrogate interior invalid",
+    "affinity": "before/after in logical reading order",
+    "fragment_comparison": "Ordered source/logical relations; adjacent Hidden fragments at the same logical boundary may coalesce regardless of explanatory reason text. No tolerance for gaps, different output, or substituting coarse node envelopes.",
+    "semantic_checks": "Declarative checks DTO for root integration; not a production IR schema",
+    "null_mapping": "Not asserted; must not count as exact mapping passed"
+  },
+  "cases": [
+    {
+      "id": "project.map.strong-entity-cjk-astral",
+      "input_utf8": "**中&amp;😀**",
+      "category": "mapping",
+      "tags": [
+        "strong",
+        "entity",
+        "cjk",
+        "astral",
+        "hidden",
+        "invalid-surrogate"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "中&😀",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "inline",
+            "node_kind": "strong",
+            "text": "中&😀",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "中&😀"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 16,
+        "logical_utf16": 4,
+        "fragments": [
+          {
+            "source": [
+              0,
+              2
+            ],
+            "logical": [
+              0,
+              0
+            ],
+            "kind": "Hidden",
+            "reason": "strong-opening"
+          },
+          {
+            "source": [
+              2,
+              5
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "literal-cjk"
+          },
+          {
+            "source": [
+              5,
+              10
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "NamedEntity"
+          },
+          {
+            "source": [
+              10,
+              14
+            ],
+            "logical": [
+              2,
+              4
+            ],
+            "kind": "Copy",
+            "reason": "literal-astral"
+          },
+          {
+            "source": [
+              14,
+              16
+            ],
+            "logical": [
+              4,
+              4
+            ],
+            "kind": "Hidden",
+            "reason": "strong-closing"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 7,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 7,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 0,
+            "affinity": "before",
+            "expected_position": 0,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 0,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 4,
+            "affinity": "before",
+            "expected_position": 14,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 4,
+            "affinity": "after",
+            "expected_position": 16,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 3,
+            "affinity": "before",
+            "expected_error": "InvalidBoundary",
+            "correspondence": null
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 3,
+            "affinity": "after",
+            "expected_error": "InvalidBoundary",
+            "correspondence": null
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "Manually authored input and byte/code-unit boundaries; CommonMark0.31.2 strong emphasis and entity rules; G01 logical UTF-16/affinity policy."
+      },
+      "notes": [
+        "Hidden query results compose delimiters with adjacent visible endpoints.",
+        "Invalid source position 3 is inside UTF-8 中; invalid logical position 3 is inside the emoji surrogate pair."
+      ]
+    },
+    {
+      "id": "project.map.escape-star",
+      "input_utf8": "a\\*b",
+      "category": "mapping",
+      "tags": [
+        "escape",
+        "ascii-punctuation"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "a*b",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a*b"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 4,
+        "logical_utf16": 3,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          },
+          {
+            "source": [
+              1,
+              3
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "BackslashEscape"
+          },
+          {
+            "source": [
+              3,
+              4
+            ],
+            "logical": [
+              2,
+              3
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 0,
+            "affinity": "after",
+            "expected_position": 0,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 3,
+            "affinity": "before",
+            "expected_position": 4,
+            "correspondence": "Exact"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 backslash escapes: escaped ASCII punctuation emits the punctuation; one original backslash retained in source provenance."
+      },
+      "notes": [
+        "input_utf8 contains one U+005C, not two."
+      ]
+    },
+    {
+      "id": "project.map.softbreak-lf",
+      "input_utf8": "a\nb",
+      "category": "mapping",
+      "tags": [
+        "softbreak",
+        "lf",
+        "raw-newline"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "a b",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "inline",
+            "node_kind": "soft_break",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a b"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 3,
+        "logical_utf16": 3,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          },
+          {
+            "source": [
+              1,
+              2
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "SoftBreakToSpace"
+          },
+          {
+            "source": [
+              2,
+              3
+            ],
+            "logical": [
+              2,
+              3
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "before",
+            "expected_position": 2,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 2,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Exact"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 line-ending/soft-line-break rules; independently retained original CR/LF/CRLF bytes; G01 readable stream renders a prose soft break as one U+0020."
+      },
+      "notes": [
+        "CR/LF bytes must not be normalized by the importer. CommonMark HTML may preserve a soft newline; readable text is a separate explicitly selected research projection."
+      ]
+    },
+    {
+      "id": "project.map.softbreak-cr",
+      "input_utf8": "a\rb",
+      "category": "mapping",
+      "tags": [
+        "softbreak",
+        "cr",
+        "raw-newline"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "a b",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "inline",
+            "node_kind": "soft_break",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a b"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 3,
+        "logical_utf16": 3,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          },
+          {
+            "source": [
+              1,
+              2
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "SoftBreakToSpace"
+          },
+          {
+            "source": [
+              2,
+              3
+            ],
+            "logical": [
+              2,
+              3
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "before",
+            "expected_position": 2,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 2,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Exact"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 line-ending/soft-line-break rules; independently retained original CR/LF/CRLF bytes; G01 readable stream renders a prose soft break as one U+0020."
+      },
+      "notes": [
+        "CR/LF bytes must not be normalized by the importer. CommonMark HTML may preserve a soft newline; readable text is a separate explicitly selected research projection."
+      ]
+    },
+    {
+      "id": "project.map.softbreak-crlf",
+      "input_utf8": "a\r\nb",
+      "category": "mapping",
+      "tags": [
+        "softbreak",
+        "crlf",
+        "raw-newline"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "a b",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "inline",
+            "node_kind": "soft_break",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a b"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 4,
+        "logical_utf16": 3,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          },
+          {
+            "source": [
+              1,
+              3
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "SoftBreakToSpace"
+          },
+          {
+            "source": [
+              3,
+              4
+            ],
+            "logical": [
+              2,
+              3
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 3,
+            "affinity": "before",
+            "expected_position": 4,
+            "correspondence": "Exact"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 line-ending/soft-line-break rules; independently retained original CR/LF/CRLF bytes; G01 readable stream renders a prose soft break as one U+0020."
+      },
+      "notes": [
+        "CR/LF bytes must not be normalized by the importer. CommonMark HTML may preserve a soft newline; readable text is a separate explicitly selected research projection."
+      ]
+    },
+    {
+      "id": "project.map.inline-code-crlf-trim",
+      "input_utf8": "` a\r\nb `",
+      "category": "mapping",
+      "tags": [
+        "inline-code",
+        "crlf",
+        "trim",
+        "hidden",
+        "atomic-newline"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "a b",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "inline",
+            "node_kind": "code",
+            "text": "a b",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a b"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 8,
+        "logical_utf16": 3,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              0
+            ],
+            "kind": "Hidden",
+            "reason": "code-opening"
+          },
+          {
+            "source": [
+              1,
+              2
+            ],
+            "logical": [
+              0,
+              0
+            ],
+            "kind": "Hidden",
+            "reason": "CodeTrim"
+          },
+          {
+            "source": [
+              2,
+              3
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "code-literal"
+          },
+          {
+            "source": [
+              3,
+              5
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "CodeLineEndingToSpace"
+          },
+          {
+            "source": [
+              5,
+              6
+            ],
+            "logical": [
+              2,
+              3
+            ],
+            "kind": "Copy",
+            "reason": "code-literal"
+          },
+          {
+            "source": [
+              6,
+              7
+            ],
+            "logical": [
+              3,
+              3
+            ],
+            "kind": "Hidden",
+            "reason": "CodeTrim"
+          },
+          {
+            "source": [
+              7,
+              8
+            ],
+            "logical": [
+              3,
+              3
+            ],
+            "kind": "Hidden",
+            "reason": "code-closing"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 4,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 4,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 0,
+            "affinity": "before",
+            "expected_position": 0,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 0,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 3,
+            "affinity": "before",
+            "expected_position": 6,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 3,
+            "affinity": "after",
+            "expected_position": 8,
+            "correspondence": "Hidden"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 code spans: replace line endings with U+0020, then remove one leading and one trailing U+0020 when both are present and content is not all spaces. Manual byte sequence 60 20 61 0D 0A 62 20 60."
+      },
+      "notes": [
+        "Trim bytes are hidden provenance; the two-byte CRLF is one atomic semantic transform.",
+        "Rules were read from the pinned official spec.txt, not learned from either candidate parser."
+      ]
+    },
+    {
+      "id": "project.map.entity-multi-scalar",
+      "input_utf8": "&NotEqualTilde;",
+      "category": "mapping",
+      "tags": [
+        "entity",
+        "multi-scalar",
+        "combining",
+        "atomic"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "≂̸",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "≂̸"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 15,
+        "logical_utf16": 2,
+        "fragments": [
+          {
+            "source": [
+              0,
+              15
+            ],
+            "logical": [
+              0,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "NamedEntity"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 5,
+            "affinity": "before",
+            "expected_position": 0,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 5,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 1,
+            "affinity": "before",
+            "expected_position": 0,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 1,
+            "affinity": "after",
+            "expected_position": 15,
+            "correspondence": "Atomic"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 valid named HTML entity rules, with HTML named character reference NotEqualTilde = U+2242 U+0338; manually chosen original input."
+      },
+      "notes": [
+        "Logical position 1 is a valid scalar boundary but is inside one atomic entity and a combining sequence. No per-letter entity offset is invented."
+      ]
+    },
+    {
+      "id": "project.map.image-alt-object",
+      "input_utf8": "![猫](u)",
+      "category": "mapping",
+      "tags": [
+        "image",
+        "alt",
+        "object",
+        "cjk"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "￼",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "image",
+            "alt_text": "猫",
+            "destination": "u",
+            "title": "",
+            "source_span": [
+              0,
+              9
+            ],
+            "alt_source_span": [
+              2,
+              5
+            ],
+            "alt_logical_utf16": 1,
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "￼"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 9,
+        "logical_utf16": 1,
+        "fragments": [
+          {
+            "source": [
+              0,
+              9
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Object",
+            "reason": "Image"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "before",
+            "expected_position": 0,
+            "correspondence": "EmbeddedObject"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "after",
+            "expected_position": 1,
+            "correspondence": "EmbeddedObject"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 7,
+            "affinity": "before",
+            "expected_position": 0,
+            "correspondence": "EmbeddedObject"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 7,
+            "affinity": "after",
+            "expected_position": 1,
+            "correspondence": "EmbeddedObject"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 image label/destination syntax; G01/P02 research projection gives the image one U+FFFC in main readable stream and keeps alt text in a separate semantic flow."
+      },
+      "notes": [
+        "Object projection is an explicit G01 research candidate, not a frozen product/UIA format.",
+        "Alt source [2,5) decodes to 猫, one UTF-16 unit, independently of the main object position. No layout/resource/UI test is claimed."
+      ]
+    },
+    {
+      "id": "project.map.reference-definition",
+      "input_utf8": "[x][id]\n\n[id]: /u",
+      "category": "mapping",
+      "tags": [
+        "reference-link",
+        "dependency",
+        "hidden-definition"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "x",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "link",
+            "text": "x",
+            "destination": "/u",
+            "title": "",
+            "reference_label": "id",
+            "source_span": [
+              0,
+              7
+            ],
+            "destination_source_span": [
+              15,
+              17
+            ],
+            "definition_source_span": [
+              9,
+              17
+            ],
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "x"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 17,
+        "logical_utf16": 1,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              0
+            ],
+            "kind": "Hidden",
+            "reason": "link-label-opening"
+          },
+          {
+            "source": [
+              1,
+              2
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "link-label"
+          },
+          {
+            "source": [
+              2,
+              17
+            ],
+            "logical": [
+              1,
+              1
+            ],
+            "kind": "Hidden",
+            "reason": "link-markup-blanklines-reference-definition"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "logical_to_source",
+            "position": 0,
+            "affinity": "before",
+            "expected_position": 0,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 0,
+            "affinity": "after",
+            "expected_position": 1,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 1,
+            "affinity": "before",
+            "expected_position": 2,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 1,
+            "affinity": "after",
+            "expected_position": 17,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 15,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 15,
+            "affinity": "after",
+            "expected_position": 1,
+            "correspondence": "Hidden"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 link reference definitions and full reference links; manual source counting of label [1,2), definition [9,17), and destination [15,17)."
+      },
+      "notes": [
+        "A destination-only edit must update semantic target despite unchanged readable text.",
+        "The merged hidden fragment is a canonical minimal provenance partition, not a parser node-envelope assertion; finer adjacent Hidden fragments may be coalesced before comparison."
+      ]
+    },
+    {
+      "id": "project.map.literal-nul",
+      "input_utf8": "a\u0000b",
+      "category": "mapping",
+      "tags": [
+        "nul",
+        "literal",
+        "replacement"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "a�b",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a�b"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 3,
+        "logical_utf16": 3,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          },
+          {
+            "source": [
+              1,
+              2
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "LiteralNul"
+          },
+          {
+            "source": [
+              2,
+              3
+            ],
+            "logical": [
+              2,
+              3
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 1,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 3,
+            "affinity": "before",
+            "expected_position": 3,
+            "correspondence": "Exact"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 insecure characters: literal U+0000 becomes U+FFFD semantically; original source byte 00 stays intact."
+      },
+      "notes": [
+        "The fragment is Transform even though original and output both occupy one logical scalar; transformed output UTF-8 bytes differ.",
+        "Queries on transform endpoints are exact boundary correspondences, not a claim that NUL text was copied."
+      ]
+    },
+    {
+      "id": "project.map.numeric-nul-entity",
+      "input_utf8": "a&#0;b",
+      "category": "mapping",
+      "tags": [
+        "nul",
+        "numeric-entity",
+        "replacement"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "a�b",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a�b"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 6,
+        "logical_utf16": 3,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          },
+          {
+            "source": [
+              1,
+              5
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "NumericEntity"
+          },
+          {
+            "source": [
+              5,
+              6
+            ],
+            "logical": [
+              2,
+              3
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 3,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 3,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 3,
+            "affinity": "before",
+            "expected_position": 6,
+            "correspondence": "Exact"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 numeric character references: numeric U+0000 is replaced with U+FFFD; source &#0; is an independent entity transform."
+      },
+      "notes": [
+        "LiteralNul and NumericEntity are both Transform, with distinct original spans and reasons."
+      ]
+    },
+    {
+      "id": "project.map.combining-zwj-rtl",
+      "input_utf8": "é👩‍💻אב",
+      "category": "mapping",
+      "tags": [
+        "combining",
+        "zwj",
+        "astral",
+        "rtl",
+        "no-normalization"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "é👩‍💻אב",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "é👩‍💻אב"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 18,
+        "logical_utf16": 9,
+        "fragments": [
+          {
+            "source": [
+              0,
+              18
+            ],
+            "logical": [
+              0,
+              9
+            ],
+            "kind": "Copy",
+            "reason": "literal-unicode"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 1,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 7,
+            "affinity": "after",
+            "expected_position": 4,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 4,
+            "affinity": "before",
+            "expected_position": 7,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 7,
+            "affinity": "after",
+            "expected_position": 14,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 8,
+            "affinity": "before",
+            "expected_position": 16,
+            "correspondence": "Exact"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 3,
+            "affinity": "after",
+            "expected_error": "InvalidBoundary",
+            "correspondence": null
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 6,
+            "affinity": "before",
+            "expected_error": "InvalidBoundary",
+            "correspondence": null
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "before",
+            "expected_error": "InvalidBoundary",
+            "correspondence": null
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "Original scalar sequence copied without Unicode normalization or visual-order reordering; independently counted UTF-8/UTF-16 lengths. P02 separates scalar provenance from grapheme/DirectWrite cluster geometry."
+      },
+      "notes": [
+        "Scalar boundary 1 lies within e + combining acute, and boundary 4 lies inside the ZWJ emoji grapheme; provenance remains exact but this does not authorize caret splitting.",
+        "RTL remains in logical source order. Geometry/BiDi/grapheme selection must be tested in M2."
+      ]
+    },
+    {
+      "id": "project.map.hardbreak-spaces-crlf",
+      "input_utf8": "a  \r\nb",
+      "category": "mapping",
+      "tags": [
+        "hardbreak",
+        "spaces",
+        "crlf",
+        "hidden-marker"
+      ],
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "a\nb",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "inline",
+            "node_kind": "hard_break",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a\nb"
+          }
+        ]
+      },
+      "expected_mapping": {
+        "source_bytes": 6,
+        "logical_utf16": 3,
+        "fragments": [
+          {
+            "source": [
+              0,
+              1
+            ],
+            "logical": [
+              0,
+              1
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          },
+          {
+            "source": [
+              1,
+              3
+            ],
+            "logical": [
+              1,
+              1
+            ],
+            "kind": "Hidden",
+            "reason": "hardbreak-space-marker"
+          },
+          {
+            "source": [
+              3,
+              5
+            ],
+            "logical": [
+              1,
+              2
+            ],
+            "kind": "Transform",
+            "reason": "HardBreakToLf"
+          },
+          {
+            "source": [
+              5,
+              6
+            ],
+            "logical": [
+              2,
+              3
+            ],
+            "kind": "Copy",
+            "reason": "literal"
+          }
+        ],
+        "queries": [
+          {
+            "direction": "source_to_logical",
+            "position": 2,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 4,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "source_to_logical",
+            "position": 4,
+            "affinity": "after",
+            "expected_position": 2,
+            "correspondence": "Atomic"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 1,
+            "affinity": "before",
+            "expected_position": 1,
+            "correspondence": "Hidden"
+          },
+          {
+            "direction": "logical_to_source",
+            "position": 1,
+            "affinity": "after",
+            "expected_position": 3,
+            "correspondence": "Hidden"
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "project",
+        "derivation": "CommonMark0.31.2 hard line breaks: two trailing spaces before a line ending produce a hard break; G01 readable stream is LF with separate hidden marker and CRLF provenance."
+      },
+      "notes": [
+        "Blank-line or paragraph-end trailing spaces are a different rule and are not inferred from this fixture."
+      ]
+    },
+    {
+      "id": "project.semantic.task-cjk",
+      "input_utf8": "- [x] 中",
+      "category": "semantic",
+      "tags": [
+        "task",
+        "cjk",
+        "object-policy-candidate"
+      ],
+      "profiles": [
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": null,
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "list",
+            "count": 1
+          },
+          {
+            "kind": "block",
+            "node_kind": "list_item",
+            "count": 1
+          },
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "task",
+            "checked": true,
+            "text": "中",
+            "marker_source_span": [
+              2,
+              5
+            ],
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "project",
+        "derivation": "GFM0.29-gfm task list items: [x] marker at start of list-item paragraph indicates checked state; manually authored CJK label. G01 research projection candidate is U+FFFC followed by consumed-marker-free label."
+      },
+      "notes": [
+        "Task checked state, label and marker source [2,5) are independently asserted. The whitespace/separator between U+FFFC task object and label is not frozen in G01, so expected_readable_text and expected_mapping are null (needs-review); null is not a passed oracle.",
+        "G02 must fix task readable/copy/UIA text policy before turning this into a required readable-text/mapping fixture.",
+        "C0 applicability is intentionally omitted: without selected extension, the checkbox sequence is ordinary paragraph text."
+      ]
+    },
+    {
+      "id": "project.semantic.table-align-cjk-astral",
+      "input_utf8": "| A | B |\n| :--- | ---: |\n| 中 | 😀 |",
+      "category": "semantic",
+      "tags": [
+        "table",
+        "alignment",
+        "cjk",
+        "astral",
+        "table-policy-candidate"
+      ],
+      "profiles": [
+        "G3",
+        "G4"
+      ],
+      "expected_readable_text": "A\tB\n中\t😀",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "table",
+            "columns": 2,
+            "alignments": [
+              "left",
+              "right"
+            ],
+            "header": [
+              "A",
+              "B"
+            ],
+            "rows": [
+              [
+                "中",
+                "😀"
+              ]
+            ],
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "project",
+        "derivation": "GFM0.29-gfm tables extension: header/delimiter/body structure; colons set left/right alignment; outer pipes and surrounding cell spaces are grammar. G01 research projection uses TAB between cells and LF between rows."
+      },
+      "notes": [
+        "Semantic alignment and cell strings are independent expected data. Full separator/source-affinity map, table layout and native visual geometry are not asserted.",
+        "No candidates were invoked to create the cell strings, alignments or readable text."
+      ]
+    }
+  ],
+  "normative_lookups": [
+    {
+      "purpose": "Independent normative character lookup referenced by CommonMark0.31.2; no candidate parser invoked",
+      "selector": "&NotEqualTilde;",
+      "content_utf8_bytes": 145897,
+      "content_sha256": "D741D877AC77C4194C4AD526B5B4A19AEF8DFE411AB840A466891CDBB9F362E6",
+      "codepoints": [
+        8770,
+        824
+      ],
+      "characters": "≂̸",
+      "fetched_utc": "2026-10-07T07:17:17.0743637+00:00",
+      "source": "https://html.spec.whatwg.org/entities.json"
+    }
+  ]
+}

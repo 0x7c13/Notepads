@@ -1,0 +1,28 @@
+feature SUB6 {
+    lookup GSUB6f1 {
+        sub one two three' four' five six seven by X;
+        sub two one three' four' six five seven by Y;
+    } GSUB6f1;
+
+    # format 2 is generally less efficient than format 3 and hard to generate
+    # (as in, I'm not aware of any input that will compile to format 2)
+    lookup GSUB6f3 {
+        sub [space comma semicolon] e' by e.2;
+    } GSUB6f3;
+} SUB6;
+
+# can't declare in a feature or it gets added to the feature
+lookup MY_RULES {
+    sub f by f.2;
+} MY_RULES;
+
+feature SUB5 {
+    lookup GSUB5f1 {
+        sub a' b' by a_b;
+        sub c' d' by c_d;
+    } GSUB5f1;
+
+    lookup GSUB5f3 {
+       sub f' lookup MY_RULES g';
+    } GSUB5f3;
+} SUB5;

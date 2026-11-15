@@ -1,0 +1,45 @@
+glyph 0 0 none
+contours
+points
+tags
+-
+glyph 0 16 none
+contours
+points
+tags
+-
+glyph 0 50 none
+contours
+points
+tags
+-
+glyph 1 0 none
+contours 3
+points 100,250 100,950 900,950 900,250
+tags 1 1 1 1
+m  100,250
+l  100,950
+l  900,950
+l  900,250
+l  100,250
+-
+glyph 1 16 none
+contours 3
+points 102,256 102,973 922,973 922,256
+tags 1 1 1 1
+m  1.59375,4.0
+l  1.59375,15.203125
+l  14.40625,15.203125
+l  14.40625,4.0
+l  1.59375,4.0
+-
+glyph 1 50 none
+contours 3
+points 320,800 320,3040 2880,3040 2880,800
+tags 1 1 1 1
+m  5.0,12.5
+l  5.0,47.5
+l  45.0,47.5
+l  45.0,12.5
+l  5.0,12.5
+-

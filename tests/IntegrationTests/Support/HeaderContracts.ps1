@@ -139,6 +139,81 @@ Invoke-Contract 'foreign-xml-declaration' '' {
     $script:policy.preserved[0].headers += @{ lines = 2; sha256 = (Digest $notice); paths = @('vendor/project.props') }
     Write-Fixture 'vendor/project.props' ($notice + "`n<Project />")
 }
+function Add-ModuleFixture {
+    $script:moduleRoot = 'src/Markdown'
+    $moduleLicense = "$script:moduleRoot/LICENSE"
+    $moduleTerms = "Fixture module MIT license.`n"
+    Write-Fixture $moduleLicense $moduleTerms
+    $script:policy.licenses += @{ path = $moduleLicense; sha256 = (Digest $moduleTerms) }
+    $script:policy.sourceModules = @(@{ path = $script:moduleRoot; license = $moduleLicense; licenseName = 'LICENSE file'; allowCompactBanner = $true })
+    $script:moduleCode = $code.Replace('LICENSE.txt', 'LICENSE file')
+    Write-Fixture "$script:moduleRoot/own.rs" $script:moduleCode
+}
+function Add-ModuleUpstreamFixture {
+    Add-ModuleFixture
+    $origin = "$script:moduleRoot/vendor/example"
+    Write-Fixture "$origin/LICENSE" "Fixture upstream license.`n"
+    $script:policy.licenses += @{ path = "$origin/LICENSE"; sha256 = (Digest "Fixture upstream license.`n") }
+    Write-Fixture "$origin/lib.rs" ($foreign + "`nfn upstream() {}")
+    $script:policy.upstreamTrees = @(@{ path = $origin; license = "$origin/LICENSE"; reason = 'Imported fixture source retains its own notice format.' })
+}
+Invoke-Contract 'module-license-and-rust' '' { Add-ModuleFixture }
+Invoke-Contract 'module-compact-banner' '' {
+    Add-ModuleFixture
+    Write-Fixture "$script:moduleRoot/own.rs" ($script:moduleCode.Replace("`n`n", "`n"))
+}
+Invoke-Contract 'module-wrong-license' 'src/Markdown/own.rs:1:' {
+    Add-ModuleFixture
+    Write-Fixture "$script:moduleRoot/own.rs" $code
+}
+Invoke-Contract 'module-own-notice-damaged' 'src/Markdown/own.rs:1:' {
+    Add-ModuleFixture
+    Write-Fixture "$script:moduleRoot/own.rs" ($script:moduleCode.Replace('Jiaqi', 'Wrong Owner'))
+}
+Invoke-Contract 'module-unprotected-license' 'needs its protected local license' {
+    Add-ModuleFixture
+    $script:policy.sourceModules[0].license = "$script:moduleRoot/missing/LICENSE"
+}
+Invoke-Contract 'module-license-changed' 'src/Markdown/LICENSE: preserved notice/license changed' {
+    Add-ModuleFixture
+    Write-Fixture "$script:moduleRoot/LICENSE" 'changed module terms'
+}
+Invoke-Contract 'module-xml-prolog' '' {
+    Add-ModuleFixture
+    Write-Fixture "$script:moduleRoot/build/Module.props" "<?xml version=`"1.0`" encoding=`"utf-8`"?>`n<!--`n  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.`n  See LICENSE file in the project root for license information.`n-->`n<Project />"
+}
+Invoke-Contract 'module-upstream-format' '' { Add-ModuleUpstreamFixture }
+Invoke-Contract 'module-upstream-overlaps-explicit-notice' 'Explicit header rule overlaps an upstream tree' {
+    Add-ModuleUpstreamFixture
+    $script:policy.preserved[0].headers[0].paths += "$script:moduleRoot/vendor/example/lib.rs"
+}
+Invoke-Contract 'module-upstream-overlaps-owned-xml' 'Explicit header rule overlaps an upstream tree' {
+    Add-ModuleUpstreamFixture
+    $path = "$script:moduleRoot/vendor/example/Upstream.props"
+    Write-Fixture $path '<Project />'
+    $script:policy.ownedXml += $path
+}
+Invoke-Contract 'module-upstream-license-changed' 'vendor/example/LICENSE: preserved notice/license changed' {
+    Add-ModuleUpstreamFixture
+    Write-Fixture "$script:moduleRoot/vendor/example/LICENSE" 'changed upstream terms'
+}
+Invoke-Contract 'module-upstream-cannot-exclude-own-root' 'Duplicate header policy path' {
+    Add-ModuleUpstreamFixture
+    $script:policy.upstreamTrees[0].path = $script:moduleRoot
+}
+Invoke-Contract 'module-upstream-must-be-vendor-origin' 'require one declared module vendor/baseline origin' {
+    Add-ModuleUpstreamFixture
+    Write-Fixture "$script:moduleRoot/crates/LICENSE" 'terms'
+    $script:policy.upstreamTrees[0].path = "$script:moduleRoot/crates"
+}
+Invoke-Contract 'module-undeclared-upstream-is-checked' 'src/Markdown/vendor/new/lib.rs:1:' {
+    Add-ModuleUpstreamFixture
+    Write-Fixture "$script:moduleRoot/vendor/new/lib.rs" ($foreign + "`nfn unknown() {}")
+}
+Invoke-Contract 'module-vendor-budget-remains-owned' 'src/Markdown/crates/markdown-svg-budget/lib.rs:1:' {
+    Add-ModuleUpstreamFixture
+    Write-Fixture "$script:moduleRoot/crates/markdown-svg-budget/lib.rs" 'fn own_missing_notice() {}'
+}
 # Check the actual policy too: these upstream files place indented notices after
 # a block comment. A short hash range once protected only their description.
 $actualPolicy = Get-Content (Join-Path $PSScriptRoot 'HeaderPolicy.json') -Raw | ConvertFrom-Json

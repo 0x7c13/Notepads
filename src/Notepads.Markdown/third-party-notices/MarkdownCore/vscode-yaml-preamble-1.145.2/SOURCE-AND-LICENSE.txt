@@ -1,0 +1,5 @@
+Visual Studio Code 1.145.2 YAML preamble rule and renderer
+Copyright Microsoft Corporation. License: MIT; see LICENSE.txt.
+Commit: c4453f8ea430795f941c1b2ff6c9321135a74a02
+https://github.com/microsoft/vscode/blob/c4453f8ea430795f941c1b2ff6c9321135a74a02/extensions/markdown-language-features/src/extensions/yamlPreamble/yamlPreamble.ts
+Used as the fixed recognition and table/codeBlock/hide compatibility contract. The native implementation does not execute this TypeScript or use a browser renderer.

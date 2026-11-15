@@ -1,0 +1,21 @@
+Notepads fixed mathematical font assets
+=========================================
+
+The 20 KaTeX TTF files in fonts/ are unmodified byte copies from the fixed
+RaTeX revision 5f7dc4883aba8eeb30fe34f8a104923f43f734bf. Their exact byte
+lengths, upstream URLs and SHA256 digests are recorded in ASSETS.json.
+The original local research input manifest is also bound by SHA256 there.
+
+These fonts are licensed under SIL Open Font License 1.1, not the project's
+MIT license. Their original copyright and Reserved Font Names remain in
+the font metadata. Keep licenses/SIL-OFL-1.1.txt and the original notices
+with distributions that embed the fonts. The four files in licenses/ are
+preserved without edits; references to upstream repository directories in
+those original notices describe the upstream distribution.
+
+The fixed asset table includes Caligraphic-Bold to preserve the original
+asset set. RaTeX 0.1.15 has no FontId/metrics entry for that face; its
+presence does not claim layout support or create a substitute metric.
+
+See licenses/KaTeX-fonts-NOTICE.txt, licenses/KaTeX-LICENSE.txt, and
+licenses/RaTeX-THIRD-PARTY-NOTICES.txt for original attribution.

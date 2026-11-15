@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.48">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="period"/>
+    <GlyphID id="2" name="comma"/>
+    <GlyphID id="3" name="non_uniform_scale"/>
+    <GlyphID id="4" name="simple_transform"/>
+    <GlyphID id="5" name="simple_transform_again"/>
+    <GlyphID id="6" name="translate_only"/>
+    <GlyphID id="7" name="scaled_component_offset"/>
+    <GlyphID id="8" name="noscaled_component_offset"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0x0"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1000"/>
+    <created value="Fri Jan 20 20:20:30 2023"/>
+    <modified value="Fri Apr 26 21:14:11 2024"/>
+    <xMin value="-138"/>
+    <yMin value="-200"/>
+    <xMax value="800"/>
+    <yMax value="800"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="1000"/>
+    <descent value="-200"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="600"/>
+    <minLeftSideBearing value="-138"/>
+    <minRightSideBearing value="-200"/>
+    <xMaxExtent value="800"/>
+    <caretSlopeRise value="1000"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="2"/>
+  </hhea>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="7"/>
+    <maxPoints value="8"/>
+    <maxContours value="2"/>
+    <maxCompositePoints value="4"/>
+    <maxCompositeContours value="1"/>
+    <maxZones value="1"/>
+    <maxTwilightPoints value="0"/>
+    <maxStorage value="0"/>
+    <maxFunctionDefs value="0"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="0"/>
+    <maxSizeOfInstructions value="0"/>
+    <maxComponentElements value="2"/>
+    <maxComponentDepth value="1"/>
+  </maxp>
+
+  <OS_2>
+    <!-- The fields 'usFirstCharIndex' and 'usLastCharIndex'
+         will be recalculated by the compiler -->
+    <version value="4"/>
+    <xAvgCharWidth value="586"/>
+    <usWeightClass value="400"/>
+    <usWidthClass value="5"/>
+    <fsType value="00000000 00001000"/>
+    <ySubscriptXSize value="650"/>
+    <ySubscriptYSize value="600"/>
+    <ySubscriptXOffset value="0"/>
+    <ySubscriptYOffset value="75"/>
+    <ySuperscriptXSize value="650"/>
+    <ySuperscriptYSize value="600"/>
+    <ySuperscriptXOffset value="0"/>
+    <ySuperscriptYOffset value="350"/>
+    <yStrikeoutSize value="50"/>
+    <yStrikeoutPosition value="300"/>
+    <sFamilyClass value="0"/>
+    <panose>
+      <bFamilyType value="0"/>
+      <bSerifStyle value="0"/>
+      <bWeight value="0"/>
+      <bProportion value="0"/>
+      <bContrast value="0"/>
+      <bStrokeVariation value="0"/>
+      <bArmStyle value="0"/>
+      <bLetterForm value="0"/>
+      <bMidline value="0"/>
+      <bXHeight value="0"/>
+    </panose>
+    <ulUnicodeRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulUnicodeRange2 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="NONE"/>
+    <fsSelection value="00000000 01000000"/>
+    <usFirstCharIndex value="44"/>
+    <usLastCharIndex value="51"/>
+    <sTypoAscender value="800"/>
+    <sTypoDescender value="-200"/>
+    <sTypoLineGap value="200"/>
+    <usWinAscent value="1000"/>
+    <usWinDescent value="200"/>
+    <ulCodePageRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulCodePageRange2 value="00000000 00000000 00000000 00000000"/>
+    <sxHeight value="500"/>
+    <sCapHeight value="700"/>
+    <usDefaultChar value="0"/>
+    <usBreakChar value="32"/>
+    <usMaxContext value="0"/>
+  </OS_2>
+
+  <hmtx>
+    <mtx name=".notdef" width="500" lsb="50"/>
+    <mtx name="comma" width="600" lsb="67"/>
+    <mtx name="non_uniform_scale" width="600" lsb="-138"/>
+    <mtx name="period" width="600" lsb="250"/>
+    <mtx name="simple_transform" width="600" lsb="550"/>
+    <mtx name="simple_transform_again" width="600" lsb="425"/>
+    <mtx name="translate_only" width="600" lsb="300"/>
+    <mtx name="scaled_component_offset" width="600" lsb="300"/>
+    <mtx name="noscaled_component_offset" width="600" lsb="300"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0x2c" name="comma"/><!-- COMMA -->
+      <map code="0x2e" name="period"/><!-- FULL STOP -->
+      <map code="0x30" name="non_uniform_scale"/><!-- DIGIT ZERO -->
+      <map code="0x31" name="simple_transform"/><!-- DIGIT ONE -->
+      <map code="0x32" name="simple_transform_again"/><!-- DIGIT TWO -->
+      <map code="0x33" name="translate_only"/><!-- DIGIT THREE -->
+      <map code="0x34" name="scaled_component_offset"/><!-- DIGIT FOUR -->
+      <map code="0x35" name="noscaled_component_offset"/><!-- DIGIT FIVE -->
+    </cmap_format_4>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x2c" name="comma"/><!-- COMMA -->
+      <map code="0x2e" name="period"/><!-- FULL STOP -->
+      <map code="0x30" name="non_uniform_scale"/><!-- DIGIT ZERO -->
+      <map code="0x31" name="simple_transform"/><!-- DIGIT ONE -->
+      <map code="0x32" name="simple_transform_again"/><!-- DIGIT TWO -->
+      <map code="0x33" name="translate_only"/><!-- DIGIT THREE -->
+      <map code="0x34" name="scaled_component_offset"/><!-- DIGIT FOUR -->
+      <map code="0x35" name="noscaled_component_offset"/><!-- DIGIT FIVE -->
+    </cmap_format_4>
+  </cmap>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef" xMin="50" yMin="-200" xMax="450" yMax="800">
+      <contour>
+        <pt x="50" y="-200" on="1"/>
+        <pt x="50" y="800" on="1"/>
+        <pt x="450" y="800" on="1"/>
+        <pt x="450" y="-200" on="1"/>
+      </contour>
+      <contour>
+        <pt x="100" y="-150" on="1"/>
+        <pt x="400" y="-150" on="1"/>
+        <pt x="400" y="750" on="1"/>
+        <pt x="100" y="750" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="comma" xMin="67" yMin="245" xMax="334" yMax="473">
+      <component glyphName="period" x="-233" y="-129" scalex="1.6655" scale01="1.1611" scale10="-1.1611" scaley="1.6655" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="non_uniform_scale" xMin="-138" yMin="102" xMax="26" yMax="259">
+      <component glyphName="period" x="-233" y="-129" scalex="0.8452" scale01="0.58923" scale10="-1.1611" scaley="1.6655" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="period" xMin="250" yMin="50" xMax="375" yMax="100">
+      <contour>
+        <pt x="250" y="100" on="1"/>
+        <pt x="375" y="100" on="1"/>
+        <pt x="375" y="50" on="1"/>
+        <pt x="250" y="50" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="simple_transform" xMin="550" yMin="125" xMax="800" yMax="200">
+      <component glyphName="period" x="50" y="50" scalex="1.99994" scaley="1.5" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="simple_transform_again" xMin="425" yMin="125" xMax="800" yMax="250">
+      <component glyphName="period" x="50" y="50" scalex="1.99994" scaley="1.5" flags="0x4"/>
+      <component glyphName="period" x="50" y="50" scalex="1.5" scaley="1.99994" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="translate_only" xMin="300" yMin="100" xMax="425" yMax="150">
+      <component glyphName="period" x="50" y="50" flags="0x4"/>
+    </TTGlyph>
+
+    <!-- 
+      The exact same glyph, just one version has scaled component offsets enabled (0x800).
+      Specify x/y scale (0x040) because otherwise have xform is false.
+      Specify round xy to grid (0x004) because all other examples do.
+    -->
+    <TTGlyph name="scaled_component_offset" xMin="300" yMin="100" xMax="425" yMax="150">      
+      <component glyphName="simple_transform" x="100" y="100" scalex="1.1" scaley="1.2" flags="0x844"/>
+    </TTGlyph>
+    <TTGlyph name="noscaled_component_offset" xMin="300" yMin="100" xMax="425" yMax="150">
+      <component glyphName="simple_transform" x="100" y="100" scalex="1.1" scaley="1.2" flags="0x44"/>
+    </TTGlyph>
+
+  </glyf>
+
+  <name>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      New Font
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="3" platformID="3" platEncID="1" langID="0x409">
+      1.000;NONE;NewFont-Regular
+    </namerecord>
+    <namerecord nameID="4" platformID="3" platEncID="1" langID="0x409">
+      New Font Regular
+    </namerecord>
+    <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
+      Version 1.000
+    </namerecord>
+    <namerecord nameID="6" platformID="3" platEncID="1" langID="0x409">
+      NewFont-Regular
+    </namerecord>
+  </name>
+
+  <post>
+    <formatType value="2.0"/>
+    <italicAngle value="0.0"/>
+    <underlinePosition value="-100"/>
+    <underlineThickness value="50"/>
+    <isFixedPitch value="0"/>
+    <minMemType42 value="0"/>
+    <maxMemType42 value="0"/>
+    <minMemType1 value="0"/>
+    <maxMemType1 value="0"/>
+    <psNames>
+      <!-- This file uses unique glyph names based on the information
+           found in the 'post' table. Since these names might not be unique,
+           we have to invent artificial names in case of clashes. In order to
+           be able to retain the original information, we need a name to
+           ps name mapping for those cases where they differ. That's what
+           you see below.
+            -->
+    </psNames>
+    <extraNames>
+      <!-- following are the name that are not taken from the standard Mac glyph order -->
+      <psName name="non_uniform_scale"/>
+      <psName name="simple_transform"/>
+      <psName name="simple_transform_again"/>
+      <psName name="translate_only"/>
+      <psName name="scaled_component_offset" />
+      <psName name="noscaled_component_offset" />
+    </extraNames>
+  </post>
+
+</ttFont>

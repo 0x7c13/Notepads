@@ -1,0 +1,3 @@
+a <?php this is not a valid processing tag
+---
+b <?php but this is ?>

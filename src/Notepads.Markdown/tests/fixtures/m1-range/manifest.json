@@ -1,0 +1,225 @@
+{
+  "schema_version": "m1-e04-range-fixtures.1",
+  "data_version": "m1-range.1",
+  "date": "2026-10-07",
+  "task_id": "M1-E04-B03",
+  "status": "approved_range_oracle",
+  "oracle_frozen": true,
+  "derived_from_candidate_output": false,
+  "license": "MIT AND CC-BY-SA-4.0",
+  "notice": "NOTICE.md",
+  "contract_checkpoint": {
+    "path": "artifacts/evidence/m1/e04-lineage-next/approved-range-contract-v2.md",
+    "sha256": "A059775972AF688F816F6D7FCD1F6689413AA681162D86249D14FFD2B2B86388"
+  },
+  "counts": {
+    "range_controls": 70,
+    "decode_controls": 17,
+    "models": 15,
+    "real_parser_ranges": 0
+  },
+  "response_shape_counts": {
+    "Selection": 43,
+    "Boundary": 16,
+    "ProbeError": 11
+  },
+  "model_inventory_path": "model-inventory.json",
+  "expected_path": "expected/range-goldens.json",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 19,
+      "sha256": "C4F8646C96015ECEDED7AA360B89B0B897A028CC802B9454B8629892AACF869C"
+    },
+    {
+      "path": "expected/range-goldens.json",
+      "bytes": 237828,
+      "sha256": "B9694AA30222E1DDBA1AA1AE52964015EA7165403FFB62DFB6B895B78C99223D"
+    },
+    {
+      "path": "inputs/code.bin",
+      "bytes": 5,
+      "sha256": "999C1001E3761320C3C21461A5FDD44BBC563911A6F65D2567D252E91C4CFDB9"
+    },
+    {
+      "path": "inputs/compound-image.bin",
+      "bytes": 34,
+      "sha256": "18E264A79BED9852D0E03D24847B946DF76CE4B7FC7EED25EE4A972BB07D3DAB"
+    },
+    {
+      "path": "inputs/compound-table.bin",
+      "bytes": 41,
+      "sha256": "1ED9A35D644DB4EBC7E460632F59D39C15A17632E43212D24AD86F42D7FFB57E"
+    },
+    {
+      "path": "inputs/definition.bin",
+      "bytes": 7,
+      "sha256": "F2F11A90A575C3F22247EA8CB514569673F8056E222CB5225B5C0F4001109D8F"
+    },
+    {
+      "path": "inputs/disjoint-alt.bin",
+      "bytes": 9,
+      "sha256": "46BB24D646C372F8A1546FCCD676130DD9CB816676FC6A4957DE33DB317083D8"
+    },
+    {
+      "path": "inputs/empty-alt.bin",
+      "bytes": 6,
+      "sha256": "F96B2753D9D6F0368C7F2E3B9E0C0CFBA79B57C33A02A2ED933C8FEE6C2DA5B9"
+    },
+    {
+      "path": "inputs/empty.bin",
+      "bytes": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "path": "inputs/entities.bin",
+      "bytes": 10,
+      "sha256": "360D9D079C933408511677541CCD65FECE76A0C52492FF7B4968B321EC254ECD"
+    },
+    {
+      "path": "inputs/hidden-run.bin",
+      "bytes": 32,
+      "sha256": "653BB1245E828FCDA4FA53FCD5A3DEF5BD7654E651F54B4132B73D74E64435C4"
+    },
+    {
+      "path": "inputs/image-alt.bin",
+      "bytes": 11,
+      "sha256": "B2274238FAA98E9D44699917BBAB3D49AFD029E92B3A498DB43AD352ABF671A0"
+    },
+    {
+      "path": "inputs/multi-hidden-synthetic.bin",
+      "bytes": 6,
+      "sha256": "BEF57EC7F53A6D40BEB640A780A639C83BC29AC8A9816F1FC6C5C6DCD93C4721"
+    },
+    {
+      "path": "inputs/normalization.bin",
+      "bytes": 12,
+      "sha256": "62AC38EFED0CF615EA1A2254C136F39AB13F1400AFD01773E5488590F53BE26C"
+    },
+    {
+      "path": "inputs/partial-tab.bin",
+      "bytes": 7,
+      "sha256": "5EEA125561281E1BE140ADF1BDD2CD483E15BAB175AAF5BC0A6C2B3E428770D5"
+    },
+    {
+      "path": "inputs/synthetic-run.bin",
+      "bytes": 2,
+      "sha256": "38164FBD17603D73F696B8B4D72664D735BB6A7C88577687FD2AE33FD6964153"
+    },
+    {
+      "path": "inputs/unicode-copy.bin",
+      "bytes": 24,
+      "sha256": "99DFCEC8C92612F8861B33E4AF5A708FA87B474F85C6283805F7425BC31F27B7"
+    },
+    {
+      "path": "model-inventory.json",
+      "bytes": 19277,
+      "sha256": "8093D8E2E814CA1A467215D7AE17DA5922BD0B3F37DC4F43DCCF21C4073FBE9A"
+    },
+    {
+      "path": "models/code.json",
+      "bytes": 1746,
+      "sha256": "AB543A65DAF2FD6AF3CA12F7FA638738C227973EB856B85886D02F352D7F25DC"
+    },
+    {
+      "path": "models/compound-image.json",
+      "bytes": 6492,
+      "sha256": "61BC69EC081195FF76C0C685D292B7745AF11B23F6B2B8B3A5FF14E1248C8789"
+    },
+    {
+      "path": "models/compound-table.json",
+      "bytes": 11556,
+      "sha256": "27662BB1F195936EE21BCB50461A1BD36306E570A3A3216F4D58FD1A2A0251D9"
+    },
+    {
+      "path": "models/definition.json",
+      "bytes": 1766,
+      "sha256": "354F8C42880B42A385AA2975007226E4A967A3A8F9DAFC879A61E8B269024AA0"
+    },
+    {
+      "path": "models/disjoint-alt.json",
+      "bytes": 2913,
+      "sha256": "765919205FA3A8D96D341BA072FECADA49DD1D26AED3B59F46660CE1782163FB"
+    },
+    {
+      "path": "models/empty-alt.json",
+      "bytes": 2556,
+      "sha256": "49C96DC554B9241A4DAD837B2A55A7D6F9B3529F33F63CE842D927AA75511D7C"
+    },
+    {
+      "path": "models/empty.json",
+      "bytes": 477,
+      "sha256": "62D69F17ABE9F2C4C1F031BA9907C24C4BE4C6F5AF4E9B56063DA3A2EF032368"
+    },
+    {
+      "path": "models/entities.json",
+      "bytes": 1298,
+      "sha256": "985111602C3EE10CCB6D23C3ECF82EAECB93CE7009B84711550984A225AA3D36"
+    },
+    {
+      "path": "models/hidden-run.json",
+      "bytes": 9288,
+      "sha256": "A73FF204F4CFABF6E6F846EED4A0F61EC943DCED4B69E4FDE9C7C4E63C0A8EB7"
+    },
+    {
+      "path": "models/image-alt.json",
+      "bytes": 3885,
+      "sha256": "2F793E137F1DF16482A367CD07DE825FAB5E2DDD9136752230A3C3728EE4BA89"
+    },
+    {
+      "path": "models/multi-hidden-synthetic.json",
+      "bytes": 2201,
+      "sha256": "8838A8E11CCB2E1DC7444488597B78482C7FD5CE0D18B339E77AFF9B4E4FCA80"
+    },
+    {
+      "path": "models/normalization.json",
+      "bytes": 2222,
+      "sha256": "C28AE8D591B464558C9B34DA7A24716FB870DAF807D07ED2132AC48E13396AB0"
+    },
+    {
+      "path": "models/partial-tab.json",
+      "bytes": 1762,
+      "sha256": "B37A0BA85537307800A30CA4DDE3390B7E7B597E57CEF8B06C19D090AF9A5983"
+    },
+    {
+      "path": "models/synthetic-run.json",
+      "bytes": 1963,
+      "sha256": "44439DE46605DC2D7B54AAC0BB3B5457D78CD7A3CCDEF141399C4E37AC49DD84"
+    },
+    {
+      "path": "models/unicode-copy.json",
+      "bytes": 780,
+      "sha256": "C9E0F3D4C15E560FBF068ABED220D2E49FC16D276460936632C56DD5F782B987"
+    },
+    {
+      "path": "NOTICE.md",
+      "bytes": 1637,
+      "sha256": "91C0750F4AFF95B994AC7FA02EB4C29A30781DB3436BE382A32F2973F7D87E01"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1161,
+      "sha256": "63988AAE8D7E09DB41A7253DA113F4C34EA48BD2D38269D7E4373B7F6053D9A8",
+      "original_import": {
+        "bytes": 3848,
+        "sha256": "480142D2917830B7558F5FE41AEEE1E9DB04DC7E37ED049B80569D7111A72721"
+      }
+    }
+  ],
+  "authoring_records": [
+    "artifacts/evidence/m1/e04-lineage-next/b03-author/author_models.py",
+    "artifacts/evidence/m1/e04-lineage-next/b03-author/author_ranges.py",
+    "artifacts/evidence/m1/e04-lineage-next/b03-author/package_draft.py"
+  ],
+  "review_status": "Independent research oracle approved; no implementation/G02 approval.",
+  "approval_record": "docs/design/M1-E04-RANGE-ORACLE-REVIEW.md",
+  "archived_files": [
+    {
+      "path": "tools/check_independent_data.py",
+      "bytes": 17422,
+      "sha256": "B8AB2A2281850C0E15891BE67ACD1B877100E578E935F2D88CAD6B0BFDBACE34",
+      "scope": "Retired historical checker, preserved outside the repository."
+    }
+  ],
+  "locator_scope": "Scratch contract and parent paths identify archived original records; they are not current filesystem validation inputs."
+}

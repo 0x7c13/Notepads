@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.37">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="space"/>
+    <GlyphID id="2" name="period"/>
+    <GlyphID id="3" name="comma"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0x2e34c4a3"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1024"/>
+    <created value="Sat Nov  5 18:46:15 2022"/>
+    <modified value="Sat Nov  5 18:46:15 2022"/>
+    <xMin value="51"/>
+    <yMin value="-250"/>
+    <xMax value="998"/>
+    <yMax value="950"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="3"/>
+    <maxPoints value="8"/>
+    <maxContours value="2"/>
+    <maxCompositePoints value="0"/>
+    <maxCompositeContours value="0"/>
+    <maxZones value="1"/>
+    <maxTwilightPoints value="0"/>
+    <maxStorage value="0"/>
+    <maxFunctionDefs value="0"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="0"/>
+    <maxSizeOfInstructions value="0"/>
+    <maxComponentElements value="0"/>
+    <maxComponentDepth value="0"/>
+  </maxp>
+
+  <OS_2>
+    <!-- The fields 'usFirstCharIndex' and 'usLastCharIndex'
+         will be recalculated by the compiler -->
+    <version value="4"/>
+    <xAvgCharWidth value="1275"/>
+    <usWeightClass value="400"/>
+    <usWidthClass value="5"/>
+    <fsType value="00000000 00000100"/>
+    <ySubscriptXSize value="666"/>
+    <ySubscriptYSize value="614"/>
+    <ySubscriptXOffset value="0"/>
+    <ySubscriptYOffset value="77"/>
+    <ySuperscriptXSize value="666"/>
+    <ySuperscriptYSize value="614"/>
+    <ySuperscriptXOffset value="0"/>
+    <ySuperscriptYOffset value="358"/>
+    <yStrikeoutSize value="51"/>
+    <yStrikeoutPosition value="307"/>
+    <sFamilyClass value="0"/>
+    <panose>
+      <bFamilyType value="0"/>
+      <bSerifStyle value="0"/>
+      <bWeight value="0"/>
+      <bProportion value="0"/>
+      <bContrast value="0"/>
+      <bStrokeVariation value="0"/>
+      <bArmStyle value="0"/>
+      <bLetterForm value="0"/>
+      <bMidline value="0"/>
+      <bXHeight value="0"/>
+    </panose>
+    <ulUnicodeRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulUnicodeRange2 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="NONE"/>
+    <fsSelection value="00000000 11000000"/>
+    <usFirstCharIndex value="14"/>
+    <usLastCharIndex value="32"/>
+    <sTypoAscender value="950"/>
+    <sTypoDescender value="-250"/>
+    <sTypoLineGap value="0"/>
+    <usWinAscent value="950"/>
+    <usWinDescent value="250"/>
+    <ulCodePageRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulCodePageRange2 value="00000000 00000000 00000000 00000000"/>
+    <sxHeight value="512"/>
+    <sCapHeight value="717"/>
+    <usDefaultChar value="0"/>
+    <usBreakChar value="32"/>
+    <usMaxContext value="0"/>
+  </OS_2>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="1069"/>
+    <descent value="-293"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="2837"/>
+    <minLeftSideBearing value="-693"/>
+    <minRightSideBearing value="-617"/>
+    <xMaxExtent value="2797"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="5"/>
+  </hhea>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="3"/>
+    <maxPoints value="4"/>
+    <maxContours value="1"/>
+    <maxCompositePoints value="0"/>
+    <maxCompositeContours value="0"/>
+    <maxZones value="1"/>
+    <maxTwilightPoints value="0"/>
+    <maxStorage value="0"/>
+    <maxFunctionDefs value="0"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="0"/>
+    <maxSizeOfInstructions value="0"/>
+    <maxComponentElements value="0"/>
+    <maxComponentDepth value="0"/>
+
+  </maxp>
+
+  <hmtx>
+    <mtx name=".notdef" width="1275" lsb="51"/>
+    <mtx name="space" width="1275" lsb="0"/>
+    <mtx name="period" width="1275" lsb="278"/>
+    <mtx name="comma" width="1275" lsb="278"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0x2c" name="comma"/><!-- COMMA -->
+      <map code="0x2e" name="period"/><!-- PERIOD -->
+      <map code="0x20" name="space"/><!-- SPACE -->
+    </cmap_format_4>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x2c" name="comma"/><!-- COMMA -->
+      <map code="0x2e" name="period"/><!-- PERIOD -->
+      <map code="0x20" name="space"/><!-- SPACE -->
+    </cmap_format_4>
+  </cmap>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef" xMin="51" yMin="-250" xMax="461" yMax="950">
+      <contour>
+        <pt x="51" y="-250" on="1"/>
+        <pt x="51" y="950" on="1"/>
+        <pt x="461" y="950" on="1"/>
+        <pt x="461" y="-250" on="1"/>
+      </contour>
+      <contour>
+        <pt x="102" y="-199" on="1"/>
+        <pt x="410" y="-199" on="1"/>
+        <pt x="410" y="899" on="1"/>
+        <pt x="102" y="899" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="space"/><!-- contains no outline data -->
+
+    <!-- hand-crafted path: a triangle with an extra point at the end to let it interpolate to a box -->
+    <TTGlyph name="period" xMin="278" yMin="470" xMax="998" yMax="710">
+      <contour>
+        <pt x="278" y="470" on="1"/>
+        <pt x="278" y="710" on="1"/>
+        <pt x="998" y="470" on="1"/>
+        <pt x="998" y="470" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+        <!-- hand-crafted path: a box that is interpolation compatible with the triangle above -->
+    <TTGlyph name="comma" xMin="278" yMin="470" xMax="998" yMax="710">
+      <contour>
+        <pt x="278" y="470" on="1"/>
+        <pt x="278" y="710" on="1"/>
+        <pt x="998" y="710" on="1"/>
+        <pt x="278" y="470" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+  </glyf>
+</ttFont>

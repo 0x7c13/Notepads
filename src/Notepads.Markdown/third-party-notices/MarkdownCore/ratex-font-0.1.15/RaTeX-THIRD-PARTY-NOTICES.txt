@@ -1,0 +1,19 @@
+RaTeX — third-party notices
+===========================
+
+KaTeX fonts (SIL Open Font License 1.1)
+----------------------------------------
+
+This project distributes the KaTeX mathematical font files (KaTeX_*.ttf, .woff,
+.woff2) without modification. They are not under the MIT License; they use the
+SIL Open Font License, Version 1.1.
+
+Copyright, upstream source, file locations, and embedded-metadata wording:
+  licenses/KaTeX-fonts-NOTICE.txt
+
+Full license text:
+  licenses/SIL-OFL-1.1.txt
+
+When you redistribute binaries or SDKs that include these fonts (mobile apps,
+web assets, packages, etc.), keep the above files with your distribution or
+otherwise satisfy the OFL attribution requirements for your channel.

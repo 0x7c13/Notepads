@@ -1,0 +1,7 @@
+[![debug-stub-derive on crates.io][cratesio-image]][cratesio]
+[![debug-stub-derive on docs.rs][docsrs-image]][docsrs]
+
+[cratesio-image]: https://img.shields.io/crates/v/debug_stub_derive.svg
+[cratesio]: https://crates.io/crates/debug_stub_derive
+[docsrs-image]: https://docs.rs/debug_stub_derive/badge.svg?version=0.3.0
+[docsrs]: https://docs.rs/debug_stub_derive/0.3.0/

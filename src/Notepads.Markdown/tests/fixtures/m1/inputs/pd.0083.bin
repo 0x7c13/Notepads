@@ -1,0 +1,47 @@
+  | foo | bar  |
+  |-----|------|
+  | baz | alef |
+
+  | foo | bar  |
+  |-----|------|
+| baz | alef |
+
+  | foo | bar  |
+|-----|------|
+  | baz | alef |
+
+| foo | bar  |
+  |-----|------|
+  | baz | alef |
+
+  | foo | bar  |
+|-----|------|
+| baz | alef |
+
+| foo | bar  |
+|-----|------|
+  | baz | alef |
+
+| foo | bar  |
+|-----|------|
+| baz | alef |
+
+| foo | bar  |
+  |-----|------|
+| baz | alef |
+
+    | foo | bar  |
+    |-----|------|
+    | baz | alef |
+
+| foo | bar  |
+    |-----|------|
+| baz | alef |
+
+	| foo | bar  |
+	|-----|------|
+	| baz | alef |
+
+| foo | bar  |
+	|-----|------|
+| baz | alef |

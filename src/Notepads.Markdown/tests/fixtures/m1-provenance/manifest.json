@@ -1,0 +1,950 @@
+{
+  "schema_version": "m1-e04-fixtures-research.1",
+  "data_version": "m1-provenance.1",
+  "date": "2026-10-07",
+  "status": "approved_basic_oracle",
+  "task_id": "M1-E04-B01",
+  "license": "MIT AND CC-BY-SA-4.0",
+  "notice": "NOTICE.md",
+  "contract_checkpoint": {
+    "path": "artifacts/evidence/m1/e04-plan/approved-research-contract-v3.md",
+    "sha256": "F7D453D7B71C700643D40A9DF7ACBA3EC25D57E3383F2CF53E4D038B317F5933",
+    "approval_record": "docs/design/M1-RESEARCH-REVIEW.md",
+    "historical_header": "Checkpoint retains its submission status; actual approval is recorded by the independent reviewer."
+  },
+  "oracle_frozen": true,
+  "derived_from_candidate_output": false,
+  "query_relations": "manually_authored",
+  "counts": {
+    "cases": 26,
+    "queries": 87,
+    "fragments": 112,
+    "payloads": 21,
+    "fidelity_negative_controls": 2,
+    "pending": 3
+  },
+  "layer_counts": [
+    {
+      "layer": "mapping_control",
+      "cases": 1
+    },
+    {
+      "layer": "normalization",
+      "cases": 3
+    },
+    {
+      "layer": "parser_projection",
+      "cases": 22
+    }
+  ],
+  "files": [
+    {
+      "path": "expected/independent-goldens.json",
+      "bytes": 200277,
+      "sha256": "C6D377E084AFFC37E20DD006A09383F6F6179A3F6A247F377D7CCBAA47367886",
+      "role": "manual_expected"
+    },
+    {
+      "path": "coordinate-check.json",
+      "bytes": 251397,
+      "sha256": "19900E5AE5CEFFFB760440FC5C99951DDE8829776E45815B70904FFFC3EF6634",
+      "role": "counts_only_evidence"
+    },
+    {
+      "path": "tools/Check-IndependentData.ps1",
+      "bytes": 13339,
+      "sha256": "EE0B194B451A90FDA1F1DBE740B54CF22950215D0E582E21743BF0B2FC359256",
+      "role": "arithmetic_checker"
+    },
+    {
+      "path": "NOTICE.md",
+      "bytes": 2123,
+      "sha256": "B928B754AB277B9335AA6EAD615A96119467BF97F3177E20C7F18B0AEC30C78D",
+      "role": "policy_notice",
+      "original_import": {
+        "bytes": 2126,
+        "sha256": "E71F8E3BA725C413D3FD5005C591F12243384ED636569E1F86975AA130F65E38"
+      }
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 17,
+      "sha256": "206325ABB203782129441BD9278FBE66EECBDFBF153BC43B5AAC5C4F4EDCA81B",
+      "role": "policy_notice"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2715,
+      "sha256": "38C29285C061F5785D39B06BC05BC56ABF1C37014A73DE253524C104F6BAAD5D",
+      "role": "policy_notice"
+    },
+    {
+      "path": "freeze-metadata-check.json",
+      "bytes": 11840,
+      "sha256": "3B09ACFA5531C9712554B14E1EFC655C3ABB454C8F759E94E787154E3FA80DE1",
+      "role": "metadata_identity_evidence"
+    }
+  ],
+  "cases": [
+    {
+      "id": "e04.empty",
+      "layer": "normalization",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.empty.md",
+        "bytes": 0,
+        "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      "expected_selector": "cases[id=e04.empty]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000001",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "E04 empty S/L boundary rule"
+        ],
+        "derivation": "The empty source has no origins, no fragments and one Exact 0-to-0 boundary. This is an input/mapping control, not a parser compatibility assertion."
+      },
+      "query_count": 4,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.definition-only",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.definition-only.md",
+        "bytes": 7,
+        "sha256": "F2F11A90A575C3F22247EA8CB514569673F8056E222CB5225B5C0F4001109D8F"
+      },
+      "expected_selector": "cases[id=e04.definition-only]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000002",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Link reference definitions"
+        ],
+        "derivation": "A real accepted definition produces no body node. Its entire source is Hidden; label a and destination /u remain dependency payloads."
+      },
+      "query_count": 3,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.control.multi-hidden-synthetic",
+      "layer": "mapping_control",
+      "profiles": [],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.control.multi-hidden-synthetic.md",
+        "bytes": 6,
+        "sha256": "BEF57EC7F53A6D40BEB640A780A639C83BC29AC8A9816F1FC6C5C6DCD93C4721"
+      },
+      "expected_selector": "cases[id=e04.control.multi-hidden-synthetic]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000003",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "E04 BoundaryRelation seam rule"
+        ],
+        "derivation": "Artificial fully specified trace. abcde are intentionally hidden and two separators inserted. No Markdown parser is asserted to produce this document."
+      },
+      "query_count": 8,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.normalization.crlf-nul-unicode-cr",
+      "layer": "normalization",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.normalization.crlf-nul-unicode-cr.md",
+        "bytes": 12,
+        "sha256": "62AC38EFED0CF615EA1A2254C136F39AB13F1400AFD01773E5488590F53BE26C"
+      },
+      "expected_selector": "cases[id=e04.normalization.crlf-nul-unicode-cr]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000004",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Characters and lines; Insecure characters",
+          "E04 N01 and scalar-boundary contract"
+        ],
+        "derivation": "Manually enumerated S scalars and CRLF atom, then copied normalized P into L as a control. This is not prose soft-break projection."
+      },
+      "query_count": 6,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.normalization.bom-tab-preserved",
+      "layer": "normalization",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.normalization.bom-tab-preserved.md",
+        "bytes": 5,
+        "sha256": "CEBBCDE29109F5AC1CFC6A4D324AA7E5B4283EE844074ACFE2471745A422888A"
+      },
+      "expected_selector": "cases[id=e04.normalization.bom-tab-preserved]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000005",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "E04 N01 allowed transforms"
+        ],
+        "derivation": "U+FEFF and TAB are preserved. The serialized JSON contains U+FEFF within the source string; the JSON file itself has no BOM."
+      },
+      "query_count": 2,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.task.tab-cjk",
+      "layer": "parser_projection",
+      "profiles": [
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.task.tab-cjk.md",
+        "bytes": 9,
+        "sha256": "B80BEDF564805C7B3C6A709EDF406C5202950383F12A485800D629B969763941"
+      },
+      "expected_selector": "cases[id=e04.task.tab-cjk]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000006",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "GFM Task list items (extension)",
+          "E04 task Object/Hidden/Synthetic SP policy"
+        ],
+        "derivation": "[x] is a checked task marker followed by a TAB whitespace. Marker is exactly [2,5); TAB [5,6) is consumed and Hidden. Synthetic SP at S6 precedes CJK label."
+      },
+      "query_count": 6,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.table.missing-extra",
+      "layer": "parser_projection",
+      "profiles": [
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.table.missing-extra.md",
+        "bytes": 23,
+        "sha256": "646E663D4FE6A8EA9B3CEBFB2EF1A1993EC862F2730412BD3A740F9E6FA567FC"
+      },
+      "expected_selector": "cases[id=e04.table.missing-extra]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000007",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "GFM Tables (extension): fewer and excess body cells",
+          "E04 table TAB/LF separators"
+        ],
+        "derivation": "Two header columns. Row 1 lacks column 1, represented by a zero-width Cell and a TAB. Row 2 has an excess q cell, whose source is Hidden. TAB anchors S3/S15/S19; row LF anchors S13/S17 after leading table grammar and before the new cell raw inline content. Missing cell anchor S15 is after the closing pipe and before its LF."
+      },
+      "query_count": 5,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.table.escaped-pipe-code",
+      "layer": "parser_projection",
+      "profiles": [
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.table.escaped-pipe-code.md",
+        "bytes": 14,
+        "sha256": "236526DB7F68B8D3577AEFE994543317FEAC70A5FD44DD5EF525ACF5EC25377B"
+      },
+      "expected_selector": "cases[id=e04.table.escaped-pipe-code]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000008",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "GFM Tables: escaped pipe inside code span",
+          "CM Code spans",
+          "E04 table separators"
+        ],
+        "derivation": "Table-specific pipe preprocessing consumes the backslash inside code. Body cell contains literal |. Row LF is anchored at S9 after outer pipe consumption and before the cell opening backtick; code delimiter is cell inline grammar, Hidden after Insert. Source [10,12) is one minimum pipe Transform atom."
+      },
+      "query_count": 4,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.container.partial-tab-code",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.container.partial-tab-code.md",
+        "bytes": 7,
+        "sha256": "5EEA125561281E1BE140ADF1BDD2CD483E15BAB175AAF5BC0A6C2B3E428770D5"
+      },
+      "expected_selector": "cases[id=e04.container.partial-tab-code]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000009",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "normative_example_adaptation",
+        "license": "CC-BY-SA-4.0",
+        "attribution": "John MacFarlane",
+        "upstream_id": "CM",
+        "selector": "Tabs: example with > followed by two U+2192 tab placeholders and foo",
+        "adaptation": "Spec U+2192 tab placeholders decoded to U+0009 under the spec convention; LF retained. Original spec bytes and notices remain unchanged at the pinned normative source.",
+        "rules": [
+          "CM Tabs; Indented code blocks"
+        ],
+        "derivation": "The first tab is wholly consumed by quote prefix/indent. Four columns of code indent leave two visible columns from the second tab. Whole second tab becomes exactly two spaces; it is never split into half a source byte."
+      },
+      "query_count": 5,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.container.multiline-code",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.container.multiline-code.md",
+        "bytes": 9,
+        "sha256": "1BD0BDC77D7D8AEA9ACAB9C051B4BCCDC36B25022E7C980BDD4D9A3D1ADB70CF"
+      },
+      "expected_selector": "cases[id=e04.container.multiline-code]",
+      "source_key": {
+        "document_id": "0400000000000000000000000000000a",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Code spans; Block quotes"
+        ],
+        "derivation": "One code span crosses the quote continuation. The code LF becomes one space, the second quote prefix is Hidden, and a and b remain separate exact Copy runs."
+      },
+      "query_count": 3,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.image.emphasis-alt",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.image.emphasis-alt.md",
+        "bytes": 11,
+        "sha256": "B2274238FAA98E9D44699917BBAB3D49AFD029E92B3A498DB43AD352ABF671A0"
+      },
+      "expected_selector": "cases[id=e04.image.emphasis-alt]",
+      "source_key": {
+        "document_id": "0400000000000000000000000000000b",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Images; Emphasis and strong emphasis",
+          "E04 R07 image/alt/payload control"
+        ],
+        "derivation": "Main is one U+FFFC over [0,11). Alt domain is the original label [2,7), L starts at 0 and reads a b; alt emphasis is nested within the alt label root. Destination u [9,10) is a dependency payload."
+      },
+      "query_count": 6,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.image.escape-alt-title",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.image.escape-alt-title.md",
+        "bytes": 14,
+        "sha256": "1A7A0AB8CF0D5B2DE62C2EBDECF02148197162487057BC7B5DB3608BCFFABB4F"
+      },
+      "expected_selector": "cases[id=e04.image.escape-alt-title]",
+      "source_key": {
+        "document_id": "0400000000000000000000000000000c",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Images; Backslash escapes; Link destinations and titles",
+          "E04 independent ImageAlt flow"
+        ],
+        "derivation": "Image envelope is [0,14). Alt a* is two UTF-16 units while Main has one. The escape source [3,5) is atomic in alt, destination /u [7,9) and title t [11,12) are distinct payloads."
+      },
+      "query_count": 4,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.image.empty-alt-anchor",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.image.empty-alt-anchor.md",
+        "bytes": 6,
+        "sha256": "F96B2753D9D6F0368C7F2E3B9E0C0CFBA79B57C33A02A2ED933C8FEE6C2DA5B9"
+      },
+      "expected_selector": "cases[id=e04.image.empty-alt-anchor]",
+      "source_key": {
+        "document_id": "0400000000000000000000000000000d",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Images",
+          "E04 empty-alt anchor"
+        ],
+        "derivation": "The empty label is anchored at original S2; its L0 does not correspond to S0. Main remains one Object. Aux has no source claims or contributors."
+      },
+      "query_count": 4,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.reference.multiline-first-wins",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.reference.multiline-first-wins.md",
+        "bytes": 29,
+        "sha256": "C2E450A8CA9D78B244010775B981617DB9F1EF4D613C080AB166F2BAB7DC632A"
+      },
+      "expected_selector": "cases[id=e04.reference.multiline-first-wins]",
+      "source_key": {
+        "document_id": "0400000000000000000000000000000e",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Link reference definitions: title on following line; first matching definition wins",
+          "CM Full reference links"
+        ],
+        "derivation": "Use [0,6) resolves to definition [8,21), destination /u [13,15), following-line title t [19,20). Duplicate [22,29) remains a recognized but unaccepted definition with /v provenance. Newlines outside the syntax spans are explicit Hidden grammar."
+      },
+      "query_count": 3,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.links.same-destination-distinct-occurrences",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.links.same-destination-distinct-occurrences.md",
+        "bytes": 13,
+        "sha256": "A482B72D67E2F722212727BCD825FAFDCCE6D26EE3B2E12B42C9BB3A4333F602"
+      },
+      "expected_selector": "cases[id=e04.links.same-destination-distinct-occurrences]",
+      "source_key": {
+        "document_id": "0400000000000000000000000000000f",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Inline links",
+          "E04 occurrence identity rule"
+        ],
+        "derivation": "Two links have different labels and separate source occurrences. Equal decoded destination u does not merge Link or payload identities: u comes from [4,5) and [11,12)."
+      },
+      "query_count": 2,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.html.literal-crlf-nul",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.html.literal-crlf-nul.md",
+        "bytes": 14,
+        "sha256": "669C854FE64858187BB87C8607C4AECCB98B9680906793A813F079C2D3FDF156"
+      },
+      "expected_selector": "cases[id=e04.html.literal-crlf-nul]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000010",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM HTML blocks; Characters and lines; Insecure characters",
+          "E04 inert literal HTML policy"
+        ],
+        "derivation": "An opaque raw HTML block is displayed literally. No tags, attributes or script are executed or converted to action links. CRLF becomes LF and literal NUL becomes U+FFFD before literal projection."
+      },
+      "query_count": 3,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.fidelity.code-copy-interior",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.fidelity.code-copy-interior.md",
+        "bytes": 5,
+        "sha256": "999C1001E3761320C3C21461A5FDD44BBC563911A6F65D2567D252E91C4CFDB9"
+      },
+      "expected_selector": "cases[id=e04.fidelity.code-copy-interior]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000011",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Code spans",
+          "E04 R08 minimum atom fidelity"
+        ],
+        "derivation": "The unchanged code content abc must be Copy. A whole-content Transform would lose exact internal a/b/c boundaries despite passing a coarse partition/length check."
+      },
+      "query_count": 2,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.fidelity.adjacent-entities",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.fidelity.adjacent-entities.md",
+        "bytes": 10,
+        "sha256": "360D9D079C933408511677541CCD65FECE76A0C52492FF7B4968B321EC254ECD"
+      },
+      "expected_selector": "cases[id=e04.fidelity.adjacent-entities]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000012",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Entity and numeric character references",
+          "E04 R08 minimum atom fidelity"
+        ],
+        "derivation": "Each independent &amp; is a distinct Transform. The original boundary S5 and decoded boundary L1 are exactly related, with both adjacent contributors and no Atomic flag."
+      },
+      "query_count": 4,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.g4.interior-delimiters",
+      "layer": "parser_projection",
+      "profiles": [
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.g4.interior-delimiters.md",
+        "bytes": 29,
+        "sha256": "58DFB7B85A23B4701E588C10BEEAC467BE64972959A9303CDA92FA21A31B628C"
+      },
+      "expected_selector": "cases[id=e04.g4.interior-delimiters]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000013",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "GFM Autolinks (extension): interior punctuation is included",
+          "E04 G4 hook before delimiter resolution"
+        ],
+        "derivation": "All 29 source characters belong to one extended www autolink. Interior _, * and ~~ remain literal label/path characters; no Emphasis or Strikethrough records are emitted. Destination gains http:// as a Synthetic payload prefix, absent from Main L."
+      },
+      "query_count": 2,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.g4.outer-emphasis",
+      "layer": "parser_projection",
+      "profiles": [
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.g4.outer-emphasis.md",
+        "bytes": 13,
+        "sha256": "25B74C49F8E9C37404847D8AE541FE4802536E674981ADD2D8986ED547E70822"
+      },
+      "expected_selector": "cases[id=e04.g4.outer-emphasis]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000014",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "GFM Autolinks (extension): allowed start after * and trailing * exclusion",
+          "CM Emphasis and strong emphasis"
+        ],
+        "derivation": "The leading * permits the www start; the trailing * is excluded from the URL, and the external pair resolves as emphasis. Link is nested inside Emphasis and the label is exact Copy."
+      },
+      "query_count": 3,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.g4.code-context",
+      "layer": "parser_projection",
+      "profiles": [
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.g4.code-context.md",
+        "bytes": 11,
+        "sha256": "E4CE3DA81FED6A2431357B5DFCFC9B4DFF2FCC2366F17032678534C98113F70E"
+      },
+      "expected_selector": "cases[id=e04.g4.code-context]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000015",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Code spans",
+          "GFM extended autolink inline context"
+        ],
+        "derivation": "A code span excludes extended autolink matching. The text www.a.com remains code Copy, without a Link or destination payload."
+      },
+      "query_count": 1,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.g4.explicit-link-context",
+      "layer": "parser_projection",
+      "profiles": [
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.g4.explicit-link-context.md",
+        "bytes": 15,
+        "sha256": "9A306D0828818134F712C00D5B8DF3F0B69CE8A8F88EF720B4E3DDB8A5ED7C39"
+      },
+      "expected_selector": "cases[id=e04.g4.explicit-link-context]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000016",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Links: no links nested inside links",
+          "GFM extended autolink inline context"
+        ],
+        "derivation": "There is exactly one explicit Link whose label is www.a.com and whose destination is /u. The label must not become a nested auto-Link or change its destination to http://www.a.com."
+      },
+      "query_count": 1,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.g4.html-context",
+      "layer": "parser_projection",
+      "profiles": [
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.g4.html-context.md",
+        "bytes": 21,
+        "sha256": "B196229AEE27FDFE4D20364B80AD9D2E6106F2A4019DDA4949F31A39ADDF5AAF"
+      },
+      "expected_selector": "cases[id=e04.g4.html-context]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000017",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM HTML blocks: complete standalone open tag (type 7)",
+          "E04 inert literal policy; G4 excluded raw HTML context"
+        ],
+        "derivation": "The complete standalone tag is raw HTML. The attribute text must not become an autolink or an action; all bytes display literally."
+      },
+      "query_count": 1,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.g4.table-context",
+      "layer": "parser_projection",
+      "profiles": [
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.g4.table-context.md",
+        "bytes": 15,
+        "sha256": "C9C10940EDD802CC24EF3A13FFDFE1DCC3E8EB549D66BA559E5D116F57145893"
+      },
+      "expected_selector": "cases[id=e04.g4.table-context]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000018",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "GFM Tables (extension); Autolinks (extension)"
+        ],
+        "derivation": "One header cell is an extended www autolink. No body rows or cell/row separators are invented. Header pipes and delimiter row are Hidden; the generated http:// is payload-only."
+      },
+      "query_count": 2,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.g4.invalid-domain",
+      "layer": "parser_projection",
+      "profiles": [
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.g4.invalid-domain.md",
+        "bytes": 9,
+        "sha256": "2709A3DBAD8F3FE6785DC0DC624ED0FDF2722FEC71727CFE6B03DC0EF61EF3E1"
+      },
+      "expected_selector": "cases[id=e04.g4.invalid-domain]",
+      "source_key": {
+        "document_id": "04000000000000000000000000000019",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "GFM Autolinks (extension): no underscore in last two domain segments"
+        ],
+        "derivation": "The domain has an underscore in its penultimate segment. The entire input is literal prose, with no Link or payload. This small semantic rejection does not establish bounded long-URL scanning."
+      },
+      "query_count": 1,
+      "required_oracle": true
+    },
+    {
+      "id": "e04.reference.two-labels-one-target",
+      "layer": "parser_projection",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "status": "required_oracle",
+      "input": {
+        "path": "inputs/e04.reference.two-labels-one-target.md",
+        "bytes": 28,
+        "sha256": "2C6C69864C3E963CEFD326F4F85D5BA74E006183B30FE880DB7A57F0A21BE50A"
+      },
+      "expected_selector": "cases[id=e04.reference.two-labels-one-target]",
+      "source_key": {
+        "document_id": "0400000000000000000000000000001a",
+        "revision": 1
+      },
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "rules": [
+          "CM Full reference links; Link reference definitions",
+          "E04 definition/use occurrence identity"
+        ],
+        "derivation": "Distinct labels a/b resolve to distinct accepted definitions [15,21)/[22,28), even though both destinations decode to u. Each use and source occurrence has its own identity and target provenance."
+      },
+      "query_count": 2,
+      "required_oracle": true
+    }
+  ],
+  "normative_sources": [
+    {
+      "id": "CM",
+      "path": "tests/baselines/commonmark-0.31.2/spec.txt",
+      "version": "0.31.2",
+      "commit": "9103e341a973013013bb1a80e13567007c5cef6f",
+      "sha256": "257C41AD946F7A1414A499ACA402A1AA8FDAC3678532266611348C1CF54F4B80",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "John MacFarlane",
+      "notice_path": "tests/baselines/commonmark-0.31.2/LICENSE"
+    },
+    {
+      "id": "GFM",
+      "path": "tests/baselines/gfm-0.29-gfm/spec.txt",
+      "version": "0.29-gfm",
+      "commit": "587a12bb54d95ac37241377e6ddc93ea0e45439b",
+      "sha256": "7D8E5814BEFEC287AC116786D81FF14E0ADC9B13295B4494649E995408FD871C",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "John MacFarlane and GitHub contributors",
+      "notice_path": "tests/baselines/gfm-0.29-gfm/COPYING"
+    }
+  ],
+  "legacy_read_only_checkpoints": [
+    {
+      "path": "tests/fixtures/m1/manifest.json",
+      "sha256": "C1D983CFAB034FBE190846A794EE04A85E6C7C1D898B8EAEACC9C120AC59BE93",
+      "status": "observed_read_only_checkpoint_not_rewritten"
+    },
+    {
+      "path": "tests/fixtures/m1/expected/project-goldens.json",
+      "sha256": "D36EB9B13859EF7CBB7BC938DF8AEFF9194963C3560FD65AEE0B4976B6C8B126",
+      "status": "observed_read_only_checkpoint_not_rewritten"
+    },
+    {
+      "path": "tests/baselines/manifest.json",
+      "sha256": "77C811DD1C118DEB156684F4C4B5533F083B4389ED237C980549B59F1C888850",
+      "status": "observed_read_only_checkpoint_not_rewritten"
+    }
+  ],
+  "pending": [
+    {
+      "id": "e04.pending.g4-entity-escape-priority",
+      "layer": "parser_projection",
+      "status": "pending",
+      "reason": "The exact identity of decoded destination origins around escaped/entity text in extended autolinks needs an independently reviewed normative derivation. No guessed expected result is supplied.",
+      "required_scope": true,
+      "blocks_production_gate": true
+    },
+    {
+      "id": "e04.pending.g4-failed-long-url",
+      "layer": "parser_projection",
+      "status": "pending",
+      "reason": "Bounded matcher lookahead and cancellation are cost/control obligations. A very long input is not automatically invalid Markdown and cannot receive a fabricated semantic failure golden; fixture/output/cost policy awaits review.",
+      "required_scope": true,
+      "blocks_production_gate": true
+    },
+    {
+      "id": "e04.pending.fenced-trailing-eof",
+      "layer": "parser_projection",
+      "status": "pending",
+      "reason": "Synthetic final code LF and trailing blank-line provenance require a distinct reviewed projection rule; existing m1.1 semantic inputs remain required and unchanged.",
+      "required_scope": true,
+      "blocks_production_gate": true
+    }
+  ],
+  "limitations": [
+    "The reviewed basic expected oracle is approved and frozen; no parser/normalizer/mapping implementation result is asserted.",
+    "Counting and metadata identity evidence cannot replace the independent semantic/BoundaryRelation review.",
+    "All three pending scopes are required and block production G02; a future runner cannot skip them to release that gate.",
+    "Main and ImageAlt query targets are separate; dependency payloads have no L query.",
+    "Original fixture input bytes are excluded from Git EOL conversion."
+  ],
+  "approval_scope": "The reviewed 26-case basic research oracle is frozen. This is oracle approval, not candidate parser/normalizer/mapping success or full E04/production G02 approval.",
+  "review_record": "docs/design/M1-RESEARCH-REVIEW.md, section E04-B01 独立基础 oracle 与 separator 政策",
+  "original_draft_checkpoint": {
+    "path": "artifacts/evidence/m1/e04-b01/draft-1/checkpoint.json",
+    "sha256": "7EEA6D73509AA1F3BA814D2F67581B81F33DE17DF3EAC021D57483961C3F0D84"
+  }
+}

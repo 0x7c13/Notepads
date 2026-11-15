@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="OTTO" ttLibVersion="4.37">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="i"/>
+    <GlyphID id="2" name="glyph00002"/>
+    <GlyphID id="3" name="j"/>
+    <GlyphID id="4" name="k"/>
+    <GlyphID id="5" name="l"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="0.303"/>
+    <checkSumAdjustment value="0x5eae1277"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1000"/>
+    <created value="Fri Mar 13 21:44:13 2009"/>
+    <modified value="Thu Jan  6 10:43:08 2022"/>
+    <xMin value="-346"/>
+    <yMin value="-256"/>
+    <xMax value="1309"/>
+    <yMax value="1099"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="983"/>
+    <descent value="-217"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="1379"/>
+    <minLeftSideBearing value="-346"/>
+    <minRightSideBearing value="-801"/>
+    <xMaxExtent value="1309"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="6"/>
+  </hhea>
+
+  <maxp>
+    <tableVersion value="0x5000"/>
+    <numGlyphs value="6"/>
+  </maxp>
+
+  <OS_2>
+    <!-- The fields 'usFirstCharIndex' and 'usLastCharIndex'
+         will be recalculated by the compiler -->
+    <version value="4"/>
+    <xAvgCharWidth value="568"/>
+    <usWeightClass value="400"/>
+    <usWidthClass value="5"/>
+    <fsType value="00000000 00000000"/>
+    <ySubscriptXSize value="700"/>
+    <ySubscriptYSize value="650"/>
+    <ySubscriptXOffset value="0"/>
+    <ySubscriptYOffset value="218"/>
+    <ySuperscriptXSize value="700"/>
+    <ySuperscriptYSize value="650"/>
+    <ySuperscriptXOffset value="0"/>
+    <ySuperscriptYOffset value="369"/>
+    <yStrikeoutSize value="50"/>
+    <yStrikeoutPosition value="289"/>
+    <sFamilyClass value="0"/>
+    <panose>
+      <bFamilyType value="2"/>
+      <bSerifStyle value="0"/>
+      <bWeight value="5"/>
+      <bProportion value="3"/>
+      <bContrast value="0"/>
+      <bStrokeVariation value="0"/>
+      <bArmStyle value="0"/>
+      <bLetterForm value="0"/>
+      <bMidline value="0"/>
+      <bXHeight value="0"/>
+    </panose>
+    <ulUnicodeRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulUnicodeRange2 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="ABAT"/>
+    <fsSelection value="00000000 01000000"/>
+    <usFirstCharIndex value="105"/>
+    <usLastCharIndex value="108"/>
+    <sTypoAscender value="739"/>
+    <sTypoDescender value="-217"/>
+    <sTypoLineGap value="244"/>
+    <usWinAscent value="983"/>
+    <usWinDescent value="217"/>
+    <ulCodePageRange1 value="00100000 00000000 00000001 10011111"/>
+    <ulCodePageRange2 value="00000000 00000000 00000000 00000000"/>
+    <sxHeight value="482"/>
+    <sCapHeight value="694"/>
+    <usDefaultChar value="0"/>
+    <usBreakChar value="32"/>
+    <usMaxContext value="3"/>
+  </OS_2>
+
+  <hmtx>
+    <mtx name=".notdef" width="500" lsb="50"/>
+    <mtx name="glyph00002" width="246" lsb="67"/>
+    <mtx name="i" width="246" lsb="67"/>
+    <mtx name="j" width="246" lsb="-7"/>
+    <mtx name="k" width="498" lsb="83"/>
+    <mtx name="l" width="278" lsb="83"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0x69" name="i"/><!-- LATIN SMALL LETTER I -->
+      <map code="0x6a" name="j"/><!-- LATIN SMALL LETTER J -->
+      <map code="0x6b" name="k"/><!-- LATIN SMALL LETTER K -->
+      <map code="0x6c" name="l"/><!-- LATIN SMALL LETTER L -->
+    </cmap_format_4>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x69" name="i"/><!-- LATIN SMALL LETTER I -->
+      <map code="0x6a" name="j"/><!-- LATIN SMALL LETTER J -->
+      <map code="0x6b" name="k"/><!-- LATIN SMALL LETTER K -->
+      <map code="0x6c" name="l"/><!-- LATIN SMALL LETTER L -->
+    </cmap_format_4>
+  </cmap>
+
+  <name>
+    <namerecord nameID="0" platformID="3" platEncID="1" langID="0x409">
+      Copyright 2019 The Cantarell Project Authors (https://gitlab.gnome.org/GNOME/cantarell-fonts)
+    </namerecord>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      Cantarell
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="3" platformID="3" platEncID="1" langID="0x409">
+      0.303;ABAT;Cantarell-Regular
+    </namerecord>
+    <namerecord nameID="4" platformID="3" platEncID="1" langID="0x409">
+      Cantarell Regular
+    </namerecord>
+    <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
+      Version 0.303
+    </namerecord>
+    <namerecord nameID="6" platformID="3" platEncID="1" langID="0x409">
+      Cantarell-Regular
+    </namerecord>
+    <namerecord nameID="256" platformID="3" platEncID="1" langID="0x409">
+      Weight
+    </namerecord>
+    <namerecord nameID="257" platformID="3" platEncID="1" langID="0x409">
+      Thin
+    </namerecord>
+    <namerecord nameID="258" platformID="3" platEncID="1" langID="0x409">
+      Light
+    </namerecord>
+    <namerecord nameID="259" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="260" platformID="3" platEncID="1" langID="0x409">
+      Bold
+    </namerecord>
+    <namerecord nameID="261" platformID="3" platEncID="1" langID="0x409">
+      Extra Bold
+    </namerecord>
+  </name>
+
+  <post>
+    <formatType value="3.0"/>
+    <italicAngle value="0.0"/>
+    <underlinePosition value="-100"/>
+    <underlineThickness value="50"/>
+    <isFixedPitch value="0"/>
+    <minMemType42 value="0"/>
+    <maxMemType42 value="0"/>
+    <minMemType1 value="0"/>
+    <maxMemType1 value="0"/>
+  </post>
+
+  <CFF2>
+    <major value="2"/>
+    <minor value="0"/>
+    <CFFFont name="CFF2Font">
+      <FontMatrix value="0.001 0 0 0.001 0 0"/>
+      <FDArray>
+        <FontDict index="0">
+          <Private>
+            <BlueValues>
+                <blend value="-10 0 0"/>
+                <blend value="0 0 0"/>
+                <blend value="482 -2 8"/>
+                <blend value="492 0 0"/>
+                <blend value="694 2 -8"/>
+                <blend value="704 0 0"/>
+                <blend value="739 0 0"/>
+                <blend value="749 0 0"/>
+            </BlueValues>
+            <OtherBlues>
+                <blend value="-227 0 -5"/>
+                <blend value="-217 0 5"/>
+            </OtherBlues>
+            <BlueScale value="0.0625"/>
+            <BlueShift value="7"/>
+            <BlueFuzz value="1"/>
+            <StdHW>
+                <blend value="80 -60 60"/>
+            </StdHW>
+            <StdVW>
+                <blend value="70 -50 104"/>
+            </StdVW>
+            <LanguageGroup value="0"/>
+            <ExpansionFactor value="0.06"/>
+            <Subrs>
+              <!-- The 'index' attribute is only for humans; it is ignored when parsed. -->
+              <CharString index="0">
+                2 -94 callsubr
+              </CharString>
+              <CharString index="1">
+                1 blend
+                -20 hstem
+              </CharString>
+              <CharString index="2">
+                83 24 -21 1 blend
+                hmoveto
+              </CharString>
+              <CharString index="3">
+                -21 482 -98 callsubr
+              </CharString>
+              <CharString index="4">
+                2 blend
+                rmoveto
+                26 31 6 10 19 -9</CharString>
+              <CharString index="5">
+                -206 8 -5 1 blend
+                -21</CharString>
+              <CharString index="6">
+                -13 8 -2 1 -4 2 -5 14 5 blend
+                hvcurveto
+                -18 56 13 -16 -42 58 2 blend
+                rlineto
+                -5 -12 -11 -3 -12 0 2 1 2 -4 0 0 2 -1 6 5 blend
+                hhcurveto
+                -34 -18 23 37 -5 8 -5 4 6 -7 7 -6 4 blend
+                hvcurveto
+              </CharString>
+              <CharString index="7">
+                -105 callsubr
+                -92 callsubr
+              </CharString>
+              <CharString index="8">
+                8 -5 -93 callsubr
+              </CharString>
+              <CharString index="9">
+                -2 8 1 blend
+                -20</CharString>
+              <CharString index="10">
+                -69 43 -45 66 17 -30 -14 16 12 -11 -18 37 4 blend
+                vhcurveto
+              </CharString>
+              <CharString index="11">
+                621 -80 -631 31 -50 60 -90 -25 39 3 blend
+                vlineto
+              </CharString>
+              <CharString index="12">
+                192 -6 -8 32 4 -2 -103 callsubr
+                11 -101 callsubr
+                -96 callsubr
+                -97 callsubr
+              </CharString>
+              <CharString index="13">
+                blend
+                rmoveto
+                -85 callsubr
+              </CharString>
+              <CharString index="14">
+                2 blend
+                rmoveto
+                91 40 53 76 88 -27 33 -12 1 -10 29 -14 27 -23 26 5 blend
+                vvcurveto
+                505 -80 -517 39 -41 59 -93 -27 53 3 blend
+                vlineto
+                -56 -36 -57 -54 -31 -2 -9 -1 5 1 -4 -2 2 3 -7 5 blend
+                vhcurveto
+              </CharString>
+              <CharString index="15">
+                80 482 -80 -59 93 -2 8 59 -93 3 blend
+                hlineto
+              </CharString>
+              <CharString index="16">
+                739 -80 60 -90 1 blend
+              </CharString>
+              <CharString index="17">
+                21 -83 callsubr
+                -98 80 31 -17 -72 84 65 -88 -59 93 4 blend
+                hintmask 11101000
+                -100 callsubr
+                hintmask 11110000
+                41 113 -29 46 34 -46 -107 callsubr
+              </CharString>
+              <CharString index="18">
+                -102 callsubr
+                709 -10 13 -79 callsubr
+                hstemhm
+                66 114 -97 80 30 -16 -72 84 66 -89 -59 93 4 blend
+                hintmask 11101000
+                19 -227 2 10 -99 callsubr
+                hintmask 11110000
+                130 774 -27 40 59 -79 -107 callsubr
+              </CharString>
+              <CharString index="19">
+                -80 callsubr
+                83 80 24 -21 -60 90 2 blend
+                vstem
+                -95 callsubr
+              </CharString>
+              <CharString index="20">
+                21 -104 callsubr
+                277 2 -8 -106 callsubr
+                83 80 24 -21 -60 90 2 -86 callsubr
+              </CharString>
+              <CharString index="21">
+                blend
+                vstem
+                388 27 -17 1 blend
+                hmoveto
+                106 -77 114 1 blend
+                hlineto
+                -251 286 -6 -49 235 245 -45 64 -19 9 4 -2 31 -8 41 -56 -14 7 6 blend
+                rlineto
+                -95 68 -104 1 blend
+                hlineto
+                -216 -225 -50 63 2 -8 2 blend
+                rlineto
+                -78 56 -83 1 blend
+                -257 rmoveto
+                -78 callsubr
+              </CharString>
+              <CharString index="22">
+                -84 callsubr
+                -24 24 12 -19 -12 19 24 -23 24 -23 12 -19 12 -19 24 -24 24 -23 -12 19 12 -19 -24 23 16 blend
+                hvcurveto
+              </CharString>
+              <CharString index="23">
+                36 21 21 36 36 -21 21 -36 -36 -21 -21 -36 -36 21 -21 36 -24 23 -12 19 -12 19 -24 23</CharString>
+              <CharString index="24">
+                -82 callsubr
+                hstemhm
+                67 114</CharString>
+              <CharString index="25">
+                -21 482 -81 callsubr
+              </CharString>
+              <CharString index="26">
+                -2 8 -79 callsubr
+              </CharString>
+              <CharString index="27">
+                -6 64 681 4 -2 -48 65 44 -63 3 blend
+                -20 hstem
+              </CharString>
+              <CharString index="28">
+                1 -77 callsubr
+              </CharString>
+              <CharString index="29">
+                80 -60 90 1 blend
+                -91 callsubr
+                hlineto
+              </CharString>
+              <CharString index="30">
+                blend
+                -20 133 114 34 -46 -72 85 2 blend
+              </CharString>
+            </Subrs>
+          </Private>
+        </FontDict>
+      </FDArray>
+      <CharStrings>
+        <CharString name=".notdef">
+        </CharString>
+        <CharString name="glyph00002">
+          -90 callsubr
+        </CharString>
+        <CharString name="i">
+          -90 callsubr
+        </CharString>
+        <CharString name="j">
+          -89 callsubr
+        </CharString>
+        <CharString name="k">
+          -87 callsubr
+        </CharString>
+        <CharString name="l">
+          -88 callsubr
+        </CharString>
+      </CharStrings>
+      <VarStore Format="1">
+        <Format value="1"/>
+        <VarRegionList>
+          <!-- RegionAxisCount=1 -->
+          <!-- RegionCount=2 -->
+          <Region index="0">
+            <VarRegionAxis index="0">
+              <StartCoord value="-1.0"/>
+              <PeakCoord value="-1.0"/>
+              <EndCoord value="0.0"/>
+            </VarRegionAxis>
+          </Region>
+          <Region index="1">
+            <VarRegionAxis index="0">
+              <StartCoord value="0.0"/>
+              <PeakCoord value="1.0"/>
+              <EndCoord value="1.0"/>
+            </VarRegionAxis>
+          </Region>
+        </VarRegionList>
+        <!-- VarDataCount=1 -->
+        <VarData index="0">
+          <!-- ItemCount=0 -->
+          <NumShorts value="0"/>
+          <!-- VarRegionCount=2 -->
+          <VarRegionIndex index="0" value="0"/>
+          <VarRegionIndex index="1" value="1"/>
+        </VarData>
+      </VarStore>
+    </CFFFont>
+
+    <GlobalSubrs>
+      <!-- The 'index' attribute is only for humans; it is ignored when parsed. -->
+    </GlobalSubrs>
+  </CFF2>
+
+  <GDEF>
+    <Version value="0x00010002"/>
+    <GlyphClassDef>
+      <ClassDef glyph="glyph00002" class="1"/>
+      <ClassDef glyph="i" class="1"/>
+      <ClassDef glyph="j" class="1"/>
+      <ClassDef glyph="k" class="1"/>
+      <ClassDef glyph="l" class="1"/>
+    </GlyphClassDef>
+    <MarkGlyphSetsDef>
+      <MarkSetTableFormat value="1"/>
+      <!-- MarkSetCount=3 -->
+      <Coverage index="0">
+      </Coverage>
+      <Coverage index="1">
+      </Coverage>
+      <Coverage index="2">
+      </Coverage>
+    </MarkGlyphSetsDef>
+  </GDEF>
+
+  <GPOS>
+    <Version value="0x00010000"/>
+    <ScriptList>
+      <!-- ScriptCount=1 -->
+      <ScriptRecord index="0">
+        <ScriptTag value="DFLT"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=0 -->
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+    </ScriptList>
+    <FeatureList>
+      <!-- FeatureCount=0 -->
+    </FeatureList>
+    <LookupList>
+      <!-- LookupCount=0 -->
+    </LookupList>
+  </GPOS>
+
+  <GSUB>
+    <Version value="0x00010000"/>
+    <ScriptList>
+      <!-- ScriptCount=2 -->
+      <ScriptRecord index="0">
+        <ScriptTag value="DFLT"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=0 -->
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="1">
+        <ScriptTag value="latn"/>
+        <Script>
+          <!-- LangSysCount=1 -->
+          <LangSysRecord index="0">
+            <LangSysTag value="TRK "/>
+            <LangSys>
+              <ReqFeatureIndex value="65535"/>
+              <!-- FeatureCount=1 -->
+              <FeatureIndex index="0" value="0"/>
+            </LangSys>
+          </LangSysRecord>
+        </Script>
+      </ScriptRecord>
+    </ScriptList>
+    <FeatureList>
+      <!-- FeatureCount=1 -->
+      <FeatureRecord index="0">
+        <FeatureTag value="locl"/>
+        <Feature>
+          <!-- LookupCount=1 -->
+          <LookupListIndex index="0" value="0"/>
+        </Feature>
+      </FeatureRecord>
+    </FeatureList>
+    <LookupList>
+      <!-- LookupCount=1 -->
+      <Lookup index="0">
+        <LookupType value="1"/>
+        <LookupFlag value="0"/>
+        <!-- SubTableCount=1 -->
+        <SingleSubst index="0">
+          <Substitution in="i" out="glyph00002"/>
+        </SingleSubst>
+      </Lookup>
+    </LookupList>
+  </GSUB>
+
+  <HVAR>
+    <Version value="0x00010000"/>
+    <VarStore Format="1">
+      <Format value="1"/>
+      <VarRegionList>
+        <!-- RegionAxisCount=1 -->
+        <!-- RegionCount=2 -->
+        <Region index="0">
+          <VarRegionAxis index="0">
+            <StartCoord value="-1.0"/>
+            <PeakCoord value="-1.0"/>
+            <EndCoord value="0.0"/>
+          </VarRegionAxis>
+        </Region>
+        <Region index="1">
+          <VarRegionAxis index="0">
+            <StartCoord value="0.0"/>
+            <PeakCoord value="1.0"/>
+            <EndCoord value="1.0"/>
+          </VarRegionAxis>
+        </Region>
+      </VarRegionList>
+      <!-- VarDataCount=2 -->
+      <VarData index="0">
+        <!-- ItemCount=3 -->
+        <NumShorts value="0"/>
+        <!-- VarRegionCount=2 -->
+        <VarRegionIndex index="0" value="0"/>
+        <VarRegionIndex index="1" value="1"/>
+        <Item index="0" value="[-32, 85]"/>
+        <Item index="1" value="[-11, 51]"/>
+        <Item index="2" value="[-9, 53]"/>
+      </VarData>
+      <VarData index="1">
+        <!-- ItemCount=1 -->
+        <NumShorts value="0"/>
+        <!-- VarRegionCount=0 -->
+        <Item index="0" value="[]"/>
+      </VarData>
+    </VarStore>
+    <AdvWidthMap>
+      <Map glyph=".notdef" outer="1" inner="0"/>
+      <Map glyph="glyph00002" outer="0" inner="1"/>
+      <Map glyph="i" outer="0" inner="1"/>
+      <Map glyph="j" outer="0" inner="1"/>
+      <Map glyph="k" outer="0" inner="0"/>
+      <Map glyph="l" outer="0" inner="2"/>
+    </AdvWidthMap>
+  </HVAR>
+
+  <MVAR>
+    <Version value="0x00010000"/>
+    <Reserved value="0"/>
+    <ValueRecordSize value="8"/>
+    <!-- ValueRecordCount=4 -->
+    <VarStore Format="1">
+      <Format value="1"/>
+      <VarRegionList>
+        <!-- RegionAxisCount=1 -->
+        <!-- RegionCount=2 -->
+        <Region index="0">
+          <VarRegionAxis index="0">
+            <StartCoord value="-1.0"/>
+            <PeakCoord value="-1.0"/>
+            <EndCoord value="0.0"/>
+          </VarRegionAxis>
+        </Region>
+        <Region index="1">
+          <VarRegionAxis index="0">
+            <StartCoord value="0.0"/>
+            <PeakCoord value="1.0"/>
+            <EndCoord value="1.0"/>
+          </VarRegionAxis>
+        </Region>
+      </VarRegionList>
+      <!-- VarDataCount=1 -->
+      <VarData index="0">
+        <!-- ItemCount=4 -->
+        <NumShorts value="0"/>
+        <!-- VarRegionCount=2 -->
+        <VarRegionIndex index="0" value="0"/>
+        <VarRegionIndex index="1" value="1"/>
+        <Item index="0" value="[-2, 8]"/>
+        <Item index="1" value="[-1, 1]"/>
+        <Item index="2" value="[-1, 5]"/>
+        <Item index="3" value="[1, -1]"/>
+      </VarData>
+    </VarStore>
+    <ValueRecord index="0">
+      <ValueTag value="sbyo"/>
+      <VarIdx value="3"/>
+    </ValueRecord>
+    <ValueRecord index="1">
+      <ValueTag value="spyo"/>
+      <VarIdx value="1"/>
+    </ValueRecord>
+    <ValueRecord index="2">
+      <ValueTag value="stro"/>
+      <VarIdx value="2"/>
+    </ValueRecord>
+    <ValueRecord index="3">
+      <ValueTag value="xhgt"/>
+      <VarIdx value="0"/>
+    </ValueRecord>
+  </MVAR>
+
+  <STAT>
+    <Version value="0x00010001"/>
+    <DesignAxisRecordSize value="8"/>
+    <!-- DesignAxisCount=1 -->
+    <DesignAxisRecord>
+      <Axis index="0">
+        <AxisTag value="wght"/>
+        <AxisNameID value="256"/>  <!-- Weight -->
+        <AxisOrdering value="0"/>
+      </Axis>
+    </DesignAxisRecord>
+    <!-- AxisValueCount=5 -->
+    <AxisValueArray>
+      <AxisValue index="0" Format="1">
+        <AxisIndex value="0"/>
+        <Flags value="0"/>
+        <ValueNameID value="257"/>  <!-- Thin -->
+        <Value value="100.0"/>
+      </AxisValue>
+      <AxisValue index="1" Format="1">
+        <AxisIndex value="0"/>
+        <Flags value="0"/>
+        <ValueNameID value="258"/>  <!-- Light -->
+        <Value value="300.0"/>
+      </AxisValue>
+      <AxisValue index="2" Format="3">
+        <AxisIndex value="0"/>
+        <Flags value="2"/>  <!-- ElidableAxisValueName -->
+        <ValueNameID value="259"/>  <!-- Regular -->
+        <Value value="400.0"/>
+        <LinkedValue value="700.0"/>
+      </AxisValue>
+      <AxisValue index="3" Format="1">
+        <AxisIndex value="0"/>
+        <Flags value="0"/>
+        <ValueNameID value="260"/>  <!-- Bold -->
+        <Value value="700.0"/>
+      </AxisValue>
+      <AxisValue index="4" Format="1">
+        <AxisIndex value="0"/>
+        <Flags value="0"/>
+        <ValueNameID value="261"/>  <!-- Extra Bold -->
+        <Value value="800.0"/>
+      </AxisValue>
+    </AxisValueArray>
+    <ElidedFallbackNameID value="2"/>  <!-- Regular -->
+  </STAT>
+
+  <avar>
+    <segment axis="wght">
+      <mapping from="-1.0" to="-1.0"/>
+      <mapping from="-0.3333" to="-0.6667"/>
+      <mapping from="0.0" to="0.0"/>
+      <mapping from="0.75" to="0.5111"/>
+      <mapping from="1.0" to="1.0"/>
+    </segment>
+  </avar>
+
+  <fvar>
+
+    <!-- Weight -->
+    <Axis>
+      <AxisTag>wght</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>100.0</MinValue>
+      <DefaultValue>400.0</DefaultValue>
+      <MaxValue>800.0</MaxValue>
+      <AxisNameID>256</AxisNameID>
+    </Axis>
+
+    <!-- Thin -->
+    <NamedInstance flags="0x0" subfamilyNameID="257">
+      <coord axis="wght" value="100.0"/>
+    </NamedInstance>
+
+    <!-- Light -->
+    <NamedInstance flags="0x0" subfamilyNameID="258">
+      <coord axis="wght" value="300.0"/>
+    </NamedInstance>
+
+    <!-- Regular -->
+    <NamedInstance flags="0x0" subfamilyNameID="259">
+      <coord axis="wght" value="400.0"/>
+    </NamedInstance>
+
+    <!-- Bold -->
+    <NamedInstance flags="0x0" subfamilyNameID="260">
+      <coord axis="wght" value="700.0"/>
+    </NamedInstance>
+
+    <!-- Extra Bold -->
+    <NamedInstance flags="0x0" subfamilyNameID="261">
+      <coord axis="wght" value="800.0"/>
+    </NamedInstance>
+  </fvar>
+
+</ttFont>

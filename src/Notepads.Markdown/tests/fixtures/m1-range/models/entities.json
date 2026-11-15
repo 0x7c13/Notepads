@@ -1,0 +1,73 @@
+{
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          10
+        ]
+      ],
+      "readable_utf8": "&&",
+      "logical_utf16": 2,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            5
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Transform",
+          "reasons": [
+            "NamedEntity"
+          ],
+          "output_utf8": "&"
+        },
+        {
+          "id": 1,
+          "source": [
+            5,
+            10
+          ],
+          "logical": [
+            1,
+            2
+          ],
+          "kind": "Transform",
+          "reasons": [
+            "NamedEntity"
+          ],
+          "output_utf8": "&"
+        }
+      ]
+    }
+  ],
+  "objects": [],
+  "payloads": [],
+  "structures": [
+    {
+      "kind": "Block",
+      "id": 0,
+      "parent": null,
+      "node_kind": "Paragraph",
+      "source_envelope": [
+        0,
+        10
+      ],
+      "flow_id": 0
+    }
+  ],
+  "reference_edges": [],
+  "source_key": {
+    "document_id": "04000000000000000000000000000012",
+    "revision": 1
+  }
+}

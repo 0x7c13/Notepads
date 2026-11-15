@@ -1,0 +1,18 @@
+{
+  "version": "Unicode 17.0.0",
+  "scope": "Unchanged fixed conformance data relocated from the verified N04 baseline, without regenerating expected values. Repository SVG tests no longer require ignored artifacts.",
+  "files": [
+    {
+      "path": "tests/baselines/unicode-17.0.0/GraphemeBreakTest-17.0.0.txt",
+      "source": "artifacts/evidence/r12/n04-grapheme-preparation-v1/GraphemeBreakTest-17.0.0.txt",
+      "bytes": 126570,
+      "sha256": "E2D134D2C52919BACE503EBB6A551C1855FE1A1FAEC18478C78FFF254A1793EC"
+    },
+    {
+      "path": "tests/baselines/unicode-17.0.0/Unicode-license.txt",
+      "source": "artifacts/evidence/r12/n04-grapheme-preparation-v1/Unicode-license.txt",
+      "bytes": 1995,
+      "sha256": "E7A93B009565CFCE55919A381437AC4DB883E9DA2126FA28B91D12732BC53D96"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+yaml 2.9.0 by Eemeli Aro
+https://github.com/eemeli/yaml
+https://registry.npmjs.org/yaml/-/yaml-2.9.0.tgz
+License: ISC; see the unchanged LICENSE.
+The native front matter adapter follows selected scalar, key, tag and serialization rules from this implementation to match the locked VS Code 1.145.2 rendering behavior.
+The JavaScript library is used only by the fixed development oracle, not executed or bundled as a runtime engine.

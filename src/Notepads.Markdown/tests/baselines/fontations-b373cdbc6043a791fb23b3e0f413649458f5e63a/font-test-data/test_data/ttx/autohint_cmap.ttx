@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.51">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="uni02FF"/>
+    <GlyphID id="2" name="uni055F"/>
+    <GlyphID id="3" name="uni05C5"/>
+    <GlyphID id="4" name="uni07FD"/>
+    <GlyphID id="5" name="uni07FF"/>
+    <GlyphID id="6" name="uni08FF"/>
+    <GlyphID id="7" name="uni0957"/>
+    <GlyphID id="8" name="uni097F"/>
+    <GlyphID id="9" name="uni09CD"/>
+    <GlyphID id="10" name="uni09FF"/>
+    <GlyphID id="11" name="uni0A51"/>
+    <GlyphID id="12" name="uni0A7F"/>
+    <GlyphID id="13" name="uni0ACD"/>
+    <GlyphID id="14" name="uni0AFF"/>
+    <GlyphID id="15" name="uni0B44"/>
+    <GlyphID id="16" name="uni0B7F"/>
+    <GlyphID id="17" name="uni0BC2"/>
+    <GlyphID id="18" name="uni0BFF"/>
+    <GlyphID id="19" name="uni0C40"/>
+    <GlyphID id="20" name="uni0C7F"/>
+    <GlyphID id="21" name="uni0CC6"/>
+    <GlyphID id="22" name="uni0CFF"/>
+    <GlyphID id="23" name="uni0D4E"/>
+    <GlyphID id="24" name="uni0D7F"/>
+    <GlyphID id="25" name="uni0DD6"/>
+    <GlyphID id="26" name="uni0DFF"/>
+    <GlyphID id="27" name="uni0E3A"/>
+    <GlyphID id="28" name="uni0E7F"/>
+    <GlyphID id="29" name="uni0EBC"/>
+    <GlyphID id="30" name="uni0EFF"/>
+    <GlyphID id="31" name="uni0F3F"/>
+    <GlyphID id="32" name="uni0FFF"/>
+    <GlyphID id="33" name="uni1074"/>
+    <GlyphID id="34" name="uni135F"/>
+    <GlyphID id="35" name="uni1753"/>
+    <GlyphID id="36" name="uni175F"/>
+    <GlyphID id="37" name="uni17D3"/>
+    <GlyphID id="38" name="uni17FF"/>
+    <GlyphID id="39" name="uni18A9"/>
+    <GlyphID id="40" name="uni18FF"/>
+    <GlyphID id="41" name="uni1934"/>
+    <GlyphID id="42" name="uni194F"/>
+    <GlyphID id="43" name="uni19FF"/>
+    <GlyphID id="44" name="uni1BAD"/>
+    <GlyphID id="45" name="uni1C7F"/>
+    <GlyphID id="46" name="uni1CBF"/>
+    <GlyphID id="47" name="uni1CCF"/>
+    <GlyphID id="48" name="uni1D78"/>
+    <GlyphID id="49" name="uni1DFF"/>
+    <GlyphID id="50" name="uni1FCF"/>
+    <GlyphID id="51" name="uni1FFF"/>
+    <GlyphID id="52" name="uni209C"/>
+    <GlyphID id="53" name="uni2CF1"/>
+    <GlyphID id="54" name="uni2CFF"/>
+    <GlyphID id="55" name="uni2D2D"/>
+    <GlyphID id="56" name="uni2D7F"/>
+    <GlyphID id="57" name="uni2DDF"/>
+    <GlyphID id="58" name="uni2DFF"/>
+    <GlyphID id="59" name="uni319F"/>
+    <GlyphID id="60" name="uni9FFF"/>
+    <GlyphID id="61" name="uniA4FF"/>
+    <GlyphID id="62" name="uniA63F"/>
+    <GlyphID id="63" name="uniA67F"/>
+    <GlyphID id="64" name="uniA6F1"/>
+    <GlyphID id="65" name="uniA80B"/>
+    <GlyphID id="66" name="uniA82F"/>
+    <GlyphID id="67" name="uniA8C5"/>
+    <GlyphID id="68" name="uniA8DF"/>
+    <GlyphID id="69" name="uniA92D"/>
+    <GlyphID id="70" name="uniA92F"/>
+    <GlyphID id="71" name="uniA9FF"/>
+    <GlyphID id="72" name="uniAAB8"/>
+    <GlyphID id="73" name="uniAADF"/>
+    <GlyphID id="74" name="uniABBF"/>
+    <GlyphID id="75" name="uniFB17"/>
+    <GlyphID id="76" name="uniFB4F"/>
+    <GlyphID id="77" name="uniFDFF"/>
+    <GlyphID id="78" name="u102DF"/>
+    <GlyphID id="79" name="u1034F"/>
+    <GlyphID id="80" name="u1044F"/>
+    <GlyphID id="81" name="u1047F"/>
+    <GlyphID id="82" name="u104AF"/>
+    <GlyphID id="83" name="u104FF"/>
+    <GlyphID id="84" name="u1083F"/>
+    <GlyphID id="85" name="u10B3E"/>
+    <GlyphID id="86" name="u10B3F"/>
+    <GlyphID id="87" name="u10C4F"/>
+    <GlyphID id="88" name="u10D3F"/>
+    <GlyphID id="89" name="u11134"/>
+    <GlyphID id="90" name="u1114F"/>
+    <GlyphID id="91" name="u1167F"/>
+    <GlyphID id="92" name="u16A3F"/>
+    <GlyphID id="93" name="u16E9F"/>
+    <GlyphID id="94" name="u1E02E"/>
+    <GlyphID id="95" name="u1E02F"/>
+    <GlyphID id="96" name="u1E94A"/>
+    <GlyphID id="97" name="u1E95F"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0x706bf56d"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1024"/>
+    <created value="Sat Nov  5 18:46:15 2022"/>
+    <modified value="Thu Jun 20 19:06:09 2024"/>
+    <xMin value="0"/>
+    <yMin value="0"/>
+    <xMax value="0"/>
+    <yMax value="0"/>
+    <macStyle value="00000000 00000011"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="2100"/>
+    <descent value="-1100"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="1000"/>
+    <minLeftSideBearing value="0"/>
+    <minRightSideBearing value="0"/>
+    <xMaxExtent value="0"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="2"/>
+  </hhea>
+
+  <maxp>
+    <tableVersion value="0x5000"/>
+    <numGlyphs value="98"/>
+  </maxp>
+
+  <hmtx>
+    <mtx name=".notdef" width="908" lsb="100"/>
+    <mtx name="u102DF" width="1000" lsb="0"/>
+    <mtx name="u1034F" width="1000" lsb="0"/>
+    <mtx name="u1044F" width="1000" lsb="0"/>
+    <mtx name="u1047F" width="1000" lsb="0"/>
+    <mtx name="u104AF" width="1000" lsb="0"/>
+    <mtx name="u104FF" width="1000" lsb="0"/>
+    <mtx name="u1083F" width="1000" lsb="0"/>
+    <mtx name="u10B3E" width="1000" lsb="0"/>
+    <mtx name="u10B3F" width="1000" lsb="0"/>
+    <mtx name="u10C4F" width="1000" lsb="0"/>
+    <mtx name="u10D3F" width="1000" lsb="0"/>
+    <mtx name="u11134" width="1000" lsb="0"/>
+    <mtx name="u1114F" width="1000" lsb="0"/>
+    <mtx name="u1167F" width="1000" lsb="0"/>
+    <mtx name="u16A3F" width="1000" lsb="0"/>
+    <mtx name="u16E9F" width="1000" lsb="0"/>
+    <mtx name="u1E02E" width="1000" lsb="0"/>
+    <mtx name="u1E02F" width="1000" lsb="0"/>
+    <mtx name="u1E94A" width="1000" lsb="0"/>
+    <mtx name="u1E95F" width="1000" lsb="0"/>
+    <mtx name="uni02FF" width="1000" lsb="0"/>
+    <mtx name="uni055F" width="1000" lsb="0"/>
+    <mtx name="uni05C5" width="1000" lsb="0"/>
+    <mtx name="uni07FD" width="1000" lsb="0"/>
+    <mtx name="uni07FF" width="1000" lsb="0"/>
+    <mtx name="uni08FF" width="1000" lsb="0"/>
+    <mtx name="uni0957" width="1000" lsb="0"/>
+    <mtx name="uni097F" width="1000" lsb="0"/>
+    <mtx name="uni09CD" width="1000" lsb="0"/>
+    <mtx name="uni09FF" width="1000" lsb="0"/>
+    <mtx name="uni0A51" width="1000" lsb="0"/>
+    <mtx name="uni0A7F" width="1000" lsb="0"/>
+    <mtx name="uni0ACD" width="1000" lsb="0"/>
+    <mtx name="uni0AFF" width="1000" lsb="0"/>
+    <mtx name="uni0B44" width="1000" lsb="0"/>
+    <mtx name="uni0B7F" width="1000" lsb="0"/>
+    <mtx name="uni0BC2" width="1000" lsb="0"/>
+    <mtx name="uni0BFF" width="1000" lsb="0"/>
+    <mtx name="uni0C40" width="1000" lsb="0"/>
+    <mtx name="uni0C7F" width="1000" lsb="0"/>
+    <mtx name="uni0CC6" width="1000" lsb="0"/>
+    <mtx name="uni0CFF" width="1000" lsb="0"/>
+    <mtx name="uni0D4E" width="1000" lsb="0"/>
+    <mtx name="uni0D7F" width="1000" lsb="0"/>
+    <mtx name="uni0DD6" width="1000" lsb="0"/>
+    <mtx name="uni0DFF" width="1000" lsb="0"/>
+    <mtx name="uni0E3A" width="1000" lsb="0"/>
+    <mtx name="uni0E7F" width="1000" lsb="0"/>
+    <mtx name="uni0EBC" width="1000" lsb="0"/>
+    <mtx name="uni0EFF" width="1000" lsb="0"/>
+    <mtx name="uni0F3F" width="1000" lsb="0"/>
+    <mtx name="uni0FFF" width="1000" lsb="0"/>
+    <mtx name="uni1074" width="1000" lsb="0"/>
+    <mtx name="uni135F" width="1000" lsb="0"/>
+    <mtx name="uni1753" width="1000" lsb="0"/>
+    <mtx name="uni175F" width="1000" lsb="0"/>
+    <mtx name="uni17D3" width="1000" lsb="0"/>
+    <mtx name="uni17FF" width="1000" lsb="0"/>
+    <mtx name="uni18A9" width="1000" lsb="0"/>
+    <mtx name="uni18FF" width="1000" lsb="0"/>
+    <mtx name="uni1934" width="1000" lsb="0"/>
+    <mtx name="uni194F" width="1000" lsb="0"/>
+    <mtx name="uni19FF" width="1000" lsb="0"/>
+    <mtx name="uni1BAD" width="1000" lsb="0"/>
+    <mtx name="uni1C7F" width="1000" lsb="0"/>
+    <mtx name="uni1CBF" width="1000" lsb="0"/>
+    <mtx name="uni1CCF" width="1000" lsb="0"/>
+    <mtx name="uni1D78" width="1000" lsb="0"/>
+    <mtx name="uni1DFF" width="1000" lsb="0"/>
+    <mtx name="uni1FCF" width="1000" lsb="0"/>
+    <mtx name="uni1FFF" width="1000" lsb="0"/>
+    <mtx name="uni209C" width="1000" lsb="0"/>
+    <mtx name="uni2CF1" width="1000" lsb="0"/>
+    <mtx name="uni2CFF" width="1000" lsb="0"/>
+    <mtx name="uni2D2D" width="1000" lsb="0"/>
+    <mtx name="uni2D7F" width="1000" lsb="0"/>
+    <mtx name="uni2DDF" width="1000" lsb="0"/>
+    <mtx name="uni2DFF" width="1000" lsb="0"/>
+    <mtx name="uni319F" width="1000" lsb="0"/>
+    <mtx name="uni9FFF" width="1000" lsb="0"/>
+    <mtx name="uniA4FF" width="1000" lsb="0"/>
+    <mtx name="uniA63F" width="1000" lsb="0"/>
+    <mtx name="uniA67F" width="1000" lsb="0"/>
+    <mtx name="uniA6F1" width="1000" lsb="0"/>
+    <mtx name="uniA80B" width="1000" lsb="0"/>
+    <mtx name="uniA82F" width="1000" lsb="0"/>
+    <mtx name="uniA8C5" width="1000" lsb="0"/>
+    <mtx name="uniA8DF" width="1000" lsb="0"/>
+    <mtx name="uniA92D" width="1000" lsb="0"/>
+    <mtx name="uniA92F" width="1000" lsb="0"/>
+    <mtx name="uniA9FF" width="1000" lsb="0"/>
+    <mtx name="uniAAB8" width="1000" lsb="0"/>
+    <mtx name="uniAADF" width="1000" lsb="0"/>
+    <mtx name="uniABBF" width="1000" lsb="0"/>
+    <mtx name="uniFB17" width="1000" lsb="0"/>
+    <mtx name="uniFB4F" width="1000" lsb="0"/>
+    <mtx name="uniFDFF" width="1000" lsb="0"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_12 platformID="3" platEncID="1" format="12" reserved="0" length="1156" language="0" nGroups="95">
+      <map code="0x2ff" name="uni02FF"/><!-- MODIFIER LETTER LOW LEFT ARROW -->
+      <map code="0x55f" name="uni055F"/><!-- ARMENIAN ABBREVIATION MARK -->
+      <map code="0x5c5" name="uni05C5"/><!-- HEBREW MARK LOWER DOT -->
+      <map code="0x7fd" name="uni07FD"/><!-- NKO DANTAYALAN -->
+      <map code="0x7ff" name="uni07FF"/><!-- NKO TAMAN SIGN -->
+      <map code="0x8ff" name="uni08FF"/><!-- ARABIC MARK SIDEWAYS NOON GHUNNA -->
+      <map code="0x957" name="uni0957"/><!-- DEVANAGARI VOWEL SIGN UUE -->
+      <map code="0x97f" name="uni097F"/><!-- DEVANAGARI LETTER BBA -->
+      <map code="0x9cd" name="uni09CD"/><!-- BENGALI SIGN VIRAMA -->
+      <map code="0x9ff" name="uni09FF"/><!-- ???? -->
+      <map code="0xa51" name="uni0A51"/><!-- GURMUKHI SIGN UDAAT -->
+      <map code="0xa7f" name="uni0A7F"/><!-- ???? -->
+      <map code="0xacd" name="uni0ACD"/><!-- GUJARATI SIGN VIRAMA -->
+      <map code="0xaff" name="uni0AFF"/><!-- GUJARATI SIGN TWO-CIRCLE NUKTA ABOVE -->
+      <map code="0xb44" name="uni0B44"/><!-- ORIYA VOWEL SIGN VOCALIC RR -->
+      <map code="0xb7f" name="uni0B7F"/><!-- ???? -->
+      <map code="0xbc2" name="uni0BC2"/><!-- TAMIL VOWEL SIGN UU -->
+      <map code="0xbff" name="uni0BFF"/><!-- ???? -->
+      <map code="0xc40" name="uni0C40"/><!-- TELUGU VOWEL SIGN II -->
+      <map code="0xc7f" name="uni0C7F"/><!-- TELUGU SIGN TUUMU -->
+      <map code="0xcc6" name="uni0CC6"/><!-- KANNADA VOWEL SIGN E -->
+      <map code="0xcff" name="uni0CFF"/><!-- ???? -->
+      <map code="0xd4e" name="uni0D4E"/><!-- MALAYALAM LETTER DOT REPH -->
+      <map code="0xd7f" name="uni0D7F"/><!-- MALAYALAM LETTER CHILLU K -->
+      <map code="0xdd6" name="uni0DD6"/><!-- SINHALA VOWEL SIGN DIGA PAA-PILLA -->
+      <map code="0xdff" name="uni0DFF"/><!-- ???? -->
+      <map code="0xe3a" name="uni0E3A"/><!-- THAI CHARACTER PHINTHU -->
+      <map code="0xe7f" name="uni0E7F"/><!-- ???? -->
+      <map code="0xebc" name="uni0EBC"/><!-- LAO SEMIVOWEL SIGN LO -->
+      <map code="0xeff" name="uni0EFF"/><!-- ???? -->
+      <map code="0xf3f" name="uni0F3F"/><!-- TIBETAN SIGN MAR TSHES -->
+      <map code="0xfff" name="uni0FFF"/><!-- ???? -->
+      <map code="0x1074" name="uni1074"/><!-- MYANMAR VOWEL SIGN KAYAH EE -->
+      <map code="0x135f" name="uni135F"/><!-- ETHIOPIC COMBINING GEMINATION MARK -->
+      <map code="0x1753" name="uni1753"/><!-- BUHID VOWEL SIGN U -->
+      <map code="0x175f" name="uni175F"/><!-- ???? -->
+      <map code="0x17d3" name="uni17D3"/><!-- KHMER SIGN BATHAMASAT -->
+      <map code="0x17ff" name="uni17FF"/><!-- ???? -->
+      <map code="0x18a9" name="uni18A9"/><!-- MONGOLIAN LETTER ALI GALI DAGALGA -->
+      <map code="0x18ff" name="uni18FF"/><!-- ???? -->
+      <map code="0x1934" name="uni1934"/><!-- LIMBU SMALL LETTER NA -->
+      <map code="0x194f" name="uni194F"/><!-- LIMBU DIGIT NINE -->
+      <map code="0x19ff" name="uni19FF"/><!-- KHMER SYMBOL DAP-PRAM ROC -->
+      <map code="0x1bad" name="uni1BAD"/><!-- SUNDANESE CONSONANT SIGN PASANGAN WA -->
+      <map code="0x1c7f" name="uni1C7F"/><!-- OL CHIKI PUNCTUATION DOUBLE MUCAAD -->
+      <map code="0x1cbf" name="uni1CBF"/><!-- GEORGIAN MTAVRULI CAPITAL LETTER LABIAL SIGN -->
+      <map code="0x1ccf" name="uni1CCF"/><!-- ???? -->
+      <map code="0x1d78" name="uni1D78"/><!-- MODIFIER LETTER CYRILLIC EN -->
+      <map code="0x1dff" name="uni1DFF"/><!-- COMBINING RIGHT ARROWHEAD AND DOWN ARROWHEAD BELOW -->
+      <map code="0x1fcf" name="uni1FCF"/><!-- GREEK PSILI AND PERISPOMENI -->
+      <map code="0x1fff" name="uni1FFF"/><!-- ???? -->
+      <map code="0x209c" name="uni209C"/><!-- LATIN SUBSCRIPT SMALL LETTER T -->
+      <map code="0x2cf1" name="uni2CF1"/><!-- COPTIC COMBINING SPIRITUS LENIS -->
+      <map code="0x2cff" name="uni2CFF"/><!-- COPTIC MORPHOLOGICAL DIVIDER -->
+      <map code="0x2d2d" name="uni2D2D"/><!-- GEORGIAN SMALL LETTER AEN -->
+      <map code="0x2d7f" name="uni2D7F"/><!-- TIFINAGH CONSONANT JOINER -->
+      <map code="0x2ddf" name="uni2DDF"/><!-- ???? -->
+      <map code="0x2dff" name="uni2DFF"/><!-- COMBINING CYRILLIC LETTER IOTIFIED BIG YUS -->
+      <map code="0x319f" name="uni319F"/><!-- IDEOGRAPHIC ANNOTATION MAN MARK -->
+      <map code="0x9fff" name="uni9FFF"/><!-- CJK UNIFIED IDEOGRAPH-9FFF -->
+      <map code="0xa4ff" name="uniA4FF"/><!-- LISU PUNCTUATION FULL STOP -->
+      <map code="0xa63f" name="uniA63F"/><!-- ???? -->
+      <map code="0xa67f" name="uniA67F"/><!-- CYRILLIC PAYEROK -->
+      <map code="0xa6f1" name="uniA6F1"/><!-- BAMUM COMBINING MARK TUKWENTIS -->
+      <map code="0xa80b" name="uniA80B"/><!-- SYLOTI NAGRI SIGN ANUSVARA -->
+      <map code="0xa82f" name="uniA82F"/><!-- ???? -->
+      <map code="0xa8c5" name="uniA8C5"/><!-- SAURASHTRA SIGN CANDRABINDU -->
+      <map code="0xa8df" name="uniA8DF"/><!-- ???? -->
+      <map code="0xa92d" name="uniA92D"/><!-- KAYAH LI TONE CALYA PLOPHU -->
+      <map code="0xa92f" name="uniA92F"/><!-- KAYAH LI SIGN SHYA -->
+      <map code="0xa9ff" name="uniA9FF"/><!-- ???? -->
+      <map code="0xaab8" name="uniAAB8"/><!-- TAI VIET VOWEL IA -->
+      <map code="0xaadf" name="uniAADF"/><!-- TAI VIET SYMBOL KOI KOI -->
+      <map code="0xabbf" name="uniABBF"/><!-- CHEROKEE SMALL LETTER YA -->
+      <map code="0xfb17" name="uniFB17"/><!-- ARMENIAN SMALL LIGATURE MEN XEH -->
+      <map code="0xfb4f" name="uniFB4F"/><!-- HEBREW LIGATURE ALEF LAMED -->
+      <map code="0xfdff" name="uniFDFF"/><!-- ARABIC LIGATURE AZZA WA JALL -->
+      <map code="0x102df" name="u102DF"/><!-- ???? -->
+      <map code="0x1034f" name="u1034F"/><!-- ???? -->
+      <map code="0x1044f" name="u1044F"/><!-- DESERET SMALL LETTER EW -->
+      <map code="0x1047f" name="u1047F"/><!-- SHAVIAN LETTER YEW -->
+      <map code="0x104af" name="u104AF"/><!-- ???? -->
+      <map code="0x104ff" name="u104FF"/><!-- ???? -->
+      <map code="0x1083f" name="u1083F"/><!-- CYPRIOT SYLLABLE ZO -->
+      <map code="0x10b3e" name="u10B3E"/><!-- LARGE TWO RINGS OVER ONE RING PUNCTUATION -->
+      <map code="0x10b3f" name="u10B3F"/><!-- LARGE ONE RING OVER TWO RINGS PUNCTUATION -->
+      <map code="0x10c4f" name="u10C4F"/><!-- ???? -->
+      <map code="0x10d3f" name="u10D3F"/><!-- ???? -->
+      <map code="0x11134" name="u11134"/><!-- CHAKMA MAAYYAA -->
+      <map code="0x1114f" name="u1114F"/><!-- ???? -->
+      <map code="0x1167f" name="u1167F"/><!-- ???? -->
+      <map code="0x16a3f" name="u16A3F"/><!-- ???? -->
+      <map code="0x16e9f" name="u16E9F"/><!-- ???? -->
+      <map code="0x1e02e" name="u1E02E"/><!-- ???? -->
+      <map code="0x1e02f" name="u1E02F"/><!-- ???? -->
+      <map code="0x1e94a" name="u1E94A"/><!-- ADLAM NUKTA -->
+      <map code="0x1e95f" name="u1E95F"/><!-- ADLAM INITIAL QUESTION MARK -->
+    </cmap_format_12>
+  </cmap>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef"/><!-- contains no outline data -->
+
+    <TTGlyph name="u102DF"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1034F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1044F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1047F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u104AF"/><!-- contains no outline data -->
+
+    <TTGlyph name="u104FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1083F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u10B3E"/><!-- contains no outline data -->
+
+    <TTGlyph name="u10B3F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u10C4F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u10D3F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u11134"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1114F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1167F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u16A3F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u16E9F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1E02E"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1E02F"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1E94A"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1E95F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni02FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni055F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni05C5"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni07FD"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni07FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni08FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0957"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni097F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni09CD"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni09FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0A51"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0A7F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0ACD"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0AFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0B44"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0B7F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0BC2"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0BFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0C40"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0C7F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0CC6"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0CFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0D4E"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0D7F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0DD6"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0DFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0E3A"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0E7F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0EBC"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0EFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0F3F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni0FFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1074"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni135F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1753"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni175F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni17D3"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni17FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni18A9"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni18FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1934"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni194F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni19FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1BAD"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1C7F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1CBF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1CCF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1D78"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1DFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1FCF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni1FFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni209C"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni2CF1"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni2CFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni2D2D"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni2D7F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni2DDF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni2DFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni319F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni9FFF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA4FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA63F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA67F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA6F1"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA80B"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA82F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA8C5"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA8DF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA92D"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA92F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniA9FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniAAB8"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniAADF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniABBF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniFB17"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniFB4F"/><!-- contains no outline data -->
+
+    <TTGlyph name="uniFDFF"/><!-- contains no outline data -->
+
+  </glyf>
+
+</ttFont>

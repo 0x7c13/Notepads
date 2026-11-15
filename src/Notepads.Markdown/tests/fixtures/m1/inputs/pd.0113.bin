@@ -1,0 +1,3 @@
+[x] is not a valid link definition, because parens aren't balanced.
+
+[x]: (

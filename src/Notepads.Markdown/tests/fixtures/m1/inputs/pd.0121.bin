@@ -1,0 +1,11 @@
+The second hyphen should parse the same way in both samples.
+
+ - >*
+
+   -
+
+The second hyphen should parse the same way in both samples.
+
+ - >x
+
+   -

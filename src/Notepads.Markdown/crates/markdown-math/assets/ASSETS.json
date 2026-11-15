@@ -1,0 +1,179 @@
+{
+  "format_version": 1,
+  "asset_set": "katex-ttf-20-v1",
+  "upstream_revision": "5f7dc4883aba8eeb30fe34f8a104923f43f734bf",
+  "original_input_manifest": "research/r4-math-spike/inputs-manifest.json",
+  "original_input_manifest_sha256": "fb46264b33920c72eff146fc7c835386f55a701029ce5db18cbe16eff37890f2",
+  "font_count": 20,
+  "font_bytes": 513664.0,
+  "files": [
+    {
+      "path": "fonts/KaTeX_AMS-Regular.ttf",
+      "bytes": 63632,
+      "sha256": "68534840bcfdd2bffb6f0e8deb48684dd01e7f04ea2813267577afb906de1d13",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_AMS-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Caligraphic-Bold.ttf",
+      "bytes": 12368,
+      "sha256": "07d8e303ce4fc12b4bb54f1004170dd190a1f3db45d400fe68060df3e0897268",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Caligraphic-Bold.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Caligraphic-Regular.ttf",
+      "bytes": 12344,
+      "sha256": "ed0b74372feefcbb9c0666b2e210da37b7e49fa7fbbf3eeb11db5f693dacfbb7",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Caligraphic-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Fraktur-Bold.ttf",
+      "bytes": 19584,
+      "sha256": "9163df9c7122432e6495b4229fa9071cf9ae86a758ae5efc4924ec2e1a6dbce1",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Fraktur-Bold.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Fraktur-Regular.ttf",
+      "bytes": 19572,
+      "sha256": "1e6f9579e90e2cac37f8f60a597c436e075c114385652b7cbeb0dec0421291b3",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Fraktur-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Main-Bold.ttf",
+      "bytes": 51336,
+      "sha256": "138ac28d1663b3037e9c5f52371fa5c63d8324f4a38d22cd573e6ea3a3fd0cf8",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-Bold.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Main-BoldItalic.ttf",
+      "bytes": 32968,
+      "sha256": "70ee1f64a20f2048c21940ef46d0144fd215baa953ca69afd1e31e98544f708f",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-BoldItalic.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Main-Italic.ttf",
+      "bytes": 33580,
+      "sha256": "0d85ae7cc30f23790a7f1a58c4a112fdca8aae769b6ba11429af1d98b1b6cb3a",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-Italic.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Main-Regular.ttf",
+      "bytes": 53580,
+      "sha256": "d0332f52868370fd83ae7fa46470f90c8f2eab2fcf12bc4f88080b340c95a830",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Math-BoldItalic.ttf",
+      "bytes": 31196,
+      "sha256": "f9377ab0271cda59af24bcffbd46a4d0c8a3572ffafdbb38de2ad5ea7b0d5ee5",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Math-BoldItalic.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Math-Italic.ttf",
+      "bytes": 31308,
+      "sha256": "08ce98e51b04d58945a301e639e02b6998af29fdfd61a7b8afdd07bbfc479d4a",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Math-Italic.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_SansSerif-Bold.ttf",
+      "bytes": 24504,
+      "sha256": "1ece03f79f95277d57dc7f6b435a74e1379b0d46104a8530286b60ff49369ea0",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_SansSerif-Bold.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_SansSerif-Italic.ttf",
+      "bytes": 22364,
+      "sha256": "3931dd81faed86ba021bb2bbdc36f5bed9a38d6b4f4077aca59b265aa1b02083",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_SansSerif-Italic.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_SansSerif-Regular.ttf",
+      "bytes": 19436,
+      "sha256": "f36ea897e19f4a2e571d1e900e4e3710e438deb05a842486045ba0a3e616a4ad",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_SansSerif-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Script-Regular.ttf",
+      "bytes": 16648,
+      "sha256": "1c67f068fea8bb09bf099c088b1cf64bd27516a6e07f4684344873564bb66a67",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Script-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Size1-Regular.ttf",
+      "bytes": 12228,
+      "sha256": "95b6d2f1a50173bfedb8c63e1d1c99b10427d0a4df4201cb44513b226951a22b",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Size1-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Size2-Regular.ttf",
+      "bytes": 11508,
+      "sha256": "a6b2099fb555c60e3a0db3a08842ebf1d732c6eb4e4bf44913613bed4fc4e39b",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Size2-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Size3-Regular.ttf",
+      "bytes": 7588,
+      "sha256": "500e04d54f0d51666332c9d2089aa803be22aa878eca539e59fa53c6e522b082",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Size3-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Size4-Regular.ttf",
+      "bytes": 10364,
+      "sha256": "c647367d1dd4e162468717d020e1fc0f1dc5c26ebfdffbe55261713bf88c5877",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Size4-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "fonts/KaTeX_Typewriter-Regular.ttf",
+      "bytes": 27556,
+      "sha256": "f01f3e87d9c6a61c0c081ceb577abd864eb00a612f7ac1620dd6915fad2ef5aa",
+      "upstream_url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Typewriter-Regular.ttf",
+      "license": "SIL-OFL-1.1"
+    },
+    {
+      "path": "licenses/KaTeX-LICENSE.txt",
+      "bytes": 1107,
+      "sha256": "766ccc1f306c885aa45542a9846bbd0a505b27a0374f146778171c2254ce18e3",
+      "source": "research/r4-math-spike/licenses/KaTeX-LICENSE.txt",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "licenses/KaTeX-fonts-NOTICE.txt",
+      "bytes": 1484,
+      "sha256": "d6a72bca243df26026696902d865dc3b099222d1da50559fe9e60a3f19973833",
+      "source": "research/r4-math-spike/licenses/KaTeX-fonts-NOTICE.txt",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "licenses/SIL-OFL-1.1.txt",
+      "bytes": 4016,
+      "sha256": "8eea8287e5876b539670cadb82e99f9a7afddec6f6730811be1daf25d2e9bcfd",
+      "source": "research/r4-math-spike/licenses/SIL-OFL-1.1.txt",
+      "original_bytes_preserved": true
+    },
+    {
+      "path": "licenses/RaTeX-THIRD-PARTY-NOTICES.txt",
+      "bytes": 717,
+      "sha256": "e3cf753ddd8012543a3297b62b4cf5450db1d5a3ae7ddd7afae593db927c2980",
+      "source": "research/r4-math-spike/licenses/RaTeX-THIRD-PARTY-NOTICES.txt",
+      "original_bytes_preserved": true
+    }
+  ]
+}

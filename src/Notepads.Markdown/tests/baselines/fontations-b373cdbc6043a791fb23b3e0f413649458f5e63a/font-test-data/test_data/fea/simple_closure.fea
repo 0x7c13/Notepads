@@ -1,0 +1,27 @@
+feature test {
+    lookup single_sub_f1 {
+        sub a by A;
+    } single_sub_f1;
+
+    lookup single_sub_f2 {
+    sub a by b;
+    # just to force format 2
+    sub X by Y;
+    } single_sub_f2;
+
+    lookup multiple_sub {
+        sub a by c d;
+    } multiple_sub;
+
+    lookup lig_sub {
+        sub a a by a_a;
+    } lig_sub;
+
+    lookup alt_sub {
+        sub a from [a.1 a.2];
+    } alt_sub;
+
+    lookup rev_single_sub {
+        rsub a a' by a.3;
+    } rev_single_sub;
+} test;

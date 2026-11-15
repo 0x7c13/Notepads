@@ -1,0 +1,7 @@
+[linkme-3]:
+   ===
+
+[linkme-4]:
+    ===
+
+Setext heading can interrupt link def if it has three spaces, but not four.

@@ -1,0 +1,106 @@
+{
+  "schema": "notepads.markdown.svg.fixture.ttc.v1",
+  "license": "SIL-OFL-1.1",
+  "tool": "fontTools",
+  "toolVersion": "4.68.0",
+  "toolApi": "https://fonttools.readthedocs.io/en/latest/ttLib/ttCollection.html",
+  "shareTables": false,
+  "recalcTimestamp": false,
+  "sourceRevision": "5f7dc4883aba8eeb30fe34f8a104923f43f734bf",
+  "inputs": [
+    {
+      "path": "crates/notepads-markdown-math/assets/fonts/KaTeX_Main-Regular.ttf",
+      "sha256": "D0332F52868370FD83AE7FA46470F90C8F2EAB2FCF12BC4F88080B340C95A830",
+      "upstream": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-Regular.ttf",
+      "style": "Regular",
+      "glyphCount": 286,
+      "unitsPerEm": 1000,
+      "preservedTableSha256": {
+        "glyf": "AC8482A456577E205315DED6081C923AB83D64E34FB33AD9049C531C6B9CE921",
+        "maxp": "F90C3E305A5CE2B3B5B518BAF197EB6F40ADAAED971EFCD1CFE4A610867C369F",
+        "loca": "F8648D320C30114BCCC3768765380A279E03CB4C9DB314F67C229F631F25B99C",
+        "hmtx": "24F0505C0D5D4963B23F5DBEFE67F97AC521DCE41E619A87AA9F04E94ECE49E2",
+        "hhea": "F3AD7FB6973613780F7749D823F4FF9017981D914F3E2BD8FDB1B8E0FDCE48A4",
+        "OS/2": "CB099CA7CDD6DDC4C8C3B687C4FA27D494BABB8290BE71C2EE6494E3A63FBE83",
+        "cmap": "10FE84BAA70C09CDB384FDA00E6116BBB6849A861099BA737957A17C9FFE3D2D",
+        "fpgm": "AEC85FE1971754B1C72259BD4142F4D620EA996F8417EA6FC0D106C35CC06EA0",
+        "prep": "FA1C3FDD8BA02E924A0510AFECBB974F38D97BA0F39F11FFC5EDC4AF0336289D",
+        "cvt ": "DCB932ECBCAFE130D45E4E284E622A98265178B6959222EB59CFCA012009FEBC",
+        "post": "DF8BE63740DA32C0B6007D0D4E8A5B205922930A12E0A2A7BA9A97D222CB6E81",
+        "gasp": "4CA731F86AD506AC0E320283DC9461926346DE3C4D91D539EA7F6620D3826940"
+      },
+      "preservedHead": {
+        "tableVersion": 1,
+        "fontRevision": 1,
+        "flags": 15,
+        "unitsPerEm": 1000,
+        "created": 2082840000,
+        "modified": 2082840000,
+        "xMin": -471,
+        "yMin": -272,
+        "xMax": 1803,
+        "yMax": 903,
+        "macStyle": 0,
+        "lowestRecPPEM": 8,
+        "fontDirectionHint": 2,
+        "indexToLocFormat": 0,
+        "glyphDataFormat": 0
+      }
+    },
+    {
+      "path": "crates/notepads-markdown-math/assets/fonts/KaTeX_Main-Bold.ttf",
+      "sha256": "138AC28D1663B3037E9C5F52371FA5C63D8324F4A38D22CD573E6EA3A3FD0CF8",
+      "upstream": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-Bold.ttf",
+      "style": "Bold",
+      "glyphCount": 280,
+      "unitsPerEm": 1000,
+      "preservedTableSha256": {
+        "glyf": "1FC9DC1B7980EC5F2A10867E7514EF4EB8C69E04E0138F5F322277D19A2EBE46",
+        "maxp": "34EA9118F5E3660D3D3DF7779C8F0C49F76BACA3DCEF22374D42A7C4450C26A0",
+        "loca": "E251B74DCF35F85081633EA66EB90E9E54F37CE15529A29945970E4F754F0D02",
+        "hmtx": "4B57ACB0326483E8F81A584E277F1165E82C905D47D51F41827CD9B0B7E2448A",
+        "hhea": "BB7AD7259255900D9C5367C0F8CFC1880B7DC53D7A816D193742C5FD41CF1A70",
+        "OS/2": "6D773E6266272201DEAC014600F623AC55C23581EC8AE097A75003CF26521DC1",
+        "cmap": "FA6AEE71596269DA50BA3EB0050ECEE5BF77FB90293099A46644E7573FB9CB60",
+        "fpgm": "AEC85FE1971754B1C72259BD4142F4D620EA996F8417EA6FC0D106C35CC06EA0",
+        "prep": "FA1C3FDD8BA02E924A0510AFECBB974F38D97BA0F39F11FFC5EDC4AF0336289D",
+        "cvt ": "B1CE2F4C3C8D93D84DAC6EA0C069A9264029CD5F3EB3107EBEB3935EABF60CF4",
+        "post": "5E63B04DF0784725EB33D7AA6A7CE1454EF1606CB29B97A397827EDE523E7980",
+        "gasp": "4CA731F86AD506AC0E320283DC9461926346DE3C4D91D539EA7F6620D3826940"
+      },
+      "preservedHead": {
+        "tableVersion": 1,
+        "fontRevision": 1,
+        "flags": 15,
+        "unitsPerEm": 1000,
+        "created": 2082840000,
+        "modified": 2082840000,
+        "xMin": -542,
+        "yMin": -268,
+        "xMax": 2062,
+        "yMax": 951,
+        "macStyle": 0,
+        "lowestRecPPEM": 8,
+        "fontDirectionHint": 2,
+        "indexToLocFormat": 0,
+        "glyphDataFormat": 0
+      }
+    }
+  ],
+  "output": {
+    "path": "tests/fixtures/svg-fonts/Notepads-Fixture-RegularBold.ttc",
+    "bytes": 105208,
+    "sha256": "0EC59A653501E5DFFF4D8C6046C4DB0D9B0A824CC17A6906094F4A9A60BD4D63",
+    "faces": 2,
+    "original_import": {
+      "bytes": 105112,
+      "sha256": "DA89CD3651E9126801D5D2DD1F5A4EA57E2C7C7CDA9212DD13D7F1E804F2C38A"
+    }
+  },
+  "scope": "New derived two-face TTC fixture; display/PostScript names renamed. Original source fonts, glyph/metric tables and prior baselines unchanged. Not a pre-existing upstream TTC or real Windows font-selection result.",
+  "namespace_migration": {
+    "date": "2026-11-15",
+    "tool": "fontTools 4.68.0",
+    "scope": "Only name records and required checksum adjustment changed. All original preservedTableSha256 and preservedHead controls remain valid."
+  }
+}

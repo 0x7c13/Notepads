@@ -1,0 +1,760 @@
+{
+  "schema": 1,
+  "state": "frozen-before-normal-run",
+  "syntect_version": "5.3.0",
+  "syntect_commit": "e4670846ecf16d8832db6c43d531bec466214e27",
+  "package_repo": "https://github.com/sublimehq/Packages",
+  "package_commit": "fa6b8629c95041bf262d4c1dab95c456a0530122",
+  "expected_policy": "original inline scope selectors; no generated oracle",
+  "cases": [
+    {
+      "id": "cs-syntax_test_HelloWorld",
+      "language": "cs",
+      "input": "fixtures/C#/tests/syntax_test_HelloWorld.cs",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "C#/tests/syntax_test_HelloWorld.cs",
+      "git_blob": "1c10dd15d7d2c0d7f97d9bdc302c37ac3486e7e1"
+    },
+    {
+      "id": "cs-syntax_test_Strings",
+      "language": "cs",
+      "input": "fixtures/C#/tests/syntax_test_Strings.cs",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "C#/tests/syntax_test_Strings.cs",
+      "git_blob": "067c68c80561cacd7600546094acd4597b892297"
+    },
+    {
+      "id": "cs-syntax_test_Comments",
+      "language": "cs",
+      "input": "fixtures/C#/tests/syntax_test_Comments.cs",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "C#/tests/syntax_test_Comments.cs",
+      "git_blob": "304d1559689adfe78ff990007dc949d9eae8de71"
+    },
+    {
+      "id": "cs-syntax_test_Operators",
+      "language": "cs",
+      "input": "fixtures/C#/tests/syntax_test_Operators.cs",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "C#/tests/syntax_test_Operators.cs",
+      "git_blob": "ed049b05e8a02d81ee24ddb6e67eb946e8f67652"
+    },
+    {
+      "id": "cs-syntax_test_Generics",
+      "language": "cs",
+      "input": "fixtures/C#/tests/syntax_test_Generics.cs",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "C#/tests/syntax_test_Generics.cs",
+      "git_blob": "c4787d89a3b1da6652fb711f055f1071bbdfa5d0"
+    },
+    {
+      "id": "cpp-syntax_test_cpp",
+      "language": "cpp",
+      "input": "fixtures/C++/syntax_test_cpp.cpp",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "C++/syntax_test_cpp.cpp",
+      "git_blob": "bd4f016475b11c73f7bc8949ac4e0ee6254b93d0"
+    },
+    {
+      "id": "c-syntax_test_c",
+      "language": "c",
+      "input": "fixtures/C++/syntax_test_c.c",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "C++/syntax_test_c.c",
+      "git_blob": "8bf9c98e3915f55540db4da1ddd606c54fc6697a"
+    },
+    {
+      "id": "rs-syntax_test_rust",
+      "language": "rs",
+      "input": "fixtures/Rust/syntax_test_rust.rs",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "Rust/syntax_test_rust.rs",
+      "git_blob": "8dcd847fc13bdea9af16087e207e70dd87ac7c39"
+    },
+    {
+      "id": "js-syntax_test_js",
+      "language": "js",
+      "input": "fixtures/JavaScript/syntax_test_js.js",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "JavaScript/syntax_test_js.js",
+      "git_blob": "670f0c6bc18b53242f03395673c047b7f86c3a1c"
+    },
+    {
+      "id": "json-syntax_test_json",
+      "language": "json",
+      "input": "fixtures/JavaScript/syntax_test_json.json",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "JavaScript/syntax_test_json.json",
+      "git_blob": "129b44d039ba23db8a50668121f4626f2d8a51d9"
+    },
+    {
+      "id": "py-syntax_test_python",
+      "language": "py",
+      "input": "fixtures/Python/syntax_test_python.py",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "Python/syntax_test_python.py",
+      "git_blob": "97d8010ed0d52a5b9954101b3709d9b64d9fb08b"
+    },
+    {
+      "id": "py-syntax_test_python_strings",
+      "language": "py",
+      "input": "fixtures/Python/syntax_test_python_strings.py",
+      "expected": "unchanged upstream inline scope assertions",
+      "source_path": "Python/syntax_test_python_strings.py",
+      "git_blob": "cace6e200171a777d4fa53a790e60af91854516b"
+    }
+  ],
+  "assets": [
+    {
+      "path": "fixtures/C#/tests/syntax_test_HelloWorld.cs",
+      "bytes": 1723,
+      "sha256": "33dab5cc9f611282a298e514b8281ef08ae8edf759e146dd717d160dce35fb28",
+      "git_blob": "1c10dd15d7d2c0d7f97d9bdc302c37ac3486e7e1",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%23/tests/syntax_test_HelloWorld.cs"
+    },
+    {
+      "path": "fixtures/C#/tests/syntax_test_Strings.cs",
+      "bytes": 1144,
+      "sha256": "8a29391674758cc6de2ba7b1fd01cd86a1ab81b9710c3d0bc45ef643b078ba5c",
+      "git_blob": "067c68c80561cacd7600546094acd4597b892297",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%23/tests/syntax_test_Strings.cs"
+    },
+    {
+      "path": "fixtures/C#/tests/syntax_test_Comments.cs",
+      "bytes": 1867,
+      "sha256": "8636b8833f89d089e11914005428ea127d7abdb0105cc7df7847aa5b41d4d7b4",
+      "git_blob": "304d1559689adfe78ff990007dc949d9eae8de71",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%23/tests/syntax_test_Comments.cs"
+    },
+    {
+      "path": "fixtures/C#/tests/syntax_test_Operators.cs",
+      "bytes": 3614,
+      "sha256": "7d9bd43125e2a22de45d794c3d148d197aa1bb78ddf046ae63be3c615ad26f13",
+      "git_blob": "ed049b05e8a02d81ee24ddb6e67eb946e8f67652",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%23/tests/syntax_test_Operators.cs"
+    },
+    {
+      "path": "fixtures/C#/tests/syntax_test_Generics.cs",
+      "bytes": 5312,
+      "sha256": "9e2089d543fc59aac3309b0fdefc4eff05d3f11581d4d91226be54a1f263b757",
+      "git_blob": "c4787d89a3b1da6652fb711f055f1071bbdfa5d0",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%23/tests/syntax_test_Generics.cs"
+    },
+    {
+      "path": "fixtures/C++/syntax_test_cpp.cpp",
+      "bytes": 63772,
+      "sha256": "21aefd171a25474f30b5279fd9c8883975679d9d0d7a32dff21dc28fd8cb76cd",
+      "git_blob": "bd4f016475b11c73f7bc8949ac4e0ee6254b93d0",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%2B%2B/syntax_test_cpp.cpp"
+    },
+    {
+      "path": "fixtures/C++/syntax_test_c.c",
+      "bytes": 16310,
+      "sha256": "8e19d24a8045ce019ab8843aa5469ea8b7d102b6bdeb695465445dd18a9330a8",
+      "git_blob": "8bf9c98e3915f55540db4da1ddd606c54fc6697a",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%2B%2B/syntax_test_c.c"
+    },
+    {
+      "path": "fixtures/Rust/syntax_test_rust.rs",
+      "bytes": 37068,
+      "sha256": "12cc528a46e2681af786bd1a024b64517a616ab9191829f81aa548b18c14d9f3",
+      "git_blob": "8dcd847fc13bdea9af16087e207e70dd87ac7c39",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rust/syntax_test_rust.rs"
+    },
+    {
+      "path": "fixtures/JavaScript/syntax_test_js.js",
+      "bytes": 32458,
+      "sha256": "3303db85b3042e721a24956bdc58ba5717bfbbc29270486a016f12b1147193a1",
+      "git_blob": "670f0c6bc18b53242f03395673c047b7f86c3a1c",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/JavaScript/syntax_test_js.js"
+    },
+    {
+      "path": "fixtures/JavaScript/syntax_test_json.json",
+      "bytes": 1974,
+      "sha256": "0cf9d3f4e6ae1d35658b66e402c0090c7747dde521268794bdb62f9568aaab04",
+      "git_blob": "129b44d039ba23db8a50668121f4626f2d8a51d9",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/JavaScript/syntax_test_json.json"
+    },
+    {
+      "path": "fixtures/Python/syntax_test_python.py",
+      "bytes": 36554,
+      "sha256": "368c183e8f1fa78782069d9af121424767aca9a18ff6f5d6320affc1c1a17cfd",
+      "git_blob": "97d8010ed0d52a5b9954101b3709d9b64d9fb08b",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Python/syntax_test_python.py"
+    },
+    {
+      "path": "fixtures/Python/syntax_test_python_strings.py",
+      "bytes": 24231,
+      "sha256": "c2b8b1019bf51f98af7867a6e0bc7f2e30dae0c5bfe868c1a438dcf53a9db593",
+      "git_blob": "cace6e200171a777d4fa53a790e60af91854516b",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Python/syntax_test_python_strings.py"
+    },
+    {
+      "path": "grammar-source/ActionScript/ActionScript.sublime-syntax",
+      "bytes": 16251,
+      "sha256": "aedfbf6adfa1fb4aef135b6fd6868e75b2f3e555ac78568e72702e24974d46f6",
+      "git_blob": "b08610c8592931f54f91f9b88e0937db06efdf2f",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/ActionScript/ActionScript.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/AppleScript/AppleScript.sublime-syntax",
+      "bytes": 32079,
+      "sha256": "1e359982098bbd9ad728fa92d8220a9ff74c7f241e24e6d71322f1d326dbe31c",
+      "git_blob": "d39aa257b94714371cb5e21274a85b3b6fa1513f",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/AppleScript/AppleScript.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/ASP/ASP.sublime-syntax",
+      "bytes": 29204,
+      "sha256": "0d034cc6888cb2bda32f2ca42c5782f0b2f6c4c54a54872a635919750b851633",
+      "git_blob": "111a2b67fcae0369d2edc00896e2a14cbfb8ccee",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/ASP/ASP.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/ASP/HTML-ASP.sublime-syntax",
+      "bytes": 1636,
+      "sha256": "6a9f79faf40f381504e77595958e5c8924fd15ef3101232f04a1bc28c54ec6c4",
+      "git_blob": "06690b5e58d1fcd1161b390e16e4aca0e7ee660d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/ASP/HTML-ASP.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Batch File/Batch File.sublime-syntax",
+      "bytes": 12899,
+      "sha256": "80f1329db9c054c325714cb5b4bed90cc6bc1e7b8f3183bdaefe92f7595365f4",
+      "git_blob": "ae5f71e7fb9aacb162528f5177eebe80628c8de2",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Batch%20File/Batch%20File.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/C#/Build.sublime-syntax",
+      "bytes": 1677,
+      "sha256": "6cda0be3d861b20763e2b12c2d8f1fca630f0e89ac08e58c6d957e5afb0c062b",
+      "git_blob": "f7b0e7ef65c7cd5cf7477a5a1bc6880fc476fbdb",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%23/Build.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/C#/C#.sublime-syntax",
+      "bytes": 61390,
+      "sha256": "bb90b04635aa1fba64642abb4ea2a4b0a66b561fbaca90a72fe73f4246b79724",
+      "git_blob": "7e5e49ea4ad239e945eb6f60da2697e36696534d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%23/C%23.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/C++/C.sublime-syntax",
+      "bytes": 43489,
+      "sha256": "e2a2ce9125b89321cb5d4efd962eb9e11e00748c80bc2ea2ce595ef626ac299f",
+      "git_blob": "6ead5087b40d5c6930defbb25f4d8dac9eb2a399",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%2B%2B/C.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/C++/C++.sublime-syntax",
+      "bytes": 67287,
+      "sha256": "3d3a1980be730b0330854943dcc9858bb7c870351d427769dd874df4c9eb9d2c",
+      "git_blob": "398b8cfb30e64fa489b012eaff90f8c788f61e7b",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/C%2B%2B/C%2B%2B.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Clojure/Clojure.sublime-syntax",
+      "bytes": 42786,
+      "sha256": "248c089c27897db325b7d9f52585048e89deacdf22093da0439927806116747e",
+      "git_blob": "e1713d19fa44a3325ca6a5aa2197cfe4c24da3ee",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Clojure/Clojure.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/CSS/CSS.sublime-syntax",
+      "bytes": 73724,
+      "sha256": "377cf1623784e1896c1359d87de4167bd74ae62356a987c8d326fcaf551107e7",
+      "git_blob": "9f9862dad45520071486a6b507239cdd9a6f8c4d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/CSS/CSS.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/D/D.sublime-syntax",
+      "bytes": 26043,
+      "sha256": "8caaa2870a2fdcd3563950dc650e8515acd52c5f92e2820ad0026be7ba160946",
+      "git_blob": "1b25d39cae0ba950a1145df333146acaa7377246",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/D/D.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Diff/Diff.sublime-syntax",
+      "bytes": 2294,
+      "sha256": "d99f2d03c1edfa8ab8b0a7dd5922fd7a250347800c821fd6ada1f3cd116c5d8c",
+      "git_blob": "c381062e3abbaff8e169094f32d3e5b1453906c3",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Diff/Diff.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Erlang/Erlang.sublime-syntax",
+      "bytes": 27221,
+      "sha256": "d162295d7b3d46c7026798c83950301a8b5d17e725eb49d12a92327d710f9218",
+      "git_blob": "08fdb9446a833196d5a85b8b31676b3a7a1c740a",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Erlang/Erlang.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Erlang/HTML (Erlang).sublime-syntax",
+      "bytes": 490,
+      "sha256": "f1ea44937ac511279f2dac5b6f2d449f52121aa5c03beab9e4d9d0bc44df01e3",
+      "git_blob": "ac6d94cd4b43100e1c9a32d953db996b04e65075",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Erlang/HTML%20%28Erlang%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Go/Go.sublime-syntax",
+      "bytes": 18802,
+      "sha256": "a9969e22e544eb2732a8e34eac63cba1876c2718c55a9fb5810a45724c5c2ec5",
+      "git_blob": "56e5c7bf31998d119049d1386ed36477d297bff6",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Go/Go.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Graphviz/DOT.sublime-syntax",
+      "bytes": 3881,
+      "sha256": "327ba933916f2fecfa0871b71e7402c4e50cfa9c9c0ffdf12e9fe6592c3d6ab4",
+      "git_blob": "7b1005d0939168f13f05dc23b60587bf2120996d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Graphviz/DOT.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Groovy/Groovy.sublime-syntax",
+      "bytes": 15567,
+      "sha256": "ab9b1eb0d0e6b7526e580628659a08b0c673f0830b30896a5c18af19b33f3808",
+      "git_blob": "dd430ce27c7e8f69ae415980301e3a45b040a139",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Groovy/Groovy.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Haskell/Haskell.sublime-syntax",
+      "bytes": 9353,
+      "sha256": "2e01d04b4b85ae85109ff19fa2b65cad169271607ceef7b03b2a0d7a62b63915",
+      "git_blob": "05e19639c26138a231b542d30c6d1a45470f4b7e",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Haskell/Haskell.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Haskell/Literate Haskell.sublime-syntax",
+      "bytes": 1650,
+      "sha256": "0a363a9316d55ad4f45cc16d474f829aab293bd97cf3028a3930e735d270077a",
+      "git_blob": "482ba775a271bbd1c70ba3a4f7ae0ce370750e86",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Haskell/Literate%20Haskell.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/HTML/HTML.sublime-syntax",
+      "bytes": 15542,
+      "sha256": "8422f400e06b4c1054627c60a4f1109682a8aa2deadc2576004cb802e5b4b3eb",
+      "git_blob": "861c6cc67cd2e987fd8dcd695717b9c90fdf06ab",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/HTML/HTML.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Java/Java Server Pages (JSP).sublime-syntax",
+      "bytes": 3110,
+      "sha256": "2ccdc240abbe832740e8bbf7dbce391f58647ac7234f9418adb0f067fd801dc2",
+      "git_blob": "2cb72004951930c71a85e7b65a63f6b4c33bb121",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Java/Java%20Server%20Pages%20%28JSP%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Java/Java.sublime-syntax",
+      "bytes": 23052,
+      "sha256": "7f4ba287955d428567dbb71a925ce79f0311897ad1efe6541f9568a6ccbb9bb6",
+      "git_blob": "f50632d689a3da04f4d4781121b52be577925178",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Java/Java.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Java/JavaDoc.sublime-syntax",
+      "bytes": 8836,
+      "sha256": "42b1bde52d0ea887b633fc2d471d6c6b0c80765a4179d1c3347e4aaf83ff5706",
+      "git_blob": "cab24c6148ae565ed99677c64aeb92a319d1692a",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Java/JavaDoc.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Java/JavaProperties.sublime-syntax",
+      "bytes": 836,
+      "sha256": "eae7aa2faffa8e52c3a1ce2cb0288c60ee7f7c484121bedb8a071c57168009f4",
+      "git_blob": "f46716356097c0fe71cc3c209e27bac26e9db32f",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Java/JavaProperties.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/JavaScript/JavaScript.sublime-syntax",
+      "bytes": 45577,
+      "sha256": "e1d6826882c3298f64066c928fe06b46a001fa623ff94cd0d0243a95e6883fc5",
+      "git_blob": "e72449ac794b4bfa3e0fa2ec65037a3c4690f4cf",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/JavaScript/JavaScript.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/JavaScript/JSON.sublime-syntax",
+      "bytes": 4146,
+      "sha256": "319197e580e2f60baac84e3a7e48b876e7b3ff35b816378aa400189fd053ec82",
+      "git_blob": "a39afce1582684a3e0ce6c41047b658acdaabfde",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/JavaScript/JSON.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/JavaScript/Regular Expressions (JavaScript).sublime-syntax",
+      "bytes": 2795,
+      "sha256": "2395dd3e2a0dfbc1115bbde1d1a8efed31347b8b3c9b5e77b22abefba0050ca6",
+      "git_blob": "66e835761656470d2a0e7c7467804b3af2fa748a",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/JavaScript/Regular%20Expressions%20%28JavaScript%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/LaTeX/Bibtex.sublime-syntax",
+      "bytes": 4160,
+      "sha256": "8d5a2339c94b727ad1a185274b58871d7ec9df5ca617227792e55c7fae6025da",
+      "git_blob": "868ca67e585fbd8229802cec2fe01b20d50aaa97",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/LaTeX/Bibtex.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/LaTeX/LaTeX Log.sublime-syntax",
+      "bytes": 1503,
+      "sha256": "13b12a570a1e8e52127bd43ef3cc5fab40d3f3c03c525ea66357cf2397904b0c",
+      "git_blob": "af7d11c765cadf4fa23fc42372eed2e15ebaa7d6",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/LaTeX/LaTeX%20Log.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/LaTeX/LaTeX.sublime-syntax",
+      "bytes": 64480,
+      "sha256": "5cf083ee29fbf20273faeeb83182553135700f18d131334151c6f26cd6a52bc7",
+      "git_blob": "54575610db58a8623cbf4b92f3bc0d775231d7d8",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/LaTeX/LaTeX.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/LaTeX/TeX.sublime-syntax",
+      "bytes": 5568,
+      "sha256": "8cb31f7680e9d6f7fbf4cad62c7906aea3a3e0a1c639128c793b1921c7c4d090",
+      "git_blob": "11f8143ae2e30afdea1ee7143ac12316a6b931b7",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/LaTeX/TeX.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/LICENSE",
+      "bytes": 671,
+      "sha256": "6aa3901416905d6ed0fc6b0fcca75e6649f4066db3f610e9653d0e0049e139e7",
+      "git_blob": "d861aa7545ccc0454a4a7b1c30f145562773bb32",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/LICENSE"
+    },
+    {
+      "path": "grammar-source/Lisp/Lisp.sublime-syntax",
+      "bytes": 14450,
+      "sha256": "b6c927bc50a2ced04f8f847b4861650ba0368407ca0baf1a8b39b1a7e9bd40d3",
+      "git_blob": "f853e90a32a343f5a70f079d0265a988d8652da5",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Lisp/Lisp.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Lua/Lua.sublime-syntax",
+      "bytes": 3994,
+      "sha256": "0d275c18936c48c292915b4d94e33f903e7be0f23327a5a86b5a167fbf38ebd9",
+      "git_blob": "f62b661d68fbcb0120602f82ae6a648616a39910",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Lua/Lua.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Makefile/Make Output.sublime-syntax",
+      "bytes": 282,
+      "sha256": "1afc0d9d889304a2b8ef9484bf4fb7515289a6245873e086edd17bfae5e48be5",
+      "git_blob": "e77fd388e260bb41afe59b9f2551042b9b32ab4c",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Makefile/Make%20Output.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Makefile/Makefile.sublime-syntax",
+      "bytes": 21176,
+      "sha256": "fe639beefb70306bd189289bf686be969cd0479a1f9c52bce34ec408f531f2b3",
+      "git_blob": "efb548cc8900243c510216bd3a5cb3d319c89762",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Makefile/Makefile.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Markdown/Markdown.sublime-syntax",
+      "bytes": 44971,
+      "sha256": "fe045101a3be4d2ce2773095a323da4296950826e6fa4129ca34f4c7e5c58967",
+      "git_blob": "62e8c56926a3346f50cd602df96e67f0220a90c9",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Markdown/Markdown.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Markdown/MultiMarkdown.sublime-syntax",
+      "bytes": 931,
+      "sha256": "f12b047c44f3dfbe8411b82e016d3c87e5ddfb903d9e02e3efb5c3cb3bce8064",
+      "git_blob": "679d80cc6cfb98f7551d351a96933926866255a1",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Markdown/MultiMarkdown.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Matlab/Matlab.sublime-syntax",
+      "bytes": 67047,
+      "sha256": "87a9ffcb5a16af225ab3dfa158ff5f48b3a90fc8b309a322a63d9fb2985bef5a",
+      "git_blob": "b6c21aee21ffca30cfaf774f487bc88449bee1ed",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Matlab/Matlab.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Objective-C/Objective-C.sublime-syntax",
+      "bytes": 81444,
+      "sha256": "3a407f79bbebb600987917b7bd81c11eee50c8a4d89da77c6e3286b2fc21e76e",
+      "git_blob": "82c357c20cc8363f8e1b25d89bf9613d811f0f9c",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Objective-C/Objective-C.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Objective-C/Objective-C++.sublime-syntax",
+      "bytes": 73449,
+      "sha256": "4acbd0c4124b7e3e7ec68998e8050ae297a02b03f88f346f3684dcf17929ff49",
+      "git_blob": "b3ee2dd81b8b0b3abc3d436b86cf094ebf0d0cc5",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Objective-C/Objective-C%2B%2B.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/OCaml/camlp4.sublime-syntax",
+      "bytes": 959,
+      "sha256": "6bd5edf9d81bf30c2419a774ea6b661c38d5f57632bf45f09020857a6374a2cc",
+      "git_blob": "d33b350f1155defee42de481f5630c2afa74442f",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/OCaml/camlp4.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/OCaml/OCaml.sublime-syntax",
+      "bytes": 24219,
+      "sha256": "8f89dc4f2f6fc544caa2b2491f94084fc05c4afed72226eef8eb8401ccfcc7a8",
+      "git_blob": "3732f20de3c178ab6d0aec9c9353c8468e752c70",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/OCaml/OCaml.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/OCaml/OCamllex.sublime-syntax",
+      "bytes": 5019,
+      "sha256": "b3b32395f9777910e095fd663b4cb04a4443889c358ebd5fed759f62776e34cb",
+      "git_blob": "876104cd6d3cf72ec0ef778975d5caf6580dc25c",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/OCaml/OCamllex.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/OCaml/OCamlyacc.sublime-syntax",
+      "bytes": 5379,
+      "sha256": "4eef597e8d6b970be865c0b785258b5dcc83daf4f30e13b76ee2f6971ce229a2",
+      "git_blob": "8702ce2c21a5e5bc8b7b6f19a05b19dedbe2ea77",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/OCaml/OCamlyacc.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Pascal/Pascal.sublime-syntax",
+      "bytes": 3225,
+      "sha256": "01448353a244398674aac8d2e1540e02d9d262eb7f6ba087de0c2973049981d0",
+      "git_blob": "72a3fac45148d1f0c0c9e7741e797896d305c3fb",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Pascal/Pascal.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Perl/Perl.sublime-syntax",
+      "bytes": 38966,
+      "sha256": "6bec2ffe5d9b92c39ca514347a710780d21cd0083ad06194683aa35aeb89a58f",
+      "git_blob": "2eb6ab92e9855d89beb8174441ce45b601856f3c",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Perl/Perl.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/PHP/PHP Source.sublime-syntax",
+      "bytes": 90296,
+      "sha256": "1e0d02957197bba1983b997759059ce9cea75eba4527aa9b6ddf4324066dbc78",
+      "git_blob": "4789981ec0e2438bb7914a7c5a845939f6746fb9",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/PHP/PHP%20Source.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/PHP/PHP.sublime-syntax",
+      "bytes": 1151,
+      "sha256": "d0a25b581392c8fb44b5911e9731c2155621276c7f74b56baa45358d2bc99b7b",
+      "git_blob": "de16cea7d65a09a0268a5b605def183686a9b484",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/PHP/PHP.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Python/Python.sublime-syntax",
+      "bytes": 65108,
+      "sha256": "6a39dbeb6f4711167cf00e387b50c88428cedc746f2b0126d696b6dab4333342",
+      "git_blob": "83341424a1422bfc980de1d4e556bffbaf29d233",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Python/Python.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Python/Regular Expressions (Python).sublime-syntax",
+      "bytes": 3698,
+      "sha256": "19f050b61462603f1cf35abd971d0c4b47d5c58cff21c44466e75e896045f6ed",
+      "git_blob": "88346617753030749189a8f8df22f837a32e6683",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Python/Regular%20Expressions%20%28Python%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/R/R Console.sublime-syntax",
+      "bytes": 350,
+      "sha256": "37dfbd515d0e7287e0be9c5e3e6989b64d300dd6c8c633ada998e4cfe25c918b",
+      "git_blob": "59502b01d16ca707dbae4384f73f1db15669019d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/R/R%20Console.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/R/R.sublime-syntax",
+      "bytes": 43001,
+      "sha256": "b889ac826ecd2d281de3dedef5ba022e8e1d6e1cff86e944f9f9cfcfaaa30def",
+      "git_blob": "765c8374b1577a12192c432b7f2452e197e94d7f",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/R/R.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/R/Rd (R Documentation).sublime-syntax",
+      "bytes": 4556,
+      "sha256": "a9d6e7905c530832675e34d3081f9deaf89c10a5dcf7371a1fa57f4f1699304c",
+      "git_blob": "804364bc9fe547030837b9ffa657a1a32e33a13d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/R/Rd%20%28R%20Documentation%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Rails/HTML (Rails).sublime-syntax",
+      "bytes": 876,
+      "sha256": "06dc7f50fac151f36eef5882167869e436a474846a2a090745e83c972f223357",
+      "git_blob": "65568ca366334bbdce0d2a00566176d3f4043780",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rails/HTML%20%28Rails%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Rails/JavaScript (Rails).sublime-syntax",
+      "bytes": 679,
+      "sha256": "81b8949135ff3959dced4dcbb15f88b95322afc398b99ff41ff2584e217b0800",
+      "git_blob": "443176b5025d847c06b875e6fb3fd4e4f607f561",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rails/JavaScript%20%28Rails%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Rails/Ruby Haml.sublime-syntax",
+      "bytes": 2433,
+      "sha256": "095fd549c9b80658f737ca60c17c88d9eb001ecb4242182beed89a3d9c378801",
+      "git_blob": "7dad9cebd6222e62745ba38b56dab253966ffe64",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rails/Ruby%20Haml.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Rails/Ruby on Rails.sublime-syntax",
+      "bytes": 5056,
+      "sha256": "fba9872b725fad643615546a2d2b542397674225ad161c4283849dd193b738f1",
+      "git_blob": "9a7ed6c1701dad2a4e6d3cb86c4fc93a12e78f23",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rails/Ruby%20on%20Rails.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Rails/SQL (Rails).sublime-syntax",
+      "bytes": 405,
+      "sha256": "348dfdd583d2715ca03a8da399a9e4397b50d9fe60617297aace78bd1b4cbd19",
+      "git_blob": "4e3abf820ed8d0c3ea89abfe6e1c76f62b51ce6f",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rails/SQL%20%28Rails%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Regular Expressions/RegExp.sublime-syntax",
+      "bytes": 12497,
+      "sha256": "6a5d4067ea7997b79b925dd201c1e0f00c630675825e2c27921958e4c34e1338",
+      "git_blob": "32afcf0bf606a188cd229bd26838ac48fd3e9269",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Regular%20Expressions/RegExp.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/RestructuredText/reStructuredText.sublime-syntax",
+      "bytes": 8000,
+      "sha256": "e2c25ad040b86092cd6cf18f7b20cc5d8773c35138ec7906ef41757da3c8418d",
+      "git_blob": "3c9e031a2bf820ed2fdefaea51dea5aa97a935bd",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/RestructuredText/reStructuredText.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Ruby/Ruby.sublime-syntax",
+      "bytes": 45907,
+      "sha256": "999b1326de24d82918b2ee02eaba4808860fe8853ba9e87174613ced43dc3c5d",
+      "git_blob": "e0f65244767e66f0cb2a1d94c664c467738ff37b",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Ruby/Ruby.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Rust/Cargo.sublime-syntax",
+      "bytes": 329,
+      "sha256": "37647f073050257d24e627c83df180f9e72431d3d3890345710c827bdd32653b",
+      "git_blob": "da88bf540a68c48b49b865bc78bb2529c9b46f2d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rust/Cargo.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Rust/LICENSE.txt",
+      "bytes": 1023,
+      "sha256": "89807acf2309bd285f033404ee78581602f3cd9b819a16ac2f0e5f60ff4a473e",
+      "git_blob": "89de354795ec7a7cdab07c091029653d3618540d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rust/LICENSE.txt"
+    },
+    {
+      "path": "grammar-source/Rust/Rust.sublime-syntax",
+      "bytes": 31551,
+      "sha256": "586805ace8352f932a04b3b79f9eff4e2487e9e3e4baadf0d191ff155ce73c42",
+      "git_blob": "485df79b4e2a212445300c447a61a69ded7ac417",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Rust/Rust.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Scala/Scala.sublime-syntax",
+      "bytes": 44379,
+      "sha256": "ea238d075f17fc1546a3efa3782143e88ea9d9e6600fb5a82f4a3589c2c30322",
+      "git_blob": "88d4c9dcc2f7aeaa5e2f9834bf79c1d67f23f5c9",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Scala/Scala.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/ShellScript/Bash.sublime-syntax",
+      "bytes": 44500,
+      "sha256": "aee7f4688f8d3bea30cbf69a82d04afd629062e573c2b68d35b31172b9e917c9",
+      "git_blob": "95beeb1db2b519cd4fc3be59e10f3d65965d55bb",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/ShellScript/Bash.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/ShellScript/commands-builtin-shell-bash.sublime-syntax",
+      "bytes": 44581,
+      "sha256": "7d1ce3326d3feab9cd4db0e2a8ebbcef5ae8aee99b90c0eda2bd6c3ad18cb8e8",
+      "git_blob": "66f8950de6ca21e320e34fc74982be7158d0296d",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/ShellScript/commands-builtin-shell-bash.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/ShellScript/Shell-Unix-Generic.sublime-syntax",
+      "bytes": 129,
+      "sha256": "3b84296b3ab6e47b8aa9146ba1927911653f8874f08a6fc0720260466f21e6ac",
+      "git_blob": "a0802f31ce2708742b8481c14aabfa1b67827fa9",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/ShellScript/Shell-Unix-Generic.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/SQL/SQL.sublime-syntax",
+      "bytes": 8450,
+      "sha256": "4fa4fcf076a547c9cf8d704e9f1e81db67ec2875677e36a09f30153ca5fe30b2",
+      "git_blob": "4821f1de883520880ae0d93e60f4cdbfed7b812c",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/SQL/SQL.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/TCL/HTML (Tcl).sublime-syntax",
+      "bytes": 2375,
+      "sha256": "bc18ee4da309652823f94f05fd80acd4214effb266c411c4e596dad607e70f38",
+      "git_blob": "0e769429ddd7272789c62011496db6e0a974ad89",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/TCL/HTML%20%28Tcl%29.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/TCL/Tcl.sublime-syntax",
+      "bytes": 11387,
+      "sha256": "05e79b29b6389ababe3f8d0f2c0a49f7a2e6d8a1b9ca1f43affdfec039f36e52",
+      "git_blob": "ed763d8d171584e424ba7114c582739359269d8f",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/TCL/Tcl.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/Textile/Textile.sublime-syntax",
+      "bytes": 8288,
+      "sha256": "ea98ee917f2745690080d32adfc388c907a1355d209a800712369a3f09b59896",
+      "git_blob": "ffe80d5d766e556d5306df8fdf2f855360c694b8",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/Textile/Textile.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/XML/XML.sublime-syntax",
+      "bytes": 8254,
+      "sha256": "1b9647233d8ab1366c7db478d866f13343f9ffb17413bb69e4a0aaf76a2142c4",
+      "git_blob": "b3dbeddfeff42c5a6835d3d402bf2029a1bf46b4",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/XML/XML.sublime-syntax"
+    },
+    {
+      "path": "grammar-source/YAML/YAML.sublime-syntax",
+      "bytes": 18111,
+      "sha256": "a3c24b41132deeff6ac505913f11b7abf8d0f875b0eb96346ef5ba0f40e5e3f7",
+      "git_blob": "9f0197ac6a55693e9236b4eabf125484530b0ac4",
+      "url": "https://raw.githubusercontent.com/sublimehq/Packages/fa6b8629c95041bf262d4c1dab95c456a0530122/YAML/YAML.sublime-syntax"
+    },
+    {
+      "path": "syntect-source/LICENSE.txt",
+      "bytes": 1116,
+      "sha256": "c695a20d7feb2463ecc9f0a966c88ed1581e364e1e22796e0ded020b571fa43b",
+      "git_blob": "",
+      "url": "https://raw.githubusercontent.com/trishume/syntect/e4670846ecf16d8832db6c43d531bec466214e27/LICENSE.txt"
+    },
+    {
+      "path": "syntect-source/.gitmodules",
+      "bytes": 560,
+      "sha256": "0e48d82bcae2b953886aa517715efb994733b336e32ff1bfe52bb0c6784d4718",
+      "git_blob": "",
+      "url": "https://raw.githubusercontent.com/trishume/syntect/e4670846ecf16d8832db6c43d531bec466214e27/.gitmodules"
+    },
+    {
+      "path": "syntect-source/examples/syntest.rs",
+      "bytes": 16109,
+      "sha256": "bd17e1e2d194d7f12c8d86e4f10487cb3bc32f77a30f95015841415f97fe4241",
+      "git_blob": "",
+      "url": "https://raw.githubusercontent.com/trishume/syntect/e4670846ecf16d8832db6c43d531bec466214e27/examples/syntest.rs"
+    },
+    {
+      "path": "syntect-source/examples/gendata.rs",
+      "bytes": 2698,
+      "sha256": "ecb616a90a883ef478ea0565134c9c31cd1b5b2f018449421fb7340a592d14a8",
+      "git_blob": "",
+      "url": "https://raw.githubusercontent.com/trishume/syntect/e4670846ecf16d8832db6c43d531bec466214e27/examples/gendata.rs"
+    },
+    {
+      "path": "syntect-source/Makefile",
+      "bytes": 1833,
+      "sha256": "38428851157383df235f37f05555fdaed90f7c4f318b789a15a2f6e56939a2ca",
+      "git_blob": "",
+      "url": "https://raw.githubusercontent.com/trishume/syntect/e4670846ecf16d8832db6c43d531bec466214e27/Makefile"
+    }
+  ]
+}

@@ -19,6 +19,138 @@
     {
       "path": "src/Notepads.Editor/lexilla/License.txt",
       "sha256": "AC32743BD464C837E481BEAE20DF65A9207F84D3FF1912F6003000343E9C753D"
+    },
+    {
+      "path": "src/Notepads.Markdown/LICENSE",
+      "sha256": "8107B452F68818578BE6D479208C2F4806B4C4807A5FA075E6D4A98CC876BFF9"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/Unicode17Grapheme/Unicode-license.txt",
+      "sha256": "E7A93B009565CFCE55919A381437AC4DB883E9DA2126FA28B91D12732BC53D96"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/dugong-0.9.2/LICENSE-APACHE",
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/dugong-0.9.2/LICENSE-MIT",
+      "sha256": "645FE3ACD17F0EC18B05A5CBC8071C16FC888BFA8356D9087C265DF69464D893"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/dugong-0.9.2/THIRD_PARTY_LICENSES/dagre/LICENSE",
+      "sha256": "6A349742A6CB219D5A2FC8D0844F6D89A6EFC62E20C664450D884FC7FF2D6015"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/dugong-graphlib-0.9.2/LICENSE-APACHE",
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/dugong-graphlib-0.9.2/LICENSE-MIT",
+      "sha256": "645FE3ACD17F0EC18B05A5CBC8071C16FC888BFA8356D9087C265DF69464D893"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/dugong-graphlib-0.9.2/THIRD_PARTY_LICENSES/graphlib/LICENSE",
+      "sha256": "6A349742A6CB219D5A2FC8D0844F6D89A6EFC62E20C664450D884FC7FF2D6015"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/merman-0.9.2/LICENSE-APACHE",
+      "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/merman-0.9.2/LICENSE-MIT",
+      "sha256": "645FE3ACD17F0EC18B05A5CBC8071C16FC888BFA8356D9087C265DF69464D893"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/adler2-2.0.1/LICENSE-0BSD",
+      "sha256": "861399F8C21C042B110517E76DC6B63A2B334276C8CF17412FC3C8908CA8DC17"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/adler2-2.0.1/LICENSE-APACHE",
+      "sha256": "8ADA45CD9F843ACF64E4722AE262C622A2B3B3007C7310EF36AC1061A30F6ADB"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/adler2-2.0.1/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/byteorder-lite-0.1.0/LICENSE-MIT",
+      "sha256": "0F96A83840E146E43C0EC96A22EC1F392E0680E6C1226E6F3BA87E0740AF850F"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/color_quant-1.1.0/LICENSE",
+      "sha256": "592DC80F1A865D20D61A2006A2D29CE34A2BC28CD7E868AB300FDEED6DA154CA"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/flate2-1.1.10/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/flate2-1.1.10/LICENSE-MIT",
+      "sha256": "025436EDFF4CFCDDE17A5811FDEA78892D8482EFD1ABDEC5A17872D07A4F2112"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE",
+      "sha256": "4108245A1F2DF9D4E94DF8ABED5B4BA0759BB2F9B40A6B939F1BE141077AE50B"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE-APACHE.md",
+      "sha256": "0D542E0C8804E39AA7F37EB00DA5A762149DC682D7829451287E11B938E94594"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE-MIT.md",
+      "sha256": "799E9CA9D179295EF372F25D3769CDDA7D25BB2668ADD6A6A1E22D1E4C678B8D"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.8.9/LICENSE-ZLIB.md",
+      "sha256": "0A54E647FE54104658B5E563C04C6F9EDF251710E47BCE692E0BD990A4DDAA39"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.9.1/LICENSE",
+      "sha256": "4108245A1F2DF9D4E94DF8ABED5B4BA0759BB2F9B40A6B939F1BE141077AE50B"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.9.1/LICENSE-APACHE.md",
+      "sha256": "0D542E0C8804E39AA7F37EB00DA5A762149DC682D7829451287E11B938E94594"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.9.1/LICENSE-MIT.md",
+      "sha256": "799E9CA9D179295EF372F25D3769CDDA7D25BB2668ADD6A6A1E22D1E4C678B8D"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/miniz_oxide-0.9.1/LICENSE-ZLIB.md",
+      "sha256": "0A54E647FE54104658B5E563C04C6F9EDF251710E47BCE692E0BD990A4DDAA39"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/quick-error-2.0.1/LICENSE-APACHE",
+      "sha256": "C6596EB7BE8581C18BE736C846FB9173B69ECCF6EF94C5135893EC56BD92BA08"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/NativeSvg/quick-error-2.0.1/LICENSE-MIT",
+      "sha256": "058F01FE181608D027FCDE7E528FC03EA3CF90F30903C407644B0A9BBC54F500"
+    },
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/comrak-0.56.0/COPYING",
+      "sha256": "27293E2353CE5D83E07331FFC423051908B062787D148193B8927D50D9873BD5"
+    },
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/pulldown-cmark-0.13.4/LICENSE",
+      "sha256": "C4F10F55904BDB9F27D3FBF94C354926D6CFE8B982276E556238C258941B243B"
+    },
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/toolkit-c8f76d0/License.md",
+      "sha256": "134AA3B1D2C509DCF57196CCAA7B69DB0EB9AE34FA9189C3D683C02D9923175D"
+    },
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/fontations-b373cdbc6043a791fb23b3e0f413649458f5e63a/font-test-data/LICENSE-APACHE",
+      "sha256": "EBA684204073ED715C4ABB48129ACDFD2BFF8AE48339E6A7DA3B341D3027B7F0"
+    },
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/fontations-b373cdbc6043a791fb23b3e0f413649458f5e63a/font-test-data/LICENSE-MIT",
+      "sha256": "7B4C9A3946DFCEA7967582760E963E27799E225DCF20565C8EF55324BB017427"
+    },
+    {
+      "path": "src/Notepads.Markdown/third-party-notices/WHATWG/LICENSE",
+      "sha256": "85DC6F5CCB57A6FE8C33D158F9FC8FC7EE5655A5D3DB2CDD131C6A3D0F48A864"
     }
   ],
   "preserved": [
@@ -75,142 +207,6 @@
             "src/Notepads.App/Controls/InAppNotification/InAppNotificationOpeningEventArgs.cs",
             "src/Notepads.App/Controls/InAppNotification/NotificationOptions.cs",
             "src/Notepads.App/Controls/InAppNotification/StackMode.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "D2B8B659337395EF85B49DD8A5DAE396A06640617BB03C0BEB197C570D02847F",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/CodeBlockResolvingEventArgs.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/ImageResolvingEventArgs.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/LinkClickedEventArgs.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownRenderedEventArgs.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Dimensions.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Events.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Methods.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Properties.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "6158F0D55F05DB5C1C559634DCD6B16FFBB5F43815096D319CF8EC587EBCC8F7",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/CodeBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/HeaderBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/HorizontalRuleBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/LinkReferenceBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/ListBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/ParagraphBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/QuoteBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/TableBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/YamlHeaderBlock.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "AC489150F7215EF145CDE0CFA668FC3FFAE9DD3C47E16EF4751BCEF56BCCDF71",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemBuilder.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemPreamble.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/NestedListInfo.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "B210C7FD9CB9EF9D55F2BF2BE5E22125CAB55499A2246ECD683C1F2462F34D62",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/IParser.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/ParseHelpers.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/SchemaBase.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/StringValueAttribute.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "B62F5403B251745611458A009C6CE2C1D0722FCCA91666E80FAC2649D1BAE3FC",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/ColumnAlignment.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/HyperlinkType.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/InlineParseMethod.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/ListStyle.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/MarkdownBlockType.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/MarkdownInlineType.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "9A184D27987C6BC99555846CB6B5AC75CBC49C143CB2F199263E2CE90CE56FE5",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/Common.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/DebuggingReporter.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/InlineParseResult.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/InlineTripCharHelper.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/LineInfo.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "DF4B2932D6BC1C74AA1F5DF87F88CC6F24D5934442F3B1109716F0813C400E2C",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/BoldItalicTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/BoldTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/CodeInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/CommentInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/EmojiInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/EmojiInline.EmojiCodes.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/HyperlinkInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/IInlineContainer.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/IInlineLeaf.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ILinkElement.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ImageInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ItalicTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/LinkAnchorInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/MarkdownLinkInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/StrikethroughTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/SubscriptTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/SuperscriptTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/TextRunInline.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "B805ADAE9E21C54DCA5DBDF5EAFDFCE5FC5E7AA2731B7A9CFF87AE11FCFEDEF7",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownDocument.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownElement.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownInline.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "FCF76C1B393BF3894A42CDF90073C45A1546B4D9CD11CC3EA190BAD0A2F5844A",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/ICodeBlockResolver.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/IImageResolver.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/ILinkRegister.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/InlineRenderContext.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Blocks.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Dimensions.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Inlines.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Properties.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownTable.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/RenderContext.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/RenderContextIncorrectException.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/UIElementCollectionRenderContext.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "9B8A6970DF9F8A1F7763A4D4ED2F698AD1E661BE7E7AA79F31EBD41CE4027BE1",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/IRenderContext.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.Blocks.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.Inlines.cs"
           ]
         },
         {
@@ -1259,6 +1255,179 @@
         }
       ],
       "withoutHeader": []
+    },
+    {
+      "reason": "Retain Toolkit attribution and upstream formatting; do not replace with a Notepads-only notice.",
+      "license": "LICENSE.txt",
+      "headers": [
+        {
+          "lines": 4,
+          "sha256": "D2B8B659337395EF85B49DD8A5DAE396A06640617BB03C0BEB197C570D02847F",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/CodeBlockResolvingEventArgs.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/ImageResolvingEventArgs.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/LinkClickedEventArgs.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownRenderedEventArgs.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Dimensions.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Events.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Methods.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Properties.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "6158F0D55F05DB5C1C559634DCD6B16FFBB5F43815096D319CF8EC587EBCC8F7",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/CodeBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/HeaderBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/HorizontalRuleBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/LinkReferenceBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/ListBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/ParagraphBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/QuoteBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/TableBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/YamlHeaderBlock.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "AC489150F7215EF145CDE0CFA668FC3FFAE9DD3C47E16EF4751BCEF56BCCDF71",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemBuilder.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemPreamble.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/NestedListInfo.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "B210C7FD9CB9EF9D55F2BF2BE5E22125CAB55499A2246ECD683C1F2462F34D62",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/IParser.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/ParseHelpers.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/SchemaBase.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/StringValueAttribute.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "B62F5403B251745611458A009C6CE2C1D0722FCCA91666E80FAC2649D1BAE3FC",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/ColumnAlignment.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/HyperlinkType.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/InlineParseMethod.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/ListStyle.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/MarkdownBlockType.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/MarkdownInlineType.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "9A184D27987C6BC99555846CB6B5AC75CBC49C143CB2F199263E2CE90CE56FE5",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/Common.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/DebuggingReporter.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/InlineParseResult.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/InlineTripCharHelper.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/LineInfo.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "DF4B2932D6BC1C74AA1F5DF87F88CC6F24D5934442F3B1109716F0813C400E2C",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/BoldItalicTextInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/BoldTextInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/CodeInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/CommentInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/EmojiInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/EmojiInline.EmojiCodes.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/HyperlinkInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/IInlineContainer.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/IInlineLeaf.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ILinkElement.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ImageInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ItalicTextInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/LinkAnchorInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/MarkdownLinkInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/StrikethroughTextInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/SubscriptTextInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/SuperscriptTextInline.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/TextRunInline.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "B805ADAE9E21C54DCA5DBDF5EAFDFCE5FC5E7AA2731B7A9CFF87AE11FCFEDEF7",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownBlock.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownDocument.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownElement.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownInline.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "FCF76C1B393BF3894A42CDF90073C45A1546B4D9CD11CC3EA190BAD0A2F5844A",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/ICodeBlockResolver.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/IImageResolver.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/ILinkRegister.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/InlineRenderContext.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Blocks.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Dimensions.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Inlines.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Properties.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownTable.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/RenderContext.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/RenderContextIncorrectException.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/UIElementCollectionRenderContext.cs"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "9B8A6970DF9F8A1F7763A4D4ED2F698AD1E661BE7E7AA79F31EBD41CE4027BE1",
+          "paths": [
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/IRenderContext.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.Blocks.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.cs",
+            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.Inlines.cs"
+          ]
+        }
+      ],
+      "withoutHeader": []
+    }
+  ],
+  "sourceModules": [
+    {
+      "path": "src/Notepads.Markdown",
+      "license": "src/Notepads.Markdown/LICENSE",
+      "licenseName": "LICENSE file",
+      "allowCompactBanner": true
+    }
+  ],
+  "upstreamTrees": [
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/comrak-0.56.0",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/tests/baselines/comrak-0.56.0/COPYING"
+    },
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/pulldown-cmark-0.13.4",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/tests/baselines/pulldown-cmark-0.13.4/LICENSE"
+    },
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/toolkit-c8f76d0",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/tests/baselines/toolkit-c8f76d0/License.md"
+    },
+    {
+      "path": "src/Notepads.Markdown/tests/baselines/fontations-b373cdbc6043a791fb23b3e0f413649458f5e63a",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/tests/baselines/fontations-b373cdbc6043a791fb23b3e0f413649458f5e63a/font-test-data/LICENSE-APACHE"
     }
   ]
 }

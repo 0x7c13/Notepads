@@ -1,0 +1,19 @@
+selectors 0.37.0 — The Servo Project Developers
+
+This unmodified third-party crate is governed by MPL-2.0. Its original
+source-file license notices are preserved in the source archive.
+Notepads' MIT license does not replace these terms.
+
+Complete corresponding source, including the original Cargo.toml and headers:
+https://static.crates.io/crates/selectors/selectors-0.37.0.crate
+
+The exact original source archive SHA256 is recorded in the accompanying
+dependency-notices.json, together with its published VCS commit.
+
+The published crate omits a stand-alone full license text. The accompanying
+selectors-LICENSE-MPL-2.0.html is the unchanged license page downloaded from
+the license steward on 2026-10-24:
+https://www.mozilla.org/en-US/MPL/2.0/
+
+This notice describes the source and license location; it does not claim
+that every optional function in the crate is linked or executed.

@@ -1,0 +1,9 @@
+[^foo][]
+
+[^foo][baz]
+
+[baz][^foo]
+
+[^foo]: bar
+
+[baz]: https://rust-lang.org

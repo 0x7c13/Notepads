@@ -1,0 +1,15 @@
+feature test {
+    # this will be ordered first in lookup list but has a rule that will be hit last
+    lookup three {
+        sub c by d;
+    } three;
+
+    lookup one {
+        sub a by b;
+    } one;
+
+    lookup two {
+        sub b by c;
+    } two;
+} test;
+
