@@ -1,0 +1,682 @@
+{
+  "version": "0.1.15",
+  "publishedVcs": "7d9f9a39218914bead8ffdf39b79028a01d12c22",
+  "fixtureVcs": "5f7dc4883aba8eeb30fe34f8a104923f43f734bf",
+  "files": [
+    {
+      "path": "ratex-types/.cargo_vcs_info.json",
+      "bytes": 112,
+      "sha256": "700D82A51DB9F18F0DE33E422638096696BDB976F1A7C32FE816B80F32BEAF04"
+    },
+    {
+      "path": "ratex-types/.cargo-ok",
+      "bytes": 7,
+      "sha256": "AFBF9D0F3560B0FD7795E81C42A0A79EE6B6FC67E064F77826AEE642CAD28D91"
+    },
+    {
+      "path": "ratex-types/Cargo.lock",
+      "bytes": 2669,
+      "sha256": "8BFBD21B3274BEEEE02E338154F7636C100CE4ECB20D4C4F9DE70ACDEB93C2B6"
+    },
+    {
+      "path": "ratex-types/Cargo.toml",
+      "bytes": 1048,
+      "sha256": "BA75B765371A5E02872BEE6FD210690316467C26C0E5CDFF2188C78ADFD14566"
+    },
+    {
+      "path": "ratex-types/Cargo.toml.orig",
+      "bytes": 357,
+      "sha256": "BA5A954632E62B3FF35C1319AE5B0E6A1BD0DCE4665DFA20CBE9998543D36813"
+    },
+    {
+      "path": "ratex-types/src/color.rs",
+      "bytes": 11790,
+      "sha256": "4490B0F0769571C2F173C613B7C7A458FF9845F2EDFC0B6336D30CCA95DBF3B3"
+    },
+    {
+      "path": "ratex-types/src/display_item.rs",
+      "bytes": 3814,
+      "sha256": "C416861F614694483B1033706A73B6049E1B271C37985F254296653E9AC83220"
+    },
+    {
+      "path": "ratex-types/src/lib.rs",
+      "bytes": 329,
+      "sha256": "9BF3338BE62FE4CC87A9DB6DB604A794C76191E7DB25F7DD7D41403940C1A6D3"
+    },
+    {
+      "path": "ratex-types/src/math_style.rs",
+      "bytes": 9629,
+      "sha256": "46C4C67FB84BCE086CFFEC868047E7C8241DF16BE0CC1BF60E177BA26471DCA1"
+    },
+    {
+      "path": "ratex-types/src/path_command.rs",
+      "bytes": 1356,
+      "sha256": "C59EAF7E060E664F4363C9BE276ACB350E7968B3914E6648F9232C6530DF0E3E"
+    },
+    {
+      "path": "ratex-types/src/unicode_scripts.rs",
+      "bytes": 5084,
+      "sha256": "8FEABD7D01231B341744600077982140203FC4BCAA97D238A01B3AFD3072CBAB"
+    },
+    {
+      "path": "ratex-lexer/.cargo_vcs_info.json",
+      "bytes": 112,
+      "sha256": "A871975317F152669BF76326975761A98E19BE82CA795F4201812C34950847D9"
+    },
+    {
+      "path": "ratex-lexer/.cargo-ok",
+      "bytes": 7,
+      "sha256": "AFBF9D0F3560B0FD7795E81C42A0A79EE6B6FC67E064F77826AEE642CAD28D91"
+    },
+    {
+      "path": "ratex-lexer/Cargo.lock",
+      "bytes": 2822,
+      "sha256": "B503B748BBBB72B62F57F304142C48B015874491896C153267582FE80282F4D6"
+    },
+    {
+      "path": "ratex-lexer/Cargo.toml",
+      "bytes": 1107,
+      "sha256": "FA261E73368FD253FEF6F7BB20ADD3B8112D195900FDBA1F1B2CD5919D285817"
+    },
+    {
+      "path": "ratex-lexer/Cargo.toml.orig",
+      "bytes": 388,
+      "sha256": "250C1C6CFFF07890884F5577841AF5A377E0FF0A0AA6801A1DB5A6B340FBF6E1"
+    },
+    {
+      "path": "ratex-lexer/src/lexer.rs",
+      "bytes": 28734,
+      "sha256": "6F6792FF520BAAA481D89D8C128556B58202C43C4313017265803F99EF923697"
+    },
+    {
+      "path": "ratex-lexer/src/lib.rs",
+      "bytes": 88,
+      "sha256": "8D17FD1E684CC3AEF9CA93365705391B67FE65140389A3BFA1161606A8355341"
+    },
+    {
+      "path": "ratex-lexer/src/token.rs",
+      "bytes": 4559,
+      "sha256": "29D0F2E30895E9A4900C3DC5403FC1676D88482CFA10193AB06B17F4A783C184"
+    },
+    {
+      "path": "ratex-lexer/src/bin/lex.rs",
+      "bytes": 942,
+      "sha256": "5B207FA7BCB5715BA9B9B5CA39D5799EB1D9DD2AF6F35AEDF3DCE6A1FB5EE679"
+    },
+    {
+      "path": "ratex-parser/.cargo_vcs_info.json",
+      "bytes": 113,
+      "sha256": "5B9001C3D22BC71FE2801B1BBC72910AB811D04E61FE2CCC60CED8271CAB71C7"
+    },
+    {
+      "path": "ratex-parser/.cargo-ok",
+      "bytes": 7,
+      "sha256": "AFBF9D0F3560B0FD7795E81C42A0A79EE6B6FC67E064F77826AEE642CAD28D91"
+    },
+    {
+      "path": "ratex-parser/Cargo.lock",
+      "bytes": 8126,
+      "sha256": "0DCC309C325865F47DD35AA227C115EED339A6925FD0F619EED85670DC047FD2"
+    },
+    {
+      "path": "ratex-parser/Cargo.toml",
+      "bytes": 1647,
+      "sha256": "EEDDD6CC86E78C7715713CD97BECAD9655EC0970A058E8A14544250EFF9749CF"
+    },
+    {
+      "path": "ratex-parser/Cargo.toml.orig",
+      "bytes": 586,
+      "sha256": "F08294E95129A9DB8E8D403D153B9F14E95DC50EA2379E43C5E317F92942F1FC"
+    },
+    {
+      "path": "ratex-parser/src/environments.rs",
+      "bytes": 48702,
+      "sha256": "267EA347B44F639FE9A51DDD146C0B49B857F7C4A84CC56365D3EA31F0CD3C38"
+    },
+    {
+      "path": "ratex-parser/src/error.rs",
+      "bytes": 1272,
+      "sha256": "44936826AA92D4E2DE10FDA53128E559ECDB9158C7DFA95F13A443BBA051A74D"
+    },
+    {
+      "path": "ratex-parser/src/expansion_budget.rs",
+      "bytes": 6139,
+      "sha256": "9E5101217E4E151A6BB3FD9B373EC06292FD8E6DC65E62E3FF580D6FC3A2A01C"
+    },
+    {
+      "path": "ratex-parser/src/lib.rs",
+      "bytes": 359,
+      "sha256": "3B21AB7D0487C9D1CA8BBC29786E94A2A02DE4BE0756AE9A879535BC43D76980"
+    },
+    {
+      "path": "ratex-parser/src/macro_expander.rs",
+      "bytes": 53545,
+      "sha256": "55916593EF04C3B8C4C5501A3E50053BD85AC9120143782AA24502408E9AF980"
+    },
+    {
+      "path": "ratex-parser/src/parse_node.rs",
+      "bytes": 32239,
+      "sha256": "6E6733B3823E5239D8C3E33E996E85A5F6E865F1340B4342A99853458C4D06C7"
+    },
+    {
+      "path": "ratex-parser/src/parser.rs",
+      "bytes": 51057,
+      "sha256": "DE21967C33C69C2F1A56D796336362F5B47A0D32189B4C90EBD564EA033E8B29"
+    },
+    {
+      "path": "ratex-parser/src/stack_safety.rs",
+      "bytes": 19963,
+      "sha256": "917FC40CA3ED07735B68C14E1B487A4FFC16F9ACFAFD357AD5FBA33330E43206"
+    },
+    {
+      "path": "ratex-parser/src/tests.rs",
+      "bytes": 45352,
+      "sha256": "9CAA701FD4B35A81E40F5B30615BB7DEEF2406E4B6A1D1BE30B35DF4ADDA4A6D"
+    },
+    {
+      "path": "ratex-parser/src/unicode_sup_sub.rs",
+      "bytes": 3725,
+      "sha256": "29058DE5F92BA8C6377EF01E5EC9E169A30F0A5CA3BFFBF5F85A2FD0586D12DC"
+    },
+    {
+      "path": "ratex-parser/src/bin/parse.rs",
+      "bytes": 926,
+      "sha256": "62402C78360D1F275F56BB67B6ECBE81FE566E621F773FD402438C2137FD9B6D"
+    },
+    {
+      "path": "ratex-parser/src/functions/accent.rs",
+      "bytes": 3998,
+      "sha256": "D9AED86F7117DBEB47B575D4BAD14338D1DBAEA26B77A0AA29794EF9014564EA"
+    },
+    {
+      "path": "ratex-parser/src/functions/arrow.rs",
+      "bytes": 1601,
+      "sha256": "298A9226DCBBCE0DFF195D29445FFE2A18BF8E83F0BC85EA2ACFA2813A460696"
+    },
+    {
+      "path": "ratex-parser/src/functions/bussproofs.rs",
+      "bytes": 940,
+      "sha256": "E0E82AB25559FBE2ADFACE3B18B8C63F1B9A3DC3C7B2A950CAD82733428799A6"
+    },
+    {
+      "path": "ratex-parser/src/functions/char_cmd.rs",
+      "bytes": 1568,
+      "sha256": "9E597559A4015349A4770EE6D47482CA25C3836604B56F06996102CCA0B6C46D"
+    },
+    {
+      "path": "ratex-parser/src/functions/color.rs",
+      "bytes": 3976,
+      "sha256": "71232C7340C38BDDD575DF4DBDA4C70754F9BAC4479F1F01ACEC45269E919281"
+    },
+    {
+      "path": "ratex-parser/src/functions/cr.rs",
+      "bytes": 1125,
+      "sha256": "FAD541D130CD5C82E4B7615B6459FF50368A53910FC05052B4B6CCB064C4A4EC"
+    },
+    {
+      "path": "ratex-parser/src/functions/def.rs",
+      "bytes": 7541,
+      "sha256": "D53C30804DA8CAA80D9DA5D63667314F022F2E4BDE6B161DCD46FCCC30F3A960"
+    },
+    {
+      "path": "ratex-parser/src/functions/delimsizing.rs",
+      "bytes": 4445,
+      "sha256": "D22153DF0849CB4DD7B9FEA032929D0C34FEDDD5B0784C95D5E80CC28AF8E7F0"
+    },
+    {
+      "path": "ratex-parser/src/functions/enclose.rs",
+      "bytes": 2764,
+      "sha256": "9511701AA4E90DECC0D9738083084B1A92E5CF53BD993D55C81627D898270F87"
+    },
+    {
+      "path": "ratex-parser/src/functions/environment.rs",
+      "bytes": 4223,
+      "sha256": "9BADEACFBAF93C2491B10F1E0B82481A6EF3C97E76BC3B5315A40F27A64AA9CE"
+    },
+    {
+      "path": "ratex-parser/src/functions/font.rs",
+      "bytes": 4075,
+      "sha256": "7D0D369C3580577A10E3205878228B086DDA526289014025DD86F0C68F9EA8B2"
+    },
+    {
+      "path": "ratex-parser/src/functions/genfrac.rs",
+      "bytes": 7692,
+      "sha256": "13E51680240F921339F3A4EACFF76DD7CD8D8B7E566BC70B0E07836C3493FD1B"
+    },
+    {
+      "path": "ratex-parser/src/functions/hbox.rs",
+      "bytes": 784,
+      "sha256": "761F802C331766B01AE5E93871425A044A02D0EA1180797DE2C06DEAFCDEF86F"
+    },
+    {
+      "path": "ratex-parser/src/functions/horiz_brace.rs",
+      "bytes": 1014,
+      "sha256": "89494B99BD9A28844623742C7FB6BD022CE9BE7C5D221A8DCCDF9B15D3A768BA"
+    },
+    {
+      "path": "ratex-parser/src/functions/href.rs",
+      "bytes": 2164,
+      "sha256": "09DB95BBAEE10E3A537E88444C5CB4BAE381A683619A6F6BE31DA932D16A50F6"
+    },
+    {
+      "path": "ratex-parser/src/functions/htmlmathml.rs",
+      "bytes": 1782,
+      "sha256": "CC20F57F26B654693D394CE686F9EDBEDF10FFB4077D70B8674F9A0BE05615EE"
+    },
+    {
+      "path": "ratex-parser/src/functions/kern.rs",
+      "bytes": 1007,
+      "sha256": "1030C7DAB8C0D1CEC16BB3A077808EF880F7C08285F1FF0B524041DD127C98B0"
+    },
+    {
+      "path": "ratex-parser/src/functions/lap.rs",
+      "bytes": 840,
+      "sha256": "F6393EEA359B3634D614FAE17C06528611E5891864DCC40BBB208FECA5B1E026"
+    },
+    {
+      "path": "ratex-parser/src/functions/left_right.rs",
+      "bytes": 2928,
+      "sha256": "CFEBD476B490339CFEB7CEF753092A113ED5B3E9D43EEB88EE76CC0ED410000C"
+    },
+    {
+      "path": "ratex-parser/src/functions/math.rs",
+      "bytes": 1513,
+      "sha256": "3BF426CD951773AC3D33C05EEBDCF343AFB7022AC7B8252FDD02DD9D3E24E9CF"
+    },
+    {
+      "path": "ratex-parser/src/functions/mathchoice.rs",
+      "bytes": 1080,
+      "sha256": "31E2F084AF06FAC3716D801A58FC066A1337E72CE64F4F1FE05AE0FB526DC574"
+    },
+    {
+      "path": "ratex-parser/src/functions/mclass.rs",
+      "bytes": 3925,
+      "sha256": "117A6189D862C86C061A3A64F109478F150E23FCBBCCD1F7CF57B84130D16412"
+    },
+    {
+      "path": "ratex-parser/src/functions/mod.rs",
+      "bytes": 5339,
+      "sha256": "0A8F1B1D19FA6136C6AFB2915A753F64A33FD3537E6EEFC795F653207AD23B1E"
+    },
+    {
+      "path": "ratex-parser/src/functions/nonumber.rs",
+      "bytes": 606,
+      "sha256": "8763B671D18FDA87D08D8F057D2A1D1AA9012B400A727337E9793CEF0D3AF347"
+    },
+    {
+      "path": "ratex-parser/src/functions/op.rs",
+      "bytes": 6364,
+      "sha256": "BFD49CC44C026AD564E8BDE05AA8E67F7967BF4390F69446D18ADDACAF10E457"
+    },
+    {
+      "path": "ratex-parser/src/functions/operatorname.rs",
+      "bytes": 1007,
+      "sha256": "581E2F97C7DF38AAE3ECC171EC0A219AACDA3892B1C8D398D7CD6D0607478AA8"
+    },
+    {
+      "path": "ratex-parser/src/functions/overline.rs",
+      "bytes": 1304,
+      "sha256": "08F8CAB0258C22B97ACC3427BE5351D1401F33B89AAAF438C2FD165B3EAC5EC7"
+    },
+    {
+      "path": "ratex-parser/src/functions/phantom.rs",
+      "bytes": 2549,
+      "sha256": "B07DF3C3A17FA6FA205BFDBB241F466DEB41F94012CBCE68037EEAA905A93EBE"
+    },
+    {
+      "path": "ratex-parser/src/functions/pmb.rs",
+      "bytes": 1333,
+      "sha256": "0C3F23DB3DF62D0393FA04FF2E23741294EED1382A8F72F7A9124363E76BC13D"
+    },
+    {
+      "path": "ratex-parser/src/functions/raisebox.rs",
+      "bytes": 1046,
+      "sha256": "E3B5DACE86B241933E7FA18FB6A0E9342DB40680E22C0A033B1DAFA41B0FF1E0"
+    },
+    {
+      "path": "ratex-parser/src/functions/relax.rs",
+      "bytes": 735,
+      "sha256": "4C41F96EE1EE21499C2A4FC66FD05ED82DFCA01B85EEFA8FECB2B609DAAE2902"
+    },
+    {
+      "path": "ratex-parser/src/functions/rule.rs",
+      "bytes": 1384,
+      "sha256": "B1207094D24F5E6CE4B4D965F9F6C9B8801695D3E00B97088CB5FCEC24B891C5"
+    },
+    {
+      "path": "ratex-parser/src/functions/sizing.rs",
+      "bytes": 1221,
+      "sha256": "D6E8C4DDA8B187EA7B50E55D12F544DC47AF82484C43DCB204A3DD579A8F768D"
+    },
+    {
+      "path": "ratex-parser/src/functions/spacing.rs",
+      "bytes": 2057,
+      "sha256": "548DCA8378D5658D462801CE034567C0953C345D94C8924E9D062AA9CC20BCA7"
+    },
+    {
+      "path": "ratex-parser/src/functions/sqrt.rs",
+      "bytes": 877,
+      "sha256": "D75FF25AC41547F48E6F8082BB7A79EA65C5FA1CFB2F8F241799845D8CD281EB"
+    },
+    {
+      "path": "ratex-parser/src/functions/styling.rs",
+      "bytes": 1279,
+      "sha256": "3735A26DAFEDE3DA6B2465FA69023C05768ADC199888B8668BE0CA810045A17F"
+    },
+    {
+      "path": "ratex-parser/src/functions/symbols_cmd.rs",
+      "bytes": 446,
+      "sha256": "3201D736E239EE0BDFEE3E023855B7227A5E4B213161B2EB3A0E99AC60675F0A"
+    },
+    {
+      "path": "ratex-parser/src/functions/tag.rs",
+      "bytes": 1592,
+      "sha256": "41C64C52D459175E92CCA03CDB1FE3BAC03091E2AC737955F5C3793B20473FE7"
+    },
+    {
+      "path": "ratex-parser/src/functions/text.rs",
+      "bytes": 1203,
+      "sha256": "504E490742E1E35C0B76AE9270B45C1C5D51D718820E9C31FF6C99D2AEAE20D4"
+    },
+    {
+      "path": "ratex-parser/src/functions/vcenter.rs",
+      "bytes": 790,
+      "sha256": "04AD1D87CBC4B3D7833A45C0D3FDCA5E37970CCC126223E89CF8EFFCC22E7FF6"
+    },
+    {
+      "path": "ratex-parser/src/functions/verb.rs",
+      "bytes": 251,
+      "sha256": "B2222892106DCE585A4D1DCF3E41DC7210E3EDEED5A98A6848104654B8342DED"
+    },
+    {
+      "path": "ratex-parser/src/macro_expander/resource_tests.rs",
+      "bytes": 9999,
+      "sha256": "A26E3232966D72B19345C684C31901B00A0CFACA969A05EE273844F725243451"
+    },
+    {
+      "path": "ratex-parser/src/macro_expander/template.rs",
+      "bytes": 5881,
+      "sha256": "929E4F881E74E42DE14D1B634AA7CAEC19C617EF519DA2ECAF565C63298A4C2B"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/actions.rs",
+      "bytes": 28582,
+      "sha256": "A73174F031965DE35569B41014FEBCFC66776633992572B16749C9094A853EA8"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/buffer.rs",
+      "bytes": 2145,
+      "sha256": "C1BC350A9A10CB3DA9D09D7D9B2C9017F170D035130B0D0186FA17CF7226F1D8"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/data.rs",
+      "bytes": 1761,
+      "sha256": "31BB5647238E11D70F1B8F54067C76237E4BE4CE8792B579DCD1A8BA758C9521"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/engine.rs",
+      "bytes": 3440,
+      "sha256": "4A058CBCAC218432ECE8553D60FB6B22618764ABBF8C70F604AC5385F028690E"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/error.rs",
+      "bytes": 351,
+      "sha256": "4560F108FD57D2B0217E6B6C2B23EDDB4B6099F435CF44D18F279987138AC992"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/json.rs",
+      "bytes": 1095,
+      "sha256": "FD1DD116181F01A73ED8EE30B035A8D0F74F5AC17CD4260E27645739A6C92746"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/mod.rs",
+      "bytes": 7040,
+      "sha256": "66FF0E9E5C42ADDD5A966292C0B55782FE2BD2068CC1C25CA7DA29C06074CDD2"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/patterns.rs",
+      "bytes": 18052,
+      "sha256": "A6D9CF531F1D39B40001DA340D6C3640901FFCCD4C6E24B0EC345844256512EF"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/resources.rs",
+      "bytes": 6726,
+      "sha256": "7D5ADD0C692143BE753045F83B6026C3F62C85F55593F512658EBEB4CC4D0326"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/texify.rs",
+      "bytes": 15361,
+      "sha256": "E1986CA550BAFC4C74E8F4CDE6C8AB0995776C587C11CFB8FDCBD9AF66AD4855"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/data/machines.json",
+      "bytes": 169727,
+      "sha256": "A2CC8FEC95C244DC24460EF44CEB34F77DD0463069147A02F648A3FCC8C2EE31"
+    },
+    {
+      "path": "ratex-parser/src/mhchem/data/patterns_regex.json",
+      "bytes": 3731,
+      "sha256": "15E4FAAEF81DD40A172413AC952C0676677C938313D91A4FE74452E2F234C799"
+    },
+    {
+      "path": "ratex-parser/tests/ce_line91_brace.rs",
+      "bytes": 1506,
+      "sha256": "AA97435C42BF2510BFA4557E9CD6777E8314A2B8FF5CF6E47BC49CAFE6999D00"
+    },
+    {
+      "path": "ratex-parser/tests/char_numeric.rs",
+      "bytes": 2651,
+      "sha256": "EAD84F76E2FA482D1E672AE843E375F1B288FD4AD32090C2E7F9C38ADDF5C0E0"
+    },
+    {
+      "path": "ratex-parser/tests/expansion_allocations.rs",
+      "bytes": 6878,
+      "sha256": "E8250A3F75C83FBCB8015DE0839B99AC0EDA502133F99EE59D9A800F35852DC5"
+    },
+    {
+      "path": "ratex-layout/.cargo_vcs_info.json",
+      "bytes": 113,
+      "sha256": "BCFC3B8FD41BCD4348529AFFF18F12A111B5786BFDBF72436CE00F9CA482DD46"
+    },
+    {
+      "path": "ratex-layout/.cargo-ok",
+      "bytes": 7,
+      "sha256": "AFBF9D0F3560B0FD7795E81C42A0A79EE6B6FC67E064F77826AEE642CAD28D91"
+    },
+    {
+      "path": "ratex-layout/Cargo.lock",
+      "bytes": 8405,
+      "sha256": "7781FC40B9D52E2F34802F6F2F3885A1848E1AF774AA22E60BCAE48A855DE10A"
+    },
+    {
+      "path": "ratex-layout/Cargo.toml",
+      "bytes": 1759,
+      "sha256": "07AAAFEE291059F11FBA3667CC521FD55964EB6E8F93EE138EE1A6D6D43D3F7A"
+    },
+    {
+      "path": "ratex-layout/Cargo.toml.orig",
+      "bytes": 450,
+      "sha256": "4635C1C6F7FF6633C6B9CF37B8207F37BAE3BA38F8493FDCDA85780CBE2A4162"
+    },
+    {
+      "path": "ratex-layout/src/engine.rs",
+      "bytes": 261663,
+      "sha256": "64FB0816E5DB940AA8C142229A7AE4BF2DD4833CBCAE1FC8CE7E1A6AC365B73B"
+    },
+    {
+      "path": "ratex-layout/src/hbox.rs",
+      "bytes": 2109,
+      "sha256": "7758AEC0F4A175035B1965EEA9E713F33611C52DCD483EAC3D42D45A086F60DC"
+    },
+    {
+      "path": "ratex-layout/src/katex_svg.rs",
+      "bytes": 68654,
+      "sha256": "ACB452E63FFD1F8B8F6158A5124BF5954BF88152BE0081CE86A132B46FA8FC4E"
+    },
+    {
+      "path": "ratex-layout/src/layout_box.rs",
+      "bytes": 9172,
+      "sha256": "7D1148D66358D8CBD7301FF46F623A09B5B24E5CF29896F77B9964C2310DE6EC"
+    },
+    {
+      "path": "ratex-layout/src/layout_options.rs",
+      "bytes": 3294,
+      "sha256": "AFA2C85ACF813791244B7DACA11721E3F43D9A31529268682FA4C8D28BAEBDBA"
+    },
+    {
+      "path": "ratex-layout/src/lib.rs",
+      "bytes": 481,
+      "sha256": "041720D60C37C279CB9834191413354FF1EC7DDC3E31BE6937D97A1D984E5553"
+    },
+    {
+      "path": "ratex-layout/src/resource_limits.rs",
+      "bytes": 9237,
+      "sha256": "9F2B19501ED87FAB7CD8B680B5A4597F107667E9F47157EB9951B0DB98154F0B"
+    },
+    {
+      "path": "ratex-layout/src/scoped_options.rs",
+      "bytes": 4198,
+      "sha256": "059C42707D3043F2244CA8D1537C2EF8992D8553F38C11FB15D65A697055B68E"
+    },
+    {
+      "path": "ratex-layout/src/spacing.rs",
+      "bytes": 3891,
+      "sha256": "DE4E38FD483CD5DBDF11797BC77F7345687207B037144757187127EA6BA9D505"
+    },
+    {
+      "path": "ratex-layout/src/stacked_delim.rs",
+      "bytes": 14481,
+      "sha256": "FEDE1FC5C2985391199CACAFF2221CEEF8DA74C2583A88E010E59DDEA2F0E57B"
+    },
+    {
+      "path": "ratex-layout/src/surd.rs",
+      "bytes": 502,
+      "sha256": "43D58C1870AC0CA04ACA640F166A6CB0A260B3D567743CE5BFDE18BD1C3D0CF5"
+    },
+    {
+      "path": "ratex-layout/src/to_display.rs",
+      "bytes": 40664,
+      "sha256": "81C1A415344054FD7F5E67172AF7589FEC0FD117B76C10ACCA06D11BE7FC10BD"
+    },
+    {
+      "path": "ratex-layout/src/vbox.rs",
+      "bytes": 3531,
+      "sha256": "05608269E3110593B18506F76683ABAE67AB8AF28860E863911B379E06EB6C7F"
+    },
+    {
+      "path": "ratex-layout/src/bin/layout.rs",
+      "bytes": 2085,
+      "sha256": "749F9A540D20CA8CE9F927882A993C47F74AAF6244410FE3F0B97E5ED1863B3F"
+    },
+    {
+      "path": "ratex-layout/tests/ce_co2_cjk_glyphs.rs",
+      "bytes": 1176,
+      "sha256": "579A101C9CCFE1E457D74EB250C58FFD56E29E46BEF438DCDD3F4243866F365E"
+    },
+    {
+      "path": "ratex-layout/tests/centernot.rs",
+      "bytes": 6256,
+      "sha256": "727F34D09DC3BA4C32B3F5052FA60945299A477E8FBD65F4CB3AF536B7C51BBA"
+    },
+    {
+      "path": "ratex-layout/tests/domain_boundaries.rs",
+      "bytes": 3132,
+      "sha256": "C1057DA1727D52492A32B62B06369A65BB3B71B83CA8EE42B8D57CAB820EA2E7"
+    },
+    {
+      "path": "ratex-layout/tests/fallback_metrics.rs",
+      "bytes": 5119,
+      "sha256": "EC02E4C286ABAF9F22A139C9EED4A34A58876CAE94E0AD9C2AF0B98D2CECF593"
+    },
+    {
+      "path": "ratex-layout/tests/layout_vs_katex.rs",
+      "bytes": 25387,
+      "sha256": "E2CD2E2EFDE0E2736F23A02C706F4B782BEAB28BF6E60182354841633795D1F2"
+    },
+    {
+      "path": "ratex-layout/tests/public_layout_api.rs",
+      "bytes": 4846,
+      "sha256": "2397EA7CB69D62B848B42B41F2B0583620EFED810AD57738BD5C0D03873CDF70"
+    },
+    {
+      "path": "ratex-layout/tests/resource_safety.rs",
+      "bytes": 10635,
+      "sha256": "1313D0A5599AD571F67491377566E0808594CF1972B997421773BFD5A313A7CD"
+    },
+    {
+      "path": "ratex-layout/tests/slashed.rs",
+      "bytes": 7909,
+      "sha256": "5FDDC62F6B8583445FCCB8384C633B3CFE35DD02431B0FC474B3913352D6FEB8"
+    },
+    {
+      "path": "ratex-layout/tests/stack_safety.rs",
+      "bytes": 8440,
+      "sha256": "6EFD20300BB13A9D66E5CE9569E8961CF9E9431C94B8A4A6CE3CBB42D5BFEEB4"
+    },
+    {
+      "path": "ratex-font/.cargo_vcs_info.json",
+      "bytes": 111,
+      "sha256": "ABE006FEAE8BB1BAFAF140F67FDA61D8C1E7B62189360D51D7D60ECF2F909904"
+    },
+    {
+      "path": "ratex-font/.cargo-ok",
+      "bytes": 7,
+      "sha256": "AFBF9D0F3560B0FD7795E81C42A0A79EE6B6FC67E064F77826AEE642CAD28D91"
+    },
+    {
+      "path": "ratex-font/Cargo.lock",
+      "bytes": 3915,
+      "sha256": "6DCE8A9AABFCF73F860ADD56066033743989CE165D59CCADA48B0AAEE906568E"
+    },
+    {
+      "path": "ratex-font/Cargo.toml",
+      "bytes": 1035,
+      "sha256": "6349BF58410C54C5F8E884386C2BDD42676F57DB7AC1E9106C3592F94F8E571C"
+    },
+    {
+      "path": "ratex-font/Cargo.toml.orig",
+      "bytes": 325,
+      "sha256": "97E98AA9693F5F5D6F78F4EE3ACC95BFC23CF502D2E493EE280AD52649F9F6BB"
+    },
+    {
+      "path": "ratex-font/src/font_id.rs",
+      "bytes": 5860,
+      "sha256": "EA1BC547B43C3A07FC562C27366A934831A544672048113FA5CDCD29027FC538"
+    },
+    {
+      "path": "ratex-font/src/lib.rs",
+      "bytes": 532,
+      "sha256": "8B0BEDBE695ABF716E694E6C27903A03806B01443685D9488136770078939F2A"
+    },
+    {
+      "path": "ratex-font/src/math_alpha.rs",
+      "bytes": 3329,
+      "sha256": "36DDA76E4C5F721615EEA75842FBC2FFA494FD7BEE8838438BC9DB248595D573"
+    },
+    {
+      "path": "ratex-font/src/metrics.rs",
+      "bytes": 14089,
+      "sha256": "6A0977F729A4B8A74FA16367BEE38BA26768811EB28FFAD59EC48C4BFFE99299"
+    },
+    {
+      "path": "ratex-font/src/symbols.rs",
+      "bytes": 10652,
+      "sha256": "2731ECC97A02359BF1F0ACA8DD7C174BD25D0C9DBDD939EB92C2F807CBDA193B"
+    },
+    {
+      "path": "ratex-font/src/data/metrics_data.rs",
+      "bytes": 98093,
+      "sha256": "3D8EDF2F98CBFB9274334F1C2703C234DE6B4B7710004CAFE9BEB2F97F917C47"
+    },
+    {
+      "path": "ratex-font/src/data/mod.rs",
+      "bytes": 44,
+      "sha256": "010472EE1207E352D6AA2D22F3DFA835E50B363D6AAB1A29CF77DC5E834983C6"
+    },
+    {
+      "path": "ratex-font/src/data/symbols_data.rs",
+      "bytes": 90511,
+      "sha256": "C6D18D0D21ED52D9743C2A80D5DF1D565F402C7DEE75B1450F1BD3A4419CA450"
+    }
+  ]
+}

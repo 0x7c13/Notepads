@@ -33,10 +33,7 @@ function Expect-Rejection([string] $Name, [string] $Message, [scriptblock] $Acti
 $sourceBins = @(
     'src/Notepads.Markdown/vendor/ratex-bounded/ratex-layout/src/bin/layout.rs',
     'src/Notepads.Markdown/vendor/ratex-bounded/ratex-lexer/src/bin/lex.rs',
-    'src/Notepads.Markdown/vendor/ratex-bounded/ratex-parser/src/bin/parse.rs',
-    'src/Notepads.Markdown/vendor/ratex-control/ratex-layout/src/bin/layout.rs',
-    'src/Notepads.Markdown/vendor/ratex-control/ratex-lexer/src/bin/lex.rs',
-    'src/Notepads.Markdown/vendor/ratex-control/ratex-parser/src/bin/parse.rs')
+    'src/Notepads.Markdown/vendor/ratex-bounded/ratex-parser/src/bin/parse.rs')
 $included = @('.git/HEAD', '.git/logs/HEAD.log', '.git/objects/ab/history', '.git/bin/history', '.git/obj/index',
     '.gitignore', 'docs/private ignored.md', 'docs/reference/bin/example.rs', 'docs/original-run.log', 'untracked.cs',
     'src/Notepads.App/Assets/ARM64/Release/icon.png', 'src/Notepads.Editor/scintilla/win32/ScintillaWin.cxx') + $sourceBins

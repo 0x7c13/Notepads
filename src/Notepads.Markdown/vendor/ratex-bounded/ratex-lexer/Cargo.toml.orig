@@ -1,0 +1,18 @@
+[package]
+name = "ratex-lexer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+description = "LaTeX lexer for RaTeX"
+
+[[bin]]
+name = "lex"
+path = "src/bin/lex.rs"
+
+[dependencies]
+ratex-types = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }

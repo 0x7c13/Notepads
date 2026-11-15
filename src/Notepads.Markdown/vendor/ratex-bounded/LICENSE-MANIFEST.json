@@ -1,0 +1,14 @@
+{
+  "scope": "Current RaTeX fork attribution; original research import record is archived",
+  "original_import_record_sha256": "B775BB6AD53F382C1FA88A02520FBFD8425E8DA7662AB695329782B5487AA001",
+  "fork_inventory": "vendor/forks.json",
+  "current_notice_inventory": "third-party-notices/MarkdownCore/dependency-notices.json",
+  "font_asset_manifest": "crates/markdown-math/assets/ASSETS.json",
+  "original_license_files": [
+    "vendor/ratex-bounded/licenses/RaTeX-LICENSE.txt",
+    "vendor/ratex-bounded/licenses/RaTeX-THIRD-PARTY-NOTICES.txt",
+    "vendor/ratex-bounded/licenses/KaTeX-LICENSE.txt",
+    "vendor/ratex-bounded/licenses/KaTeX-fonts-NOTICE.txt",
+    "vendor/ratex-bounded/licenses/SIL-OFL-1.1.txt"
+  ]
+}

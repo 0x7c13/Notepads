@@ -1,0 +1,1227 @@
+{
+  "scope": "Exact isolated research graph; not product notices or legal certification",
+  "third_party_packages": 37,
+  "registry_packages": 32,
+  "path_patched_packages": 5,
+  "package_versions_equal_original_audited_spike": true,
+  "original_license_inventory_path": "research/r4-math-spike/dependency-license-manifest.json",
+  "original_license_inventory_sha256": "ae7736855d1fcb1501fc1fbf139ad380593eacbe27c3c5becd9d2041966c16bc",
+  "package_declarations": [
+    {
+      "name": "aho-corasick",
+      "version": "1.1.5",
+      "registry_checksum": "c982642fa9e8606056828ee9a8505737230110bb1099153c79efe865c59d12ba",
+      "declared_spdx": "Unlicense OR MIT",
+      "repository": "https://github.com/BurntSushi/aho-corasick",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/aho-corasick-1.1.5/COPYING",
+          "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+          "bytes": 126
+        },
+        {
+          "path": "licenses/dependencies/aho-corasick-1.1.5/LICENSE-MIT",
+          "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+          "bytes": 1081
+        },
+        {
+          "path": "licenses/dependencies/aho-corasick-1.1.5/UNLICENSE",
+          "sha256": "7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c",
+          "bytes": 1211
+        }
+      ]
+    },
+    {
+      "name": "bit-set",
+      "version": "0.8.0",
+      "registry_checksum": "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3",
+      "declared_spdx": "Apache-2.0 OR MIT",
+      "repository": "https://github.com/contain-rs/bit-set",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/bit-set-0.8.0/LICENSE-APACHE",
+          "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+          "bytes": 10850
+        },
+        {
+          "path": "licenses/dependencies/bit-set-0.8.0/LICENSE-MIT",
+          "sha256": "f51ac2c59a222f7476ce507ca879960e2b64ea64bb2786eefdbeb7b0b538d1b7",
+          "bytes": 1071
+        }
+      ]
+    },
+    {
+      "name": "bit-vec",
+      "version": "0.8.0",
+      "registry_checksum": "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7",
+      "declared_spdx": "Apache-2.0 OR MIT",
+      "repository": "https://github.com/contain-rs/bit-vec",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/bit-vec-0.8.0/LICENSE-APACHE",
+          "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90",
+          "bytes": 10850
+        },
+        {
+          "path": "licenses/dependencies/bit-vec-0.8.0/LICENSE-MIT",
+          "sha256": "f51ac2c59a222f7476ce507ca879960e2b64ea64bb2786eefdbeb7b0b538d1b7",
+          "bytes": 1071
+        }
+      ]
+    },
+    {
+      "name": "fancy-regex",
+      "version": "0.14.0",
+      "registry_checksum": "6e24cb5a94bcae1e5408b0effca5cd7172ea3c5755049c5f3af4cd283a165298",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/fancy-regex/fancy-regex",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/fancy-regex-0.14.0/LICENSE",
+          "sha256": "3bc70e239e91272782006c638fc0452a714d384224f11f0923036b7be07cf9b5",
+          "bytes": 1081
+        }
+      ]
+    },
+    {
+      "name": "itoa",
+      "version": "1.0.18",
+      "registry_checksum": "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/dtolnay/itoa",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/itoa-1.0.18/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/itoa-1.0.18/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "memchr",
+      "version": "2.8.3",
+      "registry_checksum": "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98",
+      "declared_spdx": "Unlicense OR MIT",
+      "repository": "https://github.com/BurntSushi/memchr",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/memchr-2.8.3/COPYING",
+          "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f",
+          "bytes": 126
+        },
+        {
+          "path": "licenses/dependencies/memchr-2.8.3/LICENSE-MIT",
+          "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f",
+          "bytes": 1081
+        },
+        {
+          "path": "licenses/dependencies/memchr-2.8.3/UNLICENSE",
+          "sha256": "7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c",
+          "bytes": 1211
+        }
+      ]
+    },
+    {
+      "name": "phf",
+      "version": "0.11.3",
+      "registry_checksum": "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/rust-phf/rust-phf",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/phf-0.11.3/LICENSE",
+          "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+          "bytes": 1099
+        }
+      ]
+    },
+    {
+      "name": "phf_generator",
+      "version": "0.11.3",
+      "registry_checksum": "3c80231409c20246a13fddb31776fb942c38553c51e871f8cbd687a4cfb5843d",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/rust-phf/rust-phf",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/phf_generator-0.11.3/LICENSE",
+          "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+          "bytes": 1099
+        }
+      ]
+    },
+    {
+      "name": "phf_macros",
+      "version": "0.11.3",
+      "registry_checksum": "f84ac04429c13a7ff43785d75ad27569f2951ce0ffd30a3321230db2fc727216",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/rust-phf/rust-phf",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/phf_macros-0.11.3/LICENSE",
+          "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+          "bytes": 1099
+        }
+      ]
+    },
+    {
+      "name": "phf_shared",
+      "version": "0.11.3",
+      "registry_checksum": "67eabc2ef2a60eb7faa00097bd1ffdb5bd28e62bf39990626a582201b7a754e5",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/rust-phf/rust-phf",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/phf_shared-0.11.3/LICENSE",
+          "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38",
+          "bytes": 1099
+        }
+      ]
+    },
+    {
+      "name": "proc-macro2",
+      "version": "1.0.107",
+      "registry_checksum": "985e7ec9bb745e6ce6535b544d84d6cd6f7ad8bd711c398938ae983b91a766d9",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/dtolnay/proc-macro2",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/proc-macro2-1.0.107/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/proc-macro2-1.0.107/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "quote",
+      "version": "1.0.47",
+      "registry_checksum": "1fbf4db142a473a8d80c26bbf18454ed458bf8d26c8219c331daecfdbd079001",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/dtolnay/quote",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/quote-1.0.47/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/quote-1.0.47/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "rand",
+      "version": "0.8.8",
+      "registry_checksum": "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/rust-random/rand",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/rand-0.8.8/LICENSE-APACHE",
+          "sha256": "35242e7a83f69875e6edeff02291e688c97caafe2f8902e4e19b49d3e78b4cab",
+          "bytes": 9724
+        },
+        {
+          "path": "licenses/dependencies/rand-0.8.8/LICENSE-MIT",
+          "sha256": "209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b",
+          "bytes": 1117
+        }
+      ]
+    },
+    {
+      "name": "rand_core",
+      "version": "0.6.4",
+      "registry_checksum": "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/rust-random/rand",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/rand_core-0.6.4/LICENSE-APACHE",
+          "sha256": "6df43f6f4b5d4587f3d8d71e45532c688fd168afa5fe89d571cb32fa09c4ef51",
+          "bytes": 10282
+        },
+        {
+          "path": "licenses/dependencies/rand_core-0.6.4/LICENSE-MIT",
+          "sha256": "209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b",
+          "bytes": 1117
+        }
+      ]
+    },
+    {
+      "name": "ratex-font",
+      "version": "0.1.15",
+      "registry_checksum": "e4373503a1068c9f7d07862583bbd897ac4d2bdf89d42ac8c65870c33135bf6f",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/erweixin/RaTeX",
+      "supplied_license_files": [],
+      "manual_notice_closure": [
+        "licenses/RaTeX-LICENSE.txt",
+        "licenses/KaTeX-LICENSE.txt",
+        "licenses/Apache-2.0.txt",
+        "licenses/mhchem-reference.js",
+        "licenses/KaTeX-fonts-NOTICE.txt",
+        "licenses/SIL-OFL-1.1.txt"
+      ],
+      "limitation": "Published crate omits root LICENSE/NOTICE; manually retained repository/derived-source notices, not blanket MIT for all assets"
+    },
+    {
+      "name": "ratex-layout",
+      "version": "0.1.15",
+      "registry_checksum": "33c14e7af0d1c60da19e67df1fe08186eb91d0d04e0c6482ae90a8318ec7bb0a",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/erweixin/RaTeX",
+      "supplied_license_files": [],
+      "manual_notice_closure": [
+        "licenses/RaTeX-LICENSE.txt",
+        "licenses/KaTeX-LICENSE.txt",
+        "licenses/Apache-2.0.txt",
+        "licenses/mhchem-reference.js",
+        "licenses/KaTeX-fonts-NOTICE.txt",
+        "licenses/SIL-OFL-1.1.txt"
+      ],
+      "limitation": "Published crate omits root LICENSE/NOTICE; manually retained repository/derived-source notices, not blanket MIT for all assets"
+    },
+    {
+      "name": "ratex-lexer",
+      "version": "0.1.15",
+      "registry_checksum": "2f50074761e3e048f432fd1653f132a333883f02ecccf272599917bf1043a8cd",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/erweixin/RaTeX",
+      "supplied_license_files": [],
+      "manual_notice_closure": [
+        "licenses/RaTeX-LICENSE.txt",
+        "licenses/KaTeX-LICENSE.txt",
+        "licenses/Apache-2.0.txt",
+        "licenses/mhchem-reference.js",
+        "licenses/KaTeX-fonts-NOTICE.txt",
+        "licenses/SIL-OFL-1.1.txt"
+      ],
+      "limitation": "Published crate omits root LICENSE/NOTICE; manually retained repository/derived-source notices, not blanket MIT for all assets"
+    },
+    {
+      "name": "ratex-parser",
+      "version": "0.1.15",
+      "registry_checksum": "51f3c0d7744db2b9b4c0034d3983264543e701cda5268392e5829b2e24bc7624",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/erweixin/RaTeX",
+      "supplied_license_files": [],
+      "manual_notice_closure": [
+        "licenses/RaTeX-LICENSE.txt",
+        "licenses/KaTeX-LICENSE.txt",
+        "licenses/Apache-2.0.txt",
+        "licenses/mhchem-reference.js",
+        "licenses/KaTeX-fonts-NOTICE.txt",
+        "licenses/SIL-OFL-1.1.txt"
+      ],
+      "limitation": "Published crate omits root LICENSE/NOTICE; manually retained repository/derived-source notices, not blanket MIT for all assets"
+    },
+    {
+      "name": "ratex-types",
+      "version": "0.1.15",
+      "registry_checksum": "ae81208192f9898cbd2424aa42fd4472bd79c44a52092673b101cdca72c89b7c",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/erweixin/RaTeX",
+      "supplied_license_files": [],
+      "manual_notice_closure": [
+        "licenses/RaTeX-LICENSE.txt",
+        "licenses/KaTeX-LICENSE.txt",
+        "licenses/Apache-2.0.txt",
+        "licenses/mhchem-reference.js",
+        "licenses/KaTeX-fonts-NOTICE.txt",
+        "licenses/SIL-OFL-1.1.txt"
+      ],
+      "limitation": "Published crate omits root LICENSE/NOTICE; manually retained repository/derived-source notices, not blanket MIT for all assets"
+    },
+    {
+      "name": "regex",
+      "version": "1.13.1",
+      "registry_checksum": "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/rust-lang/regex",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/regex-1.13.1/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "bytes": 10847
+        },
+        {
+          "path": "licenses/dependencies/regex-1.13.1/LICENSE-MIT",
+          "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+          "bytes": 1071
+        }
+      ]
+    },
+    {
+      "name": "regex-automata",
+      "version": "0.4.18",
+      "registry_checksum": "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/rust-lang/regex",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/regex-automata-0.4.18/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "bytes": 10847
+        },
+        {
+          "path": "licenses/dependencies/regex-automata-0.4.18/LICENSE-MIT",
+          "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+          "bytes": 1071
+        }
+      ]
+    },
+    {
+      "name": "regex-lite",
+      "version": "0.1.9",
+      "registry_checksum": "cab834c73d247e67f4fae452806d17d3c7501756d98c8808d7c9c7aa7d18f973",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/rust-lang/regex",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/regex-lite-0.1.9/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "bytes": 10847
+        },
+        {
+          "path": "licenses/dependencies/regex-lite-0.1.9/LICENSE-MIT",
+          "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+          "bytes": 1071
+        }
+      ]
+    },
+    {
+      "name": "regex-syntax",
+      "version": "0.8.11",
+      "registry_checksum": "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/rust-lang/regex",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/regex-syntax-0.8.11/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "bytes": 10847
+        },
+        {
+          "path": "licenses/dependencies/regex-syntax-0.8.11/LICENSE-MIT",
+          "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb",
+          "bytes": 1071
+        }
+      ]
+    },
+    {
+      "name": "serde",
+      "version": "1.0.229",
+      "registry_checksum": "4148590afebada386688f18773da617792bf2ef03ffc1e4cbd2b1d45b023e0ba",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/serde-rs/serde",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/serde-1.0.229/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/serde-1.0.229/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "serde_core",
+      "version": "1.0.229",
+      "registry_checksum": "67dca2c9c51e58a4791a4b1ed58308b39c64224d349a935ab5039aa360942a48",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/serde-rs/serde",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/serde_core-1.0.229/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/serde_core-1.0.229/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "serde_derive",
+      "version": "1.0.229",
+      "registry_checksum": "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/serde-rs/serde",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/serde_derive-1.0.229/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/serde_derive-1.0.229/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "serde_json",
+      "version": "1.0.154",
+      "registry_checksum": "e7e9cc8b1b85264074fbcc02a88680c4096b1e47df8f739dceb03bf482f04bd6",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/serde-rs/json",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/serde_json-1.0.154/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/serde_json-1.0.154/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "siphasher",
+      "version": "1.0.4",
+      "registry_checksum": "33f4fe9184a62d842c9ef383018f3306d8ba224fd9d836f56d7288308847c256",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/jedisct1/rust-siphash",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/siphasher-1.0.4/COPYING",
+          "sha256": "c962ee4d1d05ddc138b202b2540219ebc57893fcf97b364852094a9a94ce1365",
+          "bytes": 281
+        },
+        {
+          "path": "licenses/dependencies/siphasher-1.0.4/LICENSE-APACHE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358
+        },
+        {
+          "path": "licenses/dependencies/siphasher-1.0.4/LICENSE-MIT",
+          "sha256": "f9c4c77baa3828004ee54b8a4f2db2e88ed44a6237a493965bf551fac0fcb62d",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "syn",
+      "version": "2.0.119",
+      "registry_checksum": "872831b642d1a07999a962a351ed35b955ea2cfc8f3862091e2a240a84f17297",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/dtolnay/syn",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/syn-2.0.119/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/syn-2.0.119/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "syn",
+      "version": "3.0.9",
+      "registry_checksum": "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/dtolnay/syn",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/syn-3.0.9/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/syn-3.0.9/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "thiserror",
+      "version": "1.0.69",
+      "registry_checksum": "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/dtolnay/thiserror",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/thiserror-1.0.69/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/thiserror-1.0.69/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "thiserror-impl",
+      "version": "1.0.69",
+      "registry_checksum": "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/dtolnay/thiserror",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/thiserror-impl-1.0.69/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/thiserror-impl-1.0.69/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    },
+    {
+      "name": "tinyvec",
+      "version": "1.13.3",
+      "registry_checksum": "fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee",
+      "declared_spdx": "Zlib OR Apache-2.0 OR MIT",
+      "repository": "https://github.com/Lokathor/tinyvec",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/tinyvec-1.13.3/LICENSE-APACHE.md",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358
+        },
+        {
+          "path": "licenses/dependencies/tinyvec-1.13.3/LICENSE-MIT.md",
+          "sha256": "fd80a26fbb3f644af1fa994134446702932968519797227e07a1368dea80f0bc",
+          "bytes": 1023
+        },
+        {
+          "path": "licenses/dependencies/tinyvec-1.13.3/LICENSE-ZLIB.md",
+          "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151",
+          "bytes": 851
+        }
+      ]
+    },
+    {
+      "name": "ttf-parser",
+      "version": "0.25.1",
+      "registry_checksum": "d2df906b07856748fa3f6e0ad0cbaa047052d4a7dd609e231c4f72cee8c36f31",
+      "declared_spdx": "MIT OR Apache-2.0",
+      "repository": "https://github.com/harfbuzz/ttf-parser",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/ttf-parser-0.25.1/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "bytes": 10847
+        },
+        {
+          "path": "licenses/dependencies/ttf-parser-0.25.1/LICENSE-MIT",
+          "sha256": "f3c9fe731c701ed77fd5fbaac573872af04dc5869385eb9bd5e3c73c42713814",
+          "bytes": 1061
+        }
+      ]
+    },
+    {
+      "name": "unicode-ident",
+      "version": "1.0.27",
+      "registry_checksum": "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563",
+      "declared_spdx": "(MIT OR Apache-2.0) AND Unicode-3.0",
+      "repository": "https://github.com/dtolnay/unicode-ident",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/unicode-ident-1.0.27/LICENSE-APACHE",
+          "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "bytes": 9723
+        },
+        {
+          "path": "licenses/dependencies/unicode-ident-1.0.27/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        },
+        {
+          "path": "licenses/dependencies/unicode-ident-1.0.27/LICENSE-UNICODE",
+          "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1",
+          "bytes": 1995
+        }
+      ]
+    },
+    {
+      "name": "unicode-normalization",
+      "version": "0.1.26",
+      "registry_checksum": "75cd3fb03d5288b3ba9a1ee103ac7e9cbb59f0b03d64f8ddfcc04dd42758a85d",
+      "declared_spdx": "(MIT OR Apache-2.0) AND Unicode-3.0",
+      "repository": "https://github.com/unicode-rs/unicode-normalization",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/unicode-normalization-0.1.26/LICENSE-APACHE",
+          "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+          "bytes": 10847
+        },
+        {
+          "path": "licenses/dependencies/unicode-normalization-0.1.26/LICENSE-MIT",
+          "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0",
+          "bytes": 1071
+        },
+        {
+          "path": "licenses/dependencies/unicode-normalization-0.1.26/LICENSE-UNICODE",
+          "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1",
+          "bytes": 1995
+        }
+      ]
+    },
+    {
+      "name": "zmij",
+      "version": "1.0.23",
+      "registry_checksum": "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b",
+      "declared_spdx": "MIT",
+      "repository": "https://github.com/dtolnay/zmij",
+      "supplied_license_files": [
+        {
+          "path": "licenses/dependencies/zmij-1.0.23/LICENSE-MIT",
+          "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+          "bytes": 1023
+        }
+      ]
+    }
+  ],
+  "supplied_original_files": [
+    {
+      "path": "licenses/Apache-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "licenses/dependencies/aho-corasick-1.1.5/COPYING",
+      "bytes": 126,
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f"
+    },
+    {
+      "path": "licenses/dependencies/aho-corasick-1.1.5/LICENSE-MIT",
+      "bytes": 1081,
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+    },
+    {
+      "path": "licenses/dependencies/aho-corasick-1.1.5/UNLICENSE",
+      "bytes": 1211,
+      "sha256": "7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c"
+    },
+    {
+      "path": "licenses/dependencies/bit-set-0.8.0/LICENSE-APACHE",
+      "bytes": 10850,
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90"
+    },
+    {
+      "path": "licenses/dependencies/bit-set-0.8.0/LICENSE-MIT",
+      "bytes": 1071,
+      "sha256": "f51ac2c59a222f7476ce507ca879960e2b64ea64bb2786eefdbeb7b0b538d1b7"
+    },
+    {
+      "path": "licenses/dependencies/bit-vec-0.8.0/LICENSE-APACHE",
+      "bytes": 10850,
+      "sha256": "8173d5c29b4f956d532781d2b86e4e30f83e6b7878dce18c919451d6ba707c90"
+    },
+    {
+      "path": "licenses/dependencies/bit-vec-0.8.0/LICENSE-MIT",
+      "bytes": 1071,
+      "sha256": "f51ac2c59a222f7476ce507ca879960e2b64ea64bb2786eefdbeb7b0b538d1b7"
+    },
+    {
+      "path": "licenses/dependencies/fancy-regex-0.14.0/LICENSE",
+      "bytes": 1081,
+      "sha256": "3bc70e239e91272782006c638fc0452a714d384224f11f0923036b7be07cf9b5"
+    },
+    {
+      "path": "licenses/dependencies/itoa-1.0.18/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/itoa-1.0.18/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/memchr-2.8.3/COPYING",
+      "bytes": 126,
+      "sha256": "01c266bced4a434da0051174d6bee16a4c82cf634e2679b6155d40d75012390f"
+    },
+    {
+      "path": "licenses/dependencies/memchr-2.8.3/LICENSE-MIT",
+      "bytes": 1081,
+      "sha256": "0f96a83840e146e43c0ec96a22ec1f392e0680e6c1226e6f3ba87e0740af850f"
+    },
+    {
+      "path": "licenses/dependencies/memchr-2.8.3/UNLICENSE",
+      "bytes": 1211,
+      "sha256": "7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c"
+    },
+    {
+      "path": "licenses/dependencies/phf-0.11.3/LICENSE",
+      "bytes": 1099,
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38"
+    },
+    {
+      "path": "licenses/dependencies/phf_generator-0.11.3/LICENSE",
+      "bytes": 1099,
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38"
+    },
+    {
+      "path": "licenses/dependencies/phf_macros-0.11.3/LICENSE",
+      "bytes": 1099,
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38"
+    },
+    {
+      "path": "licenses/dependencies/phf_shared-0.11.3/LICENSE",
+      "bytes": 1099,
+      "sha256": "0ab4d106b6faac07fb6a051815fd1b4d862d730895e2d7d7358c2f13565e7a38"
+    },
+    {
+      "path": "licenses/dependencies/proc-macro2-1.0.107/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/proc-macro2-1.0.107/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/quote-1.0.47/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/quote-1.0.47/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/rand-0.8.8/LICENSE-APACHE",
+      "bytes": 9724,
+      "sha256": "35242e7a83f69875e6edeff02291e688c97caafe2f8902e4e19b49d3e78b4cab"
+    },
+    {
+      "path": "licenses/dependencies/rand-0.8.8/LICENSE-MIT",
+      "bytes": 1117,
+      "sha256": "209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b"
+    },
+    {
+      "path": "licenses/dependencies/rand_core-0.6.4/LICENSE-APACHE",
+      "bytes": 10282,
+      "sha256": "6df43f6f4b5d4587f3d8d71e45532c688fd168afa5fe89d571cb32fa09c4ef51"
+    },
+    {
+      "path": "licenses/dependencies/rand_core-0.6.4/LICENSE-MIT",
+      "bytes": 1117,
+      "sha256": "209fbbe0ad52d9235e37badf9cadfe4dbdc87203179c0899e738b39ade42177b"
+    },
+    {
+      "path": "licenses/dependencies/regex-1.13.1/LICENSE-APACHE",
+      "bytes": 10847,
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "licenses/dependencies/regex-1.13.1/LICENSE-MIT",
+      "bytes": 1071,
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "licenses/dependencies/regex-automata-0.4.18/LICENSE-APACHE",
+      "bytes": 10847,
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "licenses/dependencies/regex-automata-0.4.18/LICENSE-MIT",
+      "bytes": 1071,
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "licenses/dependencies/regex-lite-0.1.9/LICENSE-APACHE",
+      "bytes": 10847,
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "licenses/dependencies/regex-lite-0.1.9/LICENSE-MIT",
+      "bytes": 1071,
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "licenses/dependencies/regex-syntax-0.8.11/LICENSE-APACHE",
+      "bytes": 10847,
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "licenses/dependencies/regex-syntax-0.8.11/LICENSE-MIT",
+      "bytes": 1071,
+      "sha256": "6485b8ed310d3f0340bf1ad1f47645069ce4069dcc6bb46c7d5c6faf41de1fdb"
+    },
+    {
+      "path": "licenses/dependencies/serde-1.0.229/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/serde-1.0.229/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/serde_core-1.0.229/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/serde_core-1.0.229/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/serde_derive-1.0.229/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/serde_derive-1.0.229/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/serde_json-1.0.154/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/serde_json-1.0.154/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/siphasher-1.0.4/COPYING",
+      "bytes": 281,
+      "sha256": "c962ee4d1d05ddc138b202b2540219ebc57893fcf97b364852094a9a94ce1365"
+    },
+    {
+      "path": "licenses/dependencies/siphasher-1.0.4/LICENSE-APACHE",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "licenses/dependencies/siphasher-1.0.4/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "f9c4c77baa3828004ee54b8a4f2db2e88ed44a6237a493965bf551fac0fcb62d"
+    },
+    {
+      "path": "licenses/dependencies/syn-2.0.119/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/syn-2.0.119/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/syn-3.0.9/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/syn-3.0.9/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/thiserror-1.0.69/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/thiserror-1.0.69/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/thiserror-impl-1.0.69/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/thiserror-impl-1.0.69/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/tinyvec-1.13.3/LICENSE-APACHE.md",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "licenses/dependencies/tinyvec-1.13.3/LICENSE-MIT.md",
+      "bytes": 1023,
+      "sha256": "fd80a26fbb3f644af1fa994134446702932968519797227e07a1368dea80f0bc"
+    },
+    {
+      "path": "licenses/dependencies/tinyvec-1.13.3/LICENSE-ZLIB.md",
+      "bytes": 851,
+      "sha256": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151"
+    },
+    {
+      "path": "licenses/dependencies/ttf-parser-0.25.1/LICENSE-APACHE",
+      "bytes": 10847,
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "licenses/dependencies/ttf-parser-0.25.1/LICENSE-MIT",
+      "bytes": 1061,
+      "sha256": "f3c9fe731c701ed77fd5fbaac573872af04dc5869385eb9bd5e3c73c42713814"
+    },
+    {
+      "path": "licenses/dependencies/unicode-ident-1.0.27/LICENSE-APACHE",
+      "bytes": 9723,
+      "sha256": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a"
+    },
+    {
+      "path": "licenses/dependencies/unicode-ident-1.0.27/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/dependencies/unicode-ident-1.0.27/LICENSE-UNICODE",
+      "bytes": 1995,
+      "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1"
+    },
+    {
+      "path": "licenses/dependencies/unicode-normalization-0.1.26/LICENSE-APACHE",
+      "bytes": 10847,
+      "sha256": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+    },
+    {
+      "path": "licenses/dependencies/unicode-normalization-0.1.26/LICENSE-MIT",
+      "bytes": 1071,
+      "sha256": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0"
+    },
+    {
+      "path": "licenses/dependencies/unicode-normalization-0.1.26/LICENSE-UNICODE",
+      "bytes": 1995,
+      "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1"
+    },
+    {
+      "path": "licenses/dependencies/zmij-1.0.23/LICENSE-MIT",
+      "bytes": 1023,
+      "sha256": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3"
+    },
+    {
+      "path": "licenses/KaTeX-fonts-NOTICE.txt",
+      "bytes": 1484,
+      "sha256": "d6a72bca243df26026696902d865dc3b099222d1da50559fe9e60a3f19973833"
+    },
+    {
+      "path": "licenses/KaTeX-LICENSE.txt",
+      "bytes": 1107,
+      "sha256": "766ccc1f306c885aa45542a9846bbd0a505b27a0374f146778171c2254ce18e3"
+    },
+    {
+      "path": "licenses/mhchem-reference.js",
+      "bytes": 67692,
+      "sha256": "2e59e02033d60c110e5ba70a42f9259c8597bb19dbd03c542e2e5860394376fd"
+    },
+    {
+      "path": "licenses/RaTeX-LICENSE.txt",
+      "bytes": 1301,
+      "sha256": "f65e10eaa978c50a58c5e792110b4be5014b865edcb2ade49076bfcc98fa92b0"
+    },
+    {
+      "path": "licenses/RaTeX-THIRD-PARTY-NOTICES.txt",
+      "bytes": 717,
+      "sha256": "e3cf753ddd8012543a3297b62b4cf5450db1d5a3ae7ddd7afae593db927c2980"
+    },
+    {
+      "path": "licenses/SIL-OFL-1.1.txt",
+      "bytes": 4016,
+      "sha256": "8eea8287e5876b539670cadb82e99f9a7afddec6f6730811be1daf25d2e9bcfd"
+    }
+  ],
+  "font_count": 20,
+  "font_bytes": 513664,
+  "font_read_only_manifest": [
+    {
+      "path": "fonts/KaTeX_AMS-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_AMS-Regular.ttf",
+      "sha256": "68534840bcfdd2bffb6f0e8deb48684dd01e7f04ea2813267577afb906de1d13",
+      "bytes": 63632,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_AMS-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Caligraphic-Bold.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Caligraphic-Bold.ttf",
+      "sha256": "07d8e303ce4fc12b4bb54f1004170dd190a1f3db45d400fe68060df3e0897268",
+      "bytes": 12368,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Caligraphic-Bold.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Caligraphic-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Caligraphic-Regular.ttf",
+      "sha256": "ed0b74372feefcbb9c0666b2e210da37b7e49fa7fbbf3eeb11db5f693dacfbb7",
+      "bytes": 12344,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Caligraphic-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Fraktur-Bold.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Fraktur-Bold.ttf",
+      "sha256": "9163df9c7122432e6495b4229fa9071cf9ae86a758ae5efc4924ec2e1a6dbce1",
+      "bytes": 19584,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Fraktur-Bold.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Fraktur-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Fraktur-Regular.ttf",
+      "sha256": "1e6f9579e90e2cac37f8f60a597c436e075c114385652b7cbeb0dec0421291b3",
+      "bytes": 19572,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Fraktur-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Main-Bold.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-Bold.ttf",
+      "sha256": "138ac28d1663b3037e9c5f52371fa5c63d8324f4a38d22cd573e6ea3a3fd0cf8",
+      "bytes": 51336,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Main-Bold.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Main-BoldItalic.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-BoldItalic.ttf",
+      "sha256": "70ee1f64a20f2048c21940ef46d0144fd215baa953ca69afd1e31e98544f708f",
+      "bytes": 32968,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Main-BoldItalic.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Main-Italic.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-Italic.ttf",
+      "sha256": "0d85ae7cc30f23790a7f1a58c4a112fdca8aae769b6ba11429af1d98b1b6cb3a",
+      "bytes": 33580,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Main-Italic.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Main-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Main-Regular.ttf",
+      "sha256": "d0332f52868370fd83ae7fa46470f90c8f2eab2fcf12bc4f88080b340c95a830",
+      "bytes": 53580,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Main-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Math-BoldItalic.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Math-BoldItalic.ttf",
+      "sha256": "f9377ab0271cda59af24bcffbd46a4d0c8a3572ffafdbb38de2ad5ea7b0d5ee5",
+      "bytes": 31196,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Math-BoldItalic.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Math-Italic.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Math-Italic.ttf",
+      "sha256": "08ce98e51b04d58945a301e639e02b6998af29fdfd61a7b8afdd07bbfc479d4a",
+      "bytes": 31308,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Math-Italic.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_SansSerif-Bold.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_SansSerif-Bold.ttf",
+      "sha256": "1ece03f79f95277d57dc7f6b435a74e1379b0d46104a8530286b60ff49369ea0",
+      "bytes": 24504,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_SansSerif-Bold.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_SansSerif-Italic.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_SansSerif-Italic.ttf",
+      "sha256": "3931dd81faed86ba021bb2bbdc36f5bed9a38d6b4f4077aca59b265aa1b02083",
+      "bytes": 22364,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_SansSerif-Italic.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_SansSerif-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_SansSerif-Regular.ttf",
+      "sha256": "f36ea897e19f4a2e571d1e900e4e3710e438deb05a842486045ba0a3e616a4ad",
+      "bytes": 19436,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_SansSerif-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Script-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Script-Regular.ttf",
+      "sha256": "1c67f068fea8bb09bf099c088b1cf64bd27516a6e07f4684344873564bb66a67",
+      "bytes": 16648,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Script-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Size1-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Size1-Regular.ttf",
+      "sha256": "95b6d2f1a50173bfedb8c63e1d1c99b10427d0a4df4201cb44513b226951a22b",
+      "bytes": 12228,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Size1-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Size2-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Size2-Regular.ttf",
+      "sha256": "a6b2099fb555c60e3a0db3a08842ebf1d732c6eb4e4bf44913613bed4fc4e39b",
+      "bytes": 11508,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Size2-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Size3-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Size3-Regular.ttf",
+      "sha256": "500e04d54f0d51666332c9d2089aa803be22aa878eca539e59fa53c6e522b082",
+      "bytes": 7588,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Size3-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Size4-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Size4-Regular.ttf",
+      "sha256": "c647367d1dd4e162468717d020e1fc0f1dc5c26ebfdffbe55261713bf88c5877",
+      "bytes": 10364,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Size4-Regular.ttf"
+    },
+    {
+      "path": "fonts/KaTeX_Typewriter-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/erweixin/RaTeX/5f7dc4883aba8eeb30fe34f8a104923f43f734bf/crates/ratex-katex-fonts/fonts/KaTeX_Typewriter-Regular.ttf",
+      "sha256": "f01f3e87d9c6a61c0c081ceb577abd864eb00a612f7ac1620dd6915fad2ef5aa",
+      "bytes": 27556,
+      "license": "SIL-OFL-1.1",
+      "read_only_path": "research/r4-math-spike/fonts/KaTeX_Typewriter-Regular.ttf"
+    }
+  ],
+  "license_notice": "MIT RaTeX/KaTeX; inherited mhchem MIT/Apache-2.0, Unicode and dependency alternatives; OFL1.1 fonts. 64 package license originals plus 7 upstream/font attribution/source files are retained. Not all dependencies MIT.",
+  "modified_code_notice": "Original ownership retained; 2026 Jiaqi (0x7c13) Liu modification notices on changed upstream sources; new execution/research code under project MIT"
+}

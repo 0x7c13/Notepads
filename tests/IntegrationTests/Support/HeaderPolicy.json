@@ -69,6 +69,258 @@
       "sha256": "645FE3ACD17F0EC18B05A5CBC8071C16FC888BFA8356D9087C265DF69464D893"
     },
     {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/RaTeX-LICENSE.txt",
+      "sha256": "F65E10EAA978C50A58C5E792110B4BE5014B865EDCB2ADE49076BFCC98FA92B0"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/aho-corasick-1.1.5/COPYING",
+      "sha256": "01C266BCED4A434DA0051174D6BEE16A4C82CF634E2679B6155D40D75012390F"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/aho-corasick-1.1.5/LICENSE-MIT",
+      "sha256": "0F96A83840E146E43C0EC96A22EC1F392E0680E6C1226E6F3BA87E0740AF850F"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/bit-set-0.8.0/LICENSE-APACHE",
+      "sha256": "8173D5C29B4F956D532781D2B86E4E30F83E6B7878DCE18C919451D6BA707C90"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/bit-set-0.8.0/LICENSE-MIT",
+      "sha256": "F51AC2C59A222F7476CE507CA879960E2B64EA64BB2786EEFDBEB7B0B538D1B7"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/bit-vec-0.8.0/LICENSE-APACHE",
+      "sha256": "8173D5C29B4F956D532781D2B86E4E30F83E6B7878DCE18C919451D6BA707C90"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/bit-vec-0.8.0/LICENSE-MIT",
+      "sha256": "F51AC2C59A222F7476CE507CA879960E2B64EA64BB2786EEFDBEB7B0B538D1B7"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/fancy-regex-0.14.0/LICENSE",
+      "sha256": "3BC70E239E91272782006C638FC0452A714D384224F11F0923036B7BE07CF9B5"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/itoa-1.0.18/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/itoa-1.0.18/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/memchr-2.8.3/COPYING",
+      "sha256": "01C266BCED4A434DA0051174D6BEE16A4C82CF634E2679B6155D40D75012390F"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/memchr-2.8.3/LICENSE-MIT",
+      "sha256": "0F96A83840E146E43C0EC96A22EC1F392E0680E6C1226E6F3BA87E0740AF850F"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/phf-0.11.3/LICENSE",
+      "sha256": "0AB4D106B6FAAC07FB6A051815FD1B4D862D730895E2D7D7358C2F13565E7A38"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/phf_generator-0.11.3/LICENSE",
+      "sha256": "0AB4D106B6FAAC07FB6A051815FD1B4D862D730895E2D7D7358C2F13565E7A38"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/phf_macros-0.11.3/LICENSE",
+      "sha256": "0AB4D106B6FAAC07FB6A051815FD1B4D862D730895E2D7D7358C2F13565E7A38"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/phf_shared-0.11.3/LICENSE",
+      "sha256": "0AB4D106B6FAAC07FB6A051815FD1B4D862D730895E2D7D7358C2F13565E7A38"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/proc-macro2-1.0.107/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/proc-macro2-1.0.107/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/quote-1.0.47/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/quote-1.0.47/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/rand-0.8.8/LICENSE-APACHE",
+      "sha256": "35242E7A83F69875E6EDEFF02291E688C97CAAFE2F8902E4E19B49D3E78B4CAB"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/rand-0.8.8/LICENSE-MIT",
+      "sha256": "209FBBE0AD52D9235E37BADF9CADFE4DBDC87203179C0899E738B39ADE42177B"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/rand_core-0.6.4/LICENSE-APACHE",
+      "sha256": "6DF43F6F4B5D4587F3D8D71E45532C688FD168AFA5FE89D571CB32FA09C4EF51"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/rand_core-0.6.4/LICENSE-MIT",
+      "sha256": "209FBBE0AD52D9235E37BADF9CADFE4DBDC87203179C0899E738B39ADE42177B"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/regex-1.13.1/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/regex-1.13.1/LICENSE-MIT",
+      "sha256": "6485B8ED310D3F0340BF1AD1F47645069CE4069DCC6BB46C7D5C6FAF41DE1FDB"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/regex-automata-0.4.18/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/regex-automata-0.4.18/LICENSE-MIT",
+      "sha256": "6485B8ED310D3F0340BF1AD1F47645069CE4069DCC6BB46C7D5C6FAF41DE1FDB"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/regex-lite-0.1.9/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/regex-lite-0.1.9/LICENSE-MIT",
+      "sha256": "6485B8ED310D3F0340BF1AD1F47645069CE4069DCC6BB46C7D5C6FAF41DE1FDB"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/regex-syntax-0.8.11/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/regex-syntax-0.8.11/LICENSE-MIT",
+      "sha256": "6485B8ED310D3F0340BF1AD1F47645069CE4069DCC6BB46C7D5C6FAF41DE1FDB"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/serde-1.0.229/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/serde-1.0.229/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/serde_core-1.0.229/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/serde_core-1.0.229/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/serde_derive-1.0.229/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/serde_derive-1.0.229/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/serde_json-1.0.154/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/serde_json-1.0.154/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/siphasher-1.0.4/COPYING",
+      "sha256": "C962EE4D1D05DDC138B202B2540219EBC57893FCF97B364852094A9A94CE1365"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/siphasher-1.0.4/LICENSE-APACHE",
+      "sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/siphasher-1.0.4/LICENSE-MIT",
+      "sha256": "F9C4C77BAA3828004EE54B8A4F2DB2E88ED44A6237A493965BF551FAC0FCB62D"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/syn-2.0.119/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/syn-2.0.119/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/syn-3.0.9/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/syn-3.0.9/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/thiserror-1.0.69/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/thiserror-1.0.69/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/thiserror-impl-1.0.69/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/thiserror-impl-1.0.69/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/tinyvec-1.13.3/LICENSE-APACHE.md",
+      "sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/tinyvec-1.13.3/LICENSE-MIT.md",
+      "sha256": "FD80A26FBB3F644AF1FA994134446702932968519797227E07A1368DEA80F0BC"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/tinyvec-1.13.3/LICENSE-ZLIB.md",
+      "sha256": "84B34DD7608F7FB9B17BD588A6BF392BF7DE504E2716F024A77D89F1B145A151"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/ttf-parser-0.25.1/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/ttf-parser-0.25.1/LICENSE-MIT",
+      "sha256": "F3C9FE731C701ED77FD5FBAAC573872AF04DC5869385EB9BD5E3C73C42713814"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/unicode-ident-1.0.27/LICENSE-APACHE",
+      "sha256": "62C7A1E35F56406896D7AA7CA52D0CC0D272AC022B5D2796E7D6905DB8A3636A"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/unicode-ident-1.0.27/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/unicode-ident-1.0.27/LICENSE-UNICODE",
+      "sha256": "F7DB81051789B729FEA528A63EC4C938FDCB93D9D61D97DC8CC2E9DF6D47F2A1"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/unicode-normalization-0.1.26/LICENSE-APACHE",
+      "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/unicode-normalization-0.1.26/LICENSE-MIT",
+      "sha256": "7B63ECD5F1902AF1B63729947373683C32745C16A10E8E6292E2E2DCD7E90AE0"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/unicode-normalization-0.1.26/LICENSE-UNICODE",
+      "sha256": "F7DB81051789B729FEA528A63EC4C938FDCB93D9D61D97DC8CC2E9DF6D47F2A1"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/dependencies/zmij-1.0.23/LICENSE-MIT",
+      "sha256": "23F18E03DC49DF91622FE2A76176497404E46CED8A715D9D2B67A7446571CCA3"
+    },
+    {
       "path": "src/Notepads.Markdown/vendor/svg-bounded/fork/harfrust-0.12.0/LICENSE",
       "sha256": "3A7C3F0B887ABB7C638FAF022D29257418458614C6724B120CEEFFB279F9C7D2"
     },
@@ -1624,6 +1876,11 @@
       "path": "src/Notepads.Markdown/vendor/syntect",
       "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
       "license": "src/Notepads.Markdown/vendor/syntect/LICENSE.txt"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/ratex-bounded",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/vendor/ratex-bounded/licenses/RaTeX-LICENSE.txt"
     },
     {
       "path": "src/Notepads.Markdown/vendor/svg-bounded/fork",

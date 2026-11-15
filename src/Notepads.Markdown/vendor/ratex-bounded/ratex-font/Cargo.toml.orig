@@ -1,0 +1,13 @@
+[package]
+name = "ratex-font"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+description = "Font metrics and symbol tables for RaTeX"
+
+[dependencies]
+ratex-types = { workspace = true }
+phf = { workspace = true }
