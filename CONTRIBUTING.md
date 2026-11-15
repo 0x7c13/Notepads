@@ -34,6 +34,40 @@ PowerShell in its root, and run:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Run-Dev.ps1
 ```
 
+Markdown preview is maintained in this checkout under
+`src/Notepads.Markdown`. The host references its C#/WinRT projection project;
+that project builds the native UWP component and its independent Rust core.
+No private Markdown NuGet feed or neighboring repository is required. Fixed test
+inputs and upstream notices are retained inside the module.
+
+Install rustup, then install the Rust toolchain pinned by the module before the
+first native build:
+
+```powershell
+./scripts/Initialize-RustToolchain.ps1 -InstallMissing
+./scripts/Run-Dev.ps1
+```
+
+The build invokes Cargo for the selected architecture and reuses its dependency
+fingerprints. New Markdown build caches default to
+`%USERPROFILE%/.notepads-build/Markdown/<module-hash>`; `NotepadsMarkdownBuildRoot` can select
+another external build directory. Debug and Production hosts both consume the
+Release native Markdown component with its existing dynamic CRT configuration.
+The projection and native DLL, WinMD, PRI and templates are built and deployed
+from the same source chain. The module retains its own Rust dependency locks,
+licenses and third-party notices.
+
+After opening a Markdown file, use **Alt+P** or the editor context menu to toggle
+the native preview. Preview currently accepts up to 4 MiB of UTF-8 source; source
+editing remains available above that limit. The preview follows the editor by
+default. Relative images and note embeds resolve from the containing document's
+folder. Development packages and offline layouts use Notepads.DocumentAssets
+first for assets within the opened document's folder and its subfolders. The broker
+rejects relative paths containing symbolic links, junctions or other reparse points. Windows
+Storage can also provide files the app already has permission to read. Remote
+images load from their document URLs. The encoded limit is 16 MiB per image and
+4 MiB per embedded note.
+
 The script reuses a complete toolchain when available. Otherwise it downloads the
 native-host .NET 10 LTS SDK selected by `global.json` (10.0.404 baseline, compatible patches allowed) into `.tools/notepads-dev` and installs
 **Build Tools 2026 18.0 or later** with v145 C++/UWP, managed UWP tasks and Windows SDK 10.0.26100.

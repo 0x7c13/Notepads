@@ -29,8 +29,8 @@ Rust 核心不依赖应用、Scintilla 或 XAML；图片 stream 和业务操作�
 
 宿主在 `../Notepads.App/Presentation/Controls/Markdown/`，分为 `Control/`、
 `Source/`、`Scrolling/`、`Images/`。编辑器适配位于相邻 `TextEditor/`。
-相对文档图片访问由 `../Notepads.DocumentAssets/` 和宿主
-`Infrastructure/DocumentAssets/` 提供，不进入控件核心。
+相对图片和嵌入笔记由 `../Notepads.DocumentAssets/` 和宿主
+`Infrastructure/DocumentAssets/` 读取。嵌入笔记以自身目录解析相对资源，并沿用已打开文档的授权。
 
 目录界定职责，不在层间复制状态。修改源坐标、修订/代次、取消或资源所有权时，
 同时核对 ABI、平台发布门和宿主；资源能力的改变通常限定在对应 crate、
@@ -68,15 +68,16 @@ msbuild src/Notepads.sln /restore /p:RestorePackagesConfig=true /p:Configuration
 ./scripts/Test.ps1 -Suite Integration -Group Markdown -Platform ARM64
 ```
 
-Rust 入口支持 `-Target` 和 `-TargetDirectory`；`Core` / `All` 包含独立 integration
-tests 并显式启用 `diagnostics`。Math 保持自己的锁定 workspace；第三方专用开发单测
+Rust 入口支持 `-Target` 和 `-TargetDirectory`。`Core` / `All` 包含独立 integration
+tests，`Interop` / `All` 启用 FFI `diagnostics`。Math 保持自己的锁定 workspace；第三方专用开发单测
 不自动等于上述入口。真实 AOT/MSIX、UI、无障碍和设备性能分别验收。
 
 默认产品不编入 `tests/native` 或 CoreValidation WinRT 类。App/Lifecycle 测试显式
 设置 `NotepadsMarkdownEnableDiagnostics=true` 并导入
 `tests/native/Notepads.Markdown.Tests.items`。产品/诊断的 native、managed、Cargo 和链接
 输入分别进入 `production` / `diagnostics` 目录，避免跨变体复用投影或 DLL。
-三组尚未接入现行 suite 的 SVG 原生测试源码保留，不将其记为已运行。
+`MarkdownCoreImages` 覆盖 SVG worker 的正常执行、启动前取消与退出，以及 retained owner 的释放与恢复。
+独立 SVG 字体会话和需要新进程的永久隔离故障用例仍需单独验证。
 
 金样、字形、度量、像素和原 hash 保留。Fontations 共享载荷说明见
 `tests/baselines/fontations-shared.json`。测试字体名称及 SVG family 已归入本模块；

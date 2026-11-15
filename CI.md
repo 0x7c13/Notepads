@@ -15,7 +15,7 @@ PR/ref. There are no path filters that could leave a required check pending.
 | Job | What must pass |
 | --- | --- |
 | Managed Tests | actionlint; all pure unit tests; runner/header/localization checks; real-storage recovery tests; isolated metrics-failure processes; architecture guard negative fixtures |
-| Native Tests | NativeDiff, NativeBidi and RegexText C++ executables, Release x64 |
+| Native Tests | NativeDiff, NativeBidi and RegexText C++ executables plus all Markdown Rust layers, Release x64 |
 | Native AOT / x86, x64, ARM64 | Production AOT publish; architecture/package guards; self-contained offline artifact and installer validation; x64 also installs and exercises the Production package |
 | E2E Tests | x64 Release AOT App tests, external UI Automation and cross-process drag tests on a hosted interactive desktop |
 | Resilience Tests | Dedicated Debug host: optional style/lexer allocation failures, editing/undo recovery and journal integrity |
@@ -50,6 +50,12 @@ runners. NuGet downloads are cached against project/dependency inputs. Build
 outputs and test results are never reused across hosted jobs. Dependencies are
 centrally versioned, but the repository does not yet lock transitive NuGet
 resolution. The runner image itself receives upstream updates.
+
+Jobs that build or test Markdown run `Initialize-RustToolchain.ps1 -InstallMissing`
+to provision and verify the exact channel, components and three MSVC targets in
+`src/Notepads.Markdown/rust-toolchain.toml`. The dedicated desktop verifies the
+same preinstalled policy without installing tools. The Native Tests job also
+runs `Test-Rust.ps1 -Layer All`; no Cargo build outputs are reused between jobs.
 
 `scripts/NativeAot.targets` keeps implicit AOT compiler packs on the selected SDK's
 version during restore and rejects stale imported compiler targets before build.
@@ -171,8 +177,9 @@ and registers the restored WinUI framework and SDK VC runtime packages. It refus
 to change a local or self-hosted machine. It also removes the foreground-lock delay
 on its disposable desktop so the input driver can switch between verified test
 windows. An adequate newer framework is retained.
-`Test-CIUI.ps1 -Lane E2E` selects all default Release App groups plus the two
-external input groups, `AppLifecycle` and `WindowMoveBroker`. `-Lane Faults` selects the default Debug group on a separate
+`Test-CIUI.ps1 -Lane E2E` selects all default Release App groups, the external
+`UIAutomation`, `DragDrop` and `TabDragging` groups, plus `AppLifecycle` and
+`WindowMoveBroker`. `-Lane Faults` selects the default Debug group on a separate
 VM. Unsupported configurations or an empty lane fail instead of silently reducing
 coverage. The dedicated `--native-faults` phase rejects Release execution because
 the native injection hooks are compiled only in Debug.
@@ -204,7 +211,10 @@ Runner setup:
 
 1. Install PowerShell 7.4+, Git, the .NET 10 LTS SDK from `global.json` (10.0.404 baseline), Visual Studio 2026 18.0+ with
    .NET UWP tools, Windows SDK 10.0.26100.0, and v145 native/UWP tools. Run
-   `./scripts/Initialize-BuildTools.ps1` to verify the native toolchain.
+   `./scripts/Initialize-BuildTools.ps1` to verify the native toolchain. Install
+   rustup, then run `./scripts/Initialize-RustToolchain.ps1 -InstallMissing` to
+   provision the checked-in Rust channel, components and three MSVC targets.
+   The desktop workflow verifies these preinstalled tools without installing them.
 2. Enable Windows Developer Mode and prepare the test package's framework
    dependencies. Use the [test guide](tests/README.md) to validate the isolated App
    tests locally on this runner before enabling workflow dispatch.
@@ -232,9 +242,11 @@ Both paths verify preservation of the test package's prior registration and data
 Run from the repository root in PowerShell 7.4+:
 
 ```powershell
+./scripts/Initialize-RustToolchain.ps1
 ./scripts/Test-Workflows.ps1
 ./scripts/Test.ps1 -Suite All -Configuration Release -Group Runner,Headers,Localization,Storage,MetricsInitialization,MetricsCounter,MetricsDuration,ArchitectureSelfTest
 ./scripts/Test.ps1 -Suite Integration -Configuration Release -Group NativeDiff,NativeBidi,RegexText -Platform x64
+./src/Notepads.Markdown/scripts/Test-Rust.ps1 -Layer All -Target x86_64-pc-windows-msvc
 
 # Production AOT, unsigned upload bundle and symbol/package checks. No deployment.
 ./scripts/Build-CI.ps1 -Platform ARM64

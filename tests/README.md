@@ -64,6 +64,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
 | RTL/LTR shaping, geometry, navigation, selection, undo and direction persistence | `NativeBidi`, `Bidi`, `ReadingOrder`, `AutomationNavigation` |
 | Real keys/clicks, TSF typing, UIA ranges, raster and cross-process dragging | `UIAutomation`, `DragDrop`; `TabDragging` for rail, modifier clicks, keyboard focus, release continuity/stacking, drag-back, cancellation, RTL/Equal overflow and actual workspace moves |
+| Native Markdown preview, incremental UTF-8 source updates, wrapped viewport mapping, images/math/flowcharts and disposal | `Markdown`, `MarkdownViewportRefresh`, `WorkspaceCommands`; Unit dirty-span differential tests; explicit `scripts/Test-Markdown.ps1 -Platform x64`, `x86` or `ARM64` for real input/clipboard and Light/Dark captures |
 | International keyboard shortcuts (Polish AltGr and left Ctrl+Alt emulation) | Explicit `scripts/Test-InternationalKeyboard.ps1`; requires an idle desktop, isolated Release AOT host and physical input ownership |
 | DPI geometry / actual Windows scale transitions | `DpiLayout` / opt-in `DisplayDpi` |
 | Installed Production launch, file association, windows, suspension and V1 data import | Hosted-only `PackagedApp` |
@@ -71,7 +72,76 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Runner ownership, toolchain/offline integrity, native package architecture/framework validation, AOT restore after SDK updates, CI export and registration boundaries | `Runner` (inert OS/install fixtures; real SDK restore) |
 
 `*` denotes a family for orientation, not a selectable wildcard; use exact group
-names from `-List`. Markdown preview is not implemented and has no completion claim.
+names from `-List`. Markdown App and Lifecycle hosts consume the same-checkout
+`src/Notepads.Markdown` projection, native UWP component and Rust core described
+in CONTRIBUTING.md. Unit and Headless hosts remain independent of that native
+build chain. With the pinned Rust toolchain installed, run:
+
+```powershell
+./scripts/Test.ps1 -Suite Integration -Group Markdown -Platform x64
+```
+
+`-NoBuild` identities include the module's Rust/C++/IDL/XAML/build inputs and the
+actual app recipe payload. They reject stale source and changed native assets.
+Recipes require exactly one current native DLL, WinMD, PRI and template; the
+module asset list also permits the managed projection used by Debug builds.
+Unexpected assets in the module deployment namespace and invalid or duplicate
+package destinations are rejected; other app dependencies remain permitted.
+A private Markdown NuGet feed is not required.
+Native image decoding, font observation and the real pre-frame reading/resource
+interleaving run through `Test.ps1 -Suite Integration -Group MarkdownCoreImages`.
+Rust core, interop, SVG, math and diagram layers can be checked independently
+through `src/Notepads.Markdown/scripts/Test-Rust.ps1 -Layer <name>`; see the
+module README. App tests explicitly enable the diagnostic native variant.
+Markdown UI tests are grouped into `Core`, `Rendering`, `Host`,
+`Synchronization`, `Performance` and `Support` directories.
+
+After building the current App host above, run the focused Diff queue/session
+restore/code-font regression:
+
+```powershell
+./scripts/Test.ps1 -Suite Integration -Group MarkdownHostStateRepair -Platform x64
+```
+
+The ordinary `Markdown` group also exercises caret/scroll arbitration: exact
+collapsed preview selection and visible marker after source navigation, native
+Ctrl+Up/Down commands at interior/edge/no-op positions, and coalesced order.
+These native commands do not replace physical wheel/thumb testing. This host
+requires matching native DLL, WinMD and projection for the current selection-origin
+getters; the same source build supplies the Markdown DLL, WinMD and projection.
+
+The interpolation endpoint fixture waits for an arranged positive scrollable
+extent before its single RevealRange requests. Native Ready/Published can precede
+XAML extent arrangement; this setup guard does not change the formula, pixel
+tolerances, request count, rejected-input checks or selection/focus assertions.
+
+The opt-in groups `MarkdownCoreReading`, `MarkdownSourceViewport`, and
+`MarkdownViewportInterpolation` expose the component reading cases,
+native display-row/fraction and pending-wrap checks, and actual public viewport
+interpolation respectively. Use the same `Test.ps1 -Suite Integration -Group`
+entry point and an exact current App build. Interpolation and physical motion
+need a visible foreground test window. UIA rectangles check presented geometry;
+they do not prove compositor pixels or smooth motion. Keep original failed
+runs when correcting a test oracle or retrying a hidden window.
+
+The focused phase uses the same isolated package and data; it requires an available
+desktop just like the ordinary Markdown App tests. Build the current Release
+App host with the `Markdown` group before using `Test-Markdown.ps1`; the driver verifies
+its source/binary identity and refuses stale builds. It preserves supported
+clipboard formats, refuses unsupported existing formats before writing, and
+requires an idle desktop for physical keys and selection.
+
+Focused host groups include `MarkdownBrokerNotes`, `MarkdownHostIo`,
+`MarkdownSourceFind` and `MarkdownScrollSyncMenu`. Use `MarkdownRendering`
+for Mermaid, math and YAML, and `MarkdownHtmlControls` and `MarkdownHtmlTables`
+for projected HTML. Other opt-in groups include `MarkdownSelectionStability`,
+`MarkdownViewportGeometry`, `MarkdownResourceDeferral`, `MarkdownThemeWidth`,
+`MarkdownCoreHighlight` and `MarkdownCoreInterop`. The latter runs the native
+controller, preview ticket and managed image provider diagnostics.
+`MarkdownViewportGeometry` requires an actual Windows display scale of 100%.
+The startup timing phase requires a separately staged private Lab fixture.
+Performance observations and the three unwired native SVG sources retain their
+qualification limits described in the module README.
 
 `TabDragging` also checks the last tab's viewport-edge shadows during preview,
 Escape cancellation and reorder settlement, with and without overflow in both
@@ -211,14 +281,19 @@ queries that repair it; equal-value setters must not be awaited as new paints.
 ./scripts/Test.ps1 -Suite Integration -Group Headers
 ```
 
-`Headers` checks tracked and new nonignored C#/C/C++/IDL/inc/PowerShell sources.
-The first-party banner has 93 hyphens, no leading indent, two spaces before the
-copyright/license text, and one blank line afterward. Preserve existing years;
-BOM and LF/CRLF are accepted. This checks headers, not body formatting.
+`Headers` checks tracked and new nonignored C#/C/C++/IDL/inc/PowerShell/Rust sources,
+plus registered XML and the Markdown module projects/resources.
+The first-party banner has 93 hyphens, no leading indent and two spaces before
+the copyright/license text. The application uses LICENSE.txt and one blank line
+afterward. The Markdown module keeps its original LICENSE banner and existing
+spacing. Preserve existing years; BOM and LF/CRLF are accepted. This checks
+headers, not body formatting.
 
 [HeaderPolicy.json](IntegrationTests/Support/HeaderPolicy.json) owns exact upstream
-exceptions, protected notice hashes and license hashes. No directory-wide skip or
-automatic hash refresh is allowed. Reviewed renames/upstream upgrades update the
-policy deliberately. XML/XAML/resources require notices only where registered.
+exceptions, protected notice hashes and license hashes. Markdown source roots
+use their own license path; declared upstream vendor subtrees retain their
+original notice formats and protected source-license files. The complete module
+is never excluded. No automatic hash refresh is allowed. Reviewed
+renames/upstream upgrades update the policy deliberately. XML/XAML/resources require notices only where registered.
 Private Git fixtures verify real enumeration and rejection, including ignored/new
 files, damaged notices, stale exceptions and missing licenses, without UI or builds.

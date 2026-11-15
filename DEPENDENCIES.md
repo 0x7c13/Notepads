@@ -4,6 +4,10 @@ Dependency inventory checked on 2026-11-04. The original audit baseline is
 `c93d3268`, 2026-10-28. Build inputs are `Directory.Packages.props`, native
 `packages.config`, and the selected .NET SDK. V2 is unreleased.
 
+On 2026-11-09, Markdown development moved to the source module
+`src/Notepads.Markdown`. Its fixed Rust dependencies and private ABI are retained;
+this source integration is not a dependency upgrade or acceptance of pending UI checks.
+
 ## Runtime dependencies
 
 | Dependency | Retained version | Actual use / decision |
@@ -18,12 +22,16 @@ Dependency inventory checked on 2026-11-04. The original audit baseline is
 | UTF.Unknown | 2.8.0 | Stream-based encoding detection in DocumentEncodingPolicy; upgraded from 2.7.0 with matched stream-detector samples and production decoding regression coverage. |
 | Microsoft.Services.Store.Engagement | 10.2307.3001 | Best-effort custom diagnostic events in AnalyticsService. Retained as a package framework; this is not the Microsoft Store client application. |
 | Microsoft.Windows.CsWinRT | 2.3.1 | Native editor/Engagement projections, WinRT interop and AOT code generation. |
+| Notepads.Markdown | same-checkout source module | Native Markdown preview, syntax highlighting, images, basic math and flowcharts. ProjectReference to its CsWinRT projection; no local NuGet feed. |
 
-The first-party project reference is Notepads.Editor.Projection. App controls
-are compiled by Notepads.App. Multiple references to the same NuGet package across
-these projects resolve to one version, not multiple runtime copies. There was no
-confirmed unused runtime package to remove in this audit. The old Markdown source
-is excluded from compilation and is not evidence that its old packages still ship.
+The first-party project references are Notepads.Editor.Projection and
+Notepads.Markdown.Projection. App controls are compiled by Notepads.App. Multiple
+references to the same NuGet package across these projects resolve to one version.
+The active Presentation Markdown view consumes the same-checkout Notepads.Markdown
+module. Rust parsing,
+semantic/layout policy and the private ABI remain independent of Notepads; the
+C++ UWP layer owns Windows rendering and the projection exposes its WinRT types.
+No browser is created for this preview.
 
 WinUI, Win2D, Toolkit, CsWinRT and Engagement matched the latest stable versions
 checked on NuGet. Preview Toolkit/CsWinRT packages were not selected.
@@ -64,9 +72,12 @@ packaging design and corresponding validation.
 | Microsoft.Windows.CppWinRT | 3.0.260818.1 | Upgraded with cancellation/lifetime AOT regression coverage. Retain the existing C++20 projection headers/PCH; modules remain disabled. |
 | Microsoft.Windows.SDK.BuildTools | 10.0.28000.2957 | Native packages.config, imports and missing-package guards use this version. Directory.Packages.props selects the same version for managed UWP builds. Compilation targets SDK 26100 and the runtime minimum is build 22000. |
 | Microsoft.Windows.SDK.BuildTools.MSIX | 1.7.261102100 | Overrides the UWP SDK's implicit packaging tools through Directory.Packages.props for product and test hosts. |
-| .NET SDK | global.json: 10.0.404, latestPatch | .NET 10 LTS, supported through 2028-11-14. Local installed patches can roll forward within the 10.0.4xx feature band; CI bootstraps the explicit version. Requires MSBuild 18.0+. Runtime/ILCompiler versions follow the selected SDK through NativeAot.targets. |
+| .NET SDK | global.json: 10.0.404, latestPatch | .NET 10 LTS, supported through 2028-11-14. Local installed patches can roll forward within the 10.0.4xx feature band; CI bootstraps the explicit version. Requires MSBuild 18.0+. Runtime/ILCompiler versions follow the target-specific SDK table through NativeAot.targets. |
 | Windows SDK headers / managed target | 10.0.26100.0 | Compilation target, not the minimum runtime OS. |
+| Microsoft.Windows.SDK.NET.Ref | 10.0.26100.87 | Product and packaged App host explicitly select this compatible metadata revision for the Markdown projection; build-tool versions remain independent. |
 | MSVC / UWP libraries | VS or Build Tools 2026 18.0+, v145 | Required to build; not an end-user installation requirement. |
+| Rust | 1.99.1, stable MSVC targets | Module rust-toolchain.toml; x86/i686, x64/x86_64 and ARM64/aarch64. Cargo locks and vendored patches remain under Notepads.Markdown. |
+| Comrak and Markdown vendors | module Cargo.lock and path dependencies | Comrak 0.56.0 plus the existing bounded math/flowchart/SVG implementations. Their source licenses and notices remain in the module. |
 
 The managed SDK also injects its own Windows SDK BuildTools/MSIX tasks and
 ILLink/ILCompiler packs. These are build inputs, not a second runtime UI stack.
@@ -122,9 +133,11 @@ installation reports under `artifacts/package-install-smoke/`:
 ## Platform decision
 
 The 2026-11-04 product decision sets **Windows 11 version 21H2, build 22000**
-as the minimum, with **x86, x64 and ARM64** packages. The product, control library,
-native component, projection and packaged test hosts declare this baseline.
-The source and generated manifests target the Windows Desktop device family.
+as the minimum, with **x86, x64 and ARM64** packages. The product, control library
+and packaged test hosts declare this baseline. The reusable native Markdown
+component and projection retain their lower build 17763 declarations; the App
+package enforces build 22000. The source and generated manifests target the
+Windows Desktop device family.
 
 The direct and resolved NuGet dependencies were checked against stable releases on 2026-11-04.
 Updates are Windows SDK BuildTools 10.0.28000.2957 for native and managed builds,
@@ -136,6 +149,10 @@ That validation used runtime and ILCompiler packs 10.0.14. The current .NET 10 L
 SDK 10.0.404 baseline retains net10 targets and resolves their runtime and ILCompiler
 packs at 10.0.15; it requires MSBuild 18.0 or later. Unit and Headless tests use the
 same net10 runtime supplied by this SDK.
+The Markdown source module retains fixed Rust dependencies and its own lock
+files. Its architecture, layer-specific test commands and third-party ownership
+are documented in `src/Notepads.Markdown/README.md`. The original 68-package
+count describes the earlier dependency audit, not the current native source graph.
 
 The final Production matrix passes Native AOT, architecture/package validation
 and offline integrity checks for ARM64, x64 and x86. The bundled WinUI, VCLibs
@@ -402,3 +419,16 @@ Primary references: [WinUI](https://www.nuget.org/packages/Microsoft.UI.Xaml),
 [Test SDK 18.11 release](https://github.com/microsoft/vstest/releases/tag/v18.11.0),
 [.NET Windows support](https://learn.microsoft.com/en-us/dotnet/core/install/windows),
 [Windows ICU](https://learn.microsoft.com/en-us/windows/win32/intl/international-components-for-unicode--icu-).
+
+Historical component reference (2026-11-06; no longer a development input): `0.1.0-preview.42`, 71,678,191 bytes,
+SHA-256 `785CEC76A9B3299864B30495530D248DCF13FC75E283903AC21EED991223ED86`.
+It adds generic viewport interpolation and matching WinRT metadata/projection.
+The final three-architecture Release AOT/MSIX build bindings were independently
+checked. Native x86 deployment uses the canonical Win32 output directory; the
+old x86 bridge packages were rejected and preserved. Core reading and native
+source-viewport/pending-wrap checks passed on x64/x86. The preview.42 record
+left physical source-follow, ordinary/interpolation window waits and final UI
+acceptance open. Preview.41 UI results apply to that build. The current
+source-built component requires its own UI acceptance results.
+
+Historical 2026-11-13 build-host validation used Visual Studio 18.12 and SDK 11.0.100. The current baseline is .NET 10 LTS SDK 10.0.404 from global.json, with net10 targets, C# 14 and Runtime/ILCompiler 10.0.15. The earlier validation and the 2026-11-04 dependency audit remain historical evidence rather than the current SDK policy.
