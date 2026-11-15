@@ -1791,6 +1791,27 @@
       "withoutHeader": []
     },
     {
+      "reason": "Retain the original font-control test banner with its explicit MIT qualifier.",
+      "license": "src/Notepads.Markdown/LICENSE",
+      "headers": [
+        {
+          "lines": 4,
+          "sha256": "E2CA98408836F3E7228B2680E740BD78BBD6B9E3CA35373B3903C6B74ED9C5C2",
+          "paths": [
+            "src/Notepads.Markdown/tests/native/NativeImageFontControlTests.cpp"
+          ]
+        },
+        {
+          "lines": 4,
+          "sha256": "E2CA98408836F3E7228B2680E740BD78BBD6B9E3CA35373B3903C6B74ED9C5C2",
+          "paths": [
+            "src/Notepads.Markdown/tests/native/NativeImageFontControlTests.h"
+          ]
+        }
+      ],
+      "withoutHeader": []
+    },
+    {
       "reason": "Retain Toolkit attribution and upstream formatting; do not replace with a Notepads-only notice.",
       "license": "LICENSE.txt",
       "headers": [
