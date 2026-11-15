@@ -1,0 +1,13 @@
+[submodule "testdata/Packages"]
+	branch = st3 # TODO: this line should be removed once st4 functionality has been implemented
+	path = testdata/Packages
+	url = https://github.com/sublimehq/Packages
+[submodule "testdata/InspiredGitHub.tmtheme"]
+	path = testdata/InspiredGitHub.tmtheme
+	url = https://github.com/sethlopezme/InspiredGitHub.tmtheme.git
+[submodule "testdata/Solarized"]
+	path = testdata/Solarized
+	url = https://github.com/braver/Solarized.git
+[submodule "testdata/spacegray"]
+	path = testdata/spacegray
+	url = https://github.com/kkga/spacegray.git

@@ -1,0 +1,63 @@
+{
+  "nodes": {
+    "fenix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "rust-analyzer-src": "rust-analyzer-src"
+      },
+      "locked": {
+        "type": "github",
+        "lastModified": 1768546293,
+        "narHash": "sha256-o15jS3eJe9Ek5KXWXSETjtFHUo6VHkWKT+JDBEz6xew=",
+        "owner": "nix-community",
+        "repo": "fenix",
+        "rev": "0a6822c636473a16ba89e7d99c5d6bde163d49d0"
+      },
+      "original": {
+        "type": "github",
+        "owner": "nix-community",
+        "repo": "fenix"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "type": "tarball",
+        "lastModified": 1780902259,
+        "narHash": "sha256-YMnBf9lk/LYgvqfmSSJuOGigtRs5Lsy26pJHVlR9yMY=",
+        "rev": "bd0ff2d3eac24699c3664d5966b9ef36f388e2ca",
+        "url": "https://releases.nixos.org/nixos/26.05/nixos-26.05.1550.bd0ff2d3eac2/nixexprs.tar.xz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-26.05/nixexprs.tar.zst"
+      }
+    },
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "fenix": "fenix"
+      }
+    },
+    "rust-analyzer-src": {
+      "locked": {
+        "type": "github",
+        "lastModified": 1768468158,
+        "narHash": "sha256-DfifO/Se9ogmp5rxe/OwmRIz20/w6BsbWC1s4kL1Bzc=",
+        "owner": "rust-lang",
+        "repo": "rust-analyzer",
+        "rev": "adbff8baedae53f9955fe60c0d470ecd77b4f548"
+      },
+      "original": {
+        "type": "github",
+        "owner": "rust-lang",
+        "repo": "rust-analyzer",
+        "ref": "nightly"
+      },
+      "flake": false
+    }
+  },
+  "root": "root",
+  "version": 7
+}

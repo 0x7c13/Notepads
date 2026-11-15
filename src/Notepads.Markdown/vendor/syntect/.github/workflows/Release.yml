@@ -1,0 +1,72 @@
+name: Release
+
+# To make a release:
+#
+# 1. Update Cargo.toml version and CHANGELOG.md on master
+# 2. Run workflow https://github.com/trishume/syntect/actions/workflows/Release.yml on master
+# 3. Done!
+
+on:
+  workflow_dispatch: # This workflow can only be triggered manually.
+    inputs:
+      one_time_crates_io_token_secret:
+        description: "A one-time crates.io token (delete it after first use)"
+        required: true
+        type: string
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Make sure regular CI passes before we make a release.
+  ci:
+    uses: ./.github/workflows/CI.yml
+    with:
+      one_time_crates_io_token_secret: masked
+
+  # After regular CI passes we publish to crates.io and push a git tag.
+  publish-and-tag:
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # So we can push a tag.
+    outputs:
+      VERSION: ${{ steps.version.outputs.VERSION }}
+      TAG_NAME: ${{ steps.version.outputs.TAG_NAME }}
+    steps:
+      - run: |
+          # See https://github.com/actions/runner/issues/643#issuecomment-708468716
+          # See https://github.com/actions/runner/issues/475#issuecomment-635775403
+          masked_secret=$(jq -r '.inputs.one_time_crates_io_token_secret' $GITHUB_EVENT_PATH)
+          echo "::add-mask::$masked_secret"
+      - uses: actions/checkout@v4
+      - run: cargo publish -p syntect
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ inputs.one_time_crates_io_token_secret }}
+      - name: version
+        id: version
+        run: |
+          version=$(cargo read-manifest --manifest-path Cargo.toml | jq --raw-output .version)
+          echo "VERSION=${version}" >> $GITHUB_OUTPUT
+          echo "TAG_NAME=v${version}" >> $GITHUB_OUTPUT
+      - name: push tag
+        run: |
+          git tag ${{ steps.version.outputs.TAG_NAME }}
+          git push origin ${{ steps.version.outputs.TAG_NAME }}
+
+  # Lastly, create a GitHub release.
+  release:
+    needs: publish-and-tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # So we can create a release.
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo install parse-changelog@0.6.4 --locked
+      - name: create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="$(parse-changelog CHANGELOG.md ${{ needs.publish-and-tag.outputs.VERSION }})"
+          title="${{ needs.publish-and-tag.outputs.TAG_NAME }}"
+          gh release create --title "$title" --notes "$notes" ${{ needs.publish-and-tag.outputs.TAG_NAME }}

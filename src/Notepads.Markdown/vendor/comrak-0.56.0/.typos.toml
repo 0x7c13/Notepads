@@ -1,0 +1,11 @@
+[default]
+extend-ignore-re = [
+  # Ignore specific commit hash from Pro Git book
+  "56ef2caf",
+
+  # Ignore hello world fixture demo
+  "worl[^\\w]",
+
+  # it's german
+  "egal",
+]

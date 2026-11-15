@@ -29,6 +29,14 @@
       "sha256": "E7A93B009565CFCE55919A381437AC4DB883E9DA2126FA28B91D12732BC53D96"
     },
     {
+      "path": "src/Notepads.Markdown/vendor/comrak-0.56.0/COPYING",
+      "sha256": "27293E2353CE5D83E07331FFC423051908B062787D148193B8927D50D9873BD5"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/syntect/LICENSE.txt",
+      "sha256": "C695A20D7FEB2463ECC9F0A966C88ED1581E364E1E22796E0DED020B571FA43B"
+    },
+    {
       "path": "src/Notepads.Markdown/third-party-notices/MarkdownCore/dugong-0.9.2/LICENSE-APACHE",
       "sha256": "C71D239DF91726FC519C6EB72D318EC65820627232B2F796219E87DCF35D0AB4"
     },
@@ -1257,6 +1265,20 @@
       "withoutHeader": []
     },
     {
+      "reason": "Generated WHATWG named entities retain the upstream terms and generator modification credit.",
+      "license": "src/Notepads.Markdown/third-party-notices/WHATWG/LICENSE",
+      "headers": [
+        {
+          "lines": 6,
+          "sha256": "EEA3BF86915787D6560E80CF7E0A32981E096E8C668A90E03E3D1F47A3094F8B",
+          "paths": [
+            "src/Notepads.Markdown/crates/markdown-core/src/ir/entities.rs"
+          ]
+        }
+      ],
+      "withoutHeader": []
+    },
+    {
       "reason": "Retain Toolkit attribution and upstream formatting; do not replace with a Notepads-only notice.",
       "license": "LICENSE.txt",
       "headers": [
@@ -1409,6 +1431,16 @@
     }
   ],
   "upstreamTrees": [
+    {
+      "path": "src/Notepads.Markdown/vendor/comrak-0.56.0",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/vendor/comrak-0.56.0/COPYING"
+    },
+    {
+      "path": "src/Notepads.Markdown/vendor/syntect",
+      "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",
+      "license": "src/Notepads.Markdown/vendor/syntect/LICENSE.txt"
+    },
     {
       "path": "src/Notepads.Markdown/tests/baselines/comrak-0.56.0",
       "reason": "Preserve this imported source origin and its original notice formats; local modifications keep upstream attribution.",

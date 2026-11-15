@@ -12,10 +12,13 @@ Resolve the current product FFI normal/build graph from the active Cargo.toml
 and [Cargo.lock](../../Cargo.lock) for the intended target. Retained-fork source
 identities and modifications are recorded in [vendor/forks.json](../../vendor/forks.json)
 and [FORKS.md](../../FORKS.md). Current notice coverage combines this preserved
-snapshot with [NativeSvg/dependency-notices.json](../NativeSvg/dependency-notices.json)
-and [NativeSvg/supplemental-inventory.json](../NativeSvg/supplemental-inventory.json);
-no one historical inventory is the current complete closure. Inventory membership
-does not assert that every function is linked, UWP-safe or exercised at runtime.
+snapshot with [NativeSvg/dependency-notices.json](../NativeSvg/dependency-notices.json),
+[NativeSvg/supplemental-inventory.json](../NativeSvg/supplemental-inventory.json),
+[emoji shortcode notices](../EmojiShortcodes/README.md),
+[additional code-fence grammar notices](code-syntaxes/README.md), and
+[registry notices for the TOML front-matter parser](front-matter-toml/dependency-notices.json).
+The TOML inventory covers the production normal/build dependency graph. Inventory
+membership records notice coverage for the captured packages.
 
 The snapshot retains each captured crate release, original archive SHA256,
 published crate VCS commit where supplied, declared license, enabled features
@@ -64,14 +67,17 @@ for the original terms.
 ## Bundled syntax assets
 
 The vendored syntect release is 5.3.0 at commit
-`e4670846ecf16d8832db6c43d531bec466214e27`. The current runtime entry uses
-`assets/default_newlines.packdump`, SHA256
+`e4670846ecf16d8832db6c43d531bec466214e27`. Its original
+`assets/default_newlines.packdump` is the base input, SHA256
 `D740B20C12E40B678B9F1012401E1969AAA5CD55F1AB329FFEB94D746B06A5C0`.
 Its 75 syntaxes comprise one built-in Plain Text definition and 74 original
 grammar files from Sublime Packages commit
 `fa6b8629c95041bf262d4c1dab95c456a0530122`. Provenance is based on the pinned
 gitlink, original generation recipe and per-file hashes; byte-identical pack
-regeneration has not been claimed.
+regeneration has not been claimed. The runtime loads `crates/markdown-core/assets/code-syntaxes/highlight.packdump`,
+which combines that base with five additional grammar files. The
+[additional grammar inventory](code-syntaxes/syntax-assets.json) records the
+fixed base and runtime pack identities, source grammars and licenses.
 
 [NOTEPADS-SYNTAX-NOTICES.txt](syntect-5.3.0/NOTEPADS-SYNTAX-NOTICES.txt)
 preserves the syntect copyright, Sublime Packages root license and exceptions,
@@ -81,7 +87,7 @@ pack when `yaml-load` is disabled. Original Sublime root and Rust license files
 are also retained separately.
 
 [SYNTAX-ASSET-PROVENANCE.json](syntect-5.3.0/SYNTAX-ASSET-PROVENANCE.json)
-binds the runtime pack, source commits, notices and frozen
+binds the original Syntect base pack, source commits, notices and frozen
 [SYNTAX-INPUTS.lock.json](syntect-5.3.0/SYNTAX-INPUTS.lock.json). The latter
 records all 93 upstream research-source assets: 12 original scope-test fixtures,
 74 grammars, two separate license files and five syntect reference files. All
@@ -91,6 +97,4 @@ grammars. The existence of 75 syntax definitions does not qualify 75 languages
 or erase known upstream fixture differences.
 
 The vendored-source inventory and local modification description are retained
-as NOTEPADS-UPSTREAM.json and NOTEPADS-PATCH.md. This notice update does
-not change the grammar pack, dependency versions, upstream test inputs or
-expected results.
+as NOTEPADS-UPSTREAM.json and NOTEPADS-PATCH.md.

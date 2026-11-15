@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  workflow_call: # From .github/workflows/Release.yml
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  min_version:
+    name: Minimum supported rust version
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable minus 2 releases # MSRV policy = last three versions of stable
+        components: clippy, rustfmt
+
+    - name: Run cargo fmt --check
+      run: cargo fmt -- --check
+
+    - name: Run cargo clippy
+      run: |
+        # Must run before `cargo check` until we use Rust 1.52
+        # See https://github.com/rust-lang/rust-clippy/issues/4612
+        cargo clippy --all-targets --all-features -- \
+          --allow clippy::unknown_clippy_lints \
+          --allow clippy::unnecessary_cast \
+          --allow clippy::block_in_if_condition_stmt
+        # Prevent regressions of https://github.com/trishume/syntect/issues/98
+        cargo clippy --all-features --lib -- --deny clippy::panic
+    - name: Run cargo check
+      run: |
+        cargo check --all-features --all-targets
+        # Check that if some other crate in the downstream dependency tree
+        # enables serde's "derive" feature, syntect still builds.
+        cargo check --all-features --features serde/derive
+
+  documentation:
+    name: Documentation checks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: RUSTDOCFLAGS='--deny warnings' cargo doc --no-deps --document-private-items --all-features
+
+  bat-tests:
+    name: Run bat syntax regression tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: 'syntect'
+    - uses: actions/checkout@v4
+      with:
+        repository: 'sharkdp/bat'
+        path: 'bat'
+        ref: master
+        submodules: true
+    - name: bat/tests/syntax-tests/regression_test.sh
+      run: |
+        cd bat
+        sed -i 's%\[dependencies.syntect\]%[dependencies.syntect]\npath = "../syntect"%' Cargo.toml
+        cargo build --release # Build bat so we can update the assets
+        PATH=target/release:$PATH ./assets/create.sh # Update assets with newly built bat
+        cargo build --release # Build bat using the newly updated assets
+        PATH=./target/release:$PATH tests/syntax-tests/regression_test.sh
+
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - uses: dtolnay/rust-toolchain@stable
+    - name: Build
+      run: |
+        cargo build
+    - name: Run tests
+      run: |
+        cargo test --features metadata
+    - name: Run tests with fancy
+      run: |
+        # Run these tests in release mode since they're slow as heck otherwise
+        cargo test --features default-fancy --no-default-features --release
+    - name: Ensure highlight works without 'plist-load' and 'yaml-load' features
+      run: |
+        cargo run --example synhtml --no-default-features --features html,default-syntaxes,default-themes,regex-onig -- examples/synhtml.rs
+    - name: Run tests with 'default-syntaxes' but without 'default-themes'
+      run: |
+        cargo test --lib --example synstats --no-default-features --features default-syntaxes,yaml-load,regex-onig
+    - name: Run tests without default features
+      run: |
+        cargo test --lib --no-default-features
+    - name: make stuff
+      run: |
+        make assets
+        make syntest
+        make syntest-fancy
+    - name: Docs
+      run: |
+        cargo doc
+
+  check-feature-powerset:
+    name: Check feature powerset
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@stable
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-hack
+    # Ensure that `cargo check` works across many different feature sets
+    - name: Check feature powerset
+      run: |
+        cargo hack --feature-powerset --depth=2 --features=regex-fancy --exclude-features=regex-onig check

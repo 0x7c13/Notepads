@@ -1,0 +1,1319 @@
+pub mod syntect
+pub mod syntect::dumps
+pub fn syntect::dumps::dump_binary<T: serde::ser::Serialize>(o: &T) -> alloc::vec::Vec<u8>
+pub fn syntect::dumps::dump_to_file<T: serde::ser::Serialize, P: core::convert::AsRef<std::path::Path>>(o: &T, path: P) -> bincode::error::Result<()>
+pub fn syntect::dumps::dump_to_uncompressed_file<T: serde::ser::Serialize, P: core::convert::AsRef<std::path::Path>>(o: &T, path: P) -> bincode::error::Result<()>
+pub fn syntect::dumps::dump_to_writer<T: serde::ser::Serialize, W: std::io::Write>(to_dump: &T, output: W) -> bincode::error::Result<()>
+pub fn syntect::dumps::from_binary<T: serde::de::DeserializeOwned>(v: &[u8]) -> T
+pub fn syntect::dumps::from_dump_file<T: serde::de::DeserializeOwned, P: core::convert::AsRef<std::path::Path>>(path: P) -> bincode::error::Result<T>
+pub fn syntect::dumps::from_reader<T: serde::de::DeserializeOwned, R: std::io::BufRead>(input: R) -> bincode::error::Result<T>
+pub fn syntect::dumps::from_uncompressed_data<T: serde::de::DeserializeOwned>(v: &[u8]) -> bincode::error::Result<T>
+pub fn syntect::dumps::from_uncompressed_dump_file<T: serde::de::DeserializeOwned, P: core::convert::AsRef<std::path::Path>>(path: P) -> bincode::error::Result<T>
+pub mod syntect::easy
+pub struct syntect::easy::HighlightFile<'a>
+pub syntect::easy::HighlightFile::highlight_lines: syntect::easy::HighlightLines<'a>
+pub syntect::easy::HighlightFile::reader: std::io::buffered::bufreader::BufReader<std::fs::File>
+impl<'a> syntect::easy::HighlightFile<'a>
+pub fn syntect::easy::HighlightFile<'a>::new<P: core::convert::AsRef<std::path::Path>>(path_obj: P, ss: &syntect::parsing::SyntaxSet, theme: &'a syntect::highlighting::Theme) -> std::io::error::Result<syntect::easy::HighlightFile<'a>>
+impl<'a> core::marker::Freeze for syntect::easy::HighlightFile<'a>
+impl<'a> !core::marker::Send for syntect::easy::HighlightFile<'a>
+impl<'a> !core::marker::Sync for syntect::easy::HighlightFile<'a>
+impl<'a> core::marker::Unpin for syntect::easy::HighlightFile<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for syntect::easy::HighlightFile<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for syntect::easy::HighlightFile<'a>
+pub struct syntect::easy::HighlightLines<'a>
+impl<'a> syntect::easy::HighlightLines<'a>
+pub fn syntect::easy::HighlightLines<'a>::from_state(theme: &'a syntect::highlighting::Theme, highlight_state: syntect::highlighting::HighlightState, parse_state: syntect::parsing::ParseState) -> syntect::easy::HighlightLines<'a>
+pub fn syntect::easy::HighlightLines<'a>::highlight<'b>(&mut self, line: &'b str, syntax_set: &syntect::parsing::SyntaxSet) -> alloc::vec::Vec<(syntect::highlighting::Style, &'b str)>
+pub fn syntect::easy::HighlightLines<'a>::highlight_line<'b>(&mut self, line: &'b str, syntax_set: &syntect::parsing::SyntaxSet) -> core::result::Result<alloc::vec::Vec<(syntect::highlighting::Style, &'b str)>, syntect::Error>
+pub fn syntect::easy::HighlightLines<'a>::new(syntax: &syntect::parsing::SyntaxReference, theme: &'a syntect::highlighting::Theme) -> syntect::easy::HighlightLines<'a>
+pub fn syntect::easy::HighlightLines<'a>::state(self) -> (syntect::highlighting::HighlightState, syntect::parsing::ParseState)
+impl<'a> core::marker::Freeze for syntect::easy::HighlightLines<'a>
+impl<'a> !core::marker::Send for syntect::easy::HighlightLines<'a>
+impl<'a> !core::marker::Sync for syntect::easy::HighlightLines<'a>
+impl<'a> core::marker::Unpin for syntect::easy::HighlightLines<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for syntect::easy::HighlightLines<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for syntect::easy::HighlightLines<'a>
+pub struct syntect::easy::ScopeRangeIterator<'a>
+impl<'a> syntect::easy::ScopeRangeIterator<'a>
+pub fn syntect::easy::ScopeRangeIterator<'a>::new(ops: &'a [(usize, syntect::parsing::ScopeStackOp)], line: &'a str) -> syntect::easy::ScopeRangeIterator<'a>
+impl<'a> core::fmt::Debug for syntect::easy::ScopeRangeIterator<'a>
+pub fn syntect::easy::ScopeRangeIterator<'a>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::iter::traits::iterator::Iterator for syntect::easy::ScopeRangeIterator<'a>
+pub type syntect::easy::ScopeRangeIterator<'a>::Item = (core::ops::range::Range<usize>, &'a syntect::parsing::ScopeStackOp)
+pub fn syntect::easy::ScopeRangeIterator<'a>::next(&mut self) -> core::option::Option<Self::Item>
+impl<'a> core::marker::Freeze for syntect::easy::ScopeRangeIterator<'a>
+impl<'a> core::marker::Send for syntect::easy::ScopeRangeIterator<'a>
+impl<'a> core::marker::Sync for syntect::easy::ScopeRangeIterator<'a>
+impl<'a> core::marker::Unpin for syntect::easy::ScopeRangeIterator<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for syntect::easy::ScopeRangeIterator<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for syntect::easy::ScopeRangeIterator<'a>
+pub struct syntect::easy::ScopeRegionIterator<'a>
+impl<'a> syntect::easy::ScopeRegionIterator<'a>
+pub fn syntect::easy::ScopeRegionIterator<'a>::new(ops: &'a [(usize, syntect::parsing::ScopeStackOp)], line: &'a str) -> syntect::easy::ScopeRegionIterator<'a>
+impl<'a> core::fmt::Debug for syntect::easy::ScopeRegionIterator<'a>
+pub fn syntect::easy::ScopeRegionIterator<'a>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::iter::traits::iterator::Iterator for syntect::easy::ScopeRegionIterator<'a>
+pub type syntect::easy::ScopeRegionIterator<'a>::Item = (&'a str, &'a syntect::parsing::ScopeStackOp)
+pub fn syntect::easy::ScopeRegionIterator<'a>::next(&mut self) -> core::option::Option<Self::Item>
+impl<'a> core::marker::Freeze for syntect::easy::ScopeRegionIterator<'a>
+impl<'a> core::marker::Send for syntect::easy::ScopeRegionIterator<'a>
+impl<'a> core::marker::Sync for syntect::easy::ScopeRegionIterator<'a>
+impl<'a> core::marker::Unpin for syntect::easy::ScopeRegionIterator<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for syntect::easy::ScopeRegionIterator<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for syntect::easy::ScopeRegionIterator<'a>
+pub mod syntect::highlighting
+#[non_exhaustive] pub enum syntect::highlighting::ParseThemeError
+pub syntect::highlighting::ParseThemeError::ColorShemeScopeIsNotObject
+pub syntect::highlighting::ParseThemeError::ColorShemeSettingsIsNotObject
+pub syntect::highlighting::ParseThemeError::DuplicateSettings
+pub syntect::highlighting::ParseThemeError::IncorrectColor
+pub syntect::highlighting::ParseThemeError::IncorrectFontStyle(alloc::string::String)
+pub syntect::highlighting::ParseThemeError::IncorrectSettings
+pub syntect::highlighting::ParseThemeError::IncorrectSyntax
+pub syntect::highlighting::ParseThemeError::IncorrectUnderlineOption
+pub syntect::highlighting::ParseThemeError::ScopeParse(syntect::parsing::ParseScopeError)
+pub syntect::highlighting::ParseThemeError::ScopeSelectorIsNotString(alloc::string::String)
+pub syntect::highlighting::ParseThemeError::UndefinedScopeSettings(alloc::string::String)
+pub syntect::highlighting::ParseThemeError::UndefinedSettings
+impl core::convert::From<syntect::highlighting::ParseThemeError> for syntect::LoadingError
+pub fn syntect::LoadingError::from(source: syntect::highlighting::ParseThemeError) -> Self
+impl core::convert::From<syntect::parsing::ParseScopeError> for syntect::highlighting::ParseThemeError
+pub fn syntect::highlighting::ParseThemeError::from(source: syntect::parsing::ParseScopeError) -> Self
+impl core::error::Error for syntect::highlighting::ParseThemeError
+pub fn syntect::highlighting::ParseThemeError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for syntect::highlighting::ParseThemeError
+pub fn syntect::highlighting::ParseThemeError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::highlighting::ParseThemeError
+pub fn syntect::highlighting::ParseThemeError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::highlighting::ParseThemeError
+impl core::marker::Send for syntect::highlighting::ParseThemeError
+impl core::marker::Sync for syntect::highlighting::ParseThemeError
+impl core::marker::Unpin for syntect::highlighting::ParseThemeError
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::ParseThemeError
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::ParseThemeError
+#[non_exhaustive] pub enum syntect::highlighting::SettingsError
+pub syntect::highlighting::SettingsError::Plist(plist::error::Error)
+impl core::convert::From<plist::error::Error> for syntect::highlighting::SettingsError
+pub fn syntect::highlighting::SettingsError::from(error: plist::error::Error) -> syntect::highlighting::SettingsError
+impl core::convert::From<syntect::highlighting::SettingsError> for syntect::LoadingError
+pub fn syntect::LoadingError::from(source: syntect::highlighting::SettingsError) -> Self
+impl core::error::Error for syntect::highlighting::SettingsError
+impl core::fmt::Debug for syntect::highlighting::SettingsError
+pub fn syntect::highlighting::SettingsError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::highlighting::SettingsError
+pub fn syntect::highlighting::SettingsError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::highlighting::SettingsError
+impl core::marker::Send for syntect::highlighting::SettingsError
+impl core::marker::Sync for syntect::highlighting::SettingsError
+impl core::marker::Unpin for syntect::highlighting::SettingsError
+impl !core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::SettingsError
+impl !core::panic::unwind_safe::UnwindSafe for syntect::highlighting::SettingsError
+pub enum syntect::highlighting::UnderlineOption
+pub syntect::highlighting::UnderlineOption::None
+pub syntect::highlighting::UnderlineOption::SquigglyUnderline
+pub syntect::highlighting::UnderlineOption::StippledUnderline
+pub syntect::highlighting::UnderlineOption::Underline
+impl core::clone::Clone for syntect::highlighting::UnderlineOption
+pub fn syntect::highlighting::UnderlineOption::clone(&self) -> syntect::highlighting::UnderlineOption
+impl core::cmp::PartialEq for syntect::highlighting::UnderlineOption
+pub fn syntect::highlighting::UnderlineOption::eq(&self, other: &syntect::highlighting::UnderlineOption) -> bool
+impl core::default::Default for syntect::highlighting::UnderlineOption
+pub fn syntect::highlighting::UnderlineOption::default() -> syntect::highlighting::UnderlineOption
+impl core::fmt::Debug for syntect::highlighting::UnderlineOption
+pub fn syntect::highlighting::UnderlineOption::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::highlighting::UnderlineOption
+impl core::str::traits::FromStr for syntect::highlighting::UnderlineOption
+pub type syntect::highlighting::UnderlineOption::Err = syntect::highlighting::ParseThemeError
+pub fn syntect::highlighting::UnderlineOption::from_str(s: &str) -> core::result::Result<syntect::highlighting::UnderlineOption, Self::Err>
+impl serde::ser::Serialize for syntect::highlighting::UnderlineOption
+pub fn syntect::highlighting::UnderlineOption::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::UnderlineOption
+pub fn syntect::highlighting::UnderlineOption::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::UnderlineOption
+impl core::marker::Send for syntect::highlighting::UnderlineOption
+impl core::marker::Sync for syntect::highlighting::UnderlineOption
+impl core::marker::Unpin for syntect::highlighting::UnderlineOption
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::UnderlineOption
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::UnderlineOption
+pub struct syntect::highlighting::Color
+pub syntect::highlighting::Color::a: u8
+pub syntect::highlighting::Color::b: u8
+pub syntect::highlighting::Color::g: u8
+pub syntect::highlighting::Color::r: u8
+impl syntect::highlighting::Color
+pub const syntect::highlighting::Color::BLACK: syntect::highlighting::Color
+pub const syntect::highlighting::Color::WHITE: syntect::highlighting::Color
+impl core::clone::Clone for syntect::highlighting::Color
+pub fn syntect::highlighting::Color::clone(&self) -> syntect::highlighting::Color
+impl core::cmp::Eq for syntect::highlighting::Color
+impl core::cmp::PartialEq for syntect::highlighting::Color
+pub fn syntect::highlighting::Color::eq(&self, other: &syntect::highlighting::Color) -> bool
+impl core::fmt::Debug for syntect::highlighting::Color
+pub fn syntect::highlighting::Color::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for syntect::highlighting::Color
+pub fn syntect::highlighting::Color::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for syntect::highlighting::Color
+impl core::marker::StructuralPartialEq for syntect::highlighting::Color
+impl core::str::traits::FromStr for syntect::highlighting::Color
+pub type syntect::highlighting::Color::Err = syntect::highlighting::ParseThemeError
+pub fn syntect::highlighting::Color::from_str(s: &str) -> core::result::Result<syntect::highlighting::Color, Self::Err>
+impl serde::ser::Serialize for syntect::highlighting::Color
+pub fn syntect::highlighting::Color::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::Color
+pub fn syntect::highlighting::Color::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::Color
+impl core::marker::Send for syntect::highlighting::Color
+impl core::marker::Sync for syntect::highlighting::Color
+impl core::marker::Unpin for syntect::highlighting::Color
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::Color
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::Color
+pub struct syntect::highlighting::FontStyle
+impl syntect::highlighting::FontStyle
+pub const syntect::highlighting::FontStyle::BOLD: Self
+pub const syntect::highlighting::FontStyle::ITALIC: Self
+pub const syntect::highlighting::FontStyle::UNDERLINE: Self
+pub const fn syntect::highlighting::FontStyle::all() -> Self
+pub const fn syntect::highlighting::FontStyle::bits(&self) -> u8
+pub const fn syntect::highlighting::FontStyle::complement(self) -> Self
+pub const fn syntect::highlighting::FontStyle::contains(&self, other: Self) -> bool
+pub const fn syntect::highlighting::FontStyle::difference(self, other: Self) -> Self
+pub const fn syntect::highlighting::FontStyle::empty() -> Self
+pub const fn syntect::highlighting::FontStyle::from_bits(bits: u8) -> core::option::Option<Self>
+pub const fn syntect::highlighting::FontStyle::from_bits_truncate(bits: u8) -> Self
+pub unsafe const fn syntect::highlighting::FontStyle::from_bits_unchecked(bits: u8) -> Self
+pub fn syntect::highlighting::FontStyle::insert(&mut self, other: Self)
+pub const fn syntect::highlighting::FontStyle::intersection(self, other: Self) -> Self
+pub const fn syntect::highlighting::FontStyle::intersects(&self, other: Self) -> bool
+pub const fn syntect::highlighting::FontStyle::is_all(&self) -> bool
+pub const fn syntect::highlighting::FontStyle::is_empty(&self) -> bool
+pub fn syntect::highlighting::FontStyle::remove(&mut self, other: Self)
+pub fn syntect::highlighting::FontStyle::set(&mut self, other: Self, value: bool)
+pub const fn syntect::highlighting::FontStyle::symmetric_difference(self, other: Self) -> Self
+pub fn syntect::highlighting::FontStyle::toggle(&mut self, other: Self)
+pub const fn syntect::highlighting::FontStyle::union(self, other: Self) -> Self
+impl core::clone::Clone for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::clone(&self) -> syntect::highlighting::FontStyle
+impl core::cmp::Eq for syntect::highlighting::FontStyle
+impl core::cmp::Ord for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::cmp(&self, other: &syntect::highlighting::FontStyle) -> core::cmp::Ordering
+impl core::cmp::PartialEq for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::eq(&self, other: &syntect::highlighting::FontStyle) -> bool
+impl core::cmp::PartialOrd for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::partial_cmp(&self, other: &syntect::highlighting::FontStyle) -> core::option::Option<core::cmp::Ordering>
+impl core::default::Default for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::default() -> syntect::highlighting::FontStyle
+impl core::fmt::Binary for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Debug for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::LowerHex for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Octal for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::UpperHex for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::iter::traits::collect::Extend<syntect::highlighting::FontStyle> for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::extend<T: core::iter::traits::collect::IntoIterator<Item = Self>>(&mut self, iterator: T)
+impl core::iter::traits::collect::FromIterator<syntect::highlighting::FontStyle> for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::from_iter<T: core::iter::traits::collect::IntoIterator<Item = Self>>(iterator: T) -> Self
+impl core::marker::Copy for syntect::highlighting::FontStyle
+impl core::marker::StructuralPartialEq for syntect::highlighting::FontStyle
+impl core::ops::arith::Sub for syntect::highlighting::FontStyle
+pub type syntect::highlighting::FontStyle::Output = syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::sub(self, other: Self) -> Self
+impl core::ops::arith::SubAssign for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::sub_assign(&mut self, other: Self)
+impl core::ops::bit::BitAnd for syntect::highlighting::FontStyle
+pub type syntect::highlighting::FontStyle::Output = syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::bitand(self, other: Self) -> Self
+impl core::ops::bit::BitAndAssign for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::bitand_assign(&mut self, other: Self)
+impl core::ops::bit::BitOr for syntect::highlighting::FontStyle
+pub type syntect::highlighting::FontStyle::Output = syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::bitor(self, other: syntect::highlighting::FontStyle) -> Self
+impl core::ops::bit::BitOrAssign for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::bitor_assign(&mut self, other: Self)
+impl core::ops::bit::BitXor for syntect::highlighting::FontStyle
+pub type syntect::highlighting::FontStyle::Output = syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::bitxor(self, other: Self) -> Self
+impl core::ops::bit::BitXorAssign for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::bitxor_assign(&mut self, other: Self)
+impl core::ops::bit::Not for syntect::highlighting::FontStyle
+pub type syntect::highlighting::FontStyle::Output = syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::not(self) -> Self
+impl core::str::traits::FromStr for syntect::highlighting::FontStyle
+pub type syntect::highlighting::FontStyle::Err = syntect::highlighting::ParseThemeError
+pub fn syntect::highlighting::FontStyle::from_str(s: &str) -> core::result::Result<syntect::highlighting::FontStyle, Self::Err>
+impl serde::ser::Serialize for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::FontStyle
+pub fn syntect::highlighting::FontStyle::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::FontStyle
+impl core::marker::Send for syntect::highlighting::FontStyle
+impl core::marker::Sync for syntect::highlighting::FontStyle
+impl core::marker::Unpin for syntect::highlighting::FontStyle
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::FontStyle
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::FontStyle
+pub struct syntect::highlighting::HighlightIterator<'a, 'b>
+impl<'a, 'b> syntect::highlighting::HighlightIterator<'a, 'b>
+pub fn syntect::highlighting::HighlightIterator<'a, 'b>::new(state: &'a mut syntect::highlighting::HighlightState, changes: &'a [(usize, syntect::parsing::ScopeStackOp)], text: &'b str, highlighter: &'a syntect::highlighting::Highlighter<'_>) -> syntect::highlighting::HighlightIterator<'a, 'b>
+impl<'a, 'b> core::fmt::Debug for syntect::highlighting::HighlightIterator<'a, 'b>
+pub fn syntect::highlighting::HighlightIterator<'a, 'b>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'b> core::iter::traits::iterator::Iterator for syntect::highlighting::HighlightIterator<'_, 'b>
+pub type syntect::highlighting::HighlightIterator<'_, 'b>::Item = (syntect::highlighting::Style, &'b str)
+pub fn syntect::highlighting::HighlightIterator<'_, 'b>::next(&mut self) -> core::option::Option<(syntect::highlighting::Style, &'b str)>
+impl<'a, 'b> core::marker::Freeze for syntect::highlighting::HighlightIterator<'a, 'b>
+impl<'a, 'b> core::marker::Send for syntect::highlighting::HighlightIterator<'a, 'b>
+impl<'a, 'b> core::marker::Sync for syntect::highlighting::HighlightIterator<'a, 'b>
+impl<'a, 'b> core::marker::Unpin for syntect::highlighting::HighlightIterator<'a, 'b>
+impl<'a, 'b> core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::HighlightIterator<'a, 'b>
+impl<'a, 'b> !core::panic::unwind_safe::UnwindSafe for syntect::highlighting::HighlightIterator<'a, 'b>
+pub struct syntect::highlighting::HighlightState
+pub syntect::highlighting::HighlightState::path: syntect::parsing::ScopeStack
+impl syntect::highlighting::HighlightState
+pub fn syntect::highlighting::HighlightState::new(highlighter: &syntect::highlighting::Highlighter<'_>, initial_stack: syntect::parsing::ScopeStack) -> syntect::highlighting::HighlightState
+impl core::clone::Clone for syntect::highlighting::HighlightState
+pub fn syntect::highlighting::HighlightState::clone(&self) -> syntect::highlighting::HighlightState
+impl core::cmp::Eq for syntect::highlighting::HighlightState
+impl core::cmp::PartialEq for syntect::highlighting::HighlightState
+pub fn syntect::highlighting::HighlightState::eq(&self, other: &syntect::highlighting::HighlightState) -> bool
+impl core::fmt::Debug for syntect::highlighting::HighlightState
+pub fn syntect::highlighting::HighlightState::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::highlighting::HighlightState
+impl core::marker::Freeze for syntect::highlighting::HighlightState
+impl core::marker::Send for syntect::highlighting::HighlightState
+impl core::marker::Sync for syntect::highlighting::HighlightState
+impl core::marker::Unpin for syntect::highlighting::HighlightState
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::HighlightState
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::HighlightState
+pub struct syntect::highlighting::Highlighter<'a>
+impl<'a> syntect::highlighting::Highlighter<'a>
+pub fn syntect::highlighting::Highlighter<'a>::get_default(&self) -> syntect::highlighting::Style
+pub fn syntect::highlighting::Highlighter<'a>::new(theme: &'a syntect::highlighting::Theme) -> syntect::highlighting::Highlighter<'a>
+pub fn syntect::highlighting::Highlighter<'a>::style_for_stack(&self, stack: &[syntect::parsing::Scope]) -> syntect::highlighting::Style
+pub fn syntect::highlighting::Highlighter<'a>::style_mod_for_stack(&self, path: &[syntect::parsing::Scope]) -> syntect::highlighting::StyleModifier
+impl<'a> core::fmt::Debug for syntect::highlighting::Highlighter<'a>
+pub fn syntect::highlighting::Highlighter<'a>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::marker::Freeze for syntect::highlighting::Highlighter<'a>
+impl<'a> core::marker::Send for syntect::highlighting::Highlighter<'a>
+impl<'a> core::marker::Sync for syntect::highlighting::Highlighter<'a>
+impl<'a> core::marker::Unpin for syntect::highlighting::Highlighter<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::Highlighter<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for syntect::highlighting::Highlighter<'a>
+pub struct syntect::highlighting::RangedHighlightIterator<'a, 'b>
+impl<'a, 'b> syntect::highlighting::RangedHighlightIterator<'a, 'b>
+pub fn syntect::highlighting::RangedHighlightIterator<'a, 'b>::new(state: &'a mut syntect::highlighting::HighlightState, changes: &'a [(usize, syntect::parsing::ScopeStackOp)], text: &'b str, highlighter: &'a syntect::highlighting::Highlighter<'_>) -> syntect::highlighting::RangedHighlightIterator<'a, 'b>
+impl<'a, 'b> core::fmt::Debug for syntect::highlighting::RangedHighlightIterator<'a, 'b>
+pub fn syntect::highlighting::RangedHighlightIterator<'a, 'b>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'b> core::iter::traits::iterator::Iterator for syntect::highlighting::RangedHighlightIterator<'_, 'b>
+pub type syntect::highlighting::RangedHighlightIterator<'_, 'b>::Item = (syntect::highlighting::Style, &'b str, core::ops::range::Range<usize>)
+pub fn syntect::highlighting::RangedHighlightIterator<'_, 'b>::next(&mut self) -> core::option::Option<(syntect::highlighting::Style, &'b str, core::ops::range::Range<usize>)>
+impl<'a, 'b> core::marker::Freeze for syntect::highlighting::RangedHighlightIterator<'a, 'b>
+impl<'a, 'b> core::marker::Send for syntect::highlighting::RangedHighlightIterator<'a, 'b>
+impl<'a, 'b> core::marker::Sync for syntect::highlighting::RangedHighlightIterator<'a, 'b>
+impl<'a, 'b> core::marker::Unpin for syntect::highlighting::RangedHighlightIterator<'a, 'b>
+impl<'a, 'b> core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::RangedHighlightIterator<'a, 'b>
+impl<'a, 'b> !core::panic::unwind_safe::UnwindSafe for syntect::highlighting::RangedHighlightIterator<'a, 'b>
+pub struct syntect::highlighting::ScopeSelector
+pub syntect::highlighting::ScopeSelector::excludes: alloc::vec::Vec<syntect::parsing::ScopeStack>
+pub syntect::highlighting::ScopeSelector::path: syntect::parsing::ScopeStack
+impl syntect::highlighting::ScopeSelector
+pub fn syntect::highlighting::ScopeSelector::does_match(&self, stack: &[syntect::parsing::Scope]) -> core::option::Option<syntect::parsing::MatchPower>
+pub fn syntect::highlighting::ScopeSelector::extract_scopes(&self) -> alloc::vec::Vec<syntect::parsing::Scope>
+pub fn syntect::highlighting::ScopeSelector::extract_single_scope(&self) -> core::option::Option<syntect::parsing::Scope>
+impl core::clone::Clone for syntect::highlighting::ScopeSelector
+pub fn syntect::highlighting::ScopeSelector::clone(&self) -> syntect::highlighting::ScopeSelector
+impl core::cmp::Eq for syntect::highlighting::ScopeSelector
+impl core::cmp::PartialEq for syntect::highlighting::ScopeSelector
+pub fn syntect::highlighting::ScopeSelector::eq(&self, other: &syntect::highlighting::ScopeSelector) -> bool
+impl core::default::Default for syntect::highlighting::ScopeSelector
+pub fn syntect::highlighting::ScopeSelector::default() -> syntect::highlighting::ScopeSelector
+impl core::fmt::Debug for syntect::highlighting::ScopeSelector
+pub fn syntect::highlighting::ScopeSelector::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::highlighting::ScopeSelector
+impl core::str::traits::FromStr for syntect::highlighting::ScopeSelector
+pub type syntect::highlighting::ScopeSelector::Err = syntect::parsing::ParseScopeError
+pub fn syntect::highlighting::ScopeSelector::from_str(s: &str) -> core::result::Result<syntect::highlighting::ScopeSelector, syntect::parsing::ParseScopeError>
+impl serde::ser::Serialize for syntect::highlighting::ScopeSelector
+pub fn syntect::highlighting::ScopeSelector::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::ScopeSelector
+pub fn syntect::highlighting::ScopeSelector::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::ScopeSelector
+impl core::marker::Send for syntect::highlighting::ScopeSelector
+impl core::marker::Sync for syntect::highlighting::ScopeSelector
+impl core::marker::Unpin for syntect::highlighting::ScopeSelector
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::ScopeSelector
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::ScopeSelector
+pub struct syntect::highlighting::ScopeSelectors
+pub syntect::highlighting::ScopeSelectors::selectors: alloc::vec::Vec<syntect::highlighting::ScopeSelector>
+impl syntect::highlighting::ScopeSelectors
+pub fn syntect::highlighting::ScopeSelectors::does_match(&self, stack: &[syntect::parsing::Scope]) -> core::option::Option<syntect::parsing::MatchPower>
+impl core::clone::Clone for syntect::highlighting::ScopeSelectors
+pub fn syntect::highlighting::ScopeSelectors::clone(&self) -> syntect::highlighting::ScopeSelectors
+impl core::cmp::Eq for syntect::highlighting::ScopeSelectors
+impl core::cmp::PartialEq for syntect::highlighting::ScopeSelectors
+pub fn syntect::highlighting::ScopeSelectors::eq(&self, other: &syntect::highlighting::ScopeSelectors) -> bool
+impl core::default::Default for syntect::highlighting::ScopeSelectors
+pub fn syntect::highlighting::ScopeSelectors::default() -> syntect::highlighting::ScopeSelectors
+impl core::fmt::Debug for syntect::highlighting::ScopeSelectors
+pub fn syntect::highlighting::ScopeSelectors::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::highlighting::ScopeSelectors
+impl core::str::traits::FromStr for syntect::highlighting::ScopeSelectors
+pub type syntect::highlighting::ScopeSelectors::Err = syntect::parsing::ParseScopeError
+pub fn syntect::highlighting::ScopeSelectors::from_str(s: &str) -> core::result::Result<syntect::highlighting::ScopeSelectors, syntect::parsing::ParseScopeError>
+impl serde::ser::Serialize for syntect::highlighting::ScopeSelectors
+pub fn syntect::highlighting::ScopeSelectors::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::ScopeSelectors
+pub fn syntect::highlighting::ScopeSelectors::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::ScopeSelectors
+impl core::marker::Send for syntect::highlighting::ScopeSelectors
+impl core::marker::Sync for syntect::highlighting::ScopeSelectors
+impl core::marker::Unpin for syntect::highlighting::ScopeSelectors
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::ScopeSelectors
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::ScopeSelectors
+pub struct syntect::highlighting::ScoredStyle
+pub syntect::highlighting::ScoredStyle::background: (syntect::parsing::MatchPower, syntect::highlighting::Color)
+pub syntect::highlighting::ScoredStyle::font_style: (syntect::parsing::MatchPower, syntect::highlighting::FontStyle)
+pub syntect::highlighting::ScoredStyle::foreground: (syntect::parsing::MatchPower, syntect::highlighting::Color)
+impl core::clone::Clone for syntect::highlighting::ScoredStyle
+pub fn syntect::highlighting::ScoredStyle::clone(&self) -> syntect::highlighting::ScoredStyle
+impl core::cmp::Eq for syntect::highlighting::ScoredStyle
+impl core::cmp::PartialEq for syntect::highlighting::ScoredStyle
+pub fn syntect::highlighting::ScoredStyle::eq(&self, other: &syntect::highlighting::ScoredStyle) -> bool
+impl core::fmt::Debug for syntect::highlighting::ScoredStyle
+pub fn syntect::highlighting::ScoredStyle::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::highlighting::ScoredStyle
+impl core::marker::Freeze for syntect::highlighting::ScoredStyle
+impl core::marker::Send for syntect::highlighting::ScoredStyle
+impl core::marker::Sync for syntect::highlighting::ScoredStyle
+impl core::marker::Unpin for syntect::highlighting::ScoredStyle
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::ScoredStyle
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::ScoredStyle
+pub struct syntect::highlighting::Style
+pub syntect::highlighting::Style::background: syntect::highlighting::Color
+pub syntect::highlighting::Style::font_style: syntect::highlighting::FontStyle
+pub syntect::highlighting::Style::foreground: syntect::highlighting::Color
+impl syntect::highlighting::Style
+pub fn syntect::highlighting::Style::apply(&self, modifier: syntect::highlighting::StyleModifier) -> syntect::highlighting::Style
+impl core::clone::Clone for syntect::highlighting::Style
+pub fn syntect::highlighting::Style::clone(&self) -> syntect::highlighting::Style
+impl core::cmp::Eq for syntect::highlighting::Style
+impl core::cmp::PartialEq for syntect::highlighting::Style
+pub fn syntect::highlighting::Style::eq(&self, other: &syntect::highlighting::Style) -> bool
+impl core::default::Default for syntect::highlighting::Style
+pub fn syntect::highlighting::Style::default() -> syntect::highlighting::Style
+impl core::fmt::Debug for syntect::highlighting::Style
+pub fn syntect::highlighting::Style::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for syntect::highlighting::Style
+pub fn syntect::highlighting::Style::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for syntect::highlighting::Style
+impl core::marker::StructuralPartialEq for syntect::highlighting::Style
+impl serde::ser::Serialize for syntect::highlighting::Style
+pub fn syntect::highlighting::Style::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::Style
+pub fn syntect::highlighting::Style::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::Style
+impl core::marker::Send for syntect::highlighting::Style
+impl core::marker::Sync for syntect::highlighting::Style
+impl core::marker::Unpin for syntect::highlighting::Style
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::Style
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::Style
+pub struct syntect::highlighting::StyleModifier
+pub syntect::highlighting::StyleModifier::background: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::StyleModifier::font_style: core::option::Option<syntect::highlighting::FontStyle>
+pub syntect::highlighting::StyleModifier::foreground: core::option::Option<syntect::highlighting::Color>
+impl syntect::highlighting::StyleModifier
+pub fn syntect::highlighting::StyleModifier::apply(&self, other: syntect::highlighting::StyleModifier) -> syntect::highlighting::StyleModifier
+impl core::clone::Clone for syntect::highlighting::StyleModifier
+pub fn syntect::highlighting::StyleModifier::clone(&self) -> syntect::highlighting::StyleModifier
+impl core::cmp::Eq for syntect::highlighting::StyleModifier
+impl core::cmp::PartialEq for syntect::highlighting::StyleModifier
+pub fn syntect::highlighting::StyleModifier::eq(&self, other: &syntect::highlighting::StyleModifier) -> bool
+impl core::default::Default for syntect::highlighting::StyleModifier
+pub fn syntect::highlighting::StyleModifier::default() -> syntect::highlighting::StyleModifier
+impl core::fmt::Debug for syntect::highlighting::StyleModifier
+pub fn syntect::highlighting::StyleModifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for syntect::highlighting::StyleModifier
+impl core::marker::StructuralPartialEq for syntect::highlighting::StyleModifier
+impl serde::ser::Serialize for syntect::highlighting::StyleModifier
+pub fn syntect::highlighting::StyleModifier::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::StyleModifier
+pub fn syntect::highlighting::StyleModifier::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::StyleModifier
+impl core::marker::Send for syntect::highlighting::StyleModifier
+impl core::marker::Sync for syntect::highlighting::StyleModifier
+impl core::marker::Unpin for syntect::highlighting::StyleModifier
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::StyleModifier
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::StyleModifier
+pub struct syntect::highlighting::Theme
+pub syntect::highlighting::Theme::author: core::option::Option<alloc::string::String>
+pub syntect::highlighting::Theme::name: core::option::Option<alloc::string::String>
+pub syntect::highlighting::Theme::scopes: alloc::vec::Vec<syntect::highlighting::ThemeItem>
+pub syntect::highlighting::Theme::settings: syntect::highlighting::ThemeSettings
+impl core::clone::Clone for syntect::highlighting::Theme
+pub fn syntect::highlighting::Theme::clone(&self) -> syntect::highlighting::Theme
+impl core::cmp::PartialEq for syntect::highlighting::Theme
+pub fn syntect::highlighting::Theme::eq(&self, other: &syntect::highlighting::Theme) -> bool
+impl core::default::Default for syntect::highlighting::Theme
+pub fn syntect::highlighting::Theme::default() -> syntect::highlighting::Theme
+impl core::fmt::Debug for syntect::highlighting::Theme
+pub fn syntect::highlighting::Theme::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::highlighting::Theme
+impl serde::ser::Serialize for syntect::highlighting::Theme
+pub fn syntect::highlighting::Theme::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::Theme
+pub fn syntect::highlighting::Theme::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::Theme
+impl core::marker::Send for syntect::highlighting::Theme
+impl core::marker::Sync for syntect::highlighting::Theme
+impl core::marker::Unpin for syntect::highlighting::Theme
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::Theme
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::Theme
+pub struct syntect::highlighting::ThemeItem
+pub syntect::highlighting::ThemeItem::scope: syntect::highlighting::ScopeSelectors
+pub syntect::highlighting::ThemeItem::style: syntect::highlighting::StyleModifier
+impl core::clone::Clone for syntect::highlighting::ThemeItem
+pub fn syntect::highlighting::ThemeItem::clone(&self) -> syntect::highlighting::ThemeItem
+impl core::cmp::PartialEq for syntect::highlighting::ThemeItem
+pub fn syntect::highlighting::ThemeItem::eq(&self, other: &syntect::highlighting::ThemeItem) -> bool
+impl core::default::Default for syntect::highlighting::ThemeItem
+pub fn syntect::highlighting::ThemeItem::default() -> syntect::highlighting::ThemeItem
+impl core::fmt::Debug for syntect::highlighting::ThemeItem
+pub fn syntect::highlighting::ThemeItem::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::highlighting::ThemeItem
+impl serde::ser::Serialize for syntect::highlighting::ThemeItem
+pub fn syntect::highlighting::ThemeItem::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::ThemeItem
+pub fn syntect::highlighting::ThemeItem::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::ThemeItem
+impl core::marker::Send for syntect::highlighting::ThemeItem
+impl core::marker::Sync for syntect::highlighting::ThemeItem
+impl core::marker::Unpin for syntect::highlighting::ThemeItem
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::ThemeItem
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::ThemeItem
+pub struct syntect::highlighting::ThemeSet
+pub syntect::highlighting::ThemeSet::themes: alloc::collections::btree::map::BTreeMap<alloc::string::String, syntect::highlighting::Theme>
+impl syntect::highlighting::ThemeSet
+pub fn syntect::highlighting::ThemeSet::add_from_folder<P: core::convert::AsRef<std::path::Path>>(&mut self, folder: P) -> core::result::Result<(), syntect::LoadingError>
+pub fn syntect::highlighting::ThemeSet::discover_theme_paths<P: core::convert::AsRef<std::path::Path>>(folder: P) -> core::result::Result<alloc::vec::Vec<std::path::PathBuf>, syntect::LoadingError>
+pub fn syntect::highlighting::ThemeSet::get_theme<P: core::convert::AsRef<std::path::Path>>(path: P) -> core::result::Result<syntect::highlighting::Theme, syntect::LoadingError>
+pub fn syntect::highlighting::ThemeSet::load_from_folder<P: core::convert::AsRef<std::path::Path>>(folder: P) -> core::result::Result<syntect::highlighting::ThemeSet, syntect::LoadingError>
+pub fn syntect::highlighting::ThemeSet::load_from_reader<R: std::io::BufRead + std::io::Seek>(r: &mut R) -> core::result::Result<syntect::highlighting::Theme, syntect::LoadingError>
+pub fn syntect::highlighting::ThemeSet::new() -> syntect::highlighting::ThemeSet
+impl syntect::highlighting::ThemeSet
+pub fn syntect::highlighting::ThemeSet::load_defaults() -> syntect::highlighting::ThemeSet
+impl core::default::Default for syntect::highlighting::ThemeSet
+pub fn syntect::highlighting::ThemeSet::default() -> syntect::highlighting::ThemeSet
+impl core::fmt::Debug for syntect::highlighting::ThemeSet
+pub fn syntect::highlighting::ThemeSet::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde::ser::Serialize for syntect::highlighting::ThemeSet
+pub fn syntect::highlighting::ThemeSet::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::ThemeSet
+pub fn syntect::highlighting::ThemeSet::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::ThemeSet
+impl core::marker::Send for syntect::highlighting::ThemeSet
+impl core::marker::Sync for syntect::highlighting::ThemeSet
+impl core::marker::Unpin for syntect::highlighting::ThemeSet
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::ThemeSet
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::ThemeSet
+pub struct syntect::highlighting::ThemeSettings
+pub syntect::highlighting::ThemeSettings::accent: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::active_guide: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::background: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::bracket_contents_foreground: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::bracket_contents_options: core::option::Option<syntect::highlighting::UnderlineOption>
+pub syntect::highlighting::ThemeSettings::brackets_background: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::brackets_foreground: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::brackets_options: core::option::Option<syntect::highlighting::UnderlineOption>
+pub syntect::highlighting::ThemeSettings::caret: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::find_highlight: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::find_highlight_foreground: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::foreground: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::guide: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::gutter: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::gutter_foreground: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::highlight: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::inactive_selection: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::inactive_selection_foreground: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::line_highlight: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::minimap_border: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::misspelling: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::phantom_css: core::option::Option<alloc::string::String>
+pub syntect::highlighting::ThemeSettings::popup_css: core::option::Option<alloc::string::String>
+pub syntect::highlighting::ThemeSettings::selection: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::selection_border: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::selection_foreground: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::shadow: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::stack_guide: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::tags_foreground: core::option::Option<syntect::highlighting::Color>
+pub syntect::highlighting::ThemeSettings::tags_options: core::option::Option<syntect::highlighting::UnderlineOption>
+impl core::clone::Clone for syntect::highlighting::ThemeSettings
+pub fn syntect::highlighting::ThemeSettings::clone(&self) -> syntect::highlighting::ThemeSettings
+impl core::cmp::PartialEq for syntect::highlighting::ThemeSettings
+pub fn syntect::highlighting::ThemeSettings::eq(&self, other: &syntect::highlighting::ThemeSettings) -> bool
+impl core::default::Default for syntect::highlighting::ThemeSettings
+pub fn syntect::highlighting::ThemeSettings::default() -> syntect::highlighting::ThemeSettings
+impl core::fmt::Debug for syntect::highlighting::ThemeSettings
+pub fn syntect::highlighting::ThemeSettings::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::highlighting::ThemeSettings
+impl serde::ser::Serialize for syntect::highlighting::ThemeSettings
+pub fn syntect::highlighting::ThemeSettings::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::highlighting::ThemeSettings
+pub fn syntect::highlighting::ThemeSettings::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::highlighting::ThemeSettings
+impl core::marker::Send for syntect::highlighting::ThemeSettings
+impl core::marker::Sync for syntect::highlighting::ThemeSettings
+impl core::marker::Unpin for syntect::highlighting::ThemeSettings
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::highlighting::ThemeSettings
+impl core::panic::unwind_safe::UnwindSafe for syntect::highlighting::ThemeSettings
+pub mod syntect::html
+#[non_exhaustive] pub enum syntect::html::ClassStyle
+pub syntect::html::ClassStyle::Spaced
+pub syntect::html::ClassStyle::SpacedPrefixed
+pub syntect::html::ClassStyle::SpacedPrefixed::prefix: &'static str
+impl core::clone::Clone for syntect::html::ClassStyle
+pub fn syntect::html::ClassStyle::clone(&self) -> syntect::html::ClassStyle
+impl core::cmp::Eq for syntect::html::ClassStyle
+impl core::cmp::PartialEq for syntect::html::ClassStyle
+pub fn syntect::html::ClassStyle::eq(&self, other: &syntect::html::ClassStyle) -> bool
+impl core::fmt::Debug for syntect::html::ClassStyle
+pub fn syntect::html::ClassStyle::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for syntect::html::ClassStyle
+impl core::marker::StructuralPartialEq for syntect::html::ClassStyle
+impl core::marker::Freeze for syntect::html::ClassStyle
+impl core::marker::Send for syntect::html::ClassStyle
+impl core::marker::Sync for syntect::html::ClassStyle
+impl core::marker::Unpin for syntect::html::ClassStyle
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::html::ClassStyle
+impl core::panic::unwind_safe::UnwindSafe for syntect::html::ClassStyle
+pub enum syntect::html::IncludeBackground
+pub syntect::html::IncludeBackground::IfDifferent(syntect::highlighting::Color)
+pub syntect::html::IncludeBackground::No
+pub syntect::html::IncludeBackground::Yes
+impl core::clone::Clone for syntect::html::IncludeBackground
+pub fn syntect::html::IncludeBackground::clone(&self) -> syntect::html::IncludeBackground
+impl core::cmp::Eq for syntect::html::IncludeBackground
+impl core::cmp::PartialEq for syntect::html::IncludeBackground
+pub fn syntect::html::IncludeBackground::eq(&self, other: &syntect::html::IncludeBackground) -> bool
+impl core::fmt::Debug for syntect::html::IncludeBackground
+pub fn syntect::html::IncludeBackground::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for syntect::html::IncludeBackground
+impl core::marker::StructuralPartialEq for syntect::html::IncludeBackground
+impl core::marker::Freeze for syntect::html::IncludeBackground
+impl core::marker::Send for syntect::html::IncludeBackground
+impl core::marker::Sync for syntect::html::IncludeBackground
+impl core::marker::Unpin for syntect::html::IncludeBackground
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::html::IncludeBackground
+impl core::panic::unwind_safe::UnwindSafe for syntect::html::IncludeBackground
+pub struct syntect::html::ClassedHTMLGenerator<'a>
+impl<'a> syntect::html::ClassedHTMLGenerator<'a>
+pub fn syntect::html::ClassedHTMLGenerator<'a>::finalize(self) -> alloc::string::String
+pub fn syntect::html::ClassedHTMLGenerator<'a>::new(syntax_reference: &'a syntect::parsing::SyntaxReference, syntax_set: &'a syntect::parsing::SyntaxSet) -> syntect::html::ClassedHTMLGenerator<'a>
+pub fn syntect::html::ClassedHTMLGenerator<'a>::new_with_class_style(syntax_reference: &'a syntect::parsing::SyntaxReference, syntax_set: &'a syntect::parsing::SyntaxSet, style: syntect::html::ClassStyle) -> syntect::html::ClassedHTMLGenerator<'a>
+pub fn syntect::html::ClassedHTMLGenerator<'a>::parse_html_for_line(&mut self, line: &str)
+pub fn syntect::html::ClassedHTMLGenerator<'a>::parse_html_for_line_which_includes_newline(&mut self, line: &str) -> core::result::Result<(), syntect::Error>
+impl<'a> core::marker::Freeze for syntect::html::ClassedHTMLGenerator<'a>
+impl<'a> !core::marker::Send for syntect::html::ClassedHTMLGenerator<'a>
+impl<'a> !core::marker::Sync for syntect::html::ClassedHTMLGenerator<'a>
+impl<'a> core::marker::Unpin for syntect::html::ClassedHTMLGenerator<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for syntect::html::ClassedHTMLGenerator<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for syntect::html::ClassedHTMLGenerator<'a>
+pub fn syntect::html::append_highlighted_html_for_styled_line(v: &[(syntect::highlighting::Style, &str)], bg: syntect::html::IncludeBackground, s: &mut alloc::string::String) -> core::result::Result<(), syntect::Error>
+pub fn syntect::html::css_for_theme(theme: &syntect::highlighting::Theme) -> alloc::string::String
+pub fn syntect::html::css_for_theme_with_class_style(theme: &syntect::highlighting::Theme, style: syntect::html::ClassStyle) -> core::result::Result<alloc::string::String, syntect::Error>
+pub fn syntect::html::highlighted_html_for_file<P: core::convert::AsRef<std::path::Path>>(path: P, ss: &syntect::parsing::SyntaxSet, theme: &syntect::highlighting::Theme) -> core::result::Result<alloc::string::String, syntect::Error>
+pub fn syntect::html::highlighted_html_for_string(s: &str, ss: &syntect::parsing::SyntaxSet, syntax: &syntect::parsing::SyntaxReference, theme: &syntect::highlighting::Theme) -> core::result::Result<alloc::string::String, syntect::Error>
+pub fn syntect::html::line_tokens_to_classed_spans(line: &str, ops: &[(usize, syntect::parsing::ScopeStackOp)], style: syntect::html::ClassStyle, stack: &mut syntect::parsing::ScopeStack) -> core::result::Result<(alloc::string::String, isize), syntect::Error>
+pub fn syntect::html::start_highlighted_html_snippet(t: &syntect::highlighting::Theme) -> (alloc::string::String, syntect::highlighting::Color)
+pub fn syntect::html::styled_line_to_highlighted_html(v: &[(syntect::highlighting::Style, &str)], bg: syntect::html::IncludeBackground) -> core::result::Result<alloc::string::String, syntect::Error>
+pub fn syntect::html::tokens_to_classed_html(line: &str, ops: &[(usize, syntect::parsing::ScopeStackOp)], style: syntect::html::ClassStyle) -> alloc::string::String
+pub fn syntect::html::tokens_to_classed_spans(line: &str, ops: &[(usize, syntect::parsing::ScopeStackOp)], style: syntect::html::ClassStyle) -> (alloc::string::String, isize)
+pub mod syntect::parsing
+pub mod syntect::parsing::syntax_definition
+#[non_exhaustive] pub enum syntect::parsing::syntax_definition::ContextReference
+#[non_exhaustive] pub syntect::parsing::syntax_definition::ContextReference::ByScope
+pub syntect::parsing::syntax_definition::ContextReference::ByScope::scope: syntect::parsing::Scope
+pub syntect::parsing::syntax_definition::ContextReference::ByScope::sub_context: core::option::Option<alloc::string::String>
+pub syntect::parsing::syntax_definition::ContextReference::ByScope::with_escape: bool
+#[non_exhaustive] pub syntect::parsing::syntax_definition::ContextReference::Direct(syntect::parsing::syntax_definition::ContextId)
+#[non_exhaustive] pub syntect::parsing::syntax_definition::ContextReference::File
+pub syntect::parsing::syntax_definition::ContextReference::File::name: alloc::string::String
+pub syntect::parsing::syntax_definition::ContextReference::File::sub_context: core::option::Option<alloc::string::String>
+pub syntect::parsing::syntax_definition::ContextReference::File::with_escape: bool
+#[non_exhaustive] pub syntect::parsing::syntax_definition::ContextReference::Inline(alloc::string::String)
+#[non_exhaustive] pub syntect::parsing::syntax_definition::ContextReference::Named(alloc::string::String)
+impl syntect::parsing::syntax_definition::ContextReference
+pub fn syntect::parsing::syntax_definition::ContextReference::id(&self) -> core::result::Result<syntect::parsing::syntax_definition::ContextId, syntect::parsing::ParsingError>
+pub fn syntect::parsing::syntax_definition::ContextReference::resolve<'a>(&self, syntax_set: &'a syntect::parsing::SyntaxSet) -> core::result::Result<&'a syntect::parsing::syntax_definition::Context, syntect::parsing::ParsingError>
+impl core::clone::Clone for syntect::parsing::syntax_definition::ContextReference
+pub fn syntect::parsing::syntax_definition::ContextReference::clone(&self) -> syntect::parsing::syntax_definition::ContextReference
+impl core::cmp::Eq for syntect::parsing::syntax_definition::ContextReference
+impl core::cmp::PartialEq for syntect::parsing::syntax_definition::ContextReference
+pub fn syntect::parsing::syntax_definition::ContextReference::eq(&self, other: &syntect::parsing::syntax_definition::ContextReference) -> bool
+impl core::fmt::Debug for syntect::parsing::syntax_definition::ContextReference
+pub fn syntect::parsing::syntax_definition::ContextReference::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::syntax_definition::ContextReference
+impl serde::ser::Serialize for syntect::parsing::syntax_definition::ContextReference
+pub fn syntect::parsing::syntax_definition::ContextReference::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::syntax_definition::ContextReference
+pub fn syntect::parsing::syntax_definition::ContextReference::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::syntax_definition::ContextReference
+impl core::marker::Send for syntect::parsing::syntax_definition::ContextReference
+impl core::marker::Sync for syntect::parsing::syntax_definition::ContextReference
+impl core::marker::Unpin for syntect::parsing::syntax_definition::ContextReference
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::ContextReference
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::ContextReference
+pub enum syntect::parsing::syntax_definition::MatchOperation
+pub syntect::parsing::syntax_definition::MatchOperation::None
+pub syntect::parsing::syntax_definition::MatchOperation::Pop
+pub syntect::parsing::syntax_definition::MatchOperation::Push(alloc::vec::Vec<syntect::parsing::syntax_definition::ContextReference>)
+pub syntect::parsing::syntax_definition::MatchOperation::Set(alloc::vec::Vec<syntect::parsing::syntax_definition::ContextReference>)
+impl core::clone::Clone for syntect::parsing::syntax_definition::MatchOperation
+pub fn syntect::parsing::syntax_definition::MatchOperation::clone(&self) -> syntect::parsing::syntax_definition::MatchOperation
+impl core::cmp::Eq for syntect::parsing::syntax_definition::MatchOperation
+impl core::cmp::PartialEq for syntect::parsing::syntax_definition::MatchOperation
+pub fn syntect::parsing::syntax_definition::MatchOperation::eq(&self, other: &syntect::parsing::syntax_definition::MatchOperation) -> bool
+impl core::fmt::Debug for syntect::parsing::syntax_definition::MatchOperation
+pub fn syntect::parsing::syntax_definition::MatchOperation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::syntax_definition::MatchOperation
+impl serde::ser::Serialize for syntect::parsing::syntax_definition::MatchOperation
+pub fn syntect::parsing::syntax_definition::MatchOperation::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::syntax_definition::MatchOperation
+pub fn syntect::parsing::syntax_definition::MatchOperation::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::syntax_definition::MatchOperation
+impl core::marker::Send for syntect::parsing::syntax_definition::MatchOperation
+impl core::marker::Sync for syntect::parsing::syntax_definition::MatchOperation
+impl core::marker::Unpin for syntect::parsing::syntax_definition::MatchOperation
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::MatchOperation
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::MatchOperation
+pub enum syntect::parsing::syntax_definition::Pattern
+pub syntect::parsing::syntax_definition::Pattern::Include(syntect::parsing::syntax_definition::ContextReference)
+pub syntect::parsing::syntax_definition::Pattern::Match(syntect::parsing::syntax_definition::MatchPattern)
+impl core::clone::Clone for syntect::parsing::syntax_definition::Pattern
+pub fn syntect::parsing::syntax_definition::Pattern::clone(&self) -> syntect::parsing::syntax_definition::Pattern
+impl core::cmp::Eq for syntect::parsing::syntax_definition::Pattern
+impl core::cmp::PartialEq for syntect::parsing::syntax_definition::Pattern
+pub fn syntect::parsing::syntax_definition::Pattern::eq(&self, other: &syntect::parsing::syntax_definition::Pattern) -> bool
+impl core::fmt::Debug for syntect::parsing::syntax_definition::Pattern
+pub fn syntect::parsing::syntax_definition::Pattern::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::syntax_definition::Pattern
+impl serde::ser::Serialize for syntect::parsing::syntax_definition::Pattern
+pub fn syntect::parsing::syntax_definition::Pattern::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::syntax_definition::Pattern
+pub fn syntect::parsing::syntax_definition::Pattern::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl !core::marker::Freeze for syntect::parsing::syntax_definition::Pattern
+impl core::marker::Send for syntect::parsing::syntax_definition::Pattern
+impl core::marker::Sync for syntect::parsing::syntax_definition::Pattern
+impl core::marker::Unpin for syntect::parsing::syntax_definition::Pattern
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::Pattern
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::Pattern
+pub struct syntect::parsing::syntax_definition::Context
+pub syntect::parsing::syntax_definition::Context::clear_scopes: core::option::Option<syntect::parsing::ClearAmount>
+pub syntect::parsing::syntax_definition::Context::meta_content_scope: alloc::vec::Vec<syntect::parsing::Scope>
+pub syntect::parsing::syntax_definition::Context::meta_include_prototype: bool
+pub syntect::parsing::syntax_definition::Context::meta_scope: alloc::vec::Vec<syntect::parsing::Scope>
+pub syntect::parsing::syntax_definition::Context::patterns: alloc::vec::Vec<syntect::parsing::syntax_definition::Pattern>
+pub syntect::parsing::syntax_definition::Context::prototype: core::option::Option<syntect::parsing::syntax_definition::ContextId>
+pub syntect::parsing::syntax_definition::Context::uses_backrefs: bool
+impl syntect::parsing::syntax_definition::Context
+pub fn syntect::parsing::syntax_definition::Context::match_at(&self, index: usize) -> core::result::Result<&syntect::parsing::syntax_definition::MatchPattern, syntect::parsing::ParsingError>
+impl syntect::parsing::syntax_definition::Context
+pub fn syntect::parsing::syntax_definition::Context::new(meta_include_prototype: bool) -> syntect::parsing::syntax_definition::Context
+impl core::clone::Clone for syntect::parsing::syntax_definition::Context
+pub fn syntect::parsing::syntax_definition::Context::clone(&self) -> syntect::parsing::syntax_definition::Context
+impl core::cmp::Eq for syntect::parsing::syntax_definition::Context
+impl core::cmp::PartialEq for syntect::parsing::syntax_definition::Context
+pub fn syntect::parsing::syntax_definition::Context::eq(&self, other: &syntect::parsing::syntax_definition::Context) -> bool
+impl core::fmt::Debug for syntect::parsing::syntax_definition::Context
+pub fn syntect::parsing::syntax_definition::Context::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::syntax_definition::Context
+impl serde::ser::Serialize for syntect::parsing::syntax_definition::Context
+pub fn syntect::parsing::syntax_definition::Context::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::syntax_definition::Context
+pub fn syntect::parsing::syntax_definition::Context::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::syntax_definition::Context
+impl core::marker::Send for syntect::parsing::syntax_definition::Context
+impl core::marker::Sync for syntect::parsing::syntax_definition::Context
+impl core::marker::Unpin for syntect::parsing::syntax_definition::Context
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::Context
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::Context
+pub struct syntect::parsing::syntax_definition::ContextId
+impl core::clone::Clone for syntect::parsing::syntax_definition::ContextId
+pub fn syntect::parsing::syntax_definition::ContextId::clone(&self) -> syntect::parsing::syntax_definition::ContextId
+impl core::cmp::Eq for syntect::parsing::syntax_definition::ContextId
+impl core::cmp::PartialEq for syntect::parsing::syntax_definition::ContextId
+pub fn syntect::parsing::syntax_definition::ContextId::eq(&self, other: &syntect::parsing::syntax_definition::ContextId) -> bool
+impl core::fmt::Debug for syntect::parsing::syntax_definition::ContextId
+pub fn syntect::parsing::syntax_definition::ContextId::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for syntect::parsing::syntax_definition::ContextId
+pub fn syntect::parsing::syntax_definition::ContextId::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for syntect::parsing::syntax_definition::ContextId
+impl core::marker::StructuralPartialEq for syntect::parsing::syntax_definition::ContextId
+impl serde::ser::Serialize for syntect::parsing::syntax_definition::ContextId
+pub fn syntect::parsing::syntax_definition::ContextId::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::syntax_definition::ContextId
+pub fn syntect::parsing::syntax_definition::ContextId::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::syntax_definition::ContextId
+impl core::marker::Send for syntect::parsing::syntax_definition::ContextId
+impl core::marker::Sync for syntect::parsing::syntax_definition::ContextId
+impl core::marker::Unpin for syntect::parsing::syntax_definition::ContextId
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::ContextId
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::ContextId
+pub struct syntect::parsing::syntax_definition::MatchIter<'a>
+impl<'a> core::fmt::Debug for syntect::parsing::syntax_definition::MatchIter<'a>
+pub fn syntect::parsing::syntax_definition::MatchIter<'a>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<'a> core::iter::traits::iterator::Iterator for syntect::parsing::syntax_definition::MatchIter<'a>
+pub type syntect::parsing::syntax_definition::MatchIter<'a>::Item = (&'a syntect::parsing::syntax_definition::Context, usize)
+pub fn syntect::parsing::syntax_definition::MatchIter<'a>::next(&mut self) -> core::option::Option<(&'a syntect::parsing::syntax_definition::Context, usize)>
+impl<'a> core::marker::Freeze for syntect::parsing::syntax_definition::MatchIter<'a>
+impl<'a> core::marker::Send for syntect::parsing::syntax_definition::MatchIter<'a>
+impl<'a> core::marker::Sync for syntect::parsing::syntax_definition::MatchIter<'a>
+impl<'a> core::marker::Unpin for syntect::parsing::syntax_definition::MatchIter<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::MatchIter<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::MatchIter<'a>
+pub struct syntect::parsing::syntax_definition::MatchPattern
+pub syntect::parsing::syntax_definition::MatchPattern::captures: core::option::Option<syntect::parsing::syntax_definition::CaptureMapping>
+pub syntect::parsing::syntax_definition::MatchPattern::has_captures: bool
+pub syntect::parsing::syntax_definition::MatchPattern::operation: syntect::parsing::syntax_definition::MatchOperation
+pub syntect::parsing::syntax_definition::MatchPattern::regex: syntect::parsing::Regex
+pub syntect::parsing::syntax_definition::MatchPattern::scope: alloc::vec::Vec<syntect::parsing::Scope>
+pub syntect::parsing::syntax_definition::MatchPattern::with_prototype: core::option::Option<syntect::parsing::syntax_definition::ContextReference>
+impl syntect::parsing::syntax_definition::MatchPattern
+pub fn syntect::parsing::syntax_definition::MatchPattern::new(has_captures: bool, regex_str: alloc::string::String, scope: alloc::vec::Vec<syntect::parsing::Scope>, captures: core::option::Option<syntect::parsing::syntax_definition::CaptureMapping>, operation: syntect::parsing::syntax_definition::MatchOperation, with_prototype: core::option::Option<syntect::parsing::syntax_definition::ContextReference>) -> syntect::parsing::syntax_definition::MatchPattern
+pub fn syntect::parsing::syntax_definition::MatchPattern::regex(&self) -> &syntect::parsing::Regex
+pub fn syntect::parsing::syntax_definition::MatchPattern::regex_with_refs(&self, region: &syntect::parsing::Region, text: &str) -> syntect::parsing::Regex
+impl core::clone::Clone for syntect::parsing::syntax_definition::MatchPattern
+pub fn syntect::parsing::syntax_definition::MatchPattern::clone(&self) -> syntect::parsing::syntax_definition::MatchPattern
+impl core::cmp::Eq for syntect::parsing::syntax_definition::MatchPattern
+impl core::cmp::PartialEq for syntect::parsing::syntax_definition::MatchPattern
+pub fn syntect::parsing::syntax_definition::MatchPattern::eq(&self, other: &syntect::parsing::syntax_definition::MatchPattern) -> bool
+impl core::fmt::Debug for syntect::parsing::syntax_definition::MatchPattern
+pub fn syntect::parsing::syntax_definition::MatchPattern::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::syntax_definition::MatchPattern
+impl serde::ser::Serialize for syntect::parsing::syntax_definition::MatchPattern
+pub fn syntect::parsing::syntax_definition::MatchPattern::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::syntax_definition::MatchPattern
+pub fn syntect::parsing::syntax_definition::MatchPattern::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl !core::marker::Freeze for syntect::parsing::syntax_definition::MatchPattern
+impl core::marker::Send for syntect::parsing::syntax_definition::MatchPattern
+impl core::marker::Sync for syntect::parsing::syntax_definition::MatchPattern
+impl core::marker::Unpin for syntect::parsing::syntax_definition::MatchPattern
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::MatchPattern
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::MatchPattern
+pub struct syntect::parsing::syntax_definition::SyntaxDefinition
+pub syntect::parsing::syntax_definition::SyntaxDefinition::contexts: std::collections::hash::map::HashMap<alloc::string::String, syntect::parsing::syntax_definition::Context>
+pub syntect::parsing::syntax_definition::SyntaxDefinition::file_extensions: alloc::vec::Vec<alloc::string::String>
+pub syntect::parsing::syntax_definition::SyntaxDefinition::first_line_match: core::option::Option<alloc::string::String>
+pub syntect::parsing::syntax_definition::SyntaxDefinition::hidden: bool
+pub syntect::parsing::syntax_definition::SyntaxDefinition::name: alloc::string::String
+pub syntect::parsing::syntax_definition::SyntaxDefinition::scope: syntect::parsing::Scope
+pub syntect::parsing::syntax_definition::SyntaxDefinition::variables: std::collections::hash::map::HashMap<alloc::string::String, alloc::string::String>
+impl syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::load_from_str(s: &str, lines_include_newline: bool, fallback_name: core::option::Option<&str>) -> core::result::Result<syntect::parsing::syntax_definition::SyntaxDefinition, syntect::parsing::ParseSyntaxError>
+impl core::clone::Clone for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::clone(&self) -> syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::cmp::Eq for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::cmp::PartialEq for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::eq(&self, other: &syntect::parsing::syntax_definition::SyntaxDefinition) -> bool
+impl core::fmt::Debug for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::syntax_definition::SyntaxDefinition
+impl serde::ser::Serialize for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::marker::Send for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::marker::Sync for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::marker::Unpin for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::context_iter<'a>(syntax_set: &'a syntect::parsing::SyntaxSet, context: &'a syntect::parsing::syntax_definition::Context) -> syntect::parsing::syntax_definition::MatchIter<'a>
+pub type syntect::parsing::syntax_definition::CaptureMapping = alloc::vec::Vec<(usize, alloc::vec::Vec<syntect::parsing::Scope>)>
+pub enum syntect::parsing::BasicScopeStackOp
+pub syntect::parsing::BasicScopeStackOp::Pop
+pub syntect::parsing::BasicScopeStackOp::Push(syntect::parsing::Scope)
+impl core::clone::Clone for syntect::parsing::BasicScopeStackOp
+pub fn syntect::parsing::BasicScopeStackOp::clone(&self) -> syntect::parsing::BasicScopeStackOp
+impl core::cmp::Eq for syntect::parsing::BasicScopeStackOp
+impl core::cmp::PartialEq for syntect::parsing::BasicScopeStackOp
+pub fn syntect::parsing::BasicScopeStackOp::eq(&self, other: &syntect::parsing::BasicScopeStackOp) -> bool
+impl core::fmt::Debug for syntect::parsing::BasicScopeStackOp
+pub fn syntect::parsing::BasicScopeStackOp::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::BasicScopeStackOp
+impl core::marker::Freeze for syntect::parsing::BasicScopeStackOp
+impl core::marker::Send for syntect::parsing::BasicScopeStackOp
+impl core::marker::Sync for syntect::parsing::BasicScopeStackOp
+impl core::marker::Unpin for syntect::parsing::BasicScopeStackOp
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::BasicScopeStackOp
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::BasicScopeStackOp
+pub enum syntect::parsing::ClearAmount
+pub syntect::parsing::ClearAmount::All
+pub syntect::parsing::ClearAmount::TopN(usize)
+impl core::clone::Clone for syntect::parsing::ClearAmount
+pub fn syntect::parsing::ClearAmount::clone(&self) -> syntect::parsing::ClearAmount
+impl core::cmp::Eq for syntect::parsing::ClearAmount
+impl core::cmp::PartialEq for syntect::parsing::ClearAmount
+pub fn syntect::parsing::ClearAmount::eq(&self, other: &syntect::parsing::ClearAmount) -> bool
+impl core::fmt::Debug for syntect::parsing::ClearAmount
+pub fn syntect::parsing::ClearAmount::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for syntect::parsing::ClearAmount
+impl core::marker::StructuralPartialEq for syntect::parsing::ClearAmount
+impl serde::ser::Serialize for syntect::parsing::ClearAmount
+pub fn syntect::parsing::ClearAmount::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::ClearAmount
+pub fn syntect::parsing::ClearAmount::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::ClearAmount
+impl core::marker::Send for syntect::parsing::ClearAmount
+impl core::marker::Sync for syntect::parsing::ClearAmount
+impl core::marker::Unpin for syntect::parsing::ClearAmount
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ClearAmount
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::ClearAmount
+#[non_exhaustive] pub enum syntect::parsing::ParseScopeError
+pub syntect::parsing::ParseScopeError::TooLong
+pub syntect::parsing::ParseScopeError::TooManyAtoms
+impl core::convert::From<syntect::parsing::ParseScopeError> for syntect::highlighting::ParseThemeError
+pub fn syntect::highlighting::ParseThemeError::from(source: syntect::parsing::ParseScopeError) -> Self
+impl core::error::Error for syntect::parsing::ParseScopeError
+impl core::fmt::Debug for syntect::parsing::ParseScopeError
+pub fn syntect::parsing::ParseScopeError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::parsing::ParseScopeError
+pub fn syntect::parsing::ParseScopeError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::parsing::ParseScopeError
+impl core::marker::Send for syntect::parsing::ParseScopeError
+impl core::marker::Sync for syntect::parsing::ParseScopeError
+impl core::marker::Unpin for syntect::parsing::ParseScopeError
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ParseScopeError
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::ParseScopeError
+#[non_exhaustive] pub enum syntect::parsing::ParseSyntaxError
+pub syntect::parsing::ParseSyntaxError::BadFileRef
+pub syntect::parsing::ParseSyntaxError::EmptyFile
+pub syntect::parsing::ParseSyntaxError::InvalidScope(syntect::parsing::ParseScopeError)
+pub syntect::parsing::ParseSyntaxError::InvalidYaml(yaml_rust::scanner::ScanError)
+pub syntect::parsing::ParseSyntaxError::MainMissing
+pub syntect::parsing::ParseSyntaxError::MissingMandatoryKey(&'static str)
+pub syntect::parsing::ParseSyntaxError::RegexCompileError(alloc::string::String, alloc::boxed::Box<(dyn core::error::Error + core::marker::Send + core::marker::Sync + 'static)>)
+pub syntect::parsing::ParseSyntaxError::TypeMismatch
+impl core::convert::From<yaml_rust::scanner::ScanError> for syntect::parsing::ParseSyntaxError
+pub fn syntect::parsing::ParseSyntaxError::from(source: yaml_rust::scanner::ScanError) -> Self
+impl core::error::Error for syntect::parsing::ParseSyntaxError
+pub fn syntect::parsing::ParseSyntaxError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for syntect::parsing::ParseSyntaxError
+pub fn syntect::parsing::ParseSyntaxError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::parsing::ParseSyntaxError
+pub fn syntect::parsing::ParseSyntaxError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::parsing::ParseSyntaxError
+impl core::marker::Send for syntect::parsing::ParseSyntaxError
+impl core::marker::Sync for syntect::parsing::ParseSyntaxError
+impl core::marker::Unpin for syntect::parsing::ParseSyntaxError
+impl !core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ParseSyntaxError
+impl !core::panic::unwind_safe::UnwindSafe for syntect::parsing::ParseSyntaxError
+#[non_exhaustive] pub enum syntect::parsing::ParsingError
+pub syntect::parsing::ParsingError::BadMatchIndex(usize)
+pub syntect::parsing::ParsingError::MissingContext(syntect::parsing::syntax_definition::ContextId)
+pub syntect::parsing::ParsingError::MissingMainContext
+pub syntect::parsing::ParsingError::UnresolvedContextReference(syntect::parsing::syntax_definition::ContextReference)
+impl core::convert::From<syntect::parsing::ParsingError> for syntect::Error
+pub fn syntect::Error::from(source: syntect::parsing::ParsingError) -> Self
+impl core::error::Error for syntect::parsing::ParsingError
+impl core::fmt::Debug for syntect::parsing::ParsingError
+pub fn syntect::parsing::ParsingError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::parsing::ParsingError
+pub fn syntect::parsing::ParsingError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::parsing::ParsingError
+impl core::marker::Send for syntect::parsing::ParsingError
+impl core::marker::Sync for syntect::parsing::ParsingError
+impl core::marker::Unpin for syntect::parsing::ParsingError
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ParsingError
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::ParsingError
+#[non_exhaustive] pub enum syntect::parsing::ScopeError
+pub syntect::parsing::ScopeError::NoClearedScopesToRestore
+impl core::convert::From<syntect::parsing::ScopeError> for syntect::Error
+pub fn syntect::Error::from(source: syntect::parsing::ScopeError) -> Self
+impl core::error::Error for syntect::parsing::ScopeError
+impl core::fmt::Debug for syntect::parsing::ScopeError
+pub fn syntect::parsing::ScopeError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::parsing::ScopeError
+pub fn syntect::parsing::ScopeError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::parsing::ScopeError
+impl core::marker::Send for syntect::parsing::ScopeError
+impl core::marker::Sync for syntect::parsing::ScopeError
+impl core::marker::Unpin for syntect::parsing::ScopeError
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ScopeError
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::ScopeError
+pub enum syntect::parsing::ScopeStackOp
+pub syntect::parsing::ScopeStackOp::Clear(syntect::parsing::ClearAmount)
+pub syntect::parsing::ScopeStackOp::Noop
+pub syntect::parsing::ScopeStackOp::Pop(usize)
+pub syntect::parsing::ScopeStackOp::Push(syntect::parsing::Scope)
+pub syntect::parsing::ScopeStackOp::Restore
+impl core::clone::Clone for syntect::parsing::ScopeStackOp
+pub fn syntect::parsing::ScopeStackOp::clone(&self) -> syntect::parsing::ScopeStackOp
+impl core::cmp::Eq for syntect::parsing::ScopeStackOp
+impl core::cmp::PartialEq for syntect::parsing::ScopeStackOp
+pub fn syntect::parsing::ScopeStackOp::eq(&self, other: &syntect::parsing::ScopeStackOp) -> bool
+impl core::fmt::Debug for syntect::parsing::ScopeStackOp
+pub fn syntect::parsing::ScopeStackOp::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::ScopeStackOp
+impl core::marker::Freeze for syntect::parsing::ScopeStackOp
+impl core::marker::Send for syntect::parsing::ScopeStackOp
+impl core::marker::Sync for syntect::parsing::ScopeStackOp
+impl core::marker::Unpin for syntect::parsing::ScopeStackOp
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ScopeStackOp
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::ScopeStackOp
+pub struct syntect::parsing::MatchPower(pub f64)
+impl core::clone::Clone for syntect::parsing::MatchPower
+pub fn syntect::parsing::MatchPower::clone(&self) -> syntect::parsing::MatchPower
+impl core::cmp::Eq for syntect::parsing::MatchPower
+impl core::cmp::Ord for syntect::parsing::MatchPower
+pub fn syntect::parsing::MatchPower::cmp(&self, other: &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for syntect::parsing::MatchPower
+pub fn syntect::parsing::MatchPower::eq(&self, other: &syntect::parsing::MatchPower) -> bool
+impl core::cmp::PartialOrd for syntect::parsing::MatchPower
+pub fn syntect::parsing::MatchPower::partial_cmp(&self, other: &syntect::parsing::MatchPower) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for syntect::parsing::MatchPower
+pub fn syntect::parsing::MatchPower::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for syntect::parsing::MatchPower
+impl core::marker::StructuralPartialEq for syntect::parsing::MatchPower
+impl core::marker::Freeze for syntect::parsing::MatchPower
+impl core::marker::Send for syntect::parsing::MatchPower
+impl core::marker::Sync for syntect::parsing::MatchPower
+impl core::marker::Unpin for syntect::parsing::MatchPower
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::MatchPower
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::MatchPower
+pub struct syntect::parsing::ParseState
+impl syntect::parsing::ParseState
+pub fn syntect::parsing::ParseState::new(syntax: &syntect::parsing::SyntaxReference) -> syntect::parsing::ParseState
+pub fn syntect::parsing::ParseState::parse_line(&mut self, line: &str, syntax_set: &syntect::parsing::SyntaxSet) -> core::result::Result<alloc::vec::Vec<(usize, syntect::parsing::ScopeStackOp)>, syntect::parsing::ParsingError>
+impl core::clone::Clone for syntect::parsing::ParseState
+pub fn syntect::parsing::ParseState::clone(&self) -> syntect::parsing::ParseState
+impl core::cmp::Eq for syntect::parsing::ParseState
+impl core::cmp::PartialEq for syntect::parsing::ParseState
+pub fn syntect::parsing::ParseState::eq(&self, other: &syntect::parsing::ParseState) -> bool
+impl core::fmt::Debug for syntect::parsing::ParseState
+pub fn syntect::parsing::ParseState::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::ParseState
+impl core::marker::Freeze for syntect::parsing::ParseState
+impl !core::marker::Send for syntect::parsing::ParseState
+impl !core::marker::Sync for syntect::parsing::ParseState
+impl core::marker::Unpin for syntect::parsing::ParseState
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ParseState
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::ParseState
+pub struct syntect::parsing::Regex
+impl syntect::parsing::Regex
+pub fn syntect::parsing::Regex::is_match(&self, text: &str) -> bool
+pub fn syntect::parsing::Regex::new(regex_str: alloc::string::String) -> Self
+pub fn syntect::parsing::Regex::regex_str(&self) -> &str
+pub fn syntect::parsing::Regex::search(&self, text: &str, begin: usize, end: usize, region: core::option::Option<&mut syntect::parsing::Region>) -> bool
+pub fn syntect::parsing::Regex::try_compile(regex_str: &str) -> core::option::Option<alloc::boxed::Box<(dyn core::error::Error + core::marker::Send + core::marker::Sync + 'static)>>
+impl core::clone::Clone for syntect::parsing::Regex
+pub fn syntect::parsing::Regex::clone(&self) -> Self
+impl core::cmp::Eq for syntect::parsing::Regex
+impl core::cmp::PartialEq for syntect::parsing::Regex
+pub fn syntect::parsing::Regex::eq(&self, other: &syntect::parsing::Regex) -> bool
+impl core::fmt::Debug for syntect::parsing::Regex
+pub fn syntect::parsing::Regex::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde::ser::Serialize for syntect::parsing::Regex
+pub fn syntect::parsing::Regex::serialize<S>(&self, serializer: S) -> core::result::Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error> where S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::Regex
+pub fn syntect::parsing::Regex::deserialize<D>(deserializer: D) -> core::result::Result<Self, <D as serde::de::Deserializer>::Error> where D: serde::de::Deserializer<'de>
+impl !core::marker::Freeze for syntect::parsing::Regex
+impl core::marker::Send for syntect::parsing::Regex
+impl core::marker::Sync for syntect::parsing::Regex
+impl core::marker::Unpin for syntect::parsing::Regex
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::Regex
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::Regex
+pub struct syntect::parsing::Region
+impl syntect::parsing::Region
+pub fn syntect::parsing::Region::new() -> Self
+pub fn syntect::parsing::Region::pos(&self, index: usize) -> core::option::Option<(usize, usize)>
+impl core::clone::Clone for syntect::parsing::Region
+pub fn syntect::parsing::Region::clone(&self) -> syntect::parsing::Region
+impl core::cmp::Eq for syntect::parsing::Region
+impl core::cmp::PartialEq for syntect::parsing::Region
+pub fn syntect::parsing::Region::eq(&self, other: &syntect::parsing::Region) -> bool
+impl core::default::Default for syntect::parsing::Region
+pub fn syntect::parsing::Region::default() -> Self
+impl core::fmt::Debug for syntect::parsing::Region
+pub fn syntect::parsing::Region::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::Region
+impl core::marker::Freeze for syntect::parsing::Region
+impl !core::marker::Send for syntect::parsing::Region
+impl !core::marker::Sync for syntect::parsing::Region
+impl core::marker::Unpin for syntect::parsing::Region
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::Region
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::Region
+pub struct syntect::parsing::Scope
+impl syntect::parsing::Scope
+pub fn syntect::parsing::Scope::atom_at(self, index: usize) -> u16
+pub fn syntect::parsing::Scope::build_string(self) -> alloc::string::String
+pub fn syntect::parsing::Scope::is_empty(self) -> bool
+pub fn syntect::parsing::Scope::is_prefix_of(self, s: syntect::parsing::Scope) -> bool
+pub fn syntect::parsing::Scope::len(self) -> u32
+pub fn syntect::parsing::Scope::new(s: &str) -> core::result::Result<syntect::parsing::Scope, syntect::parsing::ParseScopeError>
+impl core::clone::Clone for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::clone(&self) -> syntect::parsing::Scope
+impl core::cmp::Eq for syntect::parsing::Scope
+impl core::cmp::Ord for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::cmp(&self, other: &syntect::parsing::Scope) -> core::cmp::Ordering
+impl core::cmp::PartialEq for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::eq(&self, other: &syntect::parsing::Scope) -> bool
+impl core::cmp::PartialOrd for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::partial_cmp(&self, other: &syntect::parsing::Scope) -> core::option::Option<core::cmp::Ordering>
+impl core::default::Default for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::default() -> syntect::parsing::Scope
+impl core::fmt::Debug for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for syntect::parsing::Scope
+impl core::marker::StructuralPartialEq for syntect::parsing::Scope
+impl core::str::traits::FromStr for syntect::parsing::Scope
+pub type syntect::parsing::Scope::Err = syntect::parsing::ParseScopeError
+pub fn syntect::parsing::Scope::from_str(s: &str) -> core::result::Result<syntect::parsing::Scope, syntect::parsing::ParseScopeError>
+impl serde::ser::Serialize for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::serialize<S>(&self, serializer: S) -> core::result::Result<<S as serde::ser::Serializer>::Ok, <S as serde::ser::Serializer>::Error> where S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::Scope
+pub fn syntect::parsing::Scope::deserialize<D>(deserializer: D) -> core::result::Result<Self, <D as serde::de::Deserializer>::Error> where D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::Scope
+impl core::marker::Send for syntect::parsing::Scope
+impl core::marker::Sync for syntect::parsing::Scope
+impl core::marker::Unpin for syntect::parsing::Scope
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::Scope
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::Scope
+pub struct syntect::parsing::ScopeRepository
+impl syntect::parsing::ScopeRepository
+pub fn syntect::parsing::ScopeRepository::atom_str(&self, atom_number: u16) -> &str
+pub fn syntect::parsing::ScopeRepository::build(&mut self, s: &str) -> core::result::Result<syntect::parsing::Scope, syntect::parsing::ParseScopeError>
+pub fn syntect::parsing::ScopeRepository::to_string(&self, scope: syntect::parsing::Scope) -> alloc::string::String
+impl core::fmt::Debug for syntect::parsing::ScopeRepository
+pub fn syntect::parsing::ScopeRepository::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::parsing::ScopeRepository
+impl core::marker::Send for syntect::parsing::ScopeRepository
+impl core::marker::Sync for syntect::parsing::ScopeRepository
+impl core::marker::Unpin for syntect::parsing::ScopeRepository
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ScopeRepository
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::ScopeRepository
+pub struct syntect::parsing::ScopeStack
+pub syntect::parsing::ScopeStack::scopes: alloc::vec::Vec<syntect::parsing::Scope>
+impl syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::apply(&mut self, op: &syntect::parsing::ScopeStackOp) -> core::result::Result<(), syntect::parsing::ScopeError>
+pub fn syntect::parsing::ScopeStack::apply_with_hook<F>(&mut self, op: &syntect::parsing::ScopeStackOp, hook: F) -> core::result::Result<(), syntect::parsing::ScopeError> where F: core::ops::function::FnMut(syntect::parsing::BasicScopeStackOp, &[syntect::parsing::Scope])
+pub fn syntect::parsing::ScopeStack::as_slice(&self) -> &[syntect::parsing::Scope]
+pub fn syntect::parsing::ScopeStack::bottom_n(&self, n: usize) -> &[syntect::parsing::Scope]
+pub fn syntect::parsing::ScopeStack::debug_print(&self, repo: &syntect::parsing::ScopeRepository)
+pub fn syntect::parsing::ScopeStack::does_match(&self, stack: &[syntect::parsing::Scope]) -> core::option::Option<syntect::parsing::MatchPower>
+pub fn syntect::parsing::ScopeStack::from_vec(v: alloc::vec::Vec<syntect::parsing::Scope>) -> syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::is_empty(&self) -> bool
+pub fn syntect::parsing::ScopeStack::len(&self) -> usize
+pub fn syntect::parsing::ScopeStack::new() -> syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::pop(&mut self)
+pub fn syntect::parsing::ScopeStack::push(&mut self, s: syntect::parsing::Scope)
+impl core::clone::Clone for syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::clone(&self) -> syntect::parsing::ScopeStack
+impl core::cmp::Eq for syntect::parsing::ScopeStack
+impl core::cmp::PartialEq for syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::eq(&self, other: &syntect::parsing::ScopeStack) -> bool
+impl core::default::Default for syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::default() -> syntect::parsing::ScopeStack
+impl core::fmt::Debug for syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::ScopeStack
+impl core::str::traits::FromStr for syntect::parsing::ScopeStack
+pub type syntect::parsing::ScopeStack::Err = syntect::parsing::ParseScopeError
+pub fn syntect::parsing::ScopeStack::from_str(s: &str) -> core::result::Result<syntect::parsing::ScopeStack, syntect::parsing::ParseScopeError>
+impl serde::ser::Serialize for syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::ScopeStack
+pub fn syntect::parsing::ScopeStack::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::ScopeStack
+impl core::marker::Send for syntect::parsing::ScopeStack
+impl core::marker::Sync for syntect::parsing::ScopeStack
+impl core::marker::Unpin for syntect::parsing::ScopeStack
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::ScopeStack
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::ScopeStack
+pub struct syntect::parsing::SyntaxDefinition
+pub syntect::parsing::SyntaxDefinition::contexts: std::collections::hash::map::HashMap<alloc::string::String, syntect::parsing::syntax_definition::Context>
+pub syntect::parsing::SyntaxDefinition::file_extensions: alloc::vec::Vec<alloc::string::String>
+pub syntect::parsing::SyntaxDefinition::first_line_match: core::option::Option<alloc::string::String>
+pub syntect::parsing::SyntaxDefinition::hidden: bool
+pub syntect::parsing::SyntaxDefinition::name: alloc::string::String
+pub syntect::parsing::SyntaxDefinition::scope: syntect::parsing::Scope
+pub syntect::parsing::SyntaxDefinition::variables: std::collections::hash::map::HashMap<alloc::string::String, alloc::string::String>
+impl syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::load_from_str(s: &str, lines_include_newline: bool, fallback_name: core::option::Option<&str>) -> core::result::Result<syntect::parsing::syntax_definition::SyntaxDefinition, syntect::parsing::ParseSyntaxError>
+impl core::clone::Clone for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::clone(&self) -> syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::cmp::Eq for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::cmp::PartialEq for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::eq(&self, other: &syntect::parsing::syntax_definition::SyntaxDefinition) -> bool
+impl core::fmt::Debug for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for syntect::parsing::syntax_definition::SyntaxDefinition
+impl serde::ser::Serialize for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::syntax_definition::SyntaxDefinition
+pub fn syntect::parsing::syntax_definition::SyntaxDefinition::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl core::marker::Freeze for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::marker::Send for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::marker::Sync for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::marker::Unpin for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::syntax_definition::SyntaxDefinition
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::syntax_definition::SyntaxDefinition
+pub struct syntect::parsing::SyntaxReference
+pub syntect::parsing::SyntaxReference::file_extensions: alloc::vec::Vec<alloc::string::String>
+pub syntect::parsing::SyntaxReference::first_line_match: core::option::Option<alloc::string::String>
+pub syntect::parsing::SyntaxReference::hidden: bool
+pub syntect::parsing::SyntaxReference::name: alloc::string::String
+pub syntect::parsing::SyntaxReference::scope: syntect::parsing::Scope
+pub syntect::parsing::SyntaxReference::variables: std::collections::hash::map::HashMap<alloc::string::String, alloc::string::String>
+impl core::clone::Clone for syntect::parsing::SyntaxReference
+pub fn syntect::parsing::SyntaxReference::clone(&self) -> syntect::parsing::SyntaxReference
+impl core::fmt::Debug for syntect::parsing::SyntaxReference
+pub fn syntect::parsing::SyntaxReference::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde::ser::Serialize for syntect::parsing::SyntaxReference
+pub fn syntect::parsing::SyntaxReference::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::SyntaxReference
+pub fn syntect::parsing::SyntaxReference::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl !core::marker::Freeze for syntect::parsing::SyntaxReference
+impl core::marker::Send for syntect::parsing::SyntaxReference
+impl core::marker::Sync for syntect::parsing::SyntaxReference
+impl core::marker::Unpin for syntect::parsing::SyntaxReference
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::SyntaxReference
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::SyntaxReference
+pub struct syntect::parsing::SyntaxSet
+impl syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::find_syntax_by_extension<'a>(&'a self, extension: &str) -> core::option::Option<&'a syntect::parsing::SyntaxReference>
+pub fn syntect::parsing::SyntaxSet::find_syntax_by_first_line<'a>(&'a self, s: &str) -> core::option::Option<&'a syntect::parsing::SyntaxReference>
+pub fn syntect::parsing::SyntaxSet::find_syntax_by_name<'a>(&'a self, name: &str) -> core::option::Option<&'a syntect::parsing::SyntaxReference>
+pub fn syntect::parsing::SyntaxSet::find_syntax_by_path<'a>(&'a self, path: &str) -> core::option::Option<&'a syntect::parsing::SyntaxReference>
+pub fn syntect::parsing::SyntaxSet::find_syntax_by_scope(&self, scope: syntect::parsing::Scope) -> core::option::Option<&syntect::parsing::SyntaxReference>
+pub fn syntect::parsing::SyntaxSet::find_syntax_by_token<'a>(&'a self, s: &str) -> core::option::Option<&'a syntect::parsing::SyntaxReference>
+pub fn syntect::parsing::SyntaxSet::find_syntax_for_file<P: core::convert::AsRef<std::path::Path>>(&self, path_obj: P) -> std::io::error::Result<core::option::Option<&syntect::parsing::SyntaxReference>>
+pub fn syntect::parsing::SyntaxSet::find_syntax_plain_text(&self) -> &syntect::parsing::SyntaxReference
+pub fn syntect::parsing::SyntaxSet::find_unlinked_contexts(&self) -> alloc::collections::btree::set::BTreeSet<alloc::string::String>
+pub fn syntect::parsing::SyntaxSet::into_builder(self) -> syntect::parsing::SyntaxSetBuilder
+pub fn syntect::parsing::SyntaxSet::load_from_folder<P: core::convert::AsRef<std::path::Path>>(folder: P) -> core::result::Result<syntect::parsing::SyntaxSet, syntect::LoadingError>
+pub fn syntect::parsing::SyntaxSet::new() -> syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::syntaxes(&self) -> &[syntect::parsing::SyntaxReference]
+impl syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::load_defaults_newlines() -> syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::load_defaults_nonewlines() -> syntect::parsing::SyntaxSet
+impl core::clone::Clone for syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::clone(&self) -> syntect::parsing::SyntaxSet
+impl core::default::Default for syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::default() -> Self
+impl core::fmt::Debug for syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde::ser::Serialize for syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
+impl<'de> serde::de::Deserialize<'de> for syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSet::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde::de::Deserializer>::Error> where __D: serde::de::Deserializer<'de>
+impl !core::marker::Freeze for syntect::parsing::SyntaxSet
+impl core::marker::Send for syntect::parsing::SyntaxSet
+impl core::marker::Sync for syntect::parsing::SyntaxSet
+impl core::marker::Unpin for syntect::parsing::SyntaxSet
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::SyntaxSet
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::SyntaxSet
+pub struct syntect::parsing::SyntaxSetBuilder
+impl syntect::parsing::SyntaxSetBuilder
+pub fn syntect::parsing::SyntaxSetBuilder::add(&mut self, syntax: syntect::parsing::syntax_definition::SyntaxDefinition)
+pub fn syntect::parsing::SyntaxSetBuilder::add_from_folder<P: core::convert::AsRef<std::path::Path>>(&mut self, folder: P, lines_include_newline: bool) -> core::result::Result<(), syntect::LoadingError>
+pub fn syntect::parsing::SyntaxSetBuilder::add_plain_text_syntax(&mut self)
+pub fn syntect::parsing::SyntaxSetBuilder::build(self) -> syntect::parsing::SyntaxSet
+pub fn syntect::parsing::SyntaxSetBuilder::new() -> syntect::parsing::SyntaxSetBuilder
+pub fn syntect::parsing::SyntaxSetBuilder::syntaxes(&self) -> &[syntect::parsing::syntax_definition::SyntaxDefinition]
+impl core::clone::Clone for syntect::parsing::SyntaxSetBuilder
+pub fn syntect::parsing::SyntaxSetBuilder::clone(&self) -> syntect::parsing::SyntaxSetBuilder
+impl core::default::Default for syntect::parsing::SyntaxSetBuilder
+pub fn syntect::parsing::SyntaxSetBuilder::default() -> syntect::parsing::SyntaxSetBuilder
+impl core::marker::Freeze for syntect::parsing::SyntaxSetBuilder
+impl core::marker::Send for syntect::parsing::SyntaxSetBuilder
+impl core::marker::Sync for syntect::parsing::SyntaxSetBuilder
+impl core::marker::Unpin for syntect::parsing::SyntaxSetBuilder
+impl core::panic::unwind_safe::RefUnwindSafe for syntect::parsing::SyntaxSetBuilder
+impl core::panic::unwind_safe::UnwindSafe for syntect::parsing::SyntaxSetBuilder
+pub const syntect::parsing::ATOM_LEN_BITS: u16
+pub static syntect::parsing::SCOPE_REPO: once_cell::sync::Lazy<std::sync::poison::mutex::Mutex<syntect::parsing::ScopeRepository>>
+pub mod syntect::util
+pub struct syntect::util::LinesWithEndings<'a>
+impl<'a> syntect::util::LinesWithEndings<'a>
+pub fn syntect::util::LinesWithEndings<'a>::from(input: &'a str) -> syntect::util::LinesWithEndings<'a>
+impl<'a> core::iter::traits::iterator::Iterator for syntect::util::LinesWithEndings<'a>
+pub type syntect::util::LinesWithEndings<'a>::Item = &'a str
+pub fn syntect::util::LinesWithEndings<'a>::next(&mut self) -> core::option::Option<&'a str>
+impl<'a> core::marker::Freeze for syntect::util::LinesWithEndings<'a>
+impl<'a> core::marker::Send for syntect::util::LinesWithEndings<'a>
+impl<'a> core::marker::Sync for syntect::util::LinesWithEndings<'a>
+impl<'a> core::marker::Unpin for syntect::util::LinesWithEndings<'a>
+impl<'a> core::panic::unwind_safe::RefUnwindSafe for syntect::util::LinesWithEndings<'a>
+impl<'a> core::panic::unwind_safe::UnwindSafe for syntect::util::LinesWithEndings<'a>
+pub fn syntect::util::as_24_bit_terminal_escaped(v: &[(syntect::highlighting::Style, &str)], bg: bool) -> alloc::string::String
+pub fn syntect::util::as_latex_escaped(v: &[(syntect::highlighting::Style, &str)]) -> alloc::string::String
+pub fn syntect::util::debug_print_ops(line: &str, ops: &[(usize, syntect::parsing::ScopeStackOp)])
+pub fn syntect::util::modify_range<'a>(v: &[(syntect::highlighting::Style, &'a str)], r: core::ops::range::Range<usize>, modifier: syntect::highlighting::StyleModifier) -> alloc::vec::Vec<(syntect::highlighting::Style, &'a str)>
+pub fn syntect::util::split_at<'a, A: core::clone::Clone>(v: &[(A, &'a str)], split_i: usize) -> (alloc::vec::Vec<(A, &'a str)>, alloc::vec::Vec<(A, &'a str)>)
+#[non_exhaustive] pub enum syntect::Error
+pub syntect::Error::Fmt(core::fmt::Error)
+pub syntect::Error::Io(std::io::error::Error)
+pub syntect::Error::LoadingError(syntect::LoadingError)
+pub syntect::Error::ParsingError(syntect::parsing::ParsingError)
+pub syntect::Error::ScopeError(syntect::parsing::ScopeError)
+impl core::convert::From<core::fmt::Error> for syntect::Error
+pub fn syntect::Error::from(source: core::fmt::Error) -> Self
+impl core::convert::From<std::io::error::Error> for syntect::Error
+pub fn syntect::Error::from(source: std::io::error::Error) -> Self
+impl core::convert::From<syntect::LoadingError> for syntect::Error
+pub fn syntect::Error::from(source: syntect::LoadingError) -> Self
+impl core::convert::From<syntect::parsing::ParsingError> for syntect::Error
+pub fn syntect::Error::from(source: syntect::parsing::ParsingError) -> Self
+impl core::convert::From<syntect::parsing::ScopeError> for syntect::Error
+pub fn syntect::Error::from(source: syntect::parsing::ScopeError) -> Self
+impl core::error::Error for syntect::Error
+pub fn syntect::Error::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for syntect::Error
+pub fn syntect::Error::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::Error
+pub fn syntect::Error::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::Error
+impl core::marker::Send for syntect::Error
+impl core::marker::Sync for syntect::Error
+impl core::marker::Unpin for syntect::Error
+impl !core::panic::unwind_safe::RefUnwindSafe for syntect::Error
+impl !core::panic::unwind_safe::UnwindSafe for syntect::Error
+#[non_exhaustive] pub enum syntect::LoadingError
+pub syntect::LoadingError::BadPath
+pub syntect::LoadingError::Io(std::io::error::Error)
+pub syntect::LoadingError::ParseSyntax(syntect::parsing::ParseSyntaxError, alloc::string::String)
+pub syntect::LoadingError::ParseTheme(syntect::highlighting::ParseThemeError)
+pub syntect::LoadingError::ReadSettings(syntect::highlighting::SettingsError)
+pub syntect::LoadingError::WalkDir(walkdir::error::Error)
+impl core::convert::From<std::io::error::Error> for syntect::LoadingError
+pub fn syntect::LoadingError::from(source: std::io::error::Error) -> Self
+impl core::convert::From<syntect::LoadingError> for syntect::Error
+pub fn syntect::Error::from(source: syntect::LoadingError) -> Self
+impl core::convert::From<syntect::highlighting::ParseThemeError> for syntect::LoadingError
+pub fn syntect::LoadingError::from(source: syntect::highlighting::ParseThemeError) -> Self
+impl core::convert::From<syntect::highlighting::SettingsError> for syntect::LoadingError
+pub fn syntect::LoadingError::from(source: syntect::highlighting::SettingsError) -> Self
+impl core::convert::From<walkdir::error::Error> for syntect::LoadingError
+pub fn syntect::LoadingError::from(source: walkdir::error::Error) -> Self
+impl core::error::Error for syntect::LoadingError
+pub fn syntect::LoadingError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for syntect::LoadingError
+pub fn syntect::LoadingError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for syntect::LoadingError
+pub fn syntect::LoadingError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for syntect::LoadingError
+impl core::marker::Send for syntect::LoadingError
+impl core::marker::Sync for syntect::LoadingError
+impl core::marker::Unpin for syntect::LoadingError
+impl !core::panic::unwind_safe::RefUnwindSafe for syntect::LoadingError
+impl !core::panic::unwind_safe::UnwindSafe for syntect::LoadingError

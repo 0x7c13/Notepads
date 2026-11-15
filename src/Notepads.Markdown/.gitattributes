@@ -16,5 +16,6 @@ third-party-notices/** -text !eol
 tests/baselines/** -text !eol
 tests/fixtures/** -text !eol
 crates/markdown-math/assets/** -text !eol
+crates/markdown-core/assets/code-syntaxes/** -text !eol
 crates/markdown-core/tests/front-matter-vscode-1.145.2/** -text !eol
 crates/markdown-core/tests/source-baseline-index.tsv -text !eol

@@ -1,0 +1,117 @@
+[package]
+name = "comrak"
+version = "0.56.0"
+authors = ["Asherah Connor <ashe@kivikakk.ee>", "Brett Walker <github@digitalmoksha.com>", "gjtorikian"]
+rust-version = "1.89"
+description = "A 100% CommonMark-compatible GitHub Flavored Markdown parser and formatter"
+documentation = "https://docs.rs/comrak"
+homepage = "https://github.com/kivikakk/comrak"
+repository = "https://github.com/kivikakk/comrak"
+readme = "README.md"
+keywords = ["markdown", "commonmark"]
+license = "BSD-2-Clause"
+categories = ["text-processing", "parsing", "command-line-utilities"]
+exclude = [
+    "/hooks/*",
+    "/script/*",
+    "/vendor/*",
+    "/.travis.yml",
+    "/Makefile",
+    "/spec_out.txt",
+]
+resolver = "3"
+edition = "2024"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+
+[[bin]]
+name = "comrak"
+required-features = ["cli"]
+doc = false
+
+[[bench]]
+name = "progits"
+harness = false
+
+[dependencies]
+typed-arena = "2.0.2"
+shell-words = { version = "1.1", optional = true }
+emojis = { version = "0.9", optional = true }
+arbitrary = { version = "1", optional = true, features = ["derive"] }
+bon = { version = "3", optional = true }
+caseless = "0.2"
+fmt2io = { version = "1.0.0", optional = true }
+memchr-n = "0.1.7"
+phf = "0.14"
+rustc-hash = "2"
+smallvec = "1.13"
+finl_unicode = { version = "1.4.0", features = ["categories"] }
+
+[dev-dependencies]
+ntest = "0.9"
+percent-encoding-rfc3986 = "0.1.3"
+strum = { version = "0.28.0", features = ["derive"] }
+toml = "1.0.6"
+slug = "0.1.4"
+pretty_assertions = "1.4.1"
+glob = "0.3.3"
+divan = { version = "4.2.0", package = "codspeed-divan-compat" }
+
+[build-dependencies]
+entities = "1"
+phf_codegen = "0.14"
+
+[features]
+default = ["cli", "syntect-onig", "bon"]
+cli = ["clap", "bon", "shell-words", "xdg", "fmt2io", "shortcodes", "phoenix_heex", "attributes"]
+shortcodes = ["emojis"]
+phoenix_heex = []
+attributes = []
+bon = ["dep:bon"]
+# `syntect` enables the syntect plugin but is backend-neutral; pick a regex
+# backend via `syntect-onig` (C Oniguruma, the default) or `syntect-fancy`
+# (pure-Rust fancy-regex). The fancy backend avoids linking onig_sys, which is
+# required on hosts that already export Oniguruma symbols (e.g. Ruby on Windows
+# mingw), where a second static copy collides at link time.
+syntect = ["dep:syntect"]
+syntect-onig = ["syntect", "syntect/regex-onig"]
+syntect-fancy = ["syntect", "syntect/regex-fancy"]
+
+[target.'cfg(all(not(windows), not(target_arch="wasm32")))'.dependencies]
+xdg = { version = "3", optional = true }
+
+[target.'cfg(any(target_arch = "wasm32", target_os = "ios"))'.dependencies]
+syntect = { version = "5", optional = true, default-features = false, features = [
+    "default-fancy",
+] }
+
+[target.'cfg(not(any(target_arch = "wasm32", target_os = "ios")))'.dependencies]
+syntect = { version = "5", optional = true, default-features = false, features = [
+    "default-themes",
+    "default-syntaxes",
+    "html",
+] }
+
+[target.'cfg(target_arch="wasm32")'.dependencies]
+clap = { version = "4", optional = true, features = ["derive", "string"] }
+
+[target.'cfg(not(target_arch="wasm32"))'.dependencies]
+clap = { version = "4", optional = true, features = [
+    "derive",
+    "string",
+    "wrap_help",
+] }
+
+[[example]]
+name = "syntect"
+required-features = [ "syntect" ]
+
+[[example]]
+name = "s-expr"
+required-features = [ "bon" ]

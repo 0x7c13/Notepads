@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Comrak · Markdown parser and renderer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#3E2349">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Comrak">
+    <meta property="og:url" content="https://comrak.ee/">
+    <meta property="og:description" content="Homepage of Comrak, a CommonMark and GitHub Flavored Markdown parser and renderer. Standalone tool and Rust library.">
+    <meta name="description" content="Homepage of Comrak, a CommonMark and GitHub Flavored Markdown parser and renderer. Standalone tool and Rust library.">
+    <meta property="og:image" content="https://comrak.ee/comrak.png">
+</head>
+  <body>    
+<h1 id="comrak">Comrak<a href="#comrak" aria-label="Link to heading 'Comrak'" data-heading-content="Comrak" class="anchor"></a></h1>
+<p>Comrak is a <a href="https://commonmark.org/">CommonMark</a> and <a href="https://github.github.com/gfm/">GitHub Flavored Markdown</a> compatible parser and renderer, written in Rust.</p>
+<p>It is <a href="https://github.com/kivikakk/comrak">developed on GitHub</a> by a community of contributors, and released under the <a href="https://github.com/kivikakk/comrak/blob/main/COPYING">BSD 2-clause license</a>, forever<sup class="footnote-ref"><a href="#fn-no-cla" id="fnref-no-cla" data-footnote-ref>1</a></sup>, for use by all.</p>
+<h2 id="features">Features<a href="#features" aria-label="Link to heading 'Features'" data-heading-content="Features" class="anchor"></a></h2>
+<ul>
+<li>Compatible with <a href="https://spec.commonmark.org/0.31.2/">CommonMark 0.31.2</a> by default.</li>
+<li>One option to toggle on all <a href="https://github.github.com/gfm/">GitHub Flavored Markdown</a> extensions (or enable them separately).</li>
+<li>Many additional <a href="https://docs.rs/comrak/latest/comrak/options/struct.Extension.html">extensions</a> developed by the community.</li>
+<li>Fine-grained <a href="https://docs.rs/comrak/latest/comrak/options/struct.Parse.html">parse</a> and <a href="https://docs.rs/comrak/latest/comrak/options/struct.Render.html">render</a> options.</li>
+<li><a href="https://github.com/kivikakk/comrak#plugins">Pluggable</a> syntax highlighting for code blocks.</li>
+<li><a href="https://docs.rs/comrak/latest/comrak/macro.create_formatter.html">Custom formatter</a> support to override the rendering of any node type.</li>
+</ul>
+<h2 id="usage">Usage<a href="#usage" aria-label="Link to heading 'Usage'" data-heading-content="Usage" class="anchor"></a></h2>
+<p>Comrak can be used directly on the command-line or as part of a batch processing pipeline, and is available pre-built on <a href="https://github.com/kivikakk/comrak#cli">many platforms</a>.</p>
+<p>It can also be used as a library in Rust as a Cargo dependency, or with <a href="#bindings">bindings to other languages</a>.
+The WASM target lets it be used <a href="https://gitlab-org.gitlab.io/ruby/gems/gitlab-glfm-markdown/">directly in webpages</a>.</p>
+<p>This webpage is <a href="Makefile">created with Comrak</a> by stitching together three elements:</p>
+<ul>
+<li><a href="https://github.com/kivikakk/comrak/blob/main/www/header.html"><code>header.html</code></a></li>
+<li><a href="https://github.com/kivikakk/comrak/blob/main/www/index.md?plain=1"><code>index.md</code></a> converted with <code>--header-id-prefix &quot;&quot; --smart -e footnotes</code></li>
+<li><a href="https://github.com/kivikakk/comrak/blob/main/www/footer.html"><code>footer.html</code></a></li>
+</ul>
+<p>The CLI help for the latest version is available in the <a href="https://github.com/kivikakk/comrak#usage">README</a>, and the Rust documentation is on <a href="https://docs.rs/comrak/latest/comrak/">docs.rs</a>.</p>
+<h2 id="bindings">Bindings<a href="#bindings" aria-label="Link to heading 'Bindings'" data-heading-content="Bindings" class="anchor"></a></h2>
+<ul>
+<li><a href="https://github.com/gjtorikian/commonmarker">Commonmarker</a>, <a href="https://gitlab.com/gitlab-org/ruby/gems/gitlab-glfm-markdown">gitlab-glfm-markdown</a> (Ruby)</li>
+<li><a href="https://mdelixir.dev">MDEx</a> (Elixir)</li>
+<li><a href="https://github.com/lmmx/comrak">comrak</a>, <a href="https://github.com/Martin005/comrak-ext">comrak-ext</a> (Python)</li>
+<li><a href="https://github.com/nberlette/comrak-wasm">comrak-wasm</a> (TypeScript)</li>
+</ul>
+<h2 id="who-uses-comrak">Who uses Comrak?<a href="#who-uses-comrak" aria-label="Link to heading 'Who uses Comrak?'" data-heading-content="Who uses Comrak?" class="anchor"></a></h2>
+<ul>
+<li><a href="https://crates.io/">crates.io</a> and <a href="https://docs.rs/comrak/latest/comrak/">docs.rs</a></li>
+<li><a href="https://gitlab.com/">GitLab</a></li>
+<li><a href="https://deno.com/">Deno</a></li>
+<li><a href="https://www.reddit.com/">Reddit</a></li>
+<li><a href="https://lockbook.net/">Lockbook</a></li>
+<li><a href="https://github.com/kivikakk/comrak/network/dependents">many</a> <a href="https://crates.io/crates/comrak/reverse_dependencies">more!</a></li>
+</ul>
+<h2 id="questions-commits-cat-pictures">Questions? Commits? Cat pictures?<a href="#questions-commits-cat-pictures" aria-label="Link to heading 'Questions? Commits? Cat pictures?'" class="anchor"></a></h2>
+<p>You can contact the maintainers and community <a href="https://github.com/kivikakk/comrak">on GitHub</a>, or you can
+email the author at <a href="mailto:ashe@kivikakk.ee"><code>ashe@kivikakk.ee</code></a>.
+Please report security issues to that email address.</p>
+<p>Contributions are <strong>highly encouraged</strong>, and we would love to help you
+through the process.  We practice <a href="http://hintjens.com/blog:106">Optimistic Merging</a> as described by
+Peter Hintjens.  We have a <a href="https://github.com/kivikakk/comrak/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a> which forms the basis of how
+we treat one another.</p>
+<p>If you have a GitHub account, you are welcome to use its interface to
+report issues, open pull requests, and <a href="https://github.com/kivikakk/comrak/security/advisories/new">privately report security issues</a>.
+If not, you are very welcome to discuss and contribute by email, and a
+maintainer will make those actions on your behalf, attributed however you
+like.</p>
+<hr />
+<section class="footnotes" data-footnotes>
+<ol>
+<li id="fn-no-cla">
+<p>Comrak intentionally does not use a <a href="https://en.wikipedia.org/wiki/Contributor_license_agreement">Contributor License Agreement</a> — every contributor retains copyright on their contributions. <a href="#fnref-no-cla" class="footnote-backref" data-footnote-backref data-footnote-backref-idx="1" aria-label="Back to reference 1">↩</a></p>
+</li>
+</ol>
+</section>
+    <noscript>
+        <img src="https://shynet.hrzn.ee/ingress/a91a874e-a393-4bf7-a7af-422904d9b7da/pixel.gif">
+    </noscript>
+    <script defer src="https://shynet.hrzn.ee/ingress/a91a874e-a393-4bf7-a7af-422904d9b7da/script.js"></script>
+</body>
+</html>
