@@ -10,6 +10,7 @@
 #include <atomic>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -41,6 +42,8 @@ namespace Notepads::Markdown::Native
     // storage, but it never owns a view, dispatcher, source, or observer.
     struct ImageFontControlTestHooks
     {
+        // Only sampled DPI inputs are replaceable; captures and target keys stay real.
+        std::optional<std::array<double, 2>> rasterScaleInputs;
         bool failNextFreeze{}, gateNextTask{}, gateReading{};
         bool gateColdAutoTask{}; // Explicit test-only opt-in before SVG sniffing.
         uint64_t resourceCallbacks{}; // UI only, counts actual deferred callbacks.
@@ -106,6 +109,7 @@ namespace winrt::Notepads::Markdown::implementation
         static ::Notepads::Markdown::Native::ImageFontControlObservation Observe(Markdown::MarkdownView const &view);
         static bool RequestRefresh(Markdown::MarkdownView const &view);
         static bool CoalescePendingResourceLayout(Markdown::MarkdownView const &view);
+        static bool CheckRasterScaleTargets(Markdown::MarkdownView const &view);
         static void EnsureFontWatch(Markdown::MarkdownView const &view);
         static ::Notepads::Markdown::Native::CoreControllerLifetime Lifetime(Markdown::MarkdownView const &view);
         static std::weak_ptr<::Notepads::Markdown::Native::ReadingMemory> SourceMemory(Markdown::MarkdownView const &view);

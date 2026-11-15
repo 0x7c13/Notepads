@@ -633,6 +633,9 @@ namespace Notepads::Markdown::Native::ImageFontControlTests
             haveLifetime = true;
             auto baseline = note(L"baseline");
             noIo();
+            Require(Access::CheckRasterScaleTargets(view),
+                    L"Actual SVG target scale and Mermaid DPI must share root/display scale precedence and finite fallbacks.");
+            transcript += L"\nActual SVG/Mermaid captures passed root/display DPI divergence and invalid-input fallback checks.";
             Require(baseline.watchVersion == 0 && hooks->watchesCreated.load(std::memory_order_acquire) == 1,
                     L"Observer attachment must be a baseline, without a fabricated font notification.");
 

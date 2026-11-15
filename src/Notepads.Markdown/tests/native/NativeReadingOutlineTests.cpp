@@ -6,10 +6,136 @@
 #include "NativeReadingOutlineTests.h"
 #include "Reading/NativeReadingOutline.h"
 #include "Rendering/NativeDocumentRenderer.h"
+#include "Control/MarkdownView.h"
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <exception>
+#include <functional>
 #include <winrt/Windows.Foundation.Collections.h>
+
+namespace winrt::Notepads::Markdown::implementation
+{
+    // Hold only the actual scalar navigation request. Production scheduling and
+    // the real TryApplyPendingReadingReveal path remain unchanged in diagnostics.
+    struct ReadingOutlineControlTestAccess
+    {
+        using Pending = decltype(MarkdownView::_pendingReadingReveal);
+        static Pending Take(Markdown::MarkdownView const &view)
+        {
+            return std::exchange(get_self<MarkdownView>(view)->_pendingReadingReveal, {});
+        }
+        static void Restore(Markdown::MarkdownView const &view, Pending pending)
+        {
+            get_self<MarkdownView>(view)->_pendingReadingReveal = std::move(pending);
+        }
+        static bool HasPending(Markdown::MarkdownView const &view)
+        {
+            return get_self<MarkdownView>(view)->_pendingReadingReveal.has_value();
+        }
+        static bool ExtentMeasured(Markdown::MarkdownView const &view)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            return owner->ReadingAvailable() &&
+                   owner->ScrollExtentCurrent(owner->CaptureScrollIntent(), owner->_presented.frame->totalHeight);
+        }
+        static bool ExtentReady(Markdown::MarkdownView const &view)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            if (!ExtentMeasured(view))
+                return false;
+            int64_t row{};
+            double y{};
+            return ::Notepads::Markdown::Native::QuantizeViewportY(owner->_previewScroll.VerticalOffset(),
+                       owner->_viewportGeometry.scale, row, y) && owner->_presented.frame->viewportY == y;
+        }
+        static void Finish(Markdown::MarkdownView const &view)
+        {
+            get_self<MarkdownView>(view)->TryApplyPendingReadingReveal();
+        }
+        static void StageRestore(Markdown::MarkdownView const &view, bool cached)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            owner->CancelViewportRestore();
+            if (cached)
+            {
+                auto anchor = view.GetViewportAnchor();
+                owner->_viewportToRestore = MarkdownView::CachedViewport{
+                    static_cast<uint32_t>(anchor.PreviewUtf16Offset()), anchor.OffsetWithinLine(),
+                    owner->_previewScroll.VerticalOffset(), false};
+            }
+            else
+                owner->CaptureImageAnchorBeforeChange();
+        }
+        static bool HasRestore(Markdown::MarkdownView const &view)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            return owner->_viewportToRestore.has_value() || owner->_imageAnchor.has_value();
+        }
+        static double HeadingTarget(Markdown::MarkdownView const &view, uint32_t headingId)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            auto snapshot = owner->AutomationSnapshot();
+            auto node = snapshot->descriptors->outline->Headings()[headingId - 1].node;
+            return std::clamp(owner->ReadingNavigation(*snapshot).RevealBlockY(node) + owner->_padding,
+                              0.0, owner->_previewScroll.ScrollableHeight());
+        }
+        static double RangeTarget(Markdown::MarkdownView const &view, uint32_t position)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            return std::clamp(owner->ReadingNavigation(*owner->AutomationSnapshot()).RevealY(position) + owner->_padding,
+                              0.0, owner->_previewScroll.ScrollableHeight());
+        }
+        static bool ViewportAnchorMatchesPaintedText(Markdown::MarkdownView const &view)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            auto snapshot = owner->AutomationSnapshot();
+            if (!snapshot)
+                return false;
+            auto bounds = snapshot->Bounds();
+            auto rectangles = owner->ReadingRectangles(*snapshot, bounds.start, bounds.end);
+            auto top = std::min_element(rectangles.begin(), rectangles.end(), [](auto const &a, auto const &b)
+            {
+                return a.y < b.y || (a.y == b.y && a.x < b.x);
+            });
+            auto anchor = view.GetViewportAnchor();
+            return anchor.IsAvailable() && top != rectangles.end() && anchor.PreviewUtf16Offset() == top->start;
+        }
+        static std::pair<double, uint32_t> BottomTarget(Markdown::MarkdownView const &view, uint32_t position,
+                                                       bool tallLine = false)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            auto const &navigation = owner->ReadingNavigation(*owner->AutomationSnapshot());
+            auto index = navigation.LineAt(position);
+            auto const &line = navigation.Line(index);
+            const auto viewport = owner->_previewScroll.ViewportHeight();
+            const auto target = line.y + line.height + owner->_padding - viewport;
+            if ((tallLine && line.height <= owner->_lineHeight + 4.0) || target <= 1.0 ||
+                target >= owner->_previewScroll.ScrollableHeight() - 1.0 || index + 1 >= navigation.LineCount())
+                throw hresult_error(E_FAIL, L"the fixture line has the expected height and an interior scroll target");
+            return {target, navigation.Line(index + 1).text.start};
+        }
+        static void Remeasure(Markdown::MarkdownView const &view)
+        {
+            get_self<MarkdownView>(view)->StartPreviewLayout();
+        }
+        static void MoveLine(Markdown::MarkdownView const &view, bool forward)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            auto action = owner->CaptureReadingAction();
+            auto const &navigation = *action.frame->navigation;
+            auto current = navigation.LineAt(owner->_selectionActive);
+            owner->_preferredCaretX = navigation.Line(current).x;
+            owner->_hasPreferredCaretX = true;
+            owner->MoveReadingCaretVertically(action,
+                navigation.VisualLine(current, forward, 0, owner->_preferredCaretX), false);
+        }
+        static bool HasPendingCaret(Markdown::MarkdownView const &view)
+        {
+            return get_self<MarkdownView>(view)->_pendingCaretLine.has_value();
+        }
+    };
+}
 
 namespace Notepads::Markdown::Native::ReadingOutlineTests
 {
@@ -346,6 +472,37 @@ namespace Notepads::Markdown::Native::ReadingOutlineTests
             auto outline = ReadingOutline::Build(*main, sourceFlag);
             CheckDirectory(outline, *main, results);
             CheckFragments(main->Memory(), results);
+            auto const &memory = main->Memory();
+            auto cancel = std::make_shared<PreviewCancellation>(model);
+            auto reading = std::allocate_shared<ReadingSourceState>(ReadingAllocator<ReadingSourceState>{memory},
+                memory, cancel, main->SourceGeneration(), main->TextGeneration());
+            reading->PublishMain(main);
+            notepads_markdown_preview_key key{};
+            key.header = {NOTEPADS_MARKDOWN_PREVIEW_ABI_VERSION, sizeof(key)};
+            key.model = main->Identity();
+            key.layout_generation = key.theme_generation = key.measurement_generation = 1;
+            key.width = 400;
+            key.indent = 24;
+            key.gap = 8;
+            std::atomic<uint64_t> latest{1};
+            auto renderer = NativeDocumentRenderer::Create({}, cancel, key, PreviewTheme{}, reading,
+                {}, {}, {}, {}, nullptr, {}, L"a-1");
+            auto frame = renderer->CreateFrame(0, 200, 1, latest);
+            Require(frame && frame->section && frame->section->text.end < main->Length() && frame->navigation &&
+                        frame->navigation->LineCount() == 1,
+                    L"the actual heading-restricted renderer has one line before the full Main end");
+            auto const &navigation = *frame->navigation;
+            auto const &last = navigation.Line(0);
+            auto end = frame->section->text.end;
+            auto position = navigation.CanonicalCaret(end);
+            auto expected = last.followY + last.height *
+                (static_cast<double>(position - last.text.start) / (end - last.text.start));
+            Require(std::abs(navigation.ContinuousFollowY(end) - expected) < 0.001,
+                    L"scoped final-line follow interpolates to the section end rather than later full-document text");
+            auto inverse = navigation.ContinuousFollowSpan(last.followY + last.height * 0.5);
+            Require(inverse.start == last.text.start && inverse.end == navigation.CanonicalCaret(end) &&
+                        std::abs(inverse.progress - 0.5) < 0.001,
+                    L"scoped inverse follow retains the same final-line half-progress and section endpoint");
             Require(Headroom(model, allocationFlag.value) < headroom,
                     L"actual native outline payload remains charged while its snapshot is held");
         }
@@ -611,5 +768,388 @@ namespace Notepads::Markdown::Native::ReadingOutlineTests
                     recovered.GetAt(0).TextGeneration() == snapshot.TextGeneration(),
                 L"original immutable outline still exports a correct new page after the reentrant call");
         return true;
+    }
+
+    winrt::Windows::Foundation::IAsyncAction RunFollowDisclosureNavigationAsync(
+        winrt::Notepads::Markdown::MarkdownView view,
+        winrt::Windows::UI::Core::CoreDispatcher dispatcher,
+        std::shared_ptr<CoreValidation::Context> context)
+    {
+        using Access = winrt::Notepads::Markdown::implementation::ReadingOutlineControlTestAccess;
+        using ViewImplementation = winrt::Notepads::Markdown::implementation::MarkdownView;
+        using Extensions = winrt::Notepads::Markdown::MarkdownExtensions;
+        auto wait = [dispatcher, context](std::function<bool()> ready) -> winrt::Windows::Foundation::IAsyncAction
+        {
+            const auto deadline = GetTickCount64() + 10000;
+            while (!ready())
+            {
+                context->Arbitrate();
+                Require(GetTickCount64() < deadline, L"deferred disclosure follow control timed out");
+                co_await winrt::resume_after(std::chrono::milliseconds(10));
+                co_await winrt::resume_foreground(dispatcher);
+            }
+        };
+        auto owner = winrt::get_self<ViewImplementation>(view);
+        auto scroll = owner->ReadingScrollViewer();
+        auto sourceState = view.GetSourceState();
+        auto document = sourceState.DocumentId;
+        auto revision = sourceState.Revision;
+        std::string source = "# Follow start\n\n<details><summary>Deferred disclosure</summary>\n\n";
+        for (uint32_t index = 0; index < 60; ++index)
+            source += "A paragraph before the deferred target.\n\n";
+        source += "# Deferred target\n\nThe deferred body remains searchable.\n\n</details>\n\nAfter disclosure.\n";
+        constexpr std::wstring_view target{L"Deferred target"};
+        for (uint32_t api = 0; api < 3; ++api)
+            for (bool stale : {true, false})
+            {
+                auto update = view.SetDocumentWithExtensionsAsync(document, ++revision,
+                    {reinterpret_cast<uint8_t const *>(source.data()), static_cast<uint32_t>(source.size())},
+                    Extensions::HtmlBlocks | Extensions::HtmlInline);
+                auto receipt = co_await update;
+                Require(receipt.Status() == winrt::Notepads::Markdown::DocumentUpdateStatus::Ready && receipt.Published(),
+                        L"deferred disclosure follow fixture publishes through the real WinRT control");
+                co_await wait([&] { return Access::ExtentReady(view); });
+                auto selection = view.GetSelection();
+                auto text = view.DisplayedText();
+                auto position = std::wstring_view{text}.find(target);
+                Require(position != std::wstring_view::npos &&
+                            owner->ReadingRangeHidden(*owner->AutomationSnapshot(),
+                                {static_cast<uint32_t>(position), static_cast<uint32_t>(position + target.size())}) == true,
+                        L"the real authored target starts inside a collapsed disclosure");
+                Require(view.TrySetVerticalScrollProgress(0), L"the control starts the disclosure reveal at the top");
+                view.RevealRange(document, revision, selection.TextGeneration(), position, target.size(), true, true);
+                auto pending = Access::Take(view);
+                Require(pending.has_value(), L"the public reveal stages its actual deferred disclosure request");
+                // Withhold that one real request while XAML catches up. This
+                // deterministically models the first published expanded Frame
+                // preceding the extent used by TryApplyPendingReadingReveal.
+                co_await wait([&] { return Access::ExtentReady(view) && scroll.ScrollableHeight() > 600; });
+                Require(view.TrySetVerticalScrollProgress(0.25), L"the current interior viewport admits a follow baseline");
+                co_await wait([&] { return Access::ExtentReady(view) && scroll.VerticalOffset() > 100; });
+                auto anchor = view.GetViewportAnchor();
+                auto offset = scroll.VerticalOffset();
+                Require(anchor.IsAvailable() && !Access::HasPending(view),
+                        L"expanded geometry is current before the deferred request resumes");
+                Access::Restore(view, std::move(pending));
+                const auto layout = anchor.LayoutGeneration() + (stale ? 1 : 0);
+                bool accepted{};
+                if (api == 0)
+                    accepted = view.SetViewportBetweenPositions(document, revision, anchor.TextGeneration(), layout,
+                        anchor.ScrollStartUtf16Offset(), anchor.ScrollEndUtf16Offset(), anchor.ScrollProgress());
+                else if (api == 1)
+                    accepted = view.SetFollowViewportBetweenPositions(document, revision, anchor.TextGeneration(), layout,
+                        anchor.ScrollStartUtf16Offset(), anchor.ScrollEndUtf16Offset(), anchor.ScrollProgress(), 0, 0);
+                else
+                    accepted = view.TryRestoreFollowViewport(document, revision, anchor.TextGeneration(), layout,
+                        anchor.ScrollStartUtf16Offset(), anchor.ScrollEndUtf16Offset(), anchor.ScrollProgress(), 0, 0);
+                Require(accepted != stale && Access::HasPending(view) == stale && scroll.VerticalOffset() == offset,
+                        L"only current same-row follow admission retires the older deferred disclosure reveal");
+                Access::Finish(view);
+                if (stale)
+                {
+                    co_await wait([&] { return Access::ExtentReady(view) && !Access::HasPending(view) &&
+                                              scroll.VerticalOffset() > offset + 100; });
+                    Require(scroll.VerticalOffset() > offset + 100,
+                            L"stale follow rejection preserves and executes the original real disclosure navigation");
+                }
+                else
+                {
+                    co_await wait([&] { return Access::ExtentReady(view); });
+                    Access::Finish(view);
+                    Require(!Access::HasPending(view) && scroll.VerticalOffset() == offset,
+                            L"the newer same-row follow survives later disclosure completion");
+                }
+                auto after = view.GetSelection();
+                Require(after.DocumentId() == document && after.Revision() == revision &&
+                            after.TextGeneration() == selection.TextGeneration() && after.Start() == selection.Start() &&
+                            after.Length() == selection.Length() && view.DisplayedText() == text,
+                        L"follow supersession and stale rejection preserve exact Main and selection identity");
+            }
+
+        std::string navigationSource = "# Navigation start\n\n";
+        for (uint32_t index = 0; index < 40; ++index)
+            navigationSource += "A real paragraph supplies scroll extent and cached measurements.\n\n";
+        auto load = [&](Extensions extensions = Extensions::None) -> winrt::Windows::Foundation::IAsyncAction
+        {
+            auto receipt = co_await view.SetDocumentWithExtensionsAsync(document, ++revision,
+                {reinterpret_cast<uint8_t const *>(navigationSource.data()), static_cast<uint32_t>(navigationSource.size())},
+                extensions);
+            Require(receipt.Status() == winrt::Notepads::Markdown::DocumentUpdateStatus::Ready && receipt.Published(),
+                    L"navigation and measurement reuse fixture publishes");
+            co_await wait([&] { return Access::ExtentReady(view); });
+        };
+        co_await load();
+        Require(view.GetMeasurementStatistics().EntryCount > 0, L"the initial real control fills its measurement cache");
+        view.DiscardCachedDocument();
+        co_await load();
+        Require(view.GetMeasurementStatistics().EntryCount > 0, L"discard and reload create a usable measurement cache");
+        auto hits = view.GetMeasurementStatistics().HitCount;
+        auto layout = view.GetViewportAnchor().LayoutGeneration();
+        Access::Remeasure(view);
+        co_await wait([&] { return Access::ExtentReady(view) && view.GetViewportAnchor().LayoutGeneration() > layout; });
+        Require(view.GetMeasurementStatistics().HitCount > hits, L"a subsequent real layout hits the recreated measurement cache");
+        scroll = owner->ReadingScrollViewer();
+        for (bool cached : {true, false})
+            for (bool sameRow : {false, true})
+            {
+                auto outline = view.GetOutline();
+                auto heading = outline.GetHeadings(0, 1).GetAt(0);
+                auto targetY = Access::HeadingTarget(view, heading.HeadingId());
+                const auto maximum = scroll.ScrollableHeight();
+                auto baseline = sameRow ? targetY : maximum * 0.5;
+                Require(maximum > 0 && (sameRow || std::abs(baseline - targetY) > 100),
+                        L"the heading fixture distinguishes a moving command from a same-row command");
+                Require(view.TrySetVerticalScrollProgress(baseline / maximum),
+                        L"heading restore test admits its baseline viewport");
+                co_await wait([&] { return Access::ExtentReady(view) && std::abs(scroll.VerticalOffset() - baseline) <= 0.5; });
+                Access::StageRestore(view, cached);
+                Require(Access::HasRestore(view), L"a real current anchor supplies the pending viewport restore");
+                view.NavigateToHeading(document, revision, outline.TextGeneration(), heading.HeadingId());
+                Require(!Access::HasRestore(view), L"public heading navigation retires cached and image restores immediately");
+                co_await wait([&] { return Access::ExtentReady(view) && std::abs(scroll.VerticalOffset() - targetY) <= 0.5; });
+                auto previousLayout = view.GetViewportAnchor().LayoutGeneration();
+                Access::Remeasure(view);
+                co_await wait([&] { return Access::ExtentReady(view) &&
+                    view.GetViewportAnchor().LayoutGeneration() > previousLayout; });
+                Require(std::abs(scroll.VerticalOffset() - targetY) <= 0.5,
+                        L"a later actual frame preserves both moving and same-row heading navigation");
+            }
+
+        using namespace winrt::Windows::UI::Xaml::Automation;
+        constexpr std::wstring_view destination = L"New extent destination";
+        enum class RevealMethod { Heading, Range, Automation };
+        for (auto method : {RevealMethod::Heading, RevealMethod::Range, RevealMethod::Automation})
+        {
+            navigationSource = "# Short prior document\n";
+            co_await load();
+            Require(scroll.ScrollableHeight() == 0, L"the short document has no previous scroll extent");
+            for (int line = 0; line < 55; ++line)
+                navigationSource += "\nA paragraph advances the new extent.\n";
+            navigationSource += "\n## New extent destination\n";
+            for (int line = 0; line < 30; ++line)
+                navigationSource += "\nA paragraph keeps the destination away from the bottom.\n";
+            navigationSource += "\n## Replacement destination\n";
+            for (int line = 0; line < 14; ++line)
+                navigationSource += "\nA paragraph leaves room to scroll to the replacement.\n";
+            const auto newRevision = revision + 1;
+            bool requested{};
+            bool deferred{};
+            int starts{};
+            std::exception_ptr callbackError;
+            auto started = view.VerticalScrollStarting(winrt::auto_revoke, [&](auto const &, auto const &) { ++starts; });
+            auto changed = view.ViewportChanged(winrt::auto_revoke, [&](auto const &, auto const &anchor)
+            {
+                if (requested || anchor.DocumentId() != document || anchor.Revision() != newRevision)
+                    return;
+                requested = true;
+                try
+                {
+                    Require(!Access::ExtentMeasured(view), L"the first published frame precedes measurement of the new scroll extent");
+                    if (method == RevealMethod::Heading)
+                    {
+                        auto heading = view.GetOutline().GetHeadings(1, 1).GetAt(0);
+                        view.NavigateToHeading(document, newRevision, anchor.TextGeneration(), heading.HeadingId());
+                    }
+                    else if (method == RevealMethod::Range)
+                    {
+                        auto pos = std::wstring_view{view.DisplayedText()}.find(destination);
+                        Require(pos != std::wstring_view::npos, L"the public range has a real text position");
+                        view.RevealRange(document, newRevision, anchor.TextGeneration(), pos, destination.size(), true, false);
+                    }
+                    else
+                    {
+                        auto peer = Peers::FrameworkElementAutomationPeer::CreatePeerForElement(view);
+                        auto text = peer.GetPattern(Peers::PatternInterface::Text).as<Provider::ITextProvider>();
+                        auto match = text.DocumentRange().FindText(winrt::hstring{destination}, false, false);
+                        Require(!!match, L"the UI Automation provider finds the actual destination");
+                        match.ScrollIntoView(true);
+                    }
+                    deferred = Access::HasPending(view);
+                }
+                catch (...)
+                {
+                    callbackError = std::current_exception();
+                }
+            });
+            co_await load();
+            changed.revoke();
+            if (callbackError)
+                std::rethrow_exception(callbackError);
+            Require(requested && deferred, L"each public reveal retains its target while the new extent is unavailable");
+            auto heading = view.GetOutline().GetHeadings(1, 1).GetAt(0);
+            const auto pos = std::wstring_view{view.DisplayedText()}.find(destination);
+            Require(pos != std::wstring_view::npos, L"the destination remains in the presented document");
+            const auto targetY = method == RevealMethod::Heading ? Access::HeadingTarget(view, heading.HeadingId()) :
+                Access::RangeTarget(view, static_cast<uint32_t>(pos));
+            Require(targetY > 250, L"the new destination is beyond the old extent");
+            co_await wait([&] { return Access::ExtentReady(view) && !Access::HasPending(view) &&
+                                       std::abs(scroll.VerticalOffset() - targetY) <= 1.0; });
+            Require(starts == (method == RevealMethod::Automation ? 1 : 0),
+                    L"only moving UI Automation navigation announces an external scroll");
+        }
+
+        {
+            auto outline = view.GetOutline();
+            auto heading = outline.GetHeadings(2, 1).GetAt(0);
+            const auto targetY = Access::HeadingTarget(view, heading.HeadingId());
+            Require(targetY > scroll.VerticalOffset() + 100,
+                    L"the replacement target differs from the initial row and the older request");
+            auto peer = Peers::FrameworkElementAutomationPeer::CreatePeerForElement(view);
+            auto text = peer.GetPattern(Peers::PatternInterface::Text).as<Provider::ITextProvider>();
+            auto match = text.DocumentRange().FindText(L"Short prior document", false, false);
+            Require(!!match, L"the older UI Automation request has a real range");
+            bool queued{};
+            auto started = view.VerticalScrollStarting(winrt::auto_revoke, [&](auto const &, auto const &)
+            {
+                view.NavigateToHeading(document, revision, outline.TextGeneration(), heading.HeadingId());
+                queued = Access::HasPending(view);
+            });
+            match.ScrollIntoView(true);
+            Require(queued, L"the scroll-start observer queues a different reveal synchronously");
+            co_await wait([&] { return Access::ExtentReady(view) && !Access::HasPending(view) &&
+                                       std::abs(scroll.VerticalOffset() - targetY) <= 1.0; });
+        }
+
+        for (bool relayout : {false, true})
+        {
+            Require(view.TrySetVerticalScrollProgress(1), L"the interrupted UI Automation reveal starts at the bottom");
+            co_await wait([&] { return Access::ExtentReady(view) && view.VerticalScrollProgress() == 1; });
+            const auto previousLayout = view.GetViewportAnchor().LayoutGeneration();
+            auto peer = Peers::FrameworkElementAutomationPeer::CreatePeerForElement(view);
+            auto text = peer.GetPattern(Peers::PatternInterface::Text).as<Provider::ITextProvider>();
+            auto match = text.DocumentRange().FindText(winrt::hstring{destination}, false, false);
+            Require(!!match, L"the UI Automation provider finds the interrupted destination");
+            auto starts = 0;
+            auto started = view.VerticalScrollStarting(winrt::auto_revoke, [&](auto const &, auto const &)
+            {
+                if (++starts != 1)
+                    return;
+                if (relayout)
+                    view.ApplyTheme({255, 0, 0, 0}, {255, 255, 255, 255}, L"Segoe UI", 16, 35, 16,
+                                    view.ThemeGeneration() + 1);
+                else
+                    view.CancelScrollAnimation();
+            });
+            match.ScrollIntoView(true);
+            Require(starts == 1 && Access::HasPending(view),
+                    L"the scroll observer interrupts the attempt without retiring its reveal");
+            const auto pos = std::wstring_view{view.DisplayedText()}.find(destination);
+            Require(pos != std::wstring_view::npos, L"the same text target remains available during relayout");
+            co_await wait([&]
+            {
+                return Access::ExtentReady(view) && !Access::HasPending(view) &&
+                       (!relayout || view.GetViewportAnchor().LayoutGeneration() > previousLayout) &&
+                       std::abs(scroll.VerticalOffset() - Access::RangeTarget(view, static_cast<uint32_t>(pos))) <= 1.0;
+            });
+            Require(starts == 1, L"a pending UI Automation reveal announces its scroll start only once");
+        }
+
+        {
+            Require(view.TrySetVerticalScrollProgress(1), L"same-row supersession begins at the bottom");
+            co_await wait([&] { return Access::ExtentReady(view) && view.VerticalScrollProgress() == 1; });
+            auto peer = Peers::FrameworkElementAutomationPeer::CreatePeerForElement(view);
+            auto text = peer.GetPattern(Peers::PatternInterface::Text).as<Provider::ITextProvider>();
+            auto match = text.DocumentRange().FindText(winrt::hstring{destination}, false, false);
+            Require(!!match, L"the same-row supersession test has a real reveal target");
+            bool accepted{};
+            auto started = view.VerticalScrollStarting(winrt::auto_revoke, [&](auto const &, auto const &)
+            {
+                accepted = view.TrySetVerticalScrollProgress(1);
+            });
+            match.ScrollIntoView(true);
+            started.revoke();
+            Require(accepted && !Access::HasPending(view),
+                    L"an accepted same-row scroll retires the interrupted UI Automation reveal");
+            const auto previousLayout = view.GetViewportAnchor().LayoutGeneration();
+            Access::Remeasure(view);
+            co_await wait([&] { return Access::ExtentReady(view) &&
+                                       view.GetViewportAnchor().LayoutGeneration() > previousLayout; });
+            Require(!Access::HasPending(view) && view.VerticalScrollProgress() == 1,
+                    L"a subsequent layout cannot revive the superseded reveal");
+        }
+
+        view.ApplyTheme({255, 0, 0, 0}, {255, 255, 255, 255}, L"Segoe UI", 16, 24, 16,
+                        view.ThemeGeneration() + 1);
+        const std::string body = navigationSource;
+        navigationSource = body + "\n# Tall title\n\n" + body;
+        co_await load();
+        const auto headingStart = std::wstring_view{view.DisplayedText()}.find(L"Tall title");
+        Require(headingStart != std::wstring_view::npos, L"the bottom-alignment fixture has a real heading");
+        const auto [headingBottom, nextLineStart] = Access::BottomTarget(view, static_cast<uint32_t>(headingStart), true);
+        auto peer = Peers::FrameworkElementAutomationPeer::CreatePeerForElement(view);
+        auto text = peer.GetPattern(Peers::PatternInterface::Text).as<Provider::ITextProvider>();
+        auto headingRange = text.DocumentRange().FindText(L"Tall title", false, false);
+        Require(!!headingRange, L"the UI Automation range contains the taller heading");
+        auto waitAligned = [&](double target, wchar_t const *range) -> winrt::Windows::Foundation::IAsyncAction
+        {
+            try
+            {
+                co_await wait([&] { return Access::ExtentReady(view) && !Access::HasPending(view) &&
+                                           std::abs(scroll.VerticalOffset() - target) <= 1.0; });
+            }
+            catch (winrt::hresult_error const &error)
+            {
+                auto detail = std::wstring{range} + L" reveal: offset " + std::to_wstring(scroll.VerticalOffset()) +
+                    L", expected " + std::to_wstring(target) + L", " + error.message().c_str();
+                throw winrt::hresult_error(error.code(), winrt::hstring{detail});
+            }
+        };
+        headingRange.ScrollIntoView(false);
+        co_await waitAligned(headingBottom, L"tall heading");
+        Require(Access::ViewportAnchorMatchesPaintedText(view), L"the anchor matches the top painted heading range");
+        Require(view.TrySetVerticalScrollProgress(0), L"the exclusive-end case starts at the top");
+        co_await wait([&] { return Access::ExtentReady(view) && scroll.VerticalOffset() == 0; });
+        Require(nextLineStart >= headingStart + std::wstring_view{L"Tall title"}.size(),
+                L"the heading fits in one measured line");
+        view.RevealRange(document, revision, view.GetSelection().TextGeneration(),
+                         headingStart, nextLineStart - headingStart, false, false);
+        co_await waitAligned(headingBottom, L"exclusive end");
+
+        navigationSource = body + "\n<table>\n<tr><th>A</th><th>B</th><th>C</th><th>D</th></tr>\n"
+                                  "<tr><td colspan=\"3\">Range start ";
+        for (int word = 0; word < 32; ++word)
+            navigationSource += "wrapped content ";
+        navigationSource += "Lower line</td><td>Short cell</td></tr>\n</table>\n\n" + body;
+        co_await load(Extensions::HtmlBlocks);
+        auto tableText = view.DisplayedText();
+        auto firstCell = std::wstring_view{tableText}.find(L"Range start");
+        auto lowerLine = std::wstring_view{tableText}.find(L"Lower line");
+        auto secondCell = std::wstring_view{tableText}.find(L"Short cell");
+        Require(firstCell < lowerLine && lowerLine < secondCell && secondCell != std::wstring_view::npos,
+                L"the display range spans the wrapped first cell and the later short cell");
+        auto leftBottom = Access::BottomTarget(view, static_cast<uint32_t>(lowerLine + 9)).first;
+        auto rightBottom = Access::BottomTarget(view, static_cast<uint32_t>(secondCell)).first;
+        Require(leftBottom > rightBottom + 24.0, L"the last included line in text order sits higher than the wrapped cell");
+        auto generation = view.GetSelection().TextGeneration();
+        view.RevealRange(document, revision, generation, firstCell, secondCell + 10 - firstCell, false, false);
+        co_await waitAligned(leftBottom, L"both cells");
+        Require(Access::ViewportAnchorMatchesPaintedText(view),
+                L"the anchor matches the top painted range with a wrapped spanning cell");
+        view.RevealRange(document, revision, generation, secondCell, 10, false, false);
+        co_await waitAligned(rightBottom, L"short cell");
+        Require(secondCell >= 3 && std::wstring_view{tableText}.substr(secondCell - 3, 3) == L"\t\t\t",
+                L"the short cell follows three table separators for the spanning cell");
+        const auto coveredSeparator = secondCell - 2;
+        view.RevealRange(document, revision, generation, coveredSeparator, 1, false, false);
+        co_await waitAligned(leftBottom, L"covered cell separator");
+        view.RevealRange(document, revision, generation, coveredSeparator, secondCell + 10 - coveredSeparator, false, false);
+        co_await waitAligned(leftBottom, L"covered separator and short cell");
+
+        view.ApplyTheme({255, 0, 0, 0}, {255, 255, 255, 255}, L"Segoe UI", 16, 512, 16,
+                        view.ThemeGeneration() + 1);
+        navigationSource = "First tall row.\n\nSecond tall row.\n\nThird tall row.\n";
+        co_await load();
+        scroll = owner->ReadingScrollViewer();
+        auto selection = view.GetSelection();
+        auto second = std::wstring_view{view.DisplayedText()}.find(L"Second tall row.");
+        Require(second != std::wstring_view::npos && scroll.ViewportHeight() < 512,
+                L"the mounted real control has text lines taller than its viewport");
+        view.SelectRange(document, revision, selection.TextGeneration(), second, 0);
+        Require(view.TrySetVerticalScrollProgress(0), L"the tall-line keyboard test begins at the top scroll bound");
+        co_await wait([&] { return Access::ExtentReady(view) && scroll.VerticalOffset() == 0; });
+        Require(Access::ViewportAnchorMatchesPaintedText(view), L"the anchor includes a line taller than its viewport");
+        Access::MoveLine(view, false);
+        Require(!Access::HasPendingCaret(view) && view.GetSelection().Start() < second && scroll.VerticalOffset() == 0,
+                L"the actual vertical caret path finishes its tall target immediately when scrolling cannot move");
     }
 }

@@ -1,0 +1,21 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE file in the project root for license information.
+-->
+<Project>
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+    <!-- Common.props imports this file before the SDK applies these defaults. -->
+    <Configuration Condition="'$(Configuration)' == '' and '$(DefaultProjectConfiguration)' != ''">$(DefaultProjectConfiguration)</Configuration>
+    <Platform Condition="'$(Platform)' == '' and '$(DefaultProjectPlatform)' != ''">$(DefaultProjectPlatform)</Platform>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+  </PropertyGroup>
+  <Import Project="build\Notepads.Markdown.props" Condition="'$(NotepadsMarkdownRoot)' == ''" />
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <BaseIntermediateOutputPath>$(NotepadsMarkdownBuildRoot)managed\$(NotepadsMarkdownVariant)\$(MSBuildProjectName)\obj\</BaseIntermediateOutputPath>
+    <!-- Restore and generated projection inputs remain isolated by build context. -->
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)$(Platform)\$(Configuration)\</MSBuildProjectExtensionsPath>
+    <BaseOutputPath>$(NotepadsMarkdownBuildRoot)managed\$(NotepadsMarkdownVariant)\$(MSBuildProjectName)\bin\</BaseOutputPath>
+  </PropertyGroup>
+</Project>

@@ -4,9 +4,12 @@
 // ---------------------------------------------------------------------------------------------
 #include "pch.h"
 #include "NativeReadingSnapshotTests.h"
+#include "NativeControlConcurrencyTests.h"
 #include "Reading/NativeReadingNavigation.h"
 #include "Reading/NativeReadingSnapshot.h"
 #include "Rendering/NativeDocumentRenderer.h"
+#include "Rendering/NativeMeasurementCache.h"
+#include "Text/NativeScriptLayout.h"
 #include "NativeMathGeometryTests.h"
 #include "NativeMathWorkerTests.h"
 #include "NativeMathCoordinatorTests.h"
@@ -15,20 +18,170 @@
 #include "NativeScriptTests.h"
 #include "NativeDiagramRendererTests.h"
 #include "NativeMeasurementCacheTests.h"
+#include "NativeTextBitmapCacheTests.h"
+#include "NativeFinalSurfaceThreadTests.h"
 #include "NativeReadingSearchTests.h"
 #include "NativeReadingOutlineTests.h"
 #include "NativeTaskInteractionTests.h"
 #include "Reading/NativeSourceNavigation.h"
 #include "Control/MarkdownOutline.h"
+#include "Control/MarkdownView.h"
+#include "Control/PreviewUpdate.h"
 #include "Automation/TextRangeProvider.h"
+#include "Automation/ReadingObjectProvider.h"
 #include <algorithm>
 #include <array>
 #include <chrono>
 #include <cstring>
+#include <functional>
 #include <string_view>
 #include <thread>
 #include <type_traits>
 #include <utility>
+
+namespace winrt::Notepads::Markdown::implementation
+{
+    struct PreviewPublicationTestAccess
+    {
+        static std::wstring ViewportWaitDetail(Markdown::MarkdownView const &view)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            auto id = [](auto const &value) { return static_cast<uint64_t>(reinterpret_cast<uintptr_t>(get_abi(value))); };
+            auto update = owner->_previewUpdate;
+            const auto updateState = update ? update->state.load(std::memory_order_acquire) : UINT32_MAX;
+            std::wstring text = L"upd=" + std::to_wstring(updateState) + L"/" +
+                std::to_wstring(updateState == 3 ? static_cast<int>(update->status) : -1) + L"/" +
+                std::to_wstring(updateState == 3 ? update->error : 0) +
+                L" src=" + std::to_wstring(owner->_previewSubmittedSourceGeneration) + L"/" +
+                std::to_wstring(owner->_previewSourceGeneration) +
+                L" parts=" + std::to_wstring(static_cast<bool>(owner->_previewScroll)) +
+                std::to_wstring(static_cast<bool>(owner->_previewExtent)) +
+                std::to_wstring(static_cast<bool>(owner->_viewportOverlay)) +
+                std::to_wstring(static_cast<bool>(owner->_surfaceTarget)) +
+                L" SIS=" + std::to_wstring(id(owner->_surface)) +
+                L" ready=" + std::to_wstring(owner->_surfaceReady) + L" loaded=" + std::to_wstring(owner->_loaded) +
+                L" accepted=" + std::to_wstring(owner->_documentAccepted) +
+                L" model=" + std::to_wstring(owner->_previewModelReady) +
+                L" frame=" + std::to_wstring(static_cast<bool>(owner->_presented.frame)) +
+                L" active=" + std::to_wstring(static_cast<bool>(owner->_viewportActive)) +
+                L" rendering=" + std::to_wstring(static_cast<bool>(owner->_viewportRendering)) +
+                L" template=" + std::to_wstring(static_cast<int>(owner->_viewportTemplateState)) +
+                L" actual=" + std::to_wstring(view.ActualWidth()) + L"x" + std::to_wstring(view.ActualHeight()) +
+                L" error=" + std::wstring{owner->_renderingError.c_str()} +
+                L" serial=" + std::to_wstring(owner->_previewSurfaceSerial) +
+                L" D2D=" + std::to_wstring(reinterpret_cast<uintptr_t>(owner->_d2dDevice.get())) +
+                L" viewport=" + std::to_wstring(owner->_viewportGeometry.pixelWidth) + L"x" +
+                std::to_wstring(owner->_viewportGeometry.pixelHeight);
+            return text;
+        }
+        static void ViewportWaitRequire(bool condition, Markdown::MarkdownView const &view, wchar_t const *stage)
+        {
+            if (!condition)
+                throw hresult_error(E_FAIL, std::wstring{L"Preview receipt "} + stage + L": " + ViewportWaitDetail(view));
+        }
+        static bool ViewportWaitSettled(Markdown::MarkdownView const &view)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            owner->CheckUiThread();
+            return owner->_loaded && view.IsLoaded() && owner->_surfaceReady && owner->_presented.frame &&
+                !owner->_viewportActive && !owner->_viewportRendering &&
+                owner->CurrentViewportFrame(*owner->_presented.frame, owner->_presented.geometry);
+        }
+        static std::shared_ptr<PreviewUpdate> RefreshIntoViewportWait(Markdown::MarkdownView const &view)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            owner->CheckUiThread();
+            ViewportWaitRequire(ViewportWaitSettled(view), view, L"NotLoaded refresh regression starts current");
+            view.Refresh();
+            // No UI yield/COM call between returning from Refresh and retiring
+            // its pending receipt. Parse observation always posts back to UI.
+            auto retired = owner->_previewUpdate;
+            ViewportWaitRequire(retired && retired->Pending() && !retired->fullSynchronization &&
+                !owner->_previewModelReady && !owner->_presented.frame && owner->_previewTicket.Serial() &&
+                retired->sourceGeneration == owner->_previewSourceGeneration &&
+                owner->_previewSubmittedSourceGeneration == owner->_previewSourceGeneration,
+                view, L"Refresh has an actual pending async parse before UI yield");
+            retired->CompleteViewportWait();
+            ViewportWaitRequire(retired->state.load(std::memory_order_acquire) == 3 &&
+                retired->status == Markdown::DocumentUpdateStatus::NotLoaded && !retired->published && !retired->error &&
+                !retired->blocks && !retired->layoutGeneration.load(std::memory_order_acquire) &&
+                ::WaitForSingleObject(retired->completed.get(), 0) == WAIT_OBJECT_0,
+                view, L"geometry wait retires the pending refresh receipt as NotLoaded");
+            return retired;
+        }
+        static bool ViewportWaitRecovered(Markdown::MarkdownView const &view, std::shared_ptr<PreviewUpdate> const &retired)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            owner->CheckUiThread();
+            ViewportWaitRequire(retired && retired->state.load(std::memory_order_acquire) == 3 &&
+                retired->status == Markdown::DocumentUpdateStatus::NotLoaded && !retired->published && !retired->error &&
+                !retired->blocks && !retired->layoutGeneration.load(std::memory_order_acquire),
+                view, L"old NotLoaded receipt remains terminal and unchanged during recovery");
+            auto current = owner->_previewUpdate;
+            if (!current || current == retired || !ViewportWaitSettled(view))
+                return false;
+            const auto state = current->state.load(std::memory_order_acquire);
+            if (state != 3)
+                return false;
+            ViewportWaitRequire(current->status == Markdown::DocumentUpdateStatus::Ready && current->published &&
+                !current->fullSynchronization && owner->_previewModelReady &&
+                current->document == retired->document && current->revision == retired->revision &&
+                current->sourceGeneration == retired->sourceGeneration &&
+                current->sourceGeneration == owner->_previewSourceGeneration &&
+                view.DisplayedDocumentId() == retired->document && view.DisplayedRevision() == retired->revision,
+                view, L"successful parse establishes a new current internal receipt without rewriting NotLoaded");
+            return true;
+        }
+        static std::wstring ViewportWaitState(Markdown::MarkdownView const &view)
+        {
+            auto owner = get_self<MarkdownView>(view);
+            const auto installed = owner->_previewController ? owner->_previewController->Snapshot().lastInstalled : 0;
+            return L"ticket=" + std::to_wstring(owner->_previewTicket.Serial()) + L"/" +
+                std::to_wstring(owner->_previewTicket.Status()) + L" installed=" + std::to_wstring(installed) +
+                L" " + ViewportWaitDetail(view);
+        }
+
+        static void DeliverUnload(Markdown::MarkdownView const &view)
+        {
+            get_self<MarkdownView>(view)->OnUnloaded(view, nullptr);
+        }
+
+        static void DeliverLoad(Markdown::MarkdownView const &view)
+        {
+            get_self<MarkdownView>(view)->OnLoaded(view, nullptr);
+        }
+
+        static bool NativeLoaded(Markdown::MarkdownView const &view)
+        {
+            return get_self<MarkdownView>(view)->_loaded;
+        }
+
+        static uint64_t Generation(Markdown::MarkdownView const &view)
+        {
+            return get_self<MarkdownView>(view)->_generation;
+        }
+
+        static uint64_t MathGeneration(Markdown::MarkdownView const &view)
+        {
+            auto const &frame = get_self<MarkdownView>(view)->_presented.frame;
+            return frame ? frame->math.generation : 0;
+        }
+
+        static com_ptr<ReadingObjectProvider> MathPeer(Markdown::MarkdownView const &view, size_t ordinal)
+        {
+            using namespace ::Notepads::Markdown::Native;
+            auto owner = get_self<MarkdownView>(view);
+            if (!owner->ReadingAvailable())
+                return {};
+            auto snapshot = owner->AutomationSnapshot();
+            auto const &objects = snapshot->descriptors->objects;
+            for (size_t index = 0; index < objects.size(); ++index)
+                if (objects[index].kind == ReadingObjectKind::Math && ordinal-- == 0)
+                    return owner->ReadingPeer(snapshot, ReadingChildKind::Object, index);
+            return {};
+        }
+    };
+}
 
 namespace Notepads::Markdown::Native::ReadingSnapshotTests
 {
@@ -51,14 +204,32 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             TaskInteraction,
             InlineCode,
             Scripts,
+            Ruby,
             StaticHtmlCheckbox,
-            HtmlTables
+            HtmlTables,
+            TextBitmap,
+            StaticTextBitmap,
+            ListMarkers,
+            TablePageNavigation,
+            WrappedTablePageNavigation,
+            SpanningCellNavigation,
+            SpanningCellPageNavigation,
+            WrappedPointerCaret,
+            WideTableLineIndex,
+            MathFallbackLineBreak,
+            ScriptLineIndex,
+            EditImageWidths,
+            FinalSurfaceThread
         };
 
         constexpr std::array Cases{Case::Inline,          Case::LineEndings, Case::Structured, Case::Empty,
                                     Case::MultipleBatches, Case::Ownership,   Case::Math,       Case::Diagram,
                                     Case::Measurement, Case::Search, Case::Outline, Case::OutlineEmpty, Case::TaskInteraction,
-                                    Case::InlineCode, Case::Scripts, Case::StaticHtmlCheckbox, Case::HtmlTables};
+                                    Case::InlineCode, Case::Scripts, Case::Ruby, Case::StaticHtmlCheckbox, Case::HtmlTables, Case::TextBitmap,
+                                    Case::StaticTextBitmap, Case::ListMarkers, Case::TablePageNavigation,
+                                    Case::WrappedTablePageNavigation, Case::SpanningCellNavigation,
+                                    Case::SpanningCellPageNavigation, Case::WrappedPointerCaret, Case::WideTableLineIndex,
+                                    Case::MathFallbackLineBreak, Case::ScriptLineIndex, Case::EditImageWidths, Case::FinalSurfaceThread};
 
         struct Fixture
         {
@@ -78,6 +249,100 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
         {
             switch (kind)
             {
+            case Case::EditImageWidths:
+                return {L"reading_edit_image_width_proof_matches_measured_tables",
+                        "![plain](plain)\n\n"
+                        "| A | B | C |\n|---|---|---|\n| ![md0](md0) | ![md1](md1) | ![md2](md2) |\n\n"
+                        "<table><tr><td colspan=2><img src='span'></td><td rowspan=2><img src='row'></td></tr>"
+                        "<tr><td><img src='cell'></td><td>Tail</td></tr></table>\n\n"
+                        "<p><img src='html'></p>",
+                        L"\xfffc\nA\tB\tC\n\xfffc\t\xfffc\t\xfffc\n\xfffc\t\t\xfffc\n\xfffc\tTail\t\n\xfffc",
+                        NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_BLOCKS | NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_INLINE};
+            case Case::TablePageNavigation:
+                return {L"reading_table_page_navigation_document_edges",
+                        "| H0 | H1 | H2 |\n|---|---|---|\n| A0 | A1 | A2 |\n| B0 | B1 | B2 |\n",
+                        L"H0\tH1\tH2\nA0\tA1\tA2\nB0\tB1\tB2"};
+            case Case::SpanningCellNavigation:
+                return {L"reading_table_colspan_navigation_across_cell_padding",
+                        "<table><tr><td colspan='2'>iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii</td></tr>"
+                        "<tr><td>A</td><td>B</td></tr></table>",
+                        L"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii\t\nA\tB",
+                        NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_BLOCKS};
+            case Case::SpanningCellPageNavigation:
+                return {L"reading_table_page_fallback_ranks_cells_on_same_row",
+                        "<table><tr><td colspan='2'>Header</td><td rowspan='2'>" + std::string(100, 'M') +
+                            "</td></tr><tr><td>Left</td><td>Right</td></tr></table>",
+                        L"Header\t\t" + std::wstring(100, L'M') + L"\nLeft\tRight\t",
+                        NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_BLOCKS};
+            case Case::WrappedPointerCaret:
+                return {L"reading_pointer_hit_preserves_shared_wrap_side", std::string(36, 'M'), std::wstring(36, L'M')};
+            case Case::WideTableLineIndex:
+            {
+                Fixture value{L"reading_wide_table_lines_address_their_materialized_cell", {}, {}};
+                for (uint32_t row = 0; row < 64; ++row)
+                {
+                    for (uint32_t column = 0; column < 16; ++column)
+                    {
+                        value.source += "| x ";
+                        if (column)
+                            value.expected += L'\t';
+                        value.expected += L'x';
+                    }
+                    value.source += "|\n";
+                    if (row == 0)
+                    {
+                        for (uint32_t column = 0; column < 16; ++column)
+                            value.source += "| --- ";
+                        value.source += "|\n";
+                    }
+                    if (row + 1 < 64)
+                        value.expected += L'\n';
+                }
+                return value;
+            }
+            case Case::MathFallbackLineBreak:
+                return {L"reading_math_fallback_normalizes_mandatory_line_breaks",
+                        "Before $a\u0085b$ after\n\nNext",
+                        L"Before \xfffc after\nNext",
+                        NOTEPADS_MARKDOWN_CORE_EXTENSIONS_MATH};
+            case Case::ScriptLineIndex:
+                return {L"reading_visible_line_index_includes_nested_script_geometry",
+                        "Before <sub><sub><sub><sub><sub><sub><sub><sub>W</sub></sub></sub></sub></sub></sub></sub></sub>\n\n"
+                        "Middle <sup><sup><sup><sup><sup><sup><sup><sup>W</sup></sup></sup></sup></sup></sup></sup></sup>\n\nAfter",
+                        L"Before W\nMiddle W\nAfter",
+                        NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_INLINE};
+            case Case::WrappedTablePageNavigation:
+                return {L"reading_table_page_navigation_wrapped_final_row",
+                        "| H0 | H1 | H2 |\n|---|---|---|\n| A0 | A1 | A2 |\n"
+                        "| B0 | B1 wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap | B2 |\n",
+                        L"H0\tH1\tH2\nA0\tA1\tA2\nB0\t"
+                        L"B1 wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap wrap\tB2"};
+            case Case::ListMarkers:
+            {
+                Fixture value{L"reading_list_marker_gutter_batch_cache_and_narrow_restore", "99. row\n", L"row"};
+                for (size_t i = 1; i < 513; ++i)
+                {
+                    value.source += "1. row\n";
+                    value.expected += L"\nrow";
+                }
+                value.source += "\nseparator\n\n999. carry\n1. carry\n\nseparator\n\n"
+                                "999999999. high\n1. high\n\nseparator\n\n"
+                                "1. # Heading\n\n2. > quote\n\n3. ```text\n   code\n   ```\n\n"
+                                "separator\n\n> 1. outer\n>    1. inner\n\n- [x] task\n";
+                value.expected += L"\nseparator\ncarry\ncarry\nseparator\nhigh\nhigh\nseparator\n"
+                                  L"Heading\nquote\ncode\n\nseparator\nouter\ninner\n\xfffc task";
+                return value;
+            }
+            case Case::TextBitmap:
+                return {L"reading_text_bitmap_cache_pixels_and_lifetime",
+                        std::string{TextBitmapCacheTests::FixtureSource}, std::wstring{TextBitmapCacheTests::FixtureMain}};
+            case Case::FinalSurfaceThread:
+                return {L"reading_ui_begun_worker_resumed_surface_pixels_and_cleanup",
+                        std::string{FinalSurfaceThreadTests::TablePacketFixtureSource},
+                        std::wstring{FinalSurfaceThreadTests::TablePacketFixtureMain}};
+            case Case::StaticTextBitmap:
+                return {L"reading_static_text_bitmap_cache_pixels_and_lifetime",
+                        std::string{TextBitmapCacheTests::StaticFixtureSource}, std::wstring{TextBitmapCacheTests::StaticFixtureMain}};
             case Case::HtmlTables:
                 return {L"reading_html_table_spans_caption_geometry_and_lifetime",
                         std::string{InlineCodeTests::HtmlTableFixtureSource},
@@ -86,13 +351,22 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                 return {L"reading_static_html_checkbox_geometry_mapping_and_lifetime",
                         std::string{TaskInteractionTests::StaticFixtureSource},
                         std::wstring{TaskInteractionTests::StaticFixtureMain}, NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_BLOCKS};
+            case Case::Ruby:
+                return {L"reading_ruby_annotation_rendering_and_child_geometry",
+                        "<p>Start <a href='#target'><del><ins><ruby>漢字<rp>(</rp><rt>read</rt><rp>)</rp>"
+                        "</ruby></ins></del></a> tail <ruby>文<rt>text</rt>字<rt>ji</rt></ruby> ending. "
+                        "<a href='#target'><img src='icon.png' alt='Linked icon' width='24' height='18'></a></p>",
+                        L"Start 漢字read tail 文text字ji ending. \xfffc",
+                        NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_BLOCKS | NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_INLINE};
             case Case::Scripts:
                 return {L"reading_script_shaping_scopes_objects_cache_and_lifetime",
-                        std::string{ScriptTests::FixtureSource}, std::wstring{ScriptTests::FixtureMain},
+                        std::string{ScriptTests::FixtureSource} + std::string{ScriptTests::NearbySuffixSource},
+                        std::wstring{ScriptTests::FixtureMain} + std::wstring{ScriptTests::NearbySuffixMain},
                         NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_INLINE | NOTEPADS_MARKDOWN_CORE_EXTENSIONS_MATH};
             case Case::InlineCode:
                 return {L"reading_inline_code_badges_geometry_pixels_and_selection",
-                        std::string{InlineCodeTests::FixtureSource}, std::wstring{InlineCodeTests::FixtureMain}};
+                        std::string{InlineCodeTests::FixtureSource}, std::wstring{InlineCodeTests::FixtureMain},
+                        NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HIGHLIGHT | NOTEPADS_MARKDOWN_CORE_EXTENSIONS_HTML_INLINE};
             case Case::TaskInteraction:
                 return {L"reading_task_action_transport_cluster_focus_and_lifetime",
                         std::string{TaskInteractionTests::FixtureSource},
@@ -498,8 +772,8 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                             co_await winrt::resume_after(std::chrono::milliseconds(10));
                             co_await winrt::resume_foreground(dispatcher);
                         }
-                        auto result = update.GetResults();
-                        Require(result.Status() == winrt::Notepads::Markdown::DocumentUpdateStatus::Ready && result.Published());
+                        auto updateResult = update.GetResults();
+                        Require(updateResult.Status() == winrt::Notepads::Markdown::DocumentUpdateStatus::Ready && updateResult.Published());
                         auto snapshot = owner->AutomationSnapshot();
                         Require(snapshot->View() == fixture.expected && view.DisplayedText() == fixture.expected);
                         auto range = winrt::make<RangeProvider>(owner->get_weak(), RawReadingProvider{nullptr}, snapshot);
@@ -520,7 +794,7 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                             Require(fixture.expected.back() == L'\t' &&
                                     navigation.CanonicalCaret(static_cast<uint32_t>(fixture.expected.size())) == fixture.expected.size() - 1);
                     }
-
+                    co_await ReadingOutlineTests::RunFollowDisclosureNavigationAsync(view, dispatcher, context);
                 }
                 catch (...)
                 {
@@ -636,7 +910,13 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             key.header = {NOTEPADS_MARKDOWN_PREVIEW_ABI_VERSION, sizeof(key)};
             key.model = snapshot->Identity();
             key.layout_generation = key.theme_generation = key.measurement_generation = 1;
-            key.width = kind == Case::Inline ? 120 : 240;
+            key.width = 240;
+            if (kind == Case::Inline || kind == Case::WrappedPointerCaret)
+                key.width = 120;
+            if (kind == Case::SpanningCellNavigation || kind == Case::SpanningCellPageNavigation)
+                key.width = 396;
+            if (kind == Case::WideTableLineIndex)
+                key.width = 960;
             key.indent = 24;
             key.gap = 12;
             auto renderer = NativeDocumentRenderer::Create({}, cancel, key, PreviewTheme{}, reading);
@@ -644,7 +924,69 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             auto frame = renderer->CreateFrame(0, 4000, 1, latest);
             Require(frame && frame->navigation && frame->navigation->LineCount() > 1);
             auto const &navigation = *frame->navigation;
-            bool sawSharedEndpoint{}, sawSameRow{}, sawTask{};
+            if (kind == Case::ScriptLineIndex || kind == Case::Scripts || kind == Case::Ruby)
+            {
+                auto checkVisible = [&](PreviewFrame const &candidate)
+                {
+                    auto const &index = *candidate.navigation;
+                    for (size_t i = 0; i < index.LineCount(); ++i)
+                    {
+                        auto const &line = index.Line(i);
+                        for (auto const &rect : NativeDocumentRenderer::LineRectangles(candidate, line))
+                        {
+                            if (rect.width <= 0 || rect.height <= 0)
+                                continue;
+                            for (double top : {static_cast<double>(rect.y) + 0.01,
+                                               static_cast<double>(rect.y + rect.height) - 0.01})
+                            {
+                                auto visible = index.VisibleLines(top, top + 0.01);
+                                if (std::find(visible.begin(), visible.end(), static_cast<uint32_t>(i)) == visible.end())
+                                    throw AssertionFailure{NOTEPADS_MARKDOWN_CORE_INVALID_STATE,
+                                        L"Visible line omitted: line=" + std::to_wstring(i) + L", nominal=" +
+                                        std::to_wstring(line.y) + L".." + std::to_wstring(line.y + line.height) +
+                                        L", rectangle=" + std::to_wstring(rect.y) + L".." +
+                                        std::to_wstring(rect.y + rect.height) + L", viewportTop=" + std::to_wstring(top)};
+                                Require(index.VisibleLineTop(line) < top + 0.01 && index.VisibleLineBottom(line) > top);
+                            }
+                        }
+                    }
+                };
+                checkVisible(*frame);
+                if (kind != Case::Ruby) // Ruby inline objects deliberately bypass metric caching.
+                {
+                    auto cache = NativeMeasurementCache::Create();
+                    Require(static_cast<bool>(cache));
+                    for (uint32_t pass = 0; pass < 2; ++pass)
+                    {
+                        auto before = cache->Stats().hits;
+                        ++key.layout_generation;
+                        auto cached = NativeDocumentRenderer::Create({}, cancel, key, PreviewTheme{}, reading, {}, {}, {}, cache);
+                        auto cachedFrame = cached->CreateFrame(0, 4000, 1, latest);
+                        Require(cachedFrame && cachedFrame->navigation);
+                        checkVisible(*cachedFrame);
+                        if (pass)
+                            Require(cache->Stats().hits > before);
+                    }
+                }
+                return;
+            }
+            if (kind == Case::WideTableLineIndex)
+            {
+                Require(frame->Blocks().size() == 1 && frame->Blocks().front().texts.size() == 16 * 64);
+                Require(navigation.LineCount() == 16 * 64);
+                for (size_t i : {0, 15, 16 * 63, 16 * 64 - 1})
+                {
+                    auto const &line = navigation.Line(i);
+                    Require(line.textIndex == i && line.block == frame->firstBlock);
+                    auto direct = NativeDocumentRenderer::LineRectangles(*frame, line);
+                    auto full = NativeDocumentRenderer::Rectangles(*frame, line.text.start, line.text.end);
+                    Require(direct.size() == 1 && full.size() == 1 && direct.front().start == line.text.start &&
+                            direct.front().x == full.front().x && direct.front().y == full.front().y &&
+                            direct.front().width == full.front().width && direct.front().height == full.front().height);
+                }
+                return;
+            }
+            bool sawWrappedCaret{}, sawSameRow{}, sawTask{};
             double envelope = -std::numeric_limits<double>::infinity();
             for (size_t index = 0; index < navigation.LineCount(); ++index)
             {
@@ -664,7 +1006,15 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                 if (index)
                 {
                     auto const &previous = navigation.Line(index - 1);
-                    sawSharedEndpoint |= previous.text.end == line.text.start && previous.y != line.y;
+                    if (previous.wrappedEnd && previous.text.end == line.text.start &&
+                        navigation.LineAt(line.text.start) == index)
+                    {
+                        Require(navigation.LineAt(line.text.start, true) == index - 1);
+                        auto leading = NativeDocumentRenderer::Rectangles(*frame, line.text.start, line.text.start);
+                        auto trailing = NativeDocumentRenderer::Rectangles(*frame, line.text.start, line.text.start, true);
+                        Require(leading.size() == 1 && trailing.size() == 1 && trailing.front().y < leading.front().y);
+                        sawWrappedCaret = true;
+                    }
                     sawSameRow |= std::abs(previous.y - line.y) < 0.01 && previous.text.end < line.text.start;
                 }
                 if (line.text.end == line.text.start + 1 && snapshot->Text()[line.text.start] == L'\xfffc')
@@ -676,9 +1026,128 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                 }
             }
             if (kind == Case::Inline)
-                Require(sawSharedEndpoint); // real narrow DWrite soft-wrap, mixed RTL/emoji Main
+            {
+                Require(sawWrappedCaret); // real narrow DWrite soft-wrap, mixed RTL/emoji Main
+                Require(!reading->wordSegments.spans.empty());
+                auto const *segments = reading->wordSegments.spans.data();
+                auto wideKey = key;
+                wideKey.width = 360;
+                ++wideKey.layout_generation;
+                auto wide = NativeDocumentRenderer::Create({}, cancel, wideKey, PreviewTheme{}, reading);
+                auto wideFrame = wide->CreateFrame(0, 4000, 1, latest);
+                Require(wideFrame && wideFrame->navigation && wideFrame->navigation->LineCount() < navigation.LineCount());
+                Require(reading->wordSegments.spans.data() == segments);
+                using Unit = winrt::Windows::UI::Xaml::Automation::Text::TextUnit;
+                for (uint32_t position = 0; position <= snapshot->Length(); ++position)
+                {
+                    auto a = navigation.Unit(position, Unit::Word);
+                    auto b = wideFrame->navigation->Unit(position, Unit::Word);
+                    Require(a.start == b.start && a.end == b.end);
+                }
+            }
+            if (kind == Case::SpanningCellNavigation)
+            {
+                Require(navigation.LineCount() == 3);
+                auto const &left = navigation.Line(1);
+                auto const &right = navigation.Line(2);
+                auto gap = right.x - (left.x + left.width);
+                Require(gap > 1 && left.y == right.y);
+                auto preferred = right.x - gap * 0.25f;
+                Require(navigation.VisualLine(0, true, 0, preferred) == 2);
+                Require(navigation.VisualLine(0, true, frame->totalHeight + 100, preferred) == 2);
+                Require(navigation.VisualLine(2, false, 0, preferred) == 0);
+            }
+            if (kind == Case::SpanningCellPageNavigation)
+            {
+                auto leftIndex = navigation.LineAt(static_cast<uint32_t>(snapshot->Text().find(L"Left")));
+                auto rightIndex = navigation.LineAt(static_cast<uint32_t>(snapshot->Text().find(L"Right")));
+                auto const &header = navigation.Line(0);
+                auto const &left = navigation.Line(leftIndex);
+                auto const &right = navigation.Line(rightIndex);
+                auto caret = NativeDocumentRenderer::Rectangles(*frame, 1, 1);
+                Require(caret.size() == 1 && left.y == right.y && left.x < caret.front().x &&
+                        caret.front().x < left.x + left.width);
+                constexpr double page = 200;
+                Require(left.y < header.y + page && header.y + page < envelope);
+                Require(navigation.VisualLine(0, true, page, caret.front().x) == leftIndex);
+                Require(navigation.VisualLine(0, true, page, right.x + 1) == rightIndex);
+            }
+            if (kind == Case::WrappedPointerCaret)
+            {
+                auto const &row = navigation.Line(0);
+                auto boundary = row.text.end;
+                Require(row.wrappedEnd && boundary > 0 && navigation.Line(1).text.start == boundary);
+                auto const &block = frame->Blocks().front();
+                auto const &text = block.texts.front();
+                auto insideGlyph = [&](uint32_t offset, float fraction)
+                {
+                    FLOAT x{}, y{};
+                    DWRITE_HIT_TEST_METRICS glyph{};
+                    winrt::check_hresult(text.layout->HitTestTextPosition(offset, FALSE, &x, &y, &glyph));
+                    return NativeDocumentRenderer::HitTest(*frame,
+                        static_cast<float>(block.block.x) + text.x + glyph.left + glyph.width * fraction,
+                        static_cast<float>(block.block.y - frame->viewportY) + text.y + glyph.top + glyph.height * 0.5f);
+                };
+                auto trailing = insideGlyph(boundary - 1, 0.75f);
+                auto leading = insideGlyph(boundary, 0.25f);
+                Require(trailing && leading && trailing->inside && leading->inside &&
+                        trailing->position == boundary && leading->position == boundary &&
+                        trailing->trailingCaret && !leading->trailingCaret);
+                auto end = NativeDocumentRenderer::HitTestLine(*frame, 0, 1000);
+                Require(end && end->position == boundary && end->trailingCaret);
+            }
+            if (kind == Case::MathFallbackLineBreak)
+            {
+                Require(!frame->Blocks().empty() && !frame->Blocks().front().texts.empty());
+                auto const &math = frame->Blocks().front().texts.front().math;
+                Require(math.size() == 1 && math.front().label);
+                DWRITE_LINE_METRICS line{};
+                UINT32 count{};
+                winrt::check_hresult(math.front().label->GetLineMetrics(&line, 1, &count));
+                Require(count == 1);
+            }
             if (kind == Case::Structured)
                 Require(sawSameRow && sawTask); // real table cells and empty task item
+            if (kind == Case::TablePageNavigation)
+            {
+                // The authored table is the entire document. A page that
+                // overshoots either end must still inspect all three columns.
+                Require(navigation.LineCount() == 9);
+                for (size_t column = 0; column != 3; ++column)
+                {
+                    auto const &middle = navigation.Line(3 + column);
+                    Require(middle.tableCell && middle.text.start == 9 + 3 * column);
+                    auto x = middle.x + 1;
+                    Require(navigation.VisualLine(3 + column, false, frame->totalHeight + 100, x) == column);
+                    Require(navigation.VisualLine(3 + column, true, frame->totalHeight + 100, x) == 6 + column);
+                    Require(navigation.VisualLine(3 + column, false, 0, x) == column);
+                    Require(navigation.VisualLine(3 + column, true, 0, x) == 6 + column);
+                    Require(navigation.VisualLine(column, false, frame->totalHeight + 100, x) == column);
+                    Require(navigation.VisualLine(6 + column, true, frame->totalHeight + 100, x) == 6 + column);
+                }
+            }
+            if (kind == Case::WrappedTablePageNavigation)
+            {
+                Require(navigation.LineCount() > 9);
+                auto finalLeft = navigation.LineAt(18);
+                auto finalRight = navigation.LineAt(snapshot->Length() - 2);
+                for (auto [origin, target] : {std::pair<size_t, size_t>{navigation.LineAt(9), finalLeft},
+                                             {navigation.LineAt(15), finalRight}})
+                {
+                    auto const &line = navigation.Line(origin);
+                    auto const &last = navigation.Line(target);
+                    Require(line.tableCell && last.tableCell && line.block == last.block && last.y > line.y + 0.25);
+                    Require(last.y + 0.25 < envelope);
+                    auto x = line.x + 1;
+                    auto withinWrappedCell = (last.y + envelope) / 2 - line.y;
+                    Require(navigation.VisualLine(origin, true, frame->totalHeight + 100, x) == target);
+                    Require(navigation.VisualLine(origin, true, withinWrappedCell, x) == target);
+                    Require(navigation.VisualLine(origin, true, 0, x) == target);
+                    Require(navigation.VisualLine(target, true, 0, x) == target);
+                    Require(navigation.VisualLine(target, true, frame->totalHeight + 100, x) == target);
+                    Require(navigation.VisualLine(target, false, 0, x) == origin);
+                }
+            }
             double previous = navigation.FollowY(0);
             for (uint32_t position = 0; position <= snapshot->Length(); ++position)
             {
@@ -695,7 +1164,8 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             Require(!NativeDocumentRenderer::HitTestLine(*missing, 0, 1000));
         }
 
-        std::array<uint32_t, 3> QuotePixels(PreviewFrame const &frame, std::array<POINT, 3> const &points)
+        std::vector<uint32_t> ReadingPixels(PreviewFrame const &frame, std::span<POINT const> points,
+                                           float originY = 16, std::optional<D2D1_RECT_F> paintClip = {})
         {
             winrt::com_ptr<ID2D1Factory1> factory;
             winrt::check_hresult(D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, factory.put()));
@@ -721,7 +1191,8 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                                        background.B / 255.0f, 1.0f));
             try
             {
-                NativeDocumentRenderer::Draw(frame, context.get(), 16, 16);
+                NativeDocumentRenderer::Draw(frame, context.get(), 16, originY, 0, 0,
+                                             {}, false, nullptr, false, {}, paintClip);
             }
             catch (...)
             {
@@ -736,7 +1207,7 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             winrt::check_hresult(readback->CopyFromBitmap(nullptr, target.get(), nullptr));
             D2D1_MAPPED_RECT mapped{};
             winrt::check_hresult(readback->Map(D2D1_MAP_OPTIONS_READ, &mapped));
-            std::array<uint32_t, 3> pixels{};
+            std::vector<uint32_t> pixels(points.size());
             for (size_t index = 0; index < points.size(); ++index)
             {
                 auto point = points[index];
@@ -744,12 +1215,18 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                 if (point.x < 0 || point.y < 0 || point.x >= width || point.y >= height)
                 {
                     (void)readback->Unmap();
-                    throw AssertionFailure{NOTEPADS_MARKDOWN_CORE_INVALID_RANGE, L"Quote pixel probe lies outside its WARP target."};
+                    throw AssertionFailure{NOTEPADS_MARKDOWN_CORE_INVALID_RANGE, L"Pixel probe lies outside its WARP target."};
                 }
                 std::memcpy(&pixels[index], mapped.bits + static_cast<size_t>(point.y) * mapped.pitch + point.x * 4, 4);
             }
             winrt::check_hresult(readback->Unmap());
             return pixels;
+        }
+
+        std::array<uint32_t, 3> QuotePixels(PreviewFrame const &frame, std::array<POINT, 3> const &points)
+        {
+            auto values = ReadingPixels(frame, points);
+            return {values[0], values[1], values[2]};
         }
 
         void CheckQuoteGeometry(std::shared_ptr<ReadingMemory> const &memory,
@@ -807,14 +1284,14 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                 Require(quotes[index].x == lefts[index] && quotes[index].depth == depths[index] &&
                         quotes[index].border_width == 5 && quotes[index].height > 0 &&
                         (index != 4 || quotes[index].width == 345));
-            Require(quotes[0].x == parent.block.x && quotes[0].y == listQuote.block.y &&
-                    quotes[0].height == listQuote.block.height);
-            Require(quotes[3].y == outer.block.y &&
-                    quotes[3].y + quotes[3].height == tail.block.y + tail.block.height &&
+            Require(quotes[0].x == parent.block.x && quotes[0].y + 3 == listQuote.block.y &&
+                    quotes[0].height == listQuote.block.height + 6);
+            Require(quotes[3].y + 3 == outer.block.y &&
+                    quotes[3].y + quotes[3].height == tail.block.y + tail.block.height + 3 &&
                     quotes[3].x == 0 && quotes[4].x == 39 &&
-                    quotes[4].y == nested.block.y && quotes[4].height == nested.block.height);
-            Require(quotes[5].y + quotes[5].height == finish.block.y + finish.block.height &&
-                    quotes[6].y == sibling.block.y && quotes[6].node != quotes[5].node &&
+                    quotes[4].y + 3 == nested.block.y && quotes[4].height == nested.block.height + 6);
+            Require(quotes[5].y + quotes[5].height == finish.block.y + finish.block.height + 3 &&
+                    quotes[6].y + 3 == sibling.block.y && quotes[6].node != quotes[5].node &&
                     quotes[5].y + quotes[5].height < quotes[6].y);
 
             auto task = std::find_if(taskQuote.decorations.begin(), taskQuote.decorations.end(),
@@ -824,6 +1301,10 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             auto taskEnd = static_cast<uint32_t>(task->logical_end);
             auto rectangles = NativeDocumentRenderer::Rectangles(*full, taskStart, taskEnd);
             Require(rectangles.size() == 1 && rectangles[0].x == 6 && rectangles[0].width == 14);
+            auto textLine = full->navigation->Line(full->navigation->LineAt(taskStart));
+            auto const markerCenter = rectangles[0].y + rectangles[0].height * 0.5f;
+            auto const lineCenter = static_cast<float>(textLine.y - full->viewportY + textLine.height * 0.5);
+            Require(std::abs(markerCenter - lineCenter) <= 1.0f);
             auto caret = NativeDocumentRenderer::Rectangles(*full, taskStart, taskStart);
             Require(caret.size() == 1 && caret[0].x == 6);
             auto first = NativeDocumentRenderer::HitTest(*full, 7, rectangles[0].y + 7);
@@ -882,6 +1363,16 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             auto nestedPixels = QuotePixels(*middle, {POINT{26, 10}, POINT{65, 10}, POINT{57, 10}});
             Require(nestedPixels[0] == gapPixels[0] && nestedPixels[1] == nestedPixels[0] &&
                     nestedPixels[2] == gapPixels[1]);
+            auto fractional = renderer->CreateFrame(outer.block.y + full->theme.padding + 8, 32.25, 1, latest);
+            Require(fractional && quotes[3].height > 41);
+            constexpr std::array<POINT, 6> bottomPoints{{{26, 31}, {18, 31}, {26, 32},
+                                                        {18, 32}, {26, 33}, {18, 33}}};
+            // phaseY=.75 shifts the visible 32.25-DIP viewport through row 32.
+            // Both the tint and accent must cover that final complete surface row.
+            auto bottomPixels = ReadingPixels(*fractional, bottomPoints, 16.75f, D2D1::RectF(0, 0, 512, 33));
+            Require(bottomPixels[0] == gapPixels[0] && bottomPixels[1] == gapPixels[1] &&
+                    bottomPixels[2] == bottomPixels[0] && bottomPixels[3] == bottomPixels[1] &&
+                    bottomPixels[4] == 0xFFFFFFFF && bottomPixels[5] == 0xFFFFFFFF);
             middle->theme.highContrast = true;
             middle->theme.background = {255, 0, 0, 0};
             middle->theme.foreground = {255, 255, 255, 255};
@@ -1007,6 +1498,291 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             throw ReadingFailure{NOTEPADS_MARKDOWN_CORE_INTERNAL_INVARIANT};
         }
 
+        notepads_markdown_preview_key ListMarkerKey(MainTextSnapshot const &snapshot, double width)
+        {
+            notepads_markdown_preview_key key{};
+            key.header = {NOTEPADS_MARKDOWN_PREVIEW_ABI_VERSION, sizeof(key)};
+            key.model = snapshot.Identity();
+            key.layout_generation = key.theme_generation = key.measurement_generation = 1;
+            key.width = width;
+            key.indent = 28;
+            key.gap = 12;
+            return key;
+        }
+
+        void CheckEditImageWidths(std::shared_ptr<ReadingMemory> const &memory,
+                                  std::shared_ptr<MainTextSnapshot const> const &snapshot)
+        {
+            for (double available : {603.0, 71.0, 9.0})
+            {
+                auto cancel = std::make_shared<PreviewCancellation>(memory->ModelOwner().Get());
+                auto reading = std::allocate_shared<ReadingSourceState>(ReadingAllocator<ReadingSourceState>{memory},
+                    memory, cancel, snapshot->SourceGeneration(), snapshot->TextGeneration());
+                reading->PublishMain(snapshot);
+                auto key = ListMarkerKey(*snapshot, available);
+                PreviewEditResources prepared;
+                auto draft = NativeDocumentRenderer::Create({}, cancel, key, PreviewTheme{}, reading,
+                    {}, {}, {}, {}, nullptr, {}, {}, {}, &prepared);
+                Require(prepared.main == snapshot && prepared.descriptors == reading->Descriptors() &&
+                        prepared.imageWidths && prepared.imageWidths->size() == 8 && !draft->Extent().blocks);
+                draft.reset();
+                auto renderer = NativeDocumentRenderer::Create({}, cancel, key, PreviewTheme{}, reading);
+                std::atomic<uint64_t> latest{1};
+                auto frame = renderer->CreateFrame(0, 1000000, 1, latest);
+                Require(frame && frame->descriptors == prepared.descriptors && !reading->fault);
+                std::array<bool, 8> seen{};
+                size_t measured{};
+                for (auto const &block : frame->Blocks())
+                    for (auto const &text : block.texts)
+                        for (auto const &image : text.images)
+                        {
+                            auto const &widths = *prepared.imageWidths;
+                            auto proof = std::find_if(widths.begin(), widths.end(),
+                                [&](auto const &width) { return width.object == image.object; });
+                            Require(proof != widths.end() && proof->width == static_cast<double>(text.width));
+                            const auto index = static_cast<size_t>(proof - widths.begin());
+                            Require(!seen[index]);
+                            seen[index] = true;
+                            ++measured;
+                            auto const &objects = prepared.descriptors->objects;
+                            auto object = std::find_if(objects.begin(), objects.end(),
+                                [&](auto const &object) { return object.kind == ReadingObjectKind::Image && object.object == image.object; });
+                            Require(object != objects.end());
+                            if (available == 603 || available == 9)
+                            {
+                                double expected = available;
+                                if (object->destination == L"md0" || object->destination == L"md1" || object->destination == L"md2")
+                                    expected = available == 603 ? 189 : 1;
+                                else if (object->destination == L"span")
+                                    expected = available == 603 ? 390 : 4.5;
+                                else if (object->destination == L"row" || object->destination == L"cell")
+                                    expected = available == 603 ? 189 : 1.5;
+                                Require(proof->width == expected);
+                            }
+                        }
+                Require(measured == seen.size() && std::all_of(seen.begin(), seen.end(), [](bool value) { return value; }));
+            }
+        }
+
+        void CheckRubyGeometry(std::shared_ptr<ReadingMemory> const &memory,
+                               std::shared_ptr<MainTextSnapshot const> const &snapshot, Fixture const &fixture)
+        {
+            auto cancel = std::make_shared<PreviewCancellation>(memory->ModelOwner().Get());
+            auto reading = std::allocate_shared<ReadingSourceState>(ReadingAllocator<ReadingSourceState>{memory},
+                memory, cancel, snapshot->SourceGeneration(), snapshot->TextGeneration());
+            reading->PublishMain(snapshot);
+            std::atomic<uint64_t> latest{1};
+            auto make = [&](double width)
+            {
+                PreviewTheme theme;
+                theme.fontSize = 20;
+                theme.lineHeight = 30;
+                theme.background = {255, 255, 255, 255};
+                theme.foreground = {255, 0, 0, 0};
+                theme.linkForeground = {255, 15, 35, 165};
+                auto renderer = NativeDocumentRenderer::Create({}, cancel, ListMarkerKey(*snapshot, width), theme, reading);
+                auto frame = renderer->CreateFrame(0, 300, 1, latest);
+                Require(frame && frame->navigation && !reading->fault);
+                return frame;
+            };
+            const auto baseStart = static_cast<uint32_t>(fixture.expected.find(L"漢字read"));
+            const auto annotationStart = baseStart + 2;
+            auto wide = make(380);
+            auto narrow = make(115);
+            Require(wide->navigation->LineCount() < narrow->navigation->LineCount());
+            for (auto const &frame : {wide, narrow})
+            {
+                Require(frame->descriptors && frame->descriptors->objects.size() == 1 &&
+                        frame->descriptors->objects.front().kind == ReadingObjectKind::Image &&
+                        frame->descriptors->objects.front().imageHasFixedSize &&
+                        frame->descriptors->objects.front().imageReadinessAffectsText);
+                bool decoratedRuby{};
+                for (auto const &block : frame->Blocks())
+                    for (auto const &text : block.texts)
+                    {
+                        if (!text.scripts || baseStart < text.logicalStart || baseStart >= text.logicalEnd)
+                            continue;
+                        auto local = baseStart - static_cast<uint32_t>(text.logicalStart);
+                        BOOL underline{}, strike{};
+                        winrt::check_hresult(text.layout->GetUnderline(local, &underline));
+                        winrt::check_hresult(text.layout->GetStrikethrough(local, &strike));
+                        Require(!underline && !strike);
+                        size_t children{};
+                        for (auto const &part : text.scripts->RubyParts())
+                            if (local <= part.start && part.end <= local + 6)
+                            {
+                                winrt::check_hresult(part.layout->GetUnderline(0, &underline));
+                                winrt::check_hresult(part.layout->GetStrikethrough(0, &strike));
+                                Require(underline && strike);
+                                ++children;
+                            }
+                        Require(children == 2);
+                        decoratedRuby = true;
+                    }
+                Require(decoratedRuby);
+                auto base = NativeDocumentRenderer::Rectangles(*frame, baseStart, annotationStart);
+                auto rt = NativeDocumentRenderer::Rectangles(*frame, annotationStart, annotationStart + 4);
+                auto inner = NativeDocumentRenderer::Rectangles(*frame, annotationStart + 1, annotationStart + 2);
+                auto caret = NativeDocumentRenderer::Rectangles(*frame, annotationStart + 1, annotationStart + 1);
+                Require(base.size() == 1 && rt.size() == 1 && inner.size() == 1 && caret.size() == 1);
+                Require(base[0].y > rt[0].y + rt[0].height && base[0].height > rt[0].height &&
+                        inner[0].width > 0 && inner[0].width < rt[0].width &&
+                        caret[0].y == inner[0].y && std::abs(caret[0].x - inner[0].x) < 0.01);
+                int32_t moved{};
+                Require(frame->navigation->Move(annotationStart, RangeUnit::Character, 1, moved) == annotationStart + 1 &&
+                        moved == 1);
+                auto hit = NativeDocumentRenderer::HitTest(*frame, inner[0].x + inner[0].width * 0.25f,
+                                                           inner[0].y + inner[0].height * 0.5f);
+                Require(hit && hit->inside && hit->position == annotationStart + 1 &&
+                        hit->cluster.start == annotationStart + 1 && hit->cluster.end == annotationStart + 2);
+                if (frame == wide)
+                {
+                    for (auto const &box : {base[0], rt[0]})
+                    {
+                        std::vector<POINT> points;
+                        for (auto y = static_cast<LONG>(std::ceil(box.y)); y < std::floor(box.y + box.height); ++y)
+                            for (auto x = static_cast<LONG>(std::ceil(box.x)); x < std::floor(box.x + box.width); ++x)
+                                points.push_back({x + 16, y + 16});
+                        auto pixels = ReadingPixels(*frame, points);
+                        Require(std::count_if(pixels.begin(), pixels.end(), [](auto color) { return color != 0xFFFFFFFF; }) >= 4);
+                    }
+                }
+            }
+            auto reverse = MapReadingSpan(*snapshot, cancel->Get(), false, annotationStart + 1, annotationStart + 2, true);
+            const auto authored = fixture.source.find(">read<") + 2;
+            Require(reverse.start.sourceByteOffset == authored && reverse.end.sourceByteOffset == authored + 1);
+        }
+
+        void CheckListMarkerCache(std::shared_ptr<ReadingMemory> const &memory,
+                                  std::shared_ptr<MainTextSnapshot const> const &snapshot,
+                                  std::shared_ptr<NativeMeasurementCache> const &cache, bool warm)
+        {
+            auto cancel = std::make_shared<PreviewCancellation>(memory->ModelOwner().Get());
+            auto reading = std::allocate_shared<ReadingSourceState>(ReadingAllocator<ReadingSourceState>{memory},
+                memory, cancel, snapshot->SourceGeneration(), snapshot->TextGeneration());
+            reading->PublishMain(snapshot);
+            auto renderer = NativeDocumentRenderer::Create({}, cancel, ListMarkerKey(*snapshot, 2400),
+                                                           PreviewTheme{}, reading, {}, {}, {}, cache);
+            auto const &statistics = renderer->ListMarkerStatistics();
+            // 522 real text markers cross both the 256-group and 32-block boundaries.
+            Require(statistics.batches == 3 && statistics.layouts == (warm ? 0u : 3u) &&
+                    statistics.cacheHits == (warm ? 3u : 0u) && statistics.frameLayouts == 0);
+            Require(reading->fault == 0 && renderer->Key().indent > 28);
+        }
+        void CheckListMarkerGeometry(std::shared_ptr<ReadingMemory> const &memory,
+                                     std::shared_ptr<MainTextSnapshot const> const &snapshot)
+        {
+            auto cancel = std::make_shared<PreviewCancellation>(memory->ModelOwner().Get());
+            auto reading = std::allocate_shared<ReadingSourceState>(ReadingAllocator<ReadingSourceState>{memory},
+                memory, cancel, snapshot->SourceGeneration(), snapshot->TextGeneration());
+            reading->PublishMain(snapshot);
+            std::atomic<uint64_t> latest{1};
+            auto make = [&](double width, float fontSize)
+            {
+                PreviewTheme theme;
+                theme.fontSize = fontSize;
+                theme.lineHeight = fontSize * 1.5f;
+                auto renderer = NativeDocumentRenderer::Create({}, cancel, ListMarkerKey(*snapshot, width), theme, reading);
+                Require(renderer->ListMarkerStatistics().frameLayouts == 0);
+                auto frame = renderer->CreateFrame(0, 1000000, 1, latest);
+                Require(frame && frame->main == snapshot && frame->main->Text() == snapshot->Text() && reading->fault == 0);
+                return std::pair{std::move(renderer), std::move(frame)};
+            };
+            auto full = [&](PreviewFrame const &frame)
+            {
+                bool saw99{}, saw100{}, saw101{}, saw1000{}, sawBillion{}, sawHeading{}, sawCode{}, sawQuote{};
+                uint32_t markers{};
+                for (auto const &visual : frame.Blocks())
+                    for (size_t i = 0; i < visual.decorations.size(); ++i)
+                    {
+                        auto const &decoration = visual.decorations[i];
+                        if (IsPreviewTaskDecoration(decoration.kind))
+                        {
+                            auto start = static_cast<uint32_t>(decoration.logical_start);
+                            auto rectangles = NativeDocumentRenderer::Rectangles(frame, start, start + 1);
+                            Require(rectangles.size() == 1 && rectangles[0].width == 14);
+                            continue;
+                        }
+                        auto const &marker = visual.markers[i];
+                        Require(marker && marker.display == ListMarkerDisplay::Full);
+                        DWRITE_LINE_METRICS line{};
+                        UINT32 count{};
+                        winrt::check_hresult(marker.get()->GetLineMetrics(&line, 1, &count));
+                        Require(count == 1 && !line.isTrimmed && line.length == std::to_wstring(decoration.ordinal).size() + 1);
+                        DWRITE_OVERHANG_METRICS overhang{};
+                        winrt::check_hresult(marker.get()->GetOverhangMetrics(&overhang));
+                        Require(marker.x - overhang.left >= -0.01f &&
+                                marker.x + marker.get()->GetMaxWidth() + overhang.right <= marker.clipWidth + 0.01f &&
+                                visual.markerX + marker.clipWidth <= visual.block.x - 6 + 0.01);
+                        if (!visual.texts.empty())
+                        {
+                            auto const &text = visual.texts.front();
+                            float baseline{};
+                            if (text.scripts && !text.scripts->FinalLineMetrics().empty())
+                                baseline = text.scripts->FinalLineMetrics().front().baseline;
+                            else
+                            {
+                                UINT32 lines{};
+                                auto status = text.layout->GetLineMetrics(nullptr, 0, &lines);
+                                if (FAILED(status) && status != HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER))
+                                    winrt::check_hresult(status);
+                                std::vector<DWRITE_LINE_METRICS> metrics(lines);
+                                winrt::check_hresult(text.layout->GetLineMetrics(metrics.data(), lines, &lines));
+                                Require(lines > 0);
+                                baseline = metrics.front().baseline;
+                            }
+                            Require(std::abs(marker.y + line.baseline - text.y - baseline) < 0.01f);
+                        }
+                        saw99 |= decoration.ordinal == 99;
+                        saw100 |= decoration.ordinal == 100;
+                        saw101 |= decoration.ordinal == 101;
+                        saw1000 |= decoration.ordinal == 1000;
+                        sawBillion |= decoration.ordinal == 1000000000;
+                        sawHeading |= visual.block.kind == 2;
+                        sawCode |= visual.block.kind == 3;
+                        sawQuote |= visual.block.quote_depth > 0;
+                        ++markers;
+                    }
+                Require(markers == 522 && saw99 && saw100 && saw101 && saw1000 && sawBillion &&
+                        sawHeading && sawCode && sawQuote);
+            };
+            auto [wideRenderer, wide] = make(2400, 18);
+            full(*wide);
+            auto gutter = wideRenderer->Key().indent;
+            auto [narrowRenderer, narrow] = make(gutter + 24, 18);
+            Require(narrowRenderer->ListMarkerStatistics().batches == 0);
+            uint32_t trimmed{}, clipped{};
+            for (auto const &visual : narrow->Blocks())
+                for (size_t i = 0; i < visual.decorations.size(); ++i)
+                {
+                    if (IsPreviewTaskDecoration(visual.decorations[i].kind))
+                        continue;
+                    auto const &marker = visual.markers[i];
+                    if (marker.display == ListMarkerDisplay::Trimmed)
+                    {
+                        DWRITE_LINE_METRICS line{};
+                        UINT32 count{};
+                        winrt::check_hresult(marker.get()->GetLineMetrics(&line, 1, &count));
+                        Require(count == 1 && line.isTrimmed);
+                        ++trimmed;
+                    }
+                    clipped += marker.display == ListMarkerDisplay::Clipped;
+                    Require(visual.markerX + marker.clipWidth <= visual.block.x + 0.01);
+                }
+            Require(trimmed > 0 && clipped > 0 && reading->fault == 0);
+            auto [tinyRenderer, tiny] = make(8, 18);
+            for (auto const &visual : tiny->Blocks())
+                for (size_t i = 0; i < visual.decorations.size(); ++i)
+                    if (!IsPreviewTaskDecoration(visual.decorations[i].kind))
+                        Require(visual.markers[i].display == ListMarkerDisplay::Clipped);
+            auto [restoredRenderer, restored] = make(2400, 18);
+            Require(restoredRenderer->ListMarkerStatistics().batches == 0 && reading->fault == 0);
+            full(*restored);
+            auto [largeRenderer, large] = make(2400, 36);
+            full(*large);
+            Require(largeRenderer->Key().indent > gutter);
+        }
+
         template <typename Predicate> bool Until(Predicate predicate)
         {
             auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
@@ -1017,6 +1793,190 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
             return true;
+        }
+
+        winrt::Windows::Foundation::IAsyncAction WaitForPreview(
+            winrt::Windows::UI::Core::CoreDispatcher dispatcher, std::shared_ptr<CoreValidation::Context> context,
+            std::function<bool()> ready, wchar_t const *failure)
+        {
+            const auto deadline = GetTickCount64() + 8000;
+            while (!ready())
+            {
+                context->Arbitrate();
+                if (GetTickCount64() >= deadline)
+                    throw winrt::hresult_error(HRESULT_FROM_WIN32(ERROR_TIMEOUT), failure);
+                co_await winrt::resume_after(std::chrono::milliseconds(10));
+                co_await winrt::resume_foreground(dispatcher);
+            }
+        }
+
+        winrt::Windows::Foundation::IAsyncAction CheckRefreshViewportWait(
+            winrt::Notepads::Markdown::MarkdownView view, winrt::Windows::UI::Core::CoreDispatcher dispatcher,
+            std::shared_ptr<CoreValidation::Context> context)
+        {
+            using Access = winrt::Notepads::Markdown::implementation::PreviewPublicationTestAccess;
+            co_await WaitForPreview(dispatcher, context, [&] { return Access::ViewportWaitSettled(view); },
+                L"NotLoaded refresh regression did not start with a current frame.");
+            auto retired = Access::RefreshIntoViewportWait(view);
+            // The real controller completes and its actual UI parse observer
+            // must make progress; the test never calls PreviewParsed directly.
+            try
+            {
+                co_await WaitForPreview(dispatcher, context, [&] { return Access::ViewportWaitRecovered(view, retired); },
+                    L"Successful current parse could not recover the forced NotLoaded refresh receipt.");
+            }
+            catch (winrt::hresult_error const &error)
+            {
+                throw winrt::hresult_error(error.code(), std::wstring{error.message().c_str()} + L" " + Access::ViewportWaitState(view));
+            }
+        }
+
+        winrt::Windows::Foundation::IAsyncAction CheckLivePublication(
+            winrt::Windows::UI::Core::CoreDispatcher dispatcher, std::shared_ptr<CoreValidation::Context> context,
+            bool math)
+        {
+            using namespace winrt;
+            using namespace winrt::Windows::Foundation;
+            using namespace winrt::Windows::UI::Xaml;
+            using namespace winrt::Windows::UI::Xaml::Controls;
+            using namespace winrt::Notepads::Markdown;
+            using Access = implementation::PreviewPublicationTestAccess;
+            auto window = Window::Current();
+            Require(window != nullptr);
+            auto original = window.Content();
+            auto parent = original.try_as<Panel>();
+            bool replace = !parent;
+            if (replace)
+                parent = Grid{};
+            auto view = make<implementation::MarkdownView>();
+            view.Width(480);
+            view.Height(200);
+            view.CacheDocumentOnUnload(true);
+            parent.Children().Append(view);
+            struct Detach
+            {
+                Window window;
+                UIElement original;
+                Panel parent;
+                MarkdownView view;
+                bool replace;
+                ~Detach() noexcept
+                {
+                    try
+                    {
+                        view.Cancel();
+                        uint32_t index{};
+                        if (parent.Children().IndexOf(view, index))
+                            parent.Children().RemoveAt(index);
+                        if (replace)
+                            window.Content(original);
+                    }
+                    catch (...) {}
+                }
+            } detach{window, original, parent, view, replace};
+            if (replace)
+            {
+                window.Content(parent);
+                window.Activate();
+            }
+            co_await WaitForPreview(dispatcher, context, [&] { return view.IsLoaded() && Access::NativeLoaded(view); },
+                                   L"Live publication fixture did not attach.");
+
+            auto const source = math ? std::string_view{"$MMMMMMMMMMMMMMMMMMMM$\n\n$x$"}
+                                     : std::string_view{"# Retained subject\n\nThe accepted source survives the stale notification."};
+            guid document{0x86610043, 0x7734, 0x4602, {0xa8, 0xf2, 0x8d, 0x43, 0x5a, 0x97, 0x1a, 0x73}};
+            auto update = view.SetDocumentWithExtensionsAsync(document, 1,
+                {reinterpret_cast<uint8_t const *>(source.data()), static_cast<uint32_t>(source.size())},
+                math ? MarkdownExtensions::Math : MarkdownExtensions::None);
+            co_await WaitForPreview(dispatcher, context, [&] { return update.Status() != AsyncStatus::Started; },
+                                   L"Initial publication did not complete.");
+            auto initial = update.GetResults();
+            Require(initial.Status() == DocumentUpdateStatus::Ready && initial.Published());
+
+            if (!math)
+            {
+                co_await CheckRefreshViewportWait(view, dispatcher, context);
+                // Simulate the late native notification without detaching XAML.
+                Access::DeliverUnload(view);
+                Require(view.IsLoaded() && !Access::NativeLoaded(view) && view.HasCachedDocument() &&
+                        !view.IsCachedPresentationSuspended() && !view.IsSurfaceReady());
+                auto wrong = co_await view.ResumeCachedDocumentAsync(document, 2);
+                Require(wrong.Status() == DocumentUpdateStatus::ResyncRequired && !Access::NativeLoaded(view));
+                view.Visibility(Visibility::Collapsed);
+                auto hidden = co_await view.ResumeCachedDocumentAsync(document, 1);
+                Require(hidden.Status() == DocumentUpdateStatus::NotLoaded && !Access::NativeLoaded(view));
+                view.Visibility(Visibility::Visible);
+                update = view.ResumeCachedDocumentAsync(document, 1);
+                co_await WaitForPreview(dispatcher, context, [&] { return update.Status() != AsyncStatus::Started; },
+                                       L"Cached resume did not complete after stale native unload.");
+                auto resumed = update.GetResults();
+                if (resumed.Status() != DocumentUpdateStatus::Ready || !resumed.Published() ||
+                    !view.IsSurfaceReady() || view.DisplayedDocumentId() != document || view.DisplayedRevision() != 1)
+                    throw hresult_error(E_FAIL, L"Attached cached preview could not recover its accepted revision.");
+                auto generation = Access::Generation(view);
+                Access::DeliverLoad(view);
+                Require(Access::Generation(view) == generation && view.IsSurfaceReady());
+                co_return;
+            }
+
+            com_ptr<implementation::ReadingObjectProvider> widePeer, shortPeer;
+            const std::wstring_view rendered = L"Formula rendered.";
+            const std::wstring_view limited = L"Formula resource or placement limit.";
+            auto describes = [](auto const &peer, std::wstring_view status)
+            {
+                return peer && std::wstring_view{peer->GetHelpTextCore()}.starts_with(status);
+            };
+            co_await WaitForPreview(dispatcher, context, [&]
+            {
+                widePeer = Access::MathPeer(view, 0);
+                shortPeer = Access::MathPeer(view, 1);
+                return describes(widePeer, rendered) && describes(shortPeer, rendered);
+            }, L"Formulas did not reach their wide ready placement.");
+            (void)widePeer->Raw();
+            (void)shortPeer->Raw();
+            auto const mathGeneration = Access::MathGeneration(view);
+            auto const wideChanges = widePeer->MathHelpTextChangesForDiagnostics();
+            auto const shortChanges = shortPeer->MathHelpTextChangesForDiagnostics();
+            view.Width(128);
+            co_await WaitForPreview(dispatcher, context, [&]
+            {
+                return widePeer->MathHelpTextChangesForDiagnostics() == wideChanges + 1 &&
+                       view.GetViewportAnchor().IsAvailable() && describes(widePeer, limited);
+            }, L"The retained formula peer did not notify its narrow placement limit.");
+            Require(describes(shortPeer, rendered) && shortPeer->MathHelpTextChangesForDiagnostics() == shortChanges &&
+                    Access::MathGeneration(view) == mathGeneration && Access::MathPeer(view, 0).get() == widePeer.get());
+            view.Width(480);
+            co_await WaitForPreview(dispatcher, context, [&]
+            {
+                return widePeer->MathHelpTextChangesForDiagnostics() == wideChanges + 2 &&
+                       view.GetViewportAnchor().IsAvailable() && describes(widePeer, rendered);
+            }, L"The retained formula peer did not notify recovery at wide placement.");
+            Require(describes(shortPeer, rendered) && shortPeer->MathHelpTextChangesForDiagnostics() == shortChanges &&
+                    Access::MathGeneration(view) == mathGeneration && Access::MathPeer(view, 0).get() == widePeer.get());
+        }
+
+        winrt::Windows::Foundation::IAsyncAction RunLivePublicationCase(
+            winrt::Windows::UI::Core::CoreDispatcher dispatcher, std::shared_ptr<CoreControllerTests::Results> results,
+            std::shared_ptr<CoreValidation::Context> context, bool math)
+        {
+            CoreValidation::CheckResult check{
+                math ? L"reading_math_help_text_on_relayout" : L"reading_cached_preview_after_stale_native_unload",
+                true, 0, math ? L"Same peer and artifact generation, with HelpText notifications on Ready–Limited–Ready."
+                              : L"Forced NotLoaded Refresh preserves its terminal receipt and reaches an independent Ready frame. Real native teardown while XAML is still attached; visible matching cache resumes, hidden and wrong revision do not."};
+            try
+            {
+                co_await CheckLivePublication(dispatcher, context, math);
+            }
+            catch (winrt::hresult_error const &error)
+            {
+                check.passed = false;
+                check.status = error.code().value;
+                check.detail = error.message().c_str();
+            }
+            if (!check.passed)
+                context->RecordPrimary(CoreValidation::FaultKind::Assertion, check.status, check.name.c_str());
+            results->checks.push_back(std::move(check));
+            context->Arbitrate();
         }
 
         winrt::Windows::Foundation::IAsyncAction RunCase(winrt::Windows::UI::Core::CoreDispatcher dispatcher,
@@ -1047,8 +2007,17 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
             std::wstring scriptDetail;
             std::wstring staticHtmlCheckboxDetail;
             std::wstring htmlTableDetail;
+            std::wstring textBitmapDetail;
+            std::wstring finalSurfaceThreadDetail;
             try
             {
+                if (kind == Case::Ownership)
+                {
+                    std::exception_ptr concurrencyFailure;
+                    co_await ControlConcurrencyTests::RunAsync(dispatcher, context, concurrencyFailure);
+                    if (concurrencyFailure)
+                        std::rethrow_exception(concurrencyFailure);
+                }
                 context->PublishController(controller.get());
                 registered = true;
                 auto descriptor = Pod<notepads_markdown_core_snapshot>();
@@ -1057,9 +2026,9 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                 descriptor.source.document[15] = 0x29;
                 descriptor.source.revision = 1;
                 descriptor.profile = NOTEPADS_MARKDOWN_CORE_G3;
-                auto submit = controller->SubmitUtf8WithExtensions(
+                auto submit = controller->SubmitUtf8(
                     {reinterpret_cast<uint8_t const *>(fixture.source.data()), fixture.source.size()}, descriptor,
-                    fixture.extensions, &ticket);
+                    &ticket, fixture.extensions);
                 Check(submit.status);
                 co_await winrt::resume_background();
                 Require(Until(
@@ -1115,6 +2084,21 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                     staticHtmlCheckboxDetail = TaskInteractionTests::RunStaticHtmlCheckbox(snapshot, sourceFlag);
                 if (kind == Case::HtmlTables)
                     htmlTableDetail = InlineCodeTests::RunHtmlTables(snapshot, sourceFlag);
+                if (kind == Case::EditImageWidths)
+                    CheckEditImageWidths(memory, snapshot);
+                if (kind == Case::TextBitmap)
+                    textBitmapDetail = TextBitmapCacheTests::Run(memory);
+                if (kind == Case::StaticTextBitmap)
+                    textBitmapDetail = TextBitmapCacheTests::RunStatic(memory);
+                if (kind == Case::FinalSurfaceThread)
+                {
+                    std::exception_ptr surfaceFailure;
+                    co_await winrt::resume_foreground(dispatcher);
+                    co_await FinalSurfaceThreadTests::RunAsync(memory, dispatcher, finalSurfaceThreadDetail, surfaceFailure);
+                    if (surfaceFailure)
+                        std::rethrow_exception(surfaceFailure);
+                    co_await winrt::resume_background();
+                }
                 if (kind == Case::TaskInteraction)
                 {
                     taskInteraction = TaskInteractionTests::Run(snapshot, sourceFlag);
@@ -1161,6 +2145,8 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                 }
                 if (kind == Case::Scripts)
                     scriptDetail = ScriptTests::Run(memory);
+                if (kind == Case::Ruby)
+                    CheckRubyGeometry(memory, snapshot, fixture);
                 if (kind == Case::InlineCode)
                 {
                     auto code = InlineCodeTests::Run(memory);
@@ -1199,10 +2185,48 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                         }
                     }
                 }
-                if (kind == Case::Inline || kind == Case::LineEndings || kind == Case::Structured)
+                if (kind == Case::Inline || kind == Case::LineEndings || kind == Case::Structured ||
+                    kind == Case::TablePageNavigation || kind == Case::WrappedTablePageNavigation ||
+                    kind == Case::SpanningCellNavigation || kind == Case::SpanningCellPageNavigation ||
+                    kind == Case::WrappedPointerCaret || kind == Case::WideTableLineIndex ||
+                    kind == Case::MathFallbackLineBreak || kind == Case::ScriptLineIndex ||
+                    kind == Case::Scripts || kind == Case::Ruby)
                     CheckLineHits(memory, snapshot, kind);
                 if (kind == Case::Structured)
+                {
                     CheckQuoteGeometry(memory, snapshot, fixture);
+                    textBitmapDetail = TextBitmapCacheTests::RunImageRelayout(memory);
+                }
+                if (kind == Case::ListMarkers)
+                {
+                    auto cache = NativeMeasurementCache::Create();
+                    Require(static_cast<bool>(cache));
+                    CheckListMarkerCache(memory, snapshot, cache, false);
+                    auto edited = fixture.source;
+                    auto row = edited.find("row");
+                    Require(row != std::string::npos);
+                    edited.replace(row, 3, "edited row");
+                    auto editedDescriptor = descriptor;
+                    editedDescriptor.source.revision = 2;
+                    co_await winrt::resume_foreground(dispatcher);
+                    Check(controller->SubmitUtf8(
+                        {reinterpret_cast<uint8_t const *>(edited.data()), edited.size()}, editedDescriptor,
+                        &ticket, fixture.extensions).status);
+                    co_await winrt::resume_background();
+                    Require(Until([&] { context->Arbitrate(); return ticket.Done(); }));
+                    Check(ticket.Status());
+                    co_await winrt::resume_foreground(dispatcher);
+                    auto editedPin = controller->PinInstalled();
+                    co_await winrt::resume_background();
+                    auto editedCancel = std::make_shared<PreviewCancellation>(editedPin.Get());
+                    auto editedSummary = Pod<notepads_markdown_core_model_summary_result>();
+                    Check(notepads_markdown_core_model_summary(editedPin.Get(), &editedSummary, &error));
+                    auto editedMemory = ReadingMemory::Create(std::move(editedPin), editedCancel->Get(), editedSummary.identity);
+                    auto editedSnapshot = MainTextSnapshot::Build(editedMemory, editedCancel->Get(), 24, NextReadingTextToken());
+                    Require(editedSnapshot->Identity().revision == 2 && editedSnapshot->Text().starts_with(L"edited row"));
+                    CheckListMarkerCache(editedMemory, editedSnapshot, cache, true);
+                    CheckListMarkerGeometry(memory, snapshot);
+                }
                 if (kind == Case::Math)
                 {
                     // Exercise the actual Rust batch -> funded native descriptors ->
@@ -1376,12 +2400,34 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                                 L"empty-task navigation; CRLF mixed UTF8/UTF16 span roundtrip; gap-only/mid-container "
                                 L"frames and Reposition owner sharing; WARP gap/background/border/nested-tint and "
                                 L"programmatic HC palette probes. No actual HC switch or public UI claim.";
+            if (kind == Case::Structured && check.passed)
+                check.detail += textBitmapDetail;
+            if (kind == Case::TablePageNavigation && check.passed)
+                check.detail += L" Authored three-column table at both document edges: PageUp/PageDown overshoot "
+                                L"preserves every preferred column, ordinary Up/Down and boundary no-op behavior.";
+            if (kind == Case::WrappedTablePageNavigation && check.passed)
+                check.detail += L" Actual DWrite wrapped final middle cell: both shorter columns reach their final row "
+                                L"when PageDown targets within the wraps or overshoots; ordinary Up/Down and final-line no-op preserved.";
+            if (kind == Case::ListMarkers && check.passed)
+                check.detail += L" 522 authored markers: 3 cold DWrite groups, 3 cache hits/0 measured groups after a real "
+                                L"revision-2 body edit; no measurement-phase marker COM. Full 99/100/101, 999/1000 and "
+                                L"999999999/1000000000 digits, heading/code/quote first-line baselines, task selection; "
+                                L"narrow Trimmed/isTrimmed and zero-gutter Clipped states restore to Full without source fault; "
+                                L"36-DIP font and same-source resize reuse. Native geometry only; public GUI remains separate.";
             if (kind == Case::TaskInteraction && check.passed)
                 check.detail += taskInteraction.detail;
             if (kind == Case::StaticHtmlCheckbox && check.passed)
                 check.detail += staticHtmlCheckboxDetail;
             if (kind == Case::HtmlTables && check.passed)
                 check.detail += htmlTableDetail;
+            if (kind == Case::EditImageWidths && check.passed)
+                check.detail += L" Edit-only image width proofs match every measured paragraph, GFM cell and HTML "
+                                L"colspan/rowspan owner at 603, 71 and 9 DIPs; fixed wide/narrow width oracles, "
+                                L"eight distinct images and no covered-cell duplicate. No resource IO or timing claim.";
+            if ((kind == Case::TextBitmap || kind == Case::StaticTextBitmap) && check.passed)
+                check.detail += textBitmapDetail;
+            if (kind == Case::FinalSurfaceThread && check.passed)
+                check.detail += finalSurfaceThreadDetail;
             if (kind == Case::Search && check.passed)
                 check.detail += search.detail;
             if (kind == Case::Measurement && check.passed)
@@ -1403,9 +2449,9 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                                 L"the callback and final page capacity retired before returning to the caller.";
             if (kind == Case::Ownership && check.passed)
                 check.detail +=
-                    L" Funded long strings and real link/image descriptors retain their root across sorting, "
+                    L" Real MTA Cancel before/after deferred UI ticket binding retires the exact request, preserves a later successful request and releases native owners; agile Theme defaults and 2-writer/2-reader property access also pass. Funded long strings and real link/image descriptors retain their root across sorting, "
                     L"move-back, same-root swap and moved-from allocator/container reuse. Actual Range ABI Compare/CompareEndpoints "
-                    L"retain self through foreign identity callouts dropping the last caller reference, then retire before ABI return. Actual live-view Range ABI FindAttribute retains self through a foreign Boolean getter.";
+                    L"retain self through foreign identity callouts dropping the last caller reference, then retire before ABI return. Actual live-view Range ABI FindAttribute retains self through a foreign Boolean getter. The three current same-row follow APIs supersede a real deferred disclosure reveal; stale-layout rejections preserve its later navigation.";
             if (kind == Case::Math && check.passed)
             {
                 check.detail += L" Separate fixed numeric D2D/WIC pixels, 13 actual DWrite inline/display fixtures and "
@@ -1461,6 +2507,11 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
                     check.status = error.status;
                     check.detail = error.detail;
                 }
+                catch (TextBitmapCacheTests::Failure const &error)
+                {
+                    check.status = E_FAIL;
+                    check.detail = error.detail;
+                }
                 catch (winrt::hresult_error const &error)
                 {
                     check.status = error.code().value;
@@ -1490,7 +2541,7 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
 
     uint32_t CheckCount() noexcept
     {
-        return static_cast<uint32_t>(Cases.size());
+        return static_cast<uint32_t>(Cases.size()) + 2;
     }
 
     winrt::Windows::Foundation::IAsyncAction RunAsync(winrt::Windows::UI::Core::CoreDispatcher const &dispatcher,
@@ -1502,7 +2553,9 @@ namespace Notepads::Markdown::Native::ReadingSnapshotTests
         auto ui = dispatcher;
         auto output = results;
         auto owner = context;
-        output->checks.reserve(output->checks.size() + Cases.size());
+        output->checks.reserve(output->checks.size() + CheckCount());
+        co_await RunLivePublicationCase(ui, output, owner, false);
+        co_await RunLivePublicationCase(ui, output, owner, true);
         for (auto kind : Cases)
         {
             owner->Arbitrate();

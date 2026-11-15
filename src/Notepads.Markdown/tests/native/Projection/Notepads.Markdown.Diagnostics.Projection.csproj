@@ -1,0 +1,13 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE file in the project root for license information.
+-->
+<Project>
+  <!-- Restore and build must select the same variant before SDK props compute paths. -->
+  <PropertyGroup>
+    <NotepadsMarkdownEnableDiagnostics>true</NotepadsMarkdownEnableDiagnostics>
+  </PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="..\..\..\windows\Notepads.Markdown.Projection\Notepads.Markdown.Projection.props" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

@@ -1,0 +1,78 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE file in the project root for license information.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>NOTEPADS_MARKDOWN_DIAGNOSTICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory);$(MSBuildThisFileDirectory)Diagnostics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeReadingOutlineTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeTaskInteractionTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeReadingSearchTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeHighlightSnapshotTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeImageResourcesTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeImagePayloadTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeImageTestSupport.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeImageReuseControlTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeImageViewportTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeImageFontControlTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeSvgJobTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeSvgRetainedTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeReadingSnapshotTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeControlConcurrencyTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeMathGeometryTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeMathCoordinatorTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeDocumentRendererTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeTextBitmapCacheTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeFinalSurfaceThreadTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeInlineCodeTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeDiagramRendererTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeMathWorkerTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeMathMemoryTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeMathArtifactTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeScriptTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationCheck.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationReport.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationProbe.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Diagnostics\NativeStartupTrace.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Diagnostics\NativeDrawTrace.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationSuite.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CoreControllerTests.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeMeasurementCacheTests.h" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeTaskInteractionTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeReadingOutlineTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeReadingSearchTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeImageResourcesTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeImagePayloadTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeImageReuseControlTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeImageViewportTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeImageFontControlTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeSvgJobTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeSvgRetainedTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeMeasurementCacheTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeHighlightSnapshotTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeReadingSnapshotTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeControlConcurrencyTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeMathGeometryTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeMathCoordinatorTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeDocumentRendererTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeTextBitmapCacheTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeFinalSurfaceThreadTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeInlineCodeTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeDiagramRendererTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeMathWorkerTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeMathMemoryTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeMathArtifactTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeScriptTests.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationCheck.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationReport.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationProbe.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationSuite.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CoreControllerTests.cpp" />
+    <Midl Include="$(MSBuildThisFileDirectory)Diagnostics\CoreValidationProbe.idl" />
+  </ItemGroup>
+</Project>

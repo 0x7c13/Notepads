@@ -1,0 +1,39 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+#pragma once
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <unknwn.h>
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Notepads.Markdown.h>
+#include <winrt/Windows.System.Threading.h>
+#include <winrt/Windows.Graphics.Display.h>
+#include <winrt/Windows.UI.h>
+#include <winrt/Windows.UI.Core.h>
+#include <winrt/Windows.UI.Xaml.h>
+#include <winrt/Windows.UI.Xaml.Controls.h>
+#include <winrt/Windows.UI.Xaml.Media.h>
+#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
+#include <winrt/Windows.UI.Xaml.Automation.h>
+#include <winrt/Windows.UI.Xaml.Automation.Peers.h>
+#include <winrt/Windows.UI.Xaml.Automation.Provider.h>
+#include <winrt/Windows.UI.Xaml.Automation.Text.h>
+#include <winrt/Windows.UI.Xaml.Markup.h>
+#include <windows.ui.xaml.media.dxinterop.h>
+#include <d3d11.h>
+#include <d2d1_1.h>
+#include <dwrite.h>
+#include <UIAutomationCore.h>
+#include <UIAutomationCoreApi.h>
+#include <atomic>
+#include <algorithm>
+#include <cmath>
+#include <memory>
+#include <limits>
+#include <mutex>
+#include <string>
+#include <vector>
+#include "notepads/markdown/ffi.h"

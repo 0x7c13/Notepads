@@ -38,6 +38,8 @@ jobs:
           persist-credentials: false
       - name: Verify preinstalled toolchain
         run: ./scripts/Initialize-BuildTools.ps1
+      - name: Verify pinned Markdown Rust toolchain
+        run: ./scripts/Initialize-RustToolchain.ps1
       - name: Restore managed and native dependencies
         env:
           TEST_PLATFORM: ${{ inputs.platform }}

@@ -1,0 +1,59 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+
+import "MarkdownView.idl";
+
+namespace Notepads.Markdown
+{
+    [default_interface]
+    runtimeclass CoreValidationCheck
+    {
+        String Name { get; };
+        Boolean Passed { get; };
+        Int32 Status { get; };
+        String Detail { get; };
+    };
+
+    [default_interface]
+    runtimeclass CoreValidationReport
+    {
+        UInt32 CoreAbiVersion { get; };
+        Boolean Passed { get; };
+        CoreValidationCheck[] Checks { get; };
+    };
+
+    // Experimental fixed small-chain diagnostics, not the product document API.
+    runtimeclass CoreValidationProbe
+    {
+        static Windows.Foundation.IAsyncOperation<CoreValidationReport> RunAsync();
+        // Opt-in preview completion/cancellation/lifetime diagnostics.
+        static Windows.Foundation.IAsyncOperation<CoreValidationReport> RunPreviewAsync();
+        static Windows.Foundation.IAsyncOperation<CoreValidationReport> RunReadingAsync();
+        static Windows.Foundation.IAsyncOperation<CoreValidationReport> RunImagesAsync();
+        static Windows.Foundation.IAsyncOperation<CoreValidationReport> RunHighlightAsync();
+        static Windows.Foundation.IAsyncOperation<CoreValidationReport> RunImageProviderAsync(IMarkdownImageProvider provider);
+        static UInt32 LiveWorkers { get; };
+        static UInt32 LiveHandles { get; };
+        // Read-only process image ledger: generation, encoded bytes, decoded bytes.
+        // Counts physical reservations through their actual last-owner retirement.
+        static UInt64[] GetImageProcessCapacitySnapshot();
+        // Versioned observations of existing per-view work/usage authorities;
+        // not an atomic idle or final-owner retirement certificate.
+        static UInt64[] GetResourceWorkSnapshot(MarkdownView view);
+        static void StartPreviewStartupTrace(Boolean synchronousHighlights);
+        static Boolean StartupHighlightsPending(MarkdownView view);
+        static void SetViewportHighlightBaseline(Boolean value);
+        static UInt64[] GetViewportHighlightDiagnostics(MarkdownView view);
+        static UInt64[] StopPreviewStartupTrace();
+        static Double[] GetStartupHeadingGeometry(MarkdownView view, String title);
+        // One real full-publication draw takes the ordinary device-loss path.
+        static void ArmPreviewDeviceLoss(MarkdownView view, Boolean initialViewport);
+        static Boolean HasNoteEmbedParentPin(MarkdownView view);
+        static void TestCodeCopy(MarkdownView view, Boolean clipboardSucceeds);
+        // Read-only, bounded observations; not the product search API.
+        static UInt32 SearchContextCount(MarkdownView view);
+        static UInt32 SearchOperationCount(MarkdownView view);
+    };
+}

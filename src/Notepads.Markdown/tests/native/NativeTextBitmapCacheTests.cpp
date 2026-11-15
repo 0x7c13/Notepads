@@ -6,11 +6,13 @@
 #include "NativeTextBitmapCacheTests.h"
 #include "Rendering/NativeDocumentRenderer.h"
 #include "Rendering/NativeTextBitmapCache.h"
+#include "Control/ViewportRasterBand.h"
 #include <algorithm>
 #include <array>
 #include <cstring>
 #include <chrono>
 #include <thread>
+#include <cmath>
 
 namespace Notepads::Markdown::Native::TextBitmapCacheTests
 {
@@ -110,6 +112,96 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
                 return pixels;
             }
 
+            struct LookupResult
+            {
+                std::vector<uint8_t> pixels;
+                NativeTextBitmapCache::Statistics before, after;
+                bool used{}, pending{}, branchValid{};
+            };
+
+            LookupResult LookupOnly(PreviewFrame const &frame, NativeTextBitmapCache &cache,
+                                    PaintState state, NativeTextBitmapCache::RequestRepaint const &repaint)
+            {
+                Require(frame.Blocks().size() == 1 && frame.Blocks().front().texts.size() == 1,
+                        L"ready-only probe owns one genuine paragraph/text");
+                auto const &block = frame.Blocks().front();
+                auto const &text = block.texts.front();
+                Require(block.block.kind == 1 && !text.scriptDrawing && !text.scripts && text.links.empty() &&
+                            text.inlineCode.empty() && text.images.empty() && text.math.empty() && text.diagrams.empty(),
+                        L"ready-only probe uses real ordinary bitmap text without extra composition");
+                const auto scale = state.dpi / 96.0f;
+                const auto shift = state.phase / scale;
+                _context->SetTarget(_target.get());
+                _context->SetDpi(state.dpi, state.dpi);
+                _context->SetUnitMode(D2D1_UNIT_MODE_DIPS);
+                _context->SetPrimitiveBlend(D2D1_PRIMITIVE_BLEND_SOURCE_OVER);
+                _context->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+                _context->SetTextAntialiasMode(state.antialias);
+                _context->SetTextRenderingParams(nullptr);
+                _context->SetTransform(D2D1::Matrix3x2F::Translation(
+                    shift - (state.negativeOrigin ? 16.0f : 0.0f), shift));
+                LookupResult result;
+                _context->BeginDraw();
+                _context->Clear(D2D1::ColorF(D2D1::ColorF::White));
+                if (state.clip) _context->PushAxisAlignedClip(*state.clip, D2D1_ANTIALIAS_MODE_ALIASED);
+                try
+                {
+                    const auto c = frame.theme.foreground;
+                    winrt::com_ptr<ID2D1SolidColorBrush> foreground;
+                    winrt::check_hresult(_context->CreateSolidColorBrush(
+                        D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, c.A / 255.0f), foreground.put()));
+                    const auto x = (16 + state.drawPhaseX) + static_cast<float>(block.block.x);
+                    const auto y = (16 + state.drawPhaseY) + static_cast<float>(block.block.y - frame.viewportY);
+                    const auto origin = D2D1::Point2F(x + text.x, y + text.y);
+                    const auto units = std::exp2(std::ceil(std::log2(double{state.dpi} * (64.0 / 96.0))));
+                    Require(double{origin.y} * units == std::round(double{origin.y} * units),
+                            L"lookup uses the same actual grid-aligned origin as the original renderer");
+                    cache.Begin(_context.get()); // Adapter was primed by the same empty-opening Paint.
+                    result.before = cache.Stats();
+                    NativeTextBitmapCache::DiagnosticBranchScope branches{&cache};
+                    LARGE_INTEGER first{}, last{};
+                    Require(::QueryPerformanceCounter(&first) && first.QuadPart > 0,
+                            L"ready-only branch probe captures its real start");
+                    branches.Begin(static_cast<uint64_t>(first.QuadPart));
+                    result.pending = true;
+                    result.used = cache.TryDraw(_context.get(), frame, block, text, 0, origin,
+                                               foreground.get(), false, false, &repaint, &result.pending);
+                    Require(::QueryPerformanceCounter(&last) && last.QuadPart > 0,
+                            L"ready-only branch probe captures its real end");
+                    branches.Stop(static_cast<uint64_t>(last.QuadPart));
+                    result.after = cache.Stats();
+                    result.branchValid = branches.Valid() && !result.after.branchOverflow &&
+                        result.before.branchEpoch == result.after.branchEpoch;
+                    if (!result.used)
+                        _context->DrawTextLayout(origin, text.layout.get(), foreground.get(),
+                            D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT | D2D1_DRAW_TEXT_OPTIONS_CLIP);
+                }
+                catch (...)
+                {
+                    if (state.clip) _context->PopAxisAlignedClip();
+                    (void)_context->EndDraw();
+                    _context->SetTarget(nullptr);
+                    throw;
+                }
+                if (state.clip) _context->PopAxisAlignedClip();
+                const auto status = _context->EndDraw();
+                _context->SetTarget(nullptr);
+                winrt::check_hresult(status);
+                winrt::check_hresult(_readback->CopyFromBitmap(nullptr, _target.get(), nullptr));
+                D2D1_MAPPED_RECT mapped{};
+                winrt::check_hresult(_readback->Map(D2D1_MAP_OPTIONS_READ, &mapped));
+                struct Unmap
+                {
+                    ID2D1Bitmap1 *bitmap;
+                    ~Unmap() { (void)bitmap->Unmap(); }
+                } unmap{_readback.get()};
+                result.pixels.resize(static_cast<size_t>(Width) * Height * 4);
+                for (UINT32 row = 0; row < Height; ++row)
+                    std::memcpy(result.pixels.data() + static_cast<size_t>(row) * Width * 4,
+                                mapped.bits + static_cast<size_t>(row) * mapped.pitch, Width * 4);
+                return result;
+            }
+
             void Prune(NativeTextBitmapCache &cache)
             {
                 _context->SetTarget(_target.get());
@@ -142,6 +234,438 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
 
     namespace
     {
+        std::wstring RasterBandPixels(std::shared_ptr<ReadingSourceState> const &reading,
+            notepads_markdown_preview_key key, PreviewTheme theme, ID2D1Factory1 *factory)
+        {
+            ViewportGeometry geometry;
+            Require(MakeViewportGeometry(0, 0, 400, 100, 1, 0, 0, 0, 0, true, geometry),
+                    L"retained band planner uses a real physical viewport");
+            auto cold = PlanViewportRasterBand(geometry, 80, 16, 14, 214, 1000, false);
+            auto warm = PlanViewportRasterBand(geometry, 80, 16, 14, 214, 1000, true);
+            Require(cold && cold->firstRow == 80 && cold->pixelHeight == geometry.pixelHeight &&
+                    warm && warm->pixelHeight > cold->pixelHeight && warm->pixelHeight <= 2 * geometry.pixelHeight &&
+                    warm->bytes <= ViewportRasterBand::MaximumBytes,
+                    L"cold paint stays one viewport; warm band stays within two viewports and its byte cap");
+            Require(warm->Contains(80, geometry.pixelWidth, geometry.pixelHeight) &&
+                    !warm->Contains(warm->firstRow - 1, geometry.pixelWidth, geometry.pixelHeight) &&
+                    !warm->Contains(warm->firstRow + warm->pixelHeight - geometry.pixelHeight + 1,
+                        geometry.pixelWidth, geometry.pixelHeight),
+                    L"retained crop includes the whole physical viewport and rejects either one-row escape");
+            auto changed = geometry;
+            changed.phaseY += 0.25;
+            Require(!SameViewportRaster(geometry, changed), L"a fractional root-phase change invalidates retained pixels");
+            changed = geometry; changed.scale = 1.5;
+            Require(!SameViewportRaster(geometry, changed), L"DPI changes invalidate retained pixels");
+            changed = geometry; ++changed.pixelWidth;
+            Require(!SameViewportRaster(geometry, changed), L"a physical-width change invalidates retained pixels");
+            changed = geometry; changed.pixelExact = false;
+            Require(!PlanViewportRasterBand(changed, 80, 16, 14, 214, 1000, true),
+                    L"non-pixel-exact template geometry keeps the original paint path");
+            changed = geometry; changed.pixelWidth = 16384; changed.pixelHeight = 1024;
+            Require(!PlanViewportRasterBand(changed, 80, 16, 14, 214, 1000, true),
+                    L"a viewport beyond the retention byte budget never allocates a larger band");
+            Require(!PlanViewportRasterBand(geometry, INT64_MAX - 10, 16, 14, 214, 1000, true),
+                    L"physical row arithmetic refuses an overflowing viewport interval");
+            Require(ViewportRasterTranslationCompatible(1, 1) && ViewportRasterTranslationCompatible(1, 2) &&
+                    !ViewportRasterTranslationCompatible(1, 1.5) && ViewportRasterTranslationCompatible(3, 1.5),
+                    L"144 DPI only translates between compatible actual binary-DIP drawing phases");
+            Require(ViewportRasterPaintIsStatic(false, false, false, false) &&
+                    !ViewportRasterPaintIsStatic(true, false, false, false) &&
+                    !ViewportRasterPaintIsStatic(false, true, false, false) &&
+                    !ViewportRasterPaintIsStatic(false, false, true, false) &&
+                    !ViewportRasterPaintIsStatic(false, false, false, true),
+                    L"actual selection, caret, focus and hover paint use the original viewport");
+            Require(ViewportRasterOverlapsRange(*warm, geometry, 16, 80, 20) &&
+                    !ViewportRasterOverlapsRange(*warm, geometry, 16, 1000, 20),
+                    L"viewport-clipped quote decorations reject only intersecting raster bands");
+
+            Raster retained{factory}, reference{factory};
+            auto crop = [](std::vector<uint8_t> const &pixels, uint32_t row, uint32_t width, uint32_t height)
+            {
+                Require(width <= Raster::Width && row + height <= Raster::Height,
+                        L"retained oracle reads only actual physical target pixels");
+                std::vector<uint8_t> result(static_cast<size_t>(width) * height * 4);
+                for (uint32_t y = 0; y < height; ++y)
+                    std::memcpy(result.data() + static_cast<size_t>(y) * width * 4,
+                        pixels.data() + (static_cast<size_t>(row + y) * Raster::Width) * 4, width * 4);
+                return result;
+            };
+            unsigned comparisons{};
+            for (double scale : {1.0, 1.5, 2.0})
+            {
+                const bool fractional = scale != 1;
+                Require(MakeViewportGeometry(0, 0, 400, 100, scale,
+                    fractional ? 0.25 : 0.0, fractional ? 0.375 : 0.0, 0, 0, true, geometry),
+                    L"retained oracle derives fractional viewport phases from actual physical bounds");
+                theme.physicalScale = scale;
+                auto renderer = NativeDocumentRenderer::Create({}, reading->cancel, key, theme, reading);
+                std::atomic<uint64_t> latest{1};
+                auto frozen = renderer->CreateFrame(80, geometry.height, 1, latest);
+                Require(frozen && frozen->main, L"retained oracle source creates a complete real Frame");
+                const auto row = static_cast<int64_t>(80 * scale);
+                auto plan = PlanViewportRasterBand(geometry, row, theme.padding,
+                    frozen->measuredTop, frozen->measuredBottom, frozen->totalHeight, true);
+                Require(plan && plan->pixelHeight > geometry.pixelHeight && plan->pixelHeight <= Raster::Height,
+                        L"warm pixel oracle genuinely expands only the existing measured buffer");
+                Require(ViewportRasterTranslationCompatible(row - plan->firstRow, scale),
+                        L"the expanded paint origin preserves the actual current text-origin grid");
+                auto painted = frozen->Reposition(plan->firstRow / scale, plan->pixelHeight / scale);
+                Require(painted && painted->measuredBlocks == frozen->measuredBlocks,
+                        L"retained paint uses the exact existing immutable measured block buffer");
+                PaintState state;
+                state.dpi = static_cast<float>(96 * scale);
+                state.drawPhaseX = static_cast<float>(geometry.phaseX);
+                state.drawPhaseY = static_cast<float>(geometry.phaseY);
+                state.clip = D2D1::RectF(0, 0, static_cast<float>(geometry.pixelWidth / scale),
+                    static_cast<float>(plan->pixelHeight / scale));
+                auto bandPixels = retained.Paint(*painted, nullptr, state);
+                auto lastOffset = static_cast<uint32_t>(plan->pixelHeight - geometry.pixelHeight);
+                while (lastOffset && !ViewportRasterTranslationCompatible(lastOffset, scale))
+                    --lastOffset;
+                for (uint32_t offset : {scale == 1.5 ? 1u : 0u, lastOffset})
+                {
+                    Require(plan->Contains(plan->firstRow + offset, geometry.pixelWidth, geometry.pixelHeight),
+                            L"both forward and reverse edge positions fit the full physical viewport");
+                    auto direct = renderer->CreateFrame((plan->firstRow + offset) / scale,
+                        geometry.height, 1, latest);
+                    auto visible = state;
+                    visible.clip->bottom = static_cast<float>(geometry.pixelHeight / scale);
+                    auto expected = crop(reference.Paint(*direct, nullptr, visible), 0,
+                        geometry.pixelWidth, geometry.pixelHeight);
+                    const bool canTranslate = ViewportRasterTranslationCompatible(offset, scale);
+                    if (scale == 1.5 && offset == 1)
+                        Require(!canTranslate, L"one physical row at 144 DPI must repaint rather than move old pixels");
+                    auto fallback = canTranslate ? nullptr : frozen->Reposition(direct->viewportY, geometry.height);
+                    Require(canTranslate || (fallback && fallback->measuredBlocks == frozen->measuredBlocks),
+                            L"an incompatible translation uses the original H over the same measured buffer");
+                    auto actual = canTranslate ? crop(bandPixels, offset, geometry.pixelWidth, geometry.pixelHeight) :
+                        crop(retained.Paint(*fallback, nullptr, visible), 0, geometry.pixelWidth, geometry.pixelHeight);
+                    Require(std::any_of(expected.begin(), expected.end(), [](uint8_t value) { return value != 255; }),
+                            L"retained edge oracle includes actual text/table/code ink, not a blank target");
+                    Equal(actual, expected,
+                          L"eligible retained crop or original-H fallback equals an independently fully redrawn viewport");
+                    ++comparisons;
+                    if (scale == 1.5 && offset == lastOffset)
+                    {
+                        auto selected = crop(reference.Paint(*direct, nullptr, visible, 0, frozen->main->Length()),
+                            0, geometry.pixelWidth, geometry.pixelHeight);
+                        Require(selected != expected, L"the selection invalidation oracle actually changes visible pixels");
+                        // v1's original crop/direct comparison really failed
+                        // (2,889 bytes, max delta 32); its transcript is preserved.
+                        // A different compatible origin need not reproduce that
+                        // failure. Require the product's conservative H fallback
+                        // and its actual pixels, independently of that history.
+                        const bool staticPaint = ViewportRasterPaintIsStatic(true, false, false, false);
+                        auto selectedPlan = PlanViewportRasterBand(geometry, plan->firstRow + offset, theme.padding,
+                            frozen->measuredTop, frozen->measuredBottom, frozen->totalHeight, staticPaint);
+                        Require(!staticPaint && selectedPlan && selectedPlan->pixelHeight == geometry.pixelHeight,
+                                L"the product selection gate refuses expansion even during stable selected scrolling");
+                        auto selectedFrame = frozen->Reposition(selectedPlan->firstRow / scale, geometry.height);
+                        Require(selectedFrame && selectedFrame->measuredBlocks == frozen->measuredBlocks,
+                                L"selected fallback repaints the real frozen buffer at the original viewport height");
+                        Equal(crop(retained.Paint(*selectedFrame, nullptr, visible, 0, frozen->main->Length()), 0,
+                                  geometry.pixelWidth, geometry.pixelHeight), selected,
+                              L"an actual original-H repaint preserves independent selected foreground/background pixels");
+                        ++comparisons;
+                    }
+                }
+            }
+            return L" R20 retained viewport band: " + std::to_wstring(comparisons) +
+                L" independent physical crop/direct comparisons at 1x/1.5x/2x, both edges/directions, fractional root phases, "
+                L"144-DPI row fallback and selected-H repaint with selection retention rejected, "
+                L"exact full-viewport bounds, byte cap and invalidation guards passed.";
+        }
+
+        void PreparedShortZwjPixels(Raster &raster, PreviewFrame const &source, double scale, bool lengthBoundary = false)
+        {
+            // Real Main-backed slices isolate cache admission without altering
+            // the fixed Core fixtures. Node keys below are test-local only.
+            // The caller retains source's renderer through every fresh Preview
+            // allocation. No mutable visible layout is supplied to the worker.
+            const auto main = source.main->Text();
+            const auto family = main.find(L"👨‍👩‍👧‍👦");
+            Require(family != std::wstring_view::npos && !source.Blocks().empty() &&
+                        !source.Blocks().front().texts.empty(), L"the unchanged real Main contains the family ZWJ sequence");
+            winrt::com_ptr<IDWriteFactory> factory;
+            winrt::check_hresult(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
+                                                     reinterpret_cast<IUnknown **>(factory.put())));
+            winrt::com_ptr<IDWriteTextFormat> format;
+            winrt::check_hresult(factory->CreateTextFormat(source.theme.fontFamily.c_str(), nullptr,
+                DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                source.theme.fontSize, L"", format.put()));
+            auto owner = source.Blocks().get_allocator().layout;
+            enum class Admission { Short, Rejected, Overflow, Dense };
+            struct Slice { size_t start{}, length{}; Admission admission; };
+            std::vector<Slice> slices;
+            auto find = [&](std::wstring_view value)
+            {
+                const auto start = main.find(value);
+                Require(start != std::wstring_view::npos, L"each boundary sequence is backed by the unchanged real Main");
+                return start;
+            };
+            if (lengthBoundary)
+            {
+                const auto end = family + std::wstring_view{L"👨‍👩‍👧‍👦"}.size();
+                Require(end >= 129, L"the static Main supplies an actual 129-unit slice ending in the family sequence");
+                slices.push_back({end - 129, 129, Admission::Rejected});
+                slices.push_back({end - 128, 128, Admission::Short});
+            }
+            else
+            {
+                // Reject a one-supplementary prefix that does contain ZWJ,
+                // and a two-supplementary slice with no ZWJ, before filling slots.
+                slices.push_back({family, std::wstring_view{L"👨‍"}.size(), Admission::Rejected});
+                slices.push_back({find(L"😀 😅"), std::wstring_view{L"😀 😅"}.size(), Admission::Rejected});
+                slices.push_back({find(L"🧑‍🚀"), std::wstring_view{L"🧑‍🚀"}.size(), Admission::Short});
+                slices.push_back({family, std::wstring_view{L"👨‍👩‍👧‍👦"}.size(), Admission::Short});
+                slices.push_back({find(L"👩🏽‍💻 👨‍👩‍👧‍👦"), std::wstring_view{L"👩🏽‍💻 👨‍👩‍👧‍👦"}.size(), Admission::Short});
+                slices.push_back({find(L"🏳️‍🌈"), std::wstring_view{L"🏳️‍🌈"}.size(), Admission::Overflow});
+                const auto newline = main.find(L'\n');
+                Require(newline != std::wstring_view::npos, L"the original dense Emoji paragraph has its own Main span");
+                slices.push_back({0, newline, Admission::Dense});
+            }
+            auto make = [&](Slice const &slice, uint32_t node, double y)
+            {
+                PreviewBlockVisual block{owner};
+                block.block.node = node;
+                block.block.kind = 1;
+                block.block.logical_start = slice.start;
+                block.block.logical_end = slice.start + slice.length;
+                block.block.width = source.key.width;
+                block.block.y = y;
+                PreviewTextVisual text{owner};
+                text.logicalStart = slice.start;
+                text.logicalEnd = slice.start + slice.length;
+                text.utf16Length = static_cast<uint32_t>(slice.length);
+                text.matchesMainText = text.bitmapCandidate = text.prewarmCandidate = true;
+                const auto content = main.substr(slice.start, slice.length);
+                winrt::check_hresult(factory->CreateTextLayout(content.data(), text.utf16Length,
+                    format.get(), static_cast<float>(source.key.width), 2048, text.layout.put()));
+                DWRITE_TEXT_METRICS metrics{};
+                winrt::check_hresult(text.layout->GetMetrics(&metrics));
+                text.width = metrics.widthIncludingTrailingWhitespace;
+                text.height = metrics.height;
+                block.block.height = block.measuredHeight = text.height;
+                block.texts.push_back(std::move(text));
+                return block;
+            };
+            auto workers = std::make_shared<PreviewVector<PreviewBlockVisual>>(source.Blocks().get_allocator());
+            auto visible = std::make_shared<PreviewVector<PreviewBlockVisual>>(source.Blocks().get_allocator());
+            auto admitted = std::make_shared<PreviewVector<PreviewBlockVisual>>(source.Blocks().get_allocator());
+            std::vector<notepads_markdown_preview_block> locations;
+            uint32_t denseCount{};
+            for (size_t i = 0; i < slices.size(); ++i)
+            {
+                const auto &slice = slices[i];
+                const auto content = main.substr(slice.start, slice.length);
+                const auto supplementary = std::count_if(content.begin(), content.end(),
+                    [](wchar_t value) { return value >= 0xd800 && value <= 0xdbff; });
+                if (slice.admission == Admission::Dense)
+                {
+                    Require(supplementary >= 8, L"the unchanged dense paragraph exercises the existing >=8 draw-slot route");
+                    ++denseCount;
+                }
+                if (lengthBoundary && slice.admission == Admission::Rejected)
+                    Require(content.size() == 129 && supplementary == 4 && content.find(L'\u200d') != std::wstring_view::npos,
+                            L"the length rejection differs from a supported short ZWJ only in its actual Main-backed length");
+                const auto y = slice.admission == Admission::Short ? admitted->size() * 64.0 / scale : 0.0;
+                const auto node = 0xf0000000u + static_cast<uint32_t>(i);
+                workers->push_back(make(slice, node, y));
+                visible->push_back(make(slice, node, y));
+                Require(workers->back().texts[0].layout.get() != visible->back().texts[0].layout.get(),
+                        L"each worker layout is a separate genuine DWrite layout from the mutable visible layout");
+                locations.push_back(workers->back().block);
+                if (slice.admission == Admission::Short) admitted->push_back(visible->back());
+            }
+            auto frame = source;
+            frame.measuredBlocks = admitted;
+            frame.textPrewarm = NativeTextBitmapCache::CreatePrewarm();
+            NativeTextBitmapCache::BeginPrewarm(frame.textPrewarm, frame.key, frame.theme, frame.main);
+            for (auto const &block : *workers) NativeTextBitmapCache::CollectPrewarm(frame.textPrewarm, block);
+            NativeTextBitmapCache::PositionPrewarm(frame.textPrewarm, {locations.data(), locations.size()});
+            auto opening = frame;
+            opening.measuredBlocks = std::make_shared<PreviewVector<PreviewBlockVisual>>(source.Blocks().get_allocator());
+            PaintState state;
+            state.dpi = static_cast<float>(96 * scale);
+            state.drawPhaseX = static_cast<float>(0.375 / scale);
+            state.drawPhaseY = static_cast<float>(0.21875 / scale);
+            NativeTextBitmapCache cache;
+            // Two independent UI caches exercise draw-slot transfer versus
+            // loading-slot sharing. Keep them alive through the original
+            // cache's assertions/cancellation below.
+            NativeTextBitmapCache lookupCache, secondLookupCache;
+            auto single = [&](PreviewBlockVisual const &block)
+            {
+                auto selected = frame;
+                auto blocks = std::make_shared<PreviewVector<PreviewBlockVisual>>(source.Blocks().get_allocator());
+                blocks->push_back(block);
+                selected.measuredBlocks = blocks;
+                return selected;
+            };
+            Require(!admitted->empty(), L"ready-only probe has a genuine ordinary loading slice");
+            auto ordinaryProbe = single(admitted->front());
+            std::optional<PreviewFrame> denseProbe;
+            for (size_t index = 0; index < slices.size(); ++index)
+                if (slices[index].admission == Admission::Dense)
+                    denseProbe.emplace(single((*visible)[index]));
+            auto lookupNotifications = std::make_shared<std::atomic<unsigned>>(0);
+            NativeTextBitmapCache::RequestRepaint lookupRepaint = [lookupNotifications] { ++*lookupNotifications; };
+            std::optional<Raster::LookupResult> heldOrdinary, heldDense;
+            auto gate = std::make_shared<NativeTextBitmapCache::PreparationGate>();
+            struct ReleaseGate
+            {
+                std::shared_ptr<NativeTextBitmapCache::PreparationGate> gate;
+                ~ReleaseGate() { gate->released = true; }
+            } release{gate};
+            NativeTextBitmapCache::SetPreparationGate(frame, gate);
+            auto notifications = std::make_shared<std::atomic<unsigned>>(0);
+            std::function<void()> repaint = [notifications] { ++*notifications; };
+            const auto expected = raster.Paint(frame, nullptr, state);
+            const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(15);
+            while (!gate->entered.load() && std::chrono::steady_clock::now() < deadline)
+            {
+                (void)raster.Paint(opening, &cache, state); // Same empty frame retries optional two-worker admission.
+                if (!gate->entered.load()) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+            const auto entered = gate->entered.load();
+            const auto pending = entered ? raster.Paint(frame, &cache, state, 0, 0, &repaint) : std::vector<uint8_t>{};
+            const auto pendingStatistics = cache.Stats();
+            if (entered)
+            {
+                (void)raster.Paint(opening, &lookupCache, state);
+                (void)raster.Paint(opening, &secondLookupCache, state);
+                heldOrdinary = raster.LookupOnly(ordinaryProbe, lookupCache, state, lookupRepaint);
+                if (denseProbe) heldDense = raster.LookupOnly(*denseProbe, lookupCache, state, lookupRepaint);
+            }
+            // Release before any assertion; unwinding also releases the hold.
+            if (!entered || pendingStatistics.builds || pendingStatistics.prewarmUploads || pending == expected)
+                gate->released = true;
+            Require(entered && pendingStatistics.builds == 0 && pendingStatistics.prewarmUploads == 0 && pending != expected,
+                    L"short ordinary ZWJ rows are admitted and pending without synchronous UI construction (test-only red on old predicate)");
+            for (size_t i = 0; i < slices.size(); ++i)
+                if (slices[i].admission == Admission::Rejected || slices[i].admission == Admission::Overflow)
+                {
+                    auto only = frame;
+                    auto blocks = std::make_shared<PreviewVector<PreviewBlockVisual>>(source.Blocks().get_allocator());
+                    blocks->push_back((*visible)[i]);
+                    only.measuredBlocks = blocks;
+                    const auto before = cache.Stats();
+                    const auto direct = raster.Paint(only, nullptr, state);
+                    Equal(raster.Paint(only, &cache, state, 0, 0, &repaint), direct,
+                          L"rejected/overflow ordinary ZWJ preserves the existing synchronous fallback pixels");
+                    Require(cache.Stats().builds == before.builds + 1 && cache.Stats().prewarmUploads == before.prewarmUploads,
+                            L"one/no-ZWJ, overlength and fourth-slot rows do not consume a prepared payload or wait in the ordinary queue");
+                }
+            gate->released = true;
+            const auto expectedPrepared = static_cast<uint32_t>(admitted->size()) + denseCount;
+            while ((NativeTextBitmapCache::PreparedCount(frame.textPrewarm) < expectedPrepared || notifications->load() < admitted->size()) &&
+                   std::chrono::steady_clock::now() < deadline)
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            Require(NativeTextBitmapCache::PreparedCount(frame.textPrewarm) == expectedPrepared && notifications->load() >= admitted->size(),
+                    L"three ordinary slots and the separate dense-Emoji slot publish real worker payloads and repaint notifications");
+            auto checkLookup = [&](Raster::LookupResult const &result, wchar_t const *stage, bool used,
+                                   uint64_t uploads, uint64_t hits)
+            {
+                const auto &a = result.after;
+                const auto &b = result.before;
+                if (result.used != used || result.pending || !result.branchValid || lookupNotifications->load() ||
+                    a.prewarmUploads != b.prewarmUploads + uploads || a.builds != b.builds + uploads ||
+                    a.hits != b.hits + hits || a.failures != b.failures || a.branchCalls[1] != b.branchCalls[1] ||
+                    (uploads && (a.branchCalls[0] != b.branchCalls[0] + 1 ||
+                                 a.branchCalls[2] != b.branchCalls[2] + 1 ||
+                                 a.branchCalls[3] != b.branchCalls[3] + 1)) ||
+                    (hits && (a.branchCalls[0] != b.branchCalls[0] ||
+                              a.branchCalls[2] != b.branchCalls[2] ||
+                              a.branchCalls[3] != b.branchCalls[3] + hits)) ||
+                    (!used && (a.entries != b.entries || a.bytes != b.bytes)))
+                    throw Failure{L"ordinary-ready " + std::wstring{stage} + L" dpi=" + std::to_wstring(state.dpi) +
+                        L" used=" + std::to_wstring(result.used) + L" pending=" + std::to_wstring(result.pending) +
+                        L" branchValid=" + std::to_wstring(result.branchValid) +
+                        L" uploads=" + std::to_wstring(a.prewarmUploads - b.prewarmUploads) +
+                        L" builds=" + std::to_wstring(a.builds - b.builds) +
+                        L" buildCalls=" + std::to_wstring(a.branchCalls[1] - b.branchCalls[1]) +
+                        L" notifications=" + std::to_wstring(lookupNotifications->load())};
+            };
+            checkLookup(*heldOrdinary, L"held-loading", false, 0, 0);
+            if (heldDense) checkLookup(*heldDense, L"held-dense", false, 0, 0);
+            auto equalLookup = [&](Raster::LookupResult const &result, PreviewFrame const &probe,
+                                   PaintState actual, wchar_t const *stage)
+            {
+                const auto direct = raster.Paint(probe, nullptr, actual);
+                Require(std::any_of(direct.begin(), direct.end(), [](uint8_t value) { return value != 255; }),
+                        L"lookup-only direct oracle contains genuine visible glyph ink");
+                try { Equal(result.pixels, direct, stage); }
+                catch (Failure const &failure)
+                {
+                    throw Failure{L"ordinary-ready " + std::wstring{stage} + L" dpi=" +
+                        std::to_wstring(actual.dpi) + L"; " + failure.detail};
+                }
+            };
+            auto checkMisses = [&](PreviewFrame const &probe)
+            {
+                auto shifted = state;
+                shifted.drawPhaseX += static_cast<float>(0.125 / scale); // A genuine different raster origin/key.
+                const auto phaseMiss = raster.LookupOnly(probe, lookupCache, shifted, lookupRepaint);
+                checkLookup(phaseMiss, L"different-phase", false, 0, 0);
+                equalLookup(phaseMiss, probe, shifted, L"different-phase direct pixels");
+                auto ownerCancel = std::make_shared<PreviewCancellation>(probe.main->ModelOwner().Get());
+                auto otherOwner = MainTextSnapshot::Build(probe.main->Memory(), ownerCancel->Get(),
+                    probe.main->SourceGeneration(), probe.main->TextGeneration());
+                Require(otherOwner.get() != probe.main.get() &&
+                            std::memcmp(&otherOwner->Identity(), &probe.main->Identity(), sizeof(otherOwner->Identity())) == 0 &&
+                            otherOwner->Text() == probe.main->Text(),
+                        L"owner rejection uses a real independent Main with the same model identity and text");
+                auto ownerProbe = probe;
+                ownerProbe.main = std::move(otherOwner);
+                const auto ownerMiss = raster.LookupOnly(ownerProbe, lookupCache, state, lookupRepaint);
+                checkLookup(ownerMiss, L"different-owner", false, 0, 0);
+                equalLookup(ownerMiss, ownerProbe, state, L"different-owner direct pixels");
+            };
+            if (denseProbe) checkMisses(*denseProbe);
+            checkMisses(ordinaryProbe);
+            const auto preparedBeforeLookup = NativeTextBitmapCache::PreparedCount(frame.textPrewarm);
+            if (denseProbe)
+            {
+                const auto denseReady = raster.LookupOnly(*denseProbe, lookupCache, state, lookupRepaint);
+                // Intended first new red: old code returns direct without uploading this ready draw slot.
+                checkLookup(denseReady, L"dense ready upload", true, 1, 0);
+                equalLookup(denseReady, *denseProbe, state, L"dense ready-only upload equals direct pixels");
+                Require(NativeTextBitmapCache::PreparedCount(frame.textPrewarm) + 1 == preparedBeforeLookup,
+                        L"ordinary draw-slot lookup moves exactly one prepared payload");
+                const auto denseHit = raster.LookupOnly(*denseProbe, lookupCache, state, lookupRepaint);
+                checkLookup(denseHit, L"dense resident hit", true, 0, 1);
+                equalLookup(denseHit, *denseProbe, state, L"dense same-cache replay equals direct pixels");
+                const auto consumed = raster.LookupOnly(*denseProbe, secondLookupCache, state, lookupRepaint);
+                checkLookup(consumed, L"dense consumed fallback", false, 0, 0);
+                equalLookup(consumed, *denseProbe, state, L"consumed draw payload falls back to direct in another cache");
+            }
+            const auto afterDenseLookup = NativeTextBitmapCache::PreparedCount(frame.textPrewarm);
+            const auto ordinaryReady = raster.LookupOnly(ordinaryProbe, lookupCache, state, lookupRepaint);
+            checkLookup(ordinaryReady, L"loading ready upload", true, 1, 0);
+            equalLookup(ordinaryReady, ordinaryProbe, state, L"ordinary loading ready-only upload equals direct pixels");
+            const auto ordinaryHit = raster.LookupOnly(ordinaryProbe, lookupCache, state, lookupRepaint);
+            checkLookup(ordinaryHit, L"loading resident hit", true, 0, 1);
+            equalLookup(ordinaryHit, ordinaryProbe, state, L"ordinary loading same-cache replay equals direct pixels");
+            const auto shared = raster.LookupOnly(ordinaryProbe, secondLookupCache, state, lookupRepaint);
+            checkLookup(shared, L"loading shared upload", true, 1, 0);
+            equalLookup(shared, ordinaryProbe, state, L"loading payload remains usable by another cache");
+            Require(NativeTextBitmapCache::PreparedCount(frame.textPrewarm) == afterDenseLookup,
+                    L"ordinary loading lookup retains its shared prepared payload for the original cache");
+            const auto before = cache.Stats();
+            Equal(raster.Paint(frame, &cache, state), expected,
+                  L"prepared ordinary ZWJ uploads equal same-context direct glyph pixels at 96/192 DPI and nonzero actual origins");
+            Require(cache.Stats().prewarmUploads == before.prewarmUploads + admitted->size() &&
+                        cache.Stats().builds == before.builds + admitted->size(),
+                    L"each short ordinary ZWJ row uploads a real prepared bitmap rather than a synchronous replacement");
+            const auto uploaded = cache.Stats();
+            Equal(raster.Paint(frame, &cache, state), expected, L"uploaded ordinary ZWJ rows retain exact normal warm replay pixels");
+            Require(cache.Stats().hits == uploaded.hits + admitted->size() && cache.Stats().builds == uploaded.builds,
+                    L"the uploaded short-ZWJ entries become genuine unchanged-key warm cache hits");
+            cache.Clear();
+            Require(NativeTextBitmapCache::PreparedCount(frame.textPrewarm) == 0,
+                    L"Clear retires the new ordinary prepared pixels under the existing cancellation contract");
+        }
+
         std::wstring PreparedPixels(std::shared_ptr<ReadingMemory> const &memory)
         {
             // Headless/WARP machines keep the existing deterministic oracle.
@@ -180,6 +704,7 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
                 std::atomic<uint64_t> latest{1};
                 auto frame = renderer->CreateFrame(0, 10000, 1, latest);
                 Require(frame && frame->textPrewarm, L"the cold fixture publishes its bounded preparation handle");
+                PreparedShortZwjPixels(raster, *frame, scale);
                 PaintState state;
                 state.dpi = static_cast<float>(96 * scale);
                 std::vector<uint8_t> firstPhasePixels;
@@ -321,7 +846,8 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
             }
             return L" Independent same-adapter hardware preparation at 1x/2x with two nonzero actual-origin phases, "
                    L"real CPU upload/direct pixels, ready-result stability, integral block reuse and fractional block re-preparation, warm hits "
-                   L"and cancellation/CPU/GPU retirement passed.";
+                   L"and cancellation/CPU/GPU retirement; independent 2/4/7-supplementary short-ZWJ uploads, exact warm/direct pixels, "
+                   L"ordinary three-slot cap, separate dense-Emoji routing and ineligible synchronous fallback passed.";
         }
     }
 
@@ -520,6 +1046,8 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
             Raster raster{factory.get()};
             NativeTextBitmapCache cache;
             std::weak_ptr<MainTextSnapshot const> weakMain;
+            std::wstring rasterBandEvidence;
+            bool shortZwjLengthChecked{};
             {
                 stage = L"reading/Main setup";
                 auto cancel = std::make_shared<PreviewCancellation>(memory->ModelOwner().Get());
@@ -762,6 +1290,80 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
                 Require(inlineCache.Stats().entries == 1 && inlineCache.Stats().builds == 1 && inlineCache.Stats().hits == 1 &&
                             inlineCache.Stats().commandEntries == 1 && inlineCache.Stats().commandTextUnits == inlineText.utf16Length,
                         L"the real inline-code paragraph replays its one command entry without rebuilding the glyphs");
+
+                winrt::com_ptr<ID3D11Device> hardwareDevice;
+                if (SUCCEEDED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
+                    D3D11_CREATE_DEVICE_BGRA_SUPPORT, nullptr, 0, D3D11_SDK_VERSION,
+                    hardwareDevice.put(), nullptr, nullptr)))
+                {
+                    stage = L"hardware background retained-command pixels";
+                    Raster hardwareRaster{factory.get(), true};
+                    for (float dpi : {96.0f, 192.0f})
+                    {
+                        PreviewTheme theme;
+                        theme.physicalScale = dpi / 96;
+                        auto renderer = NativeDocumentRenderer::Create({}, cancel, key, theme, reading);
+                        auto workerFrame = renderer->CreateFrame(0, 10000, 1, latest);
+                        auto visibleFrame = renderer->CreateFrame(0, 10000, 1, latest);
+                        Require(visibleFrame && visibleFrame->main, L"the static ZWJ length bound owns a real retained Frame");
+                        PreparedShortZwjPixels(hardwareRaster, *visibleFrame, theme.physicalScale, true);
+                        shortZwjLengthChecked = true;
+                        auto workerBlock = workerFrame->Blocks()[4];
+                        auto visibleBlock = visibleFrame->Blocks()[4];
+                        Require(workerBlock.texts[0].layout.get() != visibleBlock.texts[0].layout.get(),
+                                L"background command recording owns an independent real layout");
+                        // The original fixture also has a link. Clear its semantic
+                        // color span on both independent layouts to exercise the
+                        // unlinked inline-code admission used by production.
+                        workerBlock.texts[0].links.clear();
+                        visibleBlock.texts[0].links.clear();
+                        workerBlock.block.y = visibleBlock.block.y = 0;
+                        auto commandBlocks = std::make_shared<PreviewVector<PreviewBlockVisual>>(visibleFrame->Blocks().get_allocator());
+                        commandBlocks->push_back(std::move(visibleBlock));
+                        auto commandFrame = *visibleFrame;
+                        commandFrame.measuredBlocks = commandBlocks;
+                        commandFrame.textPrewarm = NativeTextBitmapCache::CreatePrewarm();
+                        NativeTextBitmapCache::BeginPrewarm(commandFrame.textPrewarm, key, theme, commandFrame.main);
+                        NativeTextBitmapCache::CollectPrewarm(commandFrame.textPrewarm, workerBlock);
+                        NativeTextBitmapCache::PositionPrewarm(commandFrame.textPrewarm, {&workerBlock.block, 1});
+                        auto opening = commandFrame;
+                        opening.measuredBlocks = std::make_shared<PreviewVector<PreviewBlockVisual>>(visibleFrame->Blocks().get_allocator());
+                        PaintState state;
+                        state.dpi = dpi;
+                        state.drawPhaseX = 0.375f / static_cast<float>(theme.physicalScale);
+                        state.drawPhaseY = 0.21875f / static_cast<float>(theme.physicalScale);
+                        NativeTextBitmapCache background;
+                        auto gate = std::make_shared<NativeTextBitmapCache::PreparationGate>();
+                        NativeTextBitmapCache::SetPreparationGate(commandFrame, gate);
+                        auto notifications = std::make_shared<std::atomic<unsigned>>(0);
+                        std::function<void()> repaint = [notifications] { ++*notifications; };
+                        const auto expected = hardwareRaster.Paint(commandFrame, nullptr, state);
+                        (void)hardwareRaster.Paint(opening, &background, state);
+                        const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(15);
+                        while (!gate->entered.load() && std::chrono::steady_clock::now() < deadline)
+                            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                        const auto entered = gate->entered.load();
+                        const auto pending = entered ? hardwareRaster.Paint(commandFrame, &background, state, 0, 0, &repaint)
+                                                     : std::vector<uint8_t>{};
+                        gate->released = true;
+                        Require(entered && pending != expected && background.Stats().builds == 0,
+                                L"an admitted background command paints the placeholder without synchronous UI construction");
+                        while ((!NativeTextBitmapCache::PreparedCount(commandFrame.textPrewarm) || !notifications->load()) &&
+                               std::chrono::steady_clock::now() < deadline)
+                            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                        Require(NativeTextBitmapCache::PreparedCount(commandFrame.textPrewarm) && notifications->load(),
+                                L"background retained commands publish and notify the requesting frame");
+                        Equal(hardwareRaster.Paint(commandFrame, &background, state), expected,
+                              L"background retained command pixels equal the authoritative direct glyph and badge pixels");
+                        Require(background.Stats().commandEntries == 1 && background.Stats().bytes == 0,
+                                L"loading retains an actual command list without flattening color glyphs");
+                        commandBlocks->front().block.y += 2 / theme.physicalScale;
+                        commandFrame.viewportY += 2 / theme.physicalScale;
+                        Equal(hardwareRaster.Paint(commandFrame, &background, state), expected,
+                              L"background commands retain exact glyph and badge pixels after integral relocation");
+                        background.Clear();
+                    }
+                }
 
                 constexpr std::array inlinePhases{
                     PaintState{144, -0.51f}, PaintState{144, -0.49f},
@@ -1026,6 +1628,8 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
                 Require(mismatchCache.Stats().hits == headingBefore.hits && mismatchCache.Stats().builds == headingBefore.builds &&
                             mismatchCache.Stats().entries == 1,
                         L"an above-viewport 0.51 query neither reuses 0.49 pixels nor builds another entry");
+                stage = L"retained viewport band physical crop oracle";
+                rasterBandEvidence = RasterBandPixels(reading, key, frame->theme, factory.get());
             }
             stage = L"weak owner retirement/Prune";
             Require(weakMain.expired(), L"static bitmap entries retain no Main, layout, table block or model owner");
@@ -1037,7 +1641,10 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
                    L"real eight-entry hits including family Emoji/supplementary CJK/combining inline-code/link glyph/badge pixels; "
                    L"link RGBA key, hover/selection bypass and cancellation, 144 DPI, partial-first/full and one-sided cull "
                    L"pixels, fractional document-Y viewport reuse with selection/badges at 96/144/192 DPI, "
-                   L"above-viewport admission and weak owner retirement passed. No Lab Emoji fixture changes, public UI or timing claim.";
+                   L"above-viewport admission and weak owner retirement passed. No Lab Emoji fixture changes, public UI or timing claim." +
+                   rasterBandEvidence + (shortZwjLengthChecked
+                       ? L" Hardware ordinary-ZWJ 129-unit/4-supplementary admission bound passed."
+                       : L" Hardware ordinary-ZWJ length bound is unqualified.");
         }
         catch (winrt::hresult_error const &error)
         {
@@ -1068,7 +1675,7 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
             key.indent = 24;
             key.gap = 12;
             std::atomic<uint64_t> latest{1};
-            auto policy = NativeImagePolicy::CreateWindowedV2();
+            auto policy = NativeImagePolicy::Create();
             notepads_markdown_image_epoch epoch{};
             std::copy(std::begin(key.model.document), std::end(key.model.document), std::begin(epoch.source.document));
             epoch.source.revision = key.model.revision;
@@ -1102,11 +1709,11 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
                 Require(tailIndex < before->Blocks().size(), L"the authored image has a following independent static text block");
                 auto snapshot = std::make_shared<ImagePresentationSnapshot>(memory);
                 snapshot->textGeneration = reading->textGeneration;
-                snapshot->policy = policy->SnapshotV2();
+                snapshot->policy = policy->Snapshot();
                 ImagePresentationEntry intrinsic;
                 intrinsic.state.object = object;
                 intrinsic.state.state = NOTEPADS_MARKDOWN_IMAGE_UNREQUESTED;
-                intrinsic.state.status_flags = NOTEPADS_MARKDOWN_IMAGE_V2_HAS_METADATA;
+                intrinsic.state.status_flags = NOTEPADS_MARKDOWN_IMAGE_HAS_METADATA;
                 intrinsic.state.metadata = MakeRasterImageMetadata({1000, 333, 1000, 333, 1, 4000});
                 snapshot->entries.push_back(intrinsic);
                 auto nextKey = key;
@@ -1273,6 +1880,9 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
                     L"two actual sealed script layouts cover combining/entity Emoji and a scripted color link");
             auto frame = *source;
             frame.measuredBlocks = blocks;
+            // These oracles exercise individual draw-time decisions in isolation.
+            frame.textPrewarm = NativeTextBitmapCache::CreatePrewarm();
+            NativeTextBitmapCache::BeginPrewarm(frame.textPrewarm, key, theme, frame.main);
             PaintState state;
             state.dpi = dpi;
             state.drawPhaseX = static_cast<float>(0.375 / scale);
@@ -1374,6 +1984,55 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
             direct = offGridPixels;
             if (cached && useHardware)
             {
+                // Capture the real target with no visible text, then reuse
+                // the completed loading pixels after an integral relocation.
+                {
+                    auto loadedFrame = frame;
+                    loadedFrame.textPrewarm = NativeTextBitmapCache::CreatePrewarm();
+                    NativeTextBitmapCache::BeginPrewarm(loadedFrame.textPrewarm, key, theme, loadedFrame.main);
+                    auto loadedBlocks = std::make_shared<PreviewVector<PreviewBlockVisual>>(*blocks);
+                    std::array locations{(*loadedBlocks)[0].block, (*loadedBlocks)[1].block};
+                    for (auto const &block : *loadedBlocks)
+                        NativeTextBitmapCache::CollectPrewarm(loadedFrame.textPrewarm, block);
+                    NativeTextBitmapCache::PositionPrewarm(loadedFrame.textPrewarm, locations);
+                    auto opening = loadedFrame;
+                    opening.measuredBlocks = std::make_shared<PreviewVector<PreviewBlockVisual>>(source->Blocks().get_allocator());
+                    NativeTextBitmapCache loadingCache;
+                    auto preloadGate = std::make_shared<NativeTextBitmapCache::PreparationGate>();
+                    NativeTextBitmapCache::SetPreparationGate(loadedFrame, preloadGate);
+                    auto loadNotifications = std::make_shared<std::atomic<unsigned>>(0);
+                    std::function<void()> loadRepaint = [loadNotifications] { ++*loadNotifications; };
+                    (void)raster.Paint(opening, &loadingCache, state);
+                    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(15);
+                    while (!preloadGate->entered.load() && std::chrono::steady_clock::now() < deadline)
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    const auto entered = preloadGate->entered.load();
+                    const auto pendingPixels = entered
+                        ? raster.Paint(loadedFrame, &loadingCache, state, 0, 0, &loadRepaint)
+                        : std::vector<uint8_t>{};
+                    preloadGate->released = true;
+                    Require(entered && pendingPixels != direct && loadingCache.Stats().builds == 0,
+                            L"loading starts raster work without visible text and pending draw uses the existing placeholder");
+                    while ((NativeTextBitmapCache::PreparedCount(loadedFrame.textPrewarm) < 2 || !loadNotifications->load()) &&
+                           std::chrono::steady_clock::now() < deadline)
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    Require(NativeTextBitmapCache::PreparedCount(loadedFrame.textPrewarm) >= 2 && loadNotifications->load(),
+                            L"loading prepares both exact readbacks and delivers repaint");
+                    for (size_t index = 0; index < loadedBlocks->size(); ++index)
+                    {
+                        (*loadedBlocks)[index].block.y += 2 / scale;
+                        locations[index] = (*loadedBlocks)[index].block;
+                    }
+                    NativeTextBitmapCache::PositionPrewarm(loadedFrame.textPrewarm, locations);
+                    loadedFrame.viewportY += 2 / scale;
+                    loadedFrame.measuredBlocks = loadedBlocks;
+                    Equal(raster.Paint(loadedFrame, &loadingCache, state, 0, 0, &loadRepaint), direct,
+                          L"prepared loading pixels match direct glyphs through an integral document relocation");
+                    Require(loadingCache.Stats().prewarmUploads == 2,
+                            L"loading pixels were uploaded from retained exact readbacks instead of rebuilt");
+                    loadingCache.Clear();
+                }
+
                 // Four real short scripts fill the same bounded nearby queue.
                 auto nearbyFrame = frame;
                 auto nearbyBlocks = std::make_shared<PreviewVector<PreviewBlockVisual>>(source->Blocks().get_allocator());
@@ -1383,7 +2042,7 @@ namespace Notepads::Markdown::Native::TextBitmapCacheTests
                                     static_cast<size_t>(block.block.logical_end - block.block.logical_start)).starts_with(L"near-"))
                     {
                         nearbyBlocks->push_back(block);
-                        nearbyBlocks->back().block.y = 240 + 40 * (nearbyBlocks->size() - 1);
+                        nearbyBlocks->back().block.y = 240.0 + 40.0 * static_cast<double>(nearbyBlocks->size() - 1);
                     }
                 Require(nearbyBlocks->size() == 4, L"four authored independent short script paragraphs fill nearby capacity");
                 nearbyFrame.measuredBlocks = nearbyBlocks;

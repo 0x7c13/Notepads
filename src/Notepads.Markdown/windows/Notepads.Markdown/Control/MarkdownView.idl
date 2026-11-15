@@ -1,0 +1,377 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+namespace Notepads.Markdown
+{
+    [flags]
+    enum MarkdownExtensions
+    {
+        None = 0,
+        Math = 1,
+        Mermaid = 2,
+        HtmlBlocks = 4,
+        HtmlInline = 8,
+        HeadingIds = 16,
+        Footnotes = 32,
+        Callouts = 64,
+        DescriptionLists = 128,
+        FrontMatter = 256,
+        FrontMatterCode = 768,
+        FrontMatterHide = 1280,
+        Highlight = 2048,
+        InlineScripts = 4096,
+        EmojiShortcodes = 8192,
+        TableOfContents = 16384,
+        LocalWikiLinks = 32768,
+        NoteEmbeds = 65536,
+        Citations = 131072
+    };
+
+    enum DocumentUpdateStatus
+    {
+        Ready = 0,
+        Canceled = 1,
+        Superseded = 2,
+        NotLoaded = 3,
+        InvalidInput = 4,
+        ResourceLimit = 5,
+        Failed = 6,
+        ResyncRequired = 7
+    };
+
+    enum MarkdownFragmentResult
+    {
+        Pending = 0,
+        NotFound = 1,
+        Applied = 2
+    };
+
+    struct MarkdownSourceEdit
+    {
+        UInt64 Start;
+        UInt64 DeleteLength;
+        UInt64 ReplacementOffset;
+        UInt64 ReplacementLength;
+    };
+
+    struct MarkdownSourceState
+    {
+        Boolean StateKnown;
+        Boolean HasSource;
+        Guid DocumentId;
+        UInt64 Revision;
+        Boolean NeedsResync;
+    };
+
+    struct MarkdownMeasurementStatistics
+    {
+        UInt64 Epoch;
+        UInt64 HitCount;
+        UInt64 MissCount;
+        UInt64 EntryCount;
+        UInt64 ChargedBytes;
+        UInt64 EvictionCount;
+    };
+
+    [default_interface]
+    runtimeclass DocumentUpdateResult
+    {
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 Generation { get; };
+        DocumentUpdateStatus Status { get; };
+        Int32 ErrorCode { get; };
+        Boolean Published { get; };
+        UInt64 BlockCount { get; };
+    }
+
+    [default_interface]
+    runtimeclass MarkdownSelection
+    {
+        Boolean IsAvailable { get; };
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        UInt64 Start { get; };
+        UInt64 Length { get; };
+    };
+
+    [default_interface]
+    runtimeclass MarkdownFindResult
+    {
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        Boolean Found { get; };
+        UInt64 Start { get; };
+        UInt64 Length { get; };
+    };
+
+    [default_interface]
+    runtimeclass MarkdownHeading
+    {
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        UInt32 HeadingId { get; };
+        UInt32 Level { get; };
+        UInt64 Start { get; };
+        UInt64 Length { get; };
+        String Title { get; };
+        String Anchor { get; };
+    };
+
+    [default_interface]
+    runtimeclass MarkdownOutline
+    {
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        UInt32 Version { get; };
+        UInt32 Count { get; };
+        Windows.Foundation.Collections.IVectorView<MarkdownHeading> GetHeadings(UInt32 start, UInt32 count);
+    };
+
+    [default_interface]
+    runtimeclass MarkdownLinkRequestedEventArgs
+    {
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        UInt64 Start { get; };
+        UInt64 Length { get; };
+        String Destination { get; };
+        String Title { get; };
+        Windows.Foundation.IReference<UInt64> LocalPreviewPosition { get; };
+        UInt32 LocalHeadingNode { get; };
+        Boolean IsWikiLink { get; };
+    };
+
+    struct MarkdownNoteEmbedSlot
+    {
+        UInt32 ObjectId;
+        String Target;
+        Windows.Foundation.Rect Bounds;
+    };
+
+    [default_interface]
+    runtimeclass MarkdownTheme
+    {
+        MarkdownTheme();
+        UInt64 Generation;
+        Windows.UI.Color Foreground;
+        Windows.UI.Color Background;
+        Windows.UI.Color LinkForeground;
+        Windows.UI.Color SelectionForeground;
+        Windows.UI.Color SelectionBackground;
+        Windows.UI.Color BorderColor;
+        Windows.UI.Color PanelBackground;
+        Windows.UI.Color FocusColor;
+        Windows.UI.Color CodeCommentForeground;
+        Windows.UI.Color CodeStringForeground;
+        Windows.UI.Color CodeNumberForeground;
+        Windows.UI.Color CodeKeywordForeground;
+        Windows.UI.Color CodeTypeForeground;
+        Windows.UI.Color CodeFunctionForeground;
+        String FontFamily;
+        String CodeFontFamily;
+        Double FontSize;
+        Double LineHeight;
+        Double Padding;
+    };
+
+    enum MarkdownPositionAffinity { Before = 0, After = 1 };
+    enum MarkdownCorrespondence { Exact = 0, Atomic = 1, Hidden = 2, Synthetic = 3, Object = 4 };
+
+    [default_interface]
+    runtimeclass MarkdownMappedPosition
+    {
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        UInt64 SourceByteOffset { get; };
+        UInt64 PreviewUtf16Offset { get; };
+        MarkdownPositionAffinity Affinity { get; };
+        MarkdownCorrespondence Correspondence { get; };
+        UInt32 Effects { get; };
+    };
+
+    [default_interface]
+    runtimeclass MarkdownMappedSpan
+    {
+        MarkdownMappedPosition Start { get; };
+        MarkdownMappedPosition End { get; };
+        Boolean IsDiscontinuous { get; };
+    };
+
+    [default_interface]
+    runtimeclass MarkdownViewportAnchor
+    {
+        Boolean IsAvailable { get; };
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        UInt64 LayoutGeneration { get; };
+        UInt64 PreviewUtf16Offset { get; };
+        Double OffsetWithinLine { get; };
+        UInt64 ScrollStartUtf16Offset { get; };
+        UInt64 ScrollEndUtf16Offset { get; };
+        Double ScrollProgress { get; };
+    };
+
+    [default_interface]
+    runtimeclass MarkdownImageRequest
+    {
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        UInt64 ImageId { get; };
+        UInt64 RequestId { get; };
+        UInt64 ProviderGeneration { get; };
+        String Destination { get; };
+        String Title { get; };
+        String Alt { get; };
+        UInt64 MaximumEncodedBytes { get; };
+        UInt64 MaximumPixelCount { get; };
+    };
+
+    interface IMarkdownImageProvider
+    {
+        Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStream> OpenAsync(MarkdownImageRequest request);
+    };
+
+    interface IMarkdownScrollSettingsProvider
+    {
+        UInt32 VerticalWheelScrollLines { get; };
+    };
+
+    enum RenderingStatus
+    {
+        Success = 0,
+        Canceled = 4,
+        InvalidState = 5,
+        NotLoaded = 9,
+        RenderFailure = 10
+    };
+
+[default_interface]
+    [webhosthidden]
+    runtimeclass MarkdownTaskToggleRequestedEventArgs
+    {
+        Guid DocumentId { get; };
+        UInt64 Revision { get; };
+        UInt64 TextGeneration { get; };
+        UInt64 RequestId { get; };
+        UInt32 TaskId { get; };
+        UInt64 Start { get; };
+        UInt64 Length { get; };
+        UInt64 SourceByteOffset { get; };
+        UInt64 SourceByteLength { get; };
+        String ExpectedSource { get; };
+        Boolean IsChecked { get; };
+        Boolean RequestedChecked { get; };
+    }
+
+    [default_interface]
+    [webhosthidden]
+    runtimeclass MarkdownView : Windows.UI.Xaml.Controls.Control
+    {
+        MarkdownView();
+        Windows.Foundation.IAsyncOperation<DocumentUpdateResult> SetDocumentAsync(
+            Guid documentId, UInt64 revision, UInt8[] utf8);
+        Windows.Foundation.IAsyncOperation<DocumentUpdateResult> SetDocumentWithExtensionsAsync(
+            Guid documentId, UInt64 revision, UInt8[] utf8, MarkdownExtensions extensions);
+        Windows.Foundation.IAsyncOperation<DocumentUpdateResult> ApplyEditsAsync(
+            Guid documentId, UInt64 baseRevision, UInt64 revision, MarkdownSourceEdit[] edits, UInt8[] replacements);
+        MarkdownSourceState GetSourceState();
+        MarkdownMeasurementStatistics GetMeasurementStatistics();
+        MarkdownSelection GetSelection();
+        void SelectRange(Guid documentId, UInt64 revision, UInt64 textGeneration, UInt64 start, UInt64 length);
+        Boolean CopySelection();
+        Windows.Foundation.IAsyncOperation<MarkdownMappedPosition> MapSourcePositionAsync(
+            Guid documentId, UInt64 revision, UInt64 textGeneration, UInt64 sourceByteOffset, MarkdownPositionAffinity affinity);
+        Windows.Foundation.IAsyncOperation<MarkdownMappedPosition> MapPreviewPositionAsync(
+            Guid documentId, UInt64 revision, UInt64 textGeneration, UInt64 previewUtf16Offset, MarkdownPositionAffinity affinity);
+        Windows.Foundation.IAsyncOperation<MarkdownMappedSpan> MapSourceSpanAsync(
+            Guid documentId, UInt64 revision, UInt64 textGeneration, UInt64 start, UInt64 end, MarkdownPositionAffinity affinity);
+        Windows.Foundation.IAsyncOperation<MarkdownMappedSpan> MapPreviewSpanAsync(
+            Guid documentId, UInt64 revision, UInt64 textGeneration, UInt64 start, UInt64 end, MarkdownPositionAffinity affinity);
+        void RevealRange(Guid documentId, UInt64 revision, UInt64 textGeneration, UInt64 start, UInt64 length, Boolean alignToTop, Boolean expandDisclosures);
+        Boolean SetViewportBetweenPositions(Guid documentId, UInt64 revision, UInt64 textGeneration, UInt64 layoutGeneration, UInt64 start, UInt64 end, Double progress);
+        Boolean IsSmoothScrollingEnabled;
+        void SetScrollSettingsProvider(IMarkdownScrollSettingsProvider provider);
+        void CancelScrollAnimation();
+        MarkdownViewportAnchor GetViewportAnchor();
+        event Windows.Foundation.TypedEventHandler<MarkdownView, MarkdownViewportAnchor> ViewportChanged;
+        // Actual vertical travel; -1 when the view has no usable scroll range.
+        Double VerticalScrollProgress { get; };
+        Boolean TrySetVerticalScrollProgress(Double progress);
+        event Windows.Foundation.TypedEventHandler<MarkdownView, Object> VerticalScrollStarting;
+        // Boxed true signals a changed extent; null signals an offset change.
+        event Windows.Foundation.TypedEventHandler<MarkdownView, Object> VerticalScrollChanged;
+        void SetImageProvider(IMarkdownImageProvider provider, UInt64 generation);
+        void SetTheme(MarkdownTheme theme);
+        event Windows.Foundation.TypedEventHandler<MarkdownView, MarkdownSelection> SelectionChanged;
+        event Windows.Foundation.TypedEventHandler<MarkdownView, Object> CodeCopied;
+        event Windows.Foundation.TypedEventHandler<MarkdownView, MarkdownLinkRequestedEventArgs> LinkRequested;
+void Cancel();
+        void Refresh();
+        void ApplyTheme(Windows.UI.Color foreground, Windows.UI.Color background,
+            String fontFamily, Double fontSize, Double lineHeight, Double padding,
+            UInt64 themeGeneration);
+        UInt32 AbiVersion { get; };
+        UInt64 AcceptedRevision { get; };
+        Guid DisplayedDocumentId { get; };
+        UInt64 DisplayedRevision { get; };
+        UInt64 DisplayedGeneration { get; };
+        String DisplayedText { get; };
+        UInt64 ThemeGeneration { get; };
+RenderingStatus LastStatus { get; };
+        Boolean IsSurfaceReady { get; };
+        // A paint-only viewport changed, or a deferred device retry repainted the document.
+        event Windows.Foundation.TypedEventHandler<MarkdownView, Object> InitialViewportChanged;
+        Double MeasuredWidth { get; };
+        Double MeasuredHeight { get; };
+        String RenderingError { get; };
+        // Text properties return only the selected section in an embedded view.
+        // All identity-bearing positions/ranges retain original Main UTF16 offsets;
+        // use UIA DocumentRange for excerpt-relative search and range operations.
+        UInt64 DisplayedTextLength { get; };
+        Windows.Foundation.IAsyncOperation<MarkdownFindResult> FindTextAsync(
+            Guid documentId, UInt64 revision, UInt64 textGeneration, String query,
+            UInt64 start, UInt64 length, Boolean backward, Boolean ignoreCase);
+        MarkdownOutline GetOutline();
+        void NavigateToHeading(Guid documentId, UInt64 revision, UInt64 textGeneration, UInt32 headingId);
+        MarkdownFragmentResult NavigateToFragment(Guid documentId, UInt64 revision, UInt64 textGeneration, String destination);
+        MarkdownFragmentResult NavigateToPreviewPosition(Guid documentId, UInt64 revision, UInt64 textGeneration, UInt64 position);
+        MarkdownFragmentResult NavigateToHeadingNode(Guid documentId, UInt64 revision, UInt64 textGeneration, UInt32 node);
+        MarkdownFragmentResult NavigateToHeadingTitle(Guid documentId, UInt64 revision, UInt64 textGeneration, String title);
+        Windows.Foundation.Collections.IVectorView<MarkdownNoteEmbedSlot> GetVisibleNoteEmbeds();
+        Boolean SetNoteEmbedChild(Guid documentId, UInt64 revision, UInt64 textGeneration, UInt32 objectId, MarkdownView child);
+        void RestrictNoteEmbedToHeading(String title);
+        Boolean TaskInteractionEnabled;
+        event Windows.Foundation.TypedEventHandler<MarkdownView, MarkdownTaskToggleRequestedEventArgs> TaskToggleRequested;
+        // Retain the last published model across a visual detach without retaining its worker.
+        Boolean CacheDocumentOnUnload;
+        Boolean ShowInactiveCaretMarker;
+        Boolean HasCachedDocument { get; };
+        // Release rendering/resources; CacheDocumentOnUnload controls model retention for explicit resume.
+        void SuspendCachedDocument();
+        // Discard optional cached source/model storage; caller-owned editor text is unaffected.
+        void DiscardCachedDocument();
+        // Tracked preview/cache capacities, excluding editor, SDK and GPU; UInt64.MaxValue on failure.
+        UInt64 GetRetainedByteEstimate();
+        Windows.Foundation.IAsyncOperation<DocumentUpdateResult> ResumeCachedDocumentAsync(Guid documentId, UInt64 revision);
+        Boolean SetFollowViewportBetweenPositions(Guid documentId, UInt64 revision, UInt64 textGeneration,
+            UInt64 layoutGeneration, UInt64 start, UInt64 end, Double progress, Double topBlend, Double bottomBlend);
+        // Returns true once the requested follow offset has actually been drawn.
+        Boolean TryRestoreFollowViewport(Guid documentId, UInt64 revision, UInt64 textGeneration,
+            UInt64 layoutGeneration, UInt64 start, UInt64 end, Double progress, Double topBlend, Double bottomBlend);
+        // Defer new image/math/diagram work while the host restores its initial viewport.
+        // Existing workers are not suspended; the host owns releasing this flag.
+        Boolean IsResourceRenderingDeferred;
+        // Host resumes a pressure-retired cached visual only after validating its source stamp.
+        Boolean IsCachedPresentationSuspended { get; };
+    }
+}

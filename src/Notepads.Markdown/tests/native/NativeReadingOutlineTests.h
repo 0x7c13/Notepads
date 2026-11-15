@@ -7,6 +7,7 @@
 #include <string>
 #include <string_view>
 #include <winrt/Notepads.Markdown.h>
+#include "Diagnostics/CoreValidationSuite.h"
 
 namespace Notepads::Markdown::Native::ReadingOutlineTests
 {
@@ -48,4 +49,11 @@ namespace Notepads::Markdown::Native::ReadingOutlineTests
     // whose IUnknown QI releases the caller's last external page reference.
     bool RunPageReentrancy(winrt::Notepads::Markdown::MarkdownOutline const &snapshot,
                            std::shared_ptr<ReadingMemory> const &memory);
+    // Reuses the reading suite's mounted isolated control. A real deferred
+    // disclosure reveal is held until its expanded extent is ready, making
+    // newer follow admission and stale rejection independent of XAML timing.
+    winrt::Windows::Foundation::IAsyncAction RunFollowDisclosureNavigationAsync(
+        winrt::Notepads::Markdown::MarkdownView view,
+        winrt::Windows::UI::Core::CoreDispatcher dispatcher,
+        std::shared_ptr<CoreValidation::Context> context);
 }

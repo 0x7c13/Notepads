@@ -57,7 +57,7 @@ jobs:
   native:
     name: Native Tests
     runs-on: windows-2025-vs2026
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -65,8 +65,14 @@ jobs:
       - uses: ./.github/actions/setup-dotnet
       - name: Verify native toolchain
         run: ./scripts/Initialize-BuildTools.ps1 -InstallMissing
+      - name: Provision pinned Markdown Rust toolchain
+        run: ./scripts/Initialize-RustToolchain.ps1 -InstallMissing
       - name: Run native comparison, paragraph and regex tests
         run: ./scripts/Test.ps1 -Suite Integration -Group NativeDiff,NativeBidi,RegexText -Configuration Release -Platform x64
+      - name: Run Markdown Rust layer tests
+        run: ./src/Notepads.Markdown/scripts/Test-Rust.ps1 -Layer All -Target x86_64-pc-windows-msvc
+      - name: Run Markdown Win32 ABI tests
+        run: ./src/Notepads.Markdown/scripts/Test-Rust.ps1 -Layer Interop -Target i686-pc-windows-msvc
       - name: Preserve native test evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -100,6 +106,8 @@ jobs:
             tests/IntegrationTests/IntegrationTests.csproj
       - name: Verify native toolchain
         run: ./scripts/Initialize-BuildTools.ps1 -InstallMissing
+      - name: Provision pinned Markdown Rust toolchain
+        run: ./scripts/Initialize-RustToolchain.ps1 -InstallMissing
       - name: Publish and validate unsigned production package
         id: build
         env:
@@ -167,6 +175,8 @@ jobs:
             tests/IntegrationTests/**/*.csproj
       - name: Verify native toolchain
         run: ./scripts/Initialize-BuildTools.ps1 -InstallMissing
+      - name: Provision pinned Markdown Rust toolchain
+        run: ./scripts/Initialize-RustToolchain.ps1 -InstallMissing
       - name: Restore managed and native dependencies
         run: |
           $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'

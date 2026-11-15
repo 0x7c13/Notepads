@@ -1,0 +1,40 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE file in the project root for license information.
+-->
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <WindowsSdkPackageVersion>10.0.26100.87</WindowsSdkPackageVersion>
+    <UseUwp>true</UseUwp>
+    <UseUwpTools>false</UseUwpTools>
+    <IsAotCompatible>true</IsAotCompatible>
+    <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CsWinRTIncludes>Notepads.Markdown</CsWinRTIncludes>
+    <CsWinRTAotOptimizerEnabled>true</CsWinRTAotOptimizerEnabled>
+    <CsWinRTAotWarningLevel>2</CsWinRTAotWarningLevel>
+    <LangVersion>14.0</LangVersion>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <Configurations>Debug;Release;Production</Configurations>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AssemblyName>Notepads.Markdown.Projection</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+    <IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" />
+    <!-- Consumer.targets owns the native package payload. -->
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\Notepads.Markdown\Notepads.Markdown.vcxproj" ReferenceOutputAssembly="false" Private="false" AdditionalProperties="NotepadsMarkdownEnableDiagnostics=$(NotepadsMarkdownEnableDiagnostics)">
+      <SetPlatform>Platform=$(NotepadsMarkdownNativePlatform)</SetPlatform>
+      <SetConfiguration>Configuration=Release</SetConfiguration>
+    </ProjectReference>
+    <CsWinRTInputs Include="$(NotepadsMarkdownNativeDir)Notepads.Markdown.winmd" />
+  </ItemGroup>
+  <Target Name="ValidateNotepadsMarkdownProjectionInput" BeforeTargets="CsWinRTPrepareProjection" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="!Exists('$(NotepadsMarkdownNativeDir)Notepads.Markdown.winmd')" Text="Build the matching Notepads.Markdown native project before generating its projection." />
+  </Target>
+</Project>
