@@ -10,6 +10,7 @@ using Windows.System;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -26,7 +27,9 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
     private MenuFlyoutItem _webSearch;
     private MenuFlyoutItem _wordWrap;
     private MenuFlyoutItem _rightToLeftReadingOrder;
-    private MenuFlyoutItem _previewToggle;
+    private ToggleMenuFlyoutItem _previewScrollSync;
+    private long _previewScrollSyncCallback;
+    private bool _previewScrollSyncRegistered, _updatingPreviewScrollSync;
     private MenuFlyoutItem _share;
     private Control _presenter;
 
@@ -52,6 +55,7 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
         AddEditorTools();
         Items.Add(WebSearch);
         Items.Add(PreviewToggle);
+        Items.Add(PreviewScrollSync);
         Items.Add(Share);
 
         Opening += TextEditorContextFlyout_Opening;
@@ -60,6 +64,11 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
     public void Dispose()
     {
         Opening -= TextEditorContextFlyout_Opening;
+        if (_previewScrollSyncRegistered)
+        {
+            _previewScrollSync.UnregisterPropertyChangedCallback(ToggleMenuFlyoutItem.IsCheckedProperty, _previewScrollSyncCallback);
+            _previewScrollSyncRegistered = false;
+        }
         _presenter = null;
     }
 
@@ -95,7 +104,15 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
         Paste.IsEnabled = _textEditorCore.IsEnabled;
         _lineTools.IsEnabled = _textEditorCore.CanTransformSelectedLines;
 
-        PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType) ? Visibility.Visible : Visibility.Collapsed;
+        PreviewToggle.IsEnabled = _textEditorCore.IsEnabled && _textEditor.Mode == TextEditorMode.Editing;
+        PreviewToggle.Visibility = FileTypeUtility.IsPreviewSupported(_textEditor.FileType, _textEditor.DocumentLanguage?.Id) ? Visibility.Visible : Visibility.Collapsed;
+        bool sync = true;
+        bool hasPreview = _textEditor is TextEditor editor && editor.TryGetMarkdownScrollSync(out sync);
+        PreviewScrollSync.Visibility = hasPreview ? Visibility.Visible : Visibility.Collapsed;
+        PreviewScrollSync.IsEnabled = hasPreview;
+        _updatingPreviewScrollSync = true;
+        try { PreviewScrollSync.IsChecked = sync; }
+        finally { _updatingPreviewScrollSync = false; }
         WordWrap.Icon.Visibility = (_textEditorCore.TextWrapping == TextWrapping.Wrap) ? Visibility.Visible : Visibility.Collapsed;
         RightToLeftReadingOrder.IsEnabled = _textEditorCore.IsEnabled;
         RightToLeftReadingOrder.Icon.Visibility = _textEditorCore.RightToLeftReadingOrder ? Visibility.Visible : Visibility.Collapsed;
@@ -317,35 +334,27 @@ public sealed partial class TextEditorContextFlyout : MenuFlyout
         }
     }
 
-    public MenuFlyoutItem PreviewToggle
+    internal ToggleMenuFlyoutItem PreviewScrollSync
     {
         get
         {
-            if (_previewToggle != null) return _previewToggle;
-
-            _previewToggle = new MenuFlyoutItem
+            if (_previewScrollSync != null) return _previewScrollSync;
+            _previewScrollSync = new ToggleMenuFlyoutItem
             {
-                Text = _resourceLoader.GetString("TextEditor_ContextFlyout_PreviewToggleDisplay_Text"),
-                Icon = new FontIcon()
-                {
-                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                    Glyph = "\uE89F"
-                }
+                Text = _resourceLoader.GetString("MarkdownPreview_ScrollSync"),
+                Visibility = Visibility.Collapsed,
+                IsEnabled = false
             };
-            _previewToggle.KeyboardAccelerators.Add(new KeyboardAccelerator()
-            {
-                Modifiers = VirtualKeyModifiers.Menu,
-                Key = VirtualKey.P,
-                IsEnabled = false,
-            });
-            _previewToggle.Click += (sender, args) =>
-            {
-                if (FileTypeUtility.IsPreviewSupported(_textEditor.FileType))
+            AutomationProperties.SetAutomationId(_previewScrollSync, "MarkdownPreviewScrollSync");
+            _previewScrollSyncCallback = _previewScrollSync.RegisterPropertyChangedCallback(
+                ToggleMenuFlyoutItem.IsCheckedProperty, (_, _) =>
                 {
-                    _textEditor.ShowHideContentPreview();
-                }
-            };
-            return _previewToggle;
+                    if (!_updatingPreviewScrollSync && _textEditor is TextEditor editor)
+                        editor.SetMarkdownScrollSync(_previewScrollSync.IsChecked);
+                });
+            _previewScrollSyncRegistered = true;
+            return _previewScrollSync;
         }
     }
+
 }

@@ -319,7 +319,8 @@ internal static partial class SessionControllerTests
         public void SwitchTo(ITextEditor textEditor) => throw Unused();
         public WorkspaceTab FindReadyTab(StorageFile file) =>
             _open.FirstOrDefault(tab => tab.ReadyEditor?.EditingFile?.IsEqual(file) == true);
-        public Task<bool> OpenFileAsync(StorageFile file, Func<WorkspaceFileOpenResult, Task> presentResultAsync) => throw Unused();
+        public Task<bool> OpenFileAsync(StorageFile file, Func<WorkspaceFileOpenResult, Task> presentResultAsync,
+            Func<bool> mayPublish = null) => throw Unused();
         public void FocusOnTextEditor(ITextEditor textEditor) => throw Unused();
         public void FocusOnSelectedTextEditor() => throw Unused();
     }

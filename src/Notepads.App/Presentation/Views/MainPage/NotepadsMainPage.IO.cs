@@ -24,6 +24,7 @@ namespace Notepads.Presentation.Views.MainPage;
 
 public sealed partial class NotepadsMainPage
 {
+    private ulong _markdownLinkRequest;
 
     private async Task CreateNewTextEditorAsync(bool onlyIfEmpty = false)
     {
@@ -82,15 +83,19 @@ public sealed partial class NotepadsMainPage
         }
     }
 
-    public Task<bool> OpenFileAsync(StorageFile file, bool rebuildOpenRecentItems = true)
+    public Task<bool> OpenFileAsync(StorageFile file, bool rebuildOpenRecentItems = true) =>
+        OpenFileAsync(file, rebuildOpenRecentItems, mayPublish: null);
+
+    private Task<bool> OpenFileAsync(StorageFile file, bool rebuildOpenRecentItems, Func<bool> mayPublish, Action<WorkspaceTab> opened = null)
     {
         if (_viewClosed || _isAppClosing || file == null || NotepadsCore.IsClosing) return Task.FromResult(false);
         return NotepadsCore.OpenFileAsync(file, async result =>
         {
             if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing) return;
+            if (result.Tab != null) opened?.Invoke(result.Tab);
             switch (result.Kind)
             {
-                case WorkspaceFileOpenKind.Existing:
+                case WorkspaceFileOpenKind.Existing when mayPublish == null:
                     NotificationCenter.Instance.PostNotification(
                         _resourceLoader.GetString("TextEditor_NotificationMsg_FileAlreadyOpened"), 2500);
                     break;
@@ -108,7 +113,23 @@ public sealed partial class NotepadsMainPage
                     if (!dialog.IsAborted) NotepadsCore.FocusOnSelectedTextEditor();
                     break;
             }
-        });
+        }, mayPublish);
+    }
+
+    internal async Task<bool> OpenMarkdownLinkAsync(StorageFile file, string fragment, bool wikiHeading, Func<bool> isCurrent = null)
+    {
+        if (isCurrent?.Invoke() == false) return false;
+        var request = ++_markdownLinkRequest;
+        bool MayPublish() => request == _markdownLinkRequest && isCurrent?.Invoke() != false;
+        WorkspaceTab opened = null;
+        await OpenFileAsync(file, rebuildOpenRecentItems: true, MayPublish, tab => opened = tab);
+        if (_viewClosed || _isAppClosing || NotepadsCore.IsClosing || request != _markdownLinkRequest) return true;
+
+        // Opening the target can hide the originating preview. After publication
+        // only the page request and selected destination govern the fragment.
+        var selected = NotepadsCore.GetSelectedReadyEditor();
+        if (selected == null || !ReferenceEquals(selected, opened?.ReadyEditor)) return false;
+        return fragment == null || (selected is TextEditor editor && editor.QueueMarkdownFragment(fragment, wikiHeading));
     }
 
     // Here we track the file extension opened by user but not supported by Notepads.

@@ -218,7 +218,7 @@ public sealed partial class TabContextFlyout : MenuFlyout
                     dataPackage.SetText(_filePath);
                     Clipboard.SetContentWithOptions(dataPackage, new ClipboardContentOptions() { IsAllowedInHistory = true, IsRoamable = true });
                     Clipboard.Flush(); // This method allows the content to remain available after the application shuts down.
-                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileNameOrPathCopied"), 1500);
+                    NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("Clipboard_NotificationMsg_Copied"), 1500);
                 }
                 catch (Exception ex)
                 {

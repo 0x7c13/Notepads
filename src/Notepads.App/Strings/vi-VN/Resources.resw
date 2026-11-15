@@ -181,7 +181,7 @@
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>Xem trước các thay đổi</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>Hủy bỏ các thay đổi</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>Đã sửa đổi</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
-  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>Đã sao chép</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
+  <data name="Clipboard_NotificationMsg_Copied" xml:space="preserve"><value>Đã sao chép</value><comment>Notification displayed after copying text to the clipboard.</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>Đã lưu</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Nhấn F11 để thoát chế độ toàn màn hình</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Tải lại tệp từ đĩa</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
@@ -337,4 +337,9 @@
   <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Bao gồm cả một phần của từ</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
   <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Hiển thị dấu cách và tab</value></data>
+  <data name="MarkdownPreview_TooLarge" xml:space="preserve"><value>Bản xem trước chỉ hỗ trợ tài liệu có kích thước tối đa 4 MiB.</value></data>
+  <data name="MarkdownPreview_Failed" xml:space="preserve"><value>Không thể cập nhật bản xem trước.</value></data>
+  <data name="MarkdownPreview_Loading" xml:space="preserve"><value>Đang cập nhật bản xem trước…</value></data>
+  <data name="MarkdownPreview_LinkFailed" xml:space="preserve"><value>Không thể mở liên kết này.</value></data>
+  <data name="MarkdownPreview_ScrollSync" xml:space="preserve"><value>Đồng bộ cuộn</value></data>
 </root>

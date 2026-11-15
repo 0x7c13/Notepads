@@ -148,7 +148,13 @@ public sealed partial class TextEditor
 
     private void FindAllQueryChanged(object sender, SearchContext context)
     {
-        if (_disposed || FindAllPanel?.Visibility != Visibility.Visible) return;
+        if (_disposed) return;
+        if (_markdownSearchContext != null && !SameSearchContext(context, _markdownSearchContext))
+        {
+            ClearMarkdownSearch();
+            CancelSearch();
+        }
+        if (FindAllPanel?.Visibility != Visibility.Visible) return;
         // TextChanged can arrive after a command has already read the new text.
         // That notification must not cancel a search using those same options.
         if (_findAllContext != null && context.SearchText == _findAllContext.SearchText && context.MatchCase == _findAllContext.MatchCase &&
@@ -192,6 +198,11 @@ public sealed partial class TextEditor
         // ListViewItem consumes Enter to invoke ItemClick. Handle it during
         // preview so keyboard confirmation can also collapse the results.
         args.Handled = true;
+        ConfirmFindAllResult();
+    }
+
+    private void ConfirmFindAllResult()
+    {
         if (TextEditorCore.NavigateSearchResult(_findAllResults, FindAllList.SelectedIndex))
         {
             CancelSearch();

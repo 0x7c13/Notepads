@@ -35,6 +35,14 @@ public sealed partial class App : Application
     {
         var log = new StringBuilder();
         var phase = TestApplicationData.Arguments;
+        if (phase.StartsWith("--markdown", StringComparison.Ordinal))
+        {
+            // The visual fixtures restore their original size. A persisted maximized
+            // window can exceed TryResizeView's admitted restored-window bounds.
+            Windows.UI.ViewManagement.ApplicationView.PreferredLaunchViewSize = new Windows.Foundation.Size(1100, 760);
+            Windows.UI.ViewManagement.ApplicationView.PreferredLaunchWindowingMode =
+                Windows.UI.ViewManagement.ApplicationViewWindowingMode.PreferredLaunchViewSize;
+        }
         var watch = Stopwatch.StartNew();
         var success = false;
         try
@@ -106,6 +114,38 @@ public sealed partial class App : Application
         "--clipboard-rejected-cut" => ClipboardContractTests.RunRejectedCutAsync(log),
         "--workspace-commands" => WorkspaceCommandFeatureTests.RunAsync(log),
         "--controls-migration" => ControlsMigrationTests.RunAsync(log),
+        "--markdown" => MarkdownFeatureTests.RunAsync(log),
+        "--markdown-mermaid" => MarkdownMermaidTests.RunAsync(log),
+        "--markdown-math-cases" => MarkdownMathCasesTests.RunAsync(log),
+        "--markdown-quickwins" => MarkdownFeatureTests.RunQuickWinsAsync(log),
+        "--markdown-cache-lifecycle" => MarkdownFeatureTests.RunCacheLifecycleAsync(log),
+        "--markdown-cache-reflow" => MarkdownFeatureTests.RunCacheReflowAsync(log),
+        "--markdown-scroll-sync-menu" => MarkdownFeatureTests.RunScrollSyncMenuAsync(log),
+        "--markdown-yaml" => MarkdownFeatureTests.RunYamlAsync(log),
+        "--markdown-html-controls" => MarkdownFeatureTests.RunHtmlControlsAsync(log),
+        "--markdown-html-tables" => MarkdownFeatureTests.RunHtmlTablesAsync(log),
+        "--markdown-selection-stability" => MarkdownFeatureTests.RunSelectionStabilityAsync(log),
+        "--markdown-image-cache-stability" => MarkdownFeatureTests.RunImageCacheStabilityAsync(log),
+        "--markdown-wrapped-stability" => MarkdownFeatureTests.RunWrappedStabilityAsync(log),
+        "--markdown-source-find" => MarkdownFeatureTests.RunSourceFindAsync(log),
+        "--markdown-viewport-geometry" => MarkdownFeatureTests.RunViewportTemplateGeometryAsync(log),
+        "--markdown-viewport-refresh" => MarkdownFeatureTests.RunViewportRefreshAsync(log),
+        "--markdown-host-state-repair" => MarkdownFeatureTests.RunHostStateRepairAsync(log),
+        "--markdown-host-io" => MarkdownHostIoTests.RunAsync(log),
+        "--markdown-broker-notes" => MarkdownFeatureTests.RunBrokerNotesAsync(log),
+        "--markdown-startup-perf" => MarkdownStartupPerformanceTests.RunAsync(log),
+        "--markdown-lab-edit-replay" => MarkdownLabEditReplayTests.RunAsync(log),
+        "--markdown-lab-viewport-highlight" => MarkdownLabViewportHighlightTests.RunAsync(log),
+        "--markdown-resource-deferral" => MarkdownResourceDeferralTests.RunAsync(log),
+        "--markdown-image-geometry" => MarkdownResourceDeferralTests.RunStableImageGeometryAsync(log),
+        "--markdown-theme-width" => MarkdownThemeWidthTests.RunAsync(log),
+        "--markdown-source-viewport-span" => MarkdownSourceViewportTests.RunAsync(log),
+        "--markdown-source-viewport-pending-wrap" => MarkdownSourceViewportPendingWrapTests.RunAsync(log),
+        "--markdown-viewport-interpolation" => MarkdownViewportInterpolationTests.RunAsync(log),
+        "--markdown-core-interop" => MarkdownFeatureTests.RunCoreInteropAsync(log),
+        "--markdown-core-reading" => MarkdownCoreReadingTests.RunAsync(log),
+        "--markdown-core-images" => MarkdownCoreImageTests.RunAsync(log),
+        "--markdown-core-highlight" => MarkdownCoreHighlightTests.RunAsync(log),
         "--print-state" => WorkspaceCommandFeatureTests.RunPrintStateAsync(log),
         "--preferences" => PreferenceFeatureTests.RunAsync(log),
         "--preferences-store" => PreferenceFeatureTests.RunStoreAsync(log),

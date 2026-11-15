@@ -15,6 +15,9 @@ if (@($appGroups | Where-Object { $_.Configuration -notin @('Release', 'Debug') 
 }
 $groups = @($appGroups | Where-Object Configuration -eq $configuration | ForEach-Object Group)
 if (!$groups.Count) { throw "No default App test groups were discovered for $configuration." }
-if ($Lane -eq 'E2E') { $groups = @('UIAutomation', 'DragDrop', 'TabDragging', 'AppLifecycle', 'WindowMoveBroker') + $groups }
+if ($Lane -eq 'E2E') {
+    $groups = @('UIAutomation', 'DragDrop', 'TabDragging', 'AppLifecycle', 'WindowMoveBroker',
+        'MarkdownCoreInterop', 'MarkdownCoreImages') + $groups
+}
 Write-Host ("$Lane groups ($configuration): " + ($groups -join ', '))
 & (Join-Path $PSScriptRoot 'Test.ps1') -Suite Integration -Group $groups -Configuration $configuration -Platform x64

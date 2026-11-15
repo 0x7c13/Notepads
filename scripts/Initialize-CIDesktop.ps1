@@ -5,7 +5,7 @@
 
 # Configures only an ephemeral hosted runner; local desktops use their own setup.
 #requires -Version 7.4
-param([ValidateSet('x64', 'ARM64')][string] $Platform = 'x64', [switch] $Production)
+param([ValidateSet('x64', 'ARM64')][string] $Platform = 'x64', [switch] $Production, [switch] $WideDisplay)
 $ErrorActionPreference = 'Stop'
 if ($env:RUNNER_ENVIRONMENT -ne 'github-hosted') { throw 'Desktop CI setup requires a disposable GitHub-hosted runner.' }
 $repo = Split-Path $PSScriptRoot -Parent
@@ -13,15 +13,24 @@ $evidence = Join-Path $repo 'artifacts/ci-desktop'
 $null = New-Item -ItemType Directory -Path $evidence -Force
 Add-Type -AssemblyName System.Windows.Forms
 $session = (Get-Process -Id $PID).SessionId
+$interactive = [Environment]::UserInteractive
+# The E2E geometry fixtures resize real windows beyond the default 1024x768 desktop.
+if ($WideDisplay -and $interactive -and $session -ne 0) {
+    Set-DisplayResolution -Width 1920 -Height 1080 -Force
+}
+$screens = @([Windows.Forms.Screen]::AllScreens)
 [ordered]@{
     OS = [Environment]::OSVersion.VersionString
     Architecture = [Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
-    Interactive = [Environment]::UserInteractive
+    Interactive = $interactive
     SessionId = $session
     Elevated = [Security.Principal.WindowsPrincipal]::new([Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-    Screens = @([Windows.Forms.Screen]::AllScreens | ForEach-Object { $_.Bounds.ToString() })
+    Screens = @($screens | ForEach-Object { $_.Bounds.ToString() })
 } | ConvertTo-Json | Tee-Object -FilePath (Join-Path $evidence 'environment.json')
-if (![Environment]::UserInteractive -or $session -eq 0) { throw 'UI tests require an interactive desktop session.' }
+if (!$interactive -or $session -eq 0) { throw 'UI tests require an interactive desktop session.' }
+if ($WideDisplay -and !($screens | Where-Object { $_.Primary -and $_.Bounds.Width -eq 1920 -and $_.Bounds.Height -eq 1080 })) {
+    throw 'The hosted E2E desktop must report a 1920x1080 primary display for the geometry fixtures.'
+}
 
 # This disposable desktop belongs to the input tests. Let their driver switch
 # between its two verified windows without the user's foreground-lock delay.

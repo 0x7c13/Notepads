@@ -68,18 +68,20 @@ public sealed partial class TextEditor
 
     private Task PrepareDiffPreviewAsync() => RunDocumentOperationAsync(async cancellation =>
     {
-        if (_disposed || _diffGeneration != null || LastSavedSnapshot == null) return;
+        if (_disposed || _windowMoveActive || _diffGeneration != null || LastSavedSnapshot == null) return;
         if (!TextEditorCore.IsDocumentModified)
         {
             NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("DiffViewer_NoChanges"), 2500);
             return;
         }
+        var preview = _markdownPreview;
         using var baseline = LastSavedSnapshot.Baseline.Retain();
         var generation = new DiffGeneration(TextEditorCore, cancellation);
         _diffGeneration = generation;
         var published = false;
         try
         {
+            if (preview != null) preview.IsExtensionEnabled = false;
             TextEditorCore.IsEnabled = false;
             generation.Viewer.CloseRequested += DiffViewer_CloseRequested;
             generation.Viewer.ZoomChanged += DiffViewer_ZoomChanged;
@@ -98,6 +100,8 @@ public sealed partial class TextEditor
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("DiffViewer_NoChanges"), 2500);
                 return;
             }
+            if (_isContentPreviewPanelOpened) CloseSplitView();
+            else _markdownReopenCache?.Evict(this);
             DiffPresenter.Content = generation.Viewer;
             EditorRowDefinition.Height = new GridLength(0);
             SideBySideDiffViewRowDefinition.Height = new GridLength(1, GridUnitType.Star);
@@ -124,6 +128,8 @@ public sealed partial class TextEditor
                 {
                     TextEditorCore.IsEnabled = generation.PreviousEnabled;
                     RestoreDiffSourceViewport(generation);
+                    if (preview != null && ReferenceEquals(preview, _markdownPreview))
+                        preview.IsExtensionEnabled = true;
                 }
             }
         }

@@ -181,7 +181,7 @@
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>पाठ परिवर्तन प्रीव्यू</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>सभी बदलाव वापस लें</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>संशोधित</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
-  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>कॉपी किया गया</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
+  <data name="Clipboard_NotificationMsg_Copied" xml:space="preserve"><value>कॉपी किया गया</value><comment>Notification displayed after copying text to the clipboard.</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>सेव किया गया</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>फ़ुल स्क्रीन से बाहर निकलने के लिए F11 दबाएँ</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>डिस्क से पुनः लोड करें</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
@@ -337,4 +337,9 @@
   <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>शब्दों के हिस्से भी</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
   <data name="DiffViewer_Whitespace" xml:space="preserve"><value>स्पेस और टैब दिखाएँ</value></data>
+  <data name="MarkdownPreview_TooLarge" xml:space="preserve"><value>पूर्वावलोकन 4 MiB तक के दस्तावेज़ों के लिए उपलब्ध है।</value></data>
+  <data name="MarkdownPreview_Failed" xml:space="preserve"><value>पूर्वावलोकन अपडेट नहीं किया जा सका।</value></data>
+  <data name="MarkdownPreview_Loading" xml:space="preserve"><value>पूर्वावलोकन अपडेट हो रहा है…</value></data>
+  <data name="MarkdownPreview_LinkFailed" xml:space="preserve"><value>यह लिंक नहीं खोला जा सका।</value></data>
+  <data name="MarkdownPreview_ScrollSync" xml:space="preserve"><value>स्क्रॉल समन्वयित करें</value></data>
 </root>

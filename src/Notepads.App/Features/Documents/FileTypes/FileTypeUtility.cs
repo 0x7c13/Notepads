@@ -59,11 +59,8 @@ public static class FileTypeUtility
         return FileType.Unknown;
     }
 
-    public static bool IsPreviewSupported(FileType fileType)
-    {
-        // Preview rendering is suspended until the V2 renderers are implemented.
-        return false;
-    }
+    public static bool IsPreviewSupported(FileType fileType, string languageId = null) =>
+        fileType == FileType.MarkdownFile || string.Equals(languageId, "markdown", StringComparison.Ordinal);
 
     public static string GetDisplayText(FileType fileType)
     {

@@ -221,6 +221,9 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         Native.Modified += OnNativeModified;
         Native.CharAdded += OnNativeCharAdded;
         Native.UpdateUI += OnNativeUpdateUI;
+        Loaded += MarkdownViewport_Loaded;
+        Unloaded += MarkdownViewport_Unloaded;
+        IsEnabledChanged += MarkdownEnabledChanged;
         Native.SavePointReached += OnSavePointReached;
         Native.SavePointLeft += OnSavePointLeft;
         _keyboardCommandHandler = GetKeyboardCommandHandler();
@@ -376,8 +379,13 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         UpdateLineNumberRevealLayout();
         // Reflow at a fixed scroll position need not raise SCN_UPDATEUI.
         QueueReadingAids();
+        NotifyMarkdownViewportGeometryChanged();
     }
-    private void OnNativeScrollStarted(object sender, object args) => ScrollStarted?.Invoke(this, EventArgs.Empty);
+    private void OnNativeScrollStarted(object sender, object args)
+    {
+        InvalidateMarkdownFollowDispatch();
+        ScrollStarted?.Invoke(this, EventArgs.Empty);
+    }
 
     private void UpdateLineNumberRevealLayout()
     {
@@ -433,10 +441,12 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         if ((args.ModificationType & (int)ModificationFlags.ChangeStyle) != 0) InvalidateBraceStyles();
         if ((args.ModificationType & (int)TextModifications) == 0) return;
         ContentVersion++;
+        ClearMarkdownSearchMatch();
         if (args.Position <= DocumentTitle.SampleBytes) LeadingTextVersion++;
         _lastInsertionStart = (args.ModificationType & (int)ModificationFlags.InsertText) != 0 ? args.Position : -1;
         _lastInsertionEnd = args.Position + args.Length;
         if (_settingText) return;
+        NotifyMarkdownModification(args);
         UpdateSyntaxStatus();
         if (args.Position <= IndentationDetector.SampleBytes) QueueIndentationStatus();
         if (args.Position <= DocumentLanguages.DetectionSampleBytes) QueueLanguageDetection();
@@ -448,13 +458,21 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private void OnNativeUpdateUI(Editor sender, UpdateUIEventArgs args)
     {
-        UpdateSyntaxStatus();
-        if ((args.Updated & (int)(Update.Content | Update.Selection | Update.VScroll | Update.HScroll)) != 0) QueueReadingAids();
-        // Scintilla reports a content update without a separate selection flag
-        // when typing replaces a selection. The status bar still needs the
-        // final caret/selection after that edit.
-        if ((args.Updated & (int)(Update.Content | Update.Selection)) != 0) SelectionChanged?.Invoke(this, new RoutedEventArgs());
-        if ((args.Updated & (int)(Update.VScroll | Update.HScroll)) != 0) ViewportChanged?.Invoke(this, EventArgs.Empty);
+        var previous = _markdownUpdateUIContext;
+        _markdownUpdateUIContext = CaptureMarkdownUpdateUI();
+        try
+        {
+            InvalidateMarkdownSearchMatch();
+            UpdateSyntaxStatus();
+            if ((args.Updated & (int)(Update.Content | Update.Selection | Update.VScroll | Update.HScroll)) != 0) QueueReadingAids();
+            // Scintilla reports a content update without a separate selection flag
+            // when typing replaces a selection. The status bar still needs the
+            // final caret/selection after that edit.
+            if ((args.Updated & (int)(Update.Content | Update.Selection)) != 0) SelectionChanged?.Invoke(this, new RoutedEventArgs());
+            if ((args.Updated & (int)(Update.VScroll | Update.HScroll)) != 0) ViewportChanged?.Invoke(this, EventArgs.Empty);
+            if ((args.Updated & (int)Update.VScroll) != 0) NotifyMarkdownViewportChanged();
+        }
+        finally { _markdownUpdateUIContext = previous; }
     }
 
     private void OnSavePointReached(Editor sender, SavePointReachedEventArgs args) => ModificationStateChanged?.Invoke(this, EventArgs.Empty);
@@ -477,7 +495,12 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
             ResetDetectedIndentation();
             UpdateLineNumberMargin();
         }
-        finally { Native.UndoCollection = true; _settingText = false; }
+        finally
+        {
+            Native.UndoCollection = true;
+            _settingText = false;
+            NotifyMarkdownReset();
+        }
         TextChanged?.Invoke(this, new RoutedEventArgs());
     }
 
@@ -533,6 +556,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         {
             if (!_disposed) IsEnabled = enabled;
             _settingText = false;
+            NotifyMarkdownReset();
         }
         if (!_disposed) TextChanged?.Invoke(this, new RoutedEventArgs());
     }
@@ -661,6 +685,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     {
         if (line < 1 || line > Native.LineCount) return false;
         Native.GotoLine(line - 1);
+        MarkdownNavigateRequested?.Invoke(this, EventArgs.Empty);
         return true;
     }
 
@@ -788,6 +813,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+        ClearMarkdownSearchMatch();
+        IsEnabledChanged -= MarkdownEnabledChanged;
         IsEnabled = false;
         if (_indentationStatusTimer != null)
         {
@@ -798,6 +825,10 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
         Native.Modified -= OnNativeModified;
         Native.CharAdded -= OnNativeCharAdded;
         Native.UpdateUI -= OnNativeUpdateUI;
+        Native.Painted -= OnNativeMarkdownPainted;
+        Loaded -= MarkdownViewport_Loaded;
+        Unloaded -= MarkdownViewport_Unloaded;
+        _markdownViewportAwaitingLayout = false;
         _readingTimer?.Stop();
         if (_readingTimer != null) _readingTimer.Tick -= ReadingTimer_Tick;
         Loaded -= ReadingAids_Loaded;

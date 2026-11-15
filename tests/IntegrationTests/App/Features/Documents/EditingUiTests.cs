@@ -25,6 +25,7 @@ internal static class EditingUiTests
 {
     internal static async Task RunAsync(StringBuilder log)
     {
+        await ControlsMigrationTests.RunAsync(log);
         await using var host = await FeatureTestHost.CreateAsync();
         const string original = "cat Cat scatter cat\rsecond line\rthird";
         var editor = await OpenAsync(host, "find.txt", Encoding.UTF8.GetBytes(original));

@@ -19,7 +19,6 @@ using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Controls;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Helpers;
-using Notepads.Presentation.PreviewExtensions;
 using Notepads.Presentation.Theming;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
@@ -61,8 +60,7 @@ public sealed partial class NotepadsCore : INotepadsCore
     public event KeyEventHandler TextEditorKeyDown;
 
     private readonly SetsView _sets;
-
-    private readonly INotepadsExtensionProvider _extensionProvider;
+    private SetsViewItem _closingItem;
 
     private readonly Func<ITextEditor, Task> _renameTextEditorAsync;
 
@@ -87,11 +85,13 @@ public sealed partial class NotepadsCore : INotepadsCore
     private Exception _shutdownFailure;
 
     internal NotepadsCore(SetsView sets,
-        INotepadsExtensionProvider extensionProvider,
         CoreDispatcher dispatcher, WindowContext context,
         Func<ITextEditor, Task> renameTextEditorAsync, Func<ISessionController> sessionController)
     {
         _sets = sets;
+        _sets.ShouldCacheContent = item => !ReferenceEquals(item, _closingItem) &&
+            item.Tag is WorkspaceTab { ReadyEditor: TextEditor editor } && editor.CanCacheMarkdownPresentation;
+        _sets.CachedContentVisibilityChanged += SetsView_OnCachedContentVisibilityChanged;
         _sets.SetClosing += SetsView_OnSetClosing;
         _sets.SetTapped += SetsView_OnSetTapped;
         _sets.SetInteractionCompleted += SetsView_OnSetTapped;
@@ -103,7 +103,6 @@ public sealed partial class NotepadsCore : INotepadsCore
 
         _dispatcher = dispatcher;
         _context = context ?? throw new ArgumentNullException(nameof(context));
-        _extensionProvider = extensionProvider;
         // The page owns the guarded rename flow; tab menus route to it.
         _renameTextEditorAsync = renameTextEditorAsync ?? throw new ArgumentNullException(nameof(renameTextEditorAsync));
         _sessionController = sessionController ?? throw new ArgumentNullException(nameof(sessionController));
@@ -118,6 +117,9 @@ public sealed partial class NotepadsCore : INotepadsCore
         _disposed = true;
         _fileOperationLifetime.Cancel();
         ThemeSettingsService.OnAccentColorChanged -= ThemeSettingsService_OnAccentColorChanged;
+        _sets.CachedContentVisibilityChanged -= SetsView_OnCachedContentVisibilityChanged;
+        _sets.ShouldCacheContent = null;
+        _sets.ClearCachedContent();
         _sets.SetClosing -= SetsView_OnSetClosing;
         _sets.SetTapped -= SetsView_OnSetTapped;
         _sets.SetInteractionCompleted -= SetsView_OnSetTapped;
@@ -381,7 +383,6 @@ public sealed partial class NotepadsCore : INotepadsCore
         {
             Id = id,
             DocumentOwnerId = DocumentOwnerId,
-            ExtensionProvider = _extensionProvider,
             FileNamePlaceholder = fileNamePlaceholder
         };
 
@@ -418,22 +419,28 @@ public sealed partial class NotepadsCore : INotepadsCore
         if (_disposed || tab == null) return;
         var item = GetTabSetsViewItem(tab);
         if (item == null) return;
-        if (ReferenceEquals(_sets.SelectedItem, item) && _sets.Items.Count > 1)
+        var previousClosingItem = _closingItem;
+        _closingItem = item;
+        try
         {
-            // Own the successor by document order before removing the selection.
-            // The close guard temporarily disables the whole page, so the
-            // control's enabled-container fallback cannot choose a neighbor.
-            var index = _sets.Items.IndexOf(item);
-            _sets.SelectedItem = _sets.Items[index + 1 < _sets.Items.Count ? index + 1 : index - 1];
+            if (ReferenceEquals(_sets.SelectedItem, item) && _sets.Items.Count > 1)
+            {
+                // Own the successor by document order before removing the selection.
+                // The close guard temporarily disables the whole page, so the
+                // control's enabled-container fallback cannot choose a neighbor.
+                var index = _sets.Items.IndexOf(item);
+                _sets.SelectedItem = _sets.Items[index + 1 < _sets.Items.Count ? index + 1 : index - 1];
+            }
+            tab.StateChanged -= OnTabStateChanged;
+            tab.MarkClosed();
+            item.IsEnabled = false;
+            item.PrepareForClosing();
+            _sets.Items.Remove(item);
+            if (item.ContextFlyout is TabContextFlyout flyout) flyout.Dispose();
+            TabClosed?.Invoke(this, tab);
+            if (tab.AttachedEditor != null) DisposeTextEditor(tab.AttachedEditor);
         }
-        tab.StateChanged -= OnTabStateChanged;
-        tab.MarkClosed();
-        item.IsEnabled = false;
-        item.PrepareForClosing();
-        _sets.Items.Remove(item);
-        if (item.ContextFlyout is TabContextFlyout flyout) flyout.Dispose();
-        TabClosed?.Invoke(this, tab);
-        if (tab.AttachedEditor != null) DisposeTextEditor(tab.AttachedEditor);
+        finally { _closingItem = previousClosingItem; }
     }
 
     private void DisposeTextEditor(ITextEditor textEditor)
@@ -620,6 +627,13 @@ public sealed partial class NotepadsCore : INotepadsCore
             (tab.State == WorkspaceTabState.Failed || host.Content is not DocumentLoadingPlaceholder))
             host.Content = CreatePendingContent(tab);
         TabStateChanged?.Invoke(this, tab);
+    }
+
+    private void SetsView_OnCachedContentVisibilityChanged(SetsViewItem item, bool visible)
+    {
+        if (item.Tag is not WorkspaceTab { ReadyEditor: TextEditor editor }) return;
+        if (editor.SetCachedPresentationVisible(visible) && visible && editor.IsLoaded)
+            TextEditor_Loaded(editor, null);
     }
 
     private void SetsView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -921,7 +935,6 @@ public sealed partial class NotepadsCore : INotepadsCore
             args.AcceptedOperation = DataPackageOperation.Move;
             if (!_disposed && !IsClosing && result.Tab.ReadyEditor is ITextEditor candidate)
             {
-                if (data.StateMetaData.IsContentPreviewPanelOpened) candidate.ShowHideContentPreview();
                 if (data.StateMetaData.IsInDiffPreviewMode) await candidate.OpenSideBySideDiffViewerAsync();
             }
             AnalyticsService.TrackEvent("OnSetDropped");

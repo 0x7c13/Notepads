@@ -90,12 +90,25 @@ internal static class WorkspaceCommandFeatureTests
         Check(!menu.Undo.IsEnabled && !menu.Redo.IsEnabled && !menu.Cut.IsEnabled && !menu.Paste.IsEnabled &&
             !Enabled("MenuFindButton") && !Enabled("MenuReplaceButton"), "Disabled editors reject editing/search commands.");
         nativeCore.IsEnabled = true;
+        menu.TestFeatureRefresh();
+        Check(menu.PreviewToggle.Visibility == Visibility.Collapsed, "Plain-text documents keep the Markdown preview command hidden.");
+        editor.ShowHideContentPreview();
+        Check(!editor.TestMarkdownPanelOpen && editor.Mode == TextEditorMode.Editing,
+            "Unsupported plain-text documents preserve the guarded edit surface.");
         editor.SetLanguageOverride("markdown");
         menu.TestFeatureRefresh();
-        Check(menu.PreviewToggle.Visibility == Visibility.Collapsed, "Unavailable Markdown preview stays hidden for Markdown documents.");
+        Check(menu.PreviewToggle.Visibility == Visibility.Visible, "Markdown documents expose the real preview command.");
+        nativeCore.IsEnabled = false;
         editor.ShowHideContentPreview();
+        Check(!editor.TestMarkdownPanelOpen, "Disabled Markdown editors reject opening the preview surface.");
+        nativeCore.IsEnabled = true;
+        Invoke(menu.PreviewToggle);
+        var markdown = await MarkdownFeatureTests.CurrentAsync(editor);
+        Check(editor.TestMarkdownPanelOpen && markdown != null, "The actual Markdown context command opens a current native preview.");
+        Invoke(menu.PreviewToggle);
+        await markdown.DisposalCompletion.WaitAsync(TimeSpan.FromSeconds(20));
         Check(editor.Mode == TextEditorMode.Editing && editor.GetText() == "first Ω\rsecond 😀",
-            "The unavailable preview route preserves document text and edit mode.");
+            "Closing the actual Markdown preview preserves document text and edit mode.");
         log.AppendLine("PASS: WorkspaceCommands.NativeContext — real new-tab, selection, undo/redo, wrap and disabled/Markdown guards.");
 
         core.SwitchTo(second);

@@ -21,6 +21,12 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="../../src/Notepads.App/Presentation/Controls/Markdown/Source/MarkdownDirtySpan.cs" />
+    <Compile Include="../../src/Notepads.App/Presentation/Controls/Markdown/MarkdownDestination.cs" />
+    <Compile Include="../../src/Notepads.App/Presentation/Controls/Markdown/Images/MarkdownDataImage.cs" />
+    <Compile Include="../../src/Notepads.App/Presentation/Controls/Markdown/Scrolling/MarkdownFollowCoordinator.cs" />
+    <Compile Include="../../src/Notepads.App/Presentation/Controls/TextEditor/MarkdownViewportSample.cs" />
+    <Compile Include="../../src/Notepads.App/Presentation/Controls/TextEditor/MarkdownSearchMatch.cs" />
     <Compile Include="../../src/Notepads.App/Features/Documents/Contracts/LineEnding.cs" />
     <Compile Include="../../src/Notepads.App/Features/Documents/Contracts/DocumentMetadata.cs" />
     <Compile Include="../../src/Notepads.App/Features/Documents/Contracts/DocumentLimits.cs" />

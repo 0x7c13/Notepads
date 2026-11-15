@@ -1,0 +1,17 @@
+<UserControl
+    x:Class="Notepads.Presentation.Controls.Markdown.MarkdownExtensionView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:markdown="using:Notepads.Markdown">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="PreviewStatus" Margin="10,4" TextWrapping="Wrap" Visibility="Collapsed" />
+        <markdown:MarkdownView x:Name="PreviewDocument" Grid.Row="1"
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               AutomationProperties.AutomationId="MarkdownPreviewDocument" />
+        <Border x:Name="PreviewLoading" Grid.Row="1" Visibility="Collapsed" />
+    </Grid>
+</UserControl>

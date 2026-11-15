@@ -185,7 +185,7 @@ jobs:
           & (Join-Path $vs 'MSBuild/Current/Bin/MSBuild.exe') ./src/Notepads.sln /t:Restore /p:RestorePackagesConfig=true /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /nologo /v:minimal
           if ($LASTEXITCODE -ne 0) { throw "Solution restore failed: $LASTEXITCODE" }
       - name: Prepare interactive desktop
-        run: ./scripts/Initialize-CIDesktop.ps1 -Platform x64
+        run: ./scripts/Initialize-CIDesktop.ps1 -Platform x64 -WideDisplay:('${{ matrix.lane }}' -eq 'E2E')
       - name: Run ${{ matrix.name }}
         run: ./scripts/Test-CIUI.ps1 -Lane ${{ matrix.lane }}
       - name: Capture desktop failure diagnostics

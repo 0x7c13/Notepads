@@ -31,9 +31,14 @@ internal sealed class KeyboardCommandHandler
         if (window.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down)) modifiers |= VirtualKeyModifiers.Menu;
         if (window.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down)) modifiers |= VirtualKeyModifiers.Shift;
 
+        return Handle(args.Key, modifiers);
+    }
+
+    internal bool Handle(VirtualKey key, VirtualKeyModifiers modifiers)
+    {
         foreach (var command in _commands)
         {
-            if (command.Key == args.Key && command.Modifiers == modifiers)
+            if (command.Key == key && command.Modifiers == modifiers)
             {
                 command.Action();
                 return command.Handled;

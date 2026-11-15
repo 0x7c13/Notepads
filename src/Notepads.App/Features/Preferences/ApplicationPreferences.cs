@@ -326,6 +326,7 @@ public static partial class ApplicationPreferences
 
         InitializeDisplaySettings();
         RefreshReadingAids();
+        RefreshMarkdownFrontMatterStyle();
 
         InitializeSmartCopySettings();
 

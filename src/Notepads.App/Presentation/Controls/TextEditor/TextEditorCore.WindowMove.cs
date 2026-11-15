@@ -23,17 +23,27 @@ public sealed partial class TextEditorCore
     internal WindowMoveCapture BeginWindowMove()
     {
         if (_movingToWindow || _disposed) throw new InvalidOperationException("The editor is already moving or closed.");
-        _view.CancelScrollAnimation();
-        var state = new WindowMoveRequest
-        {
-            HasAddedLogEntry = _hasAddedLogEntry,
-            DetectedIndentation = _detectedIndentation,
-            IndentationChecked = _indentationCheckedVersion == ContentVersion
-        };
-        var capture = new WindowMoveCapture(Native, state);
         _movingToWindow = true;
-        _moveSelectionRevision = Native.SelectionRevision;
-        return capture;
+        NotifyMarkdownAvailabilityChanged();
+        try
+        {
+            _view.CancelScrollAnimation();
+            var state = new WindowMoveRequest
+            {
+                HasAddedLogEntry = _hasAddedLogEntry,
+                DetectedIndentation = _detectedIndentation,
+                IndentationChecked = _indentationCheckedVersion == ContentVersion
+            };
+            var capture = new WindowMoveCapture(Native, state);
+            _moveSelectionRevision = Native.SelectionRevision;
+            return capture;
+        }
+        catch
+        {
+            _movingToWindow = false;
+            NotifyMarkdownAvailabilityChanged();
+            throw;
+        }
     }
 
     internal bool IsWindowMoveStateUnchanged => _movingToWindow && Native.SelectionRevision == _moveSelectionRevision;
@@ -43,8 +53,12 @@ public sealed partial class TextEditorCore
         _movingToWindow = false;
         var pending = _deferredMoveSettings;
         _deferredMoveSettings = null;
-        if (!_disposed && pending != null)
-            foreach (var apply in pending.Values) apply();
+        try
+        {
+            if (!_disposed && pending != null)
+                foreach (var apply in pending.Values) apply();
+        }
+        finally { NotifyMarkdownAvailabilityChanged(); }
     }
 
     // Called on the UI thread inside each external-settings dispatch. Coalesce by

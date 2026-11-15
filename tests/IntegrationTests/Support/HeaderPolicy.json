@@ -743,7 +743,8 @@
             "src/Notepads.App/Controls/SetsView/SetsView.Properties.cs",
             "src/Notepads.App/Controls/SetsView/SetsViewItem.cs",
             "src/Notepads.App/Controls/SetsView/SetsViewItem.Properties.cs",
-            "src/Notepads.App/Controls/SetsView/SetsWidthMode.cs"
+            "src/Notepads.App/Controls/SetsView/SetsWidthMode.cs",
+            "src/Notepads.App/Controls/SetsView/SetsView.ContentPresentation.cs"
           ]
         }
       ],
@@ -1810,149 +1811,6 @@
           "sha256": "E2CA98408836F3E7228B2680E740BD78BBD6B9E3CA35373B3903C6B74ED9C5C2",
           "paths": [
             "src/Notepads.Markdown/tests/native/NativeImageFontControlTests.h"
-          ]
-        }
-      ],
-      "withoutHeader": []
-    },
-    {
-      "reason": "Retain Toolkit attribution and upstream formatting; do not replace with a Notepads-only notice.",
-      "license": "LICENSE.txt",
-      "headers": [
-        {
-          "lines": 4,
-          "sha256": "D2B8B659337395EF85B49DD8A5DAE396A06640617BB03C0BEB197C570D02847F",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/CodeBlockResolvingEventArgs.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/ImageResolvingEventArgs.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/LinkClickedEventArgs.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownRenderedEventArgs.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Dimensions.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Events.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Methods.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/MarkdownTextBlock.Properties.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "6158F0D55F05DB5C1C559634DCD6B16FFBB5F43815096D319CF8EC587EBCC8F7",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/CodeBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/HeaderBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/HorizontalRuleBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/LinkReferenceBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/ListBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/ParagraphBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/QuoteBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/TableBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/YamlHeaderBlock.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "AC489150F7215EF145CDE0CFA668FC3FFAE9DD3C47E16EF4751BCEF56BCCDF71",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemBuilder.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/ListItemPreamble.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Blocks/List/NestedListInfo.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "B210C7FD9CB9EF9D55F2BF2BE5E22125CAB55499A2246ECD683C1F2462F34D62",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/IParser.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/ParseHelpers.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/SchemaBase.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Core/StringValueAttribute.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "B62F5403B251745611458A009C6CE2C1D0722FCCA91666E80FAC2649D1BAE3FC",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/ColumnAlignment.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/HyperlinkType.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/InlineParseMethod.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/ListStyle.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/MarkdownBlockType.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Enums/MarkdownInlineType.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "9A184D27987C6BC99555846CB6B5AC75CBC49C143CB2F199263E2CE90CE56FE5",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/Common.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/DebuggingReporter.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/InlineParseResult.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/InlineTripCharHelper.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Helpers/LineInfo.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "DF4B2932D6BC1C74AA1F5DF87F88CC6F24D5934442F3B1109716F0813C400E2C",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/BoldItalicTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/BoldTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/CodeInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/CommentInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/EmojiInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/EmojiInline.EmojiCodes.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/HyperlinkInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/IInlineContainer.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/IInlineLeaf.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ILinkElement.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ImageInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/ItalicTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/LinkAnchorInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/MarkdownLinkInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/StrikethroughTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/SubscriptTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/SuperscriptTextInline.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Inlines/TextRunInline.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "B805ADAE9E21C54DCA5DBDF5EAFDFCE5FC5E7AA2731B7A9CFF87AE11FCFEDEF7",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownBlock.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownDocument.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownElement.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/MarkdownInline.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "FCF76C1B393BF3894A42CDF90073C45A1546B4D9CD11CC3EA190BAD0A2F5844A",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/ICodeBlockResolver.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/IImageResolver.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/ILinkRegister.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/InlineRenderContext.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Blocks.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Dimensions.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Inlines.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRenderer.Properties.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownTable.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/RenderContext.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/RenderContextIncorrectException.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/UIElementCollectionRenderContext.cs"
-          ]
-        },
-        {
-          "lines": 4,
-          "sha256": "9B8A6970DF9F8A1F7763A4D4ED2F698AD1E661BE7E7AA79F31EBD41CE4027BE1",
-          "paths": [
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/IRenderContext.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.Blocks.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.cs",
-            "src/Notepads.App/Controls/MarkdownTextBlock/Markdown/Render/MarkdownRendererBase.Inlines.cs"
           ]
         }
       ],

@@ -181,7 +181,7 @@
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>Änderungsvorschau</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>Alle Änderungen rückgängig machen</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>Geändert</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
-  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>Kopiert</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
+  <data name="Clipboard_NotificationMsg_Copied" xml:space="preserve"><value>Kopiert</value><comment>Notification displayed after copying text to the clipboard.</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>Gespeichert</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Vollbildmodus mit F11 beenden</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Datei von der Festplatte neu laden</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
@@ -337,4 +337,9 @@
   <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Auch Teile von Wörtern</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
   <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Leerzeichen und Tabulatoren anzeigen</value></data>
+  <data name="MarkdownPreview_TooLarge" xml:space="preserve"><value>Die Vorschau ist für Dokumente bis zu 4 MiB verfügbar.</value></data>
+  <data name="MarkdownPreview_Failed" xml:space="preserve"><value>Die Vorschau konnte nicht aktualisiert werden.</value></data>
+  <data name="MarkdownPreview_Loading" xml:space="preserve"><value>Vorschau wird aktualisiert…</value></data>
+  <data name="MarkdownPreview_LinkFailed" xml:space="preserve"><value>Dieser Link konnte nicht geöffnet werden.</value></data>
+  <data name="MarkdownPreview_ScrollSync" xml:space="preserve"><value>Scrollen synchronisieren</value></data>
 </root>

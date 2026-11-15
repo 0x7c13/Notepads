@@ -18,7 +18,6 @@ using Notepads.Presentation.Controls.Print;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Helpers;
 using Notepads.Presentation.Input;
-using Notepads.Presentation.PreviewExtensions;
 using Notepads.Presentation.Theming;
 using Notepads.Presentation.Views.Settings;
 using Notepads.Presentation.Workspace;
@@ -70,7 +69,7 @@ public sealed partial class NotepadsMainPage : Page
         {
             if (_notepadsCore != null) return _notepadsCore;
 
-            _notepadsCore = new NotepadsCore(Sets, new NotepadsExtensionProvider(), Dispatcher, _context,
+            _notepadsCore = new NotepadsCore(Sets, Dispatcher, _context,
                 RenameFileAsync, () => SessionController);
             _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
             _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
@@ -484,6 +483,7 @@ public sealed partial class NotepadsMainPage : Page
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, _context.InstanceId.ToString());
             ApplicationPreferences.RefreshFontRenderingSetting();
             ApplicationPreferences.RefreshReadingAids();
+            ApplicationPreferences.RefreshMarkdownFrontMatterStyle();
             NotepadsCore.GetSelectedReadyEditor()?.StartCheckingFileStatusPeriodically();
             if (!_isAppClosing && !_isLastTabCloseInProgress)
             {

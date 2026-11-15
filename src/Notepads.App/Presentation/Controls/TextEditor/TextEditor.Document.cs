@@ -182,7 +182,7 @@ public sealed partial class TextEditor
     {
         try
         {
-            await Task.WhenAll(_documentOperations.Completion, _fileStatusCheckerCompletion, _contentComparisonCompletion);
+            await Task.WhenAll(_documentOperations.Completion, _fileStatusCheckerCompletion, _contentComparisonCompletion, _previewShutdown);
             // An operation may have attached or stopped a candidate while cancellation
             // unwound. Drain every native writer, even when no managed journal is attached.
             _journalShutdown = TextEditorCore.StopJournalAsync();
@@ -287,6 +287,8 @@ public sealed partial class TextEditor
             {
                 if (!_disposed) TextEditorCore.IsEnabled = wasEnabled;
             }
+            if (!_disposed && !cancellationToken.IsCancellationRequested && metadata != null && TextEditorCore.IsEnabled)
+                SetMarkdownPreviewOpen(metadata.IsContentPreviewPanelOpened, restoreViewport: true);
         }
         finally { if (!adopted) prepared.Dispose(); }
     }
@@ -360,6 +362,7 @@ public sealed partial class TextEditor
             metadata.FirstVisibleDocumentLine, metadata.FirstVisibleSubLine, rowOffset: metadata.FirstVisibleRowOffset);
         TextEditorCore.ClearUndoQueue();
         RefreshModificationState();
+        if (TextEditorCore.IsEnabled) SetMarkdownPreviewOpen(metadata.IsContentPreviewPanelOpened, restoreViewport: true);
     }
 
     public Task RestoreAsync(DocumentSnapshot snapshot, StorageFile file, DocumentMetadata metadata,
@@ -414,6 +417,8 @@ public sealed partial class TextEditor
                 }
                 if (!_disposed) TextEditorCore.IsEnabled = wasEnabled;
             }
+            if (!_disposed && !cancellation.IsCancellationRequested && TextEditorCore.IsEnabled)
+                SetMarkdownPreviewOpen(capture.MetaData.IsContentPreviewPanelOpened, restoreViewport: true);
         });
     }
 

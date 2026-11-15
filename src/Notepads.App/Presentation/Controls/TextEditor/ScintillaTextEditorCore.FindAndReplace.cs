@@ -59,11 +59,15 @@ public sealed partial class TextEditorCore
     public async Task<EditorSearchResult> FindAsync(SearchContext context, bool previous = false,
         bool stopAtBoundary = false, CancellationToken cancellationToken = default)
     {
+        ClearMarkdownSearchMatch();
         if (_disposed || !IsEnabled) return SearchResult(EditorSearchStatus.Stale);
         if (context == null || string.IsNullOrEmpty(context.SearchText)) return SearchResult(EditorSearchStatus.NotFound);
         cancellationToken.ThrowIfCancellationRequested();
         var origin = previous ? Native.SelectionStart : Native.SelectionEnd;
         var selectionRevision = Native.SelectionRevision;
+        var attachment = _view.DocumentAttachmentGeneration;
+        var revision = Native.DocumentRevision;
+        var contentVersion = ContentVersion;
         EditorSearchResult result;
         if (context.UseRegex)
         {
@@ -96,6 +100,10 @@ public sealed partial class TextEditorCore
         }
 
         if (result.Status != EditorSearchStatus.Found) return result;
+        if (_disposed || !IsEnabled || cancellationToken.IsCancellationRequested ||
+            attachment != _view.DocumentAttachmentGeneration || revision != Native.DocumentRevision ||
+            contentVersion != ContentVersion || selectionRevision != Native.SelectionRevision)
+            return SearchResult(EditorSearchStatus.Stale);
         Native.SetSel(result.Start, result.End);
         Native.ScrollCaret();
         _emptyMatchPattern = context.UseRegex && result.Start == result.End ? context.SearchText : null;
@@ -104,6 +112,7 @@ public sealed partial class TextEditorCore
         _emptyMatchPosition = result.Start;
         _emptyMatchRevision = Native.DocumentRevision;
         _emptyMatchSelectionRevision = Native.SelectionRevision;
+        PublishMarkdownSearchMatch(result.Start, result.End, attachment, revision, contentVersion);
         return result;
     }
 

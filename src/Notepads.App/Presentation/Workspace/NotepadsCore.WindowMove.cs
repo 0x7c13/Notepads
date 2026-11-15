@@ -155,7 +155,6 @@ public sealed partial class NotepadsCore
                 {
                     await using var input = WindowMoveStore.OpenState(token);
                     await candidate.RestoreWindowMoveStateAsync(request, input, cancellation);
-                    if (data.StateMetaData.IsContentPreviewPanelOpened) candidate.ShowHideContentPreview();
                     if (data.StateMetaData.IsInDiffPreviewMode)
                     {
                         await candidate.OpenSideBySideDiffViewerAsync();

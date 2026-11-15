@@ -20,7 +20,6 @@ using Notepads.Presentation.Controls.FindAndReplace;
 using Notepads.Presentation.Controls.GoTo;
 using Notepads.Presentation.Helpers;
 using Notepads.Presentation.Input;
-using Notepads.Presentation.PreviewExtensions;
 using Notepads.Presentation.Theming;
 using Notepads.Presentation.Workspace;
 using Windows.ApplicationModel.DataTransfer;
@@ -53,8 +52,6 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     public event EventHandler FileRenamed;
 
     public Guid Id { get; set; }
-
-    public INotepadsExtensionProvider ExtensionProvider;
 
     private string _fileNamePlaceholder = string.Empty;
     public string FileNamePlaceholder
@@ -105,7 +102,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         RefreshDocumentLanguage();
         RefreshDisplayTitle();
         // Hide content preview if current file type is not supported for previewing
-        if (!FileTypeUtility.IsPreviewSupported(FileType))
+        if (!IsMarkdownPreviewSupported)
         {
             if (SplitPanel != null && SplitPanel.Visibility == Visibility.Visible)
             {
@@ -211,6 +208,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         base.PreviewKeyDown += TextEditor_PreviewKeyDown;
         base.KeyDown += TextEditor_KeyDown;
 
+        LanguageChanged += PreviewLanguageChanged;
         TextEditorCore.FontZoomFactorChanged += TextEditorCore_OnFontZoomFactorChanged;
         RefreshDocumentLanguage();
     }
@@ -223,6 +221,8 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     private void TextEditor_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Handled) return;
+        if (_markdownPreview is { } markdown &&
+            TryHandleMarkdownPreviewKey(markdown, e)) return;
         if (e.Key == VirtualKey.Escape &&
             (FindAllPanel?.Visibility == Visibility.Visible || FindAndReplacePlaceholder?.Visibility == Visibility.Visible ||
              GoToPlaceholder?.Visibility == Visibility.Visible || _isContentPreviewPanelOpened || _diffGeneration != null))
@@ -249,6 +249,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         if (_disposed) return;
         _disposed = true;
         var failures = new List<Exception>();
+        BeginShutdown(StopContentPreview, failures);
         BeginShutdown(CancelSearch, failures);
         BeginShutdown(CloseSideBySideDiffViewer, failures);
         BeginShutdown(StopCheckingFileStatus, failures);
@@ -293,6 +294,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         base.PreviewKeyDown -= TextEditor_PreviewKeyDown;
         base.KeyDown -= TextEditor_KeyDown;
 
+        LanguageChanged -= PreviewLanguageChanged;
         TextEditorCore.FontZoomFactorChanged -= TextEditorCore_OnFontZoomFactorChanged;
 
         if (SplitPanel != null)
@@ -386,10 +388,30 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         return metaData;
     }
 
+    private bool _cachedPresentationHidden;
+
     private void TextEditor_Loaded(object sender, RoutedEventArgs e)
     {
         Loaded?.Invoke(this, e);
+        if (_disposed) return;
+        // An evicted cached editor can attach through the normal Loaded path.
+        _markdownPreview?.SetCachedPresentationVisible(!_cachedPresentationHidden);
+        if (!_disposed && !_cachedPresentationHidden) ActivatePresentation();
+    }
 
+    internal bool SetCachedPresentationVisible(bool visible)
+    {
+        if (_disposed || _cachedPresentationHidden == !visible) return false;
+        _cachedPresentationHidden = !visible;
+        _markdownPreview?.SetCachedPresentationVisible(visible);
+        if (_disposed || _cachedPresentationHidden != !visible) return false;
+        if (!visible) StopCheckingFileStatus();
+        else if (IsLoaded) ActivatePresentation();
+        return true;
+    }
+
+    private void ActivatePresentation()
+    {
         StartCheckingFileStatusPeriodically();
 
         // Insert "Legacy Windows Notepad" style date and time if document starts with ".LOG"
@@ -400,12 +422,13 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private void TextEditor_Unloaded(object sender, RoutedEventArgs e)
     {
+        _cachedPresentationHidden = false;
         StopCheckingFileStatus();
     }
 
     public void StartCheckingFileStatusPeriodically()
     {
-        if (_disposed || EditingFile == null) return;
+        if (_disposed || _cachedPresentationHidden || EditingFile == null) return;
         StopCheckingFileStatus();
         var cancellationTokenSource = new CancellationTokenSource();
         _fileStatusCheckerCancellationTokenSource = cancellationTokenSource;
@@ -505,6 +528,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     {
         return new KeyboardCommandHandler(
         [
+            new(VirtualKeyModifiers.Menu, VirtualKey.P, () => ShowHideContentPreview()),
             new(VirtualKeyModifiers.Control, VirtualKey.F, () => ShowFindAndReplaceControl(showReplaceBar: false)),
             new(VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift, VirtualKey.F, () => ShowFindAndReplaceControl(showReplaceBar: true)),
             new(VirtualKeyModifiers.Control, VirtualKey.H, () => ShowFindAndReplaceControl(showReplaceBar: true)),
@@ -518,8 +542,10 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         ]);
     }
 
-    private void CloseSplitView()
+    private void CloseSplitView(bool retainMarkdownForReopen = false)
     {
+        if (retainMarkdownForReopen) StopContentPreviewForReopen();
+        else StopContentPreview();
         SplitPanelColumnDefinition.Width = new GridLength(0);
         EditorColumnDefinition.Width = new GridLength(1, GridUnitType.Star);
         SplitPanelColumnDefinition.MinWidth = 0.0f;
@@ -529,7 +555,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         _isContentPreviewPanelOpened = false;
     }
 
-    public void ShowHideContentPreview() { }
+    public void ShowHideContentPreview() => ToggleMarkdownPreview();
 
     /// <summary>
     /// Returns 1-based indexing values
@@ -707,7 +733,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         }
         else if (_isContentPreviewPanelOpened)
         {
-            CloseSplitView();
+            CloseSplitView(retainMarkdownForReopen: true);
         }
     }
 
@@ -812,6 +838,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     public void HideFindAndReplaceControl()
     {
+        ClearMarkdownSearch();
         CancelSearch();
         ClearFindAllResults();
         FindAndReplacePlaceholder?.Dismiss();
@@ -863,6 +890,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
 
     private void FindAndReplacePlaceholder_Closed(object sender, InAppNotificationClosedEventArgs e)
     {
+        ClearMarkdownSearch();
         CancelSearch();
         ClearFindAllResults();
         // UnloadObject may have already cleared the lazy XAML field.

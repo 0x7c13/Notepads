@@ -50,5 +50,16 @@ if (($listed | Where-Object Group -eq Editor).Platforms -ne 'x86, x64, ARM64' -o
     ($listed | Where-Object Group -eq PackagedApp).Platforms -ne 'x64') {
     throw 'The public platform listing disagrees with the actual preflight.'
 }
+$markdownTokens = $null
+$markdownErrors = $null
+$markdownAst = [Management.Automation.Language.Parser]::ParseFile(
+    (Join-Path $repo 'scripts/Test-Markdown.ps1'), [ref]$markdownTokens, [ref]$markdownErrors)
+if ($markdownErrors.Count) { throw 'The physical Markdown driver did not parse.' }
+# Bind its real parameters without evaluating any desktop setup or starting a session.
+$markdownBinding = [scriptblock]::Create($markdownAst.ParamBlock.Extent.Text + '; $Platform')
+foreach ($platform in @('x86', 'x64', 'ARM64')) {
+    if ((& $markdownBinding -Platform $platform) -cne $platform) { throw "The Markdown driver rejected $platform." }
+    $checks.Add('Physical Markdown parameter binding: ' + $platform)
+}
 $checks | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $EvidenceRoot 'checks.json') -Encoding utf8
 Write-Output "PASS platform preflight contracts: $($checks.Count) checks; no builds, package registration or UI."

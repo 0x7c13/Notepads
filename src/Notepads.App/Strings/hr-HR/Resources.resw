@@ -181,7 +181,7 @@
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>Pretprikaz promjena</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>Poništi sve promjene</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>Promijenjeno</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
-  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>Kopirano</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
+  <data name="Clipboard_NotificationMsg_Copied" xml:space="preserve"><value>Kopirano</value><comment>Notification displayed after copying text to the clipboard.</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>Spremljeno</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Prekini cjeloekranski prikaz s tipkom F11</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Ponovo učitaj datoteku s diska</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
@@ -337,4 +337,9 @@
   <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Uključujući dijelove riječi</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
   <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Prikaži razmake i tabulatore</value></data>
+  <data name="MarkdownPreview_TooLarge" xml:space="preserve"><value>Pretpregled je dostupan za dokumente veličine do 4 MiB.</value></data>
+  <data name="MarkdownPreview_Failed" xml:space="preserve"><value>Pretpregled nije moguće ažurirati.</value></data>
+  <data name="MarkdownPreview_Loading" xml:space="preserve"><value>Ažuriranje pretpregleda…</value></data>
+  <data name="MarkdownPreview_LinkFailed" xml:space="preserve"><value>Ovu poveznicu nije moguće otvoriti.</value></data>
+  <data name="MarkdownPreview_ScrollSync" xml:space="preserve"><value>Sinkroniziraj pomicanje</value></data>
 </root>

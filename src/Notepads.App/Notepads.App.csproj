@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.22000.0</TargetPlatformMinVersion>
+    <WindowsSdkPackageVersion>10.0.26100.87</WindowsSdkPackageVersion>
     <EnableAppxWindowsUniversalTargetDeviceFamilyItem>false</EnableAppxWindowsUniversalTargetDeviceFamilyItem>
     <AppxAddDefaultTargetDeviceFamilyItem>false</AppxAddDefaultTargetDeviceFamilyItem>
     <UseUwp>true</UseUwp>
@@ -16,6 +17,7 @@
     <Copyright>Copyright © 2019-2026 Jiaqi (0x7c13) Liu</Copyright>
     <Description>A modern, lightweight text editor with a minimalist design.</Description>
     <CsWinRTGenerateProjection>false</CsWinRTGenerateProjection>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <Configurations>Debug;Release;Production</Configurations>
     <OutputType>WinExe</OutputType>
     <PublishAot>true</PublishAot>
@@ -56,6 +58,7 @@
     </TargetDeviceFamily>
     <PackageReference Include="Microsoft.Windows.CsWinRT" />
     <PackageReference Include="Microsoft.UI.Xaml" />
+    <!-- The newer SDK selects the correct WebView2 binaries when cross-compiling for ARM64. -->
     <PackageReference Include="Microsoft.Web.WebView2" />
     <PackageReference Include="CommunityToolkit.Common" />
     <PackageReference Include="Microsoft.Services.Store.Engagement" />
@@ -67,16 +70,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Notepads.Editor\Projection\Notepads.Editor.Projection.csproj" />
+    <ProjectReference Include="..\Notepads.Markdown\windows\Notepads.Markdown.Projection\Notepads.Markdown.Projection.csproj" />
     <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
       <Name>Microsoft Engagement Framework</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <!-- The legacy Markdown renderer remains disabled pending its replacement. -->
-    <Compile Remove="Presentation\Controls\Markdown\**\*.cs" />
-    <Page Remove="Presentation\Controls\Markdown\**\*.xaml" />
-    <Compile Remove="Controls\MarkdownTextBlock\**\*.cs" />
-    <Page Remove="Controls\MarkdownTextBlock\**\*.xaml" />
     <Page Update="Presentation\Theming\DiffThemes.xaml"><Link>Theming\DiffThemes.xaml</Link></Page>
     <Page Update="Presentation\Theming\EditorThemes.xaml"><Link>Theming\EditorThemes.xaml</Link></Page>
     <Page Update="Presentation\Theming\SyntaxThemes.xaml">
@@ -106,6 +105,7 @@
       <Link>ThirdPartyNotices\Lexilla.txt</Link>
     </Content>
   </ItemGroup>
+  <Import Project="..\Notepads.Markdown\build\Notepads.Markdown.Consumer.targets" />
   <Import Project="Package.targets" />
   <Import Project="..\..\scripts\NativeAot.targets" />
 </Project>

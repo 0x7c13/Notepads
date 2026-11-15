@@ -21,6 +21,17 @@ public sealed partial class TextEditor
         Justification = "This field borrows the active search's using-scoped source; Dispose cancels it and the search disposes it after unwinding.")]
     private CancellationTokenSource _searchCancellation;
     private long _searchRequestVersion;
+    private SearchContext _markdownSearchContext;
+
+    private static bool SameSearchContext(SearchContext left, SearchContext right) => left != null && right != null &&
+        left.SearchText == right.SearchText && left.MatchCase == right.MatchCase &&
+        left.MatchWholeWord == right.MatchWholeWord && left.UseRegex == right.UseRegex;
+
+    private void ClearMarkdownSearch()
+    {
+        _markdownSearchContext = null;
+        TextEditorCore.ClearMarkdownSearchMatch();
+    }
 
     private void CancelSearch()
     {
@@ -38,13 +49,15 @@ public sealed partial class TextEditor
 
     private async Task<bool> InitiateFindAndReplaceAsync(FindAndReplaceEventArgs request)
     {
+        ClearMarkdownSearch();
+        CancelSearch();
         if (_disposed || !TextEditorCore.IsEnabled || Mode != TextEditorMode.Editing ||
             request.SearchContext == null || string.IsNullOrEmpty(request.SearchContext.SearchText))
         {
             return false;
         }
 
-        CancelSearch();
+        _markdownSearchContext = request.SearchContext;
         if (request.FindAndReplaceMode != FindAndReplaceMode.FindAll) ClearFindAllResults();
         var version = _searchRequestVersion;
         using var cancellation = new CancellationTokenSource();

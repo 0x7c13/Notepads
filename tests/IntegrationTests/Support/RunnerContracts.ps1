@@ -720,6 +720,48 @@ foreach ($profile in @('Unit', 'Headless')) {
     }
 }
 $checks.Add('Unit and Headless source identity remain independent of the native Markdown module')
+$unitSources = @(Get-TestSourceFiles Unit)
+foreach ($relative in @('src/Notepads.App/Presentation/Controls/Markdown/Source/MarkdownDirtySpan.cs',
+    'src/Notepads.App/Presentation/Controls/Markdown/Images/MarkdownDataImage.cs',
+    'src/Notepads.App/Presentation/Controls/Markdown/Scrolling/MarkdownFollowCoordinator.cs',
+    'src/Notepads.App/Presentation/Controls/TextEditor/MarkdownViewportSample.cs',
+    'src/Notepads.App/Presentation/Controls/TextEditor/MarkdownSearchMatch.cs')) {
+    if ((Join-Path $repo $relative) -notin $unitSources) { throw "Unit build discovery omits $relative." }
+}
+$checks.Add('Unit source identity includes the linked Markdown host files')
+$sourceMarkdownPayload = @('Notepads.Markdown.dll', 'Notepads.Markdown.winmd', 'Notepads.Markdown.pri',
+    'Notepads.Markdown/Themes/Generic.xaml') | ForEach-Object { [pscustomobject]@{ PackagePath = $_ } }
+Assert-TestMarkdownRecipe $sourceMarkdownPayload
+foreach ($relative in @($sourceMarkdownPayload.PackagePath)) {
+    Expect-Rejection "Missing Markdown source payload $relative" "*requires one $relative*found 0*" {
+        Assert-TestMarkdownRecipe @($sourceMarkdownPayload | Where-Object PackagePath -ne $relative)
+    }
+    Expect-Rejection "Duplicate Markdown source payload $relative" "*requires one $relative*found 2*" {
+        Assert-TestMarkdownRecipe (@($sourceMarkdownPayload) + @([pscustomobject]@{ PackagePath = $relative.ToUpperInvariant().Replace('/', '\') }))
+    }
+}
+foreach ($relative in @('Notepads.Markdown/Unexpected.dll', 'Notepads.Markdown.Unsupported.dll',
+    'Notepads.Markdown/Themes/Other.xaml')) {
+    Expect-Rejection "Unexpected Markdown package payload $relative" '*Unexpected source Markdown recipe asset:*' {
+        Assert-TestMarkdownRecipe (@($sourceMarkdownPayload) + @([pscustomobject]@{ PackagePath = $relative }))
+    }
+}
+foreach ($relative in @('../Unexpected.dll', '/Unexpected.dll', '\Unexpected.dll', 'C:/Unexpected.dll',
+    'Assets/../Unexpected.dll', 'Assets/./Unexpected.dll', 'Assets//Unexpected.dll', 'Assets/Unexpected.dll.',
+    'Assets/Unexpected.dll ', 'Assets/Unexpected:stream', 'Assets/Unexpected?.dll', 'Assets/', '')) {
+    Expect-Rejection "Invalid package destination [$relative]" '*Invalid app recipe package path:*' {
+        Assert-TestMarkdownRecipe (@($sourceMarkdownPayload) + @([pscustomobject]@{ PackagePath = $relative }))
+    }
+}
+Expect-Rejection 'Duplicate unrelated package destination ignores case and separators' '*Duplicate app recipe package path:*' {
+    Assert-TestMarkdownRecipe (@($sourceMarkdownPayload) + @([pscustomobject]@{ PackagePath = 'Assets/Other.dll' },
+        [pscustomobject]@{ PackagePath = 'assets\OTHER.dll' }))
+}
+$otherAppPayload = @('Notepads.Markdown.Projection.dll', 'WinUIEditor.dll', 'Microsoft.UI.Xaml.winmd',
+    'Microsoft.Graphics.Canvas.dll', 'Microsoft.Web.WebView2.Core.dll', 'OtherApp.Component.dll',
+    'ThirdPartyNotices/Notepads.Markdown/LICENSE') | ForEach-Object { [pscustomobject]@{ PackagePath = $_ } }
+Assert-TestMarkdownRecipe (@($sourceMarkdownPayload) + @($otherAppPayload))
+$checks.Add('Markdown recipes require each native/metadata/PRI/template asset once, allow the Debug projection and unrelated app dependencies, and reject unexpected module assets or invalid/duplicate destinations')
 & {
     $inputRepo = Join-Path $fixtureRoot 'manifest-inputs'
     foreach ($relative in @('scripts', 'src', 'tests/Shared', 'tests/IntegrationTests/App')) {
@@ -743,6 +785,8 @@ $checks.Add('Unit and Headless source identity remain independent of the native 
         'src/Notepads.App/bin/Release/Product.dll',
         'src/Notepads.App/obj/Release/Product.g.cs',
         'src/Notepads.Markdown/target/x86_64-pc-windows-msvc/release/core.lib',
+        'src/Notepads.Markdown/crates/markdown-math/target/release/math.lib',
+        'src/Notepads.Markdown/scripts/code-syntax-pack/target/debug/syntax-pack.exe',
         'src/Notepads.Markdown/artifacts/native/component.dll',
         'src/Notepads.Markdown/.tools/cargo/bin/cargo.exe',
         'src/Notepads.Markdown/crates/markdown-core/bin/Release/generated.dll')
@@ -978,3 +1022,4 @@ Write-Output "PASS: Runner contracts ($($checks.Count) checks); private evidence
 & (Join-Path $PSScriptRoot 'SourceBackupContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'source-backup')
 & (Join-Path $PSScriptRoot 'TestPlatformContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'platforms')
 & (Join-Path $PSScriptRoot 'MarkdownAssetContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'markdown-assets')
+& (Join-Path $PSScriptRoot 'MarkdownBuildContracts.ps1') -EvidenceRoot (Join-Path $fixtureRoot 'markdown-build')

@@ -57,6 +57,7 @@ internal static class InteractiveEditorHost
     private static byte[] _imeBaseline;
     private static NotepadsIntegrationTests.FeatureTestHost _imeWorkspace;
     private static NotepadsIntegrationTests.EditorToolsKeyboardFixture _editorTools;
+    private static NotepadsIntegrationTests.MarkdownKeyboardFixture _markdown;
 
     private static WinUIEditor.Editor Native => _view.Editor;
 
@@ -175,7 +176,7 @@ internal static class InteractiveEditorHost
                     return 0;
                 }
                 else WriteAtomic($"response-{next:D4}.txt", "OK\n" +
-                    (command[0].StartsWith("dpi-", StringComparison.Ordinal) ? string.Empty : Snapshot()) + extra);
+                    (command[0].StartsWith("dpi-", StringComparison.Ordinal) || command[0] is "markdown-geometry" or "markdown-motion-trace-stop" or "markdown-derived-state" ? string.Empty : Snapshot()) + extra);
             }
             catch (Exception ex)
             {
@@ -373,6 +374,7 @@ internal static class InteractiveEditorHost
                 break;
             case "exit" when command.Length == 1:
                 KeyboardLayoutTestScope.Restore();
+                await DisposeMarkdownAsync();
                 if (_editorTools != null) await _editorTools.DisposeAsync();
                 _editorTools = null;
                 if (_imeWorkspace != null) await _imeWorkspace.DisposeAsync();
@@ -400,6 +402,85 @@ internal static class InteractiveEditorHost
                 var horizontal = (Windows.UI.Xaml.Controls.Primitives.ScrollBar)FindElement(_view, "HorizontalScrollBar");
                 return "averageCharWidth=" + (Native.TextWidth(32, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") / 52.0).ToString(CultureInfo.InvariantCulture) +
                     "\nhorizontalMaximum=" + horizontal.Maximum.ToString(CultureInfo.InvariantCulture) + "\n";
+            case "markdown-start" when command.Length == 1:
+                if (_markdown != null) throw new InvalidOperationException("A Markdown keyboard fixture already exists.");
+                _markdown = await NotepadsIntegrationTests.MarkdownKeyboardFixture.CreateAsync();
+                return _markdown.Snapshot();
+            case "markdown-state" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).Snapshot();
+            case "markdown-geometry" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).GeometrySnapshot();
+            case "markdown-motion-prepare" when command.Length == 2:
+                return await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareMotionAsync(command[1]);
+            case "markdown-motion-trace-start" when command.Length == 3:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).StartMotionTrace(command[1], int.Parse(command[2], CultureInfo.InvariantCulture));
+            case "markdown-motion-trace-stop" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).FinishMotionTrace();
+            case "markdown-smooth-prepare" when command.Length == 1:
+                return await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareSmoothAsync();
+            case "markdown-smooth-configure" when command.Length == 6:
+                return await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).ConfigureSmoothAsync(
+                    uint.Parse(command[1], CultureInfo.InvariantCulture), bool.Parse(command[2]), bool.Parse(command[3]),
+                    command[4], Number(command[5]));
+            case "markdown-smooth-state" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).SmoothSnapshot();
+            case "markdown-smooth-action" when command.Length == 2:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).SmoothAction(command[1]);
+            case "markdown-smooth-restore" when command.Length == 1:
+                (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).RestoreSmooth();
+                break;
+            case "markdown-follow-continuity-prepare" when command.Length == 1:
+                return await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareFollowContinuityAsync();
+            case "markdown-follow-continuity-probe" when command.Length == 1:
+                return await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).ProbeFollowContinuityAsync();
+            case "markdown-follow-continuity-configure" when command.Length == 1:
+                return await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).ConfigureFollowContinuityAsync();
+            case "markdown-follow-continuity-state" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).FollowContinuityInfo();
+            case "markdown-follow-continuity-trace-start" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).StartFollowContinuityTrace();
+            case "markdown-follow-continuity-trace-stop" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).FinishFollowContinuityTrace();
+            case "markdown-resize" when command.Length == 3:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).Resize(Number(command[1]), Number(command[2]));
+            case "markdown-theme" when command.Length == 2:
+                (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).SetTheme(command[1]);
+                return _markdown.Snapshot();
+            case "markdown-math-hover" when command.Length == 2:
+                await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareMathHoverAsync(command[1]);
+                return _markdown.Snapshot();
+            case "markdown-yaml" when command.Length == 2:
+                await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareYamlAsync(command[1]);
+                return _markdown.Snapshot();
+            case "markdown-html-controls" when command.Length == 1:
+                await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareHtmlControlsAsync();
+                return _markdown.Snapshot() + _markdown.HtmlControlsState();
+            case "markdown-html-controls-state" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).Snapshot() +
+                    _markdown.HtmlControlsState();
+            case "markdown-html-tables" when command.Length == 1:
+                await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareHtmlTablesAsync();
+                return _markdown.Snapshot() + _markdown.HtmlTablesState();
+            case "markdown-html-tables-state" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).Snapshot() +
+                    _markdown.HtmlTablesState();
+            case "markdown-quotes" when command.Length == 2:
+                await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareQuotesAsync(command[1]);
+                return _markdown.Snapshot();
+            case "markdown-mermaid" when command.Length == 2:
+                await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareMermaidAsync(command[1]);
+                return _markdown.Snapshot() + _markdown.DerivedStateSnapshot();
+            case "markdown-source-text" when command.Length == 2:
+                await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).PrepareSourceTextAsync(command[1]);
+                return _markdown.Snapshot() + _markdown.DerivedStateSnapshot();
+            case "markdown-derived-state" when command.Length == 1:
+                return (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).DerivedStateSnapshot();
+            case "markdown-sync-menu" when command.Length == 1:
+                await (_markdown ?? throw new InvalidOperationException("No Markdown keyboard fixture.")).ShowScrollSyncMenuAsync();
+                return _markdown.Snapshot();
+            case "markdown-stop" when command.Length == 1:
+                await DisposeMarkdownAsync();
+                break;
             case "editor-tools-start" when command.Length == 1:
                 if (_editorTools != null) throw new InvalidOperationException("An editor tools fixture already exists.");
                 _editorTools = await NotepadsIntegrationTests.EditorToolsKeyboardFixture.CreateAsync();
@@ -538,6 +619,13 @@ internal static class InteractiveEditorHost
             "\ngutterWidth=" + Native.GetMarginWidthN(0) +
             "\nglowLeft=" + reveal.BorderThickness.Left.ToString(CultureInfo.InvariantCulture) +
             "\nglowRight=" + reveal.BorderThickness.Right.ToString(CultureInfo.InvariantCulture) + "\n";
+    }
+
+    private static async ValueTask DisposeMarkdownAsync()
+    {
+        var markdown = _markdown;
+        _markdown = null;
+        if (markdown != null) await markdown.DisposeAsync();
     }
 
     private static async Task DiscardPreparedReplacementAsync()

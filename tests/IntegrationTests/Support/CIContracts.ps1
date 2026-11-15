@@ -74,6 +74,72 @@ try {
     }
 }
 finally { Pop-Location; $env:GITHUB_OUTPUT = $priorOutput }
+& {
+    $rustRoot = Join-Path $ciFixtureRoot 'rust-policy'
+    [IO.Directory]::CreateDirectory($rustRoot) | Out-Null
+    $rustCalls = [Collections.Generic.List[string]]::new()
+    $rustMode = 'complete'
+    $fixtureChannel = '9.8.7'
+    function rustup.exe {
+        $rustCalls.Add(($args -join ' '))
+        $global:LASTEXITCODE = 0
+        switch ($args[0]) {
+            'toolchain' { return }
+            'run' {
+                if ($rustMode -eq 'missing-compiler') { $global:LASTEXITCODE = 1; return }
+                return "release: $fixtureChannel"
+            }
+            'target' {
+                if ($rustMode -eq 'missing-target') { return 'x86_64-pc-windows-msvc' }
+                return @('x86_64-pc-windows-msvc', 'i686-pc-windows-msvc', 'aarch64-pc-windows-msvc')
+            }
+            'component' {
+                if ($rustMode -eq 'missing-component') { return 'rustfmt-x86_64-pc-windows-msvc' }
+                return @('rustfmt-x86_64-pc-windows-msvc', 'clippy-x86_64-pc-windows-msvc')
+            }
+            default { throw 'Unexpected rustup fixture operation.' }
+        }
+    }
+    $initializeRust = Join-Path $repo 'scripts/Initialize-RustToolchain.ps1'
+    foreach ($fixtureChannel in @('9.8.7', '8.7.6')) {
+        $policyPath = Join-Path $rustRoot 'rust-toolchain.toml'
+        [IO.File]::WriteAllText($policyPath, @"
+[toolchain]
+channel = "$fixtureChannel"
+profile = "minimal"
+components = ["rustfmt", "clippy"]
+targets = ["x86_64-pc-windows-msvc", "i686-pc-windows-msvc", "aarch64-pc-windows-msvc"]
+"@)
+        $policyHash = (Get-FileHash -LiteralPath $policyPath).Hash
+        foreach ($rustMode in @('complete', 'missing-compiler', 'missing-target', 'missing-component')) {
+            $rustCalls.Clear()
+            $failure = $null
+            try { & $initializeRust -ModuleRoot $rustRoot | Out-Null } catch { $failure = $_ }
+            if (($rustMode -eq 'complete') -eq [bool]$failure -or
+                @($rustCalls | Where-Object { $_ -like 'toolchain install*' }).Count) {
+                throw "Rust read-only verification failed its fixture: $fixtureChannel/$rustMode/$failure"
+            }
+            $checks.Add("Read-only pinned Rust verification: $fixtureChannel/$rustMode")
+        }
+        $rustMode = 'complete'
+        $rustCalls.Clear()
+        & $initializeRust -ModuleRoot $rustRoot -InstallMissing | Out-Null
+        $expectedInstall = "toolchain install $fixtureChannel --profile minimal --component rustfmt,clippy --target x86_64-pc-windows-msvc,i686-pc-windows-msvc,aarch64-pc-windows-msvc"
+        if ($rustCalls[0] -cne $expectedInstall -or (Get-FileHash -LiteralPath $policyPath).Hash -cne $policyHash) {
+            throw 'Rust provisioning changed or duplicated the checked-in toolchain policy.'
+        }
+        $checks.Add('Explicit provisioning follows the exact fixture Rust policy: ' + $fixtureChannel)
+    }
+}
+$ciWorkflow = Get-Content -LiteralPath (Join-Path $repo '.github/workflows/ci.yml') -Raw
+foreach ($job in @('native', 'package', 'ui')) {
+    $jobBody = [regex]::Match($ciWorkflow, '(?ms)^  ' + $job + ':\r?\n(?<body>.*?)(?=^  [a-zA-Z0-9_-]+:|\z)').Groups['body'].Value
+    if ($jobBody -notmatch 'run: ./scripts/Initialize-RustToolchain.ps1 -InstallMissing' -or
+        ($job -eq 'native' -and $jobBody -notmatch 'run: ./src/Notepads.Markdown/scripts/Test-Rust.ps1 -Layer All')) {
+        throw "CI $job omits the pinned Rust provisioning or native layer-test contract."
+    }
+    $checks.Add('CI Rust wiring: ' + $job)
+}
 $priorEnvironment = $env:RUNNER_ENVIRONMENT
 try {
     $env:RUNNER_ENVIRONMENT = 'self-hosted'
@@ -109,7 +175,10 @@ try {
             @{ Mode = 'test-failure'; Error = '*fixture UI test failure*'; Invoked = $true }
         )) {
             $case.Configuration = if ($lane -eq 'E2E') { 'Release' } else { 'Debug' }
-            $case.Groups = if ($lane -eq 'E2E') { 'UIAutomation,DragDrop,TabDragging,AppLifecycle,WindowMoveBroker,Editor,FutureFeature' } else { 'NativeFaults' }
+            $case.Groups = if ($lane -eq 'E2E') {
+                @('UIAutomation', 'DragDrop', 'TabDragging', 'AppLifecycle', 'WindowMoveBroker',
+                    'MarkdownCoreInterop', 'MarkdownCoreImages', 'Editor', 'FutureFeature') -join ','
+            } else { 'NativeFaults' }
             $case | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $ciFixtureRoot 'case.json')
             $marker = Join-Path $ciFixtureRoot 'invoked.txt'
             if (Test-Path -LiteralPath $marker) { Remove-Item -LiteralPath $marker }

@@ -49,6 +49,26 @@ $groups = [ordered]@{
     ClipboardRejectedCut = @{ Profile = 'App'; Arguments = @('--clipboard-rejected-cut'); Default = $true }
     WorkspaceCommands = @{ Profile = 'App'; Arguments = @('--workspace-commands'); Default = $true }
     ControlsMigration = @{ Profile = 'App'; Arguments = @('--controls-migration'); Default = $false }
+    Markdown = @{ Profile = 'App'; Arguments = @('--markdown'); Default = $true }
+    MarkdownViewportRefresh = @{ Profile = 'App'; Arguments = @('--markdown-viewport-refresh'); Default = $true }
+    MarkdownSourceFind = @{ Profile = 'App'; Arguments = @('--markdown-source-find'); Default = $false }
+    MarkdownBrokerNotes = @{ Profile = 'App'; Arguments = @('--markdown-broker-notes'); Default = $false }
+    MarkdownHostStateRepair = @{ Profile = 'App'; Arguments = @('--markdown-host-state-repair'); Default = $false }
+    MarkdownHostIo = @{ Profile = 'App'; Arguments = @('--markdown-host-io'); Default = $false }
+    MarkdownScrollSyncMenu = @{ Profile = 'App'; Arguments = @('--markdown-scroll-sync-menu'); Default = $false }
+    MarkdownHtmlControls = @{ Profile = 'App'; Arguments = @('--markdown-html-controls'); Default = $false }
+    MarkdownHtmlTables = @{ Profile = 'App'; Arguments = @('--markdown-html-tables'); Default = $false }
+    MarkdownRendering = @{ Profile = 'App'; Arguments = @('--markdown-mermaid', '--markdown-math-cases', '--markdown-yaml'); Default = $false }
+    MarkdownSelectionStability = @{ Profile = 'App'; Arguments = @('--markdown-selection-stability'); Default = $false }
+    MarkdownViewportGeometry = @{ Profile = 'App'; Arguments = @('--markdown-viewport-geometry'); Default = $false }
+    MarkdownResourceDeferral = @{ Profile = 'App'; Arguments = @('--markdown-resource-deferral', '--markdown-image-geometry'); Default = $false }
+    MarkdownThemeWidth = @{ Profile = 'App'; Arguments = @('--markdown-theme-width'); Default = $false }
+    MarkdownCoreInterop = @{ Profile = 'App'; Arguments = @('--markdown-core-interop'); Default = $false }
+    MarkdownCoreHighlight = @{ Profile = 'App'; Arguments = @('--markdown-core-highlight'); Default = $false }
+    MarkdownCoreReading = @{ Profile = 'App'; Arguments = @('--markdown-core-reading'); Default = $false }
+    MarkdownCoreImages = @{ Profile = 'App'; Arguments = @('--markdown-core-images'); Default = $false }
+    MarkdownSourceViewport = @{ Profile = 'App'; Arguments = @('--markdown-source-viewport-span', '--markdown-source-viewport-pending-wrap'); Default = $false }
+    MarkdownViewportInterpolation = @{ Profile = 'App'; Arguments = @('--markdown-viewport-interpolation'); Default = $false }
     PrintState = @{ Profile = 'App'; Arguments = @('--print-state'); Default = $true }
     Preferences = @{ Profile = 'App'; Arguments = @('--preferences'); Default = $true }
     PreferencesStore = @{ Profile = 'App'; Arguments = @('--preferences-store'); Default = $true }
@@ -154,7 +174,7 @@ function Ensure-TestBuild([string] $Profile, [string] $BuildConfiguration = $Con
         }
         else {
             $msbuild = Get-TestMSBuild
-            $solutionDirectory = [IO.Path]::GetFullPath((Join-Path $repo 'src/'))
+            $solutionDirectory = [IO.Path]::GetFullPath((Join-Path $repo 'src')).TrimEnd('\') + '/'
             $buildArguments = @('/restore', '/p:RestorePackagesConfig=true', "/p:Configuration=$BuildConfiguration", "/p:Platform=$buildPlatform", "/p:SolutionDir=$solutionDirectory", '/v:minimal', '/nologo')
             $project = if ($Profile -eq 'Product') { Join-Path $repo 'src/Notepads.App/Notepads.App.csproj' }
                 elseif ($Profile -in @('NativeDiff', 'NativeBidi', 'RegexText')) { Join-Path $repo "tests/IntegrationTests/Support/$Profile.Tests/$Profile.Tests.vcxproj" }

@@ -29,6 +29,12 @@ public partial class SetsView
 
         base.OnItemsChanged(e);
 
+        if (!IsReordering && args?.CollectionChange is CollectionChange.ItemRemoved or CollectionChange.Reset)
+        {
+            for (int index = _cachedContents.Count - 1; index >= 0; index--)
+                if (!Items.Contains(_cachedContents[index].Item)) RemoveCachedContentAt(index);
+        }
+
         if (!IsReordering && args?.CollectionChange == CollectionChange.ItemRemoved && SelectedIndex == -1)
         {
             // If we remove the selected item we should select the previous item

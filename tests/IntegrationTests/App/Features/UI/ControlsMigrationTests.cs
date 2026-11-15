@@ -96,7 +96,7 @@ internal static class ControlsMigrationTests
                 (new DropShadowPanel(), "ShadowElement"),
                 (new GridSplitter(), "RootGrid"),
                 (new InAppNotification(), "PART_DismissButton"),
-                (new SetsView(), "SetsContentPresenter"),
+                (new SetsView(), "SetsContentHost"),
                 (new SetsViewItem(), "LayoutRoot")
             })
             {

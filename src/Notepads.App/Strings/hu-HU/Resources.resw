@@ -181,7 +181,7 @@
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_PreviewTextChanges.Text" xml:space="preserve"><value>Szövegváltozások előnézete</value><comment>TextEditor: ModificationIndicator "PreviewTextChanges" MenuFlyoutItem display text. DiffViewer will be shown upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>Összes módosítás visszavonása</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>Módosított</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
-  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>Másolva</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
+  <data name="Clipboard_NotificationMsg_Copied" xml:space="preserve"><value>Másolva</value><comment>Notification displayed after copying text to the clipboard.</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>Elmentve</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Teljes képernyős módból való kilépéshez nyomja meg az F11-et</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
   <data name="TextEditor_FileModifiedOutsideIndicator_MenuFlyoutItem_ReloadFileFromDisk.Text" xml:space="preserve"><value>Fájl újratöltése a lemezről</value><comment>TextEditor: FileModifiedOutsideIndicator "ReloadFileFromDisk" MenuFlyoutItem display text.</comment></data>
@@ -337,4 +337,9 @@
   <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Szórészletek is</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
   <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Szóközök és tabulátorok megjelenítése</value></data>
+  <data name="MarkdownPreview_TooLarge" xml:space="preserve"><value>Az előnézet legfeljebb 4 MiB méretű dokumentumokhoz érhető el.</value></data>
+  <data name="MarkdownPreview_Failed" xml:space="preserve"><value>Az előnézetet nem sikerült frissíteni.</value></data>
+  <data name="MarkdownPreview_Loading" xml:space="preserve"><value>Előnézet frissítése…</value></data>
+  <data name="MarkdownPreview_LinkFailed" xml:space="preserve"><value>Ezt a hivatkozást nem sikerült megnyitni.</value></data>
+  <data name="MarkdownPreview_ScrollSync" xml:space="preserve"><value>Görgetés szinkronizálása</value></data>
 </root>

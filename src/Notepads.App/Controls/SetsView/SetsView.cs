@@ -20,7 +20,7 @@ namespace Notepads.Controls;
 /// <summary>
 /// SetsView is a control for displaying a set of sets and their content.
 /// </summary>
-[TemplatePart(Name = SetsContentPresenterName, Type = typeof(ContentPresenter))]
+[TemplatePart(Name = SetsContentHostName, Type = typeof(Grid))]
 [TemplatePart(Name = SetsViewContainerName, Type = typeof(Grid))]
 [TemplatePart(Name = SetsItemsPresenterName, Type = typeof(ItemsPresenter))]
 [TemplatePart(Name = SetsScrollViewerName, Type = typeof(ScrollViewer))]
@@ -32,7 +32,6 @@ public partial class SetsView : ListViewBase
 {
     private const int ScrollAmount = 50; // TODO: Should this be based on SetsWidthMode
 
-    private const string SetsContentPresenterName = "SetsContentPresenter";
     private const string SetsViewContainerName = "SetsViewContainer";
     private const string SetsItemsPresenterName = "SetsItemsPresenter";
     private const string SetsScrollViewerName = "ScrollViewer";
@@ -41,7 +40,6 @@ public partial class SetsView : ListViewBase
     private const string SetsScrollBackButtonName = "SetsScrollBackButton";
     private const string SetsScrollForwardButtonName = "SetsScrollForwardButton";
 
-    private ContentPresenter _setsContentPresenter;
     private Grid _setsViewContainer;
     private ItemsPresenter _setItemsPresenter;
     private ScrollViewer _setsScroller;
@@ -82,6 +80,7 @@ public partial class SetsView : ListViewBase
 
         // Selection Hook
         SelectionChanged += SetsView_SelectionChanged;
+        Unloaded += (_, _) => ClearCachedContent();
         InitializeTabDragging();
     }
 
@@ -123,6 +122,10 @@ public partial class SetsView : ListViewBase
         InvalidateTabDrag();
         _railViewport = null;
         _scrollerReady = false;
+        ClearCachedContent();
+        if (_setsContentPresenter != null) RemoveContentPresenter(_setsContentPresenter);
+        _setsContentPresenter = null;
+        _presentedSet = null;
         base.OnApplyTemplate();
 
         if (_setItemsPresenter != null)
@@ -137,7 +140,7 @@ public partial class SetsView : ListViewBase
             _setsScroller.ViewChanged -= SetsScrollViewer_ViewChanged;
         }
 
-        _setsContentPresenter = GetTemplateChild(SetsContentPresenterName) as ContentPresenter;
+        _setsContentHost = GetTemplateChild(SetsContentHostName) as Grid;
         _setsViewContainer = GetTemplateChild(SetsViewContainerName) as Grid;
         _setItemsPresenter = GetTemplateChild(SetsItemsPresenterName) as ItemsPresenter;
         _setsScroller = GetTemplateChild(SetsScrollViewerName) as ScrollViewer;
@@ -152,6 +155,8 @@ public partial class SetsView : ListViewBase
             _setsScroller.Loaded += SetsScrollViewer_Loaded;
             _setsScroller.ViewChanged += SetsScrollViewer_ViewChanged;
         }
+        if (_setsContentHost != null && SelectedItem != null && ContainerFromItem(SelectedItem) is SetsViewItem selected)
+            PresentContent(selected, false);
     }
 
     private void SetsScrollViewer_Loaded(object sender, RoutedEventArgs e)
@@ -249,28 +254,12 @@ public partial class SetsView : ListViewBase
             SelectedItem is SetsViewItem selected)
             ScrollSetIntoView(selected);
 
-        if (_setsContentPresenter != null)
+        if (_setsContentHost != null)
         {
             if (SelectedItem == null)
-            {
-                _setsContentPresenter.Content = null;
-                _setsContentPresenter.ContentTemplate = null;
-            }
-            else
-            {
-                if (ContainerFromItem(SelectedItem) is SetsViewItem container)
-                {
-                    // Reassigning even the same Content can rebuild UWP's
-                    // presentation on the next layout and unload the editor.
-                    if (!ReferenceEquals(_setsContentPresenter.Content, container.Content))
-                        _setsContentPresenter.Content = container.Content;
-                    if (!ReferenceEquals(_setsContentPresenter.ContentTemplate, container.ContentTemplate))
-                        _setsContentPresenter.ContentTemplate = container.ContentTemplate;
-
-                    if (e != null) _setsContentPresenter.Loaded += SetsContentPresenter_Loaded;
-                }
-            }
-
+                PresentContent(null, false);
+            else if (ContainerFromItem(SelectedItem) is SetsViewItem selectedContent)
+                PresentContent(selectedContent, e != null);
             UpdateScrollViewerShadows();
             UpdateSetSeparators();
         }
@@ -309,13 +298,6 @@ public partial class SetsView : ListViewBase
             set.ShowRightSideSeparator();
         else
             set.HideRightSideSeparator();
-    }
-
-    private void SetsContentPresenter_Loaded(object sender, RoutedEventArgs e)
-    {
-        _setsContentPresenter.Loaded -= SetsContentPresenter_Loaded;
-        var args = new SetSelectedEventArgs(((SetsViewItem)ContainerFromItem(SelectedItem))?.Content, (SetsViewItem)ContainerFromItem(SelectedItem));
-        SetSelected?.Invoke(this, args);
     }
 
     /// <inheritdoc/>

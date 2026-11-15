@@ -189,7 +189,7 @@
   <data name="TextEditor_ModificationIndicator_MenuFlyoutItem_RevertAllChanges.Text" xml:space="preserve"><value>Vrátit všechny změny</value><comment>TextEditor: ModificationIndicator "RevertAllChanges" MenuFlyoutItem display text. All changes including text, encoding and line ending will be reverted to original state upon selection.</comment></data>
   <data name="TextEditor_ModificationIndicator_Text" xml:space="preserve"><value>Modifikovaný</value><comment>TextEditor: ModificationIndicator display text.</comment></data>
   <data name="TextEditor_NotificationMsg_ExitFullScreenHint" xml:space="preserve"><value>Stiskněte F11 pro ukončení celoobrazovkového režimu</value><comment>TextEditor: Notification message when app entering full screen mode.</comment></data>
-  <data name="TextEditor_NotificationMsg_FileNameOrPathCopied" xml:space="preserve"><value>Kopírovaný</value><comment>TextEditor: Notification message when user tap or click file name/path on status bar (Bottom left corner).</comment></data>
+  <data name="Clipboard_NotificationMsg_Copied" xml:space="preserve"><value>Kopírovaný</value><comment>Notification displayed after copying text to the clipboard.</comment></data>
   <data name="TextEditor_NotificationMsg_FileReloaded" xml:space="preserve"><value>Soubor byl znovu načten</value><comment>TextEditor: Notification message when file has been reloaded successfully.</comment></data>
   <data name="TextEditor_NotificationMsg_FileSaved" xml:space="preserve"><value>Uložen</value><comment>TextEditor: Notification message when file has been saved successfully.</comment></data>
   <data name="TextEditor_LineColumnIndicator_FullText_PluralSelectedWord" xml:space="preserve"><value>vybrány</value><comment>TextEditor: Plural form for the selected word count indicator. Leave it with the same value of SingularSelectedWord if your language doesen't have a plural form.</comment></data>
@@ -337,4 +337,9 @@
   <data name="EditorTools_FindAllAnyWord" xml:space="preserve"><value>Včetně částí slov</value></data>
   <data name="EditorTools_FindAllQuery" xml:space="preserve"><value>“{0}”</value></data>
   <data name="DiffViewer_Whitespace" xml:space="preserve"><value>Zobrazovat mezery a tabulátory</value></data>
+  <data name="MarkdownPreview_TooLarge" xml:space="preserve"><value>Náhled je dostupný pro dokumenty do velikosti 4 MiB.</value></data>
+  <data name="MarkdownPreview_Failed" xml:space="preserve"><value>Náhled se nepodařilo aktualizovat.</value></data>
+  <data name="MarkdownPreview_Loading" xml:space="preserve"><value>Aktualizace náhledu…</value></data>
+  <data name="MarkdownPreview_LinkFailed" xml:space="preserve"><value>Tento odkaz se nepodařilo otevřít.</value></data>
+  <data name="MarkdownPreview_ScrollSync" xml:space="preserve"><value>Synchronizovat posouvání</value></data>
 </root>

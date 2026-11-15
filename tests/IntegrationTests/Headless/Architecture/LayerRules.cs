@@ -23,9 +23,10 @@ internal static class LayerRules
         }
         foreach (var feature in new[] { "Preferences", "WebSearch" })
             if (name.StartsWith("Notepads.Features." + feature + ".")) return feature;
-        foreach (var part in new[] { "Diagnostics", "Storage", "Settings", "Threading", "Runtime", "Shell", "Fonts", "Localization", "Resources" })
+        foreach (var part in new[] { "Diagnostics", "Storage", "Settings", "Threading", "Runtime", "Shell", "Fonts", "Localization", "Resources", "DocumentAssets" })
             if (name.StartsWith("Notepads.Infrastructure." + part + ".")) return "Infrastructure." + part;
         if (name.StartsWith("WinUIEditor.")) return "Native";
+        if (name.StartsWith("Notepads.Markdown.")) return "Markdown";
         if (name.StartsWith("Notepads.Controls.")) return "Controls";
         if (name.StartsWith("Windows.UI.Xaml.") || name.StartsWith("Microsoft.UI.Xaml.") ||
             name.StartsWith("CommunityToolkit.WinUI."))
@@ -56,7 +57,9 @@ internal static class LayerRules
             {
                 return sourceType.StartsWith("Notepads.Presentation.Controls.TextEditor.") ||
                     sourceType.StartsWith("Notepads.Presentation.Workspace.") && targetType.Contains("EditorJournalCheckpoint") ||
-                    targetType == "WinUIEditor.EditorSyntaxPauseReason";
+                    targetType == "WinUIEditor.EditorSyntaxPauseReason" ||
+                    sourceType == "Notepads.Presentation.Controls.Markdown.MarkdownScrollSettingsProvider" &&
+                    targetType == "WinUIEditor.EditorBaseControl";
             }
 
             if (source.StartsWith("Documents"))
@@ -64,14 +67,16 @@ internal static class LayerRules
             if (source.StartsWith("Sessions")) return targetType.Contains("EditorJournalCheckpoint");
             return false;
         }
+        if (target == "Markdown") return source == "Presentation";
         if (source == "Presentation") return true;
-        if (target == "Controls" || target == "Presentation") return false;
+        if (target is "Controls" or "Presentation") return false;
         if (source.StartsWith("Infrastructure."))
         {
             if (!target.StartsWith("Infrastructure.")) return false;
             if (source == "Infrastructure.Diagnostics" || source == "Infrastructure.Threading") return false;
             return target == "Infrastructure.Diagnostics" ||
-                (source == "Infrastructure.Storage" || source == "Infrastructure.Runtime") && target == "Infrastructure.Threading";
+                (source is "Infrastructure.Storage" or "Infrastructure.Runtime" or "Infrastructure.DocumentAssets") &&
+                target == "Infrastructure.Threading";
         }
         if (target.StartsWith("Infrastructure.")) return true;
         if (source == "Preferences")

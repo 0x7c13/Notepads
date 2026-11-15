@@ -9,6 +9,7 @@
     xmlns:findAndReplace="using:Notepads.Presentation.Controls.FindAndReplace"
     xmlns:goTo="using:Notepads.Presentation.Controls.GoTo"
     mc:Ignorable="d"
+    UseLayoutRounding="True"
     SizeChanged="FindAllArea_SizeChanged"
     Background="{ThemeResource SystemControlForegroundTransparentBrush}">
 
@@ -64,16 +65,17 @@
                                         <VisualState x:Name="Normal"/>
                                         <VisualState x:Name="PointerOver">
                                             <VisualState.Setters>
-                                                <Setter Target="RootGrid.Background" Value="{ThemeResource GridSplitterBackgroundThemeBrush}"/>
+                                                <Setter Target="SplitterIndicator.Background" Value="{ThemeResource GridSplitterBackgroundThemeBrush}"/>
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Pressed">
                                             <VisualState.Setters>
-                                                <Setter Target="RootGrid.Background" Value="{ThemeResource GridSplitterBackgroundThemeBrush}"/>
+                                                <Setter Target="SplitterIndicator.Background" Value="{ThemeResource GridSplitterBackgroundThemeBrush}"/>
                                             </VisualState.Setters>
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
+                                <Border x:Name="SplitterIndicator" Background="{TemplateBinding Background}" Margin="{TemplateBinding Padding}"/>
                                 <ContentPresenter Content="{TemplateBinding Element}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                             </Grid>
                         </ControlTemplate>
@@ -239,7 +241,7 @@
             <ContentPresenter x:Name="SplitPanel" 
                               x:Load="False"
                               Canvas.ZIndex="100"
-                              Padding="10,0,0,0"
+                              Padding="2,0,0,0"
                               Background="{ThemeResource SplitViewBackgroundThemeBrush}"
                               AutomationProperties.AccessibilityView="Raw"
                               Grid.Column="1"/>
@@ -248,6 +250,7 @@
                                    Canvas.ZIndex="150"
                                    Style="{StaticResource CustomGridSplitterStyle}"
                                    MinWidth="10"
+                                   Padding="0,0,8,0"
                                    GripperCursor="Default"
                                    HorizontalAlignment="Left"
                                    Grid.Column="1"

@@ -300,14 +300,13 @@
                               Content="{TemplateBinding SetsEndHeader}"
                               ContentTemplate="{TemplateBinding SetsEndHeaderTemplate}" />
 
-            <ContentPresenter x:Name="SetsContentPresenter"
-                              Canvas.ZIndex="100"
-                              Grid.Row="2"
-                              Grid.ColumnSpan="6" 
-                              Grid.Column="0"
-                              Background="{ThemeResource SetsViewItemHeaderBackgroundPressed}"
-                              BorderBrush="{TemplateBinding BorderBrush}"
-                              BorderThickness="{TemplateBinding BorderThickness}" />
+            <Grid x:Name="SetsContentHost"
+                  Canvas.ZIndex="100"
+                  Grid.Row="2"
+                  Grid.ColumnSpan="6"
+                  Background="{ThemeResource SetsViewItemHeaderBackgroundPressed}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}" />
 
             <!--  Shadow above Footer  -->
             <controls:DropShadowPanel    

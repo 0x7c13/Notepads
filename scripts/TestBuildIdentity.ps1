@@ -10,7 +10,8 @@ function Get-TestSourceFiles {
     $repo = Split-Path $PSScriptRoot -Parent
     $roots = switch ($Profile) {
         'Unit' { @('tests/UnitTests', 'src/Notepads.App/Features/Documents', 'src/Notepads.App/Features/Sessions/Contracts',
-            'src/Notepads.App/Features/Sessions/Validation', 'src/Notepads.App/Features/WebSearch', 'src/Notepads.App/Controls/SetsView') }
+            'src/Notepads.App/Features/Sessions/Validation', 'src/Notepads.App/Features/WebSearch', 'src/Notepads.App/Controls/SetsView',
+            'src/Notepads.App/Presentation/Controls/Markdown', 'src/Notepads.App/Presentation/Controls/TextEditor') }
         'Headless' { @('tests/IntegrationTests/Headless', 'src/Notepads.App/Features/Documents', 'src/Notepads.App/Features/Sessions',
             'src/Notepads.App/Infrastructure/Diagnostics') }
         'App' { @('src', 'tests/IntegrationTests/App', 'tests/Shared') }
@@ -35,7 +36,9 @@ function Get-TestSourceFiles {
             }
         }
     }
-    foreach ($relative in @('src/Notepads.Markdown/target', 'src/Notepads.Markdown/artifacts',
+    foreach ($relative in @('src/Notepads.Markdown/target',
+        'src/Notepads.Markdown/crates/markdown-math/target',
+        'src/Notepads.Markdown/scripts/code-syntax-pack/target', 'src/Notepads.Markdown/artifacts',
         'src/Notepads.Markdown/.tools')) {
         $null = $generatedDirectories.Add([IO.Path]::GetFullPath((Join-Path $repo $relative)))
     }
@@ -43,7 +46,9 @@ function Get-TestSourceFiles {
     $generatedNames = @('bin', 'obj', '.git', '.vs', 'packages', '__pycache__', 'TestResults',
         '_buildUwp', '_buildWinUI3', 'Generated Files', 'AppPackages', 'BundleArtifacts')
     $projectInputs = if ($Profile -in @('Headless', 'App', 'Lifecycle')) { @('tests/IntegrationTests/IntegrationTests.csproj', 'tests/IntegrationTests/Directory.Build.props') } else { @() }
-    if ($Profile -eq 'Unit') { $projectInputs += 'tests/Shared/TestProcessLifetime.cs' }
+    if ($Profile -eq 'Unit') {
+        $projectInputs += 'tests/Shared/TestProcessLifetime.cs'
+    }
     if ($Profile -in @('App', 'Lifecycle', 'Product')) { $projectInputs += 'scripts/NativeAot.targets' }
     if ($Profile -in @('App', 'Lifecycle')) { $projectInputs += 'tests/IntegrationTests/Package.appxmanifest' }
     foreach ($relative in (@('Directory.Packages.props', 'global.json', '.editorconfig', 'scripts/TestBuildIdentity.ps1') + $projectInputs)) {
@@ -80,6 +85,37 @@ function Get-TestSourceHashes {
     return $hashes
 }
 
+function Assert-TestMarkdownRecipe {
+    param([object[]] $Payload)
+    $required = @('Notepads.Markdown.dll', 'Notepads.Markdown.winmd', 'Notepads.Markdown.pri',
+        'Notepads.Markdown/Themes/Generic.xaml')
+    # Debug Build recipes retain the managed projection; published AOT recipes
+    # compile it into the host. Both use the same native component and template.
+    $allowed = @($required) + @('Notepads.Markdown.Projection.dll')
+    $packagePaths = [Collections.Generic.List[string]]::new()
+    foreach ($item in $Payload) {
+        $relative = ([string]$item.PackagePath).Replace('\', '/')
+        # The staging copy uses Windows paths. Refuse traversal, rooted paths,
+        # invalid characters and aliases before they can hide a module asset.
+        if ([string]::IsNullOrWhiteSpace($relative) -or
+            $relative -match '^/|[\x00-\x1f:"<>|?*]|//|(^|/)[.]{1,2}(/|$)|(^|/)[^/]*[. ](/|$)|/$') {
+            throw "Invalid app recipe package path: $relative."
+        }
+        $packagePaths.Add($relative)
+    }
+    foreach ($relative in $required) {
+        $matchingAssets = @($packagePaths | Where-Object { $_ -ieq $relative })
+        if ($matchingAssets.Count -ne 1) { throw "The source Markdown recipe requires one $relative; found $($matchingAssets.Count)." }
+    }
+    $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    foreach ($relative in $packagePaths) {
+        if (!$seen.Add($relative)) { throw "Duplicate app recipe package path: $relative." }
+        if ($relative -match '^Notepads[.]Markdown([./]|$)' -and $relative -notin $allowed) {
+            throw "Unexpected source Markdown recipe asset: $relative. Update the module deployment contract before packaging new assets."
+        }
+    }
+}
+
 function Get-TestArtifactFiles {
     param([string] $Profile, [string] $Configuration, [string] $Platform)
     $repo = Split-Path $PSScriptRoot -Parent
@@ -107,14 +143,17 @@ function Get-TestArtifactFiles {
         [xml] $recipe = Get-Content -LiteralPath $recipePath
         $paths = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
         $null = $paths.Add($recipePath)
+        $payload = [Collections.Generic.List[object]]::new()
         foreach ($group in $recipe.Project.ItemGroup) {
             foreach ($file in $group.ChildNodes) {
                 if (!$file.PackagePath -or !$file.Include) { continue }
                 $path = [IO.Path]::GetFullPath([Uri]::UnescapeDataString($file.Include))
                 if (!(Test-Path -LiteralPath $path -PathType Leaf)) { throw "Missing packaged artifact: $path" }
                 $null = $paths.Add($path)
+                $payload.Add([pscustomobject]@{ PackagePath = ([string]$file.PackagePath).Replace('\', '/'); FullPath = $path })
             }
         }
+        Assert-TestMarkdownRecipe $payload.ToArray()
         if ($paths.Count -lt 2) { throw 'The app recipe has no package payload.' }
         return @($paths | Sort-Object)
     }
@@ -142,7 +181,7 @@ function Write-TestBuildIdentity {
     }
     $runtime = if ($Profile -in @('App', 'Lifecycle', 'Product', 'DragPeer')) { 'win-' + $Platform.ToLowerInvariant() } else { 'portable-or-x64-helper' }
     $document = [ordered]@{
-        Schema = 1; Profile = $Profile; Configuration = $Configuration; Platform = $Platform; Runtime = $runtime
+        Schema = 2; Profile = $Profile; Configuration = $Configuration; Platform = $Platform; Runtime = $runtime
         Sdk = (& dotnet --version); CreatedUtc = [DateTime]::UtcNow.ToString('O'); Sources = $sources; Artifacts = $artifacts
     }
     $path = Get-TestIdentityPath $Profile $Configuration $Platform
@@ -158,7 +197,7 @@ function Assert-TestBuildIdentity {
     $path = Get-TestIdentityPath $Profile $Configuration $Platform
     if (!(Test-Path -LiteralPath $path)) { throw "No verified build identity exists. Run scripts/Test.ps1 without -NoBuild first: $path" }
     $identity = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
-    if ($identity.Schema -ne 1 -or $identity.Profile -ne $Profile -or $identity.Configuration -ne $Configuration -or $identity.Platform -ne $Platform -or
+    if ($identity.Schema -ne 2 -or $identity.Profile -ne $Profile -or $identity.Configuration -ne $Configuration -or $identity.Platform -ne $Platform -or
         $identity.Sdk -ne (& dotnet --version)) { throw 'Build profile, configuration, platform or SDK does not match the reusable output.' }
     $sources = Get-TestSourceHashes $Profile
     $saved = @($identity.Sources.PSObject.Properties)

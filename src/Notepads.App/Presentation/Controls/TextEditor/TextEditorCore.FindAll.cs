@@ -107,8 +107,12 @@ public sealed partial class TextEditorCore
         if (!CanEdit || _movingToWindow || results.Summary.Revision != Native.DocumentRevision ||
             index < 0 || index >= results.Rows.Count) return false;
         var row = results.Rows[index];
+        var attachment = _view.DocumentAttachmentGeneration;
+        var revision = Native.DocumentRevision;
+        var contentVersion = ContentVersion;
         Native.SetSel(row.Start, row.End);
         Native.ScrollCaret();
+        PublishMarkdownSearchMatch(row.Start, row.End, attachment, revision, contentVersion);
         return true;
     }
 }
