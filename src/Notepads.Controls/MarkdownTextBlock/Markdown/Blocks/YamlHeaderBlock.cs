@@ -66,6 +66,7 @@ namespace Notepads.Controls.Markdown
             // if current line not contain the ": ", check it is end of parse, if not, exit
             // if next line is the end, exit
             int pos = startOfNextLine;
+            int underlineEndIndex = start;
             List<string> elements = new List<string>();
             while (pos < end)
             {
@@ -78,7 +79,7 @@ namespace Notepads.Controls.Markdown
                 else if (end - pos >= 3 && markdown.Substring(pos, 3) == "---")
                 {
                     lockedFinalUnderline = true;
-                    realEndIndex = pos + 3;
+                    underlineEndIndex = pos + 3;
                     break;
                 }
                 else if (startOfNextLine == pos + 1)
@@ -136,6 +137,7 @@ namespace Notepads.Controls.Markdown
                 return null;
             }
 
+            realEndIndex = underlineEndIndex;
             return result;
         }
 

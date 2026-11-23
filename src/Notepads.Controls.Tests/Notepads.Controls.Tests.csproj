@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Regression tests for the markdown parser that lives in Notepads.Controls.
+
+    Notepads itself is a UWP application, so this project deliberately does NOT
+    reference Notepads.Controls.csproj and is NOT part of Notepads.sln: the parser
+    sources are plain .NET (no XAML types), so linking them here lets the tests run
+    on a normal `dotnet test` without the UWP / Windows SDK toolchain.
+
+    Run with:  dotnet test src/Notepads.Controls.Tests
+  -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="MarkdownParserTests.cs" />
+    <!-- The parser sources, compiled straight from Notepads.Controls. -->
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\MarkdownBlock.cs" Link="Markdown\MarkdownBlock.cs" />
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\MarkdownDocument.cs" Link="Markdown\MarkdownDocument.cs" />
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\MarkdownElement.cs" Link="Markdown\MarkdownElement.cs" />
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\MarkdownInline.cs" Link="Markdown\MarkdownInline.cs" />
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\Blocks\**\*.cs" LinkBase="Markdown\Blocks" />
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\Core\**\*.cs" LinkBase="Markdown\Core" />
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\Helpers\**\*.cs" LinkBase="Markdown\Helpers" />
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\Inlines\**\*.cs" LinkBase="Markdown\Inlines" />
+    <Compile Include="..\Notepads.Controls\MarkdownTextBlock\Markdown\Enums\**\*.cs" LinkBase="Markdown\Enums" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- MarkdownLinkInline calls Microsoft.Toolkit.StringExtensions.IsEmail; this is the
+         same package and version Notepads.Controls resolves, so the tests exercise the
+         production dependency rather than a stand-in. -->
+    <PackageReference Include="Microsoft.Toolkit" Version="7.1.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.2" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+</Project>
