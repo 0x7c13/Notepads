@@ -164,6 +164,8 @@ internal static class BrokeredDocumentTests
                         !editor.GetTextEditorStateMetaData().HasUnconfirmedFileSave,
                         "Refusing the other volume preserves the verified version and the unsaved draft.");
                     await BytesAsync(file, Encoding.UTF8.GetBytes(Original), "A different volume's matching suffix cannot authorize writing");
+                    DocumentSaveTarget.TestDriveDeviceName = _ => null;
+                    DocumentSaveTarget.TestHideMountedVolumeName = true;
                 }
                 saved = await editor.SaveContentToFileAndUpdateEditorStateAsync(editor.EditingFile);
             }
@@ -175,6 +177,8 @@ internal static class BrokeredDocumentTests
             }
             finally
             {
+                DocumentSaveTarget.TestDriveDeviceName = null;
+                DocumentSaveTarget.TestHideMountedVolumeName = false;
                 DocumentSaveTarget.TestHideNormalizedDosPath = null;
                 DocumentSaveTarget.TestNamedMetadataUnavailable = null;
             }
@@ -185,7 +189,7 @@ internal static class BrokeredDocumentTests
                 string.Equals(Path.GetFileName(target.FinalPath), Path.GetFileName(after.FinalPath), StringComparison.OrdinalIgnoreCase),
                 $"Saving the private {kind} fixture may change only its leaf spelling.");
             log.AppendLine($"PASS: brokered {kind} verified save (prior leaf {Path.GetFileName(target.FinalPath)}, current {Path.GetFileName(after.FinalPath)}).");
-            if (kind == "canonical") log.AppendLine("PASS: a brokered local save still verifies and commits without its DOS name or access to the drive root.");
+            if (kind == "canonical") log.AppendLine("PASS: a brokered local save still verifies and commits without DOS or volume mapping access.");
             if (canRename)
             {
                 var name = "editor-" + kind + ".txt";

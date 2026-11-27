@@ -50,6 +50,11 @@ namespace Notepads.Features.Documents.IO
         {
             if (TestDriveDeviceName != null) device = TestDriveDeviceName(device);
         }
+        internal static bool TestHideMountedVolumeName;
+        static partial void OnReadingMountedVolumeName(ref string name)
+        {
+            if (TestHideMountedVolumeName) name = null;
+        }
         internal static bool TestHideVolumeGuid;
         static partial void OnResolvingVolumePath(ref bool hideVolumeGuid) => hideVolumeGuid = TestHideVolumeGuid;
         internal static Func<string, string> TestPinnedLocation;

@@ -107,6 +107,7 @@ internal static partial class DocumentSaveTarget
     static partial void OnRecheckingPinnedLocation(ref string observed);
     static partial void OnCheckingNormalizedDosPath(string path, ref string dosPath);
     static partial void OnReadingDriveDeviceName(ref string device);
+    static partial void OnReadingMountedVolumeName(ref string name);
     static partial void OnCheckingPinnedParent(ref bool hasTag, ref string finalPath);
     static partial void OnCheckingPinnedAnchor(ref string finalPath);
 
@@ -164,27 +165,46 @@ internal static partial class DocumentSaveTarget
         if (device != null)
             return physicalPath.AsSpan(0, volumeEnd).Equals(device.AsSpan().TrimEnd('\\'), StringComparison.OrdinalIgnoreCase);
 
-        var mountName = GetMountedVolumeName(path[..7], out int driveError);
-        var physicalMountName = GetMountedVolumeName(OpenableLocalVolumePath(physicalPath[..(volumeEnd + 1)]), out int volumeError);
-        if (mountName == null || physicalMountName == null)
-            LoggingService.LogError($"[Save] Volume identity unavailable for '{path[..7]}' or '{physicalPath[..volumeEnd]}' (Win32 {driveError}, {volumeError}).");
-        return mountName != null && string.Equals(mountName, physicalMountName, StringComparison.OrdinalIgnoreCase);
+        var mountName = GetMountedVolumeName(path[..7]);
+        var physicalMountName = GetMountedVolumeName(OpenableLocalVolumePath(physicalPath[..(volumeEnd + 1)]));
+        if (mountName != null && physicalMountName != null)
+            return string.Equals(mountName, physicalMountName, StringComparison.OrdinalIgnoreCase);
+
+        // Some app containers cannot query either volume mapping. Check the
+        // reported mount and exact opened name, then recheck the physical grant.
+        return IsOnRequestedMount(path) && GetFinalPath(entry, 0xA /* FILE_NAME_OPENED | VOLUME_NAME_NT */) == physicalPath;
     }
 
-    private static unsafe string GetMountedVolumeName(string root, out int error)
+    private static unsafe bool IsOnRequestedMount(string path)
+    {
+        Span<char> buffer = stackalloc char[512];
+        fixed (char* name = buffer)
+        {
+            // A reported mount point can expose a redirect even when mapping
+            // that mount point to its volume ID is denied.
+            if (GetVolumePathNameW(path, name, (uint)buffer.Length) == 0)
+            {
+                LoggingService.LogError($"[Save] Could not verify the mount for '{path}' (Win32 {Marshal.GetLastPInvokeError()}).");
+                return false;
+            }
+        }
+        int length = buffer.IndexOf('\0');
+        ReadOnlySpan<char> mount = length > 0 ? buffer[..length] : default;
+        return mount.Equals(path.AsSpan(0, 7), StringComparison.OrdinalIgnoreCase) ||
+            mount.Equals(path.AsSpan(4, 3), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static unsafe string GetMountedVolumeName(string root)
     {
         Span<char> buffer = stackalloc char[50];
         fixed (char* name = buffer)
         {
-            if (GetVolumeNameForVolumeMountPointW(root, name, (uint)buffer.Length) == 0)
-            {
-                error = Marshal.GetLastPInvokeError();
-                return null;
-            }
+            if (GetVolumeNameForVolumeMountPointW(root, name, (uint)buffer.Length) == 0) return null;
         }
-        error = 0;
         int length = buffer.IndexOf('\0');
-        return length > 0 ? new string(buffer[..length]) : null;
+        var volume = length > 0 ? new string(buffer[..length]) : null;
+        OnReadingMountedVolumeName(ref volume);
+        return volume;
     }
 
     private static unsafe string GetDriveDeviceName(string drive)
@@ -206,8 +226,11 @@ internal static partial class DocumentSaveTarget
     private static unsafe partial int DeviceIoControl(SafeFileHandle device, uint code, IntPtr input,
         uint inputSize, char* output, uint outputSize, out uint written, IntPtr overlapped);
 
-    [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16)]
     private static unsafe partial int GetVolumeNameForVolumeMountPointW(string root, char* name, uint capacity);
+
+    [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    private static unsafe partial int GetVolumePathNameW(string path, char* name, uint capacity);
 
     private static bool ResolvesParentCaseSpelling(string path, string spelling)
     {
