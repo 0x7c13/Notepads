@@ -49,6 +49,8 @@ internal static class BrokeredDocumentTests
             int rawParentList = DocumentSaveTarget.TestRawPathAccess(parent, 1, BackupSemantics);
             int rawParentTraverse = DocumentSaveTarget.TestRawPathAccess(parent, 0x20, OpenReparsePoint | BackupSemantics);
             int rawCanonical = DocumentSaveTarget.TestRawPathAccess(target.FinalPath, 0, OpenReparsePoint);
+            bool inaccessibleRedirect = (kind is "junction" or "link") && (rawParentTraverse is 2 or 3 or 5) &&
+                !target.FinalPath.EndsWith($@"\{Path.GetFileName(parent)}\{file.Name}", StringComparison.OrdinalIgnoreCase);
             log.AppendLine($"Brokered {kind} {file.Name}: Win32 file data={rawData}, parent list={rawParentList}, " +
                 $"parent traverse={rawParentTraverse}, canonical entry metadata={rawCanonical}, ungranted sibling data={sibling}.");
             log.AppendLine($"Brokered {kind}: {await Task.Run(() => DocumentSaveTarget.TestDescribeGrantedTarget(file))}.");
@@ -84,7 +86,7 @@ internal static class BrokeredDocumentTests
                 canTransact = false;
                 log.AppendLine("Brokered file link supports reading; WinRT refused a transacted write (0x800705B8).");
             }
-            bool canRename = kind == "canonical" || kind == "junction";
+            bool canRename = kind == "canonical" || (kind == "junction" && !inaccessibleRedirect);
             if (canRename)
             {
                 var previous = file.Name;
@@ -107,6 +109,27 @@ internal static class BrokeredDocumentTests
             }
             editor.TypeText(" saved");
             string expected = editor.GetText();
+            if (inaccessibleRedirect)
+            {
+                // The broker can write through the grant even when the app cannot
+                // hold the redirected directory entry stable during the transaction.
+                var binding = editor.EditingFile;
+                var version = editor.LastSavedSnapshot;
+                try
+                {
+                    await editor.SaveContentToFileAndUpdateEditorStateAsync(binding);
+                    throw new InvalidOperationException("An inaccessible redirect must not authorize a write.");
+                }
+                catch (DocumentSaveException ex) when ((ex.Stage is DocumentSaveStage.Coordinate or DocumentSaveStage.Conflict) &&
+                    (ex.HResult & 0xffff) is 2 or 3 or 5) { }
+                Check(ReferenceEquals(binding, editor.EditingFile) && ReferenceEquals(version, editor.LastSavedSnapshot) &&
+                    editor.IsModified && editor.GetText() == expected && !editor.GetTextEditorStateMetaData().HasUnconfirmedFileSave,
+                    "Refusing an inaccessible redirect preserves the binding, verified version and draft.");
+                await BytesAsync(file, Encoding.UTF8.GetBytes(Original), "The inaccessible redirect's target bytes remain intact");
+                await ChooseDialogAsync(host.Page.TestCloseTabAsync(host.Core.GetTab(editor)), "SecondaryButton");
+                log.AppendLine($"PASS: brokered {kind} with an inaccessible parent rejects saving and preserves data.");
+                continue;
+            }
             StorageFile saved;
             // The installed app can have a file grant but neither its DOS name nor access to the drive root.
             if (kind == "canonical")
