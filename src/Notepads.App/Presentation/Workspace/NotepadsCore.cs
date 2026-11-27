@@ -63,6 +63,7 @@ public sealed partial class NotepadsCore : INotepadsCore
     private readonly SetsView _sets;
     private SetsViewItem _closingItem;
 
+    private readonly Func<ITextEditor, Task> _saveTextEditorAsAsync;
     private readonly Func<ITextEditor, Task> _renameTextEditorAsync;
 
     private readonly Func<ISessionController> _sessionController;
@@ -87,7 +88,8 @@ public sealed partial class NotepadsCore : INotepadsCore
 
     internal NotepadsCore(SetsView sets,
         CoreDispatcher dispatcher, WindowContext context,
-        Func<ITextEditor, Task> renameTextEditorAsync, Func<ISessionController> sessionController)
+        Func<ITextEditor, Task> saveTextEditorAsAsync, Func<ITextEditor, Task> renameTextEditorAsync,
+        Func<ISessionController> sessionController)
     {
         _sets = sets;
         _sets.ShouldCacheContent = item => !ReferenceEquals(item, _closingItem) &&
@@ -104,7 +106,8 @@ public sealed partial class NotepadsCore : INotepadsCore
 
         _dispatcher = dispatcher;
         _context = context ?? throw new ArgumentNullException(nameof(context));
-        // The page owns the guarded rename flow; tab menus route to it.
+        // The page owns the guarded save and rename flows.
+        _saveTextEditorAsAsync = saveTextEditorAsAsync ?? throw new ArgumentNullException(nameof(saveTextEditorAsAsync));
         _renameTextEditorAsync = renameTextEditorAsync ?? throw new ArgumentNullException(nameof(renameTextEditorAsync));
         _sessionController = sessionController ?? throw new ArgumentNullException(nameof(sessionController));
 
@@ -598,7 +601,7 @@ public sealed partial class NotepadsCore : INotepadsCore
                 Foreground = new SolidColorBrush(ThemeSettingsService.AppAccentColor),
                 Visibility = tab.IsModified ? Visibility.Visible : Visibility.Collapsed
             },
-            ContextFlyout = new TabContextFlyout(this, tab, _renameTextEditorAsync)
+            ContextFlyout = new TabContextFlyout(this, tab, _saveTextEditorAsAsync, _renameTextEditorAsync)
         };
         SetTabTitle(item, tab.Title);
         return item;

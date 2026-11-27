@@ -71,7 +71,7 @@ public sealed partial class NotepadsMainPage : Page
             if (_notepadsCore != null) return _notepadsCore;
 
             _notepadsCore = new NotepadsCore(Sets, Dispatcher, _context,
-                RenameFileAsync, () => SessionController);
+                editor => SaveAsync(editor, saveAs: true), RenameFileAsync, () => SessionController);
             _notepadsCore.StorageItemsDropped += OnStorageItemsDropped;
             _notepadsCore.TextEditorLoaded += OnTextEditorLoaded;
             _notepadsCore.TabClosed += OnTabClosed;

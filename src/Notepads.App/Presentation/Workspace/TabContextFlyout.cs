@@ -26,6 +26,7 @@ public sealed partial class TabContextFlyout : MenuFlyout
     private MenuFlyoutItem _closeSaved;
     private MenuFlyoutItem _copyFullPath;
     private MenuFlyoutItem _openContainingFolder;
+    private readonly MenuFlyoutItem _saveAs;
     private MenuFlyoutItem _rename;
     private MenuFlyoutItem _moveToNewWindow;
 
@@ -38,7 +39,8 @@ public sealed partial class TabContextFlyout : MenuFlyout
 
     private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();
 
-    public TabContextFlyout(INotepadsCore notepadsCore, WorkspaceTab tab, Func<ITextEditor, Task> renameAsync)
+    public TabContextFlyout(INotepadsCore notepadsCore, WorkspaceTab tab,
+        Func<ITextEditor, Task> saveAsAsync, Func<ITextEditor, Task> renameAsync)
     {
         _notepadsCore = notepadsCore;
         _tab = tab;
@@ -52,6 +54,16 @@ public sealed partial class TabContextFlyout : MenuFlyout
         Items.Add(CopyFullPath);
         Items.Add(OpenContainingFolder);
         Items.Add(new MenuFlyoutSeparator());
+        _saveAs = new MenuFlyoutItem
+        {
+            Text = _resourceLoader.GetString("MainMenu_Button_SaveAs/Text"),
+            Icon = new FontIcon { Glyph = "\uE792" }
+        };
+        _saveAs.Click += async (_, _) =>
+        {
+            if (_tab.ReadyEditor is ITextEditor editor) await saveAsAsync(editor);
+        };
+        Items.Add(_saveAs);
         Items.Add(Rename);
         Items.Add(MoveToNewWindow);
 
@@ -85,6 +97,7 @@ public sealed partial class TabContextFlyout : MenuFlyout
         CloseOthers.IsEnabled = CloseRight.IsEnabled = _notepadsCore.GetTabCount() > 1;
         CopyFullPath.IsEnabled = !string.IsNullOrEmpty(_filePath);
         OpenContainingFolder.IsEnabled = !string.IsNullOrEmpty(_containingFolderPath);
+        _saveAs.IsEnabled = textEditor != null;
         Rename.IsEnabled = textEditor != null && textEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted && !isFileReadonly;
         MoveToNewWindow.IsEnabled = _notepadsCore.CanMoveTabToNewWindow(_tab);
     }

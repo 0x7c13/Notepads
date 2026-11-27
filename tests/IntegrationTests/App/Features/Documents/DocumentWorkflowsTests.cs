@@ -19,8 +19,11 @@ using Notepads.Features.Sessions.Storage;
 using Notepads.Infrastructure.Storage;
 using Notepads.Presentation.Controls.Dialog;
 using Notepads.Presentation.Controls.TextEditor;
+using Notepads.Presentation.Workspace;
 using NotepadsIntegrationTests;
+using Windows.ApplicationModel.Resources;
 using Windows.Storage;
+using Windows.UI.Xaml.Controls;
 using static NotepadsWorkspaceTests.DocumentFeatureAssertions;
 using static NotepadsWorkspaceTests.WorkspaceTestUI;
 
@@ -1203,15 +1206,29 @@ internal static class DocumentWorkflowsTests
         Check(first.GetText() == "one!" && first.IsModified && first.EditingFile.IsEqual(original),
             "Save As cancellation must preserve text, dirty state and original file binding.");
         await BytesAsync(original, [0x6f, 0x6e, 0x65], "Canceled Save As must preserve original file bytes");
+
+        var second = await OpenAsync(host, "save-all-second.txt", [0x74, 0x77, 0x6f]);
+        var secondFile = second.EditingFile;
+        var menu = (TabContextFlyout)host.Page.TestContainer(host.Core.GetTab(first)).ContextFlyout;
+        menu.TestFeatureRefresh();
+        var saveAsLabel = ResourceLoader.GetForCurrentView().GetString("MainMenu_Button_SaveAs/Text");
+        var saveAs = menu.Items.OfType<MenuFlyoutItem>().Single(item => item.Text == saveAsLabel);
+        Check(saveAs.IsEnabled && menu.Items.IndexOf(saveAs) + 1 == menu.Items.IndexOf(menu.TestFeatureCommand("Rename")),
+            "A ready tab offers Save As immediately above Rename.");
+        Check(ReferenceEquals(host.Core.GetSelectedReadyEditor(), second), "The Save As target starts in an inactive tab.");
+
         var destination = await host.Folder.CreateFileAsync("save-as-destination.txt", CreationCollisionOption.FailIfExists);
         TestFileSavePicker.Results.Enqueue(destination);
-        Check(await host.Page.TestSaveDocumentAsync(first, saveAs: true), "MainPage Save As must complete with the supplied picker destination.");
-        Check(first.EditingFile.IsEqual(destination) && first.EditingFileName == destination.Name && !first.IsModified,
-            "Save As must rebind file identity, title and clean state after committing.");
+        FeatureUI.Invoke(saveAs);
+        await UntilAsync(() => first.EditingFile.IsEqual(destination) && !first.IsModified,
+            "Tab context Save As must rebind the inactive document and mark it clean.");
+        Check(first.EditingFileName == destination.Name && second.EditingFile.IsEqual(secondFile) &&
+            !second.IsModified && TestFileSavePicker.LastCreated.SuggestedFileName == original.Name,
+            "Tab context Save As must use the clicked tab's document and preserve the previously selected document.");
         await BytesAsync(original, [0x6f, 0x6e, 0x65], "Save As must preserve the original file");
         await BytesAsync(destination, [0x6f, 0x6e, 0x65, 0x21], "Save As must write the edited content to the selected destination");
 
-        var second = await OpenAsync(host, "save-all-second.txt", [0x74, 0x77, 0x6f]);
+        host.Core.SwitchTo(second);
         first.TestNativeCore.SetTextSelectionPosition(4, 4);
         first.TypeText("1");
         second.TestNativeCore.SetTextSelectionPosition(3, 3);
@@ -1230,7 +1247,7 @@ internal static class DocumentWorkflowsTests
         await first.TestStopFileChecksAsync();
         await second.TestStopFileChecksAsync();
         TestFileSavePicker.Reset();
-        log.AppendLine("PASS: documents/save-as cancellation/rebinding and save-all exercise real MainPage workflows with a declared picker boundary.");
+        log.AppendLine("PASS: Save As cancellation, inactive tab context Save As, and Save All exercise real MainPage workflows with a declared picker boundary.");
     }
 
     private static async Task RenameWithUnavailableMetadataAsync(FeatureTestHost host, StringBuilder log)
