@@ -150,6 +150,8 @@ internal static class ContentModificationTests
             saving = host.Page.TestSaveDocumentAsync(editor);
             await UntilAsync(() => saving.IsCompleted || DialogManager.ActiveDialog is FileSaveErrorDialog,
                 "Concurrent status checks must not turn a successful Save into a confirmation dialog.");
+            if (DialogManager.ActiveDialog is FileSaveErrorDialog dialog)
+                log.AppendLine($"Save error during status probes: {dialog.Content}");
             Check(saving.IsCompleted && await saving, "Save must complete without a confirmation/error dialog during status probes.");
             await Task.WhenAll(checks).WaitAsync(TimeSpan.FromSeconds(20));
             Check(checks.Count == 3 && !editor.IsModified && editor.FileModificationState == FileModificationState.Untouched,
