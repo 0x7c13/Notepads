@@ -20,12 +20,12 @@ internal sealed class FileLogSink : ILogSink
     {
         if (File != null) return;
         var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("Logs", CreationCollisionOption.OpenIfExists);
-        File = await folder.CreateFileAsync(DateTime.UtcNow.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture) + ".log",
-            CreationCollisionOption.ReplaceExisting);
+        File = await folder.CreateFileAsync(DateTime.UtcNow.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture) +
+            "-" + Guid.NewGuid().ToString("N") + ".log", CreationCollisionOption.FailIfExists);
     }
 
     public async Task AppendAsync(IEnumerable<string> messages)
     {
-        await FileIO.AppendLinesAsync(File, messages);
+        await FileStorage.AppendLinesAsync(File, messages);
     }
 }

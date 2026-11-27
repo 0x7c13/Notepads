@@ -40,11 +40,15 @@ internal static class SessionRecoveryCatalogRegressionTests
         await CheckResetContentBoundaryAsync(corruptBeforeReset: true);
         await CheckResetContentBoundaryAsync(corruptBeforeReset: false);
         await CheckFailedResetDoesNotRetireAsync();
+        await CheckResetIntentCancellationAsync(RecoveryStorageStep.BeforeRead);
+        await CheckResetIntentCancellationAsync(RecoveryStorageStep.BeforeTemporaryWrite);
+        await CheckResetIntentCancellationAsync(RecoveryStorageStep.AfterRename);
         await CheckDurableFallbackAsync(receipt: true);
         await CheckDurableFallbackAsync(receipt: false);
         log.AppendLine("PASS: receiver checkpoints and rescues survive missing ACKs and older outgoing offers.");
         log.AppendLine("PASS: unreadable rescues block empty replacement and retry after repair.");
         log.AppendLine("PASS: reset retires observed content damage while new-epoch uncertainty remains protected.");
+        log.AppendLine("PASS: canceled reset repair remains retryable and committed repair preserves its new epoch.");
         log.AppendLine("PASS: durable transfer/adoption fallback preserves Pending evidence and lifecycle decisions.");
     }
 
@@ -483,6 +487,77 @@ internal static class SessionRecoveryCatalogRegressionTests
         finally { await service.DisposeAsync(); await CleanupAsync(owner); }
     }
 
+    private static async Task CheckResetIntentCancellationAsync(RecoveryStorageStep cancellationStep)
+    {
+        var owner = Guid.NewGuid();
+        var store = RecoveryRootStore.CreateStore();
+        var service = CreateService(owner);
+        using var cancellation = new CancellationTokenSource();
+        try
+        {
+            RecoveryAddress address;
+            RecoveryRecord reset;
+            byte[] intentBytes;
+            using (await SessionRecoveryTransaction.EnterAsync())
+            {
+                var area = store.GetScopeArea(owner, RecoveryAreaKind.Decisions);
+                reset = new RecoveryRecord
+                {
+                    Kind = RecoveryRecordKind.Reset,
+                    Stamp = store.CreatePublicationStamp(area, new RecoveryStamp { ScopeId = owner, EpochId = owner }),
+                    PreviousEpochId = owner
+                };
+                reset.Stamp.EpochId = Guid.NewGuid();
+                var intent = await store.PublishResetIntentAsync(area, reset);
+                RecoveryRootStore.RequireCommitted(intent);
+                address = intent.Address;
+                intentBytes = File.ReadAllBytes(store.Paths.CopyPath(address, "intent"));
+                Check((await store.ReadAsync(address)).State == RecoveryReadState.Absent,
+                    "The interrupted-reset cancellation fixture already had a final decision.");
+
+                var faults = new ResetCompletionCancellation(cancellationStep, cancellation);
+                var interrupted = new RecoveryRecordStore(store.Paths.RootPath, faults);
+                RecoveryScopeSnapshot observed = null;
+                var canceled = false;
+                try { observed = await SessionRecoveryCatalog.TestReadControlAsync(interrupted, owner, cancellation.Token); }
+                catch (OperationCanceledException error) when (error.CancellationToken == cancellation.Token)
+                { canceled = true; }
+                Check(faults.Triggered && cancellation.IsCancellationRequested,
+                    $"Reset completion did not reach the requested cancellation boundary {cancellationStep}.");
+                if (cancellationStep == RecoveryStorageStep.AfterRename)
+                {
+                    Check(!canceled && observed?.Blocked == false && observed.Stamp.EpochId == reset.Stamp.EpochId,
+                        "Cancellation after a reset decision committed discarded verified new-epoch authority.");
+                }
+                else
+                {
+                    Check(canceled && observed == null,
+                        $"Requested cancellation at {cancellationStep} became a false blocked recovery verdict.");
+                    Check((await store.ReadAsync(address)).State == RecoveryReadState.Absent,
+                        "Canceled uncommitted reset completion unexpectedly published a final decision.");
+                }
+                var retained = await store.ReadResetIntentAsync(address);
+                Check(retained.State == RecoveryReadState.Valid && retained.Record.Stamp.EpochId == reset.Stamp.EpochId &&
+                    File.ReadAllBytes(store.Paths.CopyPath(address, "intent")).SequenceEqual(intentBytes),
+                    "Canceled reset completion damaged or replaced its durable intent.");
+                Check(!Directory.EnumerateFiles(store.Paths.ScopePath(owner), "*.tmp", SearchOption.AllDirectories).Any(),
+                    "Canceled reset completion retained a temporary metadata file.");
+            }
+
+            await service.InitializeAuthorityAsync();
+            Check(!service.IsRecoveryBlocked && service.CurrentStamp.EpochId == reset.Stamp.EpochId,
+                "An uncanceled retry did not recover the reset's new epoch without false corruption.");
+            using (await SessionRecoveryTransaction.EnterAsync())
+            {
+                var completed = await store.ReadAsync(address);
+                Check(completed.State == RecoveryReadState.Valid && completed.Redundancy == RecoveryRedundancy.Mirrored &&
+                    completed.VerifiedEnvelopeBytes.SequenceEqual(intentBytes),
+                    "Retried reset completion did not retain the exact intent payload in both final mirrors.");
+            }
+        }
+        finally { await service.DisposeAsync(); await CleanupAsync(owner); }
+    }
+
     private static async Task CheckDurableFallbackAsync(bool receipt)
     {
         await using var transfer = await TransferFixture.CreateAsync();
@@ -597,6 +672,25 @@ internal static class SessionRecoveryCatalogRegressionTests
         try { await action(); }
         catch (SessionDataCorruptedException) { return; }
         throw new InvalidOperationException("Unreadable rescue-only authority was treated as an empty session.");
+    }
+
+    private sealed class ResetCompletionCancellation(RecoveryStorageStep step, CancellationTokenSource cancellation) : IRecoveryStorageFaults
+    {
+        private int _intentReads;
+        public bool Triggered { get; private set; }
+
+        public void OnStep(RecoveryStorageStep current, RecoveryAddress address, string copy)
+        {
+            if (Triggered || current != step) return;
+            // The first intent read validates the scan; its second read belongs to completion.
+            if (step == RecoveryStorageStep.BeforeRead)
+            {
+                if (copy != "intent" || ++_intentReads != 2) return;
+            }
+            else if (copy != "a") return;
+            Triggered = true;
+            cancellation.Cancel();
+        }
     }
 
     private sealed class CheckpointFailure : IRecoveryStorageFaults

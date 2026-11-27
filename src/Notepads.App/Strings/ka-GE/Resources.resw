@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>ფაილის გახსნის შეცდომა</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>სამწუხაროდ ფაილი "{0}"-ის შენახვა შეუძლებელია: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>კარგი</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>ხელახლა ცდა</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>ფაილი შესაძლოა შეიცვალა. ცვლილებების შესანახი ადგილის ასარჩევად გამოიყენეთ „შენახვა როგორც“.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>ამ ფაილის შენახვა უკვე მიმდინარეობს. ცოტა ხანში სცადეთ ხელახლა.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>„{0}“ ჩაიწერა, მაგრამ შენახული შიგთავსის შემოწმება ვერ მოხერხდა. მონახაზი კვლავ გახსნილია.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>ხელახლა შემოწმება</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>დისკზე არსებული ფაილის ვერსია ვერ გადამოწმდა.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>ცვლილებების ასლის შესანახად მომზადება ვერ მოხერხდა.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>ფაილის შენახვის შეცდომა</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>დახურვა</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>მოძებნე</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

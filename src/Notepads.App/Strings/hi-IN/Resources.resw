@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>फ़ाइल खोलने में त्रुटि</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>क्षमा करें, फ़ाइल &quot;{0}&quot; सहेजी नहीं जा सकी: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>ठीक</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>फिर कोशिश करें</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>फ़ाइल में बदलाव हुआ हो सकता है। अपने बदलाव सहेजने का स्थान चुनने के लिए “इस रूप में सहेजें” का उपयोग करें।</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>यह फ़ाइल पहले से सहेजी जा रही है। थोड़ी देर बाद फिर कोशिश करें।</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>“{0}” में लिखा गया, लेकिन सहेजी गई सामग्री की पुष्टि नहीं हो सकी। आपका ड्राफ़्ट अभी भी खुला है।</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>फिर से जाँचें</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>डिस्क पर फ़ाइल के संस्करण की पुष्टि नहीं हो सकी।</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>सहेजने के लिए आपके बदलावों की प्रति तैयार नहीं की जा सकी।</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>फ़ाइल सहेजने में त्रुटि</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>बंद करें</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>खोजें</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

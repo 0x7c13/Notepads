@@ -9,12 +9,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Infrastructure.Diagnostics;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace Notepads.Infrastructure.Storage;
 
 internal sealed class AtomicFileWriteState
 {
     public bool Opened { get; internal set; }
+    public bool Committing { get; internal set; }
     public bool Committed { get; internal set; }
 }
 
@@ -31,7 +33,7 @@ internal static class AtomicFileWriter
     }
 
     internal static async Task WriteAsync(StorageFile file, Func<Stream, Task> writeAsync,
-        AtomicFileWriteState state, CancellationToken cancellationToken = default)
+        AtomicFileWriteState state, CancellationToken cancellationToken = default, Func<IInputStream, Task> verifyOriginal = null)
     {
         ArgumentNullException.ThrowIfNull(file);
         ArgumentNullException.ThrowIfNull(writeAsync);
@@ -44,18 +46,25 @@ internal static class AtomicFileWriter
         Exception writeFailure = null;
         try
         {
-            transaction = await file.OpenTransactedWriteAsync();
+            transaction = await FileStorage.OpenTransactedWriteAsync(file, cancellationToken);
             state.Opened = true;
-            stream = transaction.Stream.AsStreamForWrite();
             cancellationToken.ThrowIfCancellationRequested();
+            if (verifyOriginal != null)
+            {
+                using var original = transaction.Stream.GetInputStreamAt(0);
+                await verifyOriginal(original);
+            }
+            stream = transaction.Stream.AsStreamForWrite();
             stream.Position = 0;
             stream.SetLength(0);
             await writeAsync(stream);
-            await stream.FlushAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            await stream.FlushAsync(CancellationToken.None);
             cancellationToken.ThrowIfCancellationRequested();
             // Once commit starts, finish it and publish the written revision.
             // Cancellation cannot report a successfully replaced file as failed.
-            await transaction.CommitAsync();
+            state.Committing = true;
+            await FileStorage.CommitAsync(file, transaction);
             state.Committed = true;
         }
         catch (Exception ex)

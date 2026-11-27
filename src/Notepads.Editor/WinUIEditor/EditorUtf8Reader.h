@@ -9,9 +9,11 @@
 
 namespace winrt::WinUIEditor::implementation
 {
+	class SaveSnapshot;
+
 	struct EditorUtf8Reader : EditorUtf8ReaderT<EditorUtf8Reader>
 	{
-		EditorUtf8Reader(WinUIEditor::Editor const &editor, com_ptr<EditorBaseControl> const &view);
+		EditorUtf8Reader(WinUIEditor::Editor const &editor, com_ptr<EditorBaseControl> const &view, bool forSave = false);
 		~EditorUtf8Reader();
 		static fire_and_forget final_release(std::unique_ptr<EditorUtf8Reader> self) noexcept;
 		uint64_t Length() const;
@@ -28,7 +30,8 @@ namespace winrt::WinUIEditor::implementation
 		uint64_t _length;
 		uint64_t _sequence;
 		std::atomic<bool> _closed{false};
-		bool _leaseHeld{true};
+		bool _leaseHeld{};
+		std::shared_ptr<SaveSnapshot> _snapshot;
 		void ReleaseLease() noexcept;
 		fire_and_forget ReleaseLeaseAsync();
 	};

@@ -91,7 +91,8 @@ internal static partial class WorkspaceFileOpeningTests
                 "A result callback released coalescing before its one presentation completed.");
             Check(outcome.Kind == (failure ? WorkspaceFileOpenKind.Failed : WorkspaceFileOpenKind.Created) &&
                 core.TestOwnedEditorCount == before + (failure ? 0 : 1) && selectedCount == (failure ? 0 : 1),
-                "Coalesced opening duplicated native preparation/selection or lost its typed outcome.");
+                $"Coalesced opening mismatch (injected failure {failure}, outcome {outcome.Kind}, error {outcome.Error}, " +
+                $"owned editors {before} -> {core.TestOwnedEditorCount}, selection notifications {selectedCount}).");
             releasePresentation.TrySetResult(null);
             Check(await leader.WaitAsync(TimeSpan.FromSeconds(10)) == !failure && !await joined && !await lateJoined,
                 "Joined ordinary calls reported that they created the leader's editor.");

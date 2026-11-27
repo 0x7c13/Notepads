@@ -11,10 +11,22 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
+#include <atomic>
+
 namespace Scintilla::Internal {
 
 class DocWatcher;
 class DocModification;
+
+// Snapshot observers run before application callbacks and never call out to views.
+// Their lifetime is independent of the ordinary watcher list being dispatched.
+class SnapshotObserver {
+public:
+	virtual void Observe(const DocModification &change) noexcept = 0;
+	virtual void Invalidate() noexcept = 0;
+	virtual ~SnapshotObserver() = default;
+};
+
 class Document;
 class LineMarkers;
 class LineLevels;
@@ -352,7 +364,7 @@ public:
 	};
 
 private:
-	int refCount;
+	std::atomic<int> refCount;
 	CellBuffer cb;
 	CharClassify charClass;
 	CharacterCategoryMap charMap;
@@ -368,6 +380,7 @@ private:
 	std::string insertion;
 
 	std::vector<WatcherWithUserData> watchers;
+	std::vector<std::weak_ptr<SnapshotObserver>> snapshotObservers;
 
 	// ldSize is not real data - it is for dimensions and loops
 	enum lineData { ldMarkers, ldLevels, ldState, ldMargin, ldAnnotation, ldEOLAnnotation, ldSize };
@@ -661,6 +674,7 @@ public:
 	void EOLAnnotationSetText(Sci::Line line, const char *text);
 	void EOLAnnotationClearAll();
 
+	void ObserveSnapshot(const std::shared_ptr<SnapshotObserver> &observer);
 	bool AddWatcher(DocWatcher *watcher, void *userData, bool beforeViews=false);
 	bool RemoveWatcher(DocWatcher *watcher, void *userData) noexcept;
 

@@ -21,7 +21,7 @@ public sealed partial class DocumentSnapshot : IDisposable
     private readonly Encoding _encoding;
 
     public DocumentSnapshot(DocumentBaseline baseline, Encoding encoding, LineEnding lineEnding,
-        long dateModifiedFileTime = -1)
+        long dateModifiedFileTime = -1, string sourceSha256 = null, string targetPath = null)
     {
         ArgumentNullException.ThrowIfNull(baseline);
         ArgumentNullException.ThrowIfNull(encoding);
@@ -29,7 +29,7 @@ public sealed partial class DocumentSnapshot : IDisposable
         _encoding = (Encoding)encoding.Clone();
         _baseline = baseline.Retain();
         LineEnding = lineEnding;
-        DateModifiedFileTime = dateModifiedFileTime;
+        FileVersion = new DocumentFileVersion(dateModifiedFileTime, sourceSha256, targetPath);
     }
 
     /// <summary>Borrowed lease; retain it before starting an independently owned operation.</summary>
@@ -41,11 +41,12 @@ public sealed partial class DocumentSnapshot : IDisposable
     public LineEnding LineEnding { get; }
 
     /// <summary>The saved file's modification time; -1 means it could not be queried.</summary>
-    public long DateModifiedFileTime { get; }
+    public long DateModifiedFileTime => FileVersion.ModifiedTime;
+    public DocumentFileVersion FileVersion { get; }
 
     public DocumentSnapshot Retain()
     {
-        return new DocumentSnapshot(_baseline, _encoding, LineEnding, DateModifiedFileTime);
+        return new DocumentSnapshot(_baseline, _encoding, LineEnding, DateModifiedFileTime, FileVersion.Sha256, FileVersion.TargetPath);
     }
 
     /// <summary>

@@ -16,6 +16,7 @@
 #include "DisplayLineMap.h"
 #include "SmoothScrollAnimation.h"
 #include "NativeEditorState.h"
+#include <atomic>
 #include <winrt/WinUIEditor.h>
 
 namespace WinUIEditor { class NativeDocumentJournal; class NativeJournalFile; struct JournalPrefix; }
@@ -124,6 +125,7 @@ namespace Scintilla::Internal {
 		void ReplaceDocumentWithUndo(Document &replacement);
 		void PublishPreparedReplacement(Document &replacement, const char *previousText, std::unique_ptr<IContractionState> contraction, bool leased = false);
 		const Document &LeasedDocument() const;
+		Document &DocumentForSaveSnapshot() const;
 		void SetDisplayLineMap(std::vector<DisplayGap> gaps, std::vector<TintedLineRange> tints);
 		void SetDisplayColours(unsigned int line, unsigned int gap, unsigned int hatch);
 		void SetDisplayHighlight(int64_t row, int64_t count, unsigned int colour);
@@ -180,7 +182,7 @@ namespace Scintilla::Internal {
 		sptr_t WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) override;
 
 	private:
-		unsigned int _readLeases{ 0 };
+		std::atomic<unsigned int> _readLeases{ 0 };
 		std::shared_ptr<WinUIEditor::NativeDocumentJournal> _journal;
 		std::vector<std::shared_ptr<WinUIEditor::NativeJournalFile>> _retiringJournals;
 		uint64_t _documentSequence{};

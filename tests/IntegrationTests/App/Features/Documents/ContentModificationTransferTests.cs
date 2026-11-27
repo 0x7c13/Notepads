@@ -28,7 +28,50 @@ internal static class ContentModificationTransferTests
     {
         foreach (var settled in new[] { false, true }) await WindowMoveAsync(settled);
         await DragReceiptAsync();
+        await LiveReceiptPathAsync();
         log.AppendLine("PASS: pending/settled content equality survives new-window moves with original undo history; drag receipts retain frozen classification and reject changed content or save settings.");
+    }
+
+    private static async Task LiveReceiptPathAsync()
+    {
+        await using var host = await FeatureTestHost.CreateAsync();
+        var core = (NotepadsCore)host.Core;
+        var editor = await OpenAsync(host, "receipt-before-rename.txt", Encoding.UTF8.GetBytes(Original));
+        editor.TypeText("draft");
+        var file = editor.EditingFile;
+        using var initial = editor.CaptureRecoveryState();
+        await initial.Checkpoint.FlushAsync();
+        var descriptor = SessionDocumentStore.CaptureEditor(editor.Id, initial, file.Name, file.Path);
+        var received = (TextEditor)await core.TestPrepareTransferredEditorAsync(descriptor, file);
+        var tab = core.GetTab(editor);
+        var operation = Guid.NewGuid();
+        try
+        {
+            var oldPath = received.EditingFilePath;
+            await file.RenameAsync("receipt-after-rename.txt");
+            Check(received.EditingFilePath == oldPath && file.Path != oldPath,
+                "The receipt fixture must retain an old editor path while the shared grant has refreshed.");
+            var admission = core.TestBeginTabTransfer(operation, tab);
+            Check(!admission.Cancel, "The renamed source must remain transferable.");
+            var serialized = (string)await admission.Data.GetView().GetDataAsync(TextEditorTransfer.DataFormat);
+            var token = JsonSerializer.Deserialize(serialized, SessionJsonContext.Default.TransferToken);
+            TextEditorSessionDataV2 frozen;
+            using (await SessionRecoveryTransaction.EnterAsync()) frozen = await TransferRootReader.ReadSourceTransferAsync(token);
+            var stamp = new RecoveryStamp { ScopeId = token.SourceOwnerId, EpochId = token.SourceEpochId };
+            await core.TestProtectTransferredEditorAsync(received, token, stamp, frozen);
+            using (await SessionRecoveryTransaction.EnterAsync())
+            {
+                var receipt = await TransferRootReader.ReadReceiptAsync(token);
+                Check(receipt.Record.Editor.EditingFilePath == file.Path &&
+                    receipt.Record.Editor.EditingFileName == file.Name,
+                    "Receipt association must use the same live grant for its name and path.");
+            }
+        }
+        finally
+        {
+            core.TestEndTabTransfer(operation, tab);
+            await core.DiscardUnattachedEditorAsync(received);
+        }
     }
 
     private static void ReplaceFirst(TextEditor editor, string value)

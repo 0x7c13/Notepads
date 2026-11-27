@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>檔案開啟錯誤</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>抱歉，檔案「{0}」儲存時發生錯誤：{1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>確定</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>重試</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>檔案可能已變更。請使用「另存新檔」選擇儲存編輯內容的位置。</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>此檔案正在儲存中。請稍後再試。</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>已寫入「{0}」，但無法確認磁碟上的內容。草稿仍保留在編輯器中。</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>重新驗證</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>無法確認磁碟上的檔案版本。</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>無法為這次儲存準備編輯內容的副本。</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>檔案儲存錯誤</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>關閉</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>尋找</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

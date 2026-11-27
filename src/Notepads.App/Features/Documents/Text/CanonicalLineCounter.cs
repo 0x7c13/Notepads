@@ -24,7 +24,9 @@ internal static class CanonicalLineCounter
         long lines = 1;
         while (true)
         {
-            var count = await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            var count = await stream.ReadAsync(buffer, CancellationToken.None).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             if (count == 0) return lines;
             lines += buffer.Span[..count].Count((byte)'\r');
             if (lines > MaximumDiffLines) return lines;

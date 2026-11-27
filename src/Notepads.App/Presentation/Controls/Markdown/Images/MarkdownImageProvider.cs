@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Markdown;
 using Notepads.Infrastructure.DocumentAssets;
+using Notepads.Infrastructure.Storage;
 using Notepads.Infrastructure.Threading;
 using Windows.Foundation;
 using Windows.Storage;
@@ -216,7 +217,7 @@ internal sealed partial class MarkdownImageProvider : IMarkdownImageProvider, ID
                 return null;
             }
 
-            stream = await file.OpenAsync(FileAccessMode.Read).AsCompletionTask(cancellation).ConfigureAwait(false);
+            stream = await FileStorage.OpenReadAsync(file, cancellation: cancellation).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is FileNotFoundException or DirectoryNotFoundException or
             UnauthorizedAccessException or ArgumentException or NotSupportedException or PathTooLongException)
@@ -248,8 +249,7 @@ internal sealed partial class MarkdownImageProvider : IMarkdownImageProvider, ID
         {
             try
             {
-                StorageFolder parent = await _documentFile.GetParentAsync()
-                    .AsCompletionTask(cancellation).ConfigureAwait(false);
+                StorageFolder parent = await FileStorage.GetParentAsync(_documentFile, cancellation).ConfigureAwait(false);
                 if (parent != null && string.Equals(Path.TrimEndingDirectorySeparator(parent.Path),
                     Path.TrimEndingDirectorySeparator(_grantDirectory), StringComparison.OrdinalIgnoreCase))
                 {
@@ -284,8 +284,7 @@ internal sealed partial class MarkdownImageProvider : IMarkdownImageProvider, ID
                 return null;
             }
         }
-        StorageFolder parent = await _documentFile.GetParentAsync()
-            .AsCompletionTask(cancellation).ConfigureAwait(false);
+        StorageFolder parent = await FileStorage.GetParentAsync(_documentFile, cancellation).ConfigureAwait(false);
         return parent == null ? null :
             await parent.GetFileAsync(localPath).AsCompletionTask(cancellation).ConfigureAwait(false);
     }

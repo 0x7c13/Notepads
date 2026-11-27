@@ -21,6 +21,7 @@ internal sealed partial class DocumentOperationCoordinator : IDisposable
     private readonly TaskCompletionSource<object> _completion = new(
         TaskCreationOptions.RunContinuationsAsynchronously);
     private int _pendingOperations;
+    private Observations _observations;
     private bool _disposed;
 
     /// <summary>Completes after disposal and every owned operation has unwound.</summary>
@@ -43,22 +44,101 @@ internal sealed partial class DocumentOperationCoordinator : IDisposable
         }
     }
 
-    public async Task RunAsync(Func<CancellationToken, Task> operation,
-        CancellationToken cancellationToken = default)
+    // A picker observation starts at the user's choice, before a queued save can change the destination.
+    // Its cancellation is independent of a save already admitted to the serialized queue.
+    public async Task<T> ObserveAsync<T>(Func<CancellationToken, Task<T>> observe, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(operation);
+        ArgumentNullException.ThrowIfNull(observe);
+        Observations batch;
+        lock (_sync)
+        {
+            BeginOperation();
+            batch = _observations ??= new Observations();
+            batch.Count++;
+        }
+        try
+        {
+            using var linked = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken, batch.Cancellation.Token);
+            linked.Token.ThrowIfCancellationRequested();
+            return await observe(linked.Token).ConfigureAwait(false);
+        }
+        finally
+        {
+            try { await FinishObservationAsync(batch).ConfigureAwait(false); }
+            finally { CompleteOperation(); }
+        }
+    }
+
+    // A close decision must wait for the picker read to release its handle, even
+    // when the storage provider needs time to respond to cancellation.
+    public Task CancelObservationsAndWaitAsync()
+    {
+        lock (_sync)
+        {
+            var batch = _observations;
+            if (batch == null) return Task.CompletedTask;
+            batch.Canceling ??= batch.Cancellation.CancelAsync();
+            return batch.Drained.Task;
+        }
+    }
+
+    private async Task FinishObservationAsync(Observations batch)
+    {
+        Task canceling;
+        lock (_sync)
+        {
+            if (--batch.Count != 0) return;
+            canceling = batch.Canceling;
+            _observations = null;
+        }
+
+        try
+        {
+            if (canceling != null) await canceling.ConfigureAwait(false);
+        }
+        finally
+        {
+            batch.Dispose();
+            batch.Drained.TrySetResult();
+        }
+    }
+
+    private sealed partial class Observations : IDisposable
+    {
+        internal readonly CancellationTokenSource Cancellation = new();
+        internal readonly TaskCompletionSource Drained = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        internal int Count;
+        internal Task Canceling;
+        public void Dispose() => Cancellation.Dispose();
+    }
+
+    private void BeginOperation()
+    {
         lock (_sync)
         {
             if (_disposed) throw new ObjectDisposedException(nameof(DocumentOperationCoordinator));
             _pendingOperations++;
         }
+    }
+
+    public Task RunAsync(Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default) =>
+        RunCoreAsync(operation, cancellationToken, waitForTurn: true);
+
+    public Task TryRunAsync(Func<CancellationToken, Task> operation, CancellationToken cancellationToken) =>
+        RunCoreAsync(operation, cancellationToken, waitForTurn: false);
+
+    private async Task RunCoreAsync(Func<CancellationToken, Task> operation, CancellationToken cancellationToken, bool waitForTurn)
+    {
+        ArgumentNullException.ThrowIfNull(operation);
+        BeginOperation();
 
         CancellationTokenSource cancellation = null;
         var acquired = false;
         try
         {
             cancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
-            await _gate.WaitAsync(cancellation.Token);
+            if (waitForTurn) await _gate.WaitAsync(cancellation.Token);
+            else if (!_gate.Wait(0, cancellation.Token)) return;
             acquired = true;
             cancellation.Token.ThrowIfCancellationRequested();
             await operation(cancellation.Token);

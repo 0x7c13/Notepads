@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Greška pri otvaranju datoteke</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Nažalost se datoteka „{0}” ne može spremiti: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>U redu</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Pokušaj ponovno</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Datoteka je možda promijenjena. Odaberite „Spremi kao” kako biste odabrali mjesto za spremanje izmjena.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Spremanje ove datoteke već je u tijeku. Pokušajte ponovno za koji trenutak.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>Datoteka „{0}” je zapisana, ali njezin sadržaj nije bilo moguće provjeriti. Skica je i dalje otvorena.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Ponovno provjeri</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>Nije moguće provjeriti verziju datoteke na disku.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Nije moguće pripremiti kopiju izmjena za spremanje.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Greška pri spremanju datoteke</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Zatvori</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Pronađi</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

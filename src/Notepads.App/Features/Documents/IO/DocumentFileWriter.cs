@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.Contracts;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Infrastructure.Storage;
 using Windows.Storage;
@@ -18,7 +19,100 @@ internal sealed class DocumentFileWriteResult
 {
     internal DocumentFileWriteResult(StorageFile file) { File = file; }
 
-    public StorageFile File { get; }
+    public StorageFile File { get; private set; }
+    public DocumentFileVersion Version { get; internal set; } = DocumentFileVersion.Unknown;
+    private byte[] _writtenHash;
+    private long _writtenLength;
+    private string _path;
+    private string _name;
+    private string _targetPath;
+    private string _admittedSpelling;
+    internal string TargetPath => _targetPath;
+    private bool _awaitingProviderRename;
+
+    // WinRT can refresh the grant's leaf casing both at commit and when reopening it.
+    private bool HasRecordedSpelling => File.Path == _path && File.Name == _name;
+    private ValueTask<bool> AtRecordedLocationAsync() => HasRecordedSpelling ? ValueTask.FromResult(true) :
+        DocumentSaveTarget.IsGrantSpellingChangeAsync(File, _path, _name, _targetPath, _admittedSpelling);
+    internal async ValueTask<bool> CanFollowProviderGrantAsync() => UpdateStatus == FileUpdateStatus.CompleteAndRenamed &&
+        (_awaitingProviderRename || await AtRecordedLocationAsync());
+
+    internal ValueTask<bool> ObserveLocationAsync()
+    {
+        if (!_awaitingProviderRename) return AtRecordedLocationAsync();
+        if (HasRecordedSpelling) return ValueTask.FromResult(false);
+        FollowRename(File);
+        return ValueTask.FromResult(true);
+    }
+
+    internal async ValueTask RecordCommitAsync(long length, byte[] hash, string originalPath, string originalName,
+        string targetPath, string admittedSpelling)
+    {
+        _writtenLength = length;
+        _writtenHash = hash;
+        _targetPath = targetPath;
+        _admittedSpelling = admittedSpelling;
+        _path = originalPath;
+        _name = originalName;
+        if (UpdateStatus == FileUpdateStatus.CompleteAndRenamed)
+        {
+            // The original directory entry is no longer proof of the provider's new location.
+            _targetPath = null;
+            _admittedSpelling = null;
+            _awaitingProviderRename = HasRecordedSpelling;
+            if (!_awaitingProviderRename) FollowRename(File);
+        }
+        else if (!await AtRecordedLocationAsync()) throw new DocumentSaveException(DocumentSaveStage.Superseded);
+    }
+
+    // Only a rename acknowledged by this provider or performed by this editor may
+    // move the receipt. A coincidental byte match at an abandoned name is insufficient.
+    internal void FollowRename(StorageFile renamed, string targetPath = null)
+    {
+        File = renamed;
+        _targetPath = targetPath;
+        _admittedSpelling = null;
+        _path = renamed.Path;
+        _name = renamed.Name;
+        _awaitingProviderRename = false;
+    }
+
+    internal async Task<DocumentFileVersion> VerifyAsync(CancellationToken cancellation)
+    {
+        if (!await ObserveLocationAsync())
+        {
+            if (_awaitingProviderRename) return DocumentFileVersion.Unknown;
+            throw new DocumentSaveException(DocumentSaveStage.Superseded);
+        }
+        try
+        {
+            if (_targetPath == null && UpdateStatus == FileUpdateStatus.CompleteAndRenamed)
+            {
+                try { _targetPath = (await DocumentSaveTarget.ResolveAsync(File, cancellation)).FinalPath; }
+                catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { return DocumentFileVersion.Unknown; }
+                catch (DocumentSaveException) { return DocumentFileVersion.Unknown; }
+            }
+            var observed = await DocumentFileWriter.VerifyCommittedVersionAsync(File, _writtenLength, _writtenHash, cancellation);
+            if (!await AtRecordedLocationAsync()) throw new DocumentSaveException(DocumentSaveStage.Superseded);
+            if (observed.IsVerified)
+            {
+                if (_admittedSpelling == null || _admittedSpelling != observed.TargetPath)
+                    await DocumentSaveTarget.RequireLocationAsync(_targetPath, observed.TargetPath, DocumentSaveStage.Superseded);
+                _targetPath = observed.TargetPath;
+                _admittedSpelling = null;
+            }
+            return observed;
+        }
+        catch (DocumentSaveException ex) when (ex.Stage == DocumentSaveStage.Superseded)
+        {
+            // The provider's known destination remains authoritative even if the bytes were superseded.
+            ex.CommittedWrite = this;
+            throw;
+        }
+    }
+
+    internal bool HasAdmittedSpelling(DocumentSaveTarget.Identity current) => ReferenceEquals(File, current.File) &&
+        _admittedSpelling != null && _admittedSpelling == current.FinalPath;
     public FileUpdateStatus? UpdateStatus { get; private set; }
     public string ProviderError { get; private set; }
 
@@ -36,7 +130,7 @@ internal interface IDocumentFileUpdates
     Task<FileUpdateStatus> CompleteAsync(StorageFile file);
 }
 
-internal static class DocumentFileWriter
+internal static partial class DocumentFileWriter
 {
     private const int MaximumAttempts = 5;
     private const int AccessDenied = unchecked((int)0x80070005);
@@ -51,19 +145,27 @@ internal static class DocumentFileWriter
     /// A returned result always represents a completed local atomic commit.
     /// </summary>
     public static Task<DocumentFileWriteResult> WriteAsync(StorageFile file, Func<Stream, Task> writeCandidate,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default, DocumentFileVersion? expectedVersion = null, DocumentSaveTarget.Identity target = null)
     {
-        return WriteAsync(file, writeCandidate, CachedUpdates, cancellationToken);
+        var updates = CachedUpdates;
+        OnSelectUpdates(ref updates);
+        return WriteAsync(file, writeCandidate, updates, cancellationToken, expectedVersion, target);
     }
 
     internal static async Task<DocumentFileWriteResult> WriteAsync(StorageFile file, Func<Stream, Task> writeCandidate,
-        IDocumentFileUpdates updates, CancellationToken cancellationToken = default)
+        IDocumentFileUpdates updates, CancellationToken cancellationToken = default, DocumentFileVersion? expectedVersion = null,
+        DocumentSaveTarget.Identity target = null)
     {
         using var measurement = OperationMetrics.Measure("document.save");
         ArgumentNullException.ThrowIfNull(file);
         ArgumentNullException.ThrowIfNull(writeCandidate);
         ArgumentNullException.ThrowIfNull(updates);
         cancellationToken.ThrowIfCancellationRequested();
+        if (expectedVersion is { IsVerified: false }) throw new DocumentSaveException(DocumentSaveStage.Unverified);
+        target ??= await DocumentSaveTarget.ResolveAsync(file, cancellationToken);
+        await DocumentSaveTarget.RequireLocationAsync(expectedVersion?.TargetPath, target.FinalPath);
+        var originalPath = file.Path;
+        var originalName = file.Name;
         var currentFile = file;
         var deferred = TryDeferUpdates(updates, currentFile);
         var resolvedPath = false;
@@ -75,9 +177,29 @@ internal static class DocumentFileWriter
                 // Allocate the publication object before committing the user file.
                 var result = new DocumentFileWriteResult(currentFile);
                 var state = new AtomicFileWriteState();
+                byte[] writtenHash = null;
+                long writtenLength = 0;
+                string admittedSpelling = null;
                 try
                 {
-                    await AtomicFileWriter.WriteAsync(currentFile, writeCandidate, state, cancellationToken);
+                    // Keep the original provider grant for the transaction. Pin mutable local links only for
+                    // this attempt, and release them before provider completion (which can rename the file).
+                    using var route = await Task.Run(() => DocumentSaveTarget.Pin(currentFile, target.FinalPath, out admittedSpelling), cancellationToken);
+                    await AtomicFileWriter.WriteAsync(currentFile, async destination =>
+                    {
+                        using var output = new DocumentSaveOutputStream(destination);
+                        await writeCandidate(output);
+                        if (target.FinalPath != null)
+                        {
+                            var observed = (await DocumentSaveTarget.ResolveAsync(currentFile, cancellationToken)).FinalPath;
+                            OnTransactionLocationObserved(ref observed);
+                            await DocumentSaveTarget.RequireLocationAsync(target.FinalPath, observed);
+                            if (observed != target.FinalPath) admittedSpelling = null;
+                        }
+                        writtenHash = output.FinishHash();
+                        writtenLength = output.Length;
+                    }, state, cancellationToken, verifyOriginal: expectedVersion is { } version
+                        ? original => DocumentSaveTarget.VerifyAsync(currentFile, version, original, cancellationToken) : null);
                 }
                 catch (Exception ex)
                 {
@@ -89,7 +211,13 @@ internal static class DocumentFileWriter
                     }
                     else
                     {
-                        if (attempt >= MaximumAttempts || !CanRetry(ex)) throw;
+                        if (attempt >= MaximumAttempts || !CanRetry(ex))
+                        {
+                            if (ex is DocumentSaveException || !DocumentSaveException.IsStorageError(ex)) throw;
+                            var stage = !state.Opened ? DocumentSaveStage.OpenTarget :
+                                state.Committing ? DocumentSaveStage.CommitTarget : DocumentSaveStage.WriteTarget;
+                            throw new DocumentSaveException(stage, ex);
+                        }
                         if (ex.HResult == AccessDenied && !state.Opened && !resolvedPath)
                         {
                             resolvedPath = true;
@@ -102,6 +230,9 @@ internal static class DocumentFileWriter
                                 deferred = false;
                                 if (completePrevious) await CompleteUpdatesAsync(updates, currentFile, null);
                                 currentFile = resolved;
+                                // Provider rename observation starts from this replacement grant.
+                                originalPath = currentFile.Path;
+                                originalName = currentFile.Name;
                                 deferred = TryDeferUpdates(updates, currentFile);
                             }
                         }
@@ -111,10 +242,14 @@ internal static class DocumentFileWriter
                 }
 
                 // Cancellation belongs to candidate preparation. Once commit
-                // succeeds, finish provider accounting and return that success.
+                // succeeds, finish provider accounting and check which bytes survived.
+                OnLocalCommit(currentFile);
                 var completeCommitted = deferred;
                 deferred = false;
                 if (completeCommitted) await CompleteUpdatesAsync(updates, currentFile, result);
+                await result.RecordCommitAsync(writtenLength, writtenHash, originalPath, originalName, target.FinalPath, admittedSpelling);
+                if (!cancellationToken.IsCancellationRequested)
+                    result.Version = await result.VerifyAsync(cancellationToken);
                 return result;
             }
         }
@@ -126,9 +261,51 @@ internal static class DocumentFileWriter
         }
     }
 
+    static partial void OnSelectUpdates(ref IDocumentFileUpdates updates);
+    static partial void OnTransactionLocationObserved(ref string observed);
+
+    // Test builds can interleave a writer at the instant CommitAsync releases exclusivity.
+    static partial void OnLocalCommit(StorageFile file);
+
+    internal static async Task<DocumentFileVersion> VerifyCommittedVersionAsync(StorageFile file, long length,
+        byte[] hash, CancellationToken cancellationToken)
+    {
+        try
+        {
+            // CommitAsync releases writer exclusivity before it returns. Attribute a
+            // disk timestamp to our snapshot only while a reader pins matching bytes.
+            for (int attempt = 1; ; attempt++)
+            {
+                try
+                {
+                    var observed = await DocumentSaveTarget.ReadVersionAsync(file, cancellationToken, length);
+                    if (observed.Sha256 == Convert.ToHexString(hash)) return observed;
+                    throw new DocumentSaveException(DocumentSaveStage.Superseded);
+                }
+                catch (DocumentSaveException ex) when (attempt < 3 && ex.Stage == DocumentSaveStage.VerifyVersion &&
+                    ex.HResult is SharingViolation or AccessDenied)
+                {
+                    // Only retry observation. Replaying the committed write could destroy a later edit.
+                    await Task.Delay(25 * attempt, cancellationToken);
+                }
+            }
+        }
+        catch (DocumentSaveException ex) when (ex.Stage == DocumentSaveStage.Superseded) { throw; }
+        catch (DocumentSaveException ex) when (ex.HResult is unchecked((int)0x80070002) or unchecked((int)0x80070003))
+        {
+            throw new DocumentSaveException(DocumentSaveStage.Superseded, ex);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
+        catch (Exception ex)
+        {
+            LoggingService.LogError($"[{nameof(DocumentFileWriter)}] Committed bytes could not be verified: {ex}");
+        }
+        return DocumentFileVersion.Unknown;
+    }
+
     private static bool CanRetry(Exception error)
     {
-        return error is not OperationCanceledException &&
+        return error is not OperationCanceledException and not DocumentSaveException { Stage: DocumentSaveStage.PrepareSnapshot } &&
             (error.HResult == AccessDenied || error.HResult == SharingViolation ||
              error.HResult == UnableToRemoveReplaced || error.HResult == GenericFailure);
     }
@@ -143,7 +320,7 @@ internal static class DocumentFileWriter
             cancellationToken.ThrowIfCancellationRequested();
             // Reuse only the existing access grant and the same storage item.
             // Genuine read-only permissions still fail the next transaction.
-            return resolved.IsEqual(file) ? resolved : null;
+            return await DocumentSaveTarget.IsSameFileAsync(file, resolved, cancellationToken) ? resolved : null;
         }
         catch (OperationCanceledException) { throw; }
         catch (Exception) { return null; }
@@ -168,6 +345,7 @@ internal static class DocumentFileWriter
     private static async Task CompleteUpdatesAsync(IDocumentFileUpdates updates, StorageFile file,
         DocumentFileWriteResult result)
     {
+        using var measurement = OperationMetrics.Measure("document.save.provider-completion");
         try
         {
             var status = await updates.CompleteAsync(file);
@@ -186,6 +364,6 @@ internal static class DocumentFileWriter
     private sealed class CachedDocumentFileUpdates : IDocumentFileUpdates
     {
         public void Defer(StorageFile file) => CachedFileManager.DeferUpdates(file);
-        public async Task<FileUpdateStatus> CompleteAsync(StorageFile file) => await CachedFileManager.CompleteUpdatesAsync(file);
+        public Task<FileUpdateStatus> CompleteAsync(StorageFile file) => FileStorage.CompleteUpdatesAsync(file);
     }
 }

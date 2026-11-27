@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.Text;
+using Notepads.Infrastructure.Storage;
 using Windows.Storage;
 
 namespace Notepads.Features.Documents.Storage;
@@ -85,7 +86,9 @@ public sealed partial class DocumentBaseline : IDisposable
                 cancellationToken.ThrowIfCancellationRequested();
                 await writeCanonicalUtf8Async(writer).ConfigureAwait(false);
                 hash = writer.Complete();
-                await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                await stream.FlushAsync(CancellationToken.None).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
                 byteLength = writer.Length;
             }
             cancellationToken.ThrowIfCancellationRequested();
@@ -133,13 +136,15 @@ public sealed partial class DocumentBaseline : IDisposable
         var asset = DocumentAssetLease.Acquire(file, persistent: true);
         try
         {
-            using var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false);
+            using var stream = await FileStorage.OpenStreamForReadAsync(file, cancellationToken).ConfigureAwait(false);
             using var validator = new CanonicalWriteStream(Stream.Null, cancellationToken);
             if (stream.Length != byteLength) throw new InvalidDataException("The saved document baseline length changed.");
             var buffer = new byte[65536];
             while (true)
             {
-                var count = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                var count = await stream.ReadAsync(buffer, 0, buffer.Length, CancellationToken.None).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
                 if (count == 0) break;
                 OnBaselineRead(file.Path, count, cancellationToken);
                 await validator.WriteAsync(buffer, 0, count, cancellationToken).ConfigureAwait(false);
@@ -261,16 +266,9 @@ public sealed partial class DocumentBaseline : IDisposable
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 ValidateWrite(buffer.Span);
-                if (!cancellationToken.CanBeCanceled)
-                {
-                    await _stream.WriteAsync(buffer, _cancellationToken).ConfigureAwait(false);
-                }
-                else
-                {
-                    using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(
-                        cancellationToken, _cancellationToken);
-                    await _stream.WriteAsync(buffer, cancellation.Token).ConfigureAwait(false);
-                }
+                await _stream.WriteAsync(buffer, CancellationToken.None).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                _cancellationToken.ThrowIfCancellationRequested();
             }
             catch
             {
@@ -319,7 +317,14 @@ public sealed partial class DocumentBaseline : IDisposable
 
         public override void Flush() => _stream.Flush();
 
-        public override Task FlushAsync(CancellationToken cancellationToken) => _stream.FlushAsync(cancellationToken);
+        public override async Task FlushAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            _cancellationToken.ThrowIfCancellationRequested();
+            await _stream.FlushAsync(CancellationToken.None).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            _cancellationToken.ThrowIfCancellationRequested();
+        }
 
         public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 

@@ -24,6 +24,7 @@ namespace winrt::WinUIEditor::implementation
 		static winrt::fire_and_forget final_release(std::unique_ptr<EditorBaseControl> self) noexcept;
 
 		WinUIEditor::Editor Editor();
+		WinUIEditor::EditorUtf8Reader AcquireSaveReader();
         static uint32_t VerticalWheelScrollLines();
 		bool IsComposing() const noexcept { return _scintilla->IsComposing(); }
 		bool HasTextStoreLock() const noexcept { return _scintilla->HasTextStoreLock(); }
@@ -76,6 +77,7 @@ namespace winrt::WinUIEditor::implementation
 		void PublishPreparedReplacement(Scintilla::Internal::Document &replacement, const char *previousText,
 			std::unique_ptr<Scintilla::Internal::IContractionState> contraction, bool leased = false);
 		const Scintilla::Internal::Document &LeasedDocument() const;
+		Scintilla::Internal::Document &DocumentForSaveSnapshot() const { return _scintilla->DocumentForSaveSnapshot(); }
 		std::shared_ptr<::WinUIEditor::NativeDocumentJournal> PrepareJournalReplacement();
 		bool IsFinalized() const noexcept { return _uiResourcesFinalized.load(); }
 		bool IsDrawingVisible() noexcept;

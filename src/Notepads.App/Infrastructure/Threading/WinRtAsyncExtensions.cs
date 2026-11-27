@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -18,7 +19,7 @@ internal static class WinRtAsyncExtensions
     internal static async Task AsCompletionTask(this IAsyncAction operation, CancellationToken cancellationToken)
     {
         var completion = operation.AsTask();
-        using var registration = cancellationToken.Register(operation.Cancel);
+        using var registration = RegisterCancellation(operation, completion, cancellationToken);
         await completion.ConfigureAwait(false);
     }
 
@@ -26,7 +27,7 @@ internal static class WinRtAsyncExtensions
         CancellationToken cancellationToken)
     {
         var completion = operation.AsTask();
-        using var registration = cancellationToken.Register(operation.Cancel);
+        using var registration = RegisterCancellation(operation, completion, cancellationToken);
         return await completion.ConfigureAwait(false);
     }
 
@@ -34,7 +35,29 @@ internal static class WinRtAsyncExtensions
         CancellationToken cancellationToken)
     {
         var completion = operation.AsTask();
-        using var registration = cancellationToken.Register(operation.Cancel);
+        using var registration = RegisterCancellation(operation, completion, cancellationToken);
         await completion.ConfigureAwait(false);
+    }
+
+    internal static async Task<TResult> AsCompletionTask<TResult, TProgress>(
+        this IAsyncOperationWithProgress<TResult, TProgress> operation, CancellationToken cancellationToken)
+    {
+        var completion = operation.AsTask();
+        using var registration = RegisterCancellation(operation, completion, cancellationToken);
+        return await completion.ConfigureAwait(false);
+    }
+
+    private static CancellationTokenRegistration RegisterCancellation(IAsyncInfo operation, Task completion,
+        CancellationToken cancellationToken)
+    {
+        if (completion.IsCompleted || !cancellationToken.CanBeCanceled) return default;
+        return cancellationToken.Register(static state =>
+        {
+            try { ((IAsyncInfo)state).Cancel(); }
+            // Match the SDK's cancellation bridge: an unavailable native endpoint
+            // cannot accept Cancel, but its completion still owns the resources.
+            catch (COMException error) when (error.HResult is unchecked((int)0x80010108) or
+                unchecked((int)0x800706BA) or unchecked((int)0x89020001)) { }
+        }, operation);
     }
 }

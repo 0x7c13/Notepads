@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>File Open Error</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Sorry, file "{0}" couldn't be saved: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>The file may have changed. Use Save As to choose where to save your edits.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Another save is in progress for this file. Try again shortly.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>“{0}” was written. Its contents could not be verified. Your draft is still open.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Check again</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>The version of the file on disk could not be verified.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Could not prepare a copy of your edits for saving.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>File Save Error</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Close</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Find</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

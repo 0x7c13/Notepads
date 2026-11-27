@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Controls;
 using Notepads.Features.Documents.Contracts;
@@ -297,7 +298,7 @@ public sealed partial class NotepadsCore : INotepadsCore
         var placeholder = GetTabs().Length == 1 && atIndex == -1 && textEditor.EditingFile != null
             ? GetTabs()[0] : null;
         if (placeholder?.ReadyEditor is not ITextEditor empty || empty.EditingFile != null ||
-            empty.IsModified || !empty.IsDocumentEmpty) placeholder = null;
+            empty.IsModified || !empty.IsDocumentEmpty || empty is TextEditor { IsFileSaveActive: true }) placeholder = null;
         OpenTab(new WorkspaceTab(textEditor), atIndex);
         if (placeholder != null) TabClosing?.Invoke(this, placeholder);
     }
@@ -405,13 +406,14 @@ public sealed partial class NotepadsCore : INotepadsCore
         return textEditor;
     }
 
-    public async Task SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file)
+    public async Task<StorageFile> SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file, DocumentFileVersion? pickedFileVersion = null, CancellationToken cancellation = default, Guid? verificationId = null)
     {
-        await textEditor.SaveContentToFileAndUpdateEditorStateAsync(file); // Will throw if not succeeded
-        if (_disposed || GetTextEditorSetsViewItem(textEditor) == null) return;
+        var committedFile = await textEditor.SaveContentToFileAndUpdateEditorStateAsync(file, pickedFileVersion, cancellation, verificationId);
+        if (_disposed || GetTextEditorSetsViewItem(textEditor) == null) return committedFile;
         if (textEditor.IsModified) MarkTextEditorSetNotSaved(textEditor);
         else MarkTextEditorSetSaved(textEditor);
         TextEditorSaved?.Invoke(this, textEditor);
+        return committedFile;
     }
 
     public void DeleteTab(WorkspaceTab tab)

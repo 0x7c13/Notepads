@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>خطأ فتح ملف</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>عذراً, الملف "{0}" تعذّر حفظه: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>موافق</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>إعادة المحاولة</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>ربما تغيّر الملف. استخدم «حفظ باسم» لاختيار مكان حفظ تعديلاتك.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>تجري الآن عملية حفظ أخرى لهذا الملف. حاول مجددًا بعد قليل.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>تمت الكتابة إلى «{0}»، لكن تعذّر التحقق من المحتوى المحفوظ. ما زالت المسودة مفتوحة.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>إعادة التحقق</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>تعذّر التحقق من إصدار الملف على القرص.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>تعذّر تجهيز نسخة من تعديلاتك للحفظ.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>خطأ حفظ ملف</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>إغلاق</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>بحث</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

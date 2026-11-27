@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.IO;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Contracts.Legacy;
 using Notepads.Features.Sessions.Contracts.Recovery;
@@ -109,7 +110,7 @@ internal sealed partial class SessionService
             // its file, even if that file was since deleted or went offline. No broker call needed.
             if (_fileGrants.TryGetValue(file, out var granted) && granted == token) return token;
             var committedFile = await FutureAccessListUtility.GetFileFromFutureAccessListAsync(token);
-            if (committedFile != null && file.IsEqual(committedFile))
+            if (await DocumentSaveTarget.MatchesFileHintAsync(file, committedFile))
             {
                 _fileGrants.AddOrUpdate(file, token);
                 return token;

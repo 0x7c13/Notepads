@@ -38,6 +38,7 @@ size_t CheckGutterGeometry();
 size_t CheckUndoCaretRestoration();
 size_t CheckEditorStateTransfer();
 size_t CheckDocumentSearchBounds();
+size_t CheckConcurrentDocumentRelease();
 size_t CheckPreparedReplacementDecorations();
 size_t CheckVerticalScrollGeometry();
 size_t CheckUtf8PositionIndex();
@@ -1215,6 +1216,8 @@ int wmain(int argc, wchar_t **argv) {
         std::cout << "PASS: bounded page cache, oversized active layout ownership and paragraph revalidation.\n";
         checks += CheckUndoCaretRestoration();
         checks += CheckEditorStateTransfer();
+        checks += CheckConcurrentDocumentRelease();
+        std::cout << "PASS: concurrent save-reader releases preserve Document reference ownership.\n";
         checks += CheckDocumentSearchBounds();
         checks += CheckPreparedReplacementDecorations();
         std::cout << "PASS: bounded literal search across buffer gaps, directions, case modes and NUL/EOF boundaries.\n";

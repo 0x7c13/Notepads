@@ -168,8 +168,29 @@ internal static class WorkspaceLifecycleTests
             "The first visual Loaded discarded the saved viewport.");
         Check(Math.Abs(current.ScrollViewerHorizontalOffset - expectedX) <= 2,
             "The first visual Loaded discarded the saved horizontal viewport.");
-        Check(page.TestStatusModified && ApplicationView.GetForCurrentView().Title.Contains(Names[0], StringComparison.Ordinal),
-            "Selected status/title did not reflect the restored editor.");
+        Check(page.TestStatusModified,
+            $"Restored modified indicator is missing: editor modified={tabs[0].ReadyEditor.IsModified}, " +
+            $"tab modified={tabs[0].IsModified}, title=[{ActualWindowTitle()}].");
+        await UntilAsync(() => ActualWindowTitle().Contains(Names[0], StringComparison.Ordinal),
+            "The restored document must appear in the actual system window title.");
+        Check(ActualWindowTitle().Contains(Names[0], StringComparison.Ordinal),
+            $"Restored title mismatch: title=[{ActualWindowTitle()}], " +
+            $"editor title=[{tabs[0].ReadyEditor.DisplayTitle}].");
+        // Negative control: a stale or hard-coded observer must fail to report
+        // this deliberately different caption before we restore the real title.
+        var view = ApplicationView.GetForCurrentView();
+        const string alternateTitle = "Workspace title observer negative control";
+        try
+        {
+            view.Title = alternateTitle;
+            await UntilAsync(() => ActualWindowTitle().Contains(alternateTitle, StringComparison.Ordinal),
+                "The title observer must detect a deliberately changed system caption.");
+            Check(!ActualWindowTitle().Contains(Names[0], StringComparison.Ordinal),
+                "The title observer must not retain a stale restored document title.");
+        }
+        finally { view.Title = tabs[0].ReadyEditor.DisplayTitle; }
+        await UntilAsync(() => ActualWindowTitle().Contains(Names[0], StringComparison.Ordinal),
+            "The real restored document title must return after the negative control.");
         log.AppendLine($"PASS: a fresh MainPage process restores document line {expectedLine}, horizontal offset and selection.");
         log.AppendLine("PASS: selected-first production MainPage paints every header with exactly one native editor, correct title/modified state and restored caret/viewport.");
 
@@ -210,7 +231,9 @@ internal static class WorkspaceLifecycleTests
             "A restored pending tab has no empty position button in the status bar.");
         page.TestRefreshMenu();
         Check(!page.TestSaveAsEnabled && !page.TestFindEnabled, "Pending content commands remained enabled.");
-        Check(page.TestStatusPath == tabs[2].EditingFilePath && ApplicationView.GetForCurrentView().Title.Contains(Names[2], StringComparison.Ordinal),
+        await UntilAsync(() => ActualWindowTitle().Contains(Names[2], StringComparison.Ordinal),
+            "Selecting a pending tab must update the actual system window title.");
+        Check(page.TestStatusPath == tabs[2].EditingFilePath && ActualWindowTitle().Contains(Names[2], StringComparison.Ordinal),
             "Selecting a pending tab left another document's path or title visible.");
         Check(!await page.TestSaveSelectedAsAsync().WaitAsync(TimeSpan.FromSeconds(2)), "Direct Save As entered the picker for a pending selection.");
         var cancelClose = page.TestCloseTabAsync(tabs[2]);

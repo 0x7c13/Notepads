@@ -37,6 +37,24 @@ public sealed class SessionRecoverySchemaTests
         Assert.Equal(0, legacy.TextEditors[0].StateMetaData.FirstVisibleRowOffset);
         Assert.Null(legacy.TextEditors[0].StateMetaData.UseContentBasedTitle);
         Assert.Null(legacy.TextEditors[0].StateMetaData.ContentTitle);
+        Assert.Null(legacy.TextEditors[0].StateMetaData.SavedFileSha256);
+        Assert.Null(legacy.TextEditors[0].StateMetaData.SavedFileTargetPath);
+    }
+
+    [Fact]
+    public void SavedFileDigestSurvivesCaptureAndRecoveryJson()
+    {
+        var session = ValidSession();
+        var metadata = session.TextEditors[0].StateMetaData;
+        metadata.HasUnconfirmedFileSave = true;
+        metadata.SavedFileTargetPath = @"\\?\Volume{00000000-0000-0000-0000-000000000001}\docs\draft.txt";
+        metadata.SavedFileSha256 = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData("disk"u8));
+        session.TextEditors[0].StateMetaData = metadata.Clone();
+        var encoded = JsonSerializer.Serialize(session, SessionJsonContext.Default.NotepadsSessionDataV2);
+        var restored = JsonSerializer.Deserialize(encoded, SessionJsonContext.Default.NotepadsSessionDataV2);
+        Assert.Equal(metadata.SavedFileSha256, restored.TextEditors[0].StateMetaData.SavedFileSha256);
+        Assert.Equal(metadata.SavedFileTargetPath, restored.TextEditors[0].StateMetaData.SavedFileTargetPath);
+        Assert.True(restored.TextEditors[0].StateMetaData.HasUnconfirmedFileSave);
     }
 
     [Theory]

@@ -18,7 +18,7 @@
 		void PasteText(hstring const &text);
 		Windows::Foundation::IAsyncActionWithProgress<uint64_t> LoadUtf8Async(Windows::Storage::Streams::IInputStream stream, uint64_t byteLength, bool preserveUndo);
 		Windows::Storage::Streams::IBuffer ReadUtf8Range(int64_t offset, int32_t maxBytes);
-		WinUIEditor::EditorUtf8Reader AcquireUtf8Reader();
+		WinUIEditor::EditorUtf8Reader AcquireUtf8Reader(bool forSave = false);
 		WinUIEditor::EditorStateReader AcquireStateReader();
 		Windows::Foundation::IAsyncAction RestoreStateAsync(Windows::Storage::Streams::IInputStream stream, uint64_t byteLength, hstring sha256);
 		Windows::Foundation::IAsyncAction RestoreStateOperationAsync(Windows::Storage::Streams::IInputStream stream,

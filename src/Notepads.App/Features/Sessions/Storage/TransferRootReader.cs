@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Validation;
+using Notepads.Infrastructure.Storage;
 using Windows.Storage;
 
 namespace Notepads.Features.Sessions.Storage;
@@ -62,12 +63,12 @@ internal static class TransferRootReader
             if (baseline.FileName == null) continue;
             var folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("DocumentBaselines");
             var file = await folder.GetFileAsync(baseline.FileName);
-            if (checked((long)(await file.GetBasicPropertiesAsync()).Size) != baseline.ByteLength)
+            if (checked((long)(await FileStorage.GetFilePropertiesAsync(file, cancellation)).Size) != baseline.ByteLength)
                 throw new InvalidDataException("A transfer baseline has an invalid length.");
         }
         var journals = await ApplicationData.Current.LocalFolder.GetFolderAsync("DocumentJournals");
         var journal = await journals.GetFileAsync(editor.Journal.FileName);
-        if ((await journal.GetBasicPropertiesAsync()).Size < checked((ulong)editor.Journal.CommittedByteLength))
+        if ((await FileStorage.GetFilePropertiesAsync(journal, cancellation)).Size < checked((ulong)editor.Journal.CommittedByteLength))
             throw new InvalidDataException("A transfer journal is shorter than its committed prefix.");
     }
 }

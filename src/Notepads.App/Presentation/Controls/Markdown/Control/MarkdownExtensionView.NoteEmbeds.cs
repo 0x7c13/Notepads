@@ -15,6 +15,7 @@ using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Documents.IO;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Infrastructure.DocumentAssets;
+using Notepads.Infrastructure.Storage;
 using Notepads.Infrastructure.Threading;
 using Notepads.Markdown;
 using Windows.Storage;
@@ -430,7 +431,7 @@ public sealed partial class MarkdownExtensionView
     {
         try
         {
-            var parent = await origin.GetParentAsync().AsCompletionTask(cancellation);
+            var parent = await FileStorage.GetParentAsync(origin, cancellation);
             if (parent != null) return await parent.GetFileAsync(relative).AsCompletionTask(cancellation);
         }
         catch (UnauthorizedAccessException)

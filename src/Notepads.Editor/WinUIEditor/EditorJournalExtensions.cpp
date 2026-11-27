@@ -175,7 +175,7 @@ namespace winrt::WinUIEditor::implementation
 			std::rethrow_exception(failure);
 		// Preparation touches only immutable recovery data. Editing remains
 		// enabled; publish only if the document is still the captured revision.
-		if (state->canceled.load() || _textLoadState != state || view->DocumentRevision() != revision ||
+		if (view->IsFinalized() || state->canceled.load() || _textLoadState != state || view->DocumentRevision() != revision ||
 			static_cast<uint64_t>(Length()) != length)
 		{
 			co_await resume_background();

@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>ଫାଇଲ୍ ଖୋଲା ତ୍ରୁଟି</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>ଦୁଃଖିତ, ଫାଇଲ୍ "{0}" ସଞ୍ଚୟ ହୋଇପାରିଲା ନାହିଁ: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>ଠିକ୍ ଅଛି</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>ଫାଇଲଟି ବଦଳି ଥାଇପାରେ। ଆପଣଙ୍କ ପରିବର୍ତ୍ତନ କେଉଁଠି ସଞ୍ଚୟ କରିବେ ବାଛିବାକୁ ‘ଏହି ନାମରେ ସଞ୍ଚୟ କରନ୍ତୁ’ ବ୍ୟବହାର କରନ୍ତୁ।</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>ଏହି ଫାଇଲ୍‌ଟି ଏବେ ସଞ୍ଚୟ ହେଉଛି। କିଛି ସମୟ ପରେ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>“{0}” ଲେଖାଯାଇଛି, କିନ୍ତୁ ସଞ୍ଚିତ ବିଷୟବସ୍ତୁ ଯାଞ୍ଚ ହୋଇପାରିଲା ନାହିଁ। ଆପଣଙ୍କ ଚିଠା ଏବେ ବି ଖୋଲା ଅଛି।</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>ପୁଣି ଯାଞ୍ଚ କରନ୍ତୁ</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>ଡିସ୍କରେ ଥିବା ଫାଇଲ୍‌ର ସଂସ୍କରଣ ଯାଞ୍ଚ କରିହେଲା ନାହିଁ।</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>ସଞ୍ଚୟ ପାଇଁ ଆପଣଙ୍କ ପରିବର୍ତ୍ତନର ଏକ ନକଲ ପ୍ରସ୍ତୁତ କରିହେଲା ନାହିଁ।</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>ଫାଇଲ ସଞ୍ଚୟ ତ୍ରୁଟି</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>ବନ୍ଦ କର</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>ଖୋଜ</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

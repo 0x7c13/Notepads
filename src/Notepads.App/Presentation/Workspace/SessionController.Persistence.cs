@@ -128,16 +128,20 @@ internal sealed partial class SessionController
     }
 
     private static SessionDocumentCapture CaptureEditor(ITextEditor editor, RecoveryDocumentSource source,
-        RecoveryFileAccessBinding fileAccessBinding) => new()
+        RecoveryFileAccessBinding fileAccessBinding)
     {
-        Id = editor.Id,
-        EditingFile = editor.EditingFile,
-        EditingFileName = editor.EditingFileName,
-        EditingFilePath = editor.EditingFilePath,
-        Recovery = editor.CaptureRecoveryState(),
-        Source = source,
-        FileAccessBinding = fileAccessBinding
-    };
+        var file = editor.EditingFile;
+        return new SessionDocumentCapture
+        {
+            Id = editor.Id,
+            EditingFile = file,
+            EditingFileName = file?.Name,
+            EditingFilePath = file?.Path,
+            Recovery = editor.CaptureRecoveryState(),
+            Source = source,
+            FileAccessBinding = fileAccessBinding
+        };
+    }
 
     public async Task ClearSessionDataAsync()
     {

@@ -19,7 +19,7 @@ using Notepads.Infrastructure.Diagnostics;
 namespace Notepads.Features.Sessions.Recovery;
 
 /// <summary>Reads and verifies roots, then selects recovery content from the complete evidence.</summary>
-internal static class SessionRecoveryCatalog
+internal static partial class SessionRecoveryCatalog
 {
     // Callers hold store admission throughout all catalog reads and repairs. A pass shares
     // lifecycle reads between the catalog reads of that one admission.
@@ -113,8 +113,13 @@ internal static class SessionRecoveryCatalog
                             throw new InvalidDataException("The reset intent has an inconsistent predecessor.");
                         var publication = await store.CompleteResetIntentAsync(address, cancellation);
                         if (publication.IsCommitted) read = await store.ReadAsync(address, true, CancellationToken.None);
-                        else Block(result, "A reset intent could not be completed durably.");
+                        else
+                        {
+                            cancellation.ThrowIfCancellationRequested();
+                            Block(result, "A reset intent could not be completed durably.");
+                        }
                     }
+                    catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { throw; }
                     catch (Exception ex) { Block(result, ex.Message); }
                 }
                 else
@@ -289,6 +294,20 @@ internal static class SessionRecoveryCatalog
     internal static TextEditorSessionDataV2 CloneEditor(TextEditorSessionDataV2 editor) => JsonSerializer.Deserialize(
         JsonSerializer.SerializeToUtf8Bytes(editor, SessionJsonContext.Default.TextEditorSessionDataV2),
         SessionJsonContext.Default.TextEditorSessionDataV2);
+
+    internal static void DetachForRescue(TextEditorSessionDataV2 editor)
+    {
+        editor.EditingFileFutureAccessToken = null;
+        editor.EditingFilePath = null;
+        editor.StateMetaData.HasEditingFile = false;
+        editor.StateMetaData.HasUnconfirmedFileSave = false;
+        editor.StateMetaData.SavedFileSha256 = null;
+        editor.StateMetaData.SavedFileTargetPath = null;
+        editor.StateMetaData.DateModifiedFileTime = -1;
+        editor.StateMetaData.RequiresSaveAs = true;
+        editor.StateMetaData.IsModified = true;
+        editor.TextDirty = true;
+    }
 
     private static void Block(RecoveryScopeSnapshot result, string reason)
     {

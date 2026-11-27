@@ -4,14 +4,19 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents.Contracts;
+using Notepads.Features.Documents.IO;
+using Notepads.Infrastructure.Storage;
+using Notepads.Presentation.Controls.Dialog;
 using Notepads.Presentation.Controls.TextEditor;
 using NotepadsEditorTests;
 using NotepadsIntegrationTests;
@@ -29,13 +34,296 @@ internal static class ContentModificationTests
     internal static async Task RunAsync(StringBuilder log)
     {
         await using var host = await FeatureTestHost.CreateAsync();
+        await ConcurrentFileObservationsAsync(host, log);
         await EmptyAndMetadataAsync(host);
+        await SaveDuringFileObservationsAsync(host, log);
+        var statusFailures = new List<Exception>();
+        async Task RunStatusCaseAsync(string name, Func<Task> run)
+        {
+            try { await run(); }
+            catch (Exception error)
+            {
+                log.AppendLine($"FAIL: {name}: {error}");
+                statusFailures.Add(new InvalidOperationException(name, error));
+            }
+        }
+        await RunStatusCaseAsync("Status check after owned commit", () => SuppressOwnedSaveStatusAsync(host, log));
+        await RunStatusCaseAsync("Earlier status observation during save", () => SuppressInFlightStatusDuringSaveAsync(host, log));
+        await RunStatusCaseAsync("Unknown saved version after conflict", () => PreserveUnknownVersionConflictAsync(host, log));
+        if (statusFailures.Count != 0) throw new AggregateException("File-status regressions failed.", statusFailures);
         await EqualityUndoRecoveryCloseAsync(host);
         await StreamingAndRacesAsync(host, log);
         await SupersessionAndReloadAsync(host);
         await FailedReloadAsync(host);
         await DisposalAsync(host);
         log.AppendLine("PASS: exact saved-content equality clears manual reversions without moving undo save points; empty/metadata, UI, close, recovery, cancellation and disposal contracts hold.");
+    }
+
+    private static async Task ConcurrentFileObservationsAsync(FeatureTestHost host, StringBuilder log)
+    {
+        var bytes = Encoding.UTF8.GetBytes(string.Concat(Enumerable.Repeat("Ω😀 observation\r\n", 65536)));
+        var file = await host.Folder.CreateFileAsync("concurrent-observation.txt");
+        await FileIO.WriteBytesAsync(file, bytes);
+        var digest = Convert.ToHexString(SHA256.HashData(bytes));
+        const int iterations = 128;
+        static void Require(bool condition, string message)
+        {
+            if (!condition) throw new InvalidOperationException(message);
+        }
+        for (var phase = 0; phase < 2; phase++)
+        {
+            using var stopPolling = new CancellationTokenSource();
+            var pollCount = 0;
+            var pinned = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var pollingStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            DocumentSaveTarget.TestVersionRead = (target, _) =>
+            {
+                Require(ReferenceEquals(file, target), "The observation test must use the same StorageFile grant.");
+                pinned.TrySetResult();
+                return phase == 0 ? Task.CompletedTask : pollingStarted.Task;
+            };
+            var poller = phase == 0 ? Task.CompletedTask : Task.Run(async () =>
+            {
+                await pinned.Task;
+                while (!stopPolling.IsCancellationRequested)
+                {
+                    var metadata = FileStorage.GetDateModifiedAsync(file);
+                    pollingStarted.TrySetResult();
+                    Require(await metadata > 0, "Concurrent status metadata must remain readable.");
+                    // Use the same open as FileExistsAsync, without its error-swallowing policy.
+                    using var reader = await FileStorage.OpenStreamForReadAsync(file);
+                    Require(reader.Length == bytes.Length, "Concurrent existence probes must observe the full file.");
+                    var parent = await FileStorage.GetParentAsync(file);
+                    Require(parent.Path == host.Folder.Path, "Concurrent relative-path lookup must preserve the document grant.");
+                    pollCount++;
+                }
+            });
+            Exception readError = null;
+            try
+            {
+                for (var i = 0; i < iterations; i++)
+                {
+                    var observed = await DocumentSaveTarget.ReadVersionAsync(file);
+                    Require(observed.Sha256 == digest, "Every stable version observation must verify the exact bytes.");
+                }
+            }
+            catch (Exception ex) { readError = ex; throw; }
+            finally
+            {
+                DocumentSaveTarget.TestVersionRead = null;
+                stopPolling.Cancel();
+                pinned.TrySetResult();
+                pollingStarted.TrySetResult();
+                try { await poller; }
+                catch (Exception ex) when (readError != null) { throw new AggregateException(readError, ex); }
+            }
+            Check(phase == 0 || pollCount > 0, "The concurrent observation phase must execute real metadata/existence probes.");
+            log.AppendLine($"PASS: stable observation phase={phase}, versionReads={iterations}, statusProbes={pollCount}.");
+        }
+        log.AppendLine("PASS: 128 stable version reads with and without concurrent status metadata/existence probes preserve exact hashes on the same StorageFile grant (bounded stress evidence).");
+    }
+
+    private static async Task SaveDuringFileObservationsAsync(FeatureTestHost host, StringBuilder log)
+    {
+        var editor = await OpenAsync(host, "save-with-status-probes.txt", "base"u8.ToArray());
+        editor.TypeText("draft Ω😀");
+        var expected = editor.GetEncoding().GetBytes(editor.GetText());
+        var checks = new ConcurrentQueue<Task>();
+        async Task CheckStatusAsync()
+        {
+            await Task.Yield();
+            await editor.TestCheckFileStatusAsync();
+        }
+        Task StartStatusCheck()
+        {
+            var check = CheckStatusAsync();
+            checks.Enqueue(check);
+            return check;
+        }
+        editor.TestSaveReaderCaptured = StartStatusCheck;
+        DocumentFileWriter.TestLocalCommit = file => { _ = StartStatusCheck(); };
+        DocumentSaveTarget.TestVersionRead = (_, _) => StartStatusCheck();
+        Task<bool> saving = null;
+        Exception saveError = null;
+        try
+        {
+            saving = host.Page.TestSaveDocumentAsync(editor);
+            await UntilAsync(() => saving.IsCompleted || DialogManager.ActiveDialog is FileSaveErrorDialog,
+                "Concurrent status checks must not turn a successful Save into a confirmation dialog.");
+            Check(saving.IsCompleted && await saving, "Save must complete without a confirmation/error dialog during status probes.");
+            await Task.WhenAll(checks).WaitAsync(TimeSpan.FromSeconds(20));
+            Check(checks.Count == 3 && !editor.IsModified && editor.FileModificationState == FileModificationState.Untouched,
+                "Status requests during capture, commit and verification must preserve the published clean save state.");
+            await BytesAsync(editor.EditingFile, expected, "Status probes preserve the exact committed draft bytes");
+        }
+        catch (Exception ex) { saveError = ex; throw; }
+        finally
+        {
+            var cleanupErrors = new List<Exception>();
+            if (saving != null)
+            {
+                try
+                {
+                    await UntilAsync(() => saving.IsCompleted || ActiveVisibleDialog() is FileSaveErrorDialog,
+                        "The status-probe save must settle before its hooks are removed.");
+                    if (!saving.IsCompleted) await ChooseDialogAsync(saving, "CloseButton");
+                    await saving.WaitAsync(TimeSpan.FromSeconds(20));
+                }
+                catch (Exception ex)
+                {
+                    if (!ReferenceEquals(ex, saveError)) cleanupErrors.Add(ex);
+                }
+            }
+            editor.TestSaveReaderCaptured = null;
+            DocumentFileWriter.TestLocalCommit = null;
+            DocumentSaveTarget.TestVersionRead = null;
+            try { await Task.WhenAll(checks).WaitAsync(TimeSpan.FromSeconds(20)); }
+            catch (Exception ex)
+            {
+                if (!ReferenceEquals(ex, saveError)) cleanupErrors.Add(ex);
+            }
+            if (cleanupErrors.Count > 0)
+            {
+                if (saveError != null) cleanupErrors.Insert(0, saveError);
+                throw new AggregateException(cleanupErrors);
+            }
+        }
+        log.AppendLine("PASS: actual MainPage Save verifies exact bytes without an error dialog when status checks are requested during capture, commit and verification; an active owned save may suppress those checks.");
+    }
+
+    private static async Task SuppressOwnedSaveStatusAsync(FeatureTestHost host, StringBuilder log)
+    {
+        var editor = await OpenAsync(host, "owned-save-status.txt", "base"u8.ToArray());
+        var file = editor.EditingFile;
+        var savedTime = editor.LastSavedSnapshot.DateModifiedFileTime;
+        editor.TypeText("draft");
+        var expected = editor.GetEncoding().GetBytes(editor.GetText());
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var observedStates = new List<FileModificationState>();
+        void Observe(object sender, EventArgs args) => observedStates.Add(editor.FileModificationState);
+        editor.FileModificationStateChanged += Observe;
+        DocumentFileWriter.TestLocalCommit = target =>
+        {
+            Check(ReferenceEquals(target, file), "The owned-save fixture must commit its own bound grant.");
+            File.SetLastWriteTimeUtc(target.Path, DateTime.FromFileTimeUtc(savedTime).AddMinutes(1));
+        };
+        DocumentSaveTarget.TestVersionRead = (target, token) =>
+        {
+            Check(ReferenceEquals(target, file), "Pause verification only for the owned-save fixture.");
+            entered.TrySetResult();
+            return release.Task.WaitAsync(token);
+        };
+        Task saving = null;
+        try
+        {
+            saving = editor.SaveContentToFileAndUpdateEditorStateAsync(file);
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(15));
+            Check(editor.IsFileSaveActive && !saving.IsCompleted &&
+                await FileStorage.GetDateModifiedAsync(file) != savedTime,
+                "The status check must run after commit with a changed timestamp and before save publication.");
+            await editor.TestCheckFileStatusAsync().WaitAsync(TimeSpan.FromSeconds(15));
+            Check(editor.FileModificationState == FileModificationState.Untouched &&
+                !observedStates.Contains(FileModificationState.Modified),
+                "An owned save must not publish an external-modification state or warning while its commit is being verified.");
+        }
+        finally
+        {
+            release.TrySetResult();
+            try { if (saving != null) await saving.WaitAsync(TimeSpan.FromSeconds(20)); }
+            finally
+            {
+                DocumentFileWriter.TestLocalCommit = null;
+                DocumentSaveTarget.TestVersionRead = null;
+                editor.FileModificationStateChanged -= Observe;
+                await editor.TestStopFileChecksAsync();
+            }
+        }
+        Check(!editor.IsModified && editor.FileModificationState == FileModificationState.Untouched,
+            "A verified owned save must finish with the correct clean file status.");
+        await BytesAsync(file, expected, "Suppressing an owned-save status check must preserve the committed draft");
+        log.AppendLine("PASS: a status check after the owned local commit emits no external-modification state or warning before publication.");
+    }
+
+    private static async Task SuppressInFlightStatusDuringSaveAsync(FeatureTestHost host, StringBuilder log)
+    {
+        var editor = await OpenAsync(host, "in-flight-save-status.txt", "base"u8.ToArray());
+        var file = editor.EditingFile;
+        editor.TypeText("draft");
+        var expected = editor.GetEncoding().GetBytes(editor.GetText());
+        // Give the poller a definite timestamp mismatch without changing the bytes
+        // that the following transaction must verify.
+        File.SetLastWriteTimeUtc(file.Path,
+            DateTime.FromFileTimeUtc(editor.LastSavedSnapshot.DateModifiedFileTime).AddMinutes(1));
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var observedStates = new List<FileModificationState>();
+        void Observe(object sender, EventArgs args) => observedStates.Add(editor.FileModificationState);
+        editor.FileModificationStateChanged += Observe;
+        editor.TestResolvingSaveTarget = () => { entered.TrySetResult(); return release.Task; };
+        Task checking = null;
+        Task saving = null;
+        try
+        {
+            // Both callbacks use Normal priority. The poll captures first; save
+            // admission is already queued before the poll can publish its result.
+            checking = editor.TestCheckFileStatusAsync();
+            await editor.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                () => saving = editor.SaveContentToFileAndUpdateEditorStateAsync(file));
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(15));
+            Check(editor.IsFileSaveActive && saving != null && !saving.IsCompleted,
+                "The earlier status observation must finish while save admission is held.");
+            await checking.WaitAsync(TimeSpan.FromSeconds(15));
+            Check(editor.FileModificationState == FileModificationState.Untouched &&
+                !observedStates.Contains(FileModificationState.Modified),
+                "A status check captured before save admission must not publish an external-modification warning during the save.");
+        }
+        finally
+        {
+            release.TrySetResult();
+            try
+            {
+                await Task.WhenAll(new[] { saving, checking }.Where(work => work != null))
+                    .WaitAsync(TimeSpan.FromSeconds(20));
+            }
+            finally
+            {
+                editor.TestResolvingSaveTarget = null;
+                editor.FileModificationStateChanged -= Observe;
+                await editor.TestStopFileChecksAsync();
+            }
+        }
+        await BytesAsync(file, expected, "An earlier status observation must not interfere with the admitted save");
+        log.AppendLine("PASS: a status check captured before save admission cannot publish a stale warning while the save is active.");
+    }
+
+    private static async Task PreserveUnknownVersionConflictAsync(FeatureTestHost host, StringBuilder log)
+    {
+        var editor = await OpenAsync(host, "unknown-version-conflict.txt", "base"u8.ToArray());
+        var file = editor.EditingFile;
+        editor.TypeText("draft");
+        var draft = editor.GetText();
+        editor.TestMakeSavedFileVersionUnknown();
+        await editor.TestCheckFileStatusAsync();
+        Check(editor.FileModificationState == FileModificationState.Unverified,
+            "The legacy-style fixture must begin without a verified saved file version.");
+        var snapshot = editor.LastSavedSnapshot;
+        var picked = await editor.ReadPickedFileVersionAsync(file, default);
+        await FileIO.WriteBytesAsync(file, "external"u8.ToArray());
+        try
+        {
+            await editor.SaveContentToFileAndUpdateEditorStateAsync(file, picked);
+            throw new InvalidOperationException("The picked destination changed before its transaction and must conflict.");
+        }
+        catch (DocumentSaveException error) when (error.Stage == DocumentSaveStage.Conflict) { }
+        Check(editor.FileModificationState == FileModificationState.Modified,
+            "A proven picked-save conflict must initially report an external modification.");
+        await editor.TestCheckFileStatusAsync();
+        Check(editor.FileModificationState == FileModificationState.Modified && editor.IsModified &&
+            editor.GetText() == draft && ReferenceEquals(editor.LastSavedSnapshot, snapshot),
+            "Polling must preserve a proven file conflict even when the saved snapshot has no historical fingerprint.");
+        await BytesAsync(file, "external"u8.ToArray(), "Conflict status must preserve the external writer's bytes");
+        log.AppendLine("PASS: a legacy-style unknown saved version retains its proven external-conflict status across polling without changing either draft or disk.");
     }
 
     private static void Replace(TextEditor editor, string text)

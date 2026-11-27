@@ -12,6 +12,7 @@ using Notepads.Features.Documents;
 using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.Storage;
 using Notepads.Features.Documents.Text;
+using Notepads.Infrastructure.Storage;
 using Windows.Storage;
 
 namespace Notepads.Features.Documents.IO;
@@ -30,34 +31,41 @@ internal static class DocumentTextPipeline
         ArgumentNullException.ThrowIfNull(options);
         var selected = options.GetInitialEncoding();
         cancellationToken.ThrowIfCancellationRequested();
-        var properties = await file.GetBasicPropertiesAsync();
+        var target = await DocumentSaveTarget.ResolveAsync(file, cancellationToken).ConfigureAwait(false);
+        var properties = await FileStorage.GetFilePropertiesAsync(file, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
         if (maximumInputBytes < 0 || properties.Size > (ulong)maximumInputBytes)
             throw new NotSupportedException("The original file exceeds the supported input size.");
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         var sample = new byte[DocumentTextCodec.BufferSize];
-        using var source = await file.OpenStreamForReadAsync().ConfigureAwait(false);
+        using var source = await FileStorage.OpenStreamForReadAsync(file, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
         if (!source.CanSeek)
             throw new NotSupportedException("Document loading requires a seekable source for complete encoding retries.");
-        if ((ulong)source.Length != properties.Size)
-            throw new IOException("The file changed before document loading started.");
+        var inputLength = (ulong)source.Length;
+        if (inputLength > (ulong)maximumInputBytes)
+            throw new NotSupportedException("The original file exceeds the supported input size.");
+        // A broker can report the size of a link entry while its granted stream
+        // contains the target. Recheck both observations before accepting a mismatch.
+        if (inputLength != properties.Size) await ValidateSourceAsync().ConfigureAwait(false);
 
         async Task ValidateSourceAsync()
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var current = await file.GetBasicPropertiesAsync();
+            var observed = await DocumentSaveTarget.ResolveAsync(file, cancellationToken).ConfigureAwait(false);
+            await DocumentSaveTarget.RequireLocationAsync(target.FinalPath, observed.FinalPath).ConfigureAwait(false);
+            var current = await FileStorage.GetFilePropertiesAsync(file, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             if (current.Size != properties.Size || current.DateModified != properties.DateModified ||
-                (ulong)source.Length != properties.Size)
+                (ulong)source.Length != inputLength)
             {
                 throw new IOException("The file changed while its document was being loaded.");
             }
         }
 
-        return await DecodeSourceAsync(source, sample, selected, ownerId, properties.Size,
-            ValidateSourceAsync, () => properties.DateModified.ToFileTime(), progress,
+        return await DecodeSourceAsync(source, sample, selected, ownerId, inputLength,
+            ValidateSourceAsync, () => properties.DateModified.ToFileTime(), target.FinalPath, progress,
             cancellationToken).ConfigureAwait(false);
     }
 
@@ -98,7 +106,7 @@ internal static class DocumentTextPipeline
         }
 
         return await DecodeSourceAsync(source, sample, selected, ownerId, (ulong)sourceLength,
-            ValidateSourceAsync, () => 0, progress, cancellationToken).ConfigureAwait(false);
+            ValidateSourceAsync, () => 0, null, progress, cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task<DocumentSnapshot> DecodeSourceAsync(
@@ -109,6 +117,7 @@ internal static class DocumentTextPipeline
         ulong expectedInputBytes,
         Func<Task> validateSourceAsync,
         Func<long> getDateModifiedFileTime,
+        string targetPath,
         IProgress<DocumentTextProgress> progress,
         CancellationToken cancellationToken)
     {
@@ -160,7 +169,7 @@ internal static class DocumentTextPipeline
                 if ((ulong)decoded.InputBytes != expectedInputBytes)
                     throw new IOException("The file changed while its document was being loaded.");
                 var savedEncoding = decoded.Encoding is UTF8Encoding ? new UTF8Encoding(preambleLength == 3) : decoded.Encoding;
-                return new DocumentSnapshot(baseline, savedEncoding, decoded.LineEnding, getDateModifiedFileTime());
+                return new DocumentSnapshot(baseline, savedEncoding, decoded.LineEnding, getDateModifiedFileTime(), decoded.SourceSha256, targetPath);
             }
             finally { await baseline.DisposeAsync().ConfigureAwait(false); }
         }

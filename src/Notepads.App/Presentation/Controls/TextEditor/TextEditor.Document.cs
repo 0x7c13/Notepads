@@ -36,6 +36,11 @@ public sealed partial class TextEditor
 
     private Encoding _requestedEncoding;
     private bool _requiresSaveAs;
+    private enum BoundFileState { Current, Changed, Unconfirmed, Superseded }
+    private BoundFileState _boundFileState;
+    private bool HasUnconfirmedFileSave => _boundFileState is BoundFileState.Unconfirmed or BoundFileState.Superseded;
+    private bool HasFileConflict => _boundFileState is BoundFileState.Changed or BoundFileState.Superseded;
+    private long _publishedContentVersion = -1;
 
     public Encoding RequestedEncoding => _requestedEncoding == null ? null : (Encoding)_requestedEncoding.Clone();
 
@@ -58,6 +63,7 @@ public sealed partial class TextEditor
 
     public async Task WaitForDocumentOperationsAsync()
     {
+        await _documentOperations.CancelObservationsAndWaitAsync();
         await _documentOperations.WaitForIdleAsync();
         await RefreshModificationStateAsync();
     }
@@ -95,12 +101,14 @@ public sealed partial class TextEditor
         return committed;
     }
 
+    partial void OnReadingRenamedLocation();
+
     public Task RenameAsync(string newFileName, StorageFile expectedFile)
     {
         return RunDocumentOperationAsync(async cancellation =>
         {
             var file = EditingFile;
-            if (file == null ? expectedFile != null : expectedFile == null || !file.IsEqual(expectedFile))
+            if (!await DocumentSaveTarget.IsSameFileAsync(file, expectedFile, cancellation))
                 throw new InvalidOperationException("The document's file changed before it could be renamed.");
             cancellation.ThrowIfCancellationRequested();
             if (file == null)
@@ -108,7 +116,52 @@ public sealed partial class TextEditor
                 _fileNamePlaceholder = newFileName;
                 _useContentBasedTitle = false;
             }
-            else await file.RenameAsync(newFileName);
+            else
+            {
+                var pending = _pendingFileSave;
+                bool renamesPending = pending is { WasBound: true } &&
+                    await DocumentSaveTarget.IsSameFileAsync(file, pending.Result.File, cancellation);
+                var observedPending = renamesPending && await pending.Result.ObserveLocationAsync();
+                if (HasUnconfirmedFileSave && !observedPending)
+                    throw new InvalidOperationException(_resourceLoader.GetString("FileSaveErrorDialog_Unverified"));
+                if (observedPending)
+                {
+                    // Observing a provider move consumes its receipt's old location.
+                    // Publish it even if the user's subsequent rename fails.
+                    await RefreshProviderRenameAsync(pending.Result);
+                    file = EditingFile;
+                }
+                var source = await DocumentSaveTarget.ResolveAsync(file, cancellation);
+                var expected = renamesPending ? pending.Result.TargetPath : LastSavedSnapshot.FileVersion.TargetPath;
+                if (DocumentSaveTarget.RequiresLocationConfirmation(expected, source.FinalPath) &&
+                    !(renamesPending && pending.Result.UpdateStatus == Windows.Storage.Provider.FileUpdateStatus.CompleteAndRenamed))
+                    throw new InvalidOperationException(_resourceLoader.GetString("FileSaveErrorDialog_Unverified"));
+                await DocumentSaveTarget.RequireLocationAsync(expected, source.FinalPath);
+                using var route = await Task.Run(() => DocumentSaveTarget.Pin(file, source.FinalPath, renamingEntry: true), cancellation);
+                cancellation.ThrowIfCancellationRequested();
+                await FileStorage.RenameAsync(file, newFileName, cancellation);
+                // The name has already changed. Losing access to its metadata must still publish
+                // the new grant and title; an unknown location requires explicit confirmation on the next save.
+                string renamedTarget = null;
+                try
+                {
+                    OnReadingRenamedLocation();
+                    renamedTarget = (await DocumentSaveTarget.ResolveAsync(file, CancellationToken.None)).FinalPath;
+                }
+                catch (DocumentSaveException ex) { LoggingService.LogException(ex); }
+                if (_disposed) return;
+                UpdateSavedTargetPath(renamedTarget);
+                if (renamesPending)
+                {
+                    if (DocumentSaveTarget.RequiresLocationConfirmation(renamedTarget, source.FinalPath))
+                        ClearPendingFileSave();
+                    else
+                    {
+                        pending.Result.FollowRename(file, renamedTarget);
+                        _pendingFileSave = pending with { Target = null };
+                    }
+                }
+            }
             // Once storage commits, closing cannot undo a successful rename.
             // Publication and its UI events belong only to a live editor.
             if (_disposed) return;
@@ -125,16 +178,30 @@ public sealed partial class TextEditor
         AdoptSnapshot(new DocumentSnapshot(baseline, encoding, lineEnding), file, isModified: false);
     }
 
-    private void AdoptSnapshot(DocumentSnapshot snapshot, StorageFile file, bool isModified)
+    private void AdoptSnapshot(DocumentSnapshot snapshot, StorageFile file, bool isModified, bool preserveUnconfirmedSave = false)
     {
         var previous = LastSavedSnapshot;
         LastSavedSnapshot = snapshot;
+        if (!preserveUnconfirmedSave)
+        {
+            ClearPendingFileSave();
+            _boundFileState = BoundFileState.Current;
+        }
         previous?.Dispose();
         EditingFile = file;
+        // Reverting changes the buffer while keeping the existing disk observation.
+        if (!preserveUnconfirmedSave)
+        {
+            if (file != null && !snapshot.FileVersion.IsVerified)
+                FileModificationState = FileModificationState.Unverified;
+            else if (FileModificationState == FileModificationState.Unverified)
+                FileModificationState = FileModificationState.Untouched;
+        }
         // Reverting saved bytes does not recover access to a missing file.
         _requiresSaveAs = file == null && _requiresSaveAs;
         _requestedEncoding = null;
         RequestedLineEnding = null;
+        _publishedContentVersion = -1;
         if (isModified) TextEditorCore.MarkModified();
         else TextEditorCore.MarkSaved();
         _loaded = true;
@@ -200,6 +267,7 @@ public sealed partial class TextEditor
             }
             _recoveryBaseline?.Dispose();
             _recoveryBaseline = null;
+            ClearPendingFileSave();
             LastSavedSnapshot?.Dispose();
             LastSavedSnapshot = null;
             _fileStatusSemaphoreSlim.Dispose();
@@ -240,7 +308,7 @@ public sealed partial class TextEditor
 
     private async Task LoadAndInitializeAsync(DocumentSnapshot snapshot, StorageFile file, bool isModified,
         CancellationToken cancellationToken, DocumentMetadata metadata = null,
-        DocumentBaseline pendingBaseline = null, bool preserveUndo = false)
+        DocumentBaseline pendingBaseline = null, bool preserveUndo = false, bool preserveUnconfirmedSave = false)
     {
         var prepared = snapshot.Retain();
         var adopted = false;
@@ -256,6 +324,7 @@ public sealed partial class TextEditor
                 var sequence = TextEditorCore.DocumentSequence;
                 await TextEditorCore.LoadBaselineAsync(content, preserveUndo, cancellationToken);
                 if (_disposed) return;
+                var loadedVersion = TextEditorCore.ContentVersion;
                 // An undoable load that inserts text commits exactly one journal operation. If no
                 // other operation committed meanwhile, the document is this baseline at that sequence.
                 var loadedSequence = TextEditorCore.DocumentSequence;
@@ -266,7 +335,9 @@ public sealed partial class TextEditor
                 var contentModified = metadata == null ? isModified : metadata.IsModified &&
                     (content.ByteLength != prepared.Baseline.ByteLength || content.Sha256 != prepared.Baseline.Sha256);
                 adopted = true;
-                AdoptSnapshot(prepared, file, contentModified);
+                AdoptSnapshot(prepared, file, contentModified, preserveUnconfirmedSave);
+                if (content.ByteLength == prepared.Baseline.ByteLength && content.Sha256 == prepared.Baseline.Sha256)
+                    _publishedContentVersion = loadedVersion;
                 if (metadata != null) ResetEditorState(metadata);
                 // Drop the whole-document replacement from the journal. Files over the
                 // compaction budget would otherwise keep it until the next explicit save.
@@ -319,6 +390,8 @@ public sealed partial class TextEditor
                 await LoadAndInitializeAsync(snapshot, file, false, cancellation, preserveUndo: true);
             }
             if (_disposed) return;
+            _boundFileState = BoundFileState.Current;
+            FileModificationState = LastSavedSnapshot.FileVersion.IsVerified ? FileModificationState.Untouched : FileModificationState.Unverified;
             LineEndingChanged?.Invoke(this, EventArgs.Empty);
             EncodingChanged?.Invoke(this, EventArgs.Empty);
             StartCheckingFileStatusPeriodically();
@@ -344,6 +417,8 @@ public sealed partial class TextEditor
         RestoreIndentationOverride(metadata.IndentationOverride);
         RefreshDocumentLanguage();
         _requiresSaveAs = EditingFile == null && (metadata.RequiresSaveAs || metadata.HasEditingFile);
+        _boundFileState = metadata.HasUnconfirmedFileSave ? BoundFileState.Unconfirmed : BoundFileState.Current;
+        if (HasUnconfirmedFileSave && EditingFile != null) FileModificationState = FileModificationState.Unverified;
         if (!string.IsNullOrEmpty(metadata.RequestedEncoding))
         {
             TryChangeEncoding(EncodingCatalog.GetEncodingByName(metadata.RequestedEncoding));
@@ -424,6 +499,8 @@ public sealed partial class TextEditor
 
     private async Task TryRotateRecoveryJournalAsync(DocumentBaseline savedBaseline, ulong sequence)
     {
+        if (_disposed || TextEditorCore.DocumentSequence != sequence) return;
+        var version = TextEditorCore.ContentVersion;
         var baseline = savedBaseline.Retain();
         DocumentJournal candidate = null;
         var adopted = false;
@@ -431,7 +508,7 @@ public sealed partial class TextEditor
         try
         {
             candidate = await DocumentJournal.CreateAsync(DocumentOwnerId);
-            if (_disposed) return;
+            if (_disposed || TextEditorCore.ContentVersion != version) return;
             await TextEditorCore.RotateJournalAsync(candidate, sequence, CancellationToken.None);
             if (_disposed)
             {
@@ -474,37 +551,41 @@ public sealed partial class TextEditor
         return _documentOperations.RunAsync(async cancellation =>
         {
             if (_disposed || !_loaded || _documentJournal == null || _recoveryTransition || !TextEditorCore.IsJournalFaulted) return;
-            using var reader = TextEditorCore.AcquireDocumentReader();
-            using var source = new EditorDocumentStream(reader, ownsReader: false);
-            using var baseline = await DocumentBaseline.CreateAsync(output => source.CopyToAsync(output, 65536, cancellation),
-                DocumentOwnerId, cancellation);
-            if (!_disposed) await TryRotateRecoveryJournalAsync(baseline, reader.Sequence);
+            using var revision = await CaptureSaveRevisionAsync(cancellation);
+            if (!_disposed && revision.Version == TextEditorCore.ContentVersion)
+                await TryRotateRecoveryJournalAsync(revision.Baseline, revision.Sequence);
         }, cancellationToken);
+    }
+
+    private const ulong MaximumReplayBytes = 128UL * 1024 * 1024;
+
+    private async Task<DocumentBaseline> CreateCheckpointBaselineAsync(DocumentBaseline baseline,
+        EditorJournalCheckpoint checkpoint, CancellationToken cancellation)
+    {
+        using var input = await baseline.OpenReadStreamAsync(cancellation);
+        // WriteBaselineAsync flushes and validates the captured prefix before replay.
+        return await DocumentBaseline.CreateAsync(output => checkpoint.WriteBaselineAsync(input.AsInputStream(),
+            (ulong)baseline.ByteLength, output.AsOutputStream(), MaximumReplayBytes).AsCompletionTask(cancellation),
+            DocumentOwnerId, cancellation);
     }
 
     public Task MaintainRecoveryAsync(CancellationToken cancellationToken = default)
     {
         return _documentOperations.RunAsync(async cancellation =>
         {
-            const ulong candidateBudget = 128UL * 1024 * 1024;
             if (_disposed || !_loaded || _documentJournal == null || _recoveryTransition) return;
             using var recovery = CaptureRecoveryState();
             // Recovery remains valid when the candidate would exceed our
             // native memory budget. Explicit saves rotate every size.
             if (!DocumentJournal.ShouldCompact(recovery.Checkpoint.CommittedByteLength,
                     recovery.Checkpoint.CommittedDocumentByteLength) ||
-                recovery.Checkpoint.CommittedDocumentByteLength > candidateBudget ||
-                checked((ulong)recovery.RecoveryBaseline.ByteLength) > candidateBudget)
+                recovery.Checkpoint.CommittedDocumentByteLength > MaximumReplayBytes ||
+                checked((ulong)recovery.RecoveryBaseline.ByteLength) > MaximumReplayBytes)
             {
                 return;
             }
 
-            await recovery.Checkpoint.FlushAsync().AsCompletionTask(cancellation);
-            using var input = await recovery.RecoveryBaseline.OpenReadStreamAsync(cancellation);
-            using var baseline = await DocumentBaseline.CreateAsync(output =>
-                recovery.Checkpoint.WriteBaselineAsync(input.AsInputStream(),
-                    checked((ulong)recovery.RecoveryBaseline.ByteLength), output.AsOutputStream(), candidateBudget)
-                    .AsCompletionTask(cancellation), DocumentOwnerId, cancellation);
+            using var baseline = await CreateCheckpointBaselineAsync(recovery.RecoveryBaseline, recovery.Checkpoint, cancellation);
             cancellation.ThrowIfCancellationRequested();
             if (_disposed || TextEditorCore.DocumentSequence != recovery.Checkpoint.CommittedSequence) return;
             // Reconstruction runs off the UI thread while editing
@@ -519,7 +600,7 @@ public sealed partial class TextEditor
         return RunDocumentOperationAsync(async cancellation =>
         {
             CloseSideBySideDiffViewer();
-            await LoadAndInitializeAsync(LastSavedSnapshot, EditingFile, false, cancellation, preserveUndo: true);
+            await LoadAndInitializeAsync(LastSavedSnapshot, EditingFile, false, cancellation, preserveUndo: true, preserveUnconfirmedSave: true);
             if (_disposed) return;
             LineEndingChanged?.Invoke(this, EventArgs.Empty);
             EncodingChanged?.Invoke(this, EventArgs.Empty);
@@ -579,77 +660,5 @@ public sealed partial class TextEditor
     public Encoding GetEncoding()
     {
         return _requestedEncoding == null ? LastSavedSnapshot.Encoding : (Encoding)_requestedEncoding.Clone();
-    }
-
-    public Task SaveContentToFileAndUpdateEditorStateAsync(StorageFile file)
-    {
-        return RunDocumentOperationAsync(cancellation => SaveAndUpdateEditorStateAsync(file, cancellation));
-    }
-
-    private async Task SaveAndUpdateEditorStateAsync(StorageFile file, CancellationToken cancellationToken)
-    {
-        if (Mode == TextEditorMode.DiffPreview) CloseSideBySideDiffViewer();
-        var version = TextEditorCore.ContentVersion;
-        DocumentBaseline savedBaseline = null;
-        var encoding = GetEncoding();
-        var lineEnding = GetLineEnding();
-        try
-        {
-            DocumentFileWriteResult result;
-            using (var reader = TextEditorCore.AcquireDocumentReader())
-            {
-                result = await DocumentFileWriter.WriteAsync(file, async destination =>
-                {
-                    // A retriable transaction starts again over the same frozen
-                    // native revision, with a fresh destination and baseline.
-                    savedBaseline?.Dispose();
-                    savedBaseline = null;
-                    using var source = new EditorDocumentStream(reader, ownsReader: false);
-                    savedBaseline = await DocumentBaseline.CreateAsync(canonical =>
-                        DocumentTextCodec.CopyFromNativeAsync(source, canonical, destination,
-                            encoding, lineEnding, cancellationToken: cancellationToken),
-                        DocumentOwnerId, cancellationToken);
-                }, cancellationToken);
-                if (!_disposed)
-                    await TryRotateRecoveryJournalAsync(savedBaseline, reader.Sequence);
-            }
-
-            long modifiedTime = -1;
-            try { modifiedTime = await FileStorage.GetDateModifiedAsync(result.File); }
-            catch (Exception ex)
-            {
-                LoggingService.LogError($"[{nameof(TextEditor)}] Saved file time could not be queried: {ex.Message}");
-            }
-            if (_disposed) return;
-
-            // Encoding/EOL controls remain available during a save. Preserve
-            // their latest effective choice, including a return to the old default.
-            var currentEncoding = GetEncoding();
-            var currentLineEnding = GetLineEnding();
-            var previous = LastSavedSnapshot;
-            // The saved snapshot exists only once its file has committed.
-            LastSavedSnapshot = new DocumentSnapshot(savedBaseline, encoding, lineEnding, modifiedTime);
-            previous.Dispose();
-            FileModificationState = FileModificationState.Untouched;
-            EditingFile = result.File;
-            _requiresSaveAs = false;
-            _requestedEncoding = EncodingCatalog.Equals(currentEncoding, encoding) ? null : currentEncoding;
-            RequestedLineEnding = currentLineEnding == lineEnding ? (LineEnding?)null : currentLineEnding;
-            if (version == TextEditorCore.ContentVersion) TextEditorCore.MarkSaved();
-            else TextEditorCore.MarkModified();
-            RefreshModificationState();
-            FileSaved?.Invoke(this, EventArgs.Empty);
-            StartCheckingFileStatusPeriodically();
-            if (result.ProviderError != null)
-            {
-                NotificationCenter.Instance.PostNotification(
-                    _resourceLoader.GetString("TextEditor_NotificationMsg_CloudSyncPending"), 5000);
-            }
-        }
-        finally
-        {
-            // The adopted snapshot holds its own lease; this releases the creation lease.
-            savedBaseline?.Dispose();
-        }
     }
 }

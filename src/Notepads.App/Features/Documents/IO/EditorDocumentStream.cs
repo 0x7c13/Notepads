@@ -14,8 +14,8 @@ using WinUIEditor;
 namespace Notepads.Features.Documents.IO;
 
 /// <summary>
-/// An asynchronous forward reader over a native document lease. WinUIEdit
-/// owns the edit freeze and dispatches range reads to the editor apartment.
+/// An asynchronous forward stream over either a native read lease or a save snapshot.
+/// WinUIEdit dispatches bounded reads to the editor apartment.
 /// </summary>
 internal sealed partial class EditorDocumentStream : Stream
 {

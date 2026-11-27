@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents.Contracts;
 using Notepads.Presentation.Controls.TextEditor;
@@ -95,7 +96,7 @@ public interface INotepadsCore : IDisposable, IAsyncDisposable
 
     void SwitchTo(WorkspaceTab tab);
 
-    Task SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file);
+    Task<StorageFile> SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file, DocumentFileVersion? pickedFileVersion = null, CancellationToken cancellation = default, Guid? verificationId = null);
 
     int GetTabCount();
 

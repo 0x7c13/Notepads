@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Infrastructure.Diagnostics;
+using Notepads.Infrastructure.Storage;
 using Windows.Storage;
 
 namespace Notepads.Features.Documents.Storage;
@@ -108,7 +109,7 @@ internal sealed partial class DocumentAssetLease : IDisposable
             }
             else
             {
-                stream = await lease.File.OpenStreamForReadAsync().ConfigureAwait(false);
+                stream = await FileStorage.OpenStreamForReadAsync(lease.File, cancellationToken).ConfigureAwait(false);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -287,8 +288,12 @@ internal sealed partial class DocumentAssetLease : IDisposable
 
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            // CopyToAsync owns a pooled array. A canceled WinRT adapter Task
+            // must not release that array or this lease before native I/O ends.
             var read = await _stream.ReadAsync(buffer[..(int)Math.Min(buffer.Length, _length - _position)],
-                cancellationToken).ConfigureAwait(false);
+                CancellationToken.None).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             if (read != 0) OnLeasedRead(_lease.File?.Path, read, cancellationToken);
             return CompleteRead(read, buffer.Length);
         }

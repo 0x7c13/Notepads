@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents;
+using Notepads.Features.Documents.Text;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Features.Sessions.Transfer;
@@ -54,12 +55,14 @@ internal sealed class TextEditorTransfer
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         Editor = editor ?? throw new ArgumentNullException(nameof(editor));
+        if (editor is TextEditor { IsFileSaveActive: true })
+            throw new InvalidOperationException("A document cannot be transferred while saving a file.");
         Id = Guid.NewGuid();
         _expectedStamp = context.Sessions.CurrentStamp;
         _recovery = editor.CaptureRecoveryState();
         _editingFile = editor.EditingFile;
         _fileName = _editingFile?.Name;
-        _filePath = editor.EditingFilePath;
+        _filePath = _editingFile?.Path;
     }
 
     public Guid Id { get; }
@@ -134,10 +137,14 @@ internal sealed class TextEditorTransfer
             metadata.FileNamePlaceholder == captured.FileNamePlaceholder &&
             metadata.UseContentBasedTitle == captured.UseContentBasedTitle &&
             metadata.RequiresSaveAs == captured.RequiresSaveAs &&
+            metadata.HasUnconfirmedFileSave == captured.HasUnconfirmedFileSave &&
+            current.SavedSnapshot.FileVersion == _recovery.SavedSnapshot.FileVersion &&
+            current.SavedSnapshot.LineEnding == _recovery.SavedSnapshot.LineEnding &&
+            EncodingCatalog.Equals(current.SavedSnapshot.Encoding, _recovery.SavedSnapshot.Encoding) &&
             metadata.HasEditingFile == captured.HasEditingFile &&
             (Editor.EditingFile == null ? _editingFile == null :
                 _editingFile != null && Editor.EditingFile.IsEqual(_editingFile)) &&
-            Editor.EditingFile?.Name == _fileName && Editor.EditingFilePath == _filePath;
+            Editor.EditingFile?.Name == _fileName && Editor.EditingFile?.Path == _filePath;
         if (includeView) unchanged &= metadata.WrapWord == captured.WrapWord &&
             metadata.RightToLeftReadingOrder == captured.RightToLeftReadingOrder && metadata.FontZoomFactor == captured.FontZoomFactor &&
             metadata.IsContentPreviewPanelOpened == captured.IsContentPreviewPanelOpened && metadata.IsInDiffPreviewMode == captured.IsInDiffPreviewMode &&

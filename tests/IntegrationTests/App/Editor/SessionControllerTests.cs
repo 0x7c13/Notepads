@@ -309,7 +309,7 @@ internal static partial class SessionControllerTests
 
         public Task<ITextEditor> CreateTextEditorAsync(Guid id, StorageFile file, Encoding encoding) => throw Unused();
         public Task<ITextEditor> CreateNewTextEditorAsync(string fileNamePlaceholder) => throw Unused();
-        public Task SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file) => throw Unused();
+        public Task<StorageFile> SaveContentToFileAndUpdateEditorStateAsync(ITextEditor textEditor, StorageFile file, DocumentFileVersion? pickedFileVersion = null, CancellationToken cancellation = default, Guid? verificationId = null) => throw Unused();
         public bool TryGetSharingContent(ITextEditor textEditor, out string title, out string content) => throw Unused();
         public bool HasTabsRequiringSave() => throw Unused();
         public bool HasPrintableTabs() => throw Unused();
@@ -456,7 +456,8 @@ internal static partial class SessionControllerTests
         public double GetFontZoomFactor() => throw Unused();
         public void SetFontZoomFactor(double fontZoomFactor) => throw Unused();
         public bool IsEditorEnabled() => throw Unused();
-        public Task SaveContentToFileAndUpdateEditorStateAsync(StorageFile file) => throw Unused();
+        public Task<DocumentFileVersion> ReadPickedFileVersionAsync(StorageFile file, CancellationToken cancellation) => throw Unused();
+        public Task<StorageFile> SaveContentToFileAndUpdateEditorStateAsync(StorageFile file, DocumentFileVersion? pickedFileVersion = null, CancellationToken cancellation = default, Guid? verificationId = null) => throw Unused();
         public string GetContentForSharing() => throw Unused();
         public void TypeText(string text) => throw Unused();
         public void Focus() => throw Unused();

@@ -220,13 +220,13 @@ Document::~Document() {
 
 // Increase reference count and return its previous value.
 int SCI_METHOD Document::AddRef() noexcept {
-	return refCount++;
+	return refCount.fetch_add(1, std::memory_order_relaxed);
 }
 
-// Decrease reference count and return its previous value.
+// Decrease reference count and return its remaining value.
 // Delete the document if reference count reaches zero.
 int SCI_METHOD Document::Release() {
-	const int curRefCount = --refCount;
+	const int curRefCount = refCount.fetch_sub(1, std::memory_order_acq_rel) - 1;
 	if (curRefCount == 0)
 		delete this;
 	return curRefCount;
@@ -299,6 +299,9 @@ void Document::ReplaceWithPreparedDocument(Document &replacement, const char *pr
 		NotifySavePoint(IsSavePoint());
 	} catch (...) {
 		if (published) SwapPreparedContents(replacement);
+		for (const auto &weak : snapshotObservers) {
+			if (const auto snapshot = weak.lock()) snapshot->Invalidate();
+		}
 		for (const auto &watcher : watchers) watcher.watcher->NotifyTransactionAborted(this, watcher.userData);
 		atomicReplacement = false;
 		--enteredModification;
@@ -2966,6 +2969,11 @@ void SCI_METHOD Document::DecorationFillRange(Sci_Position position, int value, 
 	}
 }
 
+void Document::ObserveSnapshot(const std::shared_ptr<SnapshotObserver> &observer) {
+	std::erase_if(snapshotObservers, [](const auto &weak) { return weak.expired(); });
+	snapshotObservers.emplace_back(observer);
+}
+
 bool Document::AddWatcher(DocWatcher *watcher, void *userData, bool beforeViews) {
 	const WatcherWithUserData wwud(watcher, userData);
 	const std::vector<WatcherWithUserData>::iterator it =
@@ -3012,6 +3020,15 @@ void Document::NotifyGroupCompleted() noexcept {
 }
 
 void Document::NotifyModified(DocModification mh) {
+	if (!snapshotObservers.empty() && FlagSet(mh.modificationType,
+		ModificationFlags::BeforeDelete | ModificationFlags::DeleteText | ModificationFlags::InsertText)) {
+		std::erase_if(snapshotObservers, [&](const auto &weak) {
+			const auto snapshot = weak.lock();
+			if (!snapshot) return true;
+			snapshot->Observe(mh);
+			return false;
+		});
+	}
 	// Atomic publication already swapped in the replacement's decorations.
 	// Its synthetic notifications update watchers, not those final-sized runs.
 	if (!atomicReplacement) {

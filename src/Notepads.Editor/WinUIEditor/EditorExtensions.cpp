@@ -68,7 +68,7 @@ namespace winrt::WinUIEditor::implementation
 	Windows::Storage::Streams::IBuffer Editor::ReadUtf8Range(int64_t offset, int32_t maxBytes)
 	{
 		auto view = _editor.get();
-		if (!view)
+		if (!view || view->IsFinalized())
 			winrt::throw_hresult(RO_E_CLOSED);
 		if (!view->Dispatcher().HasThreadAccess())
 			winrt::throw_hresult(RPC_E_WRONG_THREAD);
@@ -102,10 +102,10 @@ namespace winrt::WinUIEditor::implementation
 		return buffer;
 	}
 
-	WinUIEditor::EditorUtf8Reader Editor::AcquireUtf8Reader()
+	WinUIEditor::EditorUtf8Reader Editor::AcquireUtf8Reader(bool forSave)
 	{
 		auto view = _editor.get();
-		if (!view)
+		if (!view || view->IsFinalized())
 			winrt::throw_hresult(RO_E_CLOSED);
 		if (!view->Dispatcher().HasThreadAccess())
 			winrt::throw_hresult(RPC_E_WRONG_THREAD);
@@ -113,7 +113,7 @@ namespace winrt::WinUIEditor::implementation
 			winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
 		if (CodePage() != Scintilla::CpUtf8)
 			throw hresult_invalid_argument();
-		return make<implementation::EditorUtf8Reader>(*this, view);
+		return make<implementation::EditorUtf8Reader>(*this, view, forSave);
 	}
 
 	Windows::Foundation::IAsyncActionWithProgress<uint64_t> Editor::LoadUtf8Async(
@@ -121,7 +121,7 @@ namespace winrt::WinUIEditor::implementation
 	{
 		auto lifetime = get_strong();
 		auto view = _editor.get();
-		if (!view)
+		if (!view || view->IsFinalized())
 			winrt::throw_hresult(RO_E_CLOSED);
 		if (!view->Dispatcher().HasThreadAccess())
 			winrt::throw_hresult(RPC_E_WRONG_THREAD);
@@ -147,7 +147,7 @@ namespace winrt::WinUIEditor::implementation
 	{
 		auto lifetime = get_strong();
 		auto view = _editor.get();
-		if (!view)
+		if (!view || view->IsFinalized())
 			throw_hresult(RO_E_CLOSED);
 		struct LoadingState
 		{
@@ -262,12 +262,19 @@ namespace winrt::WinUIEditor::implementation
 			failure = std::current_exception();
 		}
 		co_await uiThread;
+		if (view->IsFinalized())
+			throw_hresult(RO_E_CLOSED);
 		if (failure)
 			std::rethrow_exception(failure);
 		// Stream publication must dispatch synchronously after a TSF batch
 		// retires; its notification queue would otherwise copy the full edit.
 		co_await view->WaitForTextStoreUnlockAsync();
+		if (view->IsFinalized())
+			throw_hresult(RO_E_CLOSED);
 		progress(byteLength);
+		// Reporting progress can reenter the host and finalize the control.
+		if (view->IsFinalized())
+			throw_hresult(RO_E_CLOSED);
 		if (state->canceled.load() || _textLoadState != state)
 			throw hresult_canceled();
 		if (preserveUndo)
@@ -285,7 +292,7 @@ namespace winrt::WinUIEditor::implementation
 	void Editor::PasteText(hstring const &text)
 	{
 		const auto view{_editor.get()};
-		if (!view)
+		if (!view || view->IsFinalized())
 			winrt::throw_hresult(RO_E_CLOSED);
 		view->PasteText(text);
 	}

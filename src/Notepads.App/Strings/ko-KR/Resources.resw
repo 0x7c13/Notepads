@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>파일 열기 오류</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>파일 "{0}" 을 저장할 수 없습니다: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>확인</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>다시 시도</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>파일이 변경되었을 수 있습니다. 편집 내용을 저장할 위치를 선택하려면 ‘다른 이름으로 저장’을 사용하세요.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>이 파일을 이미 저장하고 있습니다. 잠시 후 다시 시도하세요.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>‘{0}’에 기록했지만 저장된 내용을 확인할 수 없습니다. 편집 중인 문서는 계속 열려 있습니다.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>다시 확인</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>디스크에 있는 파일의 버전을 확인할 수 없습니다.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>저장할 편집 내용의 복사본을 준비할 수 없습니다.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>파일 저장 오류</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>닫기</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>찾기</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

@@ -109,9 +109,8 @@ namespace winrt::WinUIEditor::implementation
 
 	void EditorBaseControl::FinalizeUIResources()
 	{
-		if (!_uiResourcesFinalized.load())
+		if (!_uiResourcesFinalized.exchange(true))
 		{
-			_uiResourcesFinalized.store(true);
 			_layoutUpdatedRevoker.revoke();
 			StopObservingDrawingVisibility();
 			_scintilla->Finalize();
@@ -120,13 +119,12 @@ namespace winrt::WinUIEditor::implementation
 
 	void EditorBaseControl::FinalizeAfterApartmentClosed() noexcept
 	{
-		if (!_uiResourcesFinalized.load())
+		if (!_uiResourcesFinalized.exchange(true))
 		{
 			// An apartment-disconnection error proves that owning-thread
 			// callbacks can no longer run. Retire their native references even
 			// if the host did not deliver its normal shutdown notification.
 			_scintilla->FinalizeAfterApartmentClosed();
-			_uiResourcesFinalized.store(true);
 		}
 	}
 
@@ -149,6 +147,11 @@ namespace winrt::WinUIEditor::implementation
 	WinUIEditor::Editor EditorBaseControl::Editor()
 	{
 		return _editorWrapper;
+	}
+
+	WinUIEditor::EditorUtf8Reader EditorBaseControl::AcquireSaveReader()
+	{
+		return get_self<implementation::Editor>(Editor())->AcquireUtf8Reader(true);
 	}
 
 	void EditorBaseControl::SetBackgroundColor(Windows::UI::Color const &color)
@@ -211,8 +214,10 @@ namespace winrt::WinUIEditor::implementation
 		auto lifetime = get_strong();
 		while (_scintilla->HasTextStoreLock())
 		{
+			if (IsFinalized()) winrt::throw_hresult(RO_E_CLOSED);
 			co_await resume_foreground(Dispatcher());
 		}
+		if (IsFinalized()) winrt::throw_hresult(RO_E_CLOSED);
 	}
 	void EditorBaseControl::StartJournal(std::shared_ptr<::WinUIEditor::NativeJournalFile> file, uint64_t sequence, bool rotate) { _scintilla->StartJournal(std::move(file), sequence, rotate); }
 	::WinUIEditor::JournalPrefix EditorBaseControl::AcquireJournalPrefix() { return _scintilla->AcquireJournalPrefix(); }
@@ -545,6 +550,21 @@ namespace winrt::WinUIEditor::implementation
 
 	Scintilla::sptr_t EditorBaseControl::PublicWndProc(Scintilla::Message iMessage, Scintilla::uptr_t wParam, Scintilla::sptr_t lParam)
 	{
+#ifdef _DEBUG
+		if (iMessage == Scintilla::Message::PrivateLexerCall)
+		{
+			// Existing debug-only fault-injection channel; no WinRT ABI additions.
+			constexpr Scintilla::uptr_t FinalizeControl = 0x4E500003;
+			constexpr Scintilla::uptr_t FinalizedDocumentLength = 0x4E500004;
+			constexpr Scintilla::uptr_t NotifyFinalizedFocus = 0x4E500006;
+			if (wParam == FinalizeControl) { FinalizeUIResources(); return 0; }
+			if (wParam == FinalizedDocumentLength)
+				return _scintilla->WndProc(Scintilla::Message::GetTextLength, 0, 0);
+			if (wParam == NotifyFinalizedFocus)
+				return _scintilla->WndProc(iMessage, wParam, lParam);
+		}
+#endif
+		if (IsFinalized()) winrt::throw_hresult(RO_E_CLOSED);
 		const auto result = _scintilla->WndProc(iMessage, wParam, lParam);
 		switch (iMessage) {
 		case Scintilla::Message::SetBidirectional:
@@ -689,6 +709,7 @@ namespace winrt::WinUIEditor::implementation
 	void EditorBaseControl::OnGotFocus(RoutedEventArgs const &e)
 	{
 		__super::OnGotFocus(e);
+		if (IsFinalized()) return;
 
 		_isFocused = true;
 
@@ -698,6 +719,7 @@ namespace winrt::WinUIEditor::implementation
 	void EditorBaseControl::OnLostFocus(RoutedEventArgs const &e)
 	{
 		__super::OnLostFocus(e);
+		if (IsFinalized()) return;
 
 		_isFocused = false;
 

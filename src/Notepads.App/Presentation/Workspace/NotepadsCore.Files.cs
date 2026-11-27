@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.IO;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Presentation.Controls.TextEditor;
 using Windows.Storage;
@@ -72,8 +73,40 @@ public sealed partial class NotepadsCore
     private CancellationTokenSource CaptureFileOperation() => CancellationTokenSource.CreateLinkedTokenSource(
         _fileOperationLifetime.Token, _sessionController().FileOperationToken);
 
+    // WinRT IsEqual folds path casing, even for distinct case-sensitive entries.
+    // Defer ambiguous hints to the tracked open operation's filesystem proof.
     public WorkspaceTab FindReadyTab(StorageFile file) => file == null ? null :
-        GetTabs().FirstOrDefault(tab => tab.ReadyEditor?.EditingFile?.IsEqual(file) == true);
+        GetTabs().FirstOrDefault(tab => DocumentSaveTarget.SameFileHint(tab.ReadyEditor?.EditingFile, file));
+
+    private async Task<WorkspaceTab> FindReadyTabForOpenAsync(StorageFile file, CancellationToken cancellation)
+    {
+        if (file == null) return null;
+        while (true)
+        {
+            cancellation.ThrowIfCancellationRequested();
+            ThrowIfDisposedOrClosing();
+            var requestedPath = file.Path;
+            bool retry = false;
+            foreach (var tab in GetTabs())
+            {
+                var editor = tab.ReadyEditor;
+                var bound = editor?.EditingFile;
+                if (bound == null) continue;
+                var boundPath = bound.Path;
+                bool same = await DocumentSaveTarget.MatchesFileHintAsync(bound, file, cancellation);
+                cancellation.ThrowIfCancellationRequested();
+                ThrowIfDisposedOrClosing();
+                if (!ContainsTab(tab) || !ReferenceEquals(tab.ReadyEditor, editor) ||
+                    !ReferenceEquals(editor.EditingFile, bound) || bound.Path != boundPath || file.Path != requestedPath)
+                {
+                    retry = true;
+                    break;
+                }
+                if (same) return tab;
+            }
+            if (!retry) return null;
+        }
+    }
 
     public async Task<bool> OpenFileAsync(StorageFile file, Func<WorkspaceFileOpenResult, Task> presentResultAsync,
         Func<bool> mayPublish = null)
@@ -82,7 +115,7 @@ public sealed partial class NotepadsCore
         using var lifetime = CaptureFileOperation();
         var cancellation = lifetime.Token;
         var pending = _openingFiles.FirstOrDefault(request =>
-            request.File.IsEqual(file) && request.IsCurrent &&
+            DocumentSaveTarget.SameFileHint(request.File, file) && request.IsCurrent &&
             (mayPublish == null ? !request.HasOriginGuard : !request.Publishing));
         if (pending != null)
         {
@@ -112,7 +145,8 @@ public sealed partial class NotepadsCore
 
             // Presentation retains only the request record. Native shutdown does
             // not wait for a dialog, and UI failure cannot discard an installed tab.
-            if (result.Kind != WorkspaceFileOpenKind.Failed || request.IsCurrent)
+            if (result.Kind != WorkspaceFileOpenKind.Cancelled &&
+                (result.Kind != WorkspaceFileOpenKind.Failed || request.IsCurrent))
                 await PresentOpenResultAsync(result, presentResultAsync, cancellation);
             return result.Kind == WorkspaceFileOpenKind.Created;
         }
@@ -174,7 +208,9 @@ public sealed partial class NotepadsCore
             // while holding file admission.
             admission = await AcquireFileAdmissionAsync(file, cancellation);
             if (request?.IsCurrent == false) return new(WorkspaceFileOpenKind.Cancelled);
-            if (FindReadyTab(file) is WorkspaceTab existing)
+            var existing = await FindReadyTabForOpenAsync(file, cancellation);
+            if (request?.IsCurrent == false) return new(WorkspaceFileOpenKind.Cancelled);
+            if (existing != null)
             {
                 request?.BeginPublication();
                 SwitchTo(existing);
@@ -185,7 +221,9 @@ public sealed partial class NotepadsCore
             cancellation.ThrowIfCancellationRequested();
             ThrowIfDisposedOrClosing();
             if (request?.IsCurrent == false) return new(WorkspaceFileOpenKind.Cancelled);
-            if (FindReadyTab(file) is WorkspaceTab duplicate)
+            var duplicate = await FindReadyTabForOpenAsync(file, cancellation);
+            if (request?.IsCurrent == false) return new(WorkspaceFileOpenKind.Cancelled);
+            if (duplicate != null)
             {
                 request?.BeginPublication();
                 SwitchTo(duplicate);

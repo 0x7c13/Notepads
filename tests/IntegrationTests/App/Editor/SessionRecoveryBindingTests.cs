@@ -108,6 +108,9 @@ internal static class SessionRecoveryBindingTests
         primary.EditingFileFutureAccessToken = fixture.Token;
         var fallback = SessionRecoveryCatalog.CloneEditor(primary);
         fallback.Id = Guid.NewGuid();
+        fallback.StateMetaData.HasUnconfirmedFileSave = true;
+        fallback.StateMetaData.SavedFileSha256 = new string('A', 64);
+        fallback.StateMetaData.SavedFileTargetPath = @"C:\prior\note.txt";
         var lifetime = new RecoverySourceLifetime();
         var decision = new RecoveryDocumentDecision(RecoveryMembership.Owned, new(primary),
             new[] { new RecoveryDescriptor(fallback) }, Array.Empty<RecoveryDescriptor>(),
@@ -116,6 +119,8 @@ internal static class SessionRecoveryBindingTests
             null, lifetime);
         var originalHash = fallback.ComputeSha256();
         var effective = source.GetDescriptor(0);
+        SessionTestProtocol.Check(!effective.StateMetaData.HasUnconfirmedFileSave && effective.StateMetaData.SavedFileSha256 == null &&
+            effective.StateMetaData.SavedFileTargetPath == null && effective.StateMetaData.DateModifiedFileTime == -1, "Detached rescue copies must drop the old file version and confirmation state.");
         effective.EditingFileFutureAccessToken = fixture.Token;
         effective.EditingFilePath = fixture.File.Path;
         effective.StateMetaData.RequiresSaveAs = false;

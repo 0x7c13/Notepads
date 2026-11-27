@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Грешка при отварању датотеке</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Нажалост, датотека „{0}” се не може сачувати: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>У реду</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Покушај поново</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Датотека је можда измењена. Изаберите „Сачувај као“ да бисте одредили где да сачувате измене.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Чување ове датотеке је већ у току. Покушајте поново за који тренутак.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>Датотека „{0}” је записана, али њен садржај није могуће проверити. Нацрт је и даље отворен.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Провери поново</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>Није могуће проверити верзију датотеке на диску.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Није могуће припремити копију измена за чување.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Грешка при чувању датотеке</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Затвори</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Пронађи</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

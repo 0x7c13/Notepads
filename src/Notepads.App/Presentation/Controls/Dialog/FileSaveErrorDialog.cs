@@ -3,15 +3,28 @@
 //  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
+using Windows.Storage;
+
 namespace Notepads.Presentation.Controls.Dialog;
 
 public sealed partial class FileSaveErrorDialog : NotepadsDialog
 {
-    public FileSaveErrorDialog(string filePath, string errorMsg)
+    internal FileSaveErrorDialog(StorageFile file, string errorMsg, bool offerActions = false, bool allowRetry = true, bool committed = false)
+        : this(string.IsNullOrEmpty(file?.Path) ? file?.Name : file.Path, errorMsg, offerActions, allowRetry, committed)
     {
-        var content = string.IsNullOrEmpty(filePath) ? errorMsg : string.Format(ResourceLoader.GetString("FileSaveErrorDialog_Content"), filePath, errorMsg);
-        Title = ResourceLoader.GetString("FileSaveErrorDialog_Title");
-        Content = content;
-        PrimaryButtonText = ResourceLoader.GetString("FileSaveErrorDialog_PrimaryButtonText");
+    }
+
+    public FileSaveErrorDialog(string filePath, string errorMsg, bool offerActions = false, bool allowRetry = true, bool committed = false)
+    {
+        Title = ResourceLoader.GetString(committed ? "FileSaveErrorDialog_Unverified" : "FileSaveErrorDialog_Title");
+        Content = committed ? string.Format(errorMsg, filePath) : string.IsNullOrEmpty(filePath) ? errorMsg :
+            string.Format(ResourceLoader.GetString("FileSaveErrorDialog_Content"), filePath, errorMsg);
+        if (offerActions)
+        {
+            if (allowRetry) PrimaryButtonText = ResourceLoader.GetString(committed ? "FileSaveErrorDialog_CheckAgain" : "FileSaveErrorDialog_Retry");
+            SecondaryButtonText = ResourceLoader.GetString("MainMenu_Button_SaveAs/Text");
+            CloseButtonText = ResourceLoader.GetString("AppCloseSaveReminderDialog_CloseButtonText");
+        }
+        else PrimaryButtonText = ResourceLoader.GetString("FileSaveErrorDialog_PrimaryButtonText");
     }
 }

@@ -357,9 +357,13 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             LastSavedEncoding = EncodingCatalog.GetEncodingName(LastSavedSnapshot.Encoding),
             LastSavedLineEnding = LineEndingUtility.GetLineEndingName(LastSavedSnapshot.LineEnding),
             DateModifiedFileTime = LastSavedSnapshot.DateModifiedFileTime,
+            SavedFileSha256 = LastSavedSnapshot.FileVersion.Sha256,
+            SavedFileTargetPath = LastSavedSnapshot.FileVersion.TargetPath,
             HasEditingFile = EditingFile != null,
             RequiresSaveAs = _requiresSaveAs,
-            IsModified = IsModified,
+            HasUnconfirmedFileSave = HasUnconfirmedFileSave || _activeSaveTarget == SaveTargetRelation.Bound,
+            IsModified = IsModified || _activeSaveTarget != SaveTargetRelation.Different ||
+                _pendingFileSave?.Relation == SaveTargetRelation.Unknown,
             SelectionStartPosition = textSelectionStartPosition,
             SelectionEndPosition = textSelectionEndPosition,
             WrapWord = TextEditorCore.TextWrapping == TextWrapping.Wrap ||
@@ -452,9 +456,9 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
                 }
             }, cancellationToken);
         }
-        catch (TaskCanceledException)
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested || _disposed)
         {
-            // ignore
+            // A newer check or editor disposal canceled this check.
         }
         catch (ObjectDisposedException)
         {
@@ -487,23 +491,31 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
         {
             StorageFile file = null;
             DocumentSnapshot savedSnapshot = null;
-            await Dispatcher.CallOnUIThreadAsync(() =>
+            await Dispatcher.CallOnUIThreadAsync(async () =>
             {
-                if (_disposed || cancellationToken.IsCancellationRequested) return;
+                if (_disposed || IsFileSaveActive || cancellationToken.IsCancellationRequested) return;
+                if (_pendingFileSave is { WasBound: true } pending)
+                    await _documentOperations.TryRunAsync(
+                        async token => { await RefreshProviderRenameAsync(pending.Result, pending, token); }, cancellationToken);
+                if (_disposed || IsFileSaveActive || cancellationToken.IsCancellationRequested) return;
                 file = EditingFile;
                 savedSnapshot = LastSavedSnapshot;
             });
             if (file == null) return;
 
             FileModificationState newState;
-            if (!await FileStorage.FileExistsAsync(file))
+            if (!await FileStorage.FileExistsAsync(file, cancellationToken))
             {
                 newState = FileModificationState.RenamedMovedOrDeleted;
             }
+            else if (!savedSnapshot.FileVersion.IsVerified)
+            {
+                newState = FileModificationState.Unverified;
+            }
             else
             {
-                long fileModifiedTime = await FileStorage.GetDateModifiedAsync(file);
-                newState = savedSnapshot.DateModifiedFileTime >= 0 && fileModifiedTime != savedSnapshot.DateModifiedFileTime ?
+                long fileModifiedTime = await FileStorage.GetDateModifiedAsync(file, cancellationToken);
+                newState = fileModifiedTime != savedSnapshot.DateModifiedFileTime ?
                     FileModificationState.Modified : FileModificationState.Untouched;
             }
 
@@ -511,9 +523,13 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
             {
                 // Saving, reloading, or closing can invalidate a check while
                 // it waits for the storage provider.
-                if (!_disposed && !cancellationToken.IsCancellationRequested &&
+                if (!_disposed && !IsFileSaveActive && !cancellationToken.IsCancellationRequested &&
                     ReferenceEquals(file, EditingFile) && ReferenceEquals(savedSnapshot, LastSavedSnapshot))
                 {
+                    if (newState != FileModificationState.RenamedMovedOrDeleted && _boundFileState == BoundFileState.Unconfirmed)
+                        newState = FileModificationState.Unverified;
+                    else if (newState != FileModificationState.RenamedMovedOrDeleted && HasFileConflict)
+                        newState = FileModificationState.Modified;
                     FileModificationState = newState;
                 }
             });
@@ -696,7 +712,7 @@ public sealed partial class TextEditor : ITextEditor, IDisposable
     {
         if (!_loaded) return true;
 
-        if (_requiresSaveAs) return false;
+        if (_requiresSaveAs || HasUnconfirmedFileSave) return false;
         if (RequestedLineEnding != null)
         {
             return false;

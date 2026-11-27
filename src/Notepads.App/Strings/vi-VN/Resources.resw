@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Lỗi khi mở tệp</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Không thể lưu tệp "{0}" vì: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Thử lại</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Tệp có thể đã thay đổi. Hãy dùng “Lưu dưới dạng” để chọn nơi lưu nội dung chỉnh sửa.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Tệp này đang được lưu. Hãy thử lại sau giây lát.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>Đã ghi “{0}” nhưng không thể xác minh nội dung đã lưu. Bản nháp vẫn đang mở.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Kiểm tra lại</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>Không thể xác minh phiên bản của tệp trên đĩa.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Không thể chuẩn bị bản sao nội dung chỉnh sửa để lưu.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Lỗi khi lưu tệp</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Đóng</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Tìm kiếm</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

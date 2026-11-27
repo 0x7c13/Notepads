@@ -123,47 +123,33 @@ public sealed partial class NotepadsMainPage
         });
     }
 
+    private static string FileStatusMessageKey(FileModificationState state) => state switch
+    {
+        FileModificationState.Modified => "TextEditor_FileModifiedOutsideIndicator_ToolTip",
+        FileModificationState.RenamedMovedOrDeleted => "TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip",
+        FileModificationState.Unverified => "FileSaveErrorDialog_Unverified",
+        _ => null
+    };
+
     private void UpdateFileModificationStateIndicator(ITextEditor textEditor)
     {
         if (StatusBar == null) return;
-        if (textEditor.FileModificationState == FileModificationState.Untouched)
-        {
-            FileModificationStateIndicatorIcon.Glyph = "";
-            FileModificationStateIndicator.Visibility = Visibility.Collapsed;
-        }
-        else if (textEditor.FileModificationState == FileModificationState.Modified)
-        {
-            FileModificationStateIndicatorIcon.Glyph = "\uE7BA"; // Warning Icon
-            ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
-            AutomationProperties.SetName(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
-            FileModificationStateIndicator.Visibility = Visibility.Visible;
-        }
-        else if (textEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
-        {
-            FileModificationStateIndicatorIcon.Glyph = "\uE9CE"; // Unknown Icon
-            ToolTipService.SetToolTip(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
-            AutomationProperties.SetName(FileModificationStateIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
-            FileModificationStateIndicator.Visibility = Visibility.Visible;
-        }
+        var state = textEditor.FileModificationState;
+        var key = FileStatusMessageKey(state);
+        FileModificationStateIndicator.Visibility = key == null ? Visibility.Collapsed : Visibility.Visible;
+        if (key == null) return;
+        FileModificationStateIndicatorIcon.Glyph = state == FileModificationState.Modified ? "\uE7BA" : "\uE9CE";
+        var message = _resourceLoader.GetString(key);
+        ToolTipService.SetToolTip(FileModificationStateIndicator, message);
+        AutomationProperties.SetName(FileModificationStateIndicator, message);
     }
 
     private void UpdatePathIndicator(ITextEditor textEditor)
     {
         if (StatusBar == null) return;
         PathIndicator.Text = textEditor.EditingFilePath ?? textEditor.FileNamePlaceholder;
-
-        switch (textEditor.FileModificationState)
-        {
-            case FileModificationState.Untouched:
-                ToolTipService.SetToolTip(PathIndicator, PathIndicator.Text);
-                break;
-            case FileModificationState.Modified:
-                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileModifiedOutsideIndicator_ToolTip"));
-                break;
-            case FileModificationState.RenamedMovedOrDeleted:
-                ToolTipService.SetToolTip(PathIndicator, _resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"));
-                break;
-        }
+        var key = FileStatusMessageKey(textEditor.FileModificationState);
+        ToolTipService.SetToolTip(PathIndicator, key == null ? PathIndicator.Text : _resourceLoader.GetString(key));
     }
 
     private void UpdateEditorModificationIndicator(ITextEditor textEditor)
@@ -249,11 +235,12 @@ public sealed partial class NotepadsMainPage
                     selectedTextEditor.DisplayTitle,
                     confirmedAction: () => confirmed = true);
                 await DialogManager.OpenDialogAsync(revertAllChangesConfirmationDialog, awaitPreviousDialog: true);
-                if (confirmed && NotepadsCore.GetTab(selectedTextEditor) != null)
+                if (confirmed && !revertAllChangesConfirmationDialog.IsAborted && CanReloadEditor(selectedTextEditor))
                 {
                     try { await selectedTextEditor.RevertAllChangesAsync(); }
                     catch (Exception ex)
                     {
+                        if (!CanReloadEditor(selectedTextEditor)) return;
                         var errorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                         await DialogManager.OpenDialogAsync(errorDialog, awaitPreviousDialog: false);
                     }
@@ -262,24 +249,28 @@ public sealed partial class NotepadsMainPage
         }
     }
 
+    private bool CanReloadEditor(ITextEditor editor) =>
+        CanSaveEditor(editor, allowWhileClosing: false, allowWhileTabClosing: false);
+
     private async void ReloadFileFromDiskAsync(object sender, RoutedEventArgs e)
     {
         var selectedEditor = NotepadsCore.GetSelectedReadyEditor();
 
-        if (selectedEditor?.EditingFile != null &&
+        if (CanReloadEditor(selectedEditor) && selectedEditor.EditingFile != null &&
             selectedEditor.FileModificationState != FileModificationState.RenamedMovedOrDeleted)
         {
             try
             {
                 await selectedEditor.ReloadFromEditingFileAsync();
+                if (!CanReloadEditor(selectedEditor)) return;
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
             }
             catch (Exception ex)
             {
-                if (NotepadsCore.GetTab(selectedEditor) == null) return;
+                if (!CanReloadEditor(selectedEditor)) return;
                 var fileOpenErrorDialog = new FileOpenErrorDialog(selectedEditor.EditingFilePath, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                if (!fileOpenErrorDialog.IsAborted)
+                if (!fileOpenErrorDialog.IsAborted && CanReloadEditor(selectedEditor))
                 {
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
@@ -432,9 +423,9 @@ public sealed partial class NotepadsMainPage
         {
             FileModificationStateIndicator.ContextFlyout.ShowAt(FileModificationStateIndicator);
         }
-        else if (selectedEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted)
+        else if (FileStatusMessageKey(selectedEditor.FileModificationState) is string key)
         {
-            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_FileRenamedMovedOrDeletedIndicator_ToolTip"), 2500);
+            NotificationCenter.Instance.PostNotification(_resourceLoader.GetString(key), 2500);
         }
     }
 
@@ -467,7 +458,7 @@ public sealed partial class NotepadsMainPage
                 await RenameFileAsync(selectedEditor);
             }
         }
-        else if (selectedEditor.FileModificationState == FileModificationState.Modified)
+        else if (selectedEditor.FileModificationState is FileModificationState.Modified or FileModificationState.Unverified)
         {
             PathIndicatorButton.ContextFlyout.ShowAt(PathIndicatorButton);
         }
@@ -646,20 +637,21 @@ public sealed partial class NotepadsMainPage
         {
             var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
             var file = selectedTextEditor?.EditingFile;
-            if (file == null || selectedTextEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
+            if (file == null || !CanReloadEditor(selectedTextEditor) ||
+                selectedTextEditor.FileModificationState == FileModificationState.RenamedMovedOrDeleted) return;
 
             try
             {
                 await selectedTextEditor.ReloadFromEditingFileAsync(decodingMode: DocumentDecodingMode.AutoDetect);
-                if (NotepadsCore.GetTab(selectedTextEditor) == null) return;
+                if (!CanReloadEditor(selectedTextEditor)) return;
                 NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
             }
             catch (Exception ex)
             {
-                if (NotepadsCore.GetTab(selectedTextEditor) == null) return;
+                if (!CanReloadEditor(selectedTextEditor)) return;
                 var fileOpenErrorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                 await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                if (!fileOpenErrorDialog.IsAborted)
+                if (!fileOpenErrorDialog.IsAborted && CanReloadEditor(selectedTextEditor))
                 {
                     NotepadsCore.FocusOnSelectedTextEditor();
                 }
@@ -683,20 +675,20 @@ public sealed partial class NotepadsMainPage
         reopenWithEncodingItem.Click += async (sender, args) =>
         {
             var selectedTextEditor = NotepadsCore.GetSelectedReadyEditor();
-            if (selectedTextEditor != null)
+            if (CanReloadEditor(selectedTextEditor))
             {
                 try
                 {
                     await selectedTextEditor.ReloadFromEditingFileAsync(encoding);
-                    if (NotepadsCore.GetTab(selectedTextEditor) == null) return;
+                    if (!CanReloadEditor(selectedTextEditor)) return;
                     NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("TextEditor_NotificationMsg_FileReloaded"), 1500);
                 }
                 catch (Exception ex)
                 {
-                    if (NotepadsCore.GetTab(selectedTextEditor) == null) return;
+                    if (!CanReloadEditor(selectedTextEditor)) return;
                     var fileOpenErrorDialog = new FileOpenErrorDialog(selectedTextEditor.EditingFilePath, ex.Message);
                     await DialogManager.OpenDialogAsync(fileOpenErrorDialog, awaitPreviousDialog: false);
-                    if (!fileOpenErrorDialog.IsAborted)
+                    if (!fileOpenErrorDialog.IsAborted && CanReloadEditor(selectedTextEditor))
                     {
                         NotepadsCore.FocusOnSelectedTextEditor();
                     }

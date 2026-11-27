@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.IO;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Validation;
 using Windows.Storage;
@@ -54,7 +55,8 @@ internal sealed partial class SessionController
             // the actual binding, including any other matching recovery rows.
         }
         CheckFileLookupLifetime(cancellation);
-        return _notepadsCore.GetTabs().FirstOrDefault(tab => tab.ReadyEditor?.EditingFile?.IsEqual(file) == true);
+        // The core's tracked open admission proves ambiguous ready-file aliases.
+        return _notepadsCore.FindReadyTab(file);
     }
 
     public async Task PublishTransferredEditorAsync(Func<Task> publishReceipt, Action install,
@@ -106,7 +108,9 @@ internal sealed partial class SessionController
             {
                 var resolved = await binding.File.WaitAsync(cancellation);
                 CheckFileLookupLifetime(cancellation);
-                if (resolved?.IsEqual(file) == true) return binding.Tab;
+                bool matches = await DocumentSaveTarget.MatchesFileHintAsync(resolved, file, cancellation);
+                CheckFileLookupLifetime(cancellation);
+                if (matches) return binding.Tab;
             }
             CheckFileLookupLifetime(cancellation);
             if (tabs.SequenceEqual(RecoveryTabsForFileLookup())) return null;

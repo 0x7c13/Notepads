@@ -46,6 +46,70 @@ $session.Before[$sentinel] = (Get-FileHash -LiteralPath $sentinel -Algorithm SHA
 Assert-IsolatedTestRunOwnership $session
 Assert-IsolatedTestPreservation $session
 $checks.Add('Valid owned registration, sentinel and prior data are accepted')
+
+& {
+    # Exercise the real session initializer without registering a package. Its
+    # retained hashes must distinguish real NTFS entries with case-only parents.
+    $start = (Get-Command Start-IsolatedTestPackage).ScriptBlock.Ast
+    $initializer = $start.Body.Find({ param($node)
+        $node -is [Management.Automation.Language.AssignmentStatementAst] -and
+        $node.Left -is [Management.Automation.Language.VariableExpressionAst] -and
+        $node.Left.VariablePath.UserPath -ceq 'session'
+    }, $false)
+    if (!$initializer) { throw 'The runner session initializer was not found.' }
+    $retained = & ([scriptblock]::Create($initializer.Right.Extent.Text))
+    $caseRoot = Join-Path $fixtureRoot 'case-sensitive-retention'
+    [IO.Directory]::CreateDirectory($caseRoot) | Out-Null
+    if (!('RunnerCaseSensitiveDirectory' -as [type])) {
+        Add-Type @'
+using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+public static class RunnerCaseSensitiveDirectory {
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern SafeFileHandle CreateFileW(string path, uint access, uint share,
+        IntPtr security, uint creation, uint flags, IntPtr template);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool SetFileInformationByHandle(SafeFileHandle handle, int kind, ref uint data, uint size);
+    public static void Enable(string path) {
+        using var handle = CreateFileW(path, 0x100, 7, IntPtr.Zero, 3, 0x02000000, IntPtr.Zero);
+        if (handle.IsInvalid) throw new Win32Exception();
+        uint enabled = 1;
+        if (!SetFileInformationByHandle(handle, 23, ref enabled, 4)) throw new Win32Exception();
+    }
+}
+'@
+    }
+    [RunnerCaseSensitiveDirectory]::Enable($caseRoot)
+    $lower = Join-Path ([IO.Directory]::CreateDirectory((Join-Path $caseRoot 'parent')).FullName) 'note.txt'
+    $upper = Join-Path ([IO.Directory]::CreateDirectory((Join-Path $caseRoot 'PARENT')).FullName) 'note.txt'
+    [IO.File]::WriteAllText($lower, 'lower content')
+    [IO.File]::WriteAllText($upper, 'different upper content')
+    $retained.PriorDirectories = @($caseRoot)
+    foreach ($file in Get-ChildItem -LiteralPath $caseRoot -File -Recurse) {
+        $retained.Before[$file.FullName] = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash
+    }
+    if ($retained.Before.Count -ne 2 -or $retained.Before[$lower] -ceq $retained.Before[$upper]) {
+        throw 'Case-sensitive retained file paths were merged.'
+    }
+    Assert-IsolatedTestPreservation $retained
+    $roundTrip = $retained.Before | ConvertTo-Json | ConvertFrom-Json -AsHashtable
+    if ($roundTrip.Count -ne 2 -or $roundTrip[$lower] -cne $retained.Before[$lower] -or
+        $roundTrip[$upper] -cne $retained.Before[$upper]) { throw 'Retained case-sensitive evidence lost an entry.' }
+    $checks.Add('Retained data and JSON evidence distinguish case-sensitive parent entries')
+    foreach ($path in @($lower, $upper)) {
+        $original = [IO.File]::ReadAllBytes($path)
+        try {
+            [IO.File]::AppendAllText($path, ' changed')
+            Expect-Rejection "Changed retained case-sensitive entry $([IO.Path]::GetDirectoryName($path))" `
+                '*Pre-existing test data changed*' { Assert-IsolatedTestPreservation $retained }
+        }
+        finally { [IO.File]::WriteAllBytes($path, $original) }
+        Assert-IsolatedTestPreservation $retained
+    }
+}
+
 $session.Completed = $true
 Expect-Rejection 'Completed session cannot launch more work' '*already completed*' { Assert-IsolatedTestRunOwnership $session }
 $session.Completed = $false
@@ -201,13 +265,106 @@ finally {
     finally { foreach ($pending in $session.Processes.ToArray()) { Close-IsolatedTestProcess $session $pending } }
 }
 
+# Hold the junction itself without delete sharing. Cleanup must stop the exact
+# phase process before it can delete the parked link and leave the target intact.
+foreach ($readOnlyProtocol in @($false, $true)) {
+& {
+    $phaseName = if ($readOnlyProtocol) { 'document-timeout-readonly-protocol' } else { 'document-timeout' }
+    $phaseRoot = (New-Item -ItemType Directory -Path (Join-Path $fixtureRoot $phaseName)).FullName
+    $timedSession = $session.Clone()
+    $timedSession.RunRoot = $phaseRoot
+    $timedSession.Root = $phaseRoot
+    $timedSession.Executable = (Get-Process -Id $PID).Path
+    $timedSession.Processes = [Collections.Generic.List[object]]::new()
+    $fixture = @{ Child = $null; BrokerRoot = $null; ReadOnlyProtocol = $readOnlyProtocol }
+    function Start-IsolatedTestProcess {
+        param($Session, $Argument)
+        $grants = Get-Content -LiteralPath (Join-Path $Session.RunRoot 'document-grants.json') -Raw | ConvertFrom-Json
+        if ($grants.fixtureName -notmatch '^NotepadsBrokered-[a-f0-9]{32}$' -or !$grants.canonical -or !$grants.casing) {
+            throw 'The timed-out fixture did not publish the required private single-file grants.'
+        }
+        $fixture.BrokerRoot = Join-Path ([IO.Path]::GetTempPath()) $grants.fixtureName
+        if (![IO.File]::Exists((Join-Path $fixture.BrokerRoot 'canonical.txt'))) { throw 'Missing external broker fixture.' }
+        $start = [Diagnostics.ProcessStartInfo]::new($Session.Executable)
+        $start.UseShellExecute = $false
+        $start.CreateNoWindow = $true
+        $start.WindowStyle = [Diagnostics.ProcessWindowStyle]::Hidden
+        $start.RedirectStandardInput = $true
+        $start.WorkingDirectory = $Session.RunRoot
+        $holdLink = @'
+$ErrorActionPreference = 'Stop'
+Add-Type -MemberDefinition '[DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)] public static extern Microsoft.Win32.SafeHandles.SafeFileHandle CreateFileW(string path, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);' -Name LinkHandle -Namespace RunnerFixture
+[IO.Directory]::Move('document-retarget', 'document-parked')
+[IO.File]::WriteAllText('document-parked/target.txt', 'target stays intact')
+$handle = [RunnerFixture.LinkHandle]::CreateFileW('document-parked', 0, 3, [IntPtr]::Zero, 3, 0x02200000, [IntPtr]::Zero)
+if ($handle.IsInvalid) { throw [ComponentModel.Win32Exception]::new() }
+try {
+    [IO.File]::WriteAllText('progress.txt', 'holding parked junction')
+    [Console]::ReadLine() | Out-Null
+}
+finally { $handle.Dispose() }
+'@
+        foreach ($argument in @('-NoLogo', '-NoProfile', '-Command', $holdLink)) { $start.ArgumentList.Add($argument) }
+        $fixture.Child = [Diagnostics.Process]::Start($start)
+        $identity = Register-IsolatedTestProcess $Session $fixture.Child.Id
+        $ready = Join-Path $Session.RunRoot 'progress.txt'
+        $deadline = [DateTime]::UtcNow.AddSeconds(15)
+        while (![IO.File]::Exists($ready)) {
+            if ($fixture.Child.HasExited -or [DateTime]::UtcNow -ge $deadline) { throw 'Private child failed to hold the parked junction.' }
+            Start-Sleep -Milliseconds 25
+        }
+        if ($fixture.ReadOnlyProtocol) {
+            [IO.File]::SetAttributes((Join-Path $Session.RunRoot 'document-grants.json'), [IO.FileAttributes]::ReadOnly)
+        }
+        return $identity
+    }
+    try {
+        $timeoutCheck = if ($readOnlyProtocol) { 'A document timeout survives protocol cleanup failure' } else { 'A timed-out document phase preserves its timeout' }
+        Expect-Rejection $timeoutCheck '*Test phase timed out: --documents*' {
+            Invoke-IsolatedTestPhase $timedSession '--documents' -TimeoutSeconds 0
+        }
+        if (!$fixture.Child.HasExited -or $timedSession.Processes.Count) { throw 'Document timeout retained its child or process handle.' }
+        $protocol = Join-Path $phaseRoot 'document-grants.json'
+        if ([IO.Directory]::Exists($fixture.BrokerRoot) -or [IO.File]::Exists($protocol) -ne $readOnlyProtocol) {
+            throw 'Document timeout did not attempt external broker fixture and protocol cleanup.'
+        }
+        $progress = Join-Path $timedSession.Root "phase-$($timedSession.Phase)-progress.txt"
+        $process = Get-Content -LiteralPath (Join-Path $timedSession.Root "phase-$($timedSession.Phase)-process.json") -Raw | ConvertFrom-Json
+        if ([IO.File]::ReadAllText($progress) -ne 'holding parked junction' -or $process.ProcessId -ne $fixture.Child.Id -or $process.ExitCode -ne -1) {
+            throw 'Document timeout lost the original progress or exact process evidence.'
+        }
+        $remainingLinks = @(Get-ChildItem -LiteralPath $phaseRoot -Force -Attributes ReparsePoint)
+        $remainingTargetLinks = @(Get-ChildItem -LiteralPath (Join-Path $phaseRoot 'document-targets') -Force -Attributes ReparsePoint)
+        if ($remainingLinks.Count -or $remainingTargetLinks.Count -or
+            [IO.File]::ReadAllText((Join-Path $phaseRoot 'document-targets/target.txt')) -ne 'target stays intact') {
+            throw 'Document timeout did not remove its fixture links and preserve their target.'
+        }
+        if ($readOnlyProtocol) { $checks.Add('Read-only protocol cleanup failure preserves the timeout, removes remaining fixture links and retains their target') }
+        else { $checks.Add('Document timeout releases a locked parked junction, retains its target and preserves phase evidence') }
+    }
+    finally {
+        if ($fixture.Child) {
+            $fixture.Child.StandardInput.Close()
+            if (!$fixture.Child.WaitForExit(5000)) { $fixture.Child.Kill(); $null = $fixture.Child.WaitForExit(5000) }
+            $fixture.Child.Dispose()
+        }
+        foreach ($pending in $timedSession.Processes.ToArray()) { Close-IsolatedTestProcess $timedSession $pending }
+        $protocol = Join-Path $phaseRoot 'document-grants.json'
+        if ([IO.File]::Exists($protocol)) {
+            [IO.File]::SetAttributes($protocol, [IO.FileAttributes]::Normal)
+            [IO.File]::Delete($protocol)
+        }
+    }
+}
+}
+
 & {
     function Start-IsolatedTestProcess {
         param($Session, $Argument, [switch] $ExpectedTermination)
         $scope = $Argument.Split('=')[1]
         $state = Join-Path $Session.RunRoot "LeaseTests/$scope"
         if ($ExpectedTermination) {
-            New-Item -ItemType Directory -Path $state -Force | Out-Null
+            New-Item -ItemType Directory -Path (Join-Path $state 'documents') -Force | Out-Null
             [IO.File]::WriteAllText((Join-Path $state 'holder-ready'), '4294967294')
             [IO.File]::WriteAllText((Join-Path $state 'terminate-holder'), '')
             [IO.File]::WriteAllText((Join-Path $state 'result.txt'), 'PASS: lease assertions completed')

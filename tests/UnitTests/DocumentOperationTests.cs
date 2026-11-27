@@ -92,6 +92,85 @@ public sealed class DocumentOperationTests
         await Bound(closing.WaitForIdleAsync());
     }
 
+    [Fact]
+    public async Task CloseDrainsCanceledObservationsWithoutCancelingAnAdmittedWrite()
+    {
+        using var coordinator = new DocumentOperationCoordinator();
+        var releaseRead = Signal();
+        var canceled = Signal();
+        var releaseWrite = Signal();
+        var write = coordinator.RunAsync(async token =>
+        {
+            await releaseWrite.Task;
+            token.ThrowIfCancellationRequested();
+        });
+        var read = coordinator.ObserveAsync(async token =>
+        {
+            using var registration = token.Register(() => canceled.TrySetResult());
+            await releaseRead.Task;
+            token.ThrowIfCancellationRequested();
+            return 0;
+        }, TestContext.Current.CancellationToken);
+        try
+        {
+            var drain = coordinator.CancelObservationsAndWaitAsync();
+            await Bound(canceled.Task);
+            Assert.False(drain.IsCompleted);
+            Assert.False(write.IsCompleted);
+            releaseRead.SetResult();
+            await Bound(drain);
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => Bound(read));
+            Assert.False(write.IsCompleted);
+            Assert.Equal(1, await coordinator.ObserveAsync(_ => Task.FromResult(1), TestContext.Current.CancellationToken));
+        }
+        finally { releaseRead.TrySetResult(); releaseWrite.TrySetResult(); }
+        await Bound(write);
+    }
+
+    [Fact]
+    public async Task DisposalAndCloseBothWaitForAnActiveObservationToReleaseItsResources()
+    {
+        using var coordinator = new DocumentOperationCoordinator();
+        var release = Signal();
+        var canceled = Signal();
+        var read = coordinator.ObserveAsync(async token =>
+        {
+            using var registration = token.Register(() => canceled.TrySetResult());
+            await release.Task;
+            token.ThrowIfCancellationRequested();
+            return true;
+        }, TestContext.Current.CancellationToken);
+        var drain = coordinator.CancelObservationsAndWaitAsync();
+        try
+        {
+            coordinator.Dispose();
+            await Bound(canceled.Task);
+            Assert.False(coordinator.Completion.IsCompleted);
+            Assert.False(drain.IsCompleted);
+        }
+        finally { release.TrySetResult(); }
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => Bound(read));
+        await Bound(Task.WhenAll(drain, coordinator.Completion));
+    }
+
+    [Fact]
+    public async Task TryRunSkipsAnOccupiedQueueAndProtectsItsAcceptedOperation()
+    {
+        using var coordinator = new DocumentOperationCoordinator();
+        var release = Signal();
+        var accepted = coordinator.TryRunAsync(_ => release.Task, TestContext.Current.CancellationToken);
+        try
+        {
+            await Bound(coordinator.TryRunAsync(_ => throw new InvalidOperationException("An occupied gate admitted a poll."),
+                TestContext.Current.CancellationToken));
+            Assert.False(accepted.IsCompleted);
+            Assert.False(coordinator.WaitForIdleAsync().IsCompleted);
+        }
+        finally { release.TrySetResult(); }
+        await Bound(accepted);
+        await Bound(coordinator.WaitForIdleAsync());
+    }
+
     private static Task Bound(Task task) => task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
 
     private static TaskCompletionSource Signal() => new(TaskCreationOptions.RunContinuationsAsynchronously);

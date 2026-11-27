@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Virhe avattaessa tiedostoa</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Tiedostoa "{0}" ei voitu tallentaa: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Yritä uudelleen</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Tiedosto on saattanut muuttua. Valitse tallennuskohde toiminnolla Tallenna nimellä.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Tiedostoa tallennetaan parhaillaan. Yritä hetken kuluttua uudelleen.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>Tiedosto ”{0}” kirjoitettiin, mutta sen sisältöä ei voitu tarkistaa. Luonnos on edelleen auki.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Tarkista uudelleen</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>Levylle tallennetun tiedoston versiota ei voitu varmistaa.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Muutoksista ei voitu valmistella kopiota tallennusta varten.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Virhe tallennettaessa tiedostoa</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Sulje</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Etsi</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

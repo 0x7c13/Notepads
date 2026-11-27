@@ -30,6 +30,14 @@ public sealed class DocumentMetadata
 
     public long DateModifiedFileTime { get; set; }
 
+    // Older dirty recovery records need an explicit destination confirmation once.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string SavedFileSha256 { get; set; }
+
+    // The resolved directory entry associated with the saved bytes. Atomic replacement can change its file ID.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string SavedFileTargetPath { get; set; }
+
     public string RequestedLineEnding { get; set; }
 
     public string RequestedEncoding { get; set; }
@@ -37,6 +45,10 @@ public sealed class DocumentMetadata
     public bool HasEditingFile { get; set; }
 
     public bool RequiresSaveAs { get; set; }
+
+    // Undoing to the old save point cannot confirm what survived a later commit.
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public bool HasUnconfirmedFileSave { get; set; }
 
     public bool IsModified { get; set; }
 

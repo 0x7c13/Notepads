@@ -173,7 +173,9 @@ public interface ITextEditor
 
     bool IsEditorEnabled();
 
-    Task SaveContentToFileAndUpdateEditorStateAsync(StorageFile file);
+    Task<DocumentFileVersion> ReadPickedFileVersionAsync(StorageFile file, CancellationToken cancellation);
+
+    Task<StorageFile> SaveContentToFileAndUpdateEditorStateAsync(StorageFile file, DocumentFileVersion? pickedFileVersion = null, CancellationToken cancellation = default, Guid? verificationId = null);
 
     string GetContentForSharing();
 

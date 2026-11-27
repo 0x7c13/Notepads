@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>ファイルオープンエラー</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>ファイル "{0}" を保存できませんでした: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>再試行</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>ファイルが変更された可能性があります。「名前を付けて保存」で編集内容の保存先を選んでください。</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>このファイルの保存処理が既に進行中です。しばらくしてからもう一度お試しください。</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>「{0}」に書き込みましたが、保存内容を確認できませんでした。編集中の文書は開いたままです。</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>再確認</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>ディスク上のファイルのバージョンを確認できませんでした。</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>保存用に編集内容のコピーを準備できませんでした。</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>ファイル保存エラー</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>閉じる</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>検索</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

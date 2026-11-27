@@ -78,5 +78,8 @@ namespace WinUIEditor
         Boolean IsSelectionFromScroll { get; };
         UInt64 DocumentAttachmentGeneration { get; };
         UInt64 SelectionRevision { get; };
+		// Forward-only byte snapshot. Editing continues while the captured revision is read.
+		// During a native edit callback use ReadAsync to resume after the mutation.
+		EditorUtf8Reader AcquireSaveReader();
 	}
 }

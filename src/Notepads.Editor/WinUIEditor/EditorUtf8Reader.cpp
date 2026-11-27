@@ -7,16 +7,27 @@
 #include "EditorUtf8Reader.h"
 #include "EditorUtf8Reader.g.cpp"
 #include "Helpers.h"
+#include "SaveSnapshot.h"
 #include <exception>
 
 namespace winrt::WinUIEditor::implementation
 {
-	EditorUtf8Reader::EditorUtf8Reader(WinUIEditor::Editor const &editor, com_ptr<EditorBaseControl> const &view)
+	EditorUtf8Reader::EditorUtf8Reader(WinUIEditor::Editor const &editor, com_ptr<EditorBaseControl> const &view, bool forSave)
 		: _editor(editor), _view(view), _length(static_cast<uint64_t>(editor.Length())), _sequence(editor.DocumentSequence())
 	{
 		if (_length > INT32_MAX)
 			throw hresult_invalid_argument();
-		view->AcquireReadLease();
+		if (forSave)
+		{
+			auto &document = view->DocumentForSaveSnapshot();
+			_snapshot = std::make_shared<SaveSnapshot>(document);
+			if (_length > SaveSnapshot::EagerCopyBytes) document.ObserveSnapshot(_snapshot);
+		}
+		else
+		{
+			view->AcquireReadLease();
+			_leaseHeld = true;
+		}
 	}
 
 	EditorUtf8Reader::~EditorUtf8Reader()
@@ -60,18 +71,21 @@ namespace winrt::WinUIEditor::implementation
 			throw_hresult(RO_E_CLOSED);
 		if (::GetCurrentThreadId() != _owningThreadId)
 			throw_hresult(RPC_E_WRONG_THREAD);
-		return _editor.ReadUtf8Range(offset, maxBytes);
+		return _snapshot ? _snapshot->Read(offset, maxBytes, _length) : _editor.ReadUtf8Range(offset, maxBytes);
 	}
 
 	Windows::Foundation::IAsyncOperation<Windows::Storage::Streams::IBuffer> EditorUtf8Reader::ReadAsync(int64_t offset, int32_t maxBytes)
 	{
 		auto lifetime = get_strong();
 		co_await _owningApartment;
+		if (_snapshot && _snapshot->ModificationInProgress())
+			co_await resume_foreground(_view->Dispatcher());
 		co_return Read(offset, maxBytes);
 	}
 
 	void EditorUtf8Reader::ReleaseLease() noexcept
 	{
+		_snapshot.reset();
 		if (_leaseHeld)
 		{
 			_view->ReleaseReadLease();

@@ -38,6 +38,11 @@
 #include <memory>
 #include <chrono>
 #include <mutex>
+#ifdef _DEBUG
+#include <barrier>
+#include <latch>
+#include <thread>
+#endif
 
 // Want to use std::min and std::max so don't want Windows.h version of min and max
 #if !defined(NOMINMAX)
@@ -719,6 +724,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::ProcessNotifyMessage(uptr_t /*wParam*/, NotificationData const &notificationData, bool notifyTsf, Sci::Position deletedUtf16Length)
 	{
+		if (_idleFinalized) return;
 		if (notificationData.nmhdr.code == Scintilla::Notification::UpdateUI && FlagSet(notificationData.updated, Update::Selection))
 			ClaimSelection();
 
@@ -1136,6 +1142,9 @@ namespace Scintilla::Internal {
 		_compositionStartedRevoker.revoke();
 		_compositionCompletedRevoker.revoke();
 		_inputLanguageChangedRevoker.revoke();
+		// The finalized guards also suppress legacy TSF callbacks: disabling
+		// CoreText must not redirect a late focus event to the legacy manager.
+		_tsfCore = false;
 		_editContext = nullptr;
 		_tfDocumentManager = nullptr;
 		_tfThreadManager = nullptr;
@@ -2759,6 +2768,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::ClaimSelection()
 	{
+		if (_idleFinalized) return;
 		// TSF already knows the selection it is setting. Echoing that change
 		// during TextUpdating can invalidate the next queued keyboard update.
 		if (_lock != NONE) return;
@@ -2789,6 +2799,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::NotifyFocus(bool focus)
 	{
+		if (_idleFinalized) return;
 		// Todo: notifyq
 		// NOTE: Removed feature
 		/*if (commandEvents)
@@ -2940,6 +2951,7 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::FocusChanged(bool focused)
 	{
+		if (_idleFinalized) return;
 		if (!focused) CancelSmoothScroll();
 		SetFocusState(focused);
 	}
@@ -4198,7 +4210,7 @@ namespace Scintilla::Internal {
 		const bool modifying = pdoc->ModificationInProgress();
 		if (_readLeases != 0 || modifying)
 		{
-			if ((iMessage == Message::SetReadOnly && wParam == 0) ||
+			if (iMessage == Message::SetReadOnly ||
 				iMessage == Message::SetDocPointer || iMessage == Message::GetDocPointer ||
 				iMessage == Message::GetCharacterPointer || iMessage == Message::GetRangePointer ||
 				iMessage == Message::Allocate || iMessage == Message::AllocateLines ||
@@ -4270,8 +4282,62 @@ namespace Scintilla::Internal {
 			// Private debug-only fault injection; absent from release/WinRT API.
 			constexpr uptr_t FailStyleAllocation = 0x4E500001;
 			constexpr uptr_t FailSyntaxAllocation = 0x4E500002;
+			constexpr uptr_t ConcurrentReadLeaseRelease = 0x4E500005;
+			constexpr uptr_t NotifyFinalizedFocus = 0x4E500006;
 			if (wParam == FailStyleAllocation) { FailStyleAllocationForTesting(static_cast<int>(lParam)); return 0; }
 			if (wParam == FailSyntaxAllocation) { WinUIEditor::FailSyntaxAllocationForTesting(static_cast<WinUIEditor::SyntaxFaultPoint>(lParam)); return 0; }
+			if (wParam == NotifyFinalizedFocus)
+			{
+				NotifyFocus(false);
+				ClaimSelection();
+				return 1;
+			}
+			if (wParam == ConcurrentReadLeaseRelease)
+			{
+				if (_readLeases != 0) winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
+				constexpr size_t workers = 8;
+				constexpr size_t rounds = 2048;
+				const bool originallyReadOnly = pdoc->IsReadOnly();
+				std::latch start{1};
+				std::barrier<> releases{static_cast<std::ptrdiff_t>(workers + 1)};
+				bool abort = false;
+				std::array<std::jthread, workers> threads;
+				try
+				{
+					for (auto &thread : threads)
+						thread = std::jthread([&]()
+						{
+							start.wait();
+							if (abort) return;
+							for (size_t round = 0; round < rounds; ++round)
+							{
+								releases.arrive_and_wait();
+								// Exercise the real disconnect cleanup while UI is
+								// parked at the barrier, so no edits can race it.
+								ReleaseReadLease();
+								releases.arrive_and_wait();
+							}
+						});
+				}
+				catch (...)
+				{
+					abort = true;
+					start.count_down();
+					throw;
+				}
+				start.count_down();
+				bool restored = true;
+				for (size_t round = 0; round < rounds; ++round)
+				{
+					for (size_t index = 0; index < workers; ++index) AcquireReadLease();
+					releases.arrive_and_wait();
+					releases.arrive_and_wait();
+					restored &= _readLeases == 0 && pdoc->IsReadOnly() == originallyReadOnly;
+				}
+				for (auto &thread : threads) thread.join();
+				if (!restored) winrt::throw_hresult(E_FAIL);
+				return workers * rounds;
+			}
 			return __super::WndProc(iMessage, wParam, lParam);
 		}
 #endif
@@ -4393,7 +4459,7 @@ namespace Scintilla::Internal {
 	{
 		if (pdoc->ModificationInProgress() || pdoc->UndoSequenceDepth() != 0 || pdoc->TentativeActive())
 			winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
-		if (_readLeases++ == 0)
+		if (_readLeases.fetch_add(1, std::memory_order_relaxed) == 0)
 		{
 			_readOnlyBeforeLease = pdoc->IsReadOnly();
 			pdoc->SetReadOnly(true);
@@ -4742,7 +4808,12 @@ namespace Scintilla::Internal {
 
 	void ScintillaWinUI::ReleaseReadLease() noexcept
 	{
-		if (_readLeases != 0 && --_readLeases == 0)
+		// Acquisitions belong to the UI apartment, but several outstanding
+		// leases may retire concurrently after that apartment disconnects.
+		auto leases = _readLeases.load(std::memory_order_relaxed);
+		while (leases != 0 && !_readLeases.compare_exchange_weak(leases, leases - 1,
+			std::memory_order_acq_rel, std::memory_order_relaxed)) {}
+		if (leases == 1)
 		{
 			pdoc->SetReadLease(false);
 			pdoc->SetReadOnly(_readOnlyBeforeLease);
@@ -4757,6 +4828,12 @@ namespace Scintilla::Internal {
 		auto preparedContraction = ContractionStateCreate(pdoc->IsLarge());
 		preparedContraction->InsertLines(0, previousLines - 1);
 		PublishPreparedReplacement(replacement, nullptr, std::move(preparedContraction));
+	}
+
+	Document &ScintillaWinUI::DocumentForSaveSnapshot() const
+	{
+		if (pdoc->ModificationInProgress()) winrt::throw_hresult(E_ILLEGAL_METHOD_CALL);
+		return *pdoc;
 	}
 
 	const Document &ScintillaWinUI::LeasedDocument() const

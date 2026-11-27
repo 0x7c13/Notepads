@@ -4,24 +4,27 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents.Contracts;
-using Notepads.Features.Documents.IO;
 using Notepads.Features.Documents.Storage;
-using Notepads.Features.Documents.Text;
 using Notepads.Features.Sessions;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Recovery;
 using Notepads.Features.Sessions.Storage;
 using Notepads.Infrastructure.Diagnostics;
+using Notepads.Presentation.Controls.TextEditor;
+using NotepadsIntegrationTests;
 using Windows.Storage;
 using Windows.System;
 
@@ -35,11 +38,24 @@ internal static partial class SessionPerformanceTests
         using var observer = new PerformanceObserver();
         foreach (var scenario in new[] { (10, 65536, 0), (10, 4 * 1024 * 1024, 0), (50, 65536, 0), (10, 65536, 20) })
             await RunScenarioAsync(scenario.Item1, scenario.Item2, scenario.Item3, observer, results);
+        await using (var host = await FeatureTestHost.CreateAsync())
+        {
+            host.Page.TestController.StopSessionBackup();
+            await host.Page.TestController.WaitForRestorationCheckpointAsync();
+            host.Page.TestController.IsBackupEnabled = false;
+            foreach (var mebibytes in new[] { 1, 8, 64 })
+                await MeasureEditorSaveAsync(host, mebibytes, editDuringCapture: false, observer, results);
+            await MeasureEditorSaveAsync(host, 8, editDuringCapture: true, observer, results);
+        }
         var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("performance.json", CreationCollisionOption.ReplaceExisting);
         await FileIO.WriteTextAsync(file, JsonSerializer.Serialize(results, PerformanceJsonContext.Default.ListPerformanceRow));
         foreach (var result in results)
-            log.AppendLine($"PERF tabs={result.Tabs} bytes={result.DocumentBytes} foreign={result.ForeignScopes} stage={result.Stage} ms={result.Milliseconds:F2} reads={result.MetadataReads} writes={result.MetadataWrites} readBytes={result.MetadataReadBytes} writeBytes={result.MetadataWriteBytes}");
-        log.AppendLine("PASS: isolated session/recovery/atomic UTF-8 save workloads completed; timings are observations, not speed or maximum-size guarantees.");
+        {
+            var phases = result.SaveMillisecondsByPhase == null ? string.Empty :
+                " " + string.Join(" ", result.SaveMillisecondsByPhase.Select(item => $"{item.Key}Ms={item.Value:F2}"));
+            log.AppendLine($"PERF tabs={result.Tabs} bytes={result.DocumentBytes} foreign={result.ForeignScopes} stage={result.Stage} ms={result.Milliseconds:F2} reads={result.MetadataReads} writes={result.MetadataWrites} readBytes={result.MetadataReadBytes} writeBytes={result.MetadataWriteBytes}{phases}");
+        }
+        log.AppendLine("PASS: isolated session/recovery/editor save workloads completed; timings are observations, not speed or maximum-size guarantees.");
     }
 
     private static async Task RunScenarioAsync(int tabs, int requestedBytes, int foreignScopes,
@@ -52,7 +68,6 @@ internal static partial class SessionPerformanceTests
         var restored = new List<SessionTestDocument>();
         var service = SessionTestProtocol.CreateService(owner);
         SessionService reopened = null;
-        StorageFile output = null;
         var bytesPerDocument = 0L;
         try
         {
@@ -136,25 +151,6 @@ internal static partial class SessionPerformanceTests
             }
             finally { batch?.Dispose(); plan?.Dispose(); }
 
-            output = await ApplicationData.Current.LocalFolder.CreateFileAsync($"performance-{owner:N}.txt", CreationCollisionOption.FailIfExists);
-            DocumentBaseline saved = null;
-            try
-            {
-                await Measure("atomic-utf8-save", async () =>
-                {
-                    using var reader = restored[0].Editor.AcquireUtf8Reader();
-                    await DocumentFileWriter.WriteAsync(output, async destination =>
-                    {
-                        saved?.Dispose(); saved = null;
-                        using var source = new EditorDocumentStream(reader, ownsReader: false);
-                        saved = await DocumentBaseline.CreateAsync(canonical => DocumentTextCodec.CopyFromNativeAsync(
-                            source, canonical, destination, new UTF8Encoding(false, true), LineEnding.Crlf), ownerId: owner);
-                    });
-                });
-                using var decoded = await DocumentTextPipeline.DecodeFileAsync(output, new DocumentLoadOptions(new UTF8Encoding(false, true)), owner);
-                SessionTestProtocol.Check(decoded.Baseline.Sha256 == saved.Sha256, "Atomic-save bytes differ from the canonical candidate.");
-            }
-            finally { saved?.Dispose(); }
             await Measure("maintenance", () => reopened.RunMaintenanceAsync(CancellationToken.None));
             await Measure("tab-close", async () => SessionTestProtocol.Check(
                 await reopened.PrepareExplicitCloseAsync(new[] { restoredIds[0] }), "The measured tab close did not commit."));
@@ -173,15 +169,68 @@ internal static partial class SessionPerformanceTests
             foreach (var document in originals.Concat(restored)) await document.DisposeAsync();
             await service.DisposeAsync();
             if (reopened != null) await reopened.DisposeAsync();
-            if (output != null) await output.DeleteAsync();
             await SessionTestProtocol.CleanupAsync(owner);
             foreach (var foreign in foreignOwners) await SessionTestProtocol.CleanupAsync(foreign);
         }
     }
 
-    private static async Task MeasureAsync(string stage, int tabs, long bytes, int foreignScopes, Func<Task> work,
+    private static async Task MeasureEditorSaveAsync(FeatureTestHost host, int mebibytes, bool editDuringCapture,
         PerformanceObserver observer, List<PerformanceRow> results)
     {
+        var file = await host.Folder.CreateFileAsync($"editor-{mebibytes}-{editDuringCapture}.txt", CreationCollisionOption.FailIfExists);
+        const int blockSize = 65536;
+        var block = new byte[blockSize];
+        Array.Fill(block, (byte)'a');
+        for (var index = 255; index < block.Length; index += 256) block[index] = (byte)'\n';
+        using var expected = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+        expected.AppendData("!"u8);
+        using (var output = await file.OpenStreamForWriteAsync())
+        {
+            for (var remaining = mebibytes * 1024 * 1024; remaining > 0; remaining -= blockSize)
+            {
+                expected.AppendData(block);
+                await output.WriteAsync(block);
+            }
+        }
+        var expectedHash = Convert.ToHexString(expected.GetHashAndReset());
+        SessionTestProtocol.Check(await host.Page.OpenFileAsync(file), "The performance document must open through MainPage.");
+        var editor = (TextEditor)host.Core.GetSelectedReadyEditor();
+        await NotepadsWorkspaceTests.WorkspaceTestUI.UntilAsync(() => editor.TestNativeCore.IsLoaded && host.Page.IsEnabled,
+            $"The save benchmark must start from an interactive page (initially enabled={host.Page.IsEnabled}).");
+        await editor.TestStopFileChecksAsync();
+        editor.TestNativeCore.SetTextSelectionPosition(0, 0);
+        editor.TypeText("!");
+        if (editDuringCapture)
+        {
+            editor.TestSaveReaderCaptured = () =>
+            {
+                editor.TestNativeCore.SetTextSelectionPosition(1, 4 * 1024 * 1024 + 1);
+                using (OperationMetrics.Measure("document.save.edit-during-capture")) editor.TypeText("replacement");
+                using (OperationMetrics.Measure("document.save.undo-during-capture")) editor.TestNativeCore.Undo();
+                return Task.CompletedTask;
+            };
+        }
+        try
+        {
+            await MeasureAsync(editDuringCapture ? "editor-save-with-edit" : "editor-save", 1, mebibytes * 1024L * 1024L + 1, 0, async () =>
+                SessionTestProtocol.Check(await host.Page.TestSaveDocumentAsync(editor), "The real dirty editor save must verify."),
+                observer, results, includeSavePhases: true);
+        }
+        finally { editor.TestSaveReaderCaptured = null; }
+
+        using (var input = await file.OpenStreamForReadAsync())
+            SessionTestProtocol.Check(Convert.ToHexString(await SHA256.HashDataAsync(input)) == expectedHash, "The editor save must persist the admitted bytes.");
+        await editor.WaitForDocumentOperationsAsync();
+        SessionTestProtocol.Check(!editor.IsModified, "Undo must return the live editor to the saved bytes.");
+        await host.Page.TestCloseTabAsync(host.Core.GetTab(editor));
+        await editor.DisposalCompletion;
+        await file.DeleteAsync();
+    }
+
+    private static async Task MeasureAsync(string stage, int tabs, long bytes, int foreignScopes, Func<Task> work,
+        PerformanceObserver observer, List<PerformanceRow> results, bool includeSavePhases = false)
+    {
+        if (includeSavePhases) observer.ClearSavePhases();
         var before = observer.Snapshot();
         var started = Stopwatch.GetTimestamp();
         await work();
@@ -199,7 +248,8 @@ internal static partial class SessionPerformanceTests
             MetadataWrites = after.Writes - before.Writes,
             MetadataWriteBytes = after.WriteBytes - before.WriteBytes,
             ManagedBytes = GC.GetTotalMemory(false),
-            AppMemoryBytes = MemoryManager.AppMemoryUsage
+            AppMemoryBytes = MemoryManager.AppMemoryUsage,
+            SaveMillisecondsByPhase = includeSavePhases ? observer.CopySavePhases() : null
         });
     }
 
@@ -207,6 +257,7 @@ internal static partial class SessionPerformanceTests
     {
         private readonly MeterListener _listener = new();
         private long _reads, _readBytes, _writes, _writeBytes;
+        private readonly ConcurrentDictionary<string, double> _savePhases = new(StringComparer.Ordinal);
         public PerformanceObserver()
         {
             _listener.InstrumentPublished = (instrument, listener) =>
@@ -223,11 +274,19 @@ internal static partial class SessionPerformanceTests
                     case "notepads.session.metadata.write.bytes": Interlocked.Add(ref _writeBytes, value); break;
                 }
             });
-            _listener.SetMeasurementEventCallback<double>((instrument, value, tags, state) => { });
+            _listener.SetMeasurementEventCallback<double>((instrument, value, tags, state) =>
+            {
+                if (instrument.Name != "notepads.operation.duration") return;
+                foreach (var tag in tags)
+                    if (tag.Key == "operation" && tag.Value is string name && name.StartsWith("document.save", StringComparison.Ordinal))
+                        _savePhases.AddOrUpdate(name, value, (_, total) => total + value);
+            });
             _listener.Start();
         }
         public (long Reads, long ReadBytes, long Writes, long WriteBytes) Snapshot() =>
             (Interlocked.Read(ref _reads), Interlocked.Read(ref _readBytes), Interlocked.Read(ref _writes), Interlocked.Read(ref _writeBytes));
+        public void ClearSavePhases() => _savePhases.Clear();
+        public Dictionary<string, double> CopySavePhases() => new(_savePhases, StringComparer.Ordinal);
         public void Dispose() => _listener.Dispose();
     }
 }
@@ -245,6 +304,7 @@ internal sealed class PerformanceRow
     public long MetadataWriteBytes { get; set; }
     public long ManagedBytes { get; set; }
     public ulong AppMemoryBytes { get; set; }
+    public Dictionary<string, double> SaveMillisecondsByPhase { get; set; }
 }
 
 [JsonSerializable(typeof(List<PerformanceRow>))]

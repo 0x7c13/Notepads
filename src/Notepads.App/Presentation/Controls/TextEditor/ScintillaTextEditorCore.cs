@@ -563,6 +563,8 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     internal EditorUtf8Reader AcquireDocumentReader() => Native.AcquireUtf8Reader();
 
+    internal EditorUtf8Reader AcquireSaveReader() => _view.AcquireSaveReader();
+
     internal Windows.Storage.Streams.IBuffer ReadCurrentUtf8Range(long offset, int maxBytes) =>
         Native.ReadUtf8Range(offset, maxBytes);
 

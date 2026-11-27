@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Erreur lors de l'ouverture du fichier.</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Désolé, le fichier "{0}" ne peut pas être enregistré : {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Réessayer</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Le fichier a peut-être changé. Utilisez « Enregistrer sous » pour choisir où enregistrer vos modifications.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Un enregistrement de ce fichier est déjà en cours. Réessayez dans un instant.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>« {0} » a été écrit, mais son contenu n’a pas pu être vérifié. Votre brouillon reste ouvert.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Vérifier à nouveau</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>La version du fichier sur le disque n’a pas pu être vérifiée.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Impossible de préparer une copie de vos modifications pour l’enregistrement.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Erreur lors de l'enregistrement du fichier.</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Fermer</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Rechercher</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

@@ -200,7 +200,7 @@ function Register-IsolatedTestProcess {
 }
 
 function Stop-IsolatedTestProcess {
-    param([hashtable] $Session, [hashtable] $Identity, [switch] $CleanupAfterFailure)
+    param([hashtable] $Session, [hashtable] $Identity, [switch] $CleanupAfterFailure, [switch] $RecordExitCode)
     $process = Get-IsolatedTestProcess $Identity
     if ($process) {
         if (!$Identity.ExpectedTermination -and !$CleanupAfterFailure) {
@@ -209,7 +209,16 @@ function Stop-IsolatedTestProcess {
         $process.Kill()
         if (!$process.WaitForExit(5000)) { throw 'The exact owned test process did not exit.' }
     }
+    if ($RecordExitCode -and $Identity.Verified -and $Identity.Process -and $Identity.Process.HasExited) {
+        $Identity.ExitCode = $Identity.Process.get_ExitCode()
+    }
     Close-IsolatedTestProcess $Session $Identity
+}
+
+function Invoke-IsolatedTestCleanup {
+    param([Collections.Generic.List[string]] $Failures, [string] $Description, [scriptblock] $Action)
+    try { & $Action }
+    catch { $Failures.Add("${Description}: $_") }
 }
 
 function Invoke-IsolatedTestPhase {
@@ -220,7 +229,69 @@ function Invoke-IsolatedTestPhase {
     foreach ($path in @($resultPath, $reportPath)) { if (Test-Path -LiteralPath $path) { Remove-Item -LiteralPath $path } }
     $watch = [Diagnostics.Stopwatch]::StartNew()
     $identity = $null
+    $documentAliases = [Collections.Generic.List[string]]::new()
+    $folder = $null
+    $brokerRoot = $null
+    $protocol = Join-Path $Session.RunRoot 'document-grants.json'
+    $grantHost = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+    $grantScript = Join-Path $PSScriptRoot 'IsolatedDocumentGrants.ps1'
+    $phaseFailed = $false
+    $evidenceFailed = $false
     try {
+        if ($Argument -eq '--documents') {
+            # Keep ordinary user ACLs. Only these named files get a WinRT grant.
+            $newRoot = Join-Path ([IO.Path]::GetTempPath()) ('NotepadsBrokered-' + [Guid]::NewGuid().ToString('N'))
+            $brokerRoot = (New-Item -ItemType Directory -Path $newRoot -ErrorAction Stop).FullName
+            $real = (New-Item -ItemType Directory -Path (Join-Path $brokerRoot 'real') -ErrorAction Stop).FullName
+            foreach ($name in @('canonical.txt', 'Case-Entry.txt', 'leaf-source.txt', 'ungranted.txt', 'real\junction.txt', 'real\ungranted.txt')) {
+                [IO.File]::WriteAllText((Join-Path $brokerRoot $name), 'brokered original')
+            }
+            $null = New-Item -ItemType Junction -Path (Join-Path $brokerRoot 'alias') -Target $real -ErrorAction Stop
+            try {
+                $null = [IO.File]::CreateSymbolicLink((Join-Path $brokerRoot 'leaf-link.txt'), (Join-Path $brokerRoot 'leaf-source.txt'))
+            }
+            catch {
+                $cause = $_.Exception.GetBaseException()
+                if ($cause -isnot [PlatformNotSupportedException] -and $cause -isnot [UnauthorizedAccessException] -and
+                    ($cause.HResult -band 0xffff) -notin @(5, 50, 1314)) { throw }
+            }
+            & $grantHost -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $grantScript -FixtureRoot $brokerRoot -Protocol $protocol
+            if ($LASTEXITCODE -ne 0) { throw 'The desktop host could not publish the isolated document grants.' }
+            $folder = New-Item -ItemType Directory -Path (Join-Path $Session.RunRoot 'document-targets') -Force
+            $other = New-Item -ItemType Directory -Path (Join-Path $Session.RunRoot 'document-other-targets') -Force
+            $linkTargets = [ordered]@{ 'document-alias' = $folder; 'document-retarget' = $folder; 'document-standby' = $other }
+            foreach ($entry in $linkTargets.GetEnumerator()) {
+                $alias = New-Item -ItemType Junction -Path (Join-Path $Session.RunRoot $entry.Key) -Target $entry.Value.FullName -ErrorAction Stop
+                $documentAliases.Add($alias.FullName)
+            }
+            # The retarget test can exit with the original junction parked between two moves.
+            $documentAliases.Add((Join-Path $Session.RunRoot 'document-parked'))
+            $parentCaseRoot = Join-Path $Session.RunRoot 'document-parent-case'
+            $parentCaseOther = New-Item -ItemType Directory -Path (Join-Path $parentCaseRoot 'PARENT') -Force
+            $parentCaseRedirect = New-Item -ItemType Junction -Path (Join-Path $parentCaseRoot 'redirect') -Target $parentCaseOther.FullName -ErrorAction Stop
+            $documentAliases.Add($parentCaseRedirect.FullName)
+            $documentAliases.Add((Join-Path $Session.RunRoot 'document-parent-case-setup\redirect'))
+            # A dangling UNC target exercises local link protection without any SMB permissions.
+            $uncUnavailable = Join-Path $Session.RunRoot 'document-unc-symlink-unavailable.txt'
+            [IO.File]::Delete($uncUnavailable)
+            try {
+                $uncLink = [IO.Directory]::CreateSymbolicLink((Join-Path $Session.RunRoot 'document-unc-link'),
+                    ('\\localhost\Notepads-Unavailable-' + $Session.RunId + '\documents'))
+                $documentAliases.Add($uncLink.FullName)
+                # The app can open an existing file link even when its package cannot create one.
+                $leafTarget = Join-Path $folder.FullName 'leaf-source.txt'
+                [IO.File]::WriteAllText($leafTarget, 'leaf original')
+                $null = [IO.File]::CreateSymbolicLink((Join-Path $folder.FullName 'leaf-link.txt'), $leafTarget)
+                $documentAliases.Add((Join-Path $Session.RunRoot 'document-unc-parked'))
+            }
+            catch {
+                $cause = $_.Exception.GetBaseException()
+                $code = $cause.HResult -band 0xffff
+                if ($cause -isnot [PlatformNotSupportedException] -and $cause -isnot [UnauthorizedAccessException] -and
+                    $code -notin @(5, 50, 1314)) { throw }
+                [IO.File]::WriteAllText($uncUnavailable, "$($cause.GetType().Name) (0x$($cause.HResult.ToString('X8')))")
+            }
+        }
         $identity = Start-IsolatedTestProcess $Session $Argument
         while (!(Test-Path -LiteralPath $resultPath)) {
             if (!(Get-IsolatedTestProcess $identity)) {
@@ -256,19 +327,103 @@ function Invoke-IsolatedTestPhase {
         Write-Output $result
         Write-Output ("PASS phase {0}: {1:N0} ms" -f $Argument, $watch.Elapsed.TotalMilliseconds)
     }
+    catch { $phaseFailed = $true; throw }
     finally {
-        # Preserve this phase before cleanup starts another process and replaces
-        # the shared protocol files, including PASS followed by a native crash.
-        foreach ($name in @('results.txt', 'report.json', 'progress.txt')) {
-            $source = Join-Path $Session.RunRoot $name
-            if (Test-Path -LiteralPath $source) {
-                Copy-Item -LiteralPath $source -Destination (Join-Path $Session.Root "phase-$($Session.Phase)-$name")
+        try {
+            # A timed-out document test may still have a no-delete handle on a
+            # fixture link at its active or parked name. Release it before cleanup.
+            if ($phaseFailed -and $documentAliases.Count -and $identity -and $identity.Process) {
+                try { Stop-IsolatedTestProcess $Session $identity -CleanupAfterFailure -RecordExitCode }
+                catch { Write-Warning "Could not stop the failed document test: $_" }
+            }
+            # Preserve this phase before cleanup starts another process and replaces
+            # the shared protocol files, including PASS followed by a native crash.
+            foreach ($name in @('results.txt', 'report.json', 'progress.txt')) {
+                $source = Join-Path $Session.RunRoot $name
+                if (Test-Path -LiteralPath $source) {
+                    Copy-Item -LiteralPath $source -Destination (Join-Path $Session.Root "phase-$($Session.Phase)-$name")
+                }
+            }
+            if ($identity -and $identity.Process -and $identity.Process.HasExited) { $identity.ExitCode = $identity.Process.get_ExitCode() }
+            if ($identity -and $identity.ContainsKey('ExitCode')) {
+                @{ ProcessId = $identity.Id; ExitCode = $identity.ExitCode } |
+                    ConvertTo-Json | Set-Content -LiteralPath (Join-Path $Session.Root "phase-$($Session.Phase)-process.json") -Encoding utf8
             }
         }
-        if ($identity -and $identity.Process -and $identity.Process.HasExited) { $identity.ExitCode = $identity.Process.get_ExitCode() }
-        if ($identity -and $identity.ContainsKey('ExitCode')) {
-            @{ ProcessId = $identity.Id; ExitCode = $identity.ExitCode } |
-                ConvertTo-Json | Set-Content -LiteralPath (Join-Path $Session.Root "phase-$($Session.Phase)-process.json") -Encoding utf8
+        catch {
+            $evidenceFailed = $true
+            if (!$phaseFailed) { throw }
+            Write-Warning "Could not preserve all evidence for the failed test phase: $_"
+        }
+        finally {
+            $cleanupFailures = [Collections.Generic.List[string]]::new()
+            if ($brokerRoot) {
+                Invoke-IsolatedTestCleanup $cleanupFailures 'Revoke document grants' {
+                    & $grantHost -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $grantScript -FixtureRoot $brokerRoot -Protocol $protocol -Release
+                    if ($LASTEXITCODE -ne 0) { throw 'The desktop host could not revoke the isolated document grants.' }
+                }
+                Invoke-IsolatedTestCleanup $cleanupFailures 'Remove document grant protocol' { [IO.File]::Delete($protocol) }
+                Invoke-IsolatedTestCleanup $cleanupFailures 'Remove brokered document fixtures' {
+                    $normalizedRoot = [IO.Path]::GetFullPath($brokerRoot).TrimEnd('\', '/')
+                    $tempParent = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\', '/')
+                    if ($normalizedRoot -ine $brokerRoot.TrimEnd('\', '/') -or
+                        [IO.Path]::GetDirectoryName($normalizedRoot).TrimEnd('\', '/') -ine $tempParent -or
+                        [IO.Path]::GetFileName($normalizedRoot) -notmatch '^NotepadsBrokered-[a-f0-9]{32}$' -or
+                        ([IO.File]::GetAttributes($normalizedRoot) -band [IO.FileAttributes]::ReparsePoint)) {
+                        throw 'Unexpected brokered document fixture during cleanup.'
+                    }
+                    # Unlink first and never recurse through an alias or the fixture.
+                    $alias = Join-Path $normalizedRoot 'alias'
+                    Invoke-IsolatedTestCleanup $cleanupFailures 'Remove brokered document alias' {
+                        if ([IO.Directory]::Exists($alias)) { [IO.Directory]::Delete($alias) }
+                    }
+                    foreach ($dir in @((Join-Path $normalizedRoot 'real'), $normalizedRoot)) {
+                        Invoke-IsolatedTestCleanup $cleanupFailures "Remove brokered document directory $dir" {
+                            if ([IO.Directory]::Exists($dir)) {
+                                if ([IO.File]::GetAttributes($dir) -band [IO.FileAttributes]::ReparsePoint) { throw 'Unexpected linked fixture directory.' }
+                                foreach ($file in [IO.Directory]::EnumerateFiles($dir)) {
+                                    Invoke-IsolatedTestCleanup $cleanupFailures "Remove brokered document file $file" { [IO.File]::Delete($file) }
+                                }
+                                [IO.Directory]::Delete($dir)
+                            }
+                        }
+                    }
+                }
+            }
+            if ($Argument -eq '--documents' -and $folder) {
+                foreach ($name in @('leaf-link.txt', 'leaf-renamed.txt')) {
+                    Invoke-IsolatedTestCleanup $cleanupFailures "Remove document target link $name" {
+                        [IO.File]::Delete((Join-Path $folder.FullName $name))
+                    }
+                }
+            }
+            if ($Argument -eq '--documents') {
+                # A failed case-sensitive parent test may leave its junction at the old parent name.
+                # Never remove a normal source directory or recurse through the junction target.
+                Invoke-IsolatedTestCleanup $cleanupFailures 'Find moved document parent junction' {
+                    $caseAlias = [IO.Path]::GetFullPath((Join-Path $Session.RunRoot 'document-parent-case\parent'))
+                    $ownedRoot = [IO.Path]::GetFullPath($Session.RunRoot).TrimEnd('\') + '\'
+                    if (!$caseAlias.StartsWith($ownedRoot, [StringComparison]::OrdinalIgnoreCase)) { throw 'Document junction cleanup escaped its owned run root.' }
+                    try {
+                        if (([IO.File]::GetAttributes($caseAlias) -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+                            $documentAliases.Add($caseAlias)
+                        }
+                    }
+                    catch [IO.FileNotFoundException] { }
+                    catch [IO.DirectoryNotFoundException] { }
+                }
+            }
+            foreach ($aliasPath in $documentAliases) {
+                Invoke-IsolatedTestCleanup $cleanupFailures "Remove document test junction $aliasPath" {
+                    try { [IO.Directory]::Delete($aliasPath) }
+                    catch [IO.DirectoryNotFoundException] { }
+                }
+            }
+            if ($cleanupFailures.Count) {
+                $message = "Could not clean up all document test fixtures:`n" + ($cleanupFailures -join "`n")
+                if (!$phaseFailed -and !$evidenceFailed) { throw $message }
+                Write-Warning $message
+            }
         }
     }
 }
@@ -294,6 +449,8 @@ function Wait-LeaseMarker([hashtable] $Session, [string] $State, [string] $Name,
 function Invoke-LeaseProbe([hashtable] $Session, [int] $TimeoutSeconds = 60) {
     $scope = [Guid]::NewGuid().ToString('N')
     $state = Join-Path $Session.RunRoot "LeaseTests\$scope"
+    $junction = $null
+    $probeFailed = $false
     $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
     try {
         $holder = Start-IsolatedTestProcess $Session "--lease-holder=$scope" -ExpectedTermination
@@ -301,6 +458,8 @@ function Invoke-LeaseProbe([hashtable] $Session, [int] $TimeoutSeconds = 60) {
         if ([uint](Get-Content -LiteralPath (Join-Path $state 'holder-ready') -Raw) -ne $holder.Id) {
             throw 'The lease marker does not belong to the exact activated holder.'
         }
+        $aliasPath = Join-Path $state 'alias'
+        $junction = New-Item -ItemType Junction -Path $aliasPath -Target (Join-Path $state 'documents') -ErrorAction Stop
         $probe = Start-IsolatedTestProcess $Session "--lease-probe=$scope"
         if ($probe.Id -eq $holder.Id) { throw 'Lease activation did not create two separate processes.' }
         @($holder, $probe) | ForEach-Object {
@@ -319,11 +478,21 @@ function Invoke-LeaseProbe([hashtable] $Session, [int] $TimeoutSeconds = 60) {
         if (!$result.StartsWith('PASS:', [StringComparison]::Ordinal) -or $result.Contains('FAIL:')) { throw 'Packaged multi-process lease test failed.' }
         Assert-IsolatedTestRunOwnership $Session
     }
+    catch { $probeFailed = $true; throw }
     finally {
+        $cleanupError = $null
+        if ($junction) {
+            try { [IO.Directory]::Delete($junction.FullName) }
+            catch { $cleanupError = $_ }
+        }
         if (Test-Path -LiteralPath $state) {
             $evidence = Join-Path $Session.Root 'lease-protocol'
             New-Item -ItemType Directory -Path $evidence -Force | Out-Null
             Get-ChildItem -LiteralPath $state -File | Copy-Item -Destination $evidence
+        }
+        if ($cleanupError) {
+            if (!$probeFailed) { throw $cleanupError }
+            Write-Warning "Could not remove the test junction: $cleanupError"
         }
     }
 }
@@ -348,7 +517,9 @@ function Start-IsolatedTestPackage {
     if (!$acquired) { $mutex.Dispose(); throw 'Another integration run owns the test registration or desktop. Nothing was changed.' }
     $session = @{
         RunId = $runId; Root = $root; Layout = $layout; Mutex = $mutex; MutexHeld = $true
-        Processes = [Collections.Generic.List[object]]::new(); PendingActivation = $null; Phase = 0; Before = @{}; PriorDirectories = @()
+        Processes = [Collections.Generic.List[object]]::new(); PendingActivation = $null; Phase = 0
+        # Case-sensitive directories can retain distinct entries whose names only differ by case.
+        Before = [Collections.Hashtable]::new([StringComparer]::Ordinal); PriorDirectories = @()
         Prior = $null; Package = $null; RegisteredOwned = $false; UnregisteredPrior = $false
         RunRoot = $null; Executable = $null; CleanupStarted = $false; Completed = $false
     }

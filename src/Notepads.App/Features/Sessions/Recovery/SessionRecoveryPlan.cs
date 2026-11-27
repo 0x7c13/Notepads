@@ -131,12 +131,7 @@ internal sealed class RecoveryDocumentSource
         if (data != null && data.Id != Id)
         {
             data.Id = Id;
-            data.EditingFileFutureAccessToken = null;
-            data.EditingFilePath = null;
-            data.StateMetaData.HasEditingFile = false;
-            data.StateMetaData.RequiresSaveAs = true;
-            data.StateMetaData.IsModified = true;
-            data.TextDirty = true;
+            SessionRecoveryCatalog.DetachForRescue(data);
         }
         return data;
     }

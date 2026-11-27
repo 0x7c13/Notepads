@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Errore nell'apertura del file</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Spiacenti, il file "{0}" non può essere salvato: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Riprova</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Il file potrebbe essere cambiato. Usa «Salva con nome» per scegliere dove salvare le modifiche.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>È già in corso un salvataggio di questo file. Riprova tra poco.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>Il file «{0}» è stato scritto, ma non è stato possibile verificarne il contenuto. La bozza è ancora aperta.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Verifica di nuovo</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>Impossibile verificare la versione del file su disco.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Impossibile preparare una copia delle modifiche per il salvataggio.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Errore nel salvataggio del file</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Chiudi</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Trova</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

@@ -197,6 +197,7 @@
     <ClInclude Include="EditorExtensions.h" />
     <ClInclude Include="EditorExtensionsState.h" />
     <ClInclude Include="EditorUtf8Reader.h" />
+    <ClInclude Include="SaveSnapshot.h" />
     <ClInclude Include="EditorStateReader.h" />
     <ClInclude Include="EditorJournalCheckpoint.h" />
     <ClInclude Include="NativeJournal.h" />

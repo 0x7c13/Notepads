@@ -29,7 +29,7 @@ using Windows.UI.Xaml.Media;
 
 namespace NotepadsEditorTests;
 
-internal static class EditorSuite
+internal static partial class EditorSuite
 {
     private const int DefaultStyle = (int)WinUIEditor.StylesCommon.Default;
     private const int LineNumberStyle = (int)WinUIEditor.StylesCommon.LineNumber;
@@ -146,6 +146,13 @@ internal static class EditorSuite
             if (arguments == "--native-faults")
             {
                 await SyntaxHighlightingTests.RunFaultsAsync(log, core);
+#if DEBUG
+                await CheckNativeFinalizedLoadAsync();
+                CheckConcurrentNativeReadLeaseRelease();
+                log.AppendLine("PASS: finalized native controls reject blocked and late loads; concurrent native lease cleanup restores document admission.");
+                await CheckNativeFinalizedJournalPreparationAsync();
+                log.AppendLine("PASS: finalized native journal creation and import reject publication and release their prepared file handles.");
+#endif
                 core.Dispose();
                 return;
             }
@@ -720,6 +727,122 @@ internal static class EditorSuite
         return Encoding.UTF8.GetString(bytes);
     }
 
+    private static async Task CheckSaveReaderReadOnlyReentrancyAsync()
+    {
+        // Larger than the eager-copy threshold so the save cursor observes live
+        // document offsets and would be corrupted by a spurious edit notification.
+        var original = new byte[128 * 1024];
+        for (var index = 0; index < original.Length; ++index) original[index] = (byte)(32 + index % 95);
+        foreach (var notification in new[] { WinUIEditor.ModificationFlags.InsertCheck,
+            WinUIEditor.ModificationFlags.BeforeInsert, WinUIEditor.ModificationFlags.BeforeDelete })
+        {
+            var control = new WinUIEditor.EditorBaseControl();
+            var editor = control.Editor;
+            editor.ModEventMask = WinUIEditor.ModificationFlags.EventMaskAll;
+            using (var stream = await CreateUtf8StreamAsync(original))
+            using (var input = stream.GetInputStreamAt(0))
+                await editor.LoadUtf8Async(input, (ulong)original.Length, false);
+            using var reader = control.AcquireSaveReader();
+            var callbackReached = false;
+            var rejected = false;
+            WinUIEditor.ModifiedHandler changeReadOnly = (sender, modification) =>
+            {
+                if ((modification.ModificationType & (int)notification) == 0) return;
+                callbackReached = true;
+                try { sender.ReadOnly = true; }
+                catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejected = true; }
+            };
+            editor.Modified += changeReadOnly;
+            var delete = notification == WinUIEditor.ModificationFlags.BeforeDelete;
+            const int position = 123;
+            const string insertion = "inserted";
+            try
+            {
+                if (delete) editor.DeleteRange(position, insertion.Length);
+                else editor.InsertText(position, insertion);
+            }
+            finally { editor.Modified -= changeReadOnly; }
+            // Check admission before reading: the unfixed insertion path can
+            // request bytes past the unchanged live buffer's end.
+            Check(callbackReached && rejected, $"{notification} must reject ReadOnly=true during an edit.");
+            Check(!editor.ReadOnly, $"{notification} must leave the live document writable.");
+            var before = Encoding.UTF8.GetString(original);
+            var expected = delete ? before.Remove(position, insertion.Length) : before.Insert(position, insertion);
+            Equal(expected, editor.GetText(editor.Length + 1), $"{notification} must allow the original edit to finish.");
+            using var captured = new MemoryStream();
+            while (captured.Length < original.Length)
+            {
+                var chunk = await reader.ReadAsync(captured.Length, 4093);
+                var bytes = chunk.ToArray();
+                Check(bytes.Length != 0, $"{notification} snapshot must make progress before EOF.");
+                captured.Write(bytes);
+            }
+            Check(captured.ToArray().AsSpan().SequenceEqual(original), $"{notification} must preserve every captured save byte.");
+        }
+    }
+
+    private static async Task CheckSaveReaderAsync()
+    {
+        var control = new WinUIEditor.EditorBaseControl();
+        var editor = control.Editor;
+        var random = new Random(247);
+        var original = new byte[256 * 1024];
+        for (var i = 0; i < original.Length; i++) original[i] = (byte)random.Next(32, 127);
+        using var stream = await CreateUtf8StreamAsync(original);
+        using var input = stream.GetInputStreamAt(0);
+        await editor.LoadUtf8Async(input, (ulong)original.Length, false);
+        using var reader = control.AcquireSaveReader();
+        Check(!editor.ReadOnly, "A save cursor must leave input enabled.");
+        using (var leased = editor.AcquireUtf8Reader())
+        using (var nested = control.AcquireSaveReader())
+            Check(nested.Length == reader.Length && editor.ReadOnly, "A save cursor preserves independent reader ownership.");
+        using var deferredReader = control.AcquireSaveReader();
+        Task<IBuffer> deferred = null;
+        bool rejectedPartialEdit = false;
+        editor.SetSavePoint();
+        WinUIEditor.SavePointLeftHandler readFromEdit = (_, _) =>
+        {
+            try { reader.Read(0, 4); }
+            catch (Exception ex) when (ex.HResult == IllegalMethodCall) { rejectedPartialEdit = true; }
+            deferred = deferredReader.ReadAsync(0, 4).AsTask();
+        };
+        editor.SavePointLeft += readFromEdit;
+        var closing = control.AcquireSaveReader();
+        WinUIEditor.ModifiedHandler closeFromEdit = (_, _) => closing.Dispose();
+        editor.Modified += closeFromEdit;
+        try { editor.InsertText(0, "new"); }
+        finally
+        {
+            editor.SavePointLeft -= readFromEdit;
+            editor.Modified -= closeFromEdit;
+            closing.Dispose();
+        }
+        Check(rejectedPartialEdit && deferred != null, "A synchronous read inside SavePointLeft must leave its cursor untouched.");
+        var prefix = (await deferred.WaitAsync(TimeSpan.FromSeconds(5))).ToArray();
+        Check(prefix.AsSpan().SequenceEqual(original.AsSpan(0, 4)), "An asynchronous read from the same notification returns the captured bytes.");
+        using var actual = new MemoryStream();
+        while (actual.Length < original.Length)
+        {
+            var chunk = await reader.ReadAsync(actual.Length, 4093);
+            var bytes = chunk.ToArray();
+            actual.Write(bytes);
+            // Include edits at the cursor, in already-read text and in unread ranges.
+            int pos = (int)Math.Min(actual.Length - 2, editor.Length - 4);
+            editor.DeleteRange(pos, 4);
+            editor.InsertText(pos, "undo");
+            editor.Undo();
+            editor.Redo();
+            for (var i = 0; i < 4; i++)
+            {
+                pos = random.Next(0, (int)editor.Length - 30);
+                editor.DeleteRange(pos, random.Next(1, 30));
+                editor.InsertText(pos, "x");
+            }
+        }
+        Check(actual.ToArray().AsSpan().SequenceEqual(original), "Streaming, overlapping edits and undo/redo must preserve every original byte.");
+        Check(editor.Length != original.Length, "Concurrent edits reached the live document.");
+    }
+
     private static async Task CheckNativeUtf8ContractsAsync()
     {
         // One chunk boundary is enough to verify the streaming contract;
@@ -732,6 +855,8 @@ internal static class EditorSuite
         using (var input = stream.GetInputStreamAt(0))
             await editor.LoadUtf8Async(input, (ulong)bytes.Length, false);
         Equal(canonical, editor.GetText(editor.Length + 1), "canonical streaming handles a split UTF-8 scalar and embedded NUL");
+        await CheckSaveReaderReadOnlyReentrancyAsync();
+        await CheckSaveReaderAsync();
         Check(editor.EOLMode == WinUIEditor.EndOfLine.Cr, "canonical stream loading owns the native CR editing policy");
         Equal("a", ReadUtf8Buffer(editor.ReadUtf8Range(65534, 4)), "bounded reads trim a partial UTF-8 scalar");
         Equal("😀", ReadUtf8Buffer(editor.ReadUtf8Range(65535, 4)), "bounded reads admit one complete four-byte scalar");
@@ -1949,6 +2074,195 @@ internal static class EditorSuite
             GC.KeepAlive(fixture);
         }
     }
+
+#if DEBUG
+    // These private opcodes are implemented only in native Debug builds. They
+    // exercise the actual control and its document lease counter without a new ABI.
+    private const int FinalizeNativeControl = 0x4E500003;
+    private const int FinalizedNativeDocumentLength = 0x4E500004;
+    private const int ConcurrentNativeReadLeaseRelease = 0x4E500005;
+    private const int NotifyFinalizedNativeFocus = 0x4E500006;
+
+    private static async Task CheckNativeFinalizedLoadAsync()
+    {
+        foreach (var preserveUndo in new[] { false, true })
+        {
+            var view = new WinUIEditor.EditorBaseControl();
+            var native = view.Editor;
+            native.CodePage = 65001;
+            native.SetText("original");
+            using var backend = new FinalizationReadStream(Encoding.UTF8.GetBytes("replacement document"));
+            using var input = backend.AsInputStream();
+            var loading = native.LoadUtf8Async(input, (ulong)backend.Length, preserveUndo).AsTask();
+            var refused = false;
+            try
+            {
+                await backend.Entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+                native.PrivateLexerCall(FinalizeNativeControl, 0);
+                backend.Release.TrySetResult();
+                try { await loading.WaitAsync(TimeSpan.FromSeconds(5)); }
+                catch (Exception error) when (error.HResult == ObjectClosed || error is OperationCanceledException)
+                {
+                    refused = true;
+                }
+                Check(refused, "a blocked native load rejects publication after control finalization");
+                Check(native.PrivateLexerCall(FinalizedNativeDocumentLength, 0) == 8,
+                    "a finalized load preserves the original native document");
+                Check(native.PrivateLexerCall(NotifyFinalizedNativeFocus, 0) == 1,
+                    "late focus and selection callbacks are harmless after native finalization");
+                native.PrivateLexerCall(FinalizeNativeControl, 0);
+
+                var rejectedRead = false;
+                try { native.ReadUtf8Range(0, 4); }
+                catch (Exception error) when (error.HResult == ObjectClosed) { rejectedRead = true; }
+                Check(rejectedRead, "a finalized native control rejects range readers");
+                var rejectedLease = false;
+                try { using var lateReader = native.AcquireUtf8Reader(); }
+                catch (Exception error) when (error.HResult == ObjectClosed) { rejectedLease = true; }
+                Check(rejectedLease, "a finalized native control rejects new document leases");
+                using var lateBackend = new MemoryStream(Encoding.UTF8.GetBytes("late"));
+                using var lateInput = lateBackend.AsInputStream();
+                var rejectedLoad = false;
+                try { await native.LoadUtf8Async(lateInput, 4, preserveUndo); }
+                catch (Exception error) when (error.HResult == ObjectClosed) { rejectedLoad = true; }
+                Check(rejectedLoad, "a finalized native control rejects new loads");
+            }
+            finally
+            {
+                backend.Release.TrySetResult();
+                try { await loading.WaitAsync(TimeSpan.FromSeconds(5)); }
+                catch (Exception error) when (error.HResult == ObjectClosed || error is OperationCanceledException) { }
+                GC.KeepAlive(view);
+            }
+        }
+    }
+
+    private static async Task CheckNativeFinalizedJournalPreparationAsync()
+    {
+        var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
+            "finalized-native-journal-" + Guid.NewGuid().ToString("N"));
+        foreach (var import in new[] { false, true })
+        {
+            var scenario = import ? "import" : "rotate";
+            var sourceFile = await folder.CreateFileAsync(scenario + "-source.npj");
+            var preparedFile = await folder.CreateFileAsync(scenario + "-prepared.npj");
+            var sourceView = new WinUIEditor.EditorBaseControl();
+            var source = sourceView.Editor;
+            source.CodePage = 65001;
+            source.SetText("journal baseline");
+            source.StartJournal(sourceFile.Path, 0);
+            var targetView = import ? new WinUIEditor.EditorBaseControl() : sourceView;
+            var target = targetView.Editor;
+            try
+            {
+                using var checkpoint = source.AcquireJournalCheckpoint();
+                await checkpoint.FlushAsync();
+                if (import)
+                {
+                    target.CodePage = 65001;
+                    target.SetText("journal baseline");
+                }
+                var preparation = import
+                    ? target.StartJournalFromCheckpointAsync(preparedFile.Path, checkpoint)
+                    : target.RotateJournalAsync(preparedFile.Path, checkpoint.CommittedSequence);
+                // Both paths first suspend on resume_background. Staying in this
+                // UI turn finalizes the target before its owner continuation runs.
+                target.PrivateLexerCall(FinalizeNativeControl, 0);
+                var rejected = false;
+                try { await preparation.AsTask().WaitAsync(TimeSpan.FromSeconds(5)); }
+                catch (Exception error) when (error.HResult == ObjectClosed || error is OperationCanceledException)
+                {
+                    rejected = true;
+                }
+                Check(rejected, $"finalized journal {scenario} rejects native publication");
+                using (var exclusive = await OpenPreparedJournalExclusivelyAsync(preparedFile.Path, scenario))
+                {
+                    var magic = new byte[8];
+                    exclusive.ReadExactly(magic);
+                    Check(exclusive.Length == 48 && Encoding.ASCII.GetString(magic) == "NPJRNL02",
+                        $"finalized journal {scenario} prepared a real journal header before releasing its writer");
+                }
+                File.Delete(preparedFile.Path);
+                Check(!File.Exists(preparedFile.Path), $"finalized journal {scenario} releases its prepared file for deletion");
+            }
+            finally
+            {
+                await source.StopJournalAsync();
+                if (import) await target.StopJournalAsync();
+                GC.KeepAlive(sourceView);
+                GC.KeepAlive(targetView);
+            }
+        }
+        await folder.DeleteAsync(StorageDeleteOption.PermanentDelete);
+    }
+
+    private static async Task<FileStream> OpenPreparedJournalExclusivelyAsync(string path, string scenario)
+    {
+        const int sharingViolation = unchecked((int)0x80070020);
+        var elapsed = System.Diagnostics.Stopwatch.StartNew();
+        while (true)
+        {
+            try { return new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None); }
+            catch (IOException error) when (error.HResult == sharingViolation)
+            {
+                if (elapsed.Elapsed >= TimeSpan.FromSeconds(5))
+                    throw new InvalidOperationException(
+                        $"Finalized journal {scenario} left its unadopted native writer holding the prepared file.", error);
+                await Task.Delay(10);
+            }
+        }
+    }
+
+    private static void CheckConcurrentNativeReadLeaseRelease()
+    {
+        var view = new WinUIEditor.EditorBaseControl();
+        var native = view.Editor;
+        native.CodePage = 65001;
+        native.SetText("leased document");
+        foreach (var originallyReadOnly in new[] { false, true })
+        {
+            native.ReadOnly = originallyReadOnly;
+            using (var first = native.AcquireUtf8Reader())
+            {
+                using (var second = native.AcquireUtf8Reader())
+                    Check(native.ReadOnly, "overlapping native readers retain read-only admission");
+                Check(native.ReadOnly, "releasing one native reader keeps the remaining lease");
+            }
+            Check(native.ReadOnly == originallyReadOnly, "the last native reader restores the original read-only setting");
+            Check(native.PrivateLexerCall(ConcurrentNativeReadLeaseRelease, 0) == 16384,
+                "concurrent releases update the actual native control lease counter without losing decrements");
+            Check(native.ReadOnly == originallyReadOnly,
+                "concurrent native cleanup restores the original read-only setting");
+        }
+        native.ReadOnly = false;
+        native.AppendText(1, "!");
+        Check(native.GetText(native.Length + 1) == "leased document!",
+            "concurrent cleanup restores native document mutation admission");
+        GC.KeepAlive(view);
+    }
+
+    private sealed partial class FinalizationReadStream(byte[] bytes) : MemoryStream(bytes, writable: false)
+    {
+        internal TaskCompletionSource Entered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        internal TaskCompletionSource Release { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count,
+            System.Threading.CancellationToken cancellationToken)
+        {
+            Entered.TrySetResult();
+            await Release.Task;
+            return await base.ReadAsync(buffer, offset, count, cancellationToken);
+        }
+
+        public override async System.Threading.Tasks.ValueTask<int> ReadAsync(Memory<byte> buffer,
+            System.Threading.CancellationToken cancellationToken = default)
+        {
+            Entered.TrySetResult();
+            await Release.Task;
+            return await base.ReadAsync(buffer, cancellationToken);
+        }
+    }
+#endif
 
     // NotepadsDialog takes its theme from the app setting, while the application theme follows Windows.
     // The host's App.xaml copies the app's dialog and hyperlink resources; each must follow the dialog's theme.

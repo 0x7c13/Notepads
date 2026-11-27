@@ -9,5 +9,6 @@ public enum FileModificationState
 {
     Untouched,
     Modified,
-    RenamedMovedOrDeleted
+    RenamedMovedOrDeleted,
+    Unverified
 }

@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Nie można otworzyć pliku</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Niestety, plik "{0}" nie może zostać zapisany: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Spróbuj ponownie</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Plik mógł się zmienić. Użyj polecenia „Zapisz jako”, aby wybrać miejsce zapisu zmian.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Trwa już zapisywanie tego pliku. Spróbuj ponownie za chwilę.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>Zapisano plik „{0}”, ale nie udało się zweryfikować jego zawartości. Wersja robocza pozostaje otwarta.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Sprawdź ponownie</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>Nie udało się zweryfikować wersji pliku na dysku.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Nie udało się przygotować kopii zmian do zapisania.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Błąd zapisu pliku</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Zamknij</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Znajdź</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

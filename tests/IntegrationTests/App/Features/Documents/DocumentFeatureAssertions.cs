@@ -26,8 +26,9 @@ internal static class DocumentFeatureAssertions
         await FileIO.WriteBytesAsync(file, bytes);
         Check(await host.Page.OpenFileAsync(file), "Opening a new document must create its actual workspace editor: " + name);
         var editor = (TextEditor)host.Core.GetSelectedReadyEditor();
-        await editor.TestStopFileChecksAsync();
         await UntilAsync(() => editor.TestNativeCore.IsLoaded, "The native document control was not loaded: " + name);
+        await UntilAsync(() => host.Page.IsEnabled, "The opened document must be interactive before editor commands: " + name);
+        await editor.TestStopFileChecksAsync();
         return editor;
     }
 
@@ -44,8 +45,13 @@ internal static class DocumentFeatureAssertions
         using var copy = new System.IO.MemoryStream();
         await stream.CopyToAsync(copy);
         var actual = copy.ToArray();
-        Check(actual.SequenceEqual(expected), message + " (expected " + Convert.ToHexString(expected) +
-            ", actual " + Convert.ToHexString(actual) + ").");
+        if (!actual.AsSpan().SequenceEqual(expected))
+        {
+            var offset = 0;
+            while (offset < Math.Min(actual.Length, expected.Length) && actual[offset] == expected[offset]) offset++;
+            throw new InvalidOperationException($"{message}: first difference at byte {offset}, expected length {expected.Length}, actual {actual.Length}.");
+        }
+        Check(true, message);
     }
 
     internal static void Invoke(Button button)

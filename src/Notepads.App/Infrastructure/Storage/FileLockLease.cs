@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,26 +22,53 @@ internal sealed partial class FileLockLease : IDisposable
 
     private FileLockLease(FileStream handle) => _handle = handle;
 
-    public static Task<FileLockLease> AcquireExclusiveAsync(string path, CancellationToken cancellationToken)
+    public static Task<FileLockLease> AcquireExclusiveAsync(string path, CancellationToken cancellationToken) =>
+        AcquireExclusiveAsync(path, cancellationToken, temporaryLeaseTimeout: null);
+
+    public static Task<FileLockLease> AcquireTemporaryExclusiveAsync(string path, TimeSpan timeout, CancellationToken cancellationToken) =>
+        AcquireExclusiveAsync(path, cancellationToken, timeout);
+
+    private static Task<FileLockLease> AcquireExclusiveAsync(string path, CancellationToken cancellationToken, TimeSpan? temporaryLeaseTimeout)
     {
         return Task.Run(async () =>
         {
+            var started = Stopwatch.GetTimestamp();
+            var observedContention = false;
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var lease = TryAcquire(path);
+                var expired = temporaryLeaseTimeout.HasValue && Stopwatch.GetElapsedTime(started) >= temporaryLeaseTimeout.Value;
+                FileLockLease lease;
+                try { lease = TryAcquire(path, sharedReaders: false, deleteOnClose: temporaryLeaseTimeout.HasValue); }
+                catch (UnauthorizedAccessException) when (temporaryLeaseTimeout.HasValue && !expired)
+                {
+                    // A metadata reader can release the delete-pending name as the open fails.
+                    // Only a fresh open can distinguish that race from persistent access denial.
+                    lease = null;
+                }
                 if (lease != null)
                 {
                     if (!cancellationToken.IsCancellationRequested) return lease;
                     lease.Dispose();
                     cancellationToken.ThrowIfCancellationRequested();
                 }
+                if (expired) throw new TimeoutException();
+                if (!observedContention)
+                {
+                    OnWaitingForLease(path);
+                    observedContention = true;
+                }
                 await Task.Delay(20, cancellationToken).ConfigureAwait(false);
             }
         }, cancellationToken);
     }
 
-    public static FileLockLease TryAcquire(string path, bool sharedReaders = false)
+    static partial void OnWaitingForLease(string path);
+
+    public static FileLockLease TryAcquire(string path, bool sharedReaders = false) =>
+        TryAcquire(path, sharedReaders, deleteOnClose: false);
+
+    private static FileLockLease TryAcquire(string path, bool sharedReaders, bool deleteOnClose)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));
@@ -61,7 +89,8 @@ internal sealed partial class FileLockLease : IDisposable
             return new FileLockLease(new FileStream(path,
                 sharedReaders ? FileMode.Open : FileMode.OpenOrCreate,
                 sharedReaders ? FileAccess.Read : FileAccess.ReadWrite,
-                sharedReaders ? FileShare.Read : FileShare.None));
+                sharedReaders ? FileShare.Read : FileShare.None, bufferSize: 1,
+                deleteOnClose ? FileOptions.DeleteOnClose : FileOptions.None));
         }
         catch (IOException ex) when (Win32Code(ex) is SharingViolation or LockViolation)
         {

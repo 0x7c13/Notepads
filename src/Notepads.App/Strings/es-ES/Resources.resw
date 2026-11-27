@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Error al Abrir Archivo</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Lo sentimos, el archivo "{0}" no pudo ser guardado: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>OK</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Reintentar</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>El archivo puede haber cambiado. Use «Guardar como» para elegir dónde guardar los cambios.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Ya se está guardando este archivo. Vuelve a intentarlo en unos instantes.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>Se ha escrito «{0}», pero no se ha podido verificar su contenido. El borrador sigue abierto.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Volver a comprobar</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>No se pudo verificar la versión del archivo en el disco.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>No se pudo preparar una copia de los cambios para guardarlos.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Error al Guardar Archivo</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Cerrar</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Buscar</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

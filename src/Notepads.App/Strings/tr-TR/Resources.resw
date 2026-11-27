@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Dosya Açma Hatası</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Üzgünüm, "{0}" dosyası kaydedilemedi: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>Tamam</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Yeniden dene</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Dosya değişmiş olabilir. Düzenlemelerinizi nereye kaydedeceğinizi seçmek için Farklı Kaydet’i kullanın.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Bu dosya zaten kaydediliyor. Biraz sonra yeniden deneyin.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>“{0}” dosyasına yazıldı ancak kaydedilen içerik doğrulanamadı. Taslağınız hâlâ açık.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Yeniden doğrula</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>Dosyanın diskteki sürümü doğrulanamadı.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Kaydetmek için düzenlemelerinizin bir kopyası hazırlanamadı.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Dosya Kaydetme Hatası</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Kapat</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Ara</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

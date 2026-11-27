@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.IO;
 using Notepads.Features.Sessions.Storage;
 using Windows.Storage;
 
@@ -22,6 +23,9 @@ internal static class SessionLeaseProcessTests
             throw new ArgumentException("A lease probe requires an isolated scope ID.");
         var directory = Path.Combine(ApplicationData.Current.LocalFolder.Path, "LeaseTests", owner.ToString("N"));
         Directory.CreateDirectory(directory);
+        // Exceed both MAX_PATH and the first final-name query buffer.
+        var longSubpath = string.Join(Path.DirectorySeparatorChar,
+            System.Linq.Enumerable.Repeat("long-document-directory-for-alias-exclusion-tests", 11));
         try
         {
             if (parts[0] == "--lease-holder")
@@ -33,8 +37,17 @@ internal static class SessionLeaseProcessTests
                     writer = await SessionScopeLease.AcquireWriterAsync(owner);
                     reader = SessionScopeLease.AcquireReader(owner);
                 }
+                var state = await StorageFolder.GetFolderFromPathAsync(directory);
+                var documents = await state.CreateFolderAsync("documents", CreationCollisionOption.FailIfExists);
+                var document = await documents.CreateFileAsync("shared.txt");
+                var longDirectory = Directory.CreateDirectory(Path.Combine(documents.Path, longSubpath));
+                var longPath = Path.Combine(longDirectory.FullName, "MixedCase.txt");
+                File.WriteAllText(longPath, "long path");
+                var longDocument = await StorageFile.GetFileFromPathAsync(longPath);
                 using (writer)
                 using (reader)
+                using (await DocumentSaveTarget.AcquireAsync(document, CancellationToken.None))
+                using (await DocumentSaveTarget.AcquireAsync(longDocument, CancellationToken.None))
                 {
                     File.WriteAllText(Path.Combine(directory, "holder-ready"), Environment.ProcessId.ToString());
                     await WaitForAsync(Path.Combine(directory, "request-gate"));
@@ -58,6 +71,24 @@ internal static class SessionLeaseProcessTests
                     using var shared = SessionScopeLease.AcquireReader(owner);
                     Check(shared != null, "reader pins are shared across packaged processes");
                 }
+                var target = await StorageFile.GetFileFromPathAsync(Path.Combine(directory, "documents", "shared.txt"));
+                var alias = await StorageFile.GetFileFromPathAsync(Path.Combine(directory, "alias", "shared.txt"));
+                Check(!string.Equals(target.Path, alias.Path, StringComparison.OrdinalIgnoreCase), "the junction must exercise a distinct spelling");
+                Check(await DocumentSaveTarget.IsSameFileAsync(target, alias, CancellationToken.None),
+                    "the directory-entry comparison must agree with the cross-process lease");
+                var longAlias = await StorageFile.GetFileFromPathAsync(Path.Combine(directory, "alias", longSubpath, "MIXEDCASE.TXT"));
+                foreach (var spelling in new[] { target, alias, longAlias })
+                {
+                    using var canceled = new CancellationTokenSource();
+                    Notepads.Infrastructure.Storage.FileLockLease.TestLeaseWait = _ => canceled.Cancel();
+                    try
+                    {
+                        using var lease = await DocumentSaveTarget.AcquireAsync(spelling, canceled.Token);
+                        throw new InvalidOperationException("A second packaged process acquired the same document through " + spelling.Path);
+                    }
+                    catch (OperationCanceledException) when (canceled.IsCancellationRequested) { }
+                    finally { Notepads.Infrastructure.Storage.FileLockLease.TestLeaseWait = null; }
+                }
                 File.WriteAllText(Path.Combine(directory, "request-gate"), "ready");
                 await WaitForAsync(Path.Combine(directory, "gate-held"));
                 using (var canceled = new CancellationTokenSource(TimeSpan.FromMilliseconds(300)))
@@ -75,8 +106,11 @@ internal static class SessionLeaseProcessTests
                     using var readers = SessionScopeLease.TryAcquireExclusiveReaders(owner);
                     Check(writer != null && readers != null, "abrupt process exit releases writer, reader and publication leases");
                 }
+                using (var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5)))
+                using (await DocumentSaveTarget.AcquireAsync(target, deadline.Token))
+                    Check(true, "abrupt process exit releases the document save lease");
                 File.WriteAllText(Path.Combine(directory, "result.txt"),
-                    "PASS: two packaged processes verified exclusive writers, shared readers, retirement fencing, cancellation and abrupt-exit release.");
+                    "PASS: two packaged processes verified exclusive writers, shared readers, junction-alias exclusion, cancellation, retirement fencing and abrupt-exit release.");
             }
             else
             {

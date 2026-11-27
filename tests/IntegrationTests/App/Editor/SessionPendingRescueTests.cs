@@ -141,7 +141,9 @@ internal static class SessionPendingRescueTests
                     var source = plan.Sources.Single();
                     Check(source.IsOwnScopeRescue && source.Origin.RootAddress.Area.Kind == RecoveryAreaKind.Checkpoints &&
                         source.Origin.SourceEditor.ComputeSha256() == original.ComputeSha256() &&
-                        source.Descriptor.StateMetaData.RequiresSaveAs && source.EditingFileFutureAccessToken == null,
+                        source.Descriptor.StateMetaData.RequiresSaveAs && source.EditingFileFutureAccessToken == null &&
+                        !source.Descriptor.StateMetaData.HasUnconfirmedFileSave && source.Descriptor.StateMetaData.SavedFileSha256 == null &&
+                        source.Descriptor.StateMetaData.SavedFileTargetPath == null,
                         "A checkpoint-carried rescue lost source evidence or acquired original-file authority.");
                     Check((await SavePendingAsync(service, source, iteration + 1)).Succeeded, "Repeated pending publication failed.");
                 }
@@ -384,6 +386,9 @@ internal static class SessionPendingRescueTests
     private static async Task<RecoveryReadResult> CreateRescueAsync(SessionService service, string text)
     {
         await using var document = await SessionTestDocument.CreateAsync(service.CurrentStamp.ScopeId, text);
+        document.Metadata.HasUnconfirmedFileSave = true;
+        document.Metadata.SavedFileSha256 = new string('A', 64);
+        document.Metadata.SavedFileTargetPath = @"C:\prior\note.txt";
         using var state = document.CaptureState();
         await state.Checkpoint.FlushAsync();
         var editor = SessionDocumentStore.CaptureEditor(Guid.NewGuid(), state, null, null);

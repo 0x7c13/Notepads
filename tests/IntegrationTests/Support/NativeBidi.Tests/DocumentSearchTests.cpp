@@ -5,17 +5,20 @@
 
 #include <algorithm>
 #include <array>
+#include <barrier>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <iterator>
+#include <latch>
 #include <map>
 #include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <vector>
 #include "ScintillaTypes.h"
 #include "ILoader.h"
@@ -34,6 +37,52 @@
 #include "Document.h"
 #include "Selection.h"
 #include "TextStoreConversions.h"
+
+size_t CheckConcurrentDocumentRelease() {
+    using namespace Scintilla;
+    using namespace Scintilla::Internal;
+    constexpr size_t workerCount = 8;
+    constexpr size_t rounds = 8192;
+    auto *document = new Document(DocumentOption::Default);
+    bool previousCountsMatch = document->AddRef() == 0;
+    // The owning reference keeps the Document alive until all simulated
+    // disconnected save readers have released their pre-acquired references.
+    for (size_t index = 1; index <= workerCount * rounds; ++index)
+        previousCountsMatch &= document->AddRef() == static_cast<int>(index);
+
+    std::latch start(1);
+    std::barrier concurrentRelease(static_cast<std::ptrdiff_t>(workerCount));
+    bool abort = false;
+    std::array<std::jthread, workerCount> workers;
+    try {
+        for (auto &worker : workers) {
+            worker = std::jthread([&] {
+                start.wait();
+                if (abort) return;
+                for (size_t round = 0; round < rounds; ++round) {
+                    concurrentRelease.arrive_and_wait();
+                    document->Release();
+                }
+            });
+        }
+    } catch (...) {
+        abort = true;
+        start.count_down();
+        for (auto &worker : workers) if (worker.joinable()) worker.join();
+        while (document->Release() > 0) { }
+        throw;
+    }
+    start.count_down();
+    for (auto &worker : workers) worker.join();
+    const int remaining = document->Release();
+    // Clean up any leaked references before reporting a lost decrement.
+    for (int count = remaining; count > 0;) count = document->Release();
+    if (!previousCountsMatch)
+        throw std::runtime_error("Document::AddRef must return the previous reference count.");
+    if (remaining != 0)
+        throw std::runtime_error("Concurrent save-reader releases lost Document references: " + std::to_string(remaining));
+    return 2;
+}
 
 size_t CheckTextStoreOvertypeAdmission() {
     using namespace Scintilla;

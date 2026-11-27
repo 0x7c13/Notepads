@@ -30,7 +30,8 @@ public sealed partial class NotepadsCore
             saved.Retain() : await SessionDocumentStore.ForkBaselineAsync(recoverySource, DocumentOwnerId);
         using var snapshot = new DocumentSnapshot(saved,
             EncodingCatalog.GetEncodingByName(data.StateMetaData.LastSavedEncoding),
-            LineEndingUtility.GetLineEndingByName(data.StateMetaData.LastSavedLineEnding), data.StateMetaData.DateModifiedFileTime);
+            LineEndingUtility.GetLineEndingByName(data.StateMetaData.LastSavedLineEnding), data.StateMetaData.DateModifiedFileTime,
+            data.StateMetaData.SavedFileSha256, data.StateMetaData.SavedFileTargetPath);
         var candidate = CreateTextEditor(Guid.NewGuid(), editingFile, data.StateMetaData.FileNamePlaceholder);
         try
         {
@@ -60,9 +61,10 @@ public sealed partial class NotepadsCore
             current.DocumentJournal, current.Checkpoint, metadata, source.TextDirty,
             current.DocumentByteLength, current.CaptureRevision);
         await recovery.Checkpoint.FlushAsync();
+        var file = editor.EditingFile;
         var descriptor = SessionDocumentStore.CaptureEditor(editor.Id, recovery,
-            editor.EditingFile?.Name, editor.EditingFilePath);
+            file?.Name, file?.Path);
         await TransferRecoveryStore.CreateReceiptAsync(token, rootId, _context.InstanceId,
-            descriptor, recovery, editor.EditingFile, expectedStamp, windowMove: windowMove);
+            descriptor, recovery, file, expectedStamp, windowMove: windowMove);
     }
 }

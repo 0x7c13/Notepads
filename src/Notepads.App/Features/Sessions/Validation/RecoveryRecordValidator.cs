@@ -99,10 +99,12 @@ internal static class RecoveryRecordValidator
             left.IndentationOverride == right.IndentationOverride &&
             string.Equals(left.LastSavedEncoding, right.LastSavedEncoding, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(left.LastSavedLineEnding, right.LastSavedLineEnding, StringComparison.OrdinalIgnoreCase) &&
-            left.DateModifiedFileTime == right.DateModifiedFileTime &&
+            left.DateModifiedFileTime == right.DateModifiedFileTime && left.SavedFileSha256 == right.SavedFileSha256 &&
+            left.SavedFileTargetPath == right.SavedFileTargetPath &&
             string.Equals(left.RequestedEncoding, right.RequestedEncoding, StringComparison.OrdinalIgnoreCase) &&
             string.Equals(left.RequestedLineEnding, right.RequestedLineEnding, StringComparison.OrdinalIgnoreCase) &&
-            left.HasEditingFile == right.HasEditingFile && left.RequiresSaveAs == right.RequiresSaveAs && left.IsModified == right.IsModified;
+            left.HasEditingFile == right.HasEditingFile && left.RequiresSaveAs == right.RequiresSaveAs &&
+            left.HasUnconfirmedFileSave == right.HasUnconfirmedFileSave && left.IsModified == right.IsModified;
     }
 
     private static bool SameIdentity(DocumentBaselineData left, DocumentBaselineData right) =>

@@ -174,12 +174,7 @@ internal sealed partial class SessionService
     {
         var editor = SessionRecoveryCatalog.CloneEditor(source);
         editor.Id = Guid.NewGuid();
-        editor.EditingFileFutureAccessToken = null;
-        editor.EditingFilePath = null;
-        editor.StateMetaData.HasEditingFile = false;
-        editor.StateMetaData.RequiresSaveAs = true;
-        editor.StateMetaData.IsModified = true;
-        editor.TextDirty = true;
+        SessionRecoveryCatalog.DetachForRescue(editor);
         return editor;
     }
 

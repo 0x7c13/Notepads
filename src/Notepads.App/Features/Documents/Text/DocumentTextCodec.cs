@@ -6,6 +6,7 @@
 using System;
 using System.Buffers;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,18 +28,20 @@ internal sealed class DocumentTextProgress
 
 internal sealed class DocumentDecodeResult
 {
-    public DocumentDecodeResult(Encoding encoding, LineEnding lineEnding, long inputBytes, long canonicalBytes)
+    public DocumentDecodeResult(Encoding encoding, LineEnding lineEnding, long inputBytes, long canonicalBytes, string sourceSha256)
     {
         Encoding = (Encoding)encoding.Clone();
         LineEnding = lineEnding;
         InputBytes = inputBytes;
         CanonicalBytes = canonicalBytes;
+        SourceSha256 = sourceSha256;
     }
 
     public Encoding Encoding { get; }
     public LineEnding LineEnding { get; }
     public long InputBytes { get; }
     public long CanonicalBytes { get; }
+    public string SourceSha256 { get; }
 }
 
 /// <summary>
@@ -77,13 +80,16 @@ internal static class DocumentTextCodec
         var canonicalCharacters = canonicalBuffer.Memory[..characterCapacity];
         var writer = new EncodedWriter(canonicalOutput, CanonicalEncoding, encodedBuffer.Memory, maximumCanonicalBytes);
         var endings = new InputLineEndings();
+        using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         long inputBytes = 0;
 
         while (preambleLength > 0)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var count = await input.ReadAsync(bytes[..Math.Min(preambleLength, bytes.Length)], cancellationToken).ConfigureAwait(false);
+            var count = await input.ReadAsync(bytes[..Math.Min(preambleLength, bytes.Length)], CancellationToken.None).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             if (count == 0) throw new EndOfStreamException("The file changed before its encoding preamble could be read.");
+            hash.AppendData(bytes.Span[..count]);
             inputBytes += count;
             preambleLength -= count;
         }
@@ -91,7 +97,11 @@ internal static class DocumentTextCodec
         while (true)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var count = await input.ReadAsync(bytes, cancellationToken).ConfigureAwait(false);
+            // WinRT stream adapters may cancel their Task before native I/O releases
+            // the pooled memory. Drain each bounded chunk before honoring cancellation.
+            var count = await input.ReadAsync(bytes, CancellationToken.None).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            hash.AppendData(bytes.Span[..count]);
             inputBytes = checked(inputBytes + count);
             var final = count == 0;
             var offset = 0;
@@ -115,22 +125,13 @@ internal static class DocumentTextCodec
 
         endings.Complete();
         cancellationToken.ThrowIfCancellationRequested();
-        return new DocumentDecodeResult(sourceEncoding, endings.DetectedEnding, inputBytes, writer.BytesWritten);
+        return new DocumentDecodeResult(sourceEncoding, endings.DetectedEnding, inputBytes, writer.BytesWritten, Convert.ToHexString(hash.GetHashAndReset()));
     }
 
-    public static async Task<long> CopyFromNativeAsync(
-        Stream canonicalUtf8Reader,
-        Stream preparedCanonicalBaseline,
-        Stream encodedDestination,
-        Encoding requestedEncoding,
-        LineEnding requestedLineEnding,
-        IProgress<DocumentTextProgress> progress = null,
-        CancellationToken cancellationToken = default)
+    internal static async Task<long> EncodeAsync(Stream canonicalUtf8Reader, Stream encodedDestination,
+        Encoding requestedEncoding, LineEnding requestedLineEnding, CancellationToken cancellationToken)
     {
-        ValidateStreams(canonicalUtf8Reader, preparedCanonicalBaseline);
         ValidateStreams(canonicalUtf8Reader, encodedDestination);
-        if (ReferenceEquals(preparedCanonicalBaseline, encodedDestination))
-            throw new ArgumentException("Canonical and encoded outputs must be separate streams.");
         ArgumentNullException.ThrowIfNull(requestedEncoding);
         var ending = GetLineEnding(requestedLineEnding);
         requestedEncoding = (Encoding)requestedEncoding.Clone();
@@ -149,17 +150,16 @@ internal static class DocumentTextCodec
         var preamble = requestedEncoding.GetPreamble();
         cancellationToken.ThrowIfCancellationRequested();
         if (preamble.Length > 0)
-            await encodedDestination.WriteAsync(preamble, cancellationToken).ConfigureAwait(false);
+            await encodedDestination.WriteAsync(preamble, CancellationToken.None).ConfigureAwait(false);
 
         while (true)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var count = await canonicalUtf8Reader.ReadAsync(bytes, cancellationToken).ConfigureAwait(false);
+            var count = await canonicalUtf8Reader.ReadAsync(bytes, CancellationToken.None).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
             if (count > DocumentLimits.MaximumCanonicalByteLength - canonicalBytes)
                 throw new NotSupportedException("The document exceeds the supported canonical UTF-8 size.");
             canonicalBytes += count;
-            if (count > 0)
-                await preparedCanonicalBaseline.WriteAsync(bytes[..count], cancellationToken).ConfigureAwait(false);
             var final = count == 0;
             var offset = 0;
             bool complete;
@@ -176,7 +176,6 @@ internal static class DocumentTextCodec
             }
             while (!complete);
 
-            progress?.Report(new DocumentTextProgress(canonicalBytes, checked(writer.BytesWritten + preamble.Length)));
             if (final) break;
         }
         cancellationToken.ThrowIfCancellationRequested();
@@ -300,7 +299,8 @@ internal static class DocumentTextCodec
                     throw new NotSupportedException("The document exceeds the supported encoded size.");
                 if (bytesUsed > 0)
                 {
-                    await _output.WriteAsync(_bytes[..bytesUsed], cancellationToken).ConfigureAwait(false);
+                    await _output.WriteAsync(_bytes[..bytesUsed], CancellationToken.None).ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
                     BytesWritten += bytesUsed;
                 }
                 if (!complete && bytesUsed == 0 && charactersUsed == 0)

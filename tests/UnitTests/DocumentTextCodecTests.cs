@@ -44,6 +44,7 @@ public sealed class DocumentTextCodecTests
             cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal(Canonicalize(decoded), new UTF8Encoding(false, true).GetString(output.ToArray()));
         Assert.Equal(encoded.Length, result.InputBytes);
+        Assert.Equal(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(encoded)), result.SourceSha256);
         Assert.Equal(output.Length, result.CanonicalBytes);
         input.AssertReadBoundaries();
         Assert.True(input.CanRead && output.CanWrite, "The codec must not dispose caller-owned streams.");
@@ -59,22 +60,20 @@ public sealed class DocumentTextCodecTests
 
     [Theory]
     [MemberData(nameof(SaveCases))]
-    public async Task SavePreservesCanonicalBaselineAndUsesRequestedEncodingAndEol(string name, LineEnding ending, int readSize)
+    public async Task EncodeUsesRequestedEncodingAndEol(string name, LineEnding ending, int readSize)
     {
         const string text = "\ufeffcontent\0中文 العربية 日本語 😀\rnext\r";
         var encoding = EncodingFor(name);
         var canonical = new UTF8Encoding(false, true).GetBytes(text);
         using var input = new ShortReadStream(canonical, readSize);
-        using var baseline = new MemoryStream();
         using var destination = new MemoryStream();
-        var copied = await DocumentTextCodec.CopyFromNativeAsync(input, baseline, destination, encoding, ending,
+        var copied = await DocumentTextCodec.EncodeAsync(input, destination, encoding, ending,
             cancellationToken: TestContext.Current.CancellationToken);
-        Assert.Equal(canonical, baseline.ToArray());
         var eol = ending == LineEnding.Cr ? "\r" : ending == LineEnding.Lf ? "\n" : "\r\n";
         Assert.Equal(encoding.GetPreamble().Concat(encoding.GetBytes(text.Replace("\r", eol))).ToArray(), destination.ToArray());
         Assert.Equal(canonical.Length, copied);
         input.AssertReadBoundaries();
-        Assert.True(input.CanRead && baseline.CanWrite && destination.CanWrite, "Save must retain caller-owned streams.");
+        Assert.True(input.CanRead && destination.CanWrite, "Save must retain caller-owned streams.");
     }
 
     public static TheoryData<string, string, int, LineEnding> FixedByteOracles => new()
@@ -112,12 +111,10 @@ public sealed class DocumentTextCodecTests
     {
         byte[] canonical = [0x41, 0x0D, 0xC3, 0xA9, 0x00];
         using var input = new ShortReadStream(canonical, 1);
-        using var baseline = new MemoryStream();
         using var output = new MemoryStream();
-        await DocumentTextCodec.CopyFromNativeAsync(input, baseline, output, EncodingFor(name), ending,
+        await DocumentTextCodec.EncodeAsync(input, output, EncodingFor(name), ending,
             cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal(Convert.FromHexString(hex), output.ToArray());
-        Assert.Equal(canonical, baseline.ToArray());
         Assert.Equal(bomLength, EncodingFor(name).GetPreamble().Length);
     }
 
@@ -184,12 +181,10 @@ public sealed class DocumentTextCodecTests
             Assert.Equal(expected, canonical.ToArray());
 
             canonical.Position = 0;
-            using var baseline = new DelayedWriteStream();
             using var encoded = new DelayedWriteStream();
             var destinationEncoding = new UnicodeEncoding(false, true, true);
-            await DocumentTextCodec.CopyFromNativeAsync(canonical, baseline, encoded, destinationEncoding, LineEnding.Crlf,
+            await DocumentTextCodec.EncodeAsync(canonical, encoded, destinationEncoding, LineEnding.Crlf,
                 cancellationToken: TestContext.Current.CancellationToken);
-            Assert.Equal(expected, baseline.ToArray());
             Assert.Equal(destinationEncoding.GetPreamble().Concat(destinationEncoding.GetBytes(text)).ToArray(), encoded.ToArray());
         }));
     }
@@ -242,10 +237,9 @@ public sealed class DocumentTextCodecTests
                 throw new Exception("The wide-encoding admission fixture did not exercise distinct byte counts.");
         }
         using (var input = new ShortReadStream(canonical, 1))
-        using (var baseline = new MemoryStream())
         using (var output = new MemoryStream())
         {
-            await DocumentTextCodec.CopyFromNativeAsync(input, baseline, output, encoding, LineEnding.Cr,
+            await DocumentTextCodec.EncodeAsync(input, output, encoding, LineEnding.Cr,
                 cancellationToken: TestContext.Current.CancellationToken);
             EqualBytes(encoded, output.ToArray(), "wide-encoding saved output admission");
         }
@@ -308,13 +302,11 @@ public sealed class DocumentTextCodecTests
     {
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         using var source = new ShortReadStream([0x41], 1);
-        using var canonical = new MemoryStream();
         using var encoded = new MemoryStream();
         cancellation.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            DocumentTextCodec.CopyFromNativeAsync(source, canonical, encoded, new UTF8Encoding(true), LineEnding.Crlf,
+            DocumentTextCodec.EncodeAsync(source, encoded, new UTF8Encoding(true), LineEnding.Crlf,
                 cancellationToken: cancellation.Token));
-        Assert.Equal(0, canonical.Length);
         Assert.Equal(0, encoded.Length);
     }
 
@@ -324,10 +316,9 @@ public sealed class DocumentTextCodecTests
     public async Task InvalidNativeCanonicalInputIsRejected(string hex, Type expectedException)
     {
         using var source = new ShortReadStream(Convert.FromHexString(hex), 1);
-        using var canonical = new MemoryStream();
         using var encoded = new MemoryStream();
         await Assert.ThrowsAsync(expectedException, () =>
-            DocumentTextCodec.CopyFromNativeAsync(source, canonical, encoded, new UTF8Encoding(false), LineEnding.Crlf,
+            DocumentTextCodec.EncodeAsync(source, encoded, new UTF8Encoding(false), LineEnding.Crlf,
                 cancellationToken: TestContext.Current.CancellationToken));
     }
 

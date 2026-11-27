@@ -20,6 +20,7 @@ public enum WorkspaceTabState { Pending, Loading, Ready, Failed, Closed }
 public sealed class WorkspaceTab
 {
     private readonly CancellationTokenSource _lifetime = new();
+    private CancellationTokenSource _saveRequests = new();
     private readonly TaskCompletionSource<ITextEditor> _loadCompletion = new(
         TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -46,6 +47,20 @@ public sealed class WorkspaceTab
     public ITextEditor ReadyEditor => State == WorkspaceTabState.Ready ? AttachedEditor : null;
     public Task<ITextEditor> LoadCompletion => _loadCompletion.Task;
     public CancellationToken LifetimeToken { get; }
+    internal CancellationToken SaveToken => State == WorkspaceTabState.Closed ? new CancellationToken(true) : _saveRequests.Token;
+
+    // Invalidate outstanding pickers, observations and queued writes as soon as close is confirmed.
+    internal void SuspendSaves()
+    {
+        if (State != WorkspaceTabState.Closed) _saveRequests.Cancel();
+    }
+
+    internal void ResumeSaves()
+    {
+        if (State == WorkspaceTabState.Closed || !_saveRequests.IsCancellationRequested) return;
+        _saveRequests.Dispose();
+        _saveRequests = new CancellationTokenSource();
+    }
     public Exception LoadError { get; private set; }
     public string Title
     {
@@ -111,6 +126,8 @@ public sealed class WorkspaceTab
     {
         if (State == WorkspaceTabState.Closed) return;
         State = WorkspaceTabState.Closed;
+        _saveRequests.Cancel();
+        _saveRequests.Dispose();
         RepresentationVersion++;
         _lifetime.Cancel();
         _lifetime.Dispose();

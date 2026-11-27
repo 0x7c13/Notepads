@@ -130,6 +130,13 @@
   <data name="FileOpenErrorDialog_Title" xml:space="preserve"><value>Ошибка открытия файла</value><comment>FileOpenErrorDialog: "Title" display text.</comment></data>
   <data name="FileSaveErrorDialog_Content" xml:space="preserve"><value>Извините, файл "{0}" не может быть сохранен: {1}</value><comment>FileSaveErrorDialog: "Content" display text, {0} stands for file path, {1} stands for error message. You can change the order but DO NOT REMOVE them from the string.</comment></data>
   <data name="FileSaveErrorDialog_PrimaryButtonText" xml:space="preserve"><value>ОК</value><comment>FileSaveErrorDialog: PrimaryButtonText.</comment></data>
+  <data name="FileSaveErrorDialog_Retry" xml:space="preserve"><value>Повторить</value></data>
+  <data name="FileSaveErrorDialog_VersionConflict" xml:space="preserve"><value>Возможно, файл изменился. Выберите «Сохранить как», чтобы указать, куда сохранить изменения.</value></data>
+  <data name="FileSaveErrorDialog_SaveBusy" xml:space="preserve"><value>Этот файл уже сохраняется. Повторите попытку чуть позже.</value></data>
+  <data name="FileSaveErrorDialog_CommittedUnverified" xml:space="preserve"><value>Файл «{0}» записан, но проверить его содержимое не удалось. Черновик остаётся открытым.</value></data>
+  <data name="FileSaveErrorDialog_CheckAgain" xml:space="preserve"><value>Проверить ещё раз</value></data>
+  <data name="FileSaveErrorDialog_Unverified" xml:space="preserve"><value>Не удалось проверить версию файла на диске.</value></data>
+  <data name="FileSaveErrorDialog_SnapshotFailed" xml:space="preserve"><value>Не удалось подготовить копию изменений для сохранения.</value></data>
   <data name="FileSaveErrorDialog_Title" xml:space="preserve"><value>Ошибка сохранения файла</value><comment>FileSaveErrorDialog: "Title" display text.</comment></data>
   <data name="FindAndReplace_DismissButton.ToolTipService.ToolTip" xml:space="preserve"><value>Закрыть</value><comment>FindAndReplace: "Dismiss" button tool tip display text.</comment></data>
   <data name="FindAndReplace_FindBar.PlaceholderText" xml:space="preserve"><value>Найти</value><comment>FindAndReplace: Find bar placeholder text.</comment></data>

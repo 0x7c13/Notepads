@@ -7,8 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Notepads.Features.Documents.Contracts;
 using Notepads.Features.Documents.FileTypes;
+using Notepads.Features.Documents.IO;
 using Notepads.Infrastructure.Diagnostics;
 using Notepads.Infrastructure.Shell;
 using Notepads.Infrastructure.Storage;
@@ -19,6 +22,7 @@ using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Workspace;
 using Windows.Graphics.Printing;
 using Windows.Storage;
+using Windows.UI.Xaml.Controls;
 
 namespace Notepads.Presentation.Views.MainPage;
 
@@ -190,20 +194,22 @@ public sealed partial class NotepadsMainPage
         return file;
     }
 
-    private async Task SaveInternalAsync(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems)
+    private async Task SaveInternalAsync(ITextEditor textEditor, StorageFile file, bool rebuildOpenRecentItems, DocumentFileVersion? pickedFileVersion, CancellationToken cancellation, Guid? verificationId)
     {
-        await NotepadsCore.SaveContentToFileAndUpdateEditorStateAsync(textEditor, file);
-        var success = MRUService.TryAdd(file); // Remember recently used files
+        var committedFile = await NotepadsCore.SaveContentToFileAndUpdateEditorStateAsync(textEditor, file, pickedFileVersion, cancellation, verificationId);
+        var success = MRUService.TryAdd(committedFile);
         if (success && rebuildOpenRecentItems)
         {
             await BuildOpenRecentButtonSubItemsAsync();
         }
     }
 
+    partial void OnPickedVersionCaptured(StorageFile file);
+
     private async Task<bool> SaveAsync(ITextEditor textEditor, bool saveAs, bool ignoreUnmodifiedDocument = false,
-        bool rebuildOpenRecentItems = true, bool allowWhileClosing = false)
+        bool rebuildOpenRecentItems = true, bool allowWhileClosing = false, bool allowWhileTabClosing = false)
     {
-        if (!CanSaveEditor(textEditor, allowWhileClosing)) return false;
+        if (!CanSaveEditor(textEditor, allowWhileClosing, allowWhileTabClosing)) return false;
 
         if (ignoreUnmodifiedDocument && !textEditor.IsModified)
         {
@@ -211,46 +217,94 @@ public sealed partial class NotepadsMainPage
         }
 
         StorageFile file = null;
+        var cancellation = NotepadsCore.GetTab(textEditor).SaveToken;
 
         try
         {
-            if (textEditor.EditingFile == null || saveAs)
+            var binding = textEditor.EditingFile;
+            file = binding;
+            var pickTarget = saveAs || file == null;
+            DocumentFileVersion? pickedFileVersion = null;
+            bool readPickedVersion = false;
+            Guid? verificationId = null;
+            async Task<bool> CanContinueAsync()
             {
-                file = await OpenFileUsingFileSavePickerAsync(textEditor);
-                if (file == null || !CanSaveEditor(textEditor, allowWhileClosing)) return false;
-            }
-            else
-            {
-                file = textEditor.EditingFile;
-            }
-
-            bool promptSaveAs = false;
-            try
-            {
-                await SaveInternalAsync(textEditor, file, rebuildOpenRecentItems);
-            }
-            catch (UnauthorizedAccessException) // Happens when the file we are saving is read-only
-            {
-                promptSaveAs = true;
-            }
-            catch (FileNotFoundException) // Happens when the file not found or storage media is removed
-            {
-                promptSaveAs = true;
+                while (!cancellation.IsCancellationRequested && CanSaveEditor(textEditor, allowWhileClosing, allowWhileTabClosing))
+                {
+                    var current = textEditor.EditingFile;
+                    var same = await DocumentSaveTarget.IsSameFileAsync(binding, current, cancellation);
+                    if (!ReferenceEquals(current, textEditor.EditingFile)) continue;
+                    if (cancellation.IsCancellationRequested || !CanSaveEditor(textEditor, allowWhileClosing, allowWhileTabClosing)) return false;
+                    if (same) return true;
+                    break;
+                }
+                if (cancellation.IsCancellationRequested || !CanSaveEditor(textEditor, allowWhileClosing, allowWhileTabClosing)) return false;
+                NotificationCenter.Instance.PostNotification(_resourceLoader.GetString("FileSaveErrorDialog_VersionConflict"), 3500);
+                return false;
             }
 
-            if (promptSaveAs)
+            while (await CanContinueAsync())
             {
-                if (!CanSaveEditor(textEditor, allowWhileClosing)) return false;
-                file = await OpenFileUsingFileSavePickerAsync(textEditor);
-                if (file == null || !CanSaveEditor(textEditor, allowWhileClosing)) return false;
-
-                await SaveInternalAsync(textEditor, file, rebuildOpenRecentItems);
-                return true;
+                if (pickTarget)
+                {
+                    file = await OpenFileUsingFileSavePickerAsync(textEditor);
+                    if (file == null || !await CanContinueAsync()) return false;
+                    // The picker authorizes this destination, including an explicit replace.
+                    // Keep that version through queuing and retries.
+                    verificationId = null;
+                    readPickedVersion = true;
+                    pickTarget = false;
+                }
+                try
+                {
+                    if (readPickedVersion)
+                    {
+                        try { pickedFileVersion = await textEditor.ReadPickedFileVersionAsync(file, cancellation); }
+                        catch (OperationCanceledException) when (cancellation.IsCancellationRequested ||
+                            !CanSaveEditor(textEditor, allowWhileClosing, allowWhileTabClosing)) { return false; }
+                        OnPickedVersionCaptured(file);
+                        readPickedVersion = false;
+                        if (!await CanContinueAsync()) return false;
+                    }
+                    await SaveInternalAsync(textEditor, file, rebuildOpenRecentItems, pickedFileVersion, cancellation, verificationId);
+                    return true;
+                }
+                catch (DocumentSaveException failure)
+                {
+                    LoggingService.LogError($"[Save] {failure.Stage} (0x{failure.HResult:X8}): {failure}");
+                    if (failure.RenamedBinding is { } renamed && ReferenceEquals(renamed, textEditor.EditingFile))
+                    {
+                        // A provider may rename the picker grant while the original alias still names a different entry.
+                        binding = renamed;
+                        file = renamed;
+                    }
+                    if (!await CanContinueAsync()) return false;
+                    var committed = failure.Stage == DocumentSaveStage.ConfirmCommit ||
+                        verificationId.HasValue && failure.Stage is DocumentSaveStage.Coordinate or DocumentSaveStage.VerifyVersion;
+                    if (committed && failure.CommittedWrite != null) file = failure.CommittedWrite.File;
+                    var message = committed ? _resourceLoader.GetString("FileSaveErrorDialog_CommittedUnverified") : failure.Stage switch
+                    {
+                        DocumentSaveStage.Unverified => _resourceLoader.GetString("FileSaveErrorDialog_Unverified"),
+                        DocumentSaveStage.VerifyVersion when failure.InnerException == null => _resourceLoader.GetString("FileSaveErrorDialog_Unverified"),
+                        DocumentSaveStage.Coordinate when failure.InnerException is TimeoutException =>
+                            _resourceLoader.GetString("FileSaveErrorDialog_SaveBusy"),
+                        DocumentSaveStage.Conflict or DocumentSaveStage.Superseded => _resourceLoader.GetString("FileSaveErrorDialog_VersionConflict"),
+                        DocumentSaveStage.PrepareSnapshot => _resourceLoader.GetString("FileSaveErrorDialog_SnapshotFailed"),
+                        _ => failure.Message
+                    };
+                    var dialog = new FileSaveErrorDialog(file, message, offerActions: true,
+                        allowRetry: failure.Stage == DocumentSaveStage.ConfirmCommit ? failure.VerificationId.HasValue :
+                            !readPickedVersion && failure.Stage is not (DocumentSaveStage.Conflict or DocumentSaveStage.Superseded or DocumentSaveStage.Unverified),
+                        committed: committed);
+                    var action = await OpenSaveErrorDialogAsync(dialog, cancellation);
+                    if (dialog.IsAborted || action == null || action == ContentDialogResult.None) return false;
+                    pickTarget = action == ContentDialogResult.Secondary;
+                    if (failure.Stage == DocumentSaveStage.ConfirmCommit) verificationId = failure.VerificationId;
+                }
             }
-
-            return true;
+            return false;
         }
-        catch (OperationCanceledException) when (NotepadsCore.GetTab(textEditor) == null)
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested || NotepadsCore.GetTab(textEditor) == null)
         {
             return false;
         }
@@ -260,10 +314,10 @@ public sealed partial class NotepadsMainPage
         }
         catch (Exception ex)
         {
-            if (_viewClosed) return false;
-            var fileSaveErrorDialog = new FileSaveErrorDialog((file == null) ? string.Empty : file.Path, ex.Message);
-            await DialogManager.OpenDialogAsync(fileSaveErrorDialog, awaitPreviousDialog: false);
-            if (!fileSaveErrorDialog.IsAborted)
+            if (cancellation.IsCancellationRequested || !CanSaveEditor(textEditor, allowWhileClosing, allowWhileTabClosing)) return false;
+            var fileSaveErrorDialog = new FileSaveErrorDialog(file, ex.Message);
+            var action = await OpenSaveErrorDialogAsync(fileSaveErrorDialog, cancellation);
+            if (action != null && !fileSaveErrorDialog.IsAborted && CanSaveEditor(textEditor, allowWhileClosing, allowWhileTabClosing))
             {
                 NotepadsCore.FocusOnSelectedTextEditor();
             }
@@ -271,19 +325,33 @@ public sealed partial class NotepadsMainPage
         }
     }
 
-    private bool CanSaveEditor(ITextEditor textEditor, bool allowWhileClosing) =>
+    private static async Task<ContentDialogResult?> OpenSaveErrorDialogAsync(FileSaveErrorDialog dialog, CancellationToken cancellation)
+    {
+        if (cancellation.IsCancellationRequested) return null;
+        try { return await DialogManager.OpenDialogAsync(dialog, awaitPreviousDialog: false).WaitAsync(cancellation); }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { return null; }
+        finally
+        {
+            if (cancellation.IsCancellationRequested && ReferenceEquals(DialogManager.ActiveDialog, dialog)) dialog.Hide();
+        }
+    }
+
+    private bool CanSaveEditor(ITextEditor textEditor, bool allowWhileClosing, bool allowWhileTabClosing) =>
         !_viewClosed && textEditor != null && (!_isAppClosing || allowWhileClosing) &&
-        NotepadsCore.GetTab(textEditor) != null;
+        (_closeDecisionCount == 0 || allowWhileClosing || allowWhileTabClosing) &&
+        (allowWhileTabClosing || !_closingTextEditors.Contains(textEditor.Id)) && NotepadsCore.GetTab(textEditor) != null;
 
     private async Task<bool> SaveAllAsync(WorkspaceTab[] tabs)
     {
         var success = false;
         var complete = true;
+        bool CanContinueBatch() => !_viewClosed && !_isAppClosing && _closeDecisionCount == 0;
 
         foreach (var tab in tabs)
         {
-            if (_viewClosed || _isAppClosing) return false;
+            if (!CanContinueBatch()) { complete = false; break; }
             var textEditor = await SessionController.EnsureLoadedAsync(tab);
+            if (!CanContinueBatch()) { complete = false; break; }
             if (!NotepadsCore.ContainsTab(tab)) continue;
             if (textEditor == null)
             {
@@ -295,7 +363,7 @@ public sealed partial class NotepadsMainPage
             else complete = false;
         }
 
-        if (success)
+        if (success && !_viewClosed && !_isAppClosing)
         {
             await BuildOpenRecentButtonSubItemsAsync();
         }

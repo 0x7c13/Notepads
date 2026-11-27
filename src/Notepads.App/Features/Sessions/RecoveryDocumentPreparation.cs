@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents;
 using Notepads.Features.Documents.Contracts;
+using Notepads.Features.Documents.IO;
 using Notepads.Features.Documents.Text;
 using Notepads.Features.Sessions.Contracts;
 using Notepads.Features.Sessions.Legacy;
@@ -50,13 +51,32 @@ internal static class RecoveryDocumentPreparation
     private static async Task<PreparedRecoveryDocument> PrepareCurrentDocumentAsync(TextEditorSessionDataV2 data,
         StorageFile editingFile, Guid targetOwnerId, DocumentLoadOptions defaults, CancellationToken cancellation)
     {
+        var recordedTarget = data.StateMetaData.SavedFileTargetPath;
+        if (editingFile != null && recordedTarget != null)
+        {
+            try
+            {
+                var observed = await DocumentSaveTarget.ResolveAsync(editingFile, cancellation);
+                if (!await DocumentSaveTarget.SameLocationAsync(recordedTarget, observed.FinalPath)) editingFile = null;
+            }
+            catch (DocumentSaveException)
+            {
+                // The recovery assets remain usable when the provider cannot confirm its grant.
+                editingFile = null;
+            }
+        }
         if (editingFile != null && !data.StateMetaData.IsModified && !data.TextDirty)
         {
             try
             {
                 var fromFile = await PreparedRecoveryDocument.FromFileAsync(data.Id, data.StateMetaData, editingFile, targetOwnerId, defaults, cancellation);
-                fromFile.FileAccessBinding = new RecoveryFileAccessBinding(editingFile, data.EditingFileFutureAccessToken);
-                return fromFile;
+                if (recordedTarget == null || await DocumentSaveTarget.SameLocationAsync(recordedTarget, fromFile.SavedSnapshot.FileVersion.TargetPath))
+                {
+                    fromFile.FileAccessBinding = new RecoveryFileAccessBinding(editingFile, data.EditingFileFutureAccessToken);
+                    return fromFile;
+                }
+                fromFile.Dispose();
+                editingFile = null;
             }
             catch (OperationCanceledException) { throw; }
             catch (Exception ex)
@@ -76,7 +96,7 @@ internal static class RecoveryDocumentPreparation
                 prepared.SavedSnapshot = new DocumentSnapshot(saved,
                     EncodingCatalog.GetEncodingByName(data.StateMetaData.LastSavedEncoding),
                     LineEndingUtility.GetLineEndingByName(data.StateMetaData.LastSavedLineEnding),
-                    data.StateMetaData.DateModifiedFileTime);
+                    data.StateMetaData.DateModifiedFileTime, data.StateMetaData.SavedFileSha256, data.StateMetaData.SavedFileTargetPath);
                 prepared.RecoveryBaseline = data.SavedBaseline.Matches(data.RecoveryBaseline) ? saved.Retain() :
                     data.RecoveryBaseline.OwnerId != targetOwnerId ?
                         await SessionDocumentStore.ForkBaselineAsync(recoverySource, targetOwnerId, cancellation) : recoverySource.Retain();
