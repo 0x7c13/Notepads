@@ -256,13 +256,10 @@ internal static class LifecycleProbe
             FontSize = core?.FontSize ?? 0,
             MoveVerified = WindowMoveLifecycle.Verified, MoveMilliseconds = WindowMoveLifecycle.MoveMilliseconds
         };
-        var path = Path.Combine(Root, Stem + ".json");
         var json = JsonSerializer.Serialize(result, LifecycleJsonContext.Default.LifecycleObservation);
-        var receipt = Path.Combine(Root, $"{Stem}-{status}-{++_observation:D4}.json");
+        var receipt = Path.Combine(Root, $"{Stem}-{status}-{result.StartTicks:D19}-{++_observation:D4}.json");
         File.WriteAllText(receipt + ".tmp", json);
         File.Move(receipt + ".tmp", receipt);
-        File.WriteAllText(path + ".tmp", json);
-        File.Move(path + ".tmp", path, true);
     }
 
     private static void Fail(Exception error) => Publish("failed", error.ToString());

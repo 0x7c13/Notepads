@@ -22,23 +22,21 @@ $primaryFailure = $null
 
 function Wait-Observation($Identity, [string] $Status, [int] $Activations = 1) {
     $watch = [Diagnostics.Stopwatch]::StartNew()
-    $path = Join-Path $session.RunRoot "lifecycle-$($Identity.Id).json"
+    $receiptPattern = "lifecycle-$($Identity.Id)-$Status-*.json"
     do {
         foreach ($failed in Get-ChildItem -LiteralPath $session.RunRoot -Filter "lifecycle-$($Identity.Id)-failed-*.json") {
             $failure = Get-Content -LiteralPath $failed.FullName -Raw | ConvertFrom-Json
             if ($failure.StartTicks -eq $Identity.StartTicks) { throw $failure.Error }
         }
-        if (Test-Path -LiteralPath $path) {
-            foreach ($receipt in Get-ChildItem -LiteralPath $session.RunRoot -Filter "lifecycle-$($Identity.Id)-$Status-*.json" | Sort-Object Name -Descending) {
-                $state = Get-Content -LiteralPath $receipt.FullName -Raw | ConvertFrom-Json
-                if ($state.StartTicks -eq $Identity.StartTicks -and $state.Activations -ge $Activations -and
-                    ($Status -in @('prelaunch', 'ready', 'seeded') -or $state.CommandId -eq $Identity.LastCommandId)) { return $state }
-            }
+        foreach ($receipt in Get-ChildItem -LiteralPath $session.RunRoot -Filter $receiptPattern | Sort-Object Name -Descending) {
+            $state = Get-Content -LiteralPath $receipt.FullName -Raw | ConvertFrom-Json
+            if ($state.StartTicks -eq $Identity.StartTicks -and $state.Activations -ge $Activations -and
+                ($Status -in @('prelaunch', 'ready', 'seeded') -or $state.CommandId -eq $Identity.LastCommandId)) { return $state }
         }
         if (!(Get-IsolatedTestProcess $Identity)) { throw 'The lifecycle process exited before the expected observation.' }
         Start-Sleep -Milliseconds 25
     } while ($watch.Elapsed.TotalSeconds -lt $TimeoutSeconds)
-    throw "Timed out waiting for lifecycle status '$Status': $path"
+    throw "Timed out waiting for lifecycle status '$Status': $(Join-Path $session.RunRoot $receiptPattern)"
 }
 
 function Send-Command($Identity, [string] $Command) {
