@@ -45,8 +45,28 @@ internal static partial class DocumentSaveTarget
                 throw new DocumentSaveException(DocumentSaveStage.Conflict);
             var dosPath = GetFinalPath(handle, 0);
             OnCheckingNormalizedDosPath(path, ref dosPath);
-            bool ordinarySpelling = string.Equals(nativePath, dosPath, StringComparison.OrdinalIgnoreCase) ||
-                MatchesPhysicalDrivePath(nativePath, current, handle, dosPath);
+            bool ordinarySpelling = string.Equals(nativePath, dosPath, StringComparison.OrdinalIgnoreCase);
+            bool isLocal = IsLocalPath(nativePath);
+            if (isLocal && nativePath == dosPath && granted == null)
+                protection = NamespacePins.TryPinOrdinaryParent(nativePath);
+            else if (isLocal && (!ordinarySpelling || granted == null))
+            {
+                var pins = new NamespacePins();
+                protection = pins;
+                try { pins.Protect(nativePath, renamingEntry); }
+                catch (Exception ex) when (ex.HResult == unchecked((int)0x80070005))
+                {
+                    if (!ordinarySpelling && (pins.ObservedReparsePoint || !MatchesPhysicalDrivePath(nativePath, current, dosPath)))
+                    {
+                        LoggingService.LogError($"[Save] Cannot inspect route '{nativePath}'; final '{current}', DOS '{dosPath}', brokered={granted != null}.");
+                        throw;
+                    }
+                    // A file grant may allow direct file metadata but deny access to its ancestors.
+                    ordinarySpelling = true;
+                    protection.Dispose();
+                    protection = null;
+                }
+            }
             if (!renamingEntry && ordinarySpelling)
             {
                 // This exact grant opened the selected spelling and Windows identified its entry.
@@ -56,29 +76,9 @@ internal static partial class DocumentSaveTarget
                 if (expectedFinalPath == current && file.Name == name && CompareSpelling(current, selected) == null)
                     admittedSpelling = selected;
             }
-            if (!IsLocalPath(nativePath)) return null;
-            if (nativePath == dosPath && granted == null)
-                protection = NamespacePins.TryPinOrdinaryParent(nativePath);
-            else if (!ordinarySpelling || granted == null)
-            {
-                var pins = new NamespacePins();
-                protection = pins;
-                try { pins.Protect(nativePath, renamingEntry); }
-                catch (Exception ex) when (ordinarySpelling && ex.HResult == unchecked((int)0x80070005))
-                {
-                    // A file grant may allow direct file metadata but deny access to its ancestors.
-                    protection.Dispose();
-                    protection = null;
-                }
-                catch (Exception ex) when (ex.HResult == unchecked((int)0x80070005))
-                {
-                    LoggingService.LogError($"[Save] Cannot inspect route '{nativePath}'; final '{current}', DOS '{dosPath}', brokered={granted != null}.");
-                    throw;
-                }
-            }
             // A verified parent pins the entry's location. A file-only grant must freshly
             // establish that location itself, including immediately before an editor rename.
-            VerifyPinnedLocation(file, expectedFinalPath, grantOnly: protection == null);
+            if (isLocal) VerifyPinnedLocation(file, expectedFinalPath, grantOnly: protection == null);
             return protection;
         }
         catch (Exception ex)
@@ -119,7 +119,7 @@ internal static partial class DocumentSaveTarget
     private static bool IsLocalPath(string path) => path.StartsWith(@"\\?\Volume{", StringComparison.OrdinalIgnoreCase) ||
         (path.Length > 6 && path[5] == ':' && path[6] == '\\');
 
-    private static bool MatchesPhysicalDrivePath(string path, string finalPath, SafeFileHandle file, string dosPath)
+    private static bool MatchesPhysicalDrivePath(string path, string finalPath, string dosPath)
     {
         if (path.Length <= 7 || path[5] != ':' || path[6] != '\\') return false;
         using var drive = OpenMetadataByName(path[..7], 0x02000000 /* FILE_FLAG_BACKUP_SEMANTICS */);
@@ -127,11 +127,16 @@ internal static partial class DocumentSaveTarget
         if (finalRoot != null)
             return string.Equals(finalRoot.TrimEnd('\\') + path[6..], finalPath, StringComparison.OrdinalIgnoreCase);
 
-        // Access to the file grant can outlive access to the drive name. Require
-        // the opened DOS spelling and the normalized path below its volume to agree.
-        return dosPath == null &&
-            string.Equals(GetFinalPath(file, 0x8 /* FILE_NAME_OPENED */), path, StringComparison.OrdinalIgnoreCase) &&
-            path.AsSpan(6).Equals(GetFinalPath(file, 0x4 /* VOLUME_NAME_NONE */), StringComparison.OrdinalIgnoreCase);
+        // Some app containers can open the grant but cannot query the drive
+        // mapping. Keep requiring the normalized name below the local volume.
+        // The grant's full volume-qualified location is checked independently.
+        if (dosPath != null) return false;
+        const string volumeGuid = @"\\?\Volume{";
+        const string ntVolume = @"\Device\HarddiskVolume";
+        int nameStart = finalPath.StartsWith(volumeGuid, StringComparison.OrdinalIgnoreCase) ? volumeGuid.Length :
+            finalPath.StartsWith(ntVolume, StringComparison.OrdinalIgnoreCase) ? ntVolume.Length : 0;
+        int suffix = nameStart == 0 ? -1 : finalPath.IndexOf('\\', nameStart);
+        return suffix >= 0 && path.AsSpan(6).Equals(finalPath.AsSpan(suffix), StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool ResolvesParentCaseSpelling(string path, string spelling)
@@ -172,6 +177,8 @@ internal static partial class DocumentSaveTarget
         private const uint ReadData = 1;
         private const uint NameSurrogate = 0x20000000;
         private readonly Dictionary<string, SafeFileHandle> _handles = new(StringComparer.Ordinal);
+
+        internal bool ObservedReparsePoint { get; private set; }
 
         internal bool TryPinCaseParent(string path, string spelling)
         {
@@ -290,6 +297,7 @@ internal static partial class DocumentSaveTarget
         {
             var attrs = File.GetAttributes(path);
             var reparse = (attrs & System.IO.FileAttributes.ReparsePoint) != 0;
+            ObservedReparsePoint |= reparse;
             if (leaf && !reparse) return null;
             var folder = (attrs & System.IO.FileAttributes.Directory) != 0;
             if (!_handles.TryGetValue(path, out var handle))

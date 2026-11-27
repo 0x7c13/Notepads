@@ -148,15 +148,6 @@ catch {
     $report.Status = 'FAIL'
     $report.Error = $_.ToString() + "`n" + $_.ScriptStackTrace
     try {
-        if ($localState) {
-            $logs = Join-Path $localState 'Logs'
-            if (Test-Path -LiteralPath $logs -PathType Container) {
-                Copy-Item -LiteralPath $logs -Destination (Join-Path $root 'app-logs') -Recurse
-            }
-        }
-    }
-    catch { Write-Warning "Application logs unavailable: $_" }
-    try {
         Add-Type -AssemblyName System.Windows.Forms, System.Drawing
         $bounds = [Windows.Forms.SystemInformation]::VirtualScreen
         $bitmap = [Drawing.Bitmap]::new($bounds.Width, $bounds.Height)
