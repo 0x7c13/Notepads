@@ -2,6 +2,7 @@
 //  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
 //  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
+
 #pragma once
 
 #if defined(NOTEPADS_EDITOR_DIAGNOSTICS)
