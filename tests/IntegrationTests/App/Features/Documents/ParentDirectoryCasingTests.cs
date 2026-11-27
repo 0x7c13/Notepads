@@ -28,6 +28,9 @@ internal static partial class ParentDirectoryCasingTests
     {
         await SaveAfterParentRenameAsync(host, log, nested: false);
         await SaveAfterParentRenameAsync(host, log, nested: true);
+        DocumentSaveTarget.TestHideVolumeGuid = true;
+        try { await SaveAfterParentRenameAsync(host, log, nested: true); }
+        finally { DocumentSaveTarget.TestHideVolumeGuid = false; }
         await OriginLostDuringAliasLookupAsync(host, log);
         await RejectParentJunctionAsync(host, log);
     }
@@ -51,8 +54,10 @@ internal static partial class ParentDirectoryCasingTests
         await FileIO.WriteBytesAsync(file, "base"u8.ToArray());
         var editor = await OpenFileAsync(host, file);
         var historical = editor.LastSavedSnapshot.FileVersion.TargetPath;
-        Check(historical?.StartsWith(@"\\?\Volume{", StringComparison.Ordinal) == true,
-            "The parent-casing fixture must retain a canonical local historical path.");
+        bool ntPath = historical?.StartsWith(@"\Device\HarddiskVolume", StringComparison.Ordinal) == true;
+        Check(ntPath || (!DocumentSaveTarget.TestHideVolumeGuid &&
+            historical?.StartsWith(@"\\?\Volume{", StringComparison.Ordinal) == true),
+            $"The parent-casing fixture must retain a canonical local historical path. Path={historical}");
         editor.TypeText("saved Ω\r");
         var expected = editor.GetEncoding().GetBytes(
             LineEndingUtility.ApplyLineEnding(editor.GetText(), editor.GetLineEnding()));
@@ -139,7 +144,7 @@ internal static partial class ParentDirectoryCasingTests
         await editor.TestStopFileChecksAsync();
         Directory.Move(newParent, parked);
         Directory.Move(parked, newParent);
-        log.AppendLine($"PASS: actual ordinary Save accepts parent casing (nested/leaf={nested}), proves it off UI while pinning ancestors, releases handles, and publishes exact bytes and the new saved location.");
+        log.AppendLine($"PASS: actual ordinary Save accepts parent casing (nested/leaf={nested}, NT volume path={ntPath}), proves it off UI while pinning ancestors, releases handles, and publishes exact bytes and the new saved location.");
     }
 
     private static async Task VerifySharedCaseLeaseAsync(StorageFile file, string historical,

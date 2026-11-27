@@ -87,11 +87,13 @@ internal static partial class DocumentSaveTarget
     private static bool ResolvesToSpelling(string path, string spelling)
     {
         const string networkPrefix = @"\Device\Mup\";
-        if (path.StartsWith(networkPrefix, StringComparison.Ordinal)) path = @"\\?\UNC\" + path[networkPrefix.Length..];
-        else if (!path.StartsWith(@"\\?\Volume{", StringComparison.Ordinal)) return false;
+        bool network = path.StartsWith(networkPrefix, StringComparison.Ordinal);
+        if (network) path = @"\\?\UNC\" + path[networkPrefix.Length..];
+        else if (LocalVolumeSeparator(path) < 0) return false;
         OnProvingCaseSpelling(grant: false);
         using var handle = OpenMetadataByName(path, 0x00200000 /* FILE_FLAG_OPEN_REPARSE_POINT */);
-        return string.Equals(GetFinalPath(handle), spelling, StringComparison.Ordinal);
+        var observed = network ? GetFinalPath(handle) : GetFinalPath(handle, CanonicalVolumeFormat(spelling));
+        return observed == spelling;
     }
 
     internal static ValueTask<bool> IsGrantSpellingChangeAsync(StorageFile file, string previousPath, string previousName,
@@ -122,7 +124,7 @@ internal static partial class DocumentSaveTarget
             Marshal.SetLastPInvokeError(5);
             return new SafeFileHandle(IntPtr.Zero, ownsHandle: false);
         }
-        return CreateFileFromAppW(path, 0, FileShare.ReadWrite | FileShare.Delete,
+        return CreateFileFromAppW(OpenableLocalVolumePath(path), 0, FileShare.ReadWrite | FileShare.Delete,
             IntPtr.Zero, FileMode.Open, flags, IntPtr.Zero);
     }
 
@@ -251,11 +253,16 @@ internal static partial class DocumentSaveTarget
     {
         if (handle == null || handle.IsInvalid) return null;
         // Prefer a volume GUID across restarts. Network redirects may only expose an NT name.
-        return GetFinalPath(handle, 1) ?? GetFinalPath(handle, 2);
+        bool hideVolumeGuid = false;
+        OnResolvingVolumePath(ref hideVolumeGuid);
+        return (hideVolumeGuid ? null : GetFinalPath(handle, 1)) ?? GetFinalPath(handle, 2);
     }
+
+    static partial void OnResolvingVolumePath(ref bool hideVolumeGuid);
 
     private static unsafe string GetFinalPath(SafeFileHandle handle, uint volumeFormat)
     {
+        if (handle == null || handle.IsInvalid) return null;
         Span<char> buffer = stackalloc char[512];
         while (true)
         {

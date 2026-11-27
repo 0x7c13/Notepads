@@ -45,6 +45,8 @@ namespace Notepads.Features.Documents.IO
         {
             if (TestHideNormalizedDosPath?.Invoke(path) == true) dosPath = null;
         }
+        internal static bool TestHideVolumeGuid;
+        static partial void OnResolvingVolumePath(ref bool hideVolumeGuid) => hideVolumeGuid = TestHideVolumeGuid;
         internal static Func<string, string> TestPinnedLocation;
         internal static bool TestAnchorMoved;
         static partial void OnCheckingPinnedAnchor(ref string finalPath)
@@ -82,8 +84,7 @@ namespace Notepads.Features.Documents.IO
 
         internal static string TestRawEntrySpelling(string path)
         {
-            using var handle = CreateFileFromAppW(path, 0, System.IO.FileShare.ReadWrite | System.IO.FileShare.Delete,
-                IntPtr.Zero, System.IO.FileMode.Open, 0x00200000, IntPtr.Zero);
+            using var handle = OpenMetadataByName(path, 0x00200000);
             return GetFinalPath(handle);
         }
 

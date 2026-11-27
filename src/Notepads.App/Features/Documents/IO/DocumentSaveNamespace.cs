@@ -117,8 +117,25 @@ internal static partial class DocumentSaveTarget
     private static string ExtendedPath(string path) => path.StartsWith(@"\\?\", StringComparison.Ordinal) ? path :
         path.StartsWith(@"\\", StringComparison.Ordinal) ? @"\\?\UNC\" + path[2..] : @"\\?\" + path;
 
-    private static bool IsLocalPath(string path) => path.StartsWith(@"\\?\Volume{", StringComparison.OrdinalIgnoreCase) ||
+    private const string VolumeGuidPrefix = @"\\?\Volume{";
+    private const string NtVolumePrefix = @"\Device\HarddiskVolume";
+
+    private static bool IsLocalPath(string path) => path.StartsWith(VolumeGuidPrefix, StringComparison.OrdinalIgnoreCase) ||
         (path.Length > 6 && path[5] == ':' && path[6] == '\\');
+
+    private static int LocalVolumeSeparator(string path)
+    {
+        int nameStart = path.StartsWith(VolumeGuidPrefix, StringComparison.OrdinalIgnoreCase) ? VolumeGuidPrefix.Length :
+            path.StartsWith(NtVolumePrefix, StringComparison.OrdinalIgnoreCase) ? NtVolumePrefix.Length : 0;
+        return nameStart == 0 ? -1 : path.IndexOf('\\', nameStart);
+    }
+
+    private static string OpenableLocalVolumePath(string path) =>
+        path.StartsWith(NtVolumePrefix, StringComparison.OrdinalIgnoreCase) && LocalVolumeSeparator(path) >= 0 ?
+            @"\\?\GLOBALROOT" + path : path;
+
+    private static uint CanonicalVolumeFormat(string path) =>
+        path.StartsWith(NtVolumePrefix, StringComparison.OrdinalIgnoreCase) ? 2u : 1u;
 
     private static bool MatchesPhysicalDrivePath(string path, string finalPath, StringComparison comparison,
         bool allowVolumeSpellingFallback = true)
@@ -133,11 +150,7 @@ internal static partial class DocumentSaveTarget
         // mapping. Keep requiring the normalized name below the local volume.
         // The grant's full volume-qualified location is checked independently.
         if (!allowVolumeSpellingFallback) return false;
-        const string volumeGuid = @"\\?\Volume{";
-        const string ntVolume = @"\Device\HarddiskVolume";
-        int nameStart = finalPath.StartsWith(volumeGuid, StringComparison.OrdinalIgnoreCase) ? volumeGuid.Length :
-            finalPath.StartsWith(ntVolume, StringComparison.OrdinalIgnoreCase) ? ntVolume.Length : 0;
-        int suffix = nameStart == 0 ? -1 : finalPath.IndexOf('\\', nameStart);
+        int suffix = LocalVolumeSeparator(finalPath);
         return suffix >= 0 && path.AsSpan(6).Equals(finalPath.AsSpan(suffix), comparison);
     }
 
@@ -146,15 +159,16 @@ internal static partial class DocumentSaveTarget
         // A leaf-only no-follow open still follows intermediate links. For a
         // parent spelling change, prove each changed parent without following it.
         // Network providers and inaccessible parents retain their existing refusal.
-        if (!path.StartsWith(@"\\?\Volume{", StringComparison.Ordinal) ||
-            !string.Equals(Path.GetPathRoot(path), Path.GetPathRoot(spelling), StringComparison.Ordinal)) return false;
+        int rootEnd = LocalVolumeSeparator(path);
+        if (rootEnd < 0 || rootEnd != LocalVolumeSeparator(spelling) ||
+            !path.AsSpan(0, rootEnd).SequenceEqual(spelling.AsSpan(0, rootEnd))) return false;
         OnProvingCaseSpelling(grant: false);
         int parentEnd = path.LastIndexOf('\\');
         int difference = 0;
         while (difference < parentEnd && path[difference] == spelling[difference]) difference++;
         if (difference == parentEnd) return false;
         int boundary = path.LastIndexOf('\\', difference);
-        var root = Path.GetPathRoot(path);
+        var root = path[..(rootEnd + 1)];
         var anchor = boundary < root.Length ? root : path[..boundary];
         using var pins = new NamespacePins();
         // The volume root itself cannot be renamed and may not be accessible to
@@ -167,7 +181,7 @@ internal static partial class DocumentSaveTarget
             if (!pins.TryPinCaseParent(path[..end], spelling[..end])) return false;
         }
         using var leaf = OpenMetadataByName(path, NamespacePins.OpenReparsePoint);
-        return string.Equals(GetFinalPath(leaf, 1), spelling, StringComparison.Ordinal) &&
+        return GetFinalPath(leaf, CanonicalVolumeFormat(spelling)) == spelling &&
             (!hasAnchor || pins.HasCaseParentSpelling(anchor, anchor));
     }
 
@@ -187,7 +201,7 @@ internal static partial class DocumentSaveTarget
             bool unavailable = false;
             OnOpeningNamedMetadata(path, ref unavailable);
             if (unavailable) return false;
-            var handle = CreateFileFromAppW(path, Traverse | 0x80 /* FILE_READ_ATTRIBUTES */, FileShare.ReadWrite,
+            var handle = CreateFileFromAppW(OpenableLocalVolumePath(path), Traverse | 0x80 /* FILE_READ_ATTRIBUTES */, FileShare.ReadWrite,
                 IntPtr.Zero, FileMode.Open, OpenReparsePoint | BackupSemantics, IntPtr.Zero);
             if (handle.IsInvalid) { handle.Dispose(); return false; }
             _handles.Add(path, handle);
@@ -198,11 +212,11 @@ internal static partial class DocumentSaveTarget
             GetFileInformationByHandleEx(_handles[path], 9 /* FileAttributeTagInfo */, out var info, 8) &&
             (info.FileAttributes & 0x10 /* FILE_ATTRIBUTE_DIRECTORY */) != 0 &&
             (info.ReparseTag & NameSurrogate) == 0 &&
-            string.Equals(GetFinalPath(_handles[path], 1), spelling, StringComparison.Ordinal);
+            GetFinalPath(_handles[path], CanonicalVolumeFormat(spelling)) == spelling;
 
         private static string GetDirectorySpelling(SafeFileHandle handle, string path)
         {
-            if (path.StartsWith(@"\\?\Volume{", StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith(VolumeGuidPrefix, StringComparison.OrdinalIgnoreCase))
                 return GetFinalPath(handle, 1);
             var observed = GetFinalPath(handle, 0);
             OnCheckingNormalizedDosPath(path, ref observed);
