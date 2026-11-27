@@ -68,13 +68,15 @@ internal static partial class DocumentSaveTarget
                     protection = null;
                 }
             }
-            if (!renamingEntry && ordinarySpelling)
+            if (!renamingEntry && expectedFinalPath == current)
             {
                 // This exact grant opened the selected spelling and Windows identified its entry.
                 // Its own transaction can adopt that leaf case. Keep the exact physical parent.
                 var name = Path.GetFileName(path);
                 var selected = Path.Combine(Path.GetDirectoryName(current), name);
-                if (expectedFinalPath == current && file.Name == name && CompareSpelling(current, selected) == null)
+                if (file.Name == name && CompareSpelling(current, selected) == null &&
+                    (ordinarySpelling || (dosPath == null && protection is NamespacePins pins &&
+                        pins.HasCaseInsensitiveParent(nativePath, current))))
                     admittedSpelling = selected;
             }
             // A verified parent pins the entry's location. A file-only grant must freshly
@@ -213,6 +215,14 @@ internal static partial class DocumentSaveTarget
         private readonly Dictionary<string, SafeFileHandle> _handles = new(StringComparer.Ordinal);
 
         internal bool ObservedReparsePoint { get; private set; }
+
+        internal bool HasCaseInsensitiveParent(string path, string current)
+        {
+            var parent = Path.GetDirectoryName(path);
+            return !ObservedReparsePoint && parent != null && _handles.TryGetValue(parent, out var handle) &&
+                GetFinalPath(handle, CanonicalVolumeFormat(current)) == Path.GetDirectoryName(current) &&
+                GetCaseSensitivity(handle, 23 /* FileCaseSensitiveInfo */, out uint flags, sizeof(uint)) && flags == 0;
+        }
 
         internal bool TryPinCaseParent(string path, string spelling)
         {
@@ -398,4 +408,8 @@ internal static partial class DocumentSaveTarget
     [LibraryImport("api-ms-win-core-file-l1-2-0.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool GetFileInformationByHandleEx(SafeFileHandle file, int infoClass, out FileAttributeTagInfo info, uint size);
+
+    [LibraryImport("api-ms-win-core-file-l1-2-0.dll", EntryPoint = "GetFileInformationByHandleEx")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetCaseSensitivity(SafeFileHandle file, int infoClass, out uint flags, uint size);
 }

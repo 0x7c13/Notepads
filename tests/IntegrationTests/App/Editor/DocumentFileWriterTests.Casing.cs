@@ -23,7 +23,15 @@ internal static partial class DocumentFileWriterTests
     {
         await VerifyCaseProofThreadAsync(folder, log);
         await VerifyRetryGrantSpellingAsync(folder, log);
-        await VerifyFileOnlyGrantAsync(folder, log);
+        await VerifyFileOnlyGrantAsync(folder, log, "Grant.txt");
+        DocumentSaveTarget.TestHideNormalizedDosPath = _ => true;
+        DocumentSaveTarget.TestHideVolumeGuid = true;
+        try { await VerifyFileOnlyGrantAsync(folder, log, "NtVolumeGrant.txt"); }
+        finally
+        {
+            DocumentSaveTarget.TestHideVolumeGuid = false;
+            DocumentSaveTarget.TestHideNormalizedDosPath = null;
+        }
         var peer = await folder.CreateFileAsync("MiXeD.txt");
         var alias = await StorageFile.GetFileFromPathAsync(Path.Combine(folder.Path, "MIXED.TXT"));
         var before = await DocumentSaveTarget.ResolveAsync(peer, default);
@@ -182,10 +190,10 @@ internal static partial class DocumentFileWriterTests
         log.AppendLine("PASS: access-denied grant replacement records its current spelling, waits for the actual provider rename, balances deferrals and verifies without a second write.");
     }
 
-    private static async Task VerifyFileOnlyGrantAsync(StorageFolder folder, StringBuilder log)
+    private static async Task VerifyFileOnlyGrantAsync(StorageFolder folder, StringBuilder log, string fileName)
     {
-        var file = await folder.CreateFileAsync("Grant.txt");
-        var alias = await StorageFile.GetFileFromPathAsync(Path.Combine(folder.Path, "GRANT.TXT"));
+        var file = await folder.CreateFileAsync(fileName);
+        var alias = await StorageFile.GetFileFromPathAsync(Path.Combine(folder.Path, fileName.ToUpperInvariant()));
         var version = await DocumentSaveTarget.ReadVersionAsync(alias);
         var saved = "through grant"u8.ToArray();
         string during = null;
@@ -207,12 +215,13 @@ internal static partial class DocumentFileWriterTests
             await AssertBytesAsync(file, saved, "file-only grant");
             // A checkpoint alone contains no proof that an unrelated grant opened another spelling.
             var savedVersion = await DocumentSaveTarget.ReadVersionAsync(file);
-            var unknown = savedVersion with { TargetPath = Path.Combine(Path.GetDirectoryName(savedVersion.TargetPath), "gRaNt.TxT") };
+            var otherSpelling = char.ToLowerInvariant(fileName[0]) + fileName[1..];
+            var unknown = savedVersion with { TargetPath = Path.Combine(Path.GetDirectoryName(savedVersion.TargetPath), otherSpelling) };
             var rejected = await ExpectAsync<DocumentSaveException>(() => DocumentFileWriter.WriteAsync(file,
                 _ => throw new Exception("Unproven historical spelling reached the candidate."), new TestFileUpdates(), expectedVersion: unknown));
             Assert(rejected.Stage == DocumentSaveStage.Conflict, "A live receipt's casing authorization must not escape its commit.");
 
-            var reopened = await StorageFile.GetFileFromPathAsync(Path.Combine(folder.Path, "Grant.txt"));
+            var reopened = await StorageFile.GetFileFromPathAsync(Path.Combine(folder.Path, fileName));
             var current = await DocumentSaveTarget.ReadVersionAsync(reopened);
             int writes = 0;
             DocumentSaveTarget.TestVersionRead = (_, _) => Task.FromException(SharingFailure());
@@ -231,7 +240,7 @@ internal static partial class DocumentFileWriterTests
             DocumentFileWriter.TestTransactionLocation = null;
             DocumentSaveTarget.TestNamedMetadataUnavailable = null;
         }
-        log.AppendLine("PASS: file-only grant metadata survives denied data reads and confirms its own case-only commit and read-only retry.");
+        log.AppendLine($"PASS: file-only grant metadata survives denied data reads and confirms its own case-only commit and read-only retry (NT volume path only={DocumentSaveTarget.TestHideVolumeGuid}).");
     }
 
     [LibraryImport("api-ms-win-core-file-fromapp-l1-1-0.dll", EntryPoint = "CreateFileFromAppW",
