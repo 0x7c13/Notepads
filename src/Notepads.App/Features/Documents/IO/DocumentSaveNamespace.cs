@@ -146,13 +146,45 @@ internal static partial class DocumentSaveTarget
         using var drive = OpenMetadataByName(path[..7], 0x02000000 /* FILE_FLAG_BACKUP_SEMANTICS */);
         var finalRoot = GetFinalPath(drive);
         if (finalRoot != null)
-            return finalRoot.TrimEnd('\\') + path[6..] == GetFinalPath(entry, CanonicalVolumeFormat(finalRoot));
+        {
+            // A drive alias can name a subdirectory that still has an unpinned parent.
+            int rootEnd = LocalVolumeSeparator(finalRoot);
+            return rootEnd >= 0 && rootEnd == finalRoot.Length - 1 &&
+                finalRoot[..rootEnd] + path[6..] == GetFinalPath(entry, CanonicalVolumeFormat(finalRoot));
+        }
 
-        // A file grant can deny access to the root directory. The volume device
-        // can identify the drive mapping without opening that directory.
+        var physicalPath = GetFinalPath(entry, 2 /* VOLUME_NAME_NT */);
+        int volumeEnd = physicalPath == null ? -1 : LocalVolumeSeparator(physicalPath);
+        if (volumeEnd < 0 || !path.AsSpan(6).SequenceEqual(physicalPath.AsSpan(volumeEnd))) return false;
+
+        // A file grant can deny access to the root directory. Read the mapping
+        // from the volume device, or compare both mount points' volume IDs.
         var device = GetDriveDeviceName(path.Substring(4, 2));
         OnReadingDriveDeviceName(ref device);
-        return device != null && device.TrimEnd('\\') + path[6..] == GetFinalPath(entry, 2 /* VOLUME_NAME_NT */);
+        if (device != null)
+            return physicalPath.AsSpan(0, volumeEnd).Equals(device.AsSpan().TrimEnd('\\'), StringComparison.OrdinalIgnoreCase);
+
+        var mountName = GetMountedVolumeName(path[..7], out int driveError);
+        var physicalMountName = GetMountedVolumeName(OpenableLocalVolumePath(physicalPath[..(volumeEnd + 1)]), out int volumeError);
+        if (mountName == null || physicalMountName == null)
+            LoggingService.LogError($"[Save] Volume identity unavailable for '{path[..7]}' or '{physicalPath[..volumeEnd]}' (Win32 {driveError}, {volumeError}).");
+        return mountName != null && string.Equals(mountName, physicalMountName, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static unsafe string GetMountedVolumeName(string root, out int error)
+    {
+        Span<char> buffer = stackalloc char[50];
+        fixed (char* name = buffer)
+        {
+            if (GetVolumeNameForVolumeMountPointW(root, name, (uint)buffer.Length) == 0)
+            {
+                error = Marshal.GetLastPInvokeError();
+                return null;
+            }
+        }
+        error = 0;
+        int length = buffer.IndexOf('\0');
+        return length > 0 ? new string(buffer[..length]) : null;
     }
 
     private static unsafe string GetDriveDeviceName(string drive)
@@ -173,6 +205,9 @@ internal static partial class DocumentSaveTarget
     [LibraryImport("kernel32.dll")]
     private static unsafe partial int DeviceIoControl(SafeFileHandle device, uint code, IntPtr input,
         uint inputSize, char* output, uint outputSize, out uint written, IntPtr overlapped);
+
+    [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    private static unsafe partial int GetVolumeNameForVolumeMountPointW(string root, char* name, uint capacity);
 
     private static bool ResolvesParentCaseSpelling(string path, string spelling)
     {
