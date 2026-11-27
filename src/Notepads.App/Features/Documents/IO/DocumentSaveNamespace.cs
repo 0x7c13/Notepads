@@ -56,7 +56,8 @@ internal static partial class DocumentSaveTarget
                 try { pins.Protect(nativePath, renamingEntry); }
                 catch (Exception ex) when (ex.HResult == unchecked((int)0x80070005))
                 {
-                    if (!ordinarySpelling && (pins.ObservedReparsePoint || !MatchesPhysicalDrivePath(nativePath, current, dosPath)))
+                    if (!ordinarySpelling && (pins.ObservedReparsePoint ||
+                        !MatchesPhysicalDrivePath(nativePath, current, StringComparison.OrdinalIgnoreCase, dosPath == null)))
                     {
                         LoggingService.LogError($"[Save] Cannot inspect route '{nativePath}'; final '{current}', DOS '{dosPath}', brokered={granted != null}.");
                         throw;
@@ -119,24 +120,25 @@ internal static partial class DocumentSaveTarget
     private static bool IsLocalPath(string path) => path.StartsWith(@"\\?\Volume{", StringComparison.OrdinalIgnoreCase) ||
         (path.Length > 6 && path[5] == ':' && path[6] == '\\');
 
-    private static bool MatchesPhysicalDrivePath(string path, string finalPath, string dosPath)
+    private static bool MatchesPhysicalDrivePath(string path, string finalPath, StringComparison comparison,
+        bool allowVolumeSpellingFallback = true)
     {
-        if (path.Length <= 7 || path[5] != ':' || path[6] != '\\') return false;
+        if (finalPath == null || path.Length <= 7 || path[5] != ':' || path[6] != '\\') return false;
         using var drive = OpenMetadataByName(path[..7], 0x02000000 /* FILE_FLAG_BACKUP_SEMANTICS */);
         var finalRoot = GetFinalPath(drive);
         if (finalRoot != null)
-            return string.Equals(finalRoot.TrimEnd('\\') + path[6..], finalPath, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(finalRoot.TrimEnd('\\') + path[6..], finalPath, comparison);
 
         // Some app containers can open the grant but cannot query the drive
         // mapping. Keep requiring the normalized name below the local volume.
         // The grant's full volume-qualified location is checked independently.
-        if (dosPath != null) return false;
+        if (!allowVolumeSpellingFallback) return false;
         const string volumeGuid = @"\\?\Volume{";
         const string ntVolume = @"\Device\HarddiskVolume";
         int nameStart = finalPath.StartsWith(volumeGuid, StringComparison.OrdinalIgnoreCase) ? volumeGuid.Length :
             finalPath.StartsWith(ntVolume, StringComparison.OrdinalIgnoreCase) ? ntVolume.Length : 0;
         int suffix = nameStart == 0 ? -1 : finalPath.IndexOf('\\', nameStart);
-        return suffix >= 0 && path.AsSpan(6).Equals(finalPath.AsSpan(suffix), StringComparison.OrdinalIgnoreCase);
+        return suffix >= 0 && path.AsSpan(6).Equals(finalPath.AsSpan(suffix), comparison);
     }
 
     private static bool ResolvesParentCaseSpelling(string path, string spelling)
@@ -198,6 +200,20 @@ internal static partial class DocumentSaveTarget
             (info.ReparseTag & NameSurrogate) == 0 &&
             string.Equals(GetFinalPath(_handles[path], 1), spelling, StringComparison.Ordinal);
 
+        private static string GetDirectorySpelling(SafeFileHandle handle, string path)
+        {
+            if (path.StartsWith(@"\\?\Volume{", StringComparison.OrdinalIgnoreCase))
+                return GetFinalPath(handle, 1);
+            var observed = GetFinalPath(handle, 0);
+            OnCheckingNormalizedDosPath(path, ref observed);
+            if (observed != null) return observed;
+
+            // A no-follow directory handle can still prove the anchor when
+            // Windows supplies only its volume-qualified name.
+            var physicalPath = GetFinalPath(handle);
+            return MatchesPhysicalDrivePath(path, physicalPath, StringComparison.Ordinal) ? path : physicalPath;
+        }
+
         private static string FindAnchor(string path, string root)
         {
             // Query upward from the granted subtree. Even a cross-volume link may sit inside
@@ -207,9 +223,8 @@ internal static partial class DocumentSaveTarget
             {
                 using var handle = CreateFileFromAppW(parent, 0, FileShare.ReadWrite | FileShare.Delete,
                     IntPtr.Zero, FileMode.Open, BackupSemantics | OpenReparsePoint, IntPtr.Zero);
-                uint format = parent.StartsWith(@"\\?\Volume{", StringComparison.OrdinalIgnoreCase) ? 1u : 0u;
                 if (!handle.IsInvalid && GetFileInformationByHandleEx(handle, 9, out var info, 8) &&
-                    (info.ReparseTag & NameSurrogate) == 0 && string.Equals(parent, GetFinalPath(handle, format), StringComparison.Ordinal))
+                    (info.ReparseTag & NameSurrogate) == 0 && GetDirectorySpelling(handle, parent) == parent)
                     return parent;
                 parent = Path.GetDirectoryName(parent);
             }
@@ -233,7 +248,7 @@ internal static partial class DocumentSaveTarget
             }
             try
             {
-                var observed = GetFinalPath(handle, 0);
+                var observed = GetDirectorySpelling(handle, parent);
                 var hasTag = GetFileInformationByHandleEx(handle, 9, out var info, 8);
                 OnCheckingOrdinaryParent(ref hasTag, ref observed);
                 if (!hasTag || observed == null) throw new DocumentSaveException(DocumentSaveStage.Coordinate);
@@ -265,8 +280,7 @@ internal static partial class DocumentSaveTarget
                 {
                     if (ProtectComponent(prefix, leaf: false) != null)
                         throw new DocumentSaveException(DocumentSaveStage.Conflict);
-                    uint format = prefix.StartsWith(@"\\?\Volume{", StringComparison.OrdinalIgnoreCase) ? 1u : 0u;
-                    var observed = GetFinalPath(_handles[prefix], format);
+                    var observed = GetDirectorySpelling(_handles[prefix], prefix);
                     OnCheckingPinnedAnchor(ref observed);
                     if (observed == null) throw new DocumentSaveException(DocumentSaveStage.Coordinate);
                     if (observed != prefix) throw new DocumentSaveException(DocumentSaveStage.Conflict);

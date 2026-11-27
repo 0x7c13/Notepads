@@ -69,6 +69,9 @@ internal static class PendingSaveRegressionTests
         var stage = "first save";
         try
         {
+            var driveRoot = Path.GetPathRoot(@"\\?\" + root);
+            DocumentSaveTarget.TestHideNormalizedDosPath = _ => true;
+            DocumentSaveTarget.TestNamedMetadataUnavailable = path => path == driveRoot;
             TestFileSavePicker.Reset();
             TestFileSavePicker.Results.Enqueue(alias);
             var first = host.Page.TestSaveDocumentAsync(editor, saveAs: true);
@@ -78,8 +81,14 @@ internal static class PendingSaveRegressionTests
             var second = host.Page.TestSaveDocumentAsync(editor);
             releaseFirst.SetResult();
             await secondAdmitted.Task.WaitAsync(TimeSpan.FromSeconds(15));
-            await ChooseDialogAsync(first, "CloseButton");
-            Check(!await first && ReferenceEquals(editor.EditingFile, alias), "The first unconfirmed save publishes its equivalent picker grant.");
+            object firstDialog = null;
+            await ChooseDialogAsync(first, "CloseButton", whileDialogOpen: () =>
+            {
+                firstDialog = (DialogManager.ActiveDialog as FileSaveErrorDialog)?.Content;
+                return Task.CompletedTask;
+            });
+            Check(!await first && ReferenceEquals(editor.EditingFile, alias),
+                $"The first unconfirmed save publishes its equivalent picker grant. Commits={commits}. Dialog={firstDialog}");
             var previous = DialogManager.ActiveDialog;
             stage = "hold original lease";
             held = await DocumentSaveTarget.AcquireAsync(original, default);
@@ -122,6 +131,8 @@ internal static class PendingSaveRegressionTests
             FileLockLease.TestLeaseWait = null;
             DocumentFileWriter.TestUpdates = null;
             DocumentFileWriter.TestLocalCommit = null;
+            DocumentSaveTarget.TestHideNormalizedDosPath = null;
+            DocumentSaveTarget.TestNamedMetadataUnavailable = null;
             editor.TestResolvingSaveTarget = null;
             TestFileSavePicker.Reset();
         }

@@ -344,6 +344,10 @@ function Invoke-IsolatedTestPhase {
                     Copy-Item -LiteralPath $source -Destination (Join-Path $Session.Root "phase-$($Session.Phase)-$name")
                 }
             }
+            $workspaceLog = Join-Path $Session.RunRoot 'workspace.log'
+            if ($phaseFailed -and (Test-Path -LiteralPath $workspaceLog -PathType Leaf)) {
+                Copy-Item -LiteralPath $workspaceLog -Destination (Join-Path $Session.Root "phase-$($Session.Phase)-workspace-log.txt")
+            }
             if ($identity -and $identity.Process -and $identity.Process.HasExited) { $identity.ExitCode = $identity.Process.get_ExitCode() }
             if ($identity -and $identity.ContainsKey('ExitCode')) {
                 @{ ProcessId = $identity.Id; ExitCode = $identity.ExitCode } |
