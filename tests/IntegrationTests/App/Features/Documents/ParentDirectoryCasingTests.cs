@@ -47,7 +47,8 @@ internal static partial class ParentDirectoryCasingTests
 
     private static async Task SaveAfterParentRenameAsync(FeatureTestHost host, StringBuilder log, bool nested)
     {
-        var fixture = await host.Folder.CreateFolderAsync("parent-case-" + Guid.NewGuid().ToString("N"));
+        // WinRT rename can hit the path limit under the hosted runner's longer package LocalState.
+        var fixture = await host.Folder.CreateFolderAsync("pc", CreationCollisionOption.GenerateUniqueName);
         var parent = await fixture.CreateFolderAsync("Parent");
         var content = nested ? await parent.CreateFolderAsync("Child") : parent;
         var file = await content.CreateFileAsync("Note.txt");
@@ -63,17 +64,17 @@ internal static partial class ParentDirectoryCasingTests
             LineEndingUtility.ApplyLineEnding(editor.GetText(), editor.GetLineEnding()));
         var oldParent = parent.Path;
         var newParent = Path.Combine(fixture.Path, "PARENT");
-        var parked = Path.Combine(fixture.Path, "parent-parked");
+        var parked = Path.Combine(fixture.Path, "parked");
         Directory.Move(oldParent, parked);
         Directory.Move(parked, newParent);
         if (nested)
         {
             var child = Path.Combine(newParent, "Child");
-            var parkedChild = Path.Combine(newParent, "child-parked");
+            var parkedChild = Path.Combine(newParent, "parked");
             Directory.Move(child, parkedChild);
             Directory.Move(parkedChild, Path.Combine(newParent, "CHILD"));
             // Refresh the grant's leaf while leaving the saved version unchanged.
-            await file.RenameAsync("leaf-case-parked.txt");
+            await file.RenameAsync("n.txt");
             await file.RenameAsync("NOTE.TXT");
             var beforeSave = await DocumentSaveTarget.ResolveAsync(file, default);
             Check(beforeSave.FinalPath?.EndsWith(@"\PARENT\CHILD\NOTE.TXT", StringComparison.Ordinal) == true,
@@ -174,10 +175,9 @@ internal static partial class ParentDirectoryCasingTests
 
     private static async Task OriginLostDuringAliasLookupAsync(FeatureTestHost host, StringBuilder log)
     {
-        var suffix = Guid.NewGuid().ToString("N");
-        var target = await OpenAsync(host, "case-lookup-target-" + suffix + ".txt", "target"u8.ToArray());
-        var origin = await OpenAsync(host, "case-lookup-origin-" + suffix + ".txt", "origin"u8.ToArray());
-        var selected = await OpenAsync(host, "case-lookup-selection-" + suffix + ".txt", "selection"u8.ToArray());
+        var target = await OpenAsync(host, "case-target.txt", "target"u8.ToArray());
+        var origin = await OpenAsync(host, "case-origin.txt", "origin"u8.ToArray());
+        var selected = await OpenAsync(host, "case-selected.txt", "selection"u8.ToArray());
         var alias = await StorageFile.GetFileFromPathAsync(target.EditingFile.Path.ToUpperInvariant());
         Check(!string.Equals(alias.Path, target.EditingFile.Path, StringComparison.Ordinal) &&
             string.Equals(alias.Path, target.EditingFile.Path, StringComparison.OrdinalIgnoreCase),
