@@ -54,11 +54,12 @@ function Wait-State([scriptblock] $Predicate, [string] $Message, $Owner = $sessi
     } while ($watch.Elapsed.TotalSeconds -lt 8)
     throw "$Message.`nLast state:`n$($state | ConvertTo-Json)"
 }
-function Header([int] $Index, $Owner = $session) {
+function Header([int] $Index, $Owner = $session, [switch] $Container) {
     $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($Owner.ProcessId))
     $tab = $root.FindFirst([Windows.Automation.TreeScope]::Descendants,
         [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, "DragTab$Index"))
     if (!$tab) { throw "Tab $Index is not exposed by the owned workspace." }
+    if ($Container) { return $tab.Current.BoundingRectangle }
     $text = $tab.FindFirst([Windows.Automation.TreeScope]::Descendants,
         [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ControlTypeProperty, [Windows.Automation.ControlType]::Text))
     if (!$text) { throw "Tab $Index has no text peer." }
@@ -89,13 +90,11 @@ function Start-Raster([string] $Name) {
     # Cropping to their transient bounds can permanently cut off a marker that
     # continues moving toward the edge. Capture the owned window's full rail
     # band instead; the driver's process/occlusion guards still check every frame.
-    $window = $root.Current.BoundingRectangle
-    $left = [int]($window.Left + 8)
-    $right = [int]($window.Right - 8)
+    $client = $driver.GetEditorClientBounds()
     $text = Header 0
     $script:rasterMinimumWidth = ($rects | Measure-Object Width -Minimum).Minimum
-    $script:raster = [TabDragRasterCapture]::new($handles[[uint32]$session.ProcessId], $left,
-        [int]$text.Top, $right - $left, [int]$text.Height, (Join-Path $session.Root "$Name-frames"))
+    $script:raster = [TabDragRasterCapture]::new($handles[[uint32]$session.ProcessId], $client.Left,
+        [int]$text.Top, $client.Right - $client.Left, [int]$text.Height, (Join-Path $session.Root "$Name-frames"))
 }
 function Finish-Motion([string] $Name, [string] $Order, [int] $Source, [bool] $Aligned, [bool] $RequireSourceResidual = $true) {
     $raster.Finish()
@@ -232,12 +231,11 @@ function Check-EdgeShadows([string] $Left, [string] $Right, [string] $Label) {
 }
 
 function Capture-Shadows([string] $Name, [int] $Index) {
-    $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($session.ProcessId))
-    $window = $root.Current.BoundingRectangle
+    $client = $driver.GetEditorClientBounds()
     $text = Header $Index
     $scale = [double](State).tabScale
-    $null = [EditorAutomationInput]::Capture($session.ProcessId, [int]($window.Left + 8),
-        [int]($text.Top - 5 * $scale), [int]($window.Width - 16), [int](40 * $scale),
+    $null = [EditorAutomationInput]::Capture($session.ProcessId, $client.Left,
+        [int]($text.Top - 5 * $scale), $client.Right - $client.Left, [int](40 * $scale),
         (Join-Path $session.Root "$Name.png"))
 }
 
@@ -247,13 +245,12 @@ function Capture-BottomShadow([string] $Name, $Slot, [double] $Scale) {
     # pixels near the bottom with the same columns above the shadow's blur.
     $null = Invoke-EditorTestCommand $session 'tabs-frame'
     $path = Join-Path $session.Root "$Name-bottom.png"
-    $root = [Windows.Automation.AutomationElement]::FromHandle([PackagedAppDriver]::Window($session.ProcessId))
-    $window = $root.Current.BoundingRectangle
-    $left = [int]($window.Left + 8)
+    $client = $driver.GetEditorClientBounds()
+    $left = $client.Left
     # Capture the rail (including text) through the existing guarded helper;
     # its text-fixture check intentionally rejects a blank light-theme crop.
     $null = [EditorAutomationInput]::Capture($session.ProcessId,
-        $left, [int]$Slot.Top, [int]($window.Width - 16), [int]$Slot.Height, $path)
+        $left, [int]$Slot.Top, $client.Right - $left, [int]$Slot.Height, $path)
     $bitmap = [Drawing.Bitmap]::new($path)
     try {
         $above = $bottom = 0.0
@@ -569,17 +566,52 @@ try {
     Check-Keyboard 'DragBack'
     Finish-Motion 'SamePressPromotionAndDragBack' '1,2,0' 0 $true
 
-    Ready
-    $start = Point (Header 0)
-    $driver.Begin($session.ProcessId, $start.X, $start.Y, $false)
-    $driver.MoveTo($start.X + 15, $start.Y + 210, 12)
-    $null = Wait-State { param($s) $s.tabStarts -eq '1' } 'Promotion did not start'
-    $driver.Escape()
-    try { $state = Wait-State { param($s) $s.tabCompletions -eq '1' } 'Windows Escape did not complete' }
-    finally { $driver.ReleaseEscape() }
-    $driver.End($session.ProcessId, $start.X + 15, $start.Y + 210)
-    Check ($state.tabOrder -eq '0,1,2' -and $state.tabResult -eq 'None' -and $state.tabPublished -eq '0') 'External cancellation must retain the draft and its order.'
-    Finish 'ExternalEscape'
+    foreach ($direction in @(0, -1, 1)) {
+        Ready
+        $name = @{ 0 = 'ExternalEscape'; -1 = 'LeftThenDownPreview'; 1 = 'RightThenDownPreview' }[$direction]
+        $start = Point (Header 1)
+        $slot = Header 1 -Container
+        $slotWidth = [int]$slot.Width
+        $slotHeight = [int][Math]::Ceiling($slot.Height)
+        $targetX = $start.X + [int]($direction * $slotWidth * .35)
+        $scale = [double](State).tabScale
+        $client = $driver.GetEditorClientBounds()
+        $targetY = [Math]::Min($start.Y + [int](130 * $scale), $client.Bottom - $slotHeight)
+        $left = [int][Math]::Max($client.Left, $targetX - 1.5 * $slotWidth)
+        $right = [int][Math]::Min($client.Right, $targetX + 1.5 * $slotWidth)
+        $top = [Math]::Max([int][Math]::Ceiling($slot.Bottom) + $slotHeight, $targetY - [int](76 * $scale))
+        $bottom = [Math]::Min($client.Bottom, $targetY + [int](52 * $scale))
+        $width = $right - $left
+        $height = $bottom - $top
+        Check ($slotWidth -ge 20 -and $slotHeight -ge 20 -and $width -ge $slotWidth -and
+            $targetX -ge $left -and $targetX -lt $right -and $targetY - $top -ge $slotHeight) 'The owned client area cannot fit the tab preview fixture.'
+        # Require a solid band of the dark tab body. A full-width accent
+        # stroke alone must not hide clipping in the rest of the preview.
+        $minimumBand = [int][Math]::Ceiling($slotHeight / 4)
+        $capturePath = Join-Path $session.Root "$name.png"
+        $before = [EditorAutomationInput]::Capture($session.ProcessId, $left, $top, $width, $height, $null)
+
+        $driver.Begin($session.ProcessId, $start.X, $start.Y, $false)
+        if ($direction) {
+            $driver.MoveTo($targetX, $start.Y, 8)
+            $null = Wait-State { param($s) [Math]::Abs((Point (Header 1)).X - $targetX) -le 4 } 'The header did not reach the horizontal preview position'
+            $null = Invoke-EditorTestCommand $session 'tabs-frame'
+        }
+        $driver.MoveTo($targetX, $targetY, 12)
+        $null = Wait-State { param($s) $s.tabStarts -eq '1' } 'Promotion did not start'
+        $watch = [Diagnostics.Stopwatch]::StartNew()
+        do {
+            $during = [EditorAutomationInput]::Capture($session.ProcessId, $left, $top, $width, $height, $capturePath)
+            $previewWidth = $during.WidestChangedBand($before, $minimumBand)
+        } while ([Math]::Abs($previewWidth - $slotWidth) -gt 4 -and $watch.Elapsed.TotalSeconds -lt 2)
+        $driver.Escape()
+        try { $state = Wait-State { param($s) $s.tabCompletions -eq '1' } 'Windows Escape did not complete' }
+        finally { $driver.ReleaseEscape() }
+        $driver.End($session.ProcessId, $targetX, $targetY)
+        Check ([Math]::Abs($previewWidth - $slotWidth) -le 4) "$name showed $previewWidth pixels of a $slotWidth pixel tab."
+        Check ($state.tabOrder -eq '0,1,2' -and $state.tabResult -eq 'None' -and $state.tabPublished -eq '0') 'External cancellation must retain the draft and its order.'
+        Finish $name
+    }
 
     Ready
     $start = Point (Header 0)

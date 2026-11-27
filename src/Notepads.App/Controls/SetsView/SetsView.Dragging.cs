@@ -227,7 +227,6 @@ public partial class SetsView
         // Pointer capture does not require keyboard focus. Let the consumer
         // focus the content when this local user interaction completes.
         if (_mouseDrag != drag || Items.IndexOf(item) < 0) { ResetMouseDrag(); return true; }
-        item.DragStarting += MouseDragStarting;
         args.Handled = true;
         return true;
     }
@@ -251,25 +250,32 @@ public partial class SetsView
         if (!TryGetHeaderBounds(out var bounds)) { ResetMouseDrag(); return; }
         if (TabDragGeometry.Escapes(point.Position.Y, bounds.Top, bounds.Bottom))
         {
+            var header = drag.Item.HeaderDragRoot;
+            if (header == null) { ResetMouseDrag(); return; }
+
             // Windows owns completion from this point, including expected capture loss.
             drag.External = true;
             HideRail(drag);
-            var start = args.GetCurrentPoint(drag.Item);
+            // Capture the header in its own coordinate space. A snapshot of
+            // the item can crop the translated header to its old layout slot.
+            var start = args.GetCurrentPoint(header);
             ReleasePointerCapture(drag.Pointer);
-            _ = RunExternalDragAsync(drag, start);
+            _ = RunExternalDragAsync(drag, header, start);
         }
         else UpdateRail(drag);
         args.Handled = true;
     }
 
-    private async System.Threading.Tasks.Task RunExternalDragAsync(MouseTabDrag drag, Windows.UI.Input.PointerPoint point)
+    private async System.Threading.Tasks.Task RunExternalDragAsync(MouseTabDrag drag, FrameworkElement header, Windows.UI.Input.PointerPoint point)
     {
         var result = DataPackageOperation.None;
         Exception error = null;
-        try { result = await drag.Item.StartDragAsync(point); }
+        header.DragStarting += MouseDragStarting;
+        try { result = await header.StartDragAsync(point); }
         catch (Exception exception) { error = exception; }
         finally
         {
+            header.DragStarting -= MouseDragStarting;
             ResetMouseDrag();
             TabDragCompleted?.Invoke(this, new TabDragCompletedEventArgs(drag.Operation, drag.Item, result, error));
         }
@@ -318,7 +324,7 @@ public partial class SetsView
 
     private void MouseDragStarting(UIElement sender, DragStartingEventArgs args)
     {
-        if (_mouseDrag is not { External: true, Retired: false } drag || sender != drag.Item)
+        if (_mouseDrag is not { External: true, Retired: false } drag || sender != drag.Item.HeaderDragRoot)
         { args.Cancel = true; return; }
         args.Data.Properties[LocalDragProperty] = drag.Operation.ToString("N");
         args.AllowedOperations = DataPackageOperation.Move;
@@ -596,7 +602,6 @@ public partial class SetsView
         if (drag == null) return;
         _mouseDrag = null; // Releasing capture can synchronously reenter this control.
         HideRail(drag);
-        drag.Item.DragStarting -= MouseDragStarting;
         _isDragging = false;
         ReleasePointerCapture(drag.Pointer);
         if (drag.Started && IsLoaded) SetsView_SelectionChanged(this, null);

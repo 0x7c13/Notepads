@@ -308,6 +308,30 @@ public sealed class EditorInkSnapshot
         return pixels[offset] | pixels[offset + 1] << 8 | pixels[offset + 2] << 16;
     }
 
+    public int WidestChangedBand(EditorInkSnapshot baseline, int minimumHeight)
+    {
+        if (baseline.imageWidth != imageWidth || baseline.imageHeight != imageHeight)
+            throw new ArgumentException("The snapshots must cover the same size.", nameof(baseline));
+        if (minimumHeight < 1 || minimumHeight > imageHeight)
+            throw new ArgumentOutOfRangeException(nameof(minimumHeight));
+
+        // A qualifying column has changed for at least minimumHeight consecutive
+        // rows ending here. Adjacent qualifying columns form a solid band.
+        var columnHeights = new int[imageWidth];
+        int widest = 0;
+        for (int y = 0; y < imageHeight; y++)
+        {
+            int run = 0;
+            for (int x = 0; x < imageWidth; x++)
+            {
+                columnHeights[x] = PixelRgb(x, y) == baseline.PixelRgb(x, y) ? 0 : columnHeights[x] + 1;
+                run = columnHeights[x] >= minimumHeight ? run + 1 : 0;
+                widest = Math.Max(widest, run);
+            }
+        }
+        return widest;
+    }
+
     private static bool IsInk(byte[] pixels, int offset) => Math.Min(pixels[offset], Math.Min(pixels[offset + 1], pixels[offset + 2])) < 192;
 
     public bool SameShape(EditorInkSnapshot other, bool mirror)

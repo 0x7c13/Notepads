@@ -43,6 +43,8 @@ public sealed class EditorDragInput : IDisposable
     [DllImport("user32.dll")] private static extern bool ShowWindowAsync(IntPtr window, int command);
     [DllImport("user32.dll", SetLastError = true)] private static extern bool SetWindowPos(IntPtr window, IntPtr after, int x, int y, int width, int height, uint flags);
     [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr window, out Rect rect);
+    [DllImport("user32.dll")] private static extern bool GetClientRect(IntPtr window, out Rect rect);
+    [DllImport("user32.dll")] private static extern bool ClientToScreen(IntPtr window, ref Point point);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern int GetClassName(IntPtr window, StringBuilder name, int capacity);
     [DllImport("user32.dll")] private static extern IntPtr MonitorFromWindow(IntPtr window, uint flags);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern bool GetMonitorInfo(IntPtr monitor, ref MonitorInfo info);
@@ -206,6 +208,15 @@ public sealed class EditorDragInput : IDisposable
         if (pid == peerProcess) return PeerWindow;
         throw new InvalidOperationException("Process is not owned by this driver.");
     }
+    public Rect GetEditorClientBounds()
+    {
+        ValidateWindows();
+        var origin = new Point();
+        if (!GetClientRect(EditorAnchor, out var rect) || !ClientToScreen(EditorAnchor, ref origin))
+            throw new InvalidOperationException("Could not measure the owned editor client area.");
+        return new Rect { Left = origin.X, Top = origin.Y, Right = origin.X + rect.Right, Bottom = origin.Y + rect.Bottom };
+    }
+
     public void Arrange()
     {
         if (HasPressedInput) throw new InvalidOperationException("Cannot arrange windows while driver-owned input is held.");
