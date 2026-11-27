@@ -56,8 +56,8 @@ internal static partial class DocumentSaveTarget
                 try { pins.Protect(nativePath, renamingEntry); }
                 catch (Exception ex) when (ex.HResult == unchecked((int)0x80070005))
                 {
-                    if (!ordinarySpelling && (pins.ObservedReparsePoint ||
-                        !MatchesPhysicalDrivePath(nativePath, current, StringComparison.OrdinalIgnoreCase, dosPath == null)))
+                    if (!ordinarySpelling && (dosPath != null || pins.ObservedReparsePoint ||
+                        !MatchesPhysicalDrivePath(nativePath, handle)))
                     {
                         LoggingService.LogError($"[Save] Cannot inspect route '{nativePath}'; final '{current}', DOS '{dosPath}', brokered={granted != null}.");
                         throw;
@@ -104,7 +104,8 @@ internal static partial class DocumentSaveTarget
 
     static partial void OnRecheckingPinnedLocation(ref string observed);
     static partial void OnCheckingNormalizedDosPath(string path, ref string dosPath);
-    static partial void OnCheckingOrdinaryParent(ref bool hasTag, ref string finalPath);
+    static partial void OnReadingDriveDeviceName(ref string device);
+    static partial void OnCheckingPinnedParent(ref bool hasTag, ref string finalPath);
     static partial void OnCheckingPinnedAnchor(ref string finalPath);
 
     private static DocumentSaveException NamespaceFailure(int error) =>
@@ -137,22 +138,39 @@ internal static partial class DocumentSaveTarget
     private static uint CanonicalVolumeFormat(string path) =>
         path.StartsWith(NtVolumePrefix, StringComparison.OrdinalIgnoreCase) ? 2u : 1u;
 
-    private static bool MatchesPhysicalDrivePath(string path, string finalPath, StringComparison comparison,
-        bool allowVolumeSpellingFallback = true)
+    private static bool MatchesPhysicalDrivePath(string path, SafeFileHandle entry)
     {
-        if (finalPath == null || path.Length <= 7 || path[5] != ':' || path[6] != '\\') return false;
+        if (path.Length < 7 || !char.IsAsciiLetter(path[4]) || path[5] != ':' || path[6] != '\\') return false;
         using var drive = OpenMetadataByName(path[..7], 0x02000000 /* FILE_FLAG_BACKUP_SEMANTICS */);
         var finalRoot = GetFinalPath(drive);
         if (finalRoot != null)
-            return string.Equals(finalRoot.TrimEnd('\\') + path[6..], finalPath, comparison);
+            return finalRoot.TrimEnd('\\') + path[6..] == GetFinalPath(entry, CanonicalVolumeFormat(finalRoot));
 
-        // Some app containers can open the grant but cannot query the drive
-        // mapping. Keep requiring the normalized name below the local volume.
-        // The grant's full volume-qualified location is checked independently.
-        if (!allowVolumeSpellingFallback) return false;
-        int suffix = LocalVolumeSeparator(finalPath);
-        return suffix >= 0 && path.AsSpan(6).Equals(finalPath.AsSpan(suffix), comparison);
+        // A file grant can deny access to the root directory. The volume device
+        // can identify the drive mapping without opening that directory.
+        var device = GetDriveDeviceName(path.Substring(4, 2));
+        OnReadingDriveDeviceName(ref device);
+        return device != null && device.TrimEnd('\\') + path[6..] == GetFinalPath(entry, 2 /* VOLUME_NAME_NT */);
     }
+
+    private static unsafe string GetDriveDeviceName(string drive)
+    {
+        using var handle = CreateFileFromAppW(@"\\.\" + drive, 0, FileShare.ReadWrite | FileShare.Delete,
+            IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+        if (handle.IsInvalid) return null;
+        const uint queryDeviceName = 0x004d0008; // IOCTL_MOUNTDEV_QUERY_DEVICE_NAME
+        const uint capacity = 512;
+        char* result = stackalloc char[(int)capacity / sizeof(char)];
+        if (DeviceIoControl(handle, queryDeviceName, IntPtr.Zero, 0, result, capacity, out uint written, IntPtr.Zero) == 0 ||
+            written < sizeof(ushort) || written > capacity) return null;
+        uint nameBytes = result[0];
+        return nameBytes != 0 && nameBytes % sizeof(char) == 0 && nameBytes <= written - sizeof(ushort)
+            ? new string(result + 1, 0, (int)nameBytes / sizeof(char)) : null;
+    }
+
+    [LibraryImport("kernel32.dll")]
+    private static unsafe partial int DeviceIoControl(SafeFileHandle device, uint code, IntPtr input,
+        uint inputSize, char* output, uint outputSize, out uint written, IntPtr overlapped);
 
     private static bool ResolvesParentCaseSpelling(string path, string spelling)
     {
@@ -224,8 +242,7 @@ internal static partial class DocumentSaveTarget
 
             // A no-follow directory handle can still prove the anchor when
             // Windows supplies only its volume-qualified name.
-            var physicalPath = GetFinalPath(handle);
-            return MatchesPhysicalDrivePath(path, physicalPath, StringComparison.Ordinal) ? path : physicalPath;
+            return MatchesPhysicalDrivePath(path, handle) ? path : GetFinalPath(handle);
         }
 
         private static string FindAnchor(string path, string root)
@@ -243,6 +260,13 @@ internal static partial class DocumentSaveTarget
                 parent = Path.GetDirectoryName(parent);
             }
             return root;
+        }
+
+        private static void RequirePinnedDirectory(string expected, string observed, bool hasTag, bool redirected = false)
+        {
+            OnCheckingPinnedParent(ref hasTag, ref observed);
+            if (!hasTag || observed == null) throw new DocumentSaveException(DocumentSaveStage.Coordinate);
+            if (redirected || observed != expected) throw new DocumentSaveException(DocumentSaveStage.Conflict);
         }
 
         internal static SafeFileHandle TryPinOrdinaryParent(string path)
@@ -264,10 +288,7 @@ internal static partial class DocumentSaveTarget
             {
                 var observed = GetDirectorySpelling(handle, parent);
                 var hasTag = GetFileInformationByHandleEx(handle, 9, out var info, 8);
-                OnCheckingOrdinaryParent(ref hasTag, ref observed);
-                if (!hasTag || observed == null) throw new DocumentSaveException(DocumentSaveStage.Coordinate);
-                if ((info.ReparseTag & NameSurrogate) != 0 || observed != parent)
-                    throw new DocumentSaveException(DocumentSaveStage.Conflict);
+                RequirePinnedDirectory(parent, observed, hasTag, (info.ReparseTag & NameSurrogate) != 0);
                 return handle;
             }
             catch
@@ -296,8 +317,7 @@ internal static partial class DocumentSaveTarget
                         throw new DocumentSaveException(DocumentSaveStage.Conflict);
                     var observed = GetDirectorySpelling(_handles[prefix], prefix);
                     OnCheckingPinnedAnchor(ref observed);
-                    if (observed == null) throw new DocumentSaveException(DocumentSaveStage.Coordinate);
-                    if (observed != prefix) throw new DocumentSaveException(DocumentSaveStage.Conflict);
+                    RequirePinnedDirectory(prefix, observed, hasTag: true);
                 }
                 bool followed = false;
                 var components = path[prefix.Length..].Split('\\', StringSplitOptions.RemoveEmptyEntries);

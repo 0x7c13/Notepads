@@ -41,19 +41,25 @@ internal static partial class DocumentFileWriterTests
         Directory.Move(path, parked);
         Directory.Move(parked, path);
 
-        foreach (bool missingTag in new[] { false, true })
+        foreach (var (missingTag, hideDos) in new[] { (false, false), (true, false), (false, true), (true, true) })
         {
             DocumentSaveTarget.TestMissingParentTag = missingTag;
             DocumentSaveTarget.TestMissingParentName = !missingTag;
+            DocumentSaveTarget.TestHideNormalizedDosPath = hideDos ? _ => true : null;
             try
             {
                 var error = await ExpectAsync<DocumentSaveException>(() => Task.Run(() =>
                 {
                     using var unexpected = DocumentSaveTarget.Pin(file, version.TargetPath);
                 }));
-                Assert(error.Stage == DocumentSaveStage.Coordinate, "Both the verified tag and the parent name are required.");
+                Assert(error.Stage == DocumentSaveStage.Coordinate,
+                    $"Pinned directories require both a verified tag and name (missing tag={missingTag}, hidden DOS name={hideDos}).");
             }
-            finally { DocumentSaveTarget.TestMissingParentTag = DocumentSaveTarget.TestMissingParentName = false; }
+            finally
+            {
+                DocumentSaveTarget.TestMissingParentTag = DocumentSaveTarget.TestMissingParentName = false;
+                DocumentSaveTarget.TestHideNormalizedDosPath = null;
+            }
         }
         DocumentSaveTarget.TestPinnedLocation = _ => null;
         try

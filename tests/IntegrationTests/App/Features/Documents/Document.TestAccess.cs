@@ -45,6 +45,11 @@ namespace Notepads.Features.Documents.IO
         {
             if (TestHideNormalizedDosPath?.Invoke(path) == true) dosPath = null;
         }
+        internal static Func<string, string> TestDriveDeviceName;
+        static partial void OnReadingDriveDeviceName(ref string device)
+        {
+            if (TestDriveDeviceName != null) device = TestDriveDeviceName(device);
+        }
         internal static bool TestHideVolumeGuid;
         static partial void OnResolvingVolumePath(ref bool hideVolumeGuid) => hideVolumeGuid = TestHideVolumeGuid;
         internal static Func<string, string> TestPinnedLocation;
@@ -59,7 +64,7 @@ namespace Notepads.Features.Documents.IO
         }
         internal static bool TestMissingParentTag;
         internal static bool TestMissingParentName;
-        static partial void OnCheckingOrdinaryParent(ref bool hasTag, ref string finalPath)
+        static partial void OnCheckingPinnedParent(ref bool hasTag, ref string finalPath)
         {
             if (TestMissingParentTag) hasTag = false;
             if (TestMissingParentName) finalPath = null;

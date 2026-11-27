@@ -143,7 +143,30 @@ internal static class BrokeredDocumentTests
                 DocumentSaveTarget.TestHideNormalizedDosPath = path => path == file.Path;
                 DocumentSaveTarget.TestNamedMetadataUnavailable = path => path == @"\\?\" + driveRoot;
             }
-            try { saved = await editor.SaveContentToFileAndUpdateEditorStateAsync(editor.EditingFile); }
+            try
+            {
+                if (kind == "canonical")
+                {
+                    var version = editor.LastSavedSnapshot;
+                    bool checkedDevice = false;
+                    DocumentSaveTarget.TestDriveDeviceName = device =>
+                    {
+                        checkedDevice = true;
+                        return device + "-different-volume";
+                    };
+                    try
+                    {
+                        await ThrowsAsync<DocumentSaveException>(() => editor.SaveContentToFileAndUpdateEditorStateAsync(file),
+                            "Identical volume-relative names on different devices do not authorize a save.");
+                    }
+                    finally { DocumentSaveTarget.TestDriveDeviceName = null; }
+                    Check(checkedDevice && editor.IsModified && ReferenceEquals(version, editor.LastSavedSnapshot) &&
+                        !editor.GetTextEditorStateMetaData().HasUnconfirmedFileSave,
+                        "Refusing the other volume preserves the verified version and the unsaved draft.");
+                    await BytesAsync(file, Encoding.UTF8.GetBytes(Original), "A different volume's matching suffix cannot authorize writing");
+                }
+                saved = await editor.SaveContentToFileAndUpdateEditorStateAsync(editor.EditingFile);
+            }
             catch (DocumentSaveException ex)
             {
                 log.AppendLine($"Brokered {kind} editor save failed at {ex.Stage} (HRESULT 0x{ex.HResult:X8}, " +
