@@ -40,6 +40,11 @@ namespace Notepads.Features.Documents.IO
         internal static Func<string, bool> TestNamedMetadataUnavailable;
         static partial void OnOpeningNamedMetadata(string path, ref bool unavailable) =>
             unavailable = TestNamedMetadataUnavailable?.Invoke(path) == true;
+        internal static Func<string, bool> TestHideNormalizedDosPath;
+        static partial void OnCheckingNormalizedDosPath(string path, ref string dosPath)
+        {
+            if (TestHideNormalizedDosPath?.Invoke(path) == true) dosPath = null;
+        }
         internal static Func<string, string> TestPinnedLocation;
         internal static bool TestAnchorMoved;
         static partial void OnCheckingPinnedAnchor(ref string finalPath)

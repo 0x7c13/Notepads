@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using Notepads.Infrastructure.Diagnostics;
 using Windows.Storage;
 
 namespace Notepads.Features.Documents.IO;
@@ -43,7 +44,9 @@ internal static partial class DocumentSaveTarget
             if (!SameLocationOnWorker(expectedFinalPath, current))
                 throw new DocumentSaveException(DocumentSaveStage.Conflict);
             var dosPath = GetFinalPath(handle, 0);
-            bool ordinarySpelling = string.Equals(nativePath, dosPath, StringComparison.OrdinalIgnoreCase);
+            OnCheckingNormalizedDosPath(path, ref dosPath);
+            bool ordinarySpelling = string.Equals(nativePath, dosPath, StringComparison.OrdinalIgnoreCase) ||
+                MatchesPhysicalDrivePath(nativePath, current, handle, dosPath);
             if (!renamingEntry && ordinarySpelling)
             {
                 // This exact grant opened the selected spelling and Windows identified its entry.
@@ -66,6 +69,11 @@ internal static partial class DocumentSaveTarget
                     // A file grant may allow direct file metadata but deny access to its ancestors.
                     protection.Dispose();
                     protection = null;
+                }
+                catch (Exception ex) when (ex.HResult == unchecked((int)0x80070005))
+                {
+                    LoggingService.LogError($"[Save] Cannot inspect route '{nativePath}'; final '{current}', DOS '{dosPath}', brokered={granted != null}.");
+                    throw;
                 }
             }
             // A verified parent pins the entry's location. A file-only grant must freshly
@@ -94,6 +102,7 @@ internal static partial class DocumentSaveTarget
     }
 
     static partial void OnRecheckingPinnedLocation(ref string observed);
+    static partial void OnCheckingNormalizedDosPath(string path, ref string dosPath);
     static partial void OnCheckingOrdinaryParent(ref bool hasTag, ref string finalPath);
     static partial void OnCheckingPinnedAnchor(ref string finalPath);
 
@@ -109,6 +118,21 @@ internal static partial class DocumentSaveTarget
 
     private static bool IsLocalPath(string path) => path.StartsWith(@"\\?\Volume{", StringComparison.OrdinalIgnoreCase) ||
         (path.Length > 6 && path[5] == ':' && path[6] == '\\');
+
+    private static bool MatchesPhysicalDrivePath(string path, string finalPath, SafeFileHandle file, string dosPath)
+    {
+        if (path.Length <= 7 || path[5] != ':' || path[6] != '\\') return false;
+        using var drive = OpenMetadataByName(path[..7], 0x02000000 /* FILE_FLAG_BACKUP_SEMANTICS */);
+        var finalRoot = GetFinalPath(drive);
+        if (finalRoot != null)
+            return string.Equals(finalRoot.TrimEnd('\\') + path[6..], finalPath, StringComparison.OrdinalIgnoreCase);
+
+        // Access to the file grant can outlive access to the drive name. Require
+        // the opened DOS spelling and the normalized path below its volume to agree.
+        return dosPath == null &&
+            string.Equals(GetFinalPath(file, 0x8 /* FILE_NAME_OPENED */), path, StringComparison.OrdinalIgnoreCase) &&
+            path.AsSpan(6).Equals(GetFinalPath(file, 0x4 /* VOLUME_NAME_NONE */), StringComparison.OrdinalIgnoreCase);
+    }
 
     private static bool ResolvesParentCaseSpelling(string path, string spelling)
     {

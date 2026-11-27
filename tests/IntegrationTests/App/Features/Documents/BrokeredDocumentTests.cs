@@ -108,6 +108,8 @@ internal static class BrokeredDocumentTests
             editor.TypeText(" saved");
             string expected = editor.GetText();
             StorageFile saved;
+            // The installed app can have a file grant with no normalized DOS spelling.
+            if (kind == "canonical") DocumentSaveTarget.TestHideNormalizedDosPath = path => path == file.Path;
             try { saved = await editor.SaveContentToFileAndUpdateEditorStateAsync(editor.EditingFile); }
             catch (DocumentSaveException ex)
             {
@@ -115,6 +117,7 @@ internal static class BrokeredDocumentTests
                     $"expected={target.FinalPath}, {await Task.Run(() => DocumentSaveTarget.TestDescribeGrantedTarget(file))}).");
                 throw;
             }
+            finally { DocumentSaveTarget.TestHideNormalizedDosPath = null; }
             Check(saved != null && !editor.IsModified && await FileIO.ReadTextAsync(saved) == expected,
                 $"Saving the writable brokered {kind} grant must verify all bytes and clear the modified flag.");
             var after = await DocumentSaveTarget.ResolveAsync(saved, default);
@@ -122,6 +125,7 @@ internal static class BrokeredDocumentTests
                 string.Equals(Path.GetFileName(target.FinalPath), Path.GetFileName(after.FinalPath), StringComparison.OrdinalIgnoreCase),
                 $"Saving the private {kind} fixture may change only its leaf spelling.");
             log.AppendLine($"PASS: brokered {kind} verified save (prior leaf {Path.GetFileName(target.FinalPath)}, current {Path.GetFileName(after.FinalPath)}).");
+            if (kind == "canonical") log.AppendLine("PASS: a brokered local save still verifies and commits without the normalized DOS spelling.");
             if (canRename)
             {
                 var name = "editor-" + kind + ".txt";
