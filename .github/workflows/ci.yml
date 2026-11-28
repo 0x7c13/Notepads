@@ -127,6 +127,8 @@ jobs:
         with:
           name: notepads-offline-${{ matrix.platform }}
           path: ${{ steps.build.outputs.offline-path }}
+          # The bundle manifest includes third-party notices under .licenses directories.
+          include-hidden-files: true
           retention-days: 14
           if-no-files-found: error
       - name: Preserve build and package evidence
