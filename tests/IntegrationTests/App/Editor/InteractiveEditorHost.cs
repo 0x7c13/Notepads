@@ -819,7 +819,7 @@ internal static class InteractiveEditorHost
         await EditorTestLayout.AfterPaintAsync(Native, () =>
         {
             ThemeSettingsService.SetTheme(dark ? ElementTheme.Dark : ElementTheme.Light);
-            ApplicationPreferences.EditorFontRendering = clearType ? FontRenderingMode.ClearType : FontRenderingMode.Grayscale;
+            _editor.SetFontRendering(clearType ? FontRenderingMode.ClearType : FontRenderingMode.Grayscale);
             _editor.FontFamily = new FontFamily("Consolas");
             // Force production font/theme application even after a manual-quality fixture.
             _editor.FontSize = 14;
@@ -829,7 +829,7 @@ internal static class InteractiveEditorHost
             _panel.Padding = new Thickness(24);
             ((Grid)Window.Current.Content).Background = new SolidColorBrush(Color.FromArgb(255, 26, 88, 55));
             // Remove only the XAML underlay: the independent pixel oracle must
-            // prove that the production preference paints native opaque pixels.
+            // prove that the editor paints native opaque pixels.
             if (nativeOnly) ((Grid)_editor.Content).Background = null;
             _editor.UpdateLayout();
         });

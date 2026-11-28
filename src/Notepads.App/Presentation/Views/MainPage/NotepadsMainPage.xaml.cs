@@ -482,7 +482,6 @@ public sealed partial class NotepadsMainPage : Page
             // Publish on the activation thread: queued background writes can
             // finish out of order after the user has already switched windows.
             ApplicationSettingsStore.Write(SettingsKey.ActiveInstanceIdStr, _context.InstanceId.ToString());
-            ApplicationPreferences.RefreshFontRenderingSetting();
             ApplicationPreferences.RefreshReadingAids();
             ApplicationPreferences.RefreshMarkdownFrontMatterStyle();
             NotepadsCore.GetSelectedReadyEditor()?.StartCheckingFileStatusPeriodically();

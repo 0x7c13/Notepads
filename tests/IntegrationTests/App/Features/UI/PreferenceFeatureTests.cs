@@ -27,10 +27,11 @@ namespace NotepadsIntegrationTests;
 internal static partial class PreferenceFeatureTests
 {
     private const string RestartMarker = "IntegrationPreferencesRestartMarker";
+    private const string LegacyFontRenderingKey = "EditorFontRenderingStr";
     private static readonly string[] Keys =
     [
         SettingsKey.EditorFontFamilyStr, SettingsKey.EditorFontSizeInt, SettingsKey.EditorFontStyleStr,
-        SettingsKey.EditorFontWeightUshort, SettingsKey.EditorFontRenderingStr, SettingsKey.EditorDefaultTextWrappingStr,
+        SettingsKey.EditorFontWeightUshort, SettingsKey.EditorDefaultTextWrappingStr,
         SettingsKey.EditorDefaultLineHighlighterViewStateBool, SettingsKey.EditorDefaultDisplayLineNumbersBool,
         SettingsKey.EditorDefaultLineEndingStr, SettingsKey.EditorDefaultEncodingCodePageInt,
         SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool, SettingsKey.EditorDefaultDecodingCodePageInt,
@@ -190,7 +191,6 @@ internal static partial class PreferenceFeatureTests
         foreach (var key in Keys) ApplicationSettingsStore.Remove(key);
         ApplicationPreferences.Initialize();
         Check(ApplicationPreferences.EditorFontFamily == "Consolas" && ApplicationPreferences.EditorFontSize == 14 &&
-            ApplicationPreferences.EditorFontRendering == FontRenderingMode.Grayscale &&
             ApplicationPreferences.EditorFontWeight == 400 && ApplicationPreferences.EditorFontStyle == FontSlant.Normal &&
             !ApplicationPreferences.EditorDefaultWordWrap && ApplicationPreferences.EditorDisplayLineHighlighter &&
             ApplicationPreferences.EditorDisplayLineNumbers && ApplicationPreferences.ShowStatusBar,
@@ -210,7 +210,6 @@ internal static partial class PreferenceFeatureTests
         }
 
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, "WrapWholeWords");
-        ApplicationSettingsStore.Write(SettingsKey.EditorFontRenderingStr, "ClearType");
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultEncodingCodePageInt, 65001);
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultUtf8EncoderShouldEmitByteOrderMarkBool, true);
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, "Cr");
@@ -219,7 +218,6 @@ internal static partial class PreferenceFeatureTests
         ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, false);
         ApplicationPreferences.Initialize();
         Check(ApplicationPreferences.EditorDefaultWordWrap && ApplicationPreferences.EditorDefaultLineEnding == LineEnding.Cr &&
-            ApplicationPreferences.EditorFontRendering == FontRenderingMode.ClearType &&
             ApplicationPreferences.EditorDefaultEncoding.GetPreamble().SequenceEqual(new byte[] { 0xef, 0xbb, 0xbf }) &&
             ApplicationPreferences.EditorDefaultSearchEngine == SearchEngine.DuckDuckGo &&
             ApplicationPreferences.EditorDefaultTabIndents == -1 && !ApplicationPreferences.IsSessionSnapshotEnabled,
@@ -230,7 +228,6 @@ internal static partial class PreferenceFeatureTests
         ApplicationSettingsStore.Write(SettingsKey.EditorFontStyleStr, "not-a-style");
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultTextWrappingStr, "not-a-wrap-mode");
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineHighlighterViewStateBool, "false");
-        ApplicationSettingsStore.Write(SettingsKey.EditorFontRenderingStr, "unknown-rendering-mode");
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultLineEndingStr, "not-a-line-ending");
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultDecodingCodePageInt, -12345);
         ApplicationSettingsStore.Write(SettingsKey.EditorDefaultSearchEngineStr, "not-a-search-engine");
@@ -238,7 +235,6 @@ internal static partial class PreferenceFeatureTests
         ApplicationSettingsStore.Write(SettingsKey.EditorEnableSessionBackupAndRestoreBool, "false");
         ApplicationPreferences.Initialize();
         Check(ApplicationPreferences.EditorFontSize == 14 && ApplicationPreferences.EditorFontWeight == 400 &&
-            ApplicationPreferences.EditorFontRendering == FontRenderingMode.Grayscale &&
             ApplicationPreferences.EditorFontStyle == FontSlant.Normal && !ApplicationPreferences.EditorDefaultWordWrap &&
             ApplicationPreferences.EditorDisplayLineHighlighter && ApplicationPreferences.EditorDefaultLineEnding == LineEnding.Crlf &&
             ApplicationPreferences.EditorDefaultDecoding == null && ApplicationPreferences.EditorDefaultSearchEngine == SearchEngine.Bing &&
@@ -266,8 +262,7 @@ internal static partial class PreferenceFeatureTests
     internal static async Task SeedAsync(StringBuilder log)
     {
         await using var host = await FeatureTestHost.CreateAsync();
-        var personalization = await SettingsAsync<PersonalizationSettingsPage>(host.Page, "Personalization");
-        Named<RadioButton>(personalization, "ClearTypeRenderingRadioButton").IsChecked = true;
+        ApplicationSettingsStore.Write(LegacyFontRenderingKey, "ClearType");
         var settings = await SettingsAsync<TextAndEditorSettingsPage>(host.Page, "TextAndEditor");
         Named<ToggleSwitch>(settings, "TextWrappingToggle").IsOn = true;
         Named<ToggleSwitch>(settings, "LineNumbersToggle").IsOn = false;
@@ -285,10 +280,10 @@ internal static partial class PreferenceFeatureTests
 
     internal static async Task VerifyRestartAsync(StringBuilder log)
     {
-        Check((string)ApplicationSettingsStore.Read(RestartMarker) == "controls-seeded-v1",
-            "The restart phase received the explicit seed container.");
+        Check((string)ApplicationSettingsStore.Read(RestartMarker) == "controls-seeded-v1" &&
+            ApplicationSettingsStore.Read(LegacyFontRenderingKey) is "ClearType",
+            "The restart phase received a seed container with a saved legacy ClearType value.");
         Check(ApplicationPreferences.EditorDefaultWordWrap && ApplicationPreferences.EditorFontSize == 20 &&
-            ApplicationPreferences.EditorFontRendering == FontRenderingMode.ClearType &&
             !ApplicationPreferences.EditorDisplayLineNumbers && ApplicationPreferences.EditorDefaultLineEnding == LineEnding.Lf &&
             ApplicationPreferences.IsSmartCopyEnabled &&
             ApplicationPreferences.EditorDefaultEncoding.GetPreamble().SequenceEqual(new byte[] { 0xef, 0xbb, 0xbf }),
@@ -297,20 +292,18 @@ internal static partial class PreferenceFeatureTests
         var editor = (TextEditor)host.Core.GetSelectedReadyEditor();
         var native = editor.TestNativeCore.TestFeatureNative;
         Check(native.WrapMode == WinUIEditor.Wrap.Word && native.GetMarginWidthN(0) == 0 &&
-            native.FontQuality == WinUIEditor.FontQuality.QualityLcdOptimized &&
+            native.FontQuality == WinUIEditor.FontQuality.QualityAntialiased &&
             native.StyleGetSizeFractional(32) == 1500 && editor.GetLineEnding() == LineEnding.Lf &&
             editor.GetEncoding().GetPreamble().SequenceEqual(new byte[] { 0xef, 0xbb, 0xbf }),
-            "Fresh native editor receives persisted presentation and document defaults after process restart.");
+            "Fresh native editor uses grayscale with the persisted presentation and document defaults after process restart.");
         var settings = await SettingsAsync<TextAndEditorSettingsPage>(host.Page, "TextAndEditor");
         Check(Named<ToggleSwitch>(settings, "TextWrappingToggle").IsOn &&
             !Named<ToggleSwitch>(settings, "LineNumbersToggle").IsOn &&
             (int)Named<ComboBox>(settings, "FontSizePicker").SelectedItem == 20,
             "Fresh settings controls agree with the persisted state applied to the editor.");
         var personalization = await SettingsAsync<PersonalizationSettingsPage>(host.Page, "Personalization");
-        Check(Named<RadioButton>(personalization, "ClearTypeRenderingRadioButton").IsChecked == true &&
-            !Named<Slider>(personalization, "BackgroundTintOpacitySlider").IsEnabled &&
-            Named<TextBlock>(personalization, "ClearTypeTransparencyNotice").Visibility == Visibility.Visible,
-            "Fresh personalization restores ClearType and its transparency constraint together.");
+        CheckRenderingSettings(personalization);
+        ApplicationSettingsStore.Remove(LegacyFontRenderingKey);
         ApplicationSettingsStore.Remove(RestartMarker);
         log.AppendLine("PASS: Preferences.Restart — a fresh process, settings controls and native editor agree on retained values.");
     }

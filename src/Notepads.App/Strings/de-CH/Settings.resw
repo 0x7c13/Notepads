@@ -192,11 +192,6 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>Systemstandard</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>App schliessen beim Schliessen des letzten Tabs</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>App schliessen beim Schliessen des letzten Tabs</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
-  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Schriftdarstellung</value></data>
-  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Graustufenglättung</value></data>
-  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
-  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Graustufenglättung glättet Zeichenränder und erhält dabei Textfarben und Hintergrundtransparenz. ClearType kann auf manchen Bildschirmen schärfer wirken und verwendet einen undurchsichtigen Editorhintergrund.</value></data>
-  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType benötigt einen undurchsichtigen Editorhintergrund. Wählen Sie unter Schriftdarstellung die Graustufenglättung, um die Transparenz anzupassen.</value></data>
   <data name="EditorWhitespace.OffContent" xml:space="preserve"><value>Leerzeichen und Tabulatoren anzeigen</value></data>
   <data name="EditorWhitespace.OnContent" xml:space="preserve"><value>Leerzeichen und Tabulatoren anzeigen</value></data>
   <data name="EditorIndentGuides.OffContent" xml:space="preserve"><value>Einrückungslinien anzeigen</value></data>

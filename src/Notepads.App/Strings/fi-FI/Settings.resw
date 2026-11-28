@@ -192,11 +192,6 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>Järjestelmän oletus</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Sulje sovellus viimeisen välilehden sulkemisen yhteydessä</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Sulje sovellus viimeisen välilehden sulkemisen yhteydessä</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
-  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Fontin piirto</value></data>
-  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Harmaasävypehmennys</value></data>
-  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
-  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Harmaasävypehmennys tasoittaa merkkien reunat ja säilyttää tekstin värit sekä taustan läpinäkyvyyden. ClearType voi näyttää terävämmältä joillakin näytöillä ja käyttää editorissa peittävää taustaa.</value></data>
-  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType vaatii editoriin läpinäkymättömän taustan. Vaihda fontin piirto harmaasävytasoitukseen, jos haluat säätää läpinäkyvyyttä.</value></data>
   <data name="EditorWhitespace.OffContent" xml:space="preserve"><value>Näytä välilyönnit ja sarkaimet</value></data>
   <data name="EditorWhitespace.OnContent" xml:space="preserve"><value>Näytä välilyönnit ja sarkaimet</value></data>
   <data name="EditorIndentGuides.OffContent" xml:space="preserve"><value>Näytä sisennysohjaimet</value></data>

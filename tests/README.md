@@ -59,7 +59,7 @@ measurements on an idle desktop, with no concurrent builds during A/B.
 | Tabs, content-derived titles, selected reorder attachment, transfer admission and pending availability | `WorkspaceCommands`, `Activation`, `Workspace`; Unit title/drag geometry |
 | Prelaunch, first-paint restore, new-window protocol, process routing, live window preference, delayed activation/shutdown foreground | `AppLifecycle` (explicit locally; E2E CI) |
 | Move tab to new window: live undo/selection, draft/file/Diff state, pending content equality, cancellation; real ValueSet broker, duplicates and replay retirement | `WindowMove` (default); `WindowMoveBroker` (explicit locally; E2E CI) |
-| Preferences (defaults, persisted values, Tab, grayscale/ClearType), themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
+| Preferences (defaults, persisted values, Tab), grayscale defaults and internal ClearType, themes/accent, zoom/language, view modes and accessible actions | `Preferences*`, `Appearance`, `ZoomLanguage`, `ViewModes`, `EditingUI` |
 | Session restart/import, primary snapshot close, secondary Save/Discard/Cancel with snapshots on/off, transfer, persistence and recovery | `Workspace*`, `FileOpening`, `WindowMove`, `Persistence`, `Leases`, `SessionResilience` |
 | First-paint restore, two-axis pixel scrolling/animation, wrap, Diff sync and tab reattachment | `ScrollRestoration` |
 | RTL/LTR shaping, geometry, navigation, selection, undo and direction persistence | `NativeBidi`, `Bidi`, `ReadingOrder`, `AutomationNavigation` |
@@ -181,9 +181,9 @@ App tests exercise the real adapter/control, including immediate post-edit queri
 first paint, restore, rectangles, language, accessibility and focus. External tests
 add physical input and independent UIA/pixel observations. Font-quality raster
 checks cover transparent/opaque Light/Dark, compatible buffers, mode round-trips,
-ClearType selection and the real preference's native background opacity. Settings
-checks preserve hidden/Diff state, selection, undo and a legal RTL viewport;
-refresh is simulated through shared storage, while restart uses a new process.
+ClearType selection and the editor's native background opacity. Internal mode
+switches preserve hidden/Diff state, selection, undo and a legal RTL viewport.
+The restart check uses a new process with a legacy ClearType value in storage.
 These checks do not
 require ClearType to differ on systems configured for grayscale pixel geometry.
 These layers complement each other: NativeBidi does not compile `Editor.cxx` or

@@ -1835,7 +1835,7 @@ try {
         }
     }
 
-    Test-Case 'Font preference paints opaque ClearType and restores transparent grayscale' {
+    Test-Case 'Editor paints opaque ClearType and restores transparent grayscale' {
         foreach ($dark in @($false, $true)) {
             $grayState = Invoke-EditorTestCommand $session "font-preference|False|$dark"
             $expectedText = $pattern.DocumentRange.GetText(-1)
@@ -1847,8 +1847,8 @@ try {
             $lcdState = Invoke-EditorTestCommand $session "font-preference|True|$dark"
             $lcd = Read-StableInk "font-preference-cleartype-$dark" 4
             $expectedBackground = if ($dark) { 0x252525 } else { 0xf0f0f0 }
-            Assert-Equal $lcd.PixelRgb($sampleX, $sampleY) $expectedBackground 'The ClearType preference itself paints the solid native theme background'
-            Assert-Equal $lcdState.renderQuality '3' 'The production preference selects ClearType antialiasing'
+            Assert-Equal $lcd.PixelRgb($sampleX, $sampleY) $expectedBackground 'ClearType paints the solid native theme background'
+            Assert-Equal $lcdState.renderQuality '3' 'The editor selects ClearType antialiasing'
             Assert-Equal $lcdState.positionY $grayState.positionY 'The preference preserves measured display-row geometry'
             Assert-Equal $pattern.DocumentRange.GetText(-1) $expectedText 'The preference preserves independent UIA document text'
             $restoredState = Invoke-EditorTestCommand $session "font-preference|False|$dark"

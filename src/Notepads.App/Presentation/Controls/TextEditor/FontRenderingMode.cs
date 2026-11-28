@@ -3,6 +3,6 @@
 //  See LICENSE.txt in the project root for license information.
 // ---------------------------------------------------------------------------------------------
 
-namespace Notepads.Features.Preferences;
+namespace Notepads.Presentation.Controls.TextEditor;
 
-public enum FontRenderingMode { Grayscale, ClearType }
+internal enum FontRenderingMode { Grayscale, ClearType }

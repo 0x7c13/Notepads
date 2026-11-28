@@ -192,11 +192,6 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>الإفتراضي في النظام</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>إغلاق التطبيق عند إغلاق آخر علامة تبويب</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>إغلاق التطبيق عند إغلاق آخر علامة تبويب</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
-  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>عرض الخط</value></data>
-  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>تنعيم بتدرجات الرمادي</value></data>
-  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
-  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>يعمل التنعيم بتدرجات الرمادي على تنعيم حواف الأحرف مع الحفاظ على ألوان النص وشفافية الخلفية. قد يبدو ClearType أكثر وضوحًا على بعض الشاشات، ويستخدم خلفية معتمة للمحرر.</value></data>
-  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>يتطلب ClearType خلفية معتمة للمحرر. انتقل إلى تنعيم الحواف بتدرج الرمادي في إعدادات عرض الخط لضبط الشفافية.</value></data>
   <data name="EditorWhitespace.OffContent" xml:space="preserve"><value>إظهار المسافات وعلامات الجدولة</value></data>
   <data name="EditorWhitespace.OnContent" xml:space="preserve"><value>إظهار المسافات وعلامات الجدولة</value></data>
   <data name="EditorIndentGuides.OffContent" xml:space="preserve"><value>إظهار أدلة المسافة البادئة</value></data>

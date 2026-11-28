@@ -25,7 +25,6 @@ internal static class SettingsKey
     internal static string EditorFontSizeInt = "EditorFontSizeInt";
     internal static string EditorFontStyleStr = "EditorFontStyleStr";
     internal static string EditorFontWeightUshort = "EditorFontWeightUshort";
-    internal static string EditorFontRenderingStr = "EditorFontRenderingStr";
     internal static string EditorDefaultTextWrappingStr = "EditorDefaultTextWrappingStr";
     internal static string EditorDefaultLineHighlighterViewStateBool = "EditorDefaultLineHighlighterViewStateBool";
     internal static string EditorDefaultLineEndingStr = "EditorDefaultLineEndingStr";

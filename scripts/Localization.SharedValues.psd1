@@ -18,7 +18,6 @@
     'Resources.resw/TextEditor_Indentation_Tabs' = @{ Value = 'Tabs'; Locales = @('nl-NL') }
     'Resources.resw/TextEditor_LineColumnIndicator_FullText' = @{ Value = 'Ln {0}, Col {1} ({2} {3})'; Locales = @('es-ES', 'fr-FR', 'pt-BR', 'pt-PT') }
     'Resources.resw/TextEditor_LineColumnIndicator_ShortText' = @{ Value = 'Ln {0}, Col {1}'; Locales = @('es-ES', 'fr-FR', 'pt-BR', 'pt-PT') }
-    'Settings.resw/PersonalizationPage_FontRendering_ClearType.Content' = @{ Value = 'ClearType'; Locales = @('*') }
     'Settings.resw/TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content' = @{ Value = 'UTF-8'; Locales = @('*') }
     'Settings.resw/TextAndEditorPage_Title.Content' = @{ Value = 'Text & Editor'; Locales = @('de-CH', 'de-DE') }
 }

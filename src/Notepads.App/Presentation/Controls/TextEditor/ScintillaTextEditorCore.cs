@@ -49,7 +49,7 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
     private readonly GradientStop _lineNumberGlowCenter;
     private readonly GradientStop _lineNumberGlowEnd;
     private EditorColorPalette _palette;
-    private FontRenderingMode _fontRendering;
+    private FontRenderingMode _fontRendering = FontRenderingMode.Grayscale;
     private double _dpiScale = 1;
     private readonly AccessibilitySettings _accessibility = new();
     private Editor Native => _view.Editor;
@@ -277,17 +277,22 @@ public sealed partial class TextEditorCore : UserControl, IDisposable
 
     private static int ToScintillaColor(Color color) => color.R | color.G << 8 | color.B << 16;
 
+    internal void SetFontRendering(FontRenderingMode rendering)
+    {
+        if (_fontRendering == rendering) return;
+        _fontRendering = rendering;
+        ApplyTheme(force: true);
+    }
+
     private void ApplyTheme(bool force = false)
     {
         var palette = EditorColorPalette.ForTheme(ThemeSettingsService.ThemeMode, _accessibility.HighContrast);
-        var rendering = ApplicationPreferences.EditorFontRendering;
         // Restyling re-wraps the whole document. Light and dark palettes are shared,
         // so a repeated theme notification skips it; high contrast always reapplies.
-        if (!force && palette == _palette && rendering == _fontRendering) return;
+        if (!force && palette == _palette) return;
         _palette = palette;
-        _fontRendering = rendering;
         var foreground = ToScintillaColor(palette[EditorColorRole.Foreground]);
-        var clearType = rendering == FontRenderingMode.ClearType;
+        var clearType = _fontRendering == FontRenderingMode.ClearType;
         var background = palette[clearType ? EditorColorRole.OpaqueBackground : EditorColorRole.Background];
         // Paint the insets whenever the native surface is opaque, including
         // grayscale in high contrast. Otherwise let the page backdrop show.

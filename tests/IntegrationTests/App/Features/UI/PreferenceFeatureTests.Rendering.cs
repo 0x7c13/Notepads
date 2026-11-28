@@ -10,8 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Notepads.Features.Documents.FileTypes;
 using Notepads.Features.Documents.Storage;
-using Notepads.Features.Preferences;
-using Notepads.Infrastructure.Settings;
 using Notepads.Presentation.Controls.DiffViewer;
 using Notepads.Presentation.Controls.TextEditor;
 using Notepads.Presentation.Theming;
@@ -34,8 +32,6 @@ internal static partial class PreferenceFeatureTests
 {
     private static async Task RunRenderingAsync(StringBuilder log)
     {
-        using var saved = new StoredPreferences(new[] { SettingsKey.EditorFontRenderingStr });
-        ApplicationPreferences.EditorFontRendering = FontRenderingMode.Grayscale;
         await using var host = await FeatureTestHost.CreateAsync();
         var hidden = (TextEditor)host.Core.GetSelectedReadyEditor();
         hidden.TypeText("hidden Ω😀");
@@ -58,24 +54,15 @@ internal static partial class PreferenceFeatureTests
             "The existing Diff snapshot is prepared before changing font rendering.");
         var oldPane = Named<TextEditorCore>(diff, "OldEditor");
         var newPane = Named<TextEditorCore>(diff, "NewEditor");
+        var editors = new[] { core, hidden.TestNativeCore, oldPane, newPane };
+        Check(editors.All(editor => editor.TestFeatureNative.FontQuality == FontQuality.QualityAntialiased),
+            "Visible, hidden and Diff editors start in grayscale.");
         var settings = await SettingsAsync<PersonalizationSettingsPage>(host.Page, "Personalization");
-        var gray = Named<RadioButton>(settings, "GrayscaleRenderingRadioButton");
-        var lcd = Named<RadioButton>(settings, "ClearTypeRenderingRadioButton");
-        Check(gray.IsChecked == true && lcd.IsChecked == false &&
-            !string.IsNullOrWhiteSpace(Named<TextBlock>(settings, "FontRenderingDescription").Text),
-            "Real settings expose the grayscale default and its localized explanation.");
-        var description = Named<TextBlock>(settings, "FontRenderingDescription");
-        var tintTitle = Named<TextBlock>(settings, "BackgroundTintOpacityTitle");
-        Check(description.ActualHeight > 0 && description.TransformToVisual(settings)
-            .TransformPoint(new(0, description.ActualHeight)).Y <= tintTitle.TransformToVisual(settings).TransformPoint(default).Y,
-            "Personalization presents font rendering and its explanation before background tint opacity.");
+        CheckRenderingSettings(settings);
         var theme = ThemeSettingsService.ThemeMode;
         var useWindowsTheme = ThemeSettingsService.UseWindowsTheme;
         var oldSelection = (native.Anchor, native.CurrentPos);
         var oldCanUndo = native.CanUndo();
-        var changes = 0;
-        void Changed(object sender, FontRenderingMode mode) => changes++;
-        ApplicationPreferences.OnFontRenderingChanged += Changed;
         try
         {
             foreach (var nextTheme in new[] { ElementTheme.Light, ElementTheme.Dark })
@@ -100,22 +87,12 @@ internal static partial class PreferenceFeatureTests
                     $"The fixture starts partially scrolled: row={native.FirstVisibleLine}, offset={view.DisplayVerticalOffset}/{offset}, x={native.XOffset}.");
                 foreach (var mode in new[] { FontRenderingMode.ClearType, FontRenderingMode.Grayscale })
                 {
-                    var before = changes;
                     await EditorTestLayout.AfterPaintAsync(native, () =>
-                        (mode == FontRenderingMode.ClearType ? lcd : gray).IsChecked = true);
-                    Check(changes == before + 1 && (string)ApplicationSettingsStore.Read(SettingsKey.EditorFontRenderingStr) == mode.ToString(),
-                        "One radio choice persists and broadcasts one rendering change.");
-                    Check(themeButton.IsChecked == true && gray.IsChecked != lcd.IsChecked &&
-                        (mode == FontRenderingMode.ClearType ? lcd : gray).IsChecked == true,
-                        "Theme and font-rendering radio groups remain independent on the same page.");
-                    ApplicationPreferences.EditorFontRendering = mode;
-                    Check(changes == before + 1, "Reapplying the same mode does not restyle documents.");
+                    {
+                        foreach (var editor in editors) editor.SetFontRendering(mode);
+                    });
                     var quality = mode == FontRenderingMode.ClearType ? FontQuality.QualityLcdOptimized : FontQuality.QualityAntialiased;
-                    // Each editor owns a dispatcher callback. A paint from the
-                    // selected editor does not drain the other editors' queues.
-                    await UntilAsync(() => native.FontQuality == quality &&
-                        hidden.TestNativeCore.TestFeatureNative.FontQuality == quality &&
-                        oldPane.TestFeatureNative.FontQuality == quality && newPane.TestFeatureNative.FontQuality == quality,
+                    Check(editors.All(editor => editor.TestFeatureNative.FontQuality == quality),
                         "Visible, hidden and existing Diff editors adopt the new rendering mode.");
                     var highContrast = new AccessibilitySettings().HighContrast;
                     if (mode == FontRenderingMode.ClearType || highContrast)
@@ -140,76 +117,29 @@ internal static partial class PreferenceFeatureTests
                         "Font rendering retains read-only Diff documents and hunk presentation.");
                 }
             }
-            // Simulate another process publishing the shared preference while
-            // this actual Settings page stays open; activation uses this reader.
-            ApplicationSettingsStore.Write(SettingsKey.EditorFontRenderingStr, "ClearType");
-            ApplicationPreferences.RefreshFontRenderingSetting();
-            await UntilAsync(() => lcd.IsChecked == true && native.FontQuality == FontQuality.QualityLcdOptimized,
-                "An external setting update refreshes both editor and already-open radio controls.");
-            var count = changes;
-            ApplicationPreferences.RefreshFontRenderingSetting();
-            Check(changes == count, "Unchanged activation refresh emits no restyling event.");
-            ApplicationSettingsStore.Write(SettingsKey.EditorFontRenderingStr, 42);
-            ApplicationPreferences.RefreshFontRenderingSetting();
-            await UntilAsync(() => gray.IsChecked == true && native.FontQuality == FontQuality.QualityAntialiased,
-                "A malformed external value falls back to grayscale in the editor and settings UI.");
-            Check(ApplicationSettingsStore.Read(SettingsKey.EditorFontRenderingStr) is int value && value == 42,
-                "Refreshing the radio selection never writes back to the shared store.");
-            await CloseSettingsAsync(host.Page);
-            settings = await SettingsAsync<PersonalizationSettingsPage>(host.Page, "Personalization");
-            Check(Named<RadioButton>(settings, "GrayscaleRenderingRadioButton").IsChecked == true,
-                "Reopened settings retain the current rendering mode after event rebinding.");
-            await CheckTransparencyControlsAsync(host);
+            CheckRenderingSettings(settings);
             native.Undo();
             Check(selected.GetText() == "", "Rendering switches preserve the original edit's undo operation.");
         }
         finally
         {
-            ApplicationPreferences.OnFontRenderingChanged -= Changed;
             ThemeSettingsService.SetTheme(theme);
             ThemeSettingsService.UseWindowsTheme = useWindowsTheme;
         }
-        log.AppendLine("PASS: font rendering — real settings, Light/Dark, hidden editors, Diff, selection/viewport/undo and external-setting refresh.");
+        log.AppendLine("PASS: grayscale defaults, Personalization controls and internal font rendering across themes, hidden editors and Diff.");
     }
 
-    private static async Task CheckTransparencyControlsAsync(FeatureTestHost host)
+    private static void CheckRenderingSettings(PersonalizationSettingsPage settings)
     {
-        var settings = await SettingsAsync<PersonalizationSettingsPage>(host.Page, "Personalization");
+        Check(settings.FindName("FontRenderingPanel") == null &&
+            settings.FindName("FontRenderingDescription") == null &&
+            settings.FindName("ClearTypeTransparencyNotice") == null,
+            "Personalization omits font rendering controls and explanatory text.");
         var slider = Named<Slider>(settings, "BackgroundTintOpacitySlider");
-        var notice = Named<TextBlock>(settings, "ClearTypeTransparencyNotice");
-        var value = slider.Value;
-        var tint = ThemeSettingsService.AppBackgroundPanelTintOpacity;
         var system = new UISettings();
-        Check(notice.Visibility == Visibility.Collapsed && slider.IsEnabled ==
-            (system.AdvancedEffectsEnabled && PowerManager.EnergySaverStatus != EnergySaverStatus.On),
-            "Grayscale transparency controls respect the existing Windows effects and energy-saver policy.");
-        Named<RadioButton>(settings, "ClearTypeRenderingRadioButton").IsChecked = true;
-        await UntilAsync(() => !slider.IsEnabled && notice.Visibility == Visibility.Visible,
-            "Choosing ClearType on the same page disables transparency and displays the localized reason.");
-        Check(!string.IsNullOrWhiteSpace(notice.Text) && notice.Text.Contains("ClearType", StringComparison.Ordinal),
-            "The visible explanation identifies the rendering mode that requires a solid background.");
-        foreach (var theme in new[] { ElementTheme.Light, ElementTheme.Dark })
-        {
-            ThemeSettingsService.SetTheme(theme);
-            var expected = new AccessibilitySettings().HighContrast
-                ? (Color)Application.Current.Resources["SystemColorWindowTextColor"]
-                : theme == ElementTheme.Light ? Color.FromArgb(255, 138, 91, 0) : Color.FromArgb(255, 255, 217, 102);
-            await UntilAsync(() => (notice.Foreground as SolidColorBrush)?.Color == expected,
-                "The explanation uses readable amber/yellow theme colors (system text in high contrast).");
-        }
-        await SettingsAsync<TextAndEditorSettingsPage>(host.Page, "TextAndEditor");
-        settings = await SettingsAsync<PersonalizationSettingsPage>(host.Page, "Personalization");
-        slider = Named<Slider>(settings, "BackgroundTintOpacitySlider");
-        notice = Named<TextBlock>(settings, "ClearTypeTransparencyNotice");
-        Check(!slider.IsEnabled && notice.Visibility == Visibility.Visible,
-            "Reopening personalization initializes the ClearType constraint before interaction.");
-        ApplicationSettingsStore.Write(SettingsKey.EditorFontRenderingStr, "Grayscale");
-        ApplicationPreferences.RefreshFontRenderingSetting();
-        await UntilAsync(() => notice.Visibility == Visibility.Collapsed && slider.IsEnabled ==
-            (system.AdvancedEffectsEnabled && PowerManager.EnergySaverStatus != EnergySaverStatus.On) &&
-            Named<RadioButton>(settings, "GrayscaleRenderingRadioButton").IsChecked == true,
-            "External refresh to grayscale restores the Windows-dependent availability and removes the notice.");
-        Check(slider.Value == value && ThemeSettingsService.AppBackgroundPanelTintOpacity == tint,
-            "Rendering switches and page navigation preserve the user's original transparency value.");
+        Check(slider.IsEnabled == (system.AdvancedEffectsEnabled && PowerManager.EnergySaverStatus != EnergySaverStatus.On),
+            "Transparency controls respect the Windows effects and energy-saver policy.");
+        Check(slider.Value == ThemeSettingsService.AppBackgroundPanelTintOpacity * 100,
+            "Personalization shows the retained transparency value.");
     }
 }

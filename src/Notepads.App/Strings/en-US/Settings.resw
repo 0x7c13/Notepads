@@ -192,11 +192,6 @@
   <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>System Default</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>Exit app when closing last tab</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
   <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>Exit app when closing last tab</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
-  <data name="PersonalizationPage_FontRendering_Title.Text" xml:space="preserve"><value>Font Rendering</value></data>
-  <data name="PersonalizationPage_FontRendering_Grayscale.Content" xml:space="preserve"><value>Grayscale</value></data>
-  <data name="PersonalizationPage_FontRendering_ClearType.Content" xml:space="preserve"><value>ClearType</value></data>
-  <data name="PersonalizationPage_FontRendering_Description.Text" xml:space="preserve"><value>Grayscale smooths character edges while preserving text colors and background transparency. ClearType may look sharper on some displays and uses a solid editor background.</value></data>
-  <data name="PersonalizationPage_ClearTypeTransparencyNotice.Text" xml:space="preserve"><value>ClearType requires a solid editor background. Switch to Grayscale in Font Rendering to adjust transparency.</value></data>
   <data name="EditorWhitespace.OffContent" xml:space="preserve"><value>Show spaces and tabs</value></data>
   <data name="EditorWhitespace.OnContent" xml:space="preserve"><value>Show spaces and tabs</value></data>
   <data name="EditorIndentGuides.OffContent" xml:space="preserve"><value>Show indentation guides</value></data>
