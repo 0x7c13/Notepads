@@ -1,0 +1,9 @@
+# Fixed upstream Markdown baselines
+
+These are test/reference inputs, not runtime dependencies. Exact commits, original URLs, SHA256 hashes, copyright attribution and per-file licenses are recorded in [manifest.json](manifest.json). Original files retain their original bytes and notices; Git text conversion is disabled for this directory.
+
+The project is MIT licensed. The CommonMark/GFM specifications and their derived example data remain **CC-BY-SA-4.0**, attributed to John MacFarlane and the original contributors. The original LICENSE/COPYING files and [full CC-BY-SA license](licenses/CC-BY-SA-4.0.txt) are retained. Comrak, pulldown-cmark, VS Code and Windows Community Toolkit files keep their respective BSD/MIT and inherited notices. Third-party content retains its original authorship.
+
+The complete CommonMark 0.31.2, GFM 0.29 and pulldown-cmark regression examples are retained. Selected syntax profiles, independent mapping goldens, source-position/editor/viewer adaptations and explicit scope differences live in [the M1 manifest](../fixtures/m1/manifest.json). Historical viewer behavior and old GFM base examples do not override the selected current syntax contract.
+
+Run the current module layer tests through `../../scripts/Test-Rust.ps1 -Layer Core`. Original manifests record upstream inputs; `fontations-shared.json` maps identical font payloads to a single retained copy. Historical import scripts and acquisition paths are not build dependencies. Never generate expected results from the current renderer. Syntax tests do not establish native interaction, accessibility or device performance.

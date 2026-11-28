@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- this was trimmed down from Vazirmatn ( https://fonts.google.com/specimen/Vazirmatn )
+and is intended to contain examples of many variable font tables -->
+
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.38">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="A"/>
+    <GlyphID id="2" name="Agrave"/>
+    <GlyphID id="3" name="grave"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="0.0"/>
+    <checkSumAdjustment value="0x0"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00001111"/>
+    <unitsPerEm value="2048"/>
+    <created value="Sun May 17 08:12:36 2015"/>
+    <modified value="Thu Oct 27 15:04:36 2022"/>
+    <xMin value="29"/>
+    <yMin value="0"/>
+    <xMax value="1310"/>
+    <yMax value="1847"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="2100"/>
+    <descent value="-1100"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="1336"/>
+    <minLeftSideBearing value="29"/>
+    <minRightSideBearing value="26"/>
+    <xMaxExtent value="1310"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="4"/>
+  </hhea>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="4"/>
+    <maxPoints value="14"/>
+    <maxContours value="3"/>
+    <maxCompositePoints value="18"/>
+    <maxCompositeContours value="4"/>
+    <maxZones value="2"/>
+    <maxTwilightPoints value="122"/>
+    <maxStorage value="207"/>
+    <maxFunctionDefs value="141"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="292"/>
+    <maxSizeOfInstructions value="3596"/>
+    <maxComponentElements value="2"/>
+    <maxComponentDepth value="1"/>
+  </maxp>
+
+  <hmtx>
+    <mtx name=".notdef" width="908" lsb="100"/>
+    <mtx name="A" width="1336" lsb="29"/>
+    <mtx name="Agrave" width="1336" lsb="29"/>
+    <mtx name="grave" width="633" lsb="57"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0x41" name="A"/><!-- LATIN CAPITAL LETTER A -->
+      <map code="0x60" name="grave"/><!-- GRAVE ACCENT -->
+      <map code="0xc0" name="Agrave"/><!-- LATIN CAPITAL LETTER A WITH GRAVE -->
+    </cmap_format_4>
+  </cmap>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef"/><!-- contains no outline data -->
+
+    <TTGlyph name="A" xMin="29" yMin="0" xMax="1310" yMax="1456">
+      <contour>
+        <pt x="708" y="1327" on="1"/>
+        <pt x="226" y="0" on="1"/>
+        <pt x="29" y="0" on="1"/>
+        <pt x="584" y="1456" on="1"/>
+        <pt x="711" y="1456" on="1"/>
+      </contour>
+      <contour>
+        <pt x="1112" y="0" on="1"/>
+        <pt x="629" y="1327" on="1"/>
+        <pt x="626" y="1456" on="1"/>
+        <pt x="753" y="1456" on="1"/>
+        <pt x="1310" y="0" on="1"/>
+      </contour>
+      <contour>
+        <pt x="1087" y="539" on="1"/>
+        <pt x="1087" y="381" on="1"/>
+        <pt x="269" y="381" on="1"/>
+        <pt x="269" y="539" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="Agrave" xMin="29" yMin="0" xMax="1310" yMax="1847">
+      <component glyphName="A" x="0" y="0" flags="0x204"/>
+      <component glyphName="grave" x="303" y="311" flags="0x404"/>
+      <instructions>
+        <assembly>
+          PUSHB[ ]	/* 2 values pushed */
+          3 1
+          PUSHW[ ]	/* 1 value pushed */
+          311
+          PUSHB[ ]	/* 1 value pushed */
+          53
+          CALL[ ]	/* CallFunction */
+        </assembly>
+      </instructions>
+    </TTGlyph>
+
+    <TTGlyph name="grave" xMin="57" yMin="1242" xMax="474" yMax="1536">
+      <contour>
+        <pt x="281" y="1536" on="1" overlap="1"/>
+        <pt x="474" y="1242" on="1"/>
+        <pt x="315" y="1242" on="1"/>
+        <pt x="57" y="1536" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+  </glyf>
+
+  <name>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="257" platformID="3" platEncID="1" langID="0x409">
+      Weight
+    </namerecord>
+    <namerecord nameID="258" platformID="3" platEncID="1" langID="0x409">
+      Thin
+    </namerecord>
+    <namerecord nameID="261" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="264" platformID="3" platEncID="1" langID="0x409">
+      Bold
+    </namerecord>
+  </name>
+
+  <gasp>
+    <gaspRange rangeMaxPPEM="65535" rangeGaspBehavior="15"/>
+  </gasp>
+
+  <HVAR>
+    <Version value="0x00010000"/>
+    <VarStore Format="1">
+      <Format value="1"/>
+      <VarRegionList>
+        <!-- RegionAxisCount=1 -->
+        <!-- RegionCount=2 -->
+        <Region index="0">
+          <VarRegionAxis index="0">
+            <StartCoord value="-1.0"/>
+            <PeakCoord value="-1.0"/>
+            <EndCoord value="0.0"/>
+          </VarRegionAxis>
+        </Region>
+        <Region index="1">
+          <VarRegionAxis index="0">
+            <StartCoord value="0.0"/>
+            <PeakCoord value="1.0"/>
+            <EndCoord value="1.0"/>
+          </VarRegionAxis>
+        </Region>
+      </VarRegionList>
+      <!-- VarDataCount=2 -->
+      <VarData index="0">
+        <!-- ItemCount=1 -->
+        <NumShorts value="0"/>
+        <!-- VarRegionCount=0 -->
+        <Item index="0" value="[]"/>
+      </VarData>
+      <VarData index="1">
+        <!-- ItemCount=2 -->
+        <NumShorts value="0"/>
+        <!-- VarRegionCount=2 -->
+        <VarRegionIndex index="0" value="0"/>
+        <VarRegionIndex index="1" value="1"/>
+        <Item index="0" value="[-113, 59]"/>
+        <Item index="1" value="[-96, 63]"/>
+      </VarData>
+    </VarStore>
+    <AdvWidthMap>
+      <Map glyph=".notdef" outer="0" inner="0"/>
+      <Map glyph="A" outer="1" inner="0"/>
+      <Map glyph="Agrave" outer="1" inner="0"/>
+      <Map glyph="grave" outer="1" inner="1"/>
+    </AdvWidthMap>
+  </HVAR>
+
+  <STAT>
+    <Version value="0x00010001"/>
+    <DesignAxisRecordSize value="8"/>
+    <!-- DesignAxisCount=1 -->
+    <DesignAxisRecord>
+      <Axis index="0">
+        <AxisTag value="wght"/>
+        <AxisNameID value="257"/>  <!-- Weight -->
+        <AxisOrdering value="0"/>
+      </Axis>
+    </DesignAxisRecord>
+    <!-- AxisValueCount=3 -->
+    <AxisValueArray>
+      <AxisValue index="0" Format="1">
+        <AxisIndex value="0"/>
+        <Flags value="0"/>
+        <ValueNameID value="258"/>  <!-- Thin -->
+        <Value value="100.0"/>
+      </AxisValue>
+      <AxisValue index="1" Format="1">
+        <AxisIndex value="0"/>
+        <Flags value="2"/>  <!-- ElidableAxisValueName -->
+        <ValueNameID value="261"/>  <!-- Regular -->
+        <Value value="400.0"/>
+      </AxisValue>
+      <AxisValue index="2" Format="1">
+        <AxisIndex value="0"/>
+        <Flags value="0"/>
+        <ValueNameID value="264"/>  <!-- Bold -->
+        <Value value="700.0"/>
+      </AxisValue>
+    </AxisValueArray>
+    <ElidedFallbackNameID value="2"/>  <!-- Regular -->
+  </STAT>
+
+  <avar>
+    <segment axis="wght">
+      <mapping from="-1.0" to="-1.0"/>
+      <mapping from="-0.6667" to="-0.5"/>
+      <mapping from="-0.3333" to="-0.25"/>
+      <mapping from="0.0" to="0.0"/>
+      <mapping from="0.2" to="0.3674"/>
+      <mapping from="0.4" to="0.52246"/>
+      <mapping from="0.6" to="0.67755"/>
+      <mapping from="0.8" to="0.83875"/>
+      <mapping from="1.0" to="1.0"/>
+    </segment>
+  </avar>
+
+  <fvar>
+
+    <!-- Weight -->
+    <Axis>
+      <AxisTag>wght</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>100.0</MinValue>
+      <DefaultValue>400.0</DefaultValue>
+      <MaxValue>900.0</MaxValue>
+      <AxisNameID>257</AxisNameID>
+    </Axis>
+
+    <!-- Thin -->
+    <NamedInstance flags="0x0" subfamilyNameID="258">
+      <coord axis="wght" value="100.0"/>
+    </NamedInstance>
+    <NamedInstance flags="0x0" subfamilyNameID="259">
+      <coord axis="wght" value="200.0"/>
+    </NamedInstance>
+    <NamedInstance flags="0x0" subfamilyNameID="260">
+      <coord axis="wght" value="300.0"/>
+    </NamedInstance>
+
+    <!-- Regular -->
+    <NamedInstance flags="0x0" subfamilyNameID="261">
+      <coord axis="wght" value="400.0"/>
+    </NamedInstance>
+    <NamedInstance flags="0x0" subfamilyNameID="262">
+      <coord axis="wght" value="500.0"/>
+    </NamedInstance>
+    <NamedInstance flags="0x0" subfamilyNameID="263">
+      <coord axis="wght" value="600.0"/>
+    </NamedInstance>
+
+    <!-- Bold -->
+    <NamedInstance flags="0x0" subfamilyNameID="264">
+      <coord axis="wght" value="700.0"/>
+    </NamedInstance>
+    <NamedInstance flags="0x0" subfamilyNameID="265">
+      <coord axis="wght" value="800.0"/>
+    </NamedInstance>
+    <NamedInstance flags="0x0" subfamilyNameID="266">
+      <coord axis="wght" value="900.0"/>
+    </NamedInstance>
+
+  </fvar>
+
+  <gvar>
+    <version value="1"/>
+    <reserved value="0"/>
+    <glyphVariations glyph="A">
+      <tuple>
+        <coord axis="wght" value="-1.0"/>
+        <delta pt="0" x="-90" y="83"/>
+        <delta pt="1" x="-134" y="0"/>
+        <delta pt="2" x="4" y="0"/>
+        <delta pt="3" x="-6" y="0"/>
+        <delta pt="4" x="-81" y="0"/>
+        <delta pt="5" x="18" y="0"/>
+        <delta pt="6" x="-25" y="83"/>
+        <delta pt="7" x="-33" y="0"/>
+        <delta pt="8" x="-109" y="0"/>
+        <delta pt="9" x="-121" y="0"/>
+        <delta pt="10" x="-111" y="-50"/>
+        <delta pt="11" x="-111" y="54"/>
+        <delta pt="12" x="-22" y="54"/>
+        <delta pt="13" x="-22" y="-50"/>
+        <delta pt="14" x="0" y="0"/>
+        <delta pt="15" x="-113" y="0"/>
+        <delta pt="16" x="0" y="-21"/>
+        <delta pt="17" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="20" y="-177"/>
+        <delta pt="1" x="147" y="0"/>
+        <delta pt="2" x="-33" y="0"/>
+        <delta pt="3" x="-53" y="0"/>
+        <delta pt="4" x="59" y="0"/>
+        <delta pt="5" x="-90" y="0"/>
+        <delta pt="6" x="37" y="-177"/>
+        <delta pt="7" x="-6" y="0"/>
+        <delta pt="8" x="109" y="0"/>
+        <delta pt="9" x="90" y="0"/>
+        <delta pt="10" x="-79" y="4"/>
+        <delta pt="11" x="-79" y="-109"/>
+        <delta pt="12" x="-8" y="-109"/>
+        <delta pt="13" x="-8" y="4"/>
+        <delta pt="14" x="0" y="0"/>
+        <delta pt="15" x="59" y="0"/>
+        <delta pt="16" x="0" y="9"/>
+        <delta pt="17" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="Agrave">
+      <tuple>
+        <coord axis="wght" value="-1.0"/>
+        <delta pt="1" x="-51" y="8"/>
+        <delta pt="3" x="-113" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="-54" y="-1"/>
+        <delta pt="3" x="59" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="grave">
+      <tuple>
+        <coord axis="wght" value="-1.0"/>
+        <delta pt="0" x="-66" y="0"/>
+        <delta pt="1" x="-71" y="28"/>
+        <delta pt="2" x="29" y="28"/>
+        <delta pt="3" x="92" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="-96" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="130" y="0"/>
+        <delta pt="1" x="136" y="-20"/>
+        <delta pt="2" x="22" y="-20"/>
+        <delta pt="3" x="-2" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="63" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+  </gvar>
+
+</ttFont>

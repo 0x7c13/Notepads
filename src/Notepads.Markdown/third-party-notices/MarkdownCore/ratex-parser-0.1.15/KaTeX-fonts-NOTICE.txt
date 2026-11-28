@@ -1,0 +1,34 @@
+KaTeX Font Software — attribution and license notice
+========================================================
+
+This repository bundles the KaTeX mathematical fonts (files named KaTeX_* with
+extensions .ttf, .woff, or .woff2) for rendering. They are unmodified binaries
+from the KaTeX project: https://github.com/KaTeX/KaTeX
+
+These font files are NOT licensed under the MIT License in the repository root
+LICENSE file. They are licensed under the SIL Open Font License, Version 1.1.
+
+Locations in this repository (non-exhaustive; mirrors may exist per platform):
+
+  fonts/
+  platforms/web/fonts/
+  platforms/android/src/main/assets/fonts/
+  platforms/ios/Sources/Ratex/Fonts/
+  platforms/flutter/lib/fonts/
+  platforms/react-native/android/src/main/assets/fonts/
+
+Copyright and license notice (verbatim from font metadata; each face uses the
+same copyright holders and OFL reference, and names its own Reserved Font Name
+— e.g. KaTeX_Main, KaTeX_Math, KaTeX_AMS, KaTeX_Caligraphic — in the line below
+“Khan Academy”):
+
+  Copyright (c) 2009-2010, Design Science, Inc. (<www.mathjax.org>)
+  Copyright (c) 2014-2018 Khan Academy (<www.khanacademy.org>),
+  with Reserved Font Name KaTeX_Main.
+
+  This Font Software is licensed under the SIL Open Font License, Version 1.1.
+  This license available with a FAQ at:
+  http://scripts.sil.org/OFL
+
+Complete text of the SIL Open Font License, Version 1.1: see SIL-OFL-1.1.txt
+in this directory (reproduced from the SPDX license list).

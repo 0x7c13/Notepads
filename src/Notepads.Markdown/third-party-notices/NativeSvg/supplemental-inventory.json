@@ -1,0 +1,590 @@
+{
+  "format_version": 1,
+  "scope": "Supplemental notices and locked package identities for the current SVG normal/build Cargo graph across three MSVC targets; original notice bytes only.",
+  "targets": [
+    "i686-pc-windows-msvc",
+    "x86_64-pc-windows-msvc",
+    "aarch64-pc-windows-msvc"
+  ],
+  "packages": [
+    {
+      "name": "arrayref",
+      "version": "0.3.9",
+      "license": "BSD-2-Clause",
+      "registry_archive_sha256": "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "f8d0299d863922db6c409d08098941e833b70d69"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/arrayref-0.3.9/LICENSE",
+          "origin": "LICENSE",
+          "bytes": 1336,
+          "sha256": "1BC7E6F475B3EC99B7E2643411950AE2368C250DD4C5C325F80F9811362A94A1"
+        }
+      ]
+    },
+    {
+      "name": "arrayvec",
+      "version": "0.7.8",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "0cb664cf505844348538230479b0040b44f3faf1"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/arrayvec-0.7.8/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/arrayvec-0.7.8/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1071,
+          "sha256": "4DA95EC4ECB65B738D470B7D762894AD9C97DA93E6CBFB18B570FC2C96F4B871"
+        }
+      ]
+    },
+    {
+      "name": "base64",
+      "version": "0.23.1",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "069bf7067b949f5c0a92b6ceb82492920502f2c2"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/base64-0.23.1/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/base64-0.23.1/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1093,
+          "sha256": "AB499C75A0F0DA8E0FE83BF9BA3A27E5C39705310F07107C6C66B69958D2401C"
+        }
+      ]
+    },
+    {
+      "name": "bytemuck_derive",
+      "version": "1.12.1",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "registry_archive_sha256": "6a1f896587b6f2c069c73d2f0913e2d590c3990285cd2f0b6aa02b786b4c679c",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "839ee557dd9b1ac5a0b0155cabba71f96b4ccd06"
+        },
+        "path_in_vcs": "derive"
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/bytemuck_derive-1.12.1/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 10398,
+          "sha256": "E3BA223BB1423F0AAD8C3DFCE0FE3148DB48926D41E6FBC3AFBBF5FF9E1C89CB"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/bytemuck_derive-1.12.1/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1110,
+          "sha256": "9DF9BA60A11AF705F2E451B53762686E615D86F76B169CF075C3237730DBD7E2"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/bytemuck_derive-1.12.1/LICENSE-ZLIB",
+          "origin": "LICENSE-ZLIB",
+          "bytes": 851,
+          "sha256": "84B34DD7608F7FB9B17BD588A6BF392BF7DE504E2716F024A77D89F1B145A151"
+        }
+      ]
+    },
+    {
+      "name": "bytemuck",
+      "version": "1.25.2",
+      "license": "Zlib OR Apache-2.0 OR MIT",
+      "registry_archive_sha256": "95832e849adfb21180ccb6826a99da14e5d266ae5c2e668e1602cf234f153797",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "f363643e951a7ac9e4b9921de982f2b0918902e3"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/bytemuck-1.25.2/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 10398,
+          "sha256": "E3BA223BB1423F0AAD8C3DFCE0FE3148DB48926D41E6FBC3AFBBF5FF9E1C89CB"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/bytemuck-1.25.2/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1110,
+          "sha256": "9DF9BA60A11AF705F2E451B53762686E615D86F76B169CF075C3237730DBD7E2"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/bytemuck-1.25.2/LICENSE-ZLIB",
+          "origin": "LICENSE-ZLIB",
+          "bytes": 851,
+          "sha256": "84B34DD7608F7FB9B17BD588A6BF392BF7DE504E2716F024A77D89F1B145A151"
+        }
+      ]
+    },
+    {
+      "name": "float-cmp",
+      "version": "0.9.0",
+      "license": "MIT",
+      "registry_archive_sha256": "98de4bbd547a563b716d8dfa9aad1cb19bfab00f4fa09a6a4ed21dbcf44ce9c4",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "4844daf1ad47c9363a96ba8954d3c30d6a008591"
+        }
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/float-cmp-0.9.0/LICENSE",
+          "origin": "LICENSE",
+          "bytes": 1075,
+          "sha256": "40BE1E77825D7E49485A2E43D89BED29DFFF29F8F529E71D3C683656021F0D08"
+        }
+      ]
+    },
+    {
+      "name": "font-types",
+      "version": "0.12.7",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "835ae9d781464a79026cde387f9cbc650c9a4909d7cf7e658b127e3c35d2f35d",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "ef666662f5985965bbbb726c4f77d15481831a1b"
+        },
+        "path_in_vcs": "font-types"
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/font-types-0.12.7/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 9701,
+          "sha256": "EBA684204073ED715C4ABB48129ACDFD2BFF8AE48339E6A7DA3B341D3027B7F0"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/font-types-0.12.7/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1065,
+          "sha256": "7B4C9A3946DFCEA7967582760E963E27799E225DCF20565C8EF55324BB017427"
+        }
+      ]
+    },
+    {
+      "name": "imagesize",
+      "version": "0.15.0",
+      "license": "MIT",
+      "registry_archive_sha256": "65b27460c2c92b037f3f94c538ed9a3342f3fdf923606781629ccb35f82d042a",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "7dba0c7ae38ee1b90024f82cbb8fab12d6b1b4eb"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/imagesize-0.15.0/LICENSE",
+          "origin": "LICENSE",
+          "bytes": 1064,
+          "sha256": "FA0D694967D5C279E70A5C7B7E4B9929E4C1C8C1B8506998E66FC2F1547B200A"
+        }
+      ]
+    },
+    {
+      "name": "pico-args",
+      "version": "0.5.0",
+      "license": "MIT",
+      "registry_archive_sha256": "5be167a7af36ee22fe3115051bc51f6e6c7054c9348e28deb4f49bd6f705a315",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "56e8872fa31f168fd87e84fdc5f24bd60875daea"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/pico-args-0.5.0/LICENSE",
+          "origin": "LICENSE",
+          "bytes": 1061,
+          "sha256": "F71452D91682FDAE0CA948B18CFED53A953D1237740DD80371C76A5C1C7BBE91"
+        }
+      ]
+    },
+    {
+      "name": "polycool",
+      "version": "0.4.0",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "50596ddc09eb5ad5f75cacd40209568e66df71baf86e1499a0e99c4cff12a5a6",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "0ffc830eca99e68ba6bab54224cfac2c66bde2f9"
+        },
+        "path_in_vcs": "polycool"
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/polycool-0.4.0/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 11358,
+          "sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/polycool-0.4.0/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1055,
+          "sha256": "23C23145F6EAC25C28CDCC03D38506A5712A9A8CFFB5BD5301457F6173EA696E"
+        }
+      ]
+    },
+    {
+      "name": "read-fonts",
+      "version": "0.41.0",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "046a7d674daf459825b32f5062056d6882db0d2f5a479fbd76ccfc870ac18709",
+      "checksum_basis": "https://index.crates.io/re/ad/read-fonts version 0.41.0",
+      "source": "vendor/svg-bounded/fork/read-fonts-0.41.0/Cargo.toml",
+      "published_vcs": {
+        "git": {
+          "sha1": "cd4aaef57887dd1d8a5875e38c406843e66c9cab"
+        },
+        "path_in_vcs": "read-fonts"
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/read-fonts-0.41.0/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 9701,
+          "sha256": "EBA684204073ED715C4ABB48129ACDFD2BFF8AE48339E6A7DA3B341D3027B7F0"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/read-fonts-0.41.0/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1065,
+          "sha256": "7B4C9A3946DFCEA7967582760E963E27799E225DCF20565C8EF55324BB017427"
+        }
+      ]
+    },
+    {
+      "name": "rgb",
+      "version": "0.8.53",
+      "license": "MIT",
+      "registry_archive_sha256": "47b34b781b31e5d73e9fbc8689c70551fd1ade9a19e3e28cfec8580a79290cc4",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "f453adedbbd1a672c654239b0eb0576de606d7d2"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/rgb-0.8.53/LICENSE",
+          "origin": "LICENSE",
+          "bytes": 1063,
+          "sha256": "457B464BC0FBA8A3D67D2458569104F5611869F0C1563A1A12D9C51A0BCA9261"
+        }
+      ]
+    },
+    {
+      "name": "saphyr-parser",
+      "version": "0.3.4",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "c98d2738e44a25e6ba2e6d83d91805648df204768abc96f4f1278cb3d5c90bbe",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "c4f88314c98142cfac783dffb4748dbd1e5495d0"
+        },
+        "path_in_vcs": "parser"
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/saphyr-parser-0.3.4/LICENSE",
+          "origin": "LICENSE",
+          "bytes": 722,
+          "sha256": "932DC213B1BBD3D5950E155CF0C8F065AAA6E520D01F410CFAACEC5798B8215B"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/saphyr-parser-0.3.4/.licenses/ChenYuheng-Apache",
+          "origin": ".licenses/ChenYuheng-Apache",
+          "bytes": 10278,
+          "sha256": "B2174E5BFABA26C7A78172221E190E57897B643EE21ED8CE582CF72C9B381589"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/saphyr-parser-0.3.4/.licenses/ChenYuheng-MIT",
+          "origin": ".licenses/ChenYuheng-MIT",
+          "bytes": 1078,
+          "sha256": "70480DC70C2FE1D9BBB64DAB9A0ABCE266332905FFEF9CABEAE26DD027716ECB"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/saphyr-parser-0.3.4/.licenses/Ethiraric-Apache",
+          "origin": ".licenses/Ethiraric-Apache",
+          "bytes": 10276,
+          "sha256": "E0F2EFBE68FB02DB5485F2BEF61D8B49E788DEF182D3262AF2DF50E87C0D19F8"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/saphyr-parser-0.3.4/.licenses/Ethiraric-MIT",
+          "origin": ".licenses/Ethiraric-MIT",
+          "bytes": 1076,
+          "sha256": "90F4EA53F408858BA4886F57B8E3CEAC876EEFBB59C20F0844F0ABBFA59E2749"
+        }
+      ]
+    },
+    {
+      "name": "skrifa",
+      "version": "0.44.0",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "819ab7d62b1d3e72d9d9dea5650bac30424f9111364bb94928dbf5ecad1baa68",
+      "checksum_basis": "https://index.crates.io/sk/ri/skrifa version 0.44.0",
+      "source": "vendor/svg-bounded/fork/skrifa-0.44.0/Cargo.toml",
+      "published_vcs": {
+        "git": {
+          "sha1": "b373cdbc6043a791fb23b3e0f413649458f5e63a"
+        },
+        "path_in_vcs": "skrifa"
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/skrifa-0.44.0/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 9701,
+          "sha256": "EBA684204073ED715C4ABB48129ACDFD2BFF8AE48339E6A7DA3B341D3027B7F0"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/skrifa-0.44.0/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1065,
+          "sha256": "7B4C9A3946DFCEA7967582760E963E27799E225DCF20565C8EF55324BB017427"
+        }
+      ]
+    },
+    {
+      "name": "smallvec",
+      "version": "1.16.4",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "eab77462eda2767d2386f1d251928f474827e1c7"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/smallvec-1.16.4/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/smallvec-1.16.4/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1072,
+          "sha256": "0B28172679E0009B655DA42797C03FD163A3379D5CFA67BA1F1655E974A2A1A9"
+        }
+      ]
+    },
+    {
+      "name": "strict-num",
+      "version": "0.1.1",
+      "license": "MIT",
+      "registry_archive_sha256": "6637bab7722d379c8b41ba849228d680cc12d0a45ba1fa2b48f2a30577a06731",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "edf5020c215063c3a9eb8fcac463c82eaceba6df"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/strict-num-0.1.1/LICENSE",
+          "origin": "LICENSE",
+          "bytes": 1060,
+          "sha256": "3085885678BB161F6C472BBD331F66A2550B555EB76128F7F8247779128199C0"
+        }
+      ]
+    },
+    {
+      "name": "unicode-script",
+      "version": "0.5.8",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "383ad40bb927465ec0ce7720e033cb4ca06912855fc35db31b5755d0de75b1ee",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "20cae8782e71e26180198b350b1746c0ba042c41"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/unicode-script-0.5.8/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 11049,
+          "sha256": "7CBB56D1B5D83D735056B363AB20958524120AFAFC4AD8206E6BE98CDEC5D737"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/unicode-script-0.5.8/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1101,
+          "sha256": "7AD3EA8CA3CAF894DB98C3F31D5D4949173FFA93C883EF19A9E529AD48960F8C"
+        }
+      ]
+    },
+    {
+      "name": "unicode-segmentation",
+      "version": "1.13.3",
+      "license": "MIT OR Apache-2.0",
+      "registry_archive_sha256": "c6f5d3c3b1bf09027a88a6bc961fc00497d651009560b5463668dc81b0fa87a8",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "66a032fd8d667bc47ac5b640b151dff3f5356d07"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/unicode-segmentation-1.13.3/COPYRIGHT",
+          "origin": "COPYRIGHT",
+          "bytes": 321,
+          "sha256": "23860C2A7B5D96B21569AFEDF033469BAB9FE14A1B24A35068B8641C578CE24D"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/unicode-segmentation-1.13.3/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/unicode-segmentation-1.13.3/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1071,
+          "sha256": "7B63ECD5F1902AF1B63729947373683C32745C16A10E8E6292E2E2DCD7E90AE0"
+        }
+      ]
+    },
+    {
+      "name": "unicode-vo",
+      "version": "0.1.0",
+      "license": "MIT/Apache-2.0",
+      "registry_archive_sha256": "b1d386ff53b415b7fe27b50bb44679e2cc4660272694b7b6f3326d8480823a94",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "f163f6cc40436cf793742607048273fbb8834fbd"
+        }
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/unicode-vo-0.1.0/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/unicode-vo-0.1.0/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1082,
+          "sha256": "0B5F24524360E15BCF9FB79BCA875F5AA62F01F94F2988E23238C7EC0E6E8784"
+        }
+      ]
+    },
+    {
+      "name": "version_check",
+      "version": "0.9.5",
+      "license": "MIT/Apache-2.0",
+      "registry_archive_sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a",
+      "checksum_basis": "Cargo.lock registry checksum",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "published_vcs": {
+        "git": {
+          "sha1": "d77ef9f27cc336719b2d839d09ee6635dd22f758"
+        },
+        "path_in_vcs": ""
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/version_check-0.9.5/LICENSE-APACHE",
+          "origin": "LICENSE-APACHE",
+          "bytes": 10847,
+          "sha256": "A60EEA817514531668D7E00765731449FE14D059D3249E0BC93B36DE45F759F2"
+        },
+        {
+          "path": "third-party-notices/NativeSvg/version_check-0.9.5/LICENSE-MIT",
+          "origin": "LICENSE-MIT",
+          "bytes": 1085,
+          "sha256": "B7E650F3FCE5C53249D1CDC608B54DF156A97EDD636CF9D23498D0CFE7AEC63E"
+        }
+      ]
+    },
+    {
+      "name": "xmlwriter",
+      "version": "0.1.0",
+      "license": "MIT",
+      "registry_archive_sha256": "ec7a2a501ed189703dba8b08142f057e887dfc4b2cc4db2d343ac6376ba3e0b9",
+      "checksum_basis": "https://index.crates.io/xm/lw/xmlwriter version 0.1.0",
+      "source": "vendor/svg-bounded/fork/xmlwriter-0.1.0/Cargo.toml",
+      "published_vcs": {
+        "git": {
+          "sha1": "5fdcff47da7d71896b55a1bc0e4b561171e232d6"
+        }
+      },
+      "notices": [
+        {
+          "path": "third-party-notices/NativeSvg/xmlwriter-0.1.0/LICENSE",
+          "origin": "LICENSE",
+          "bytes": 1082,
+          "sha256": "2CDCE1FF4CA8F455EF169691EA493407E23C32ECDEA5FD9B3A6FC82BE5B49B5A"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+name: Typos
+
+on: [push, pull_request]
+
+jobs:
+  typos:
+    name: 'Check for spelling errors'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: crate-ci/typos@78bc6fb2c0d734235d57a2d6b9de923cc325ebdd # v1.43.4

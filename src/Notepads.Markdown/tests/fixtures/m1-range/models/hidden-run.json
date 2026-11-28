@@ -1,0 +1,509 @@
+{
+  "source_key": {
+    "document_id": "04030000000000000000000000000002",
+    "revision": 1
+  },
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          32
+        ]
+      ],
+      "readable_utf8": "",
+      "logical_utf16": 0,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            1
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 1,
+          "source": [
+            1,
+            2
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 2,
+          "source": [
+            2,
+            3
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 3,
+          "source": [
+            3,
+            4
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 4,
+          "source": [
+            4,
+            5
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 5,
+          "source": [
+            5,
+            6
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 6,
+          "source": [
+            6,
+            7
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 7,
+          "source": [
+            7,
+            8
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 8,
+          "source": [
+            8,
+            9
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 9,
+          "source": [
+            9,
+            10
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 10,
+          "source": [
+            10,
+            11
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 11,
+          "source": [
+            11,
+            12
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 12,
+          "source": [
+            12,
+            13
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 13,
+          "source": [
+            13,
+            14
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 14,
+          "source": [
+            14,
+            15
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 15,
+          "source": [
+            15,
+            16
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 16,
+          "source": [
+            16,
+            17
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 17,
+          "source": [
+            17,
+            18
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 18,
+          "source": [
+            18,
+            19
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 19,
+          "source": [
+            19,
+            20
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 20,
+          "source": [
+            20,
+            21
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 21,
+          "source": [
+            21,
+            22
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 22,
+          "source": [
+            22,
+            23
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 23,
+          "source": [
+            23,
+            24
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 24,
+          "source": [
+            24,
+            25
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 25,
+          "source": [
+            25,
+            26
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 26,
+          "source": [
+            26,
+            27
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 27,
+          "source": [
+            27,
+            28
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 28,
+          "source": [
+            28,
+            29
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 29,
+          "source": [
+            29,
+            30
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 30,
+          "source": [
+            30,
+            31
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 31,
+          "source": [
+            31,
+            32
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [],
+  "payloads": [],
+  "structures": [],
+  "reference_edges": []
+}

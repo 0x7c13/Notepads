@@ -1,0 +1,4156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.41">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="space"/>
+    <GlyphID id="2" name="quotedbl"/>
+    <GlyphID id="3" name="A"/>
+    <GlyphID id="4" name="B"/>
+    <GlyphID id="5" name="a"/>
+    <GlyphID id="6" name="b"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.231"/>
+    <checkSumAdjustment value="0x5f78bcf5"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00011001"/>
+    <unitsPerEm value="2048"/>
+    <created value="Mon Jun 21 08:18:22 2010"/>
+    <modified value="Fri Jun  5 00:57:17 2020"/>
+    <xMin value="-1114"/>
+    <yMin value="-621"/>
+    <xMax value="2618"/>
+    <yMax value="2010"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="9"/>
+    <fontDirectionHint value="1"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="1825"/>
+    <descent value="-443"/>
+    <lineGap value="87"/>
+    <advanceWidthMax value="2730"/>
+    <minLeftSideBearing value="-1114"/>
+    <minRightSideBearing value="-1313"/>
+    <xMaxExtent value="2618"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="7"/>
+  </hhea>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="7"/>
+    <maxPoints value="338"/>
+    <maxContours value="84"/>
+    <maxCompositePoints value="139"/>
+    <maxCompositeContours value="6"/>
+    <maxZones value="2"/>
+    <maxTwilightPoints value="16"/>
+    <maxStorage value="47"/>
+    <maxFunctionDefs value="92"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="707"/>
+    <maxSizeOfInstructions value="966"/>
+    <maxComponentElements value="3"/>
+    <maxComponentDepth value="1"/>
+  </maxp>
+
+  <OS_2>
+    <!-- The fields 'usFirstCharIndex' and 'usLastCharIndex'
+         will be recalculated by the compiler -->
+    <version value="3"/>
+    <xAvgCharWidth value="1116"/>
+    <usWeightClass value="400"/>
+    <usWidthClass value="5"/>
+    <fsType value="00000000 00000000"/>
+    <ySubscriptXSize value="1434"/>
+    <ySubscriptYSize value="1331"/>
+    <ySubscriptXOffset value="0"/>
+    <ySubscriptYOffset value="293"/>
+    <ySuperscriptXSize value="1434"/>
+    <ySuperscriptYSize value="1331"/>
+    <ySuperscriptXOffset value="0"/>
+    <ySuperscriptYOffset value="928"/>
+    <yStrikeoutSize value="100"/>
+    <yStrikeoutPosition value="420"/>
+    <sFamilyClass value="261"/>
+    <panose>
+      <bFamilyType value="2"/>
+      <bSerifStyle value="2"/>
+      <bWeight value="6"/>
+      <bProportion value="3"/>
+      <bContrast value="5"/>
+      <bStrokeVariation value="4"/>
+      <bArmStyle value="5"/>
+      <bLetterForm value="2"/>
+      <bMidline value="3"/>
+      <bXHeight value="4"/>
+    </panose>
+    <ulUnicodeRange1 value="00000000 00000000 00000000 00000011"/>
+    <ulUnicodeRange2 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="MONO"/>
+    <fsSelection value="00000000 01000000"/>
+    <usFirstCharIndex value="32"/>
+    <usLastCharIndex value="160"/>
+    <sTypoAscender value="1420"/>
+    <sTypoDescender value="-442"/>
+    <sTypoLineGap value="307"/>
+    <usWinAscent value="1825"/>
+    <usWinDescent value="443"/>
+    <ulCodePageRange1 value="01100000 00000000 00000001 10111111"/>
+    <ulCodePageRange2 value="11011111 11110111 00000000 00000000"/>
+    <sxHeight value="940"/>
+    <sCapHeight value="1341"/>
+    <usDefaultChar value="0"/>
+    <usBreakChar value="32"/>
+    <usMaxContext value="4"/>
+  </OS_2>
+
+  <hmtx>
+    <mtx name=".notdef" width="1593" lsb="0"/>
+    <mtx name="A" width="1479" lsb="20"/>
+    <mtx name="B" width="1366" lsb="59"/>
+    <mtx name="a" width="909" lsb="72"/>
+    <mtx name="b" width="1024" lsb="0"/>
+    <mtx name="quotedbl" width="836" lsb="127"/>
+    <mtx name="space" width="512" lsb="0"/>
+  </hmtx>
+
+  <VDMX>
+    <version value="0"/>
+    <ratRanges>
+      <ratRange bCharSet="1" groupIndex="0" xRatio="1" yEndRatio="1" yStartRatio="1"/>
+      <ratRange bCharSet="1" groupIndex="1" xRatio="5" yEndRatio="3" yStartRatio="3"/>
+      <ratRange bCharSet="1" groupIndex="2" xRatio="2" yEndRatio="1" yStartRatio="1"/>
+    </ratRanges>
+    <groups>
+      <group index="0">
+        <!-- recs=248, startsz=8, endsz=255 -->
+        <record yPelHeight="8" yMax="8" yMin="-2"/>
+        <record yPelHeight="9" yMax="10" yMin="-2"/>
+        <record yPelHeight="10" yMax="10" yMin="-2"/>
+        <record yPelHeight="11" yMax="11" yMin="-3"/>
+        <record yPelHeight="12" yMax="12" yMin="-3"/>
+        <record yPelHeight="13" yMax="12" yMin="-3"/>
+        <record yPelHeight="14" yMax="13" yMin="-3"/>
+        <record yPelHeight="15" yMax="13" yMin="-4"/>
+        <record yPelHeight="16" yMax="15" yMin="-4"/>
+        <record yPelHeight="17" yMax="15" yMin="-4"/>
+        <record yPelHeight="18" yMax="16" yMin="-4"/>
+        <record yPelHeight="19" yMax="16" yMin="-5"/>
+        <record yPelHeight="20" yMax="17" yMin="-5"/>
+        <record yPelHeight="21" yMax="18" yMin="-5"/>
+        <record yPelHeight="22" yMax="20" yMin="-5"/>
+        <record yPelHeight="23" yMax="20" yMin="-6"/>
+        <record yPelHeight="24" yMax="21" yMin="-6"/>
+        <record yPelHeight="25" yMax="23" yMin="-6"/>
+        <record yPelHeight="26" yMax="23" yMin="-6"/>
+        <record yPelHeight="27" yMax="24" yMin="-7"/>
+        <record yPelHeight="28" yMax="26" yMin="-7"/>
+        <record yPelHeight="29" yMax="26" yMin="-7"/>
+        <record yPelHeight="30" yMax="27" yMin="-7"/>
+        <record yPelHeight="31" yMax="28" yMin="-7"/>
+        <record yPelHeight="32" yMax="28" yMin="-8"/>
+        <record yPelHeight="33" yMax="29" yMin="-8"/>
+        <record yPelHeight="34" yMax="31" yMin="-8"/>
+        <record yPelHeight="35" yMax="32" yMin="-8"/>
+        <record yPelHeight="36" yMax="32" yMin="-9"/>
+        <record yPelHeight="37" yMax="33" yMin="-9"/>
+        <record yPelHeight="38" yMax="34" yMin="-9"/>
+        <record yPelHeight="39" yMax="34" yMin="-9"/>
+        <record yPelHeight="40" yMax="36" yMin="-10"/>
+        <record yPelHeight="41" yMax="37" yMin="-10"/>
+        <record yPelHeight="42" yMax="38" yMin="-10"/>
+        <record yPelHeight="43" yMax="39" yMin="-10"/>
+        <record yPelHeight="44" yMax="40" yMin="-11"/>
+        <record yPelHeight="45" yMax="41" yMin="-11"/>
+        <record yPelHeight="46" yMax="42" yMin="-11"/>
+        <record yPelHeight="47" yMax="42" yMin="-11"/>
+        <record yPelHeight="48" yMax="43" yMin="-12"/>
+        <record yPelHeight="49" yMax="44" yMin="-12"/>
+        <record yPelHeight="50" yMax="45" yMin="-12"/>
+        <record yPelHeight="51" yMax="45" yMin="-12"/>
+        <record yPelHeight="52" yMax="47" yMin="-13"/>
+        <record yPelHeight="53" yMax="48" yMin="-13"/>
+        <record yPelHeight="54" yMax="48" yMin="-13"/>
+        <record yPelHeight="55" yMax="49" yMin="-13"/>
+        <record yPelHeight="56" yMax="50" yMin="-14"/>
+        <record yPelHeight="57" yMax="51" yMin="-14"/>
+        <record yPelHeight="58" yMax="53" yMin="-14"/>
+        <record yPelHeight="59" yMax="53" yMin="-14"/>
+        <record yPelHeight="60" yMax="54" yMin="-14"/>
+        <record yPelHeight="61" yMax="54" yMin="-15"/>
+        <record yPelHeight="62" yMax="55" yMin="-15"/>
+        <record yPelHeight="63" yMax="56" yMin="-15"/>
+        <record yPelHeight="64" yMax="58" yMin="-15"/>
+        <record yPelHeight="65" yMax="58" yMin="-16"/>
+        <record yPelHeight="66" yMax="59" yMin="-16"/>
+        <record yPelHeight="67" yMax="60" yMin="-16"/>
+        <record yPelHeight="68" yMax="61" yMin="-16"/>
+        <record yPelHeight="69" yMax="61" yMin="-17"/>
+        <record yPelHeight="70" yMax="63" yMin="-17"/>
+        <record yPelHeight="71" yMax="64" yMin="-17"/>
+        <record yPelHeight="72" yMax="64" yMin="-17"/>
+        <record yPelHeight="73" yMax="65" yMin="-18"/>
+        <record yPelHeight="74" yMax="66" yMin="-18"/>
+        <record yPelHeight="75" yMax="67" yMin="-18"/>
+        <record yPelHeight="76" yMax="68" yMin="-18"/>
+        <record yPelHeight="77" yMax="69" yMin="-19"/>
+        <record yPelHeight="78" yMax="70" yMin="-19"/>
+        <record yPelHeight="79" yMax="71" yMin="-19"/>
+        <record yPelHeight="80" yMax="71" yMin="-19"/>
+        <record yPelHeight="81" yMax="72" yMin="-20"/>
+        <record yPelHeight="82" yMax="74" yMin="-20"/>
+        <record yPelHeight="83" yMax="74" yMin="-20"/>
+        <record yPelHeight="84" yMax="75" yMin="-20"/>
+        <record yPelHeight="85" yMax="76" yMin="-21"/>
+        <record yPelHeight="86" yMax="77" yMin="-21"/>
+        <record yPelHeight="87" yMax="77" yMin="-21"/>
+        <record yPelHeight="88" yMax="79" yMin="-21"/>
+        <record yPelHeight="89" yMax="80" yMin="-21"/>
+        <record yPelHeight="90" yMax="81" yMin="-22"/>
+        <record yPelHeight="91" yMax="81" yMin="-22"/>
+        <record yPelHeight="92" yMax="82" yMin="-22"/>
+        <record yPelHeight="93" yMax="83" yMin="-22"/>
+        <record yPelHeight="94" yMax="84" yMin="-23"/>
+        <record yPelHeight="95" yMax="85" yMin="-23"/>
+        <record yPelHeight="96" yMax="86" yMin="-23"/>
+        <record yPelHeight="97" yMax="87" yMin="-23"/>
+        <record yPelHeight="98" yMax="87" yMin="-24"/>
+        <record yPelHeight="99" yMax="88" yMin="-24"/>
+        <record yPelHeight="100" yMax="90" yMin="-24"/>
+        <record yPelHeight="101" yMax="91" yMin="-24"/>
+        <record yPelHeight="102" yMax="91" yMin="-25"/>
+        <record yPelHeight="103" yMax="92" yMin="-25"/>
+        <record yPelHeight="104" yMax="93" yMin="-25"/>
+        <record yPelHeight="105" yMax="93" yMin="-25"/>
+        <record yPelHeight="106" yMax="95" yMin="-26"/>
+        <record yPelHeight="107" yMax="96" yMin="-26"/>
+        <record yPelHeight="108" yMax="97" yMin="-26"/>
+        <record yPelHeight="109" yMax="97" yMin="-26"/>
+        <record yPelHeight="110" yMax="98" yMin="-27"/>
+        <record yPelHeight="111" yMax="99" yMin="-27"/>
+        <record yPelHeight="112" yMax="100" yMin="-27"/>
+        <record yPelHeight="113" yMax="101" yMin="-27"/>
+        <record yPelHeight="114" yMax="102" yMin="-28"/>
+        <record yPelHeight="115" yMax="103" yMin="-28"/>
+        <record yPelHeight="116" yMax="103" yMin="-28"/>
+        <record yPelHeight="117" yMax="104" yMin="-28"/>
+        <record yPelHeight="118" yMax="105" yMin="-28"/>
+        <record yPelHeight="119" yMax="107" yMin="-29"/>
+        <record yPelHeight="120" yMax="107" yMin="-29"/>
+        <record yPelHeight="121" yMax="108" yMin="-29"/>
+        <record yPelHeight="122" yMax="109" yMin="-29"/>
+        <record yPelHeight="123" yMax="110" yMin="-30"/>
+        <record yPelHeight="124" yMax="110" yMin="-30"/>
+        <record yPelHeight="125" yMax="112" yMin="-30"/>
+        <record yPelHeight="126" yMax="113" yMin="-30"/>
+        <record yPelHeight="127" yMax="113" yMin="-31"/>
+        <record yPelHeight="128" yMax="114" yMin="-31"/>
+        <record yPelHeight="129" yMax="115" yMin="-31"/>
+        <record yPelHeight="130" yMax="116" yMin="-31"/>
+        <record yPelHeight="131" yMax="117" yMin="-32"/>
+        <record yPelHeight="132" yMax="118" yMin="-32"/>
+        <record yPelHeight="133" yMax="119" yMin="-32"/>
+        <record yPelHeight="134" yMax="120" yMin="-32"/>
+        <record yPelHeight="135" yMax="120" yMin="-33"/>
+        <record yPelHeight="136" yMax="121" yMin="-33"/>
+        <record yPelHeight="137" yMax="123" yMin="-33"/>
+        <record yPelHeight="138" yMax="123" yMin="-33"/>
+        <record yPelHeight="139" yMax="124" yMin="-34"/>
+        <record yPelHeight="140" yMax="125" yMin="-34"/>
+        <record yPelHeight="141" yMax="126" yMin="-34"/>
+        <record yPelHeight="142" yMax="126" yMin="-34"/>
+        <record yPelHeight="143" yMax="128" yMin="-35"/>
+        <record yPelHeight="144" yMax="129" yMin="-35"/>
+        <record yPelHeight="145" yMax="130" yMin="-35"/>
+        <record yPelHeight="146" yMax="130" yMin="-35"/>
+        <record yPelHeight="147" yMax="131" yMin="-35"/>
+        <record yPelHeight="148" yMax="132" yMin="-36"/>
+        <record yPelHeight="149" yMax="133" yMin="-36"/>
+        <record yPelHeight="150" yMax="134" yMin="-36"/>
+        <record yPelHeight="151" yMax="135" yMin="-34"/>
+        <record yPelHeight="152" yMax="136" yMin="-35"/>
+        <record yPelHeight="153" yMax="136" yMin="-35"/>
+        <record yPelHeight="154" yMax="137" yMin="-35"/>
+        <record yPelHeight="155" yMax="139" yMin="-35"/>
+        <record yPelHeight="156" yMax="140" yMin="-36"/>
+        <record yPelHeight="157" yMax="140" yMin="-36"/>
+        <record yPelHeight="158" yMax="141" yMin="-36"/>
+        <record yPelHeight="159" yMax="142" yMin="-36"/>
+        <record yPelHeight="160" yMax="142" yMin="-37"/>
+        <record yPelHeight="161" yMax="144" yMin="-37"/>
+        <record yPelHeight="162" yMax="145" yMin="-37"/>
+        <record yPelHeight="163" yMax="146" yMin="-37"/>
+        <record yPelHeight="164" yMax="146" yMin="-38"/>
+        <record yPelHeight="165" yMax="147" yMin="-38"/>
+        <record yPelHeight="166" yMax="148" yMin="-38"/>
+        <record yPelHeight="167" yMax="150" yMin="-38"/>
+        <record yPelHeight="168" yMax="150" yMin="-39"/>
+        <record yPelHeight="169" yMax="151" yMin="-39"/>
+        <record yPelHeight="170" yMax="152" yMin="-39"/>
+        <record yPelHeight="171" yMax="153" yMin="-38"/>
+        <record yPelHeight="172" yMax="153" yMin="-38"/>
+        <record yPelHeight="173" yMax="155" yMin="-39"/>
+        <record yPelHeight="174" yMax="156" yMin="-39"/>
+        <record yPelHeight="175" yMax="156" yMin="-39"/>
+        <record yPelHeight="176" yMax="157" yMin="-39"/>
+        <record yPelHeight="177" yMax="158" yMin="-40"/>
+        <record yPelHeight="178" yMax="159" yMin="-40"/>
+        <record yPelHeight="179" yMax="160" yMin="-40"/>
+        <record yPelHeight="180" yMax="161" yMin="-40"/>
+        <record yPelHeight="181" yMax="162" yMin="-41"/>
+        <record yPelHeight="182" yMax="163" yMin="-41"/>
+        <record yPelHeight="183" yMax="163" yMin="-41"/>
+        <record yPelHeight="184" yMax="164" yMin="-41"/>
+        <record yPelHeight="185" yMax="166" yMin="-42"/>
+        <record yPelHeight="186" yMax="166" yMin="-42"/>
+        <record yPelHeight="187" yMax="167" yMin="-42"/>
+        <record yPelHeight="188" yMax="168" yMin="-42"/>
+        <record yPelHeight="189" yMax="169" yMin="-43"/>
+        <record yPelHeight="190" yMax="169" yMin="-43"/>
+        <record yPelHeight="191" yMax="171" yMin="-43"/>
+        <record yPelHeight="192" yMax="172" yMin="-43"/>
+        <record yPelHeight="193" yMax="173" yMin="-44"/>
+        <record yPelHeight="194" yMax="173" yMin="-44"/>
+        <record yPelHeight="195" yMax="174" yMin="-44"/>
+        <record yPelHeight="196" yMax="176" yMin="-44"/>
+        <record yPelHeight="197" yMax="176" yMin="-45"/>
+        <record yPelHeight="198" yMax="177" yMin="-45"/>
+        <record yPelHeight="199" yMax="179" yMin="-45"/>
+        <record yPelHeight="200" yMax="180" yMin="-45"/>
+        <record yPelHeight="201" yMax="180" yMin="-45"/>
+        <record yPelHeight="202" yMax="181" yMin="-46"/>
+        <record yPelHeight="203" yMax="182" yMin="-46"/>
+        <record yPelHeight="204" yMax="183" yMin="-46"/>
+        <record yPelHeight="205" yMax="184" yMin="-46"/>
+        <record yPelHeight="206" yMax="185" yMin="-47"/>
+        <record yPelHeight="207" yMax="186" yMin="-47"/>
+        <record yPelHeight="208" yMax="186" yMin="-47"/>
+        <record yPelHeight="209" yMax="187" yMin="-47"/>
+        <record yPelHeight="210" yMax="188" yMin="-48"/>
+        <record yPelHeight="211" yMax="190" yMin="-48"/>
+        <record yPelHeight="212" yMax="190" yMin="-48"/>
+        <record yPelHeight="213" yMax="191" yMin="-48"/>
+        <record yPelHeight="214" yMax="192" yMin="-49"/>
+        <record yPelHeight="215" yMax="193" yMin="-49"/>
+        <record yPelHeight="216" yMax="193" yMin="-49"/>
+        <record yPelHeight="217" yMax="195" yMin="-49"/>
+        <record yPelHeight="218" yMax="196" yMin="-50"/>
+        <record yPelHeight="219" yMax="196" yMin="-50"/>
+        <record yPelHeight="220" yMax="197" yMin="-50"/>
+        <record yPelHeight="221" yMax="198" yMin="-50"/>
+        <record yPelHeight="222" yMax="199" yMin="-51"/>
+        <record yPelHeight="223" yMax="200" yMin="-51"/>
+        <record yPelHeight="224" yMax="201" yMin="-51"/>
+        <record yPelHeight="225" yMax="202" yMin="-51"/>
+        <record yPelHeight="226" yMax="203" yMin="-52"/>
+        <record yPelHeight="227" yMax="203" yMin="-52"/>
+        <record yPelHeight="228" yMax="204" yMin="-52"/>
+        <record yPelHeight="229" yMax="206" yMin="-52"/>
+        <record yPelHeight="230" yMax="206" yMin="-52"/>
+        <record yPelHeight="231" yMax="207" yMin="-53"/>
+        <record yPelHeight="232" yMax="208" yMin="-53"/>
+        <record yPelHeight="233" yMax="209" yMin="-53"/>
+        <record yPelHeight="234" yMax="209" yMin="-53"/>
+        <record yPelHeight="235" yMax="211" yMin="-54"/>
+        <record yPelHeight="236" yMax="212" yMin="-54"/>
+        <record yPelHeight="237" yMax="213" yMin="-54"/>
+        <record yPelHeight="238" yMax="213" yMin="-54"/>
+        <record yPelHeight="239" yMax="214" yMin="-54"/>
+        <record yPelHeight="240" yMax="215" yMin="-54"/>
+        <record yPelHeight="241" yMax="216" yMin="-54"/>
+        <record yPelHeight="242" yMax="217" yMin="-54"/>
+        <record yPelHeight="243" yMax="218" yMin="-55"/>
+        <record yPelHeight="244" yMax="219" yMin="-55"/>
+        <record yPelHeight="245" yMax="219" yMin="-55"/>
+        <record yPelHeight="246" yMax="220" yMin="-55"/>
+        <record yPelHeight="247" yMax="222" yMin="-56"/>
+        <record yPelHeight="248" yMax="223" yMin="-56"/>
+        <record yPelHeight="249" yMax="223" yMin="-56"/>
+        <record yPelHeight="250" yMax="224" yMin="-56"/>
+        <record yPelHeight="251" yMax="225" yMin="-57"/>
+        <record yPelHeight="252" yMax="225" yMin="-57"/>
+        <record yPelHeight="253" yMax="227" yMin="-57"/>
+        <record yPelHeight="254" yMax="228" yMin="-57"/>
+        <record yPelHeight="255" yMax="229" yMin="-58"/>
+      </group>
+      <group index="1">
+        <!-- recs=248, startsz=8, endsz=255 -->
+        <record yPelHeight="8" yMax="8" yMin="-2"/>
+        <record yPelHeight="9" yMax="10" yMin="-2"/>
+        <record yPelHeight="10" yMax="10" yMin="-2"/>
+        <record yPelHeight="11" yMax="11" yMin="-3"/>
+        <record yPelHeight="12" yMax="12" yMin="-3"/>
+        <record yPelHeight="13" yMax="12" yMin="-3"/>
+        <record yPelHeight="14" yMax="13" yMin="-3"/>
+        <record yPelHeight="15" yMax="13" yMin="-4"/>
+        <record yPelHeight="16" yMax="15" yMin="-4"/>
+        <record yPelHeight="17" yMax="15" yMin="-4"/>
+        <record yPelHeight="18" yMax="16" yMin="-4"/>
+        <record yPelHeight="19" yMax="16" yMin="-5"/>
+        <record yPelHeight="20" yMax="17" yMin="-5"/>
+        <record yPelHeight="21" yMax="18" yMin="-5"/>
+        <record yPelHeight="22" yMax="20" yMin="-5"/>
+        <record yPelHeight="23" yMax="20" yMin="-6"/>
+        <record yPelHeight="24" yMax="21" yMin="-6"/>
+        <record yPelHeight="25" yMax="23" yMin="-6"/>
+        <record yPelHeight="26" yMax="23" yMin="-6"/>
+        <record yPelHeight="27" yMax="24" yMin="-7"/>
+        <record yPelHeight="28" yMax="26" yMin="-7"/>
+        <record yPelHeight="29" yMax="26" yMin="-7"/>
+        <record yPelHeight="30" yMax="27" yMin="-7"/>
+        <record yPelHeight="31" yMax="28" yMin="-7"/>
+        <record yPelHeight="32" yMax="28" yMin="-8"/>
+        <record yPelHeight="33" yMax="29" yMin="-8"/>
+        <record yPelHeight="34" yMax="31" yMin="-8"/>
+        <record yPelHeight="35" yMax="32" yMin="-8"/>
+        <record yPelHeight="36" yMax="32" yMin="-9"/>
+        <record yPelHeight="37" yMax="33" yMin="-9"/>
+        <record yPelHeight="38" yMax="34" yMin="-9"/>
+        <record yPelHeight="39" yMax="34" yMin="-9"/>
+        <record yPelHeight="40" yMax="36" yMin="-10"/>
+        <record yPelHeight="41" yMax="37" yMin="-10"/>
+        <record yPelHeight="42" yMax="38" yMin="-10"/>
+        <record yPelHeight="43" yMax="39" yMin="-10"/>
+        <record yPelHeight="44" yMax="40" yMin="-11"/>
+        <record yPelHeight="45" yMax="41" yMin="-11"/>
+        <record yPelHeight="46" yMax="42" yMin="-11"/>
+        <record yPelHeight="47" yMax="42" yMin="-11"/>
+        <record yPelHeight="48" yMax="43" yMin="-12"/>
+        <record yPelHeight="49" yMax="44" yMin="-12"/>
+        <record yPelHeight="50" yMax="45" yMin="-12"/>
+        <record yPelHeight="51" yMax="45" yMin="-12"/>
+        <record yPelHeight="52" yMax="47" yMin="-13"/>
+        <record yPelHeight="53" yMax="48" yMin="-13"/>
+        <record yPelHeight="54" yMax="48" yMin="-13"/>
+        <record yPelHeight="55" yMax="49" yMin="-13"/>
+        <record yPelHeight="56" yMax="50" yMin="-14"/>
+        <record yPelHeight="57" yMax="51" yMin="-14"/>
+        <record yPelHeight="58" yMax="53" yMin="-14"/>
+        <record yPelHeight="59" yMax="53" yMin="-14"/>
+        <record yPelHeight="60" yMax="54" yMin="-14"/>
+        <record yPelHeight="61" yMax="54" yMin="-15"/>
+        <record yPelHeight="62" yMax="55" yMin="-15"/>
+        <record yPelHeight="63" yMax="56" yMin="-15"/>
+        <record yPelHeight="64" yMax="58" yMin="-15"/>
+        <record yPelHeight="65" yMax="58" yMin="-16"/>
+        <record yPelHeight="66" yMax="59" yMin="-16"/>
+        <record yPelHeight="67" yMax="60" yMin="-16"/>
+        <record yPelHeight="68" yMax="61" yMin="-16"/>
+        <record yPelHeight="69" yMax="61" yMin="-17"/>
+        <record yPelHeight="70" yMax="63" yMin="-17"/>
+        <record yPelHeight="71" yMax="64" yMin="-17"/>
+        <record yPelHeight="72" yMax="64" yMin="-17"/>
+        <record yPelHeight="73" yMax="65" yMin="-18"/>
+        <record yPelHeight="74" yMax="66" yMin="-18"/>
+        <record yPelHeight="75" yMax="67" yMin="-18"/>
+        <record yPelHeight="76" yMax="68" yMin="-18"/>
+        <record yPelHeight="77" yMax="69" yMin="-19"/>
+        <record yPelHeight="78" yMax="70" yMin="-19"/>
+        <record yPelHeight="79" yMax="71" yMin="-19"/>
+        <record yPelHeight="80" yMax="71" yMin="-19"/>
+        <record yPelHeight="81" yMax="72" yMin="-20"/>
+        <record yPelHeight="82" yMax="74" yMin="-20"/>
+        <record yPelHeight="83" yMax="74" yMin="-20"/>
+        <record yPelHeight="84" yMax="75" yMin="-20"/>
+        <record yPelHeight="85" yMax="76" yMin="-21"/>
+        <record yPelHeight="86" yMax="77" yMin="-21"/>
+        <record yPelHeight="87" yMax="77" yMin="-21"/>
+        <record yPelHeight="88" yMax="79" yMin="-21"/>
+        <record yPelHeight="89" yMax="80" yMin="-21"/>
+        <record yPelHeight="90" yMax="81" yMin="-22"/>
+        <record yPelHeight="91" yMax="81" yMin="-22"/>
+        <record yPelHeight="92" yMax="82" yMin="-21"/>
+        <record yPelHeight="93" yMax="83" yMin="-21"/>
+        <record yPelHeight="94" yMax="84" yMin="-22"/>
+        <record yPelHeight="95" yMax="85" yMin="-22"/>
+        <record yPelHeight="96" yMax="86" yMin="-22"/>
+        <record yPelHeight="97" yMax="87" yMin="-22"/>
+        <record yPelHeight="98" yMax="87" yMin="-23"/>
+        <record yPelHeight="99" yMax="88" yMin="-23"/>
+        <record yPelHeight="100" yMax="90" yMin="-23"/>
+        <record yPelHeight="101" yMax="91" yMin="-23"/>
+        <record yPelHeight="102" yMax="91" yMin="-23"/>
+        <record yPelHeight="103" yMax="92" yMin="-23"/>
+        <record yPelHeight="104" yMax="93" yMin="-23"/>
+        <record yPelHeight="105" yMax="93" yMin="-23"/>
+        <record yPelHeight="106" yMax="95" yMin="-24"/>
+        <record yPelHeight="107" yMax="96" yMin="-24"/>
+        <record yPelHeight="108" yMax="97" yMin="-24"/>
+        <record yPelHeight="109" yMax="97" yMin="-24"/>
+        <record yPelHeight="110" yMax="98" yMin="-25"/>
+        <record yPelHeight="111" yMax="99" yMin="-25"/>
+        <record yPelHeight="112" yMax="100" yMin="-25"/>
+        <record yPelHeight="113" yMax="101" yMin="-25"/>
+        <record yPelHeight="114" yMax="102" yMin="-26"/>
+        <record yPelHeight="115" yMax="103" yMin="-26"/>
+        <record yPelHeight="116" yMax="103" yMin="-26"/>
+        <record yPelHeight="117" yMax="104" yMin="-26"/>
+        <record yPelHeight="118" yMax="105" yMin="-26"/>
+        <record yPelHeight="119" yMax="107" yMin="-27"/>
+        <record yPelHeight="120" yMax="107" yMin="-27"/>
+        <record yPelHeight="121" yMax="108" yMin="-27"/>
+        <record yPelHeight="122" yMax="109" yMin="-27"/>
+        <record yPelHeight="123" yMax="110" yMin="-28"/>
+        <record yPelHeight="124" yMax="110" yMin="-28"/>
+        <record yPelHeight="125" yMax="112" yMin="-28"/>
+        <record yPelHeight="126" yMax="113" yMin="-28"/>
+        <record yPelHeight="127" yMax="113" yMin="-29"/>
+        <record yPelHeight="128" yMax="114" yMin="-29"/>
+        <record yPelHeight="129" yMax="115" yMin="-29"/>
+        <record yPelHeight="130" yMax="116" yMin="-29"/>
+        <record yPelHeight="131" yMax="117" yMin="-30"/>
+        <record yPelHeight="132" yMax="118" yMin="-30"/>
+        <record yPelHeight="133" yMax="119" yMin="-30"/>
+        <record yPelHeight="134" yMax="120" yMin="-30"/>
+        <record yPelHeight="135" yMax="120" yMin="-31"/>
+        <record yPelHeight="136" yMax="121" yMin="-31"/>
+        <record yPelHeight="137" yMax="123" yMin="-31"/>
+        <record yPelHeight="138" yMax="123" yMin="-31"/>
+        <record yPelHeight="139" yMax="124" yMin="-32"/>
+        <record yPelHeight="140" yMax="125" yMin="-32"/>
+        <record yPelHeight="141" yMax="126" yMin="-32"/>
+        <record yPelHeight="142" yMax="126" yMin="-32"/>
+        <record yPelHeight="143" yMax="128" yMin="-33"/>
+        <record yPelHeight="144" yMax="129" yMin="-33"/>
+        <record yPelHeight="145" yMax="130" yMin="-33"/>
+        <record yPelHeight="146" yMax="130" yMin="-33"/>
+        <record yPelHeight="147" yMax="131" yMin="-33"/>
+        <record yPelHeight="148" yMax="132" yMin="-34"/>
+        <record yPelHeight="149" yMax="133" yMin="-34"/>
+        <record yPelHeight="150" yMax="134" yMin="-34"/>
+        <record yPelHeight="151" yMax="135" yMin="-34"/>
+        <record yPelHeight="152" yMax="136" yMin="-35"/>
+        <record yPelHeight="153" yMax="136" yMin="-35"/>
+        <record yPelHeight="154" yMax="137" yMin="-35"/>
+        <record yPelHeight="155" yMax="139" yMin="-35"/>
+        <record yPelHeight="156" yMax="140" yMin="-36"/>
+        <record yPelHeight="157" yMax="140" yMin="-36"/>
+        <record yPelHeight="158" yMax="141" yMin="-36"/>
+        <record yPelHeight="159" yMax="142" yMin="-36"/>
+        <record yPelHeight="160" yMax="142" yMin="-37"/>
+        <record yPelHeight="161" yMax="144" yMin="-37"/>
+        <record yPelHeight="162" yMax="145" yMin="-37"/>
+        <record yPelHeight="163" yMax="146" yMin="-37"/>
+        <record yPelHeight="164" yMax="146" yMin="-38"/>
+        <record yPelHeight="165" yMax="147" yMin="-38"/>
+        <record yPelHeight="166" yMax="148" yMin="-38"/>
+        <record yPelHeight="167" yMax="150" yMin="-38"/>
+        <record yPelHeight="168" yMax="150" yMin="-39"/>
+        <record yPelHeight="169" yMax="151" yMin="-39"/>
+        <record yPelHeight="170" yMax="152" yMin="-39"/>
+        <record yPelHeight="171" yMax="152" yMin="-38"/>
+        <record yPelHeight="172" yMax="153" yMin="-39"/>
+        <record yPelHeight="173" yMax="155" yMin="-39"/>
+        <record yPelHeight="174" yMax="156" yMin="-39"/>
+        <record yPelHeight="175" yMax="156" yMin="-39"/>
+        <record yPelHeight="176" yMax="157" yMin="-39"/>
+        <record yPelHeight="177" yMax="158" yMin="-40"/>
+        <record yPelHeight="178" yMax="159" yMin="-40"/>
+        <record yPelHeight="179" yMax="160" yMin="-40"/>
+        <record yPelHeight="180" yMax="161" yMin="-40"/>
+        <record yPelHeight="181" yMax="162" yMin="-40"/>
+        <record yPelHeight="182" yMax="163" yMin="-40"/>
+        <record yPelHeight="183" yMax="163" yMin="-40"/>
+        <record yPelHeight="184" yMax="164" yMin="-40"/>
+        <record yPelHeight="185" yMax="166" yMin="-40"/>
+        <record yPelHeight="186" yMax="166" yMin="-40"/>
+        <record yPelHeight="187" yMax="167" yMin="-40"/>
+        <record yPelHeight="188" yMax="168" yMin="-41"/>
+        <record yPelHeight="189" yMax="169" yMin="-41"/>
+        <record yPelHeight="190" yMax="169" yMin="-41"/>
+        <record yPelHeight="191" yMax="171" yMin="-41"/>
+        <record yPelHeight="192" yMax="172" yMin="-41"/>
+        <record yPelHeight="193" yMax="173" yMin="-42"/>
+        <record yPelHeight="194" yMax="173" yMin="-42"/>
+        <record yPelHeight="195" yMax="174" yMin="-42"/>
+        <record yPelHeight="196" yMax="176" yMin="-42"/>
+        <record yPelHeight="197" yMax="176" yMin="-43"/>
+        <record yPelHeight="198" yMax="177" yMin="-44"/>
+        <record yPelHeight="199" yMax="179" yMin="-44"/>
+        <record yPelHeight="200" yMax="180" yMin="-44"/>
+        <record yPelHeight="201" yMax="180" yMin="-44"/>
+        <record yPelHeight="202" yMax="181" yMin="-45"/>
+        <record yPelHeight="203" yMax="182" yMin="-45"/>
+        <record yPelHeight="204" yMax="183" yMin="-45"/>
+        <record yPelHeight="205" yMax="184" yMin="-45"/>
+        <record yPelHeight="206" yMax="185" yMin="-46"/>
+        <record yPelHeight="207" yMax="186" yMin="-46"/>
+        <record yPelHeight="208" yMax="186" yMin="-46"/>
+        <record yPelHeight="209" yMax="187" yMin="-46"/>
+        <record yPelHeight="210" yMax="188" yMin="-47"/>
+        <record yPelHeight="211" yMax="190" yMin="-47"/>
+        <record yPelHeight="212" yMax="190" yMin="-47"/>
+        <record yPelHeight="213" yMax="191" yMin="-46"/>
+        <record yPelHeight="214" yMax="192" yMin="-47"/>
+        <record yPelHeight="215" yMax="193" yMin="-47"/>
+        <record yPelHeight="216" yMax="193" yMin="-47"/>
+        <record yPelHeight="217" yMax="195" yMin="-47"/>
+        <record yPelHeight="218" yMax="196" yMin="-48"/>
+        <record yPelHeight="219" yMax="196" yMin="-48"/>
+        <record yPelHeight="220" yMax="197" yMin="-48"/>
+        <record yPelHeight="221" yMax="198" yMin="-48"/>
+        <record yPelHeight="222" yMax="199" yMin="-49"/>
+        <record yPelHeight="223" yMax="200" yMin="-49"/>
+        <record yPelHeight="224" yMax="201" yMin="-49"/>
+        <record yPelHeight="225" yMax="202" yMin="-49"/>
+        <record yPelHeight="226" yMax="203" yMin="-50"/>
+        <record yPelHeight="227" yMax="203" yMin="-50"/>
+        <record yPelHeight="228" yMax="204" yMin="-50"/>
+        <record yPelHeight="229" yMax="206" yMin="-50"/>
+        <record yPelHeight="230" yMax="206" yMin="-50"/>
+        <record yPelHeight="231" yMax="207" yMin="-51"/>
+        <record yPelHeight="232" yMax="208" yMin="-51"/>
+        <record yPelHeight="233" yMax="209" yMin="-51"/>
+        <record yPelHeight="234" yMax="209" yMin="-52"/>
+        <record yPelHeight="235" yMax="211" yMin="-53"/>
+        <record yPelHeight="236" yMax="212" yMin="-53"/>
+        <record yPelHeight="237" yMax="213" yMin="-53"/>
+        <record yPelHeight="238" yMax="213" yMin="-53"/>
+        <record yPelHeight="239" yMax="214" yMin="-53"/>
+        <record yPelHeight="240" yMax="215" yMin="-53"/>
+        <record yPelHeight="241" yMax="216" yMin="-53"/>
+        <record yPelHeight="242" yMax="217" yMin="-52"/>
+        <record yPelHeight="243" yMax="218" yMin="-53"/>
+        <record yPelHeight="244" yMax="219" yMin="-53"/>
+        <record yPelHeight="245" yMax="219" yMin="-53"/>
+        <record yPelHeight="246" yMax="220" yMin="-53"/>
+        <record yPelHeight="247" yMax="222" yMin="-54"/>
+        <record yPelHeight="248" yMax="223" yMin="-54"/>
+        <record yPelHeight="249" yMax="223" yMin="-54"/>
+        <record yPelHeight="250" yMax="224" yMin="-54"/>
+        <record yPelHeight="251" yMax="225" yMin="-55"/>
+        <record yPelHeight="252" yMax="225" yMin="-55"/>
+        <record yPelHeight="253" yMax="227" yMin="-55"/>
+        <record yPelHeight="254" yMax="228" yMin="-55"/>
+        <record yPelHeight="255" yMax="229" yMin="-56"/>
+      </group>
+      <group index="2">
+        <!-- recs=248, startsz=8, endsz=255 -->
+        <record yPelHeight="8" yMax="8" yMin="-2"/>
+        <record yPelHeight="9" yMax="10" yMin="-2"/>
+        <record yPelHeight="10" yMax="10" yMin="-2"/>
+        <record yPelHeight="11" yMax="11" yMin="-3"/>
+        <record yPelHeight="12" yMax="12" yMin="-3"/>
+        <record yPelHeight="13" yMax="12" yMin="-3"/>
+        <record yPelHeight="14" yMax="13" yMin="-3"/>
+        <record yPelHeight="15" yMax="13" yMin="-4"/>
+        <record yPelHeight="16" yMax="15" yMin="-4"/>
+        <record yPelHeight="17" yMax="15" yMin="-4"/>
+        <record yPelHeight="18" yMax="16" yMin="-4"/>
+        <record yPelHeight="19" yMax="16" yMin="-5"/>
+        <record yPelHeight="20" yMax="17" yMin="-5"/>
+        <record yPelHeight="21" yMax="18" yMin="-5"/>
+        <record yPelHeight="22" yMax="20" yMin="-5"/>
+        <record yPelHeight="23" yMax="20" yMin="-6"/>
+        <record yPelHeight="24" yMax="21" yMin="-6"/>
+        <record yPelHeight="25" yMax="23" yMin="-6"/>
+        <record yPelHeight="26" yMax="23" yMin="-6"/>
+        <record yPelHeight="27" yMax="24" yMin="-7"/>
+        <record yPelHeight="28" yMax="26" yMin="-7"/>
+        <record yPelHeight="29" yMax="26" yMin="-7"/>
+        <record yPelHeight="30" yMax="27" yMin="-7"/>
+        <record yPelHeight="31" yMax="28" yMin="-7"/>
+        <record yPelHeight="32" yMax="28" yMin="-8"/>
+        <record yPelHeight="33" yMax="29" yMin="-8"/>
+        <record yPelHeight="34" yMax="31" yMin="-8"/>
+        <record yPelHeight="35" yMax="32" yMin="-8"/>
+        <record yPelHeight="36" yMax="32" yMin="-9"/>
+        <record yPelHeight="37" yMax="33" yMin="-9"/>
+        <record yPelHeight="38" yMax="34" yMin="-9"/>
+        <record yPelHeight="39" yMax="34" yMin="-9"/>
+        <record yPelHeight="40" yMax="36" yMin="-10"/>
+        <record yPelHeight="41" yMax="37" yMin="-10"/>
+        <record yPelHeight="42" yMax="38" yMin="-10"/>
+        <record yPelHeight="43" yMax="39" yMin="-10"/>
+        <record yPelHeight="44" yMax="40" yMin="-11"/>
+        <record yPelHeight="45" yMax="41" yMin="-11"/>
+        <record yPelHeight="46" yMax="43" yMin="-11"/>
+        <record yPelHeight="47" yMax="42" yMin="-11"/>
+        <record yPelHeight="48" yMax="43" yMin="-12"/>
+        <record yPelHeight="49" yMax="44" yMin="-12"/>
+        <record yPelHeight="50" yMax="45" yMin="-12"/>
+        <record yPelHeight="51" yMax="45" yMin="-12"/>
+        <record yPelHeight="52" yMax="47" yMin="-13"/>
+        <record yPelHeight="53" yMax="48" yMin="-13"/>
+        <record yPelHeight="54" yMax="48" yMin="-13"/>
+        <record yPelHeight="55" yMax="49" yMin="-13"/>
+        <record yPelHeight="56" yMax="50" yMin="-14"/>
+        <record yPelHeight="57" yMax="51" yMin="-14"/>
+        <record yPelHeight="58" yMax="53" yMin="-14"/>
+        <record yPelHeight="59" yMax="53" yMin="-14"/>
+        <record yPelHeight="60" yMax="54" yMin="-14"/>
+        <record yPelHeight="61" yMax="54" yMin="-15"/>
+        <record yPelHeight="62" yMax="55" yMin="-15"/>
+        <record yPelHeight="63" yMax="56" yMin="-15"/>
+        <record yPelHeight="64" yMax="58" yMin="-15"/>
+        <record yPelHeight="65" yMax="58" yMin="-16"/>
+        <record yPelHeight="66" yMax="59" yMin="-16"/>
+        <record yPelHeight="67" yMax="60" yMin="-16"/>
+        <record yPelHeight="68" yMax="61" yMin="-16"/>
+        <record yPelHeight="69" yMax="61" yMin="-17"/>
+        <record yPelHeight="70" yMax="63" yMin="-17"/>
+        <record yPelHeight="71" yMax="64" yMin="-17"/>
+        <record yPelHeight="72" yMax="64" yMin="-17"/>
+        <record yPelHeight="73" yMax="65" yMin="-18"/>
+        <record yPelHeight="74" yMax="66" yMin="-18"/>
+        <record yPelHeight="75" yMax="67" yMin="-18"/>
+        <record yPelHeight="76" yMax="68" yMin="-18"/>
+        <record yPelHeight="77" yMax="69" yMin="-19"/>
+        <record yPelHeight="78" yMax="70" yMin="-19"/>
+        <record yPelHeight="79" yMax="71" yMin="-19"/>
+        <record yPelHeight="80" yMax="71" yMin="-19"/>
+        <record yPelHeight="81" yMax="72" yMin="-20"/>
+        <record yPelHeight="82" yMax="74" yMin="-20"/>
+        <record yPelHeight="83" yMax="74" yMin="-20"/>
+        <record yPelHeight="84" yMax="75" yMin="-20"/>
+        <record yPelHeight="85" yMax="76" yMin="-21"/>
+        <record yPelHeight="86" yMax="77" yMin="-21"/>
+        <record yPelHeight="87" yMax="77" yMin="-21"/>
+        <record yPelHeight="88" yMax="79" yMin="-21"/>
+        <record yPelHeight="89" yMax="80" yMin="-21"/>
+        <record yPelHeight="90" yMax="81" yMin="-22"/>
+        <record yPelHeight="91" yMax="81" yMin="-22"/>
+        <record yPelHeight="92" yMax="82" yMin="-21"/>
+        <record yPelHeight="93" yMax="83" yMin="-21"/>
+        <record yPelHeight="94" yMax="84" yMin="-22"/>
+        <record yPelHeight="95" yMax="85" yMin="-22"/>
+        <record yPelHeight="96" yMax="86" yMin="-22"/>
+        <record yPelHeight="97" yMax="87" yMin="-22"/>
+        <record yPelHeight="98" yMax="87" yMin="-23"/>
+        <record yPelHeight="99" yMax="88" yMin="-23"/>
+        <record yPelHeight="100" yMax="90" yMin="-23"/>
+        <record yPelHeight="101" yMax="91" yMin="-23"/>
+        <record yPelHeight="102" yMax="91" yMin="-23"/>
+        <record yPelHeight="103" yMax="92" yMin="-23"/>
+        <record yPelHeight="104" yMax="93" yMin="-23"/>
+        <record yPelHeight="105" yMax="93" yMin="-23"/>
+        <record yPelHeight="106" yMax="95" yMin="-24"/>
+        <record yPelHeight="107" yMax="96" yMin="-24"/>
+        <record yPelHeight="108" yMax="97" yMin="-24"/>
+        <record yPelHeight="109" yMax="97" yMin="-24"/>
+        <record yPelHeight="110" yMax="98" yMin="-25"/>
+        <record yPelHeight="111" yMax="99" yMin="-25"/>
+        <record yPelHeight="112" yMax="100" yMin="-25"/>
+        <record yPelHeight="113" yMax="101" yMin="-25"/>
+        <record yPelHeight="114" yMax="102" yMin="-26"/>
+        <record yPelHeight="115" yMax="103" yMin="-26"/>
+        <record yPelHeight="116" yMax="103" yMin="-26"/>
+        <record yPelHeight="117" yMax="104" yMin="-26"/>
+        <record yPelHeight="118" yMax="105" yMin="-26"/>
+        <record yPelHeight="119" yMax="107" yMin="-27"/>
+        <record yPelHeight="120" yMax="107" yMin="-27"/>
+        <record yPelHeight="121" yMax="108" yMin="-27"/>
+        <record yPelHeight="122" yMax="109" yMin="-27"/>
+        <record yPelHeight="123" yMax="110" yMin="-28"/>
+        <record yPelHeight="124" yMax="110" yMin="-28"/>
+        <record yPelHeight="125" yMax="112" yMin="-28"/>
+        <record yPelHeight="126" yMax="113" yMin="-28"/>
+        <record yPelHeight="127" yMax="113" yMin="-29"/>
+        <record yPelHeight="128" yMax="114" yMin="-29"/>
+        <record yPelHeight="129" yMax="115" yMin="-29"/>
+        <record yPelHeight="130" yMax="116" yMin="-29"/>
+        <record yPelHeight="131" yMax="117" yMin="-30"/>
+        <record yPelHeight="132" yMax="118" yMin="-30"/>
+        <record yPelHeight="133" yMax="119" yMin="-30"/>
+        <record yPelHeight="134" yMax="120" yMin="-30"/>
+        <record yPelHeight="135" yMax="120" yMin="-31"/>
+        <record yPelHeight="136" yMax="121" yMin="-31"/>
+        <record yPelHeight="137" yMax="123" yMin="-31"/>
+        <record yPelHeight="138" yMax="123" yMin="-31"/>
+        <record yPelHeight="139" yMax="124" yMin="-32"/>
+        <record yPelHeight="140" yMax="125" yMin="-32"/>
+        <record yPelHeight="141" yMax="126" yMin="-32"/>
+        <record yPelHeight="142" yMax="126" yMin="-32"/>
+        <record yPelHeight="143" yMax="128" yMin="-33"/>
+        <record yPelHeight="144" yMax="129" yMin="-33"/>
+        <record yPelHeight="145" yMax="130" yMin="-33"/>
+        <record yPelHeight="146" yMax="130" yMin="-33"/>
+        <record yPelHeight="147" yMax="131" yMin="-33"/>
+        <record yPelHeight="148" yMax="132" yMin="-34"/>
+        <record yPelHeight="149" yMax="133" yMin="-34"/>
+        <record yPelHeight="150" yMax="134" yMin="-34"/>
+        <record yPelHeight="151" yMax="135" yMin="-34"/>
+        <record yPelHeight="152" yMax="136" yMin="-35"/>
+        <record yPelHeight="153" yMax="136" yMin="-35"/>
+        <record yPelHeight="154" yMax="137" yMin="-35"/>
+        <record yPelHeight="155" yMax="139" yMin="-35"/>
+        <record yPelHeight="156" yMax="140" yMin="-36"/>
+        <record yPelHeight="157" yMax="140" yMin="-36"/>
+        <record yPelHeight="158" yMax="141" yMin="-36"/>
+        <record yPelHeight="159" yMax="142" yMin="-36"/>
+        <record yPelHeight="160" yMax="142" yMin="-37"/>
+        <record yPelHeight="161" yMax="144" yMin="-37"/>
+        <record yPelHeight="162" yMax="145" yMin="-37"/>
+        <record yPelHeight="163" yMax="146" yMin="-37"/>
+        <record yPelHeight="164" yMax="146" yMin="-38"/>
+        <record yPelHeight="165" yMax="147" yMin="-38"/>
+        <record yPelHeight="166" yMax="148" yMin="-38"/>
+        <record yPelHeight="167" yMax="150" yMin="-38"/>
+        <record yPelHeight="168" yMax="150" yMin="-39"/>
+        <record yPelHeight="169" yMax="151" yMin="-39"/>
+        <record yPelHeight="170" yMax="152" yMin="-39"/>
+        <record yPelHeight="171" yMax="153" yMin="-38"/>
+        <record yPelHeight="172" yMax="153" yMin="-39"/>
+        <record yPelHeight="173" yMax="155" yMin="-39"/>
+        <record yPelHeight="174" yMax="156" yMin="-39"/>
+        <record yPelHeight="175" yMax="156" yMin="-39"/>
+        <record yPelHeight="176" yMax="157" yMin="-39"/>
+        <record yPelHeight="177" yMax="158" yMin="-40"/>
+        <record yPelHeight="178" yMax="159" yMin="-40"/>
+        <record yPelHeight="179" yMax="160" yMin="-40"/>
+        <record yPelHeight="180" yMax="161" yMin="-40"/>
+        <record yPelHeight="181" yMax="162" yMin="-41"/>
+        <record yPelHeight="182" yMax="163" yMin="-40"/>
+        <record yPelHeight="183" yMax="163" yMin="-40"/>
+        <record yPelHeight="184" yMax="164" yMin="-40"/>
+        <record yPelHeight="185" yMax="166" yMin="-40"/>
+        <record yPelHeight="186" yMax="166" yMin="-40"/>
+        <record yPelHeight="187" yMax="167" yMin="-40"/>
+        <record yPelHeight="188" yMax="168" yMin="-41"/>
+        <record yPelHeight="189" yMax="169" yMin="-41"/>
+        <record yPelHeight="190" yMax="169" yMin="-41"/>
+        <record yPelHeight="191" yMax="171" yMin="-41"/>
+        <record yPelHeight="192" yMax="172" yMin="-41"/>
+        <record yPelHeight="193" yMax="173" yMin="-42"/>
+        <record yPelHeight="194" yMax="173" yMin="-42"/>
+        <record yPelHeight="195" yMax="174" yMin="-42"/>
+        <record yPelHeight="196" yMax="175" yMin="-42"/>
+        <record yPelHeight="197" yMax="176" yMin="-43"/>
+        <record yPelHeight="198" yMax="177" yMin="-44"/>
+        <record yPelHeight="199" yMax="179" yMin="-44"/>
+        <record yPelHeight="200" yMax="180" yMin="-44"/>
+        <record yPelHeight="201" yMax="180" yMin="-44"/>
+        <record yPelHeight="202" yMax="181" yMin="-45"/>
+        <record yPelHeight="203" yMax="182" yMin="-45"/>
+        <record yPelHeight="204" yMax="183" yMin="-45"/>
+        <record yPelHeight="205" yMax="184" yMin="-45"/>
+        <record yPelHeight="206" yMax="185" yMin="-46"/>
+        <record yPelHeight="207" yMax="186" yMin="-46"/>
+        <record yPelHeight="208" yMax="186" yMin="-46"/>
+        <record yPelHeight="209" yMax="187" yMin="-46"/>
+        <record yPelHeight="210" yMax="188" yMin="-47"/>
+        <record yPelHeight="211" yMax="190" yMin="-47"/>
+        <record yPelHeight="212" yMax="190" yMin="-47"/>
+        <record yPelHeight="213" yMax="191" yMin="-46"/>
+        <record yPelHeight="214" yMax="192" yMin="-47"/>
+        <record yPelHeight="215" yMax="193" yMin="-47"/>
+        <record yPelHeight="216" yMax="193" yMin="-47"/>
+        <record yPelHeight="217" yMax="195" yMin="-47"/>
+        <record yPelHeight="218" yMax="196" yMin="-48"/>
+        <record yPelHeight="219" yMax="196" yMin="-48"/>
+        <record yPelHeight="220" yMax="197" yMin="-48"/>
+        <record yPelHeight="221" yMax="198" yMin="-48"/>
+        <record yPelHeight="222" yMax="199" yMin="-49"/>
+        <record yPelHeight="223" yMax="200" yMin="-49"/>
+        <record yPelHeight="224" yMax="201" yMin="-49"/>
+        <record yPelHeight="225" yMax="202" yMin="-49"/>
+        <record yPelHeight="226" yMax="203" yMin="-50"/>
+        <record yPelHeight="227" yMax="203" yMin="-50"/>
+        <record yPelHeight="228" yMax="204" yMin="-50"/>
+        <record yPelHeight="229" yMax="206" yMin="-50"/>
+        <record yPelHeight="230" yMax="206" yMin="-50"/>
+        <record yPelHeight="231" yMax="207" yMin="-51"/>
+        <record yPelHeight="232" yMax="208" yMin="-51"/>
+        <record yPelHeight="233" yMax="209" yMin="-51"/>
+        <record yPelHeight="234" yMax="209" yMin="-52"/>
+        <record yPelHeight="235" yMax="211" yMin="-53"/>
+        <record yPelHeight="236" yMax="212" yMin="-53"/>
+        <record yPelHeight="237" yMax="213" yMin="-53"/>
+        <record yPelHeight="238" yMax="213" yMin="-53"/>
+        <record yPelHeight="239" yMax="214" yMin="-53"/>
+        <record yPelHeight="240" yMax="215" yMin="-53"/>
+        <record yPelHeight="241" yMax="216" yMin="-53"/>
+        <record yPelHeight="242" yMax="217" yMin="-52"/>
+        <record yPelHeight="243" yMax="218" yMin="-53"/>
+        <record yPelHeight="244" yMax="219" yMin="-53"/>
+        <record yPelHeight="245" yMax="219" yMin="-53"/>
+        <record yPelHeight="246" yMax="220" yMin="-53"/>
+        <record yPelHeight="247" yMax="222" yMin="-54"/>
+        <record yPelHeight="248" yMax="223" yMin="-54"/>
+        <record yPelHeight="249" yMax="223" yMin="-54"/>
+        <record yPelHeight="250" yMax="224" yMin="-54"/>
+        <record yPelHeight="251" yMax="225" yMin="-55"/>
+        <record yPelHeight="252" yMax="225" yMin="-55"/>
+        <record yPelHeight="253" yMax="227" yMin="-55"/>
+        <record yPelHeight="254" yMax="228" yMin="-55"/>
+        <record yPelHeight="255" yMax="229" yMin="-56"/>
+      </group>
+    </groups>
+  </VDMX>
+
+  <hdmx>
+    <hdmxData>
+          ppem:  11  12  13  15  16  17  19  21  24  27  29  32  33  37  42  46  50  54  58  67  75  83  92 100 ;
+
+       .notdef:   9   9  10  12  12  13  15  16  19  21  23  25  26  29  33  36  39  42  45  52  58  65  72  78 ;
+             A:   8   9  10  11  11  11  13  14  17  19  20  22  23  25  30  32  35  38  41  47  53  59  66  72 ;
+             B:   7   8   8  10  10  11  12  14  16  18  19  21  22  25  27  30  33  36  38  45  50  56  61  66 ;
+             a:   5   5   6   7   7   7   8   9  11  12  12  14  15  16  19  21  22  24  26  30  33  37  41  44 ;
+             b:   5   6   7   7   8   8  10  10  12  14  14  16  16  18  20  23  24  27  29  34  38  42  46  50 ;
+      quotedbl:   5   5   6   5   5   5   8   8  10  10  10  13  13  15  17  18  20  22  23  27  30  35  38  40 ;
+         space:   3   3   3   4   4   4   5   5   6   7   7   8   8   9  11  12  13  14  15  17  19  21  23  25 ;
+    </hdmxData>
+  </hdmx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x20" name="space"/><!-- SPACE -->
+      <map code="0x22" name="quotedbl"/><!-- QUOTATION MARK -->
+      <map code="0x41" name="A"/><!-- LATIN CAPITAL LETTER A -->
+      <map code="0x42" name="B"/><!-- LATIN CAPITAL LETTER B -->
+      <map code="0x61" name="a"/><!-- LATIN SMALL LETTER A -->
+      <map code="0x62" name="b"/><!-- LATIN SMALL LETTER B -->
+      <map code="0xa0" name="space"/><!-- NO-BREAK SPACE -->
+    </cmap_format_4>
+  </cmap>
+
+  <fpgm>
+    <assembly>
+      NPUSHB[ ]	/* 71 values pushed */
+      91 90 89 88 85 84 83 82 81 80 79 78 77 76 75 74 73 72 71 70 69 68 67 66 65
+      64 63 62 61 60 59 58 57 56 55 54 53 49 48 47 46 45 44 40 39 38 37 36 35 34
+      33 31 24 20 17 16 15 14 13 11 10 9 8 7 6 5 4 3 2 1 0
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        ADD[ ]	/* Add */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        3
+        CINDEX[ ]	/* CopyXToTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        SRP1[ ]	/* SetRefPoint1 */
+        GC[0]	/* GetCoordOnPVector */
+        SUB[ ]	/* Subtract */
+        SWAP[ ]	/* SwapTopStack */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        SUB[ ]	/* Subtract */
+        SCFS[ ]	/* SetCoordFromStackFP */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        RTG[ ]	/* RoundToGrid */
+        ROUND[00]	/* Round */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        GC[0]	/* GetCoordOnPVector */
+        ADD[ ]	/* Add */
+        PUSHB[ ]	/* 1 value pushed */
+        32
+        SUB[ ]	/* Subtract */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        70
+        ADD[ ]	/* Add */
+        PUSHB[ ]	/* 1 value pushed */
+        4
+        MINDEX[ ]	/* MoveXToTopStack */
+        SWAP[ ]	/* SwapTopStack */
+        SCFS[ ]	/* SetCoordFromStackFP */
+        SCFS[ ]	/* SetCoordFromStackFP */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        GC[0]	/* GetCoordOnPVector */
+        SWAP[ ]	/* SwapTopStack */
+        SUB[ ]	/* Subtract */
+        PUSHB[ ]	/* 1 value pushed */
+        32
+        ADD[ ]	/* Add */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        38
+        SUB[ ]	/* Subtract */
+        PUSHB[ ]	/* 1 value pushed */
+        32
+        SUB[ ]	/* Subtract */
+        PUSHB[ ]	/* 1 value pushed */
+        4
+        MINDEX[ ]	/* MoveXToTopStack */
+        SWAP[ ]	/* SwapTopStack */
+        SCFS[ ]	/* SetCoordFromStackFP */
+        SCFS[ ]	/* SetCoordFromStackFP */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        GC[0]	/* GetCoordOnPVector */
+        ADD[ ]	/* Add */
+        PUSHB[ ]	/* 1 value pushed */
+        64
+        SUB[ ]	/* Subtract */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        102
+        ADD[ ]	/* Add */
+        PUSHB[ ]	/* 1 value pushed */
+        4
+        MINDEX[ ]	/* MoveXToTopStack */
+        SWAP[ ]	/* SwapTopStack */
+        SCFS[ ]	/* SetCoordFromStackFP */
+        SCFS[ ]	/* SetCoordFromStackFP */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        GC[0]	/* GetCoordOnPVector */
+        SWAP[ ]	/* SwapTopStack */
+        SUB[ ]	/* Subtract */
+        PUSHB[ ]	/* 1 value pushed */
+        64
+        ADD[ ]	/* Add */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        38
+        SUB[ ]	/* Subtract */
+        PUSHB[ ]	/* 1 value pushed */
+        64
+        SUB[ ]	/* Subtract */
+        PUSHB[ ]	/* 1 value pushed */
+        4
+        MINDEX[ ]	/* MoveXToTopStack */
+        SWAP[ ]	/* SwapTopStack */
+        SCFS[ ]	/* SetCoordFromStackFP */
+        SCFS[ ]	/* SetCoordFromStackFP */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        SRP0[ ]	/* SetRefPoint0 */
+        DUP[ ]	/* DuplicateTopStack */
+        ALIGNRP[ ]	/* AlignRelativePt */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        ALIGNRP[ ]	/* AlignRelativePt */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        205
+        WCVTP[ ]	/* WriteCVTInPixels */
+        SWAP[ ]	/* SwapTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHW[ ]	/* 1 value pushed */
+        346
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          SWAP[ ]	/* SwapTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          141
+          WCVTP[ ]	/* WriteCVTInPixels */
+          SWAP[ ]	/* SwapTopStack */
+        EIF[ ]	/* EndIf */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        237
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          SWAP[ ]	/* SwapTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          77
+          WCVTP[ ]	/* WriteCVTInPixels */
+          SWAP[ ]	/* SwapTopStack */
+        EIF[ ]	/* EndIf */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        4
+        MINDEX[ ]	/* MoveXToTopStack */
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          SWAP[ ]	/* SwapTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          13
+          WCVTP[ ]	/* WriteCVTInPixels */
+          SWAP[ ]	/* SwapTopStack */
+        EIF[ ]	/* EndIf */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        RTG[ ]	/* RoundToGrid */
+        ROUND[00]	/* Round */
+        WCVTP[ ]	/* WriteCVTInPixels */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        ADD[ ]	/* Add */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        70
+        SROUND[ ]	/* SuperRound */
+        ROUND[00]	/* Round */
+        ROLL[ ]	/* RollTopThreeStack */
+        RCVT[ ]	/* ReadCVT */
+        ADD[ ]	/* Add */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 2 values pushed */
+        11 10
+        RS[ ]	/* ReadStore */
+        SWAP[ ]	/* SwapTopStack */
+        RS[ ]	/* ReadStore */
+        NEG[ ]	/* Negate */
+        SPVFS[ ]	/* SetPVectorFromStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 2 values pushed */
+        10 11
+        RS[ ]	/* ReadStore */
+        SWAP[ ]	/* SwapTopStack */
+        RS[ ]	/* ReadStore */
+        SFVFS[ ]	/* SetFVectorFromStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        40
+        SWAP[ ]	/* SwapTopStack */
+        WCVTF[ ]	/* WriteCVTInFUnits */
+        PUSHB[ ]	/* 2 values pushed */
+        1 40
+        MIAP[0]	/* MoveIndirectAbsPt */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        40
+        SWAP[ ]	/* SwapTopStack */
+        WCVTF[ ]	/* WriteCVTInFUnits */
+        PUSHB[ ]	/* 2 values pushed */
+        2 40
+        RCVT[ ]	/* ReadCVT */
+        MSIRP[0]	/* MoveStackIndirRelPt */
+        PUSHB[ ]	/* 2 values pushed */
+        2 0
+        SFVTL[0]	/* SetFVectorToLine */
+        GFV[ ]	/* GetFVector */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        3
+        CINDEX[ ]	/* CopyXToTopStack */
+        RCVT[ ]	/* ReadCVT */
+        SUB[ ]	/* Subtract */
+        ABS[ ]	/* Absolute */
+        PUSHB[ ]	/* 1 value pushed */
+        80
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          RCVT[ ]	/* ReadCVT */
+          WCVTP[ ]	/* WriteCVTInPixels */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MD[0]	/* MeasureDistance */
+        PUSHB[ ]	/* 1 value pushed */
+        14
+        SWAP[ ]	/* SwapTopStack */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        RS[ ]	/* ReadStore */
+        ADD[ ]	/* Add */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        6
+        RS[ ]	/* ReadStore */
+        PUSHB[ ]	/* 1 value pushed */
+        7
+        RS[ ]	/* ReadStore */
+        NEG[ ]	/* Negate */
+        SPVFS[ ]	/* SetPVectorFromStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        ROUND[01]	/* Round */
+        PUSHB[ ]	/* 1 value pushed */
+        64
+        SUB[ ]	/* Subtract */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        MAX[ ]	/* Maximum */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 2 values pushed */
+        44 192
+        ROLL[ ]	/* RollTopThreeStack */
+        MIN[ ]	/* Minimum */
+        PUSHW[ ]	/* 1 value pushed */
+        4096
+        DIV[ ]	/* Divide */
+        ADD[ ]	/* Add */
+        CALL[ ]	/* CallFunction */
+        GPV[ ]	/* GetPVector */
+        ABS[ ]	/* Absolute */
+        SWAP[ ]	/* SwapTopStack */
+        ABS[ ]	/* Absolute */
+        SUB[ ]	/* Subtract */
+        NOT[ ]	/* LogicalNot */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          SUB[ ]	/* Subtract */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        ROLL[ ]	/* RollTopThreeStack */
+        SPVTCA[1]	/* SetPVectorToAxis */
+        RCVT[ ]	/* ReadCVT */
+        ROLL[ ]	/* RollTopThreeStack */
+        ROLL[ ]	/* RollTopThreeStack */
+        SDPVTL[1]	/* SetDualPVectorToLine */
+        PUSHB[ ]	/* 1 value pushed */
+        17
+        CALL[ ]	/* CallFunction */
+        PUSHB[ ]	/* 1 value pushed */
+        41
+        SWAP[ ]	/* SwapTopStack */
+        WCVTP[ ]	/* WriteCVTInPixels */
+        PUSHB[ ]	/* 1 value pushed */
+        41
+        ROFF[ ]	/* RoundOff */
+        MIRP[00100]	/* MoveIndirectRelPt */
+        RTG[ ]	/* RoundToGrid */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        NEG[ ]	/* Negate */
+        PUSHB[ ]	/* 1 value pushed */
+        44
+        SWAP[ ]	/* SwapTopStack */
+        WCVTP[ ]	/* WriteCVTInPixels */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        43
+        SWAP[ ]	/* SwapTopStack */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        GT[ ]	/* GreaterThan */
+        IF[ ]	/* If */
+          RCVT[ ]	/* ReadCVT */
+          WCVTP[ ]	/* WriteCVTInPixels */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          RCVT[ ]	/* ReadCVT */
+          WCVTP[ ]	/* WriteCVTInPixels */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        5
+        CINDEX[ ]	/* CopyXToTopStack */
+        SRP0[ ]	/* SetRefPoint0 */
+        SWAP[ ]	/* SwapTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        ROLL[ ]	/* RollTopThreeStack */
+        MIRP[10101]	/* MoveIndirectRelPt */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        ADD[ ]	/* Add */
+        SWAP[ ]	/* SwapTopStack */
+        MIRP[01101]	/* MoveIndirectRelPt */
+        MIRP[01100]	/* MoveIndirectRelPt */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        5
+        CINDEX[ ]	/* CopyXToTopStack */
+        SRP0[ ]	/* SetRefPoint0 */
+        SWAP[ ]	/* SwapTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        ROLL[ ]	/* RollTopThreeStack */
+        MIRP[10101]	/* MoveIndirectRelPt */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        SUB[ ]	/* Subtract */
+        SWAP[ ]	/* SwapTopStack */
+        MIRP[01101]	/* MoveIndirectRelPt */
+        MIRP[01100]	/* MoveIndirectRelPt */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        6
+        CINDEX[ ]	/* CopyXToTopStack */
+        SRP0[ ]	/* SetRefPoint0 */
+        MIRP[10101]	/* MoveIndirectRelPt */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        MIRP[01101]	/* MoveIndirectRelPt */
+        MIRP[01100]	/* MoveIndirectRelPt */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        RS[ ]	/* ReadStore */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        GT[ ]	/* GreaterThan */
+        IF[ ]	/* If */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        ELSE[ ]	/* Else */
+          GC[0]	/* GetCoordOnPVector */
+          SWAP[ ]	/* SwapTopStack */
+          GC[0]	/* GetCoordOnPVector */
+          ADD[ ]	/* Add */
+          ROLL[ ]	/* RollTopThreeStack */
+          ROLL[ ]	/* RollTopThreeStack */
+          GC[0]	/* GetCoordOnPVector */
+          SWAP[ ]	/* SwapTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          GC[0]	/* GetCoordOnPVector */
+          ROLL[ ]	/* RollTopThreeStack */
+          ADD[ ]	/* Add */
+          ROLL[ ]	/* RollTopThreeStack */
+          SUB[ ]	/* Subtract */
+          PUSHW[ ]	/* 1 value pushed */
+          -128
+          DIV[ ]	/* Divide */
+          SWAP[ ]	/* SwapTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          SWAP[ ]	/* SwapTopStack */
+          ROLL[ ]	/* RollTopThreeStack */
+          PUSHB[ ]	/* 2 values pushed */
+          12 12
+          ROLL[ ]	/* RollTopThreeStack */
+          WCVTF[ ]	/* WriteCVTInFUnits */
+          RCVT[ ]	/* ReadCVT */
+          ADD[ ]	/* Add */
+          DUP[ ]	/* DuplicateTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          0
+          LT[ ]	/* LessThan */
+          IF[ ]	/* If */
+            PUSHB[ ]	/* 1 value pushed */
+            1
+            SUB[ ]	/* Subtract */
+            PUSHW[ ]	/* 1 value pushed */
+            -70
+            MAX[ ]	/* Maximum */
+          ELSE[ ]	/* Else */
+            PUSHB[ ]	/* 1 value pushed */
+            70
+            MIN[ ]	/* Minimum */
+          EIF[ ]	/* EndIf */
+          PUSHB[ ]	/* 1 value pushed */
+          16
+          ADD[ ]	/* Add */
+          ROUND[00]	/* Round */
+          SVTCA[1]	/* SetFPVectorToAxis */
+          MSIRP[0]	/* MoveStackIndirRelPt */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        3
+        CINDEX[ ]	/* CopyXToTopStack */
+        GC[0]	/* GetCoordOnPVector */
+        GT[ ]	/* GreaterThan */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        PUSHB[ ]	/* 1 value pushed */
+        19
+        LTEQ[ ]	/* LessThenOrEqual */
+        OR[ ]	/* LogicalOr */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          CINDEX[ ]	/* CopyXToTopStack */
+          GC[0]	/* GetCoordOnPVector */
+          DUP[ ]	/* DuplicateTopStack */
+          ROUND[00]	/* Round */
+          SUB[ ]	/* Subtract */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          CINDEX[ ]	/* CopyXToTopStack */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          SWAP[ ]	/* SwapTopStack */
+          POP[ ]	/* PopTopStack */
+          SHPIX[ ]	/* ShiftZoneByPixel */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          SRP1[ ]	/* SetRefPoint1 */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        3
+        CINDEX[ ]	/* CopyXToTopStack */
+        GC[0]	/* GetCoordOnPVector */
+        LT[ ]	/* LessThan */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          CINDEX[ ]	/* CopyXToTopStack */
+          GC[0]	/* GetCoordOnPVector */
+          DUP[ ]	/* DuplicateTopStack */
+          ROUND[00]	/* Round */
+          SUB[ ]	/* Subtract */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          CINDEX[ ]	/* CopyXToTopStack */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          SWAP[ ]	/* SwapTopStack */
+          POP[ ]	/* PopTopStack */
+          SHPIX[ ]	/* ShiftZoneByPixel */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          SRP1[ ]	/* SetRefPoint1 */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        7
+        RS[ ]	/* ReadStore */
+        PUSHB[ ]	/* 1 value pushed */
+        6
+        RS[ ]	/* ReadStore */
+        SFVFS[ ]	/* SetFVectorFromStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        3
+        CINDEX[ ]	/* CopyXToTopStack */
+        RCVT[ ]	/* ReadCVT */
+        LT[ ]	/* LessThan */
+        IF[ ]	/* If */
+          ROLL[ ]	/* RollTopThreeStack */
+          DUP[ ]	/* DuplicateTopStack */
+          RCVT[ ]	/* ReadCVT */
+          ROLL[ ]	/* RollTopThreeStack */
+          MAX[ ]	/* Maximum */
+          WCVTP[ ]	/* WriteCVTInPixels */
+          POP[ ]	/* PopTopStack */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          RCVT[ ]	/* ReadCVT */
+          WCVTP[ ]	/* WriteCVTInPixels */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        POP[ ]	/* PopTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        128
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          GPV[ ]	/* GetPVector */
+          ABS[ ]	/* Absolute */
+          SWAP[ ]	/* SwapTopStack */
+          ABS[ ]	/* Absolute */
+          MAX[ ]	/* Maximum */
+          PUSHW[ ]	/* 1 value pushed */
+          8192
+          DIV[ ]	/* Divide */
+        ELSE[ ]	/* Else */
+          PUSHB[ ]	/* 3 values pushed */
+          0 64 47
+          CALL[ ]	/* CallFunction */
+        EIF[ ]	/* EndIf */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        ADD[ ]	/* Add */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        POP[ ]	/* PopTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        192
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          GPV[ ]	/* GetPVector */
+          ABS[ ]	/* Absolute */
+          SWAP[ ]	/* SwapTopStack */
+          ABS[ ]	/* Absolute */
+          MAX[ ]	/* Maximum */
+          PUSHW[ ]	/* 1 value pushed */
+          5461
+          DIV[ ]	/* Divide */
+        ELSE[ ]	/* Else */
+          PUSHB[ ]	/* 3 values pushed */
+          0 128 47
+          CALL[ ]	/* CallFunction */
+        EIF[ ]	/* EndIf */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        ADD[ ]	/* Add */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        GPV[ ]	/* GetPVector */
+        ABS[ ]	/* Absolute */
+        SWAP[ ]	/* SwapTopStack */
+        ABS[ ]	/* Absolute */
+        MAX[ ]	/* Maximum */
+        PUSHW[ ]	/* 1 value pushed */
+        16384
+        DIV[ ]	/* Divide */
+        ADD[ ]	/* Add */
+        SWAP[ ]	/* SwapTopStack */
+        POP[ ]	/* PopTopStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        GTEQ[ ]	/* GreaterThanOrEqual */
+        IF[ ]	/* If */
+          ROLL[ ]	/* RollTopThreeStack */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          CINDEX[ ]	/* CopyXToTopStack */
+          MD[0]	/* MeasureDistance */
+          ABS[ ]	/* Absolute */
+          SWAP[ ]	/* SwapTopStack */
+          RCVT[ ]	/* ReadCVT */
+          ROUND[01]	/* Round */
+          PUSHB[ ]	/* 1 value pushed */
+          64
+          MAX[ ]	/* Maximum */
+          SUB[ ]	/* Subtract */
+          PUSHB[ ]	/* 1 value pushed */
+          128
+          DIV[ ]	/* Divide */
+          PUSHB[ ]	/* 1 value pushed */
+          32
+          SUB[ ]	/* Subtract */
+          ROUND[10]	/* Round */
+          PUSHB[ ]	/* 1 value pushed */
+          14
+          SWAP[ ]	/* SwapTopStack */
+          WCVTP[ ]	/* WriteCVTInPixels */
+          SWAP[ ]	/* SwapTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          14
+          MIRP[10110]	/* MoveIndirectRelPt */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          SWAP[ ]	/* SwapTopStack */
+          ROLL[ ]	/* RollTopThreeStack */
+          SRP2[ ]	/* SetRefPoint2 */
+          SRP1[ ]	/* SetRefPoint1 */
+          DUP[ ]	/* DuplicateTopStack */
+          IP[ ]	/* InterpolatePts */
+          MDAP[1]	/* MoveDirectAbsPt */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        GTEQ[ ]	/* GreaterThanOrEqual */
+        IF[ ]	/* If */
+          DUP[ ]	/* DuplicateTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          CINDEX[ ]	/* CopyXToTopStack */
+          MD[0]	/* MeasureDistance */
+          ABS[ ]	/* Absolute */
+          ROUND[01]	/* Round */
+          DUP[ ]	/* DuplicateTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          5
+          MINDEX[ ]	/* MoveXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          6
+          CINDEX[ ]	/* CopyXToTopStack */
+          MD[0]	/* MeasureDistance */
+          ABS[ ]	/* Absolute */
+          SWAP[ ]	/* SwapTopStack */
+          SUB[ ]	/* Subtract */
+          PUSHB[ ]	/* 1 value pushed */
+          128
+          DIV[ ]	/* Divide */
+          PUSHB[ ]	/* 1 value pushed */
+          32
+          SUB[ ]	/* Subtract */
+          ROUND[10]	/* Round */
+          PUSHB[ ]	/* 1 value pushed */
+          14
+          SWAP[ ]	/* SwapTopStack */
+          WCVTP[ ]	/* WriteCVTInPixels */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          MINDEX[ ]	/* MoveXToTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          14
+          MIRP[10110]	/* MoveIndirectRelPt */
+          ROLL[ ]	/* RollTopThreeStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          14
+          SWAP[ ]	/* SwapTopStack */
+          WCVTP[ ]	/* WriteCVTInPixels */
+          PUSHB[ ]	/* 1 value pushed */
+          14
+          MIRP[10110]	/* MoveIndirectRelPt */
+          PUSHB[ ]	/* 1 value pushed */
+          14
+          SWAP[ ]	/* SwapTopStack */
+          WCVTP[ ]	/* WriteCVTInPixels */
+          PUSHB[ ]	/* 1 value pushed */
+          14
+          MIRP[01101]	/* MoveIndirectRelPt */
+        ELSE[ ]	/* Else */
+          ROLL[ ]	/* RollTopThreeStack */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          MINDEX[ ]	/* MoveXToTopStack */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          DUP[ ]	/* DuplicateTopStack */
+          IP[ ]	/* InterpolatePts */
+          SWAP[ ]	/* SwapTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          IP[ ]	/* InterpolatePts */
+          MDAP[1]	/* MoveDirectAbsPt */
+          MDAP[1]	/* MoveDirectAbsPt */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        RCVT[ ]	/* ReadCVT */
+        ADD[ ]	/* Add */
+        SWAP[ ]	/* SwapTopStack */
+        RCVT[ ]	/* ReadCVT */
+        ADD[ ]	/* Add */
+        SWAP[ ]	/* SwapTopStack */
+        RCVT[ ]	/* ReadCVT */
+        ADD[ ]	/* Add */
+        SWAP[ ]	/* SwapTopStack */
+        SROUND[ ]	/* SuperRound */
+        ROUND[00]	/* Round */
+        RTG[ ]	/* RoundToGrid */
+        PUSHB[ ]	/* 1 value pushed */
+        128
+        DIV[ ]	/* Divide */
+        DUP[ ]	/* DuplicateTopStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        72
+        CALL[ ]	/* CallFunction */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        EQ[ ]	/* Equal */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          64
+          WCVTP[ ]	/* WriteCVTInPixels */
+          DUP[ ]	/* DuplicateTopStack */
+          RCVT[ ]	/* ReadCVT */
+          PUSHB[ ]	/* 1 value pushed */
+          64
+          SUB[ ]	/* Subtract */
+          WCVTP[ ]	/* WriteCVTInPixels */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 2 values pushed */
+        48 47
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        RCVT[ ]	/* ReadCVT */
+        SUB[ ]	/* Subtract */
+        ADD[ ]	/* Add */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        ADD[ ]	/* Add */
+        ROUND[01]	/* Round */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          47
+          SWAP[ ]	/* SwapTopStack */
+          WCVTF[ ]	/* WriteCVTInFUnits */
+          PUSHB[ ]	/* 1 value pushed */
+          20
+          SWAP[ ]	/* SwapTopStack */
+          WS[ ]	/* WriteStore */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          DUP[ ]	/* DuplicateTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          CINDEX[ ]	/* CopyXToTopStack */
+          RCVT[ ]	/* ReadCVT */
+          ROUND[01]	/* Round */
+          GTEQ[ ]	/* GreaterThanOrEqual */
+          IF[ ]	/* If */
+            WCVTP[ ]	/* WriteCVTInPixels */
+          ELSE[ ]	/* Else */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+          EIF[ ]	/* EndIf */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        PUSHB[ ]	/* 1 value pushed */
+        20
+        RS[ ]	/* ReadStore */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        ADD[ ]	/* Add */
+        MUL[ ]	/* Multiply */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        ADD[ ]	/* Add */
+        ROUND[01]	/* Round */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        47
+        RCVT[ ]	/* ReadCVT */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        ROLL[ ]	/* RollTopThreeStack */
+        ADD[ ]	/* Add */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        RCVT[ ]	/* ReadCVT */
+        ADD[ ]	/* Add */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        SWAP[ ]	/* SwapTopStack */
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          PUSHW[ ]	/* 2 values pushed */
+          51 -32
+          PUSHB[ ]	/* 2 values pushed */
+          52 32
+        ELSE[ ]	/* Else */
+          PUSHB[ ]	/* 4 values pushed */
+          51 0 52 0
+        EIF[ ]	/* EndIf */
+        WCVTP[ ]	/* WriteCVTInPixels */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        22
+        RS[ ]	/* ReadStore */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          MINDEX[ ]	/* MoveXToTopStack */
+          RCVT[ ]	/* ReadCVT */
+          ROLL[ ]	/* RollTopThreeStack */
+          IF[ ]	/* If */
+            ABS[ ]	/* Absolute */
+            FLOOR[ ]	/* Floor */
+            PUSHB[ ]	/* 1 value pushed */
+            31
+            ADD[ ]	/* Add */
+          ELSE[ ]	/* Else */
+            ABS[ ]	/* Absolute */
+            PUSHB[ ]	/* 1 value pushed */
+            32
+            ADD[ ]	/* Add */
+            FLOOR[ ]	/* Floor */
+            DUP[ ]	/* DuplicateTopStack */
+            IF[ ]	/* If */
+            ELSE[ ]	/* Else */
+              POP[ ]	/* PopTopStack */
+              PUSHB[ ]	/* 1 value pushed */
+              64
+            EIF[ ]	/* EndIf */
+            PUSHB[ ]	/* 1 value pushed */
+            1
+            SUB[ ]	/* Subtract */
+          EIF[ ]	/* EndIf */
+          SWAP[ ]	/* SwapTopStack */
+          IF[ ]	/* If */
+            NEG[ ]	/* Negate */
+          EIF[ ]	/* EndIf */
+          PUSHB[ ]	/* 1 value pushed */
+          41
+          SWAP[ ]	/* SwapTopStack */
+          WCVTP[ ]	/* WriteCVTInPixels */
+          SWAP[ ]	/* SwapTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          41
+          MIRP[00000]	/* MoveIndirectRelPt */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        RS[ ]	/* ReadStore */
+        EQ[ ]	/* Equal */
+        IF[ ]	/* If */
+          MPPEM[ ]	/* MeasurePixelPerEm */
+          GTEQ[ ]	/* GreaterThanOrEqual */
+          SWAP[ ]	/* SwapTopStack */
+          MPPEM[ ]	/* MeasurePixelPerEm */
+          LTEQ[ ]	/* LessThenOrEqual */
+          AND[ ]	/* LogicalAnd */
+          IF[ ]	/* If */
+            SHPIX[ ]	/* ShiftZoneByPixel */
+          ELSE[ ]	/* Else */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+          EIF[ ]	/* EndIf */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        22
+        RS[ ]	/* ReadStore */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          CINDEX[ ]	/* CopyXToTopStack */
+          RCVT[ ]	/* ReadCVT */
+          ABS[ ]	/* Absolute */
+          PUSHB[ ]	/* 1 value pushed */
+          32
+          ADD[ ]	/* Add */
+          FLOOR[ ]	/* Floor */
+          DUP[ ]	/* DuplicateTopStack */
+          IF[ ]	/* If */
+          ELSE[ ]	/* Else */
+            POP[ ]	/* PopTopStack */
+            PUSHB[ ]	/* 1 value pushed */
+            64
+          EIF[ ]	/* EndIf */
+          PUSHB[ ]	/* 1 value pushed */
+          1
+          SUB[ ]	/* Subtract */
+          SWAP[ ]	/* SwapTopStack */
+          IF[ ]	/* If */
+          ELSE[ ]	/* Else */
+            NEG[ ]	/* Negate */
+          EIF[ ]	/* EndIf */
+          PUSHB[ ]	/* 1 value pushed */
+          41
+          SWAP[ ]	/* SwapTopStack */
+          WCVTP[ ]	/* WriteCVTInPixels */
+          PUSHB[ ]	/* 1 value pushed */
+          5
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          8
+          CINDEX[ ]	/* CopyXToTopStack */
+          SFVTL[0]	/* SetFVectorToLine */
+          DUP[ ]	/* DuplicateTopStack */
+          IF[ ]	/* If */
+            SPVTCA[0]	/* SetPVectorToAxis */
+          ELSE[ ]	/* Else */
+            SPVTCA[1]	/* SetPVectorToAxis */
+          EIF[ ]	/* EndIf */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          CINDEX[ ]	/* CopyXToTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          5
+          CINDEX[ ]	/* CopyXToTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          GC[0]	/* GetCoordOnPVector */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          CINDEX[ ]	/* CopyXToTopStack */
+          SWAP[ ]	/* SwapTopStack */
+          WS[ ]	/* WriteStore */
+          ALIGNRP[ ]	/* AlignRelativePt */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          7
+          CINDEX[ ]	/* CopyXToTopStack */
+          SFVTL[0]	/* SetFVectorToLine */
+          PUSHB[ ]	/* 1 value pushed */
+          7
+          CINDEX[ ]	/* CopyXToTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          6
+          CINDEX[ ]	/* CopyXToTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          GC[0]	/* GetCoordOnPVector */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          1
+          ADD[ ]	/* Add */
+          SWAP[ ]	/* SwapTopStack */
+          WS[ ]	/* WriteStore */
+          ALIGNRP[ ]	/* AlignRelativePt */
+          DUP[ ]	/* DuplicateTopStack */
+          IF[ ]	/* If */
+            SVTCA[1]	/* SetFPVectorToAxis */
+          ELSE[ ]	/* Else */
+            SVTCA[0]	/* SetFPVectorToAxis */
+          EIF[ ]	/* EndIf */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          CINDEX[ ]	/* CopyXToTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          5
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          41
+          MIRP[00000]	/* MoveIndirectRelPt */
+          PUSHB[ ]	/* 1 value pushed */
+          41
+          DUP[ ]	/* DuplicateTopStack */
+          RCVT[ ]	/* ReadCVT */
+          NEG[ ]	/* Negate */
+          WCVTP[ ]	/* WriteCVTInPixels */
+          PUSHB[ ]	/* 1 value pushed */
+          7
+          CINDEX[ ]	/* CopyXToTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          6
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          41
+          MIRP[00000]	/* MoveIndirectRelPt */
+          PUSHB[ ]	/* 1 value pushed */
+          5
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          8
+          CINDEX[ ]	/* CopyXToTopStack */
+          SFVTL[0]	/* SetFVectorToLine */
+          DUP[ ]	/* DuplicateTopStack */
+          IF[ ]	/* If */
+            SPVTCA[0]	/* SetPVectorToAxis */
+          ELSE[ ]	/* Else */
+            SPVTCA[1]	/* SetPVectorToAxis */
+          EIF[ ]	/* EndIf */
+          PUSHB[ ]	/* 1 value pushed */
+          5
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          CINDEX[ ]	/* CopyXToTopStack */
+          RS[ ]	/* ReadStore */
+          SCFS[ ]	/* SetCoordFromStackFP */
+          PUSHB[ ]	/* 1 value pushed */
+          4
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          7
+          CINDEX[ ]	/* CopyXToTopStack */
+          SFVTL[0]	/* SetFVectorToLine */
+          PUSHB[ ]	/* 1 value pushed */
+          6
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          3
+          CINDEX[ ]	/* CopyXToTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          1
+          ADD[ ]	/* Add */
+          RS[ ]	/* ReadStore */
+          SCFS[ ]	/* SetCoordFromStackFP */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SPVTCA[0]	/* SetPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        4
+        CINDEX[ ]	/* CopyXToTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        GC[0]	/* GetCoordOnPVector */
+        PUSHB[ ]	/* 1 value pushed */
+        4
+        CINDEX[ ]	/* CopyXToTopStack */
+        SWAP[ ]	/* SwapTopStack */
+        WS[ ]	/* WriteStore */
+        PUSHB[ ]	/* 1 value pushed */
+        5
+        CINDEX[ ]	/* CopyXToTopStack */
+        SFVTL[0]	/* SetFVectorToLine */
+        PUSHB[ ]	/* 1 value pushed */
+        3
+        CINDEX[ ]	/* CopyXToTopStack */
+        RCVT[ ]	/* ReadCVT */
+        SCFS[ ]	/* SetCoordFromStackFP */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SPVTCA[0]	/* SetPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        3
+        CINDEX[ ]	/* CopyXToTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        4
+        CINDEX[ ]	/* CopyXToTopStack */
+        SFVTL[0]	/* SetFVectorToLine */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        CINDEX[ ]	/* CopyXToTopStack */
+        RS[ ]	/* ReadStore */
+        SCFS[ ]	/* SetCoordFromStackFP */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+        POP[ ]	/* PopTopStack */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        SWAP[ ]	/* SwapTopStack */
+        DUP[ ]	/* DuplicateTopStack */
+        RCVT[ ]	/* ReadCVT */
+        RTG[ ]	/* RoundToGrid */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        LT[ ]	/* LessThan */
+        DUP[ ]	/* DuplicateTopStack */
+        IF[ ]	/* If */
+          SWAP[ ]	/* SwapTopStack */
+          NEG[ ]	/* Negate */
+          SWAP[ ]	/* SwapTopStack */
+        EIF[ ]	/* EndIf */
+        SWAP[ ]	/* SwapTopStack */
+        ROUND[00]	/* Round */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        64
+        LT[ ]	/* LessThan */
+        IF[ ]	/* If */
+          POP[ ]	/* PopTopStack */
+          PUSHB[ ]	/* 1 value pushed */
+          64
+        EIF[ ]	/* EndIf */
+        SWAP[ ]	/* SwapTopStack */
+        IF[ ]	/* If */
+          NEG[ ]	/* Negate */
+        EIF[ ]	/* EndIf */
+        ROLL[ ]	/* RollTopThreeStack */
+        ADD[ ]	/* Add */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        GTEQ[ ]	/* GreaterThanOrEqual */
+        SWAP[ ]	/* SwapTopStack */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        LTEQ[ ]	/* LessThenOrEqual */
+        AND[ ]	/* LogicalAnd */
+        IF[ ]	/* If */
+          DUP[ ]	/* DuplicateTopStack */
+          RCVT[ ]	/* ReadCVT */
+          ROLL[ ]	/* RollTopThreeStack */
+          ADD[ ]	/* Add */
+          WCVTP[ ]	/* WriteCVTInPixels */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        EQ[ ]	/* Equal */
+        IF[ ]	/* If */
+          DUP[ ]	/* DuplicateTopStack */
+          RCVT[ ]	/* ReadCVT */
+          ROLL[ ]	/* RollTopThreeStack */
+          ADD[ ]	/* Add */
+          WCVTP[ ]	/* WriteCVTInPixels */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        GTEQ[ ]	/* GreaterThanOrEqual */
+        SWAP[ ]	/* SwapTopStack */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        LTEQ[ ]	/* LessThenOrEqual */
+        AND[ ]	/* LogicalAnd */
+        IF[ ]	/* If */
+          SHPIX[ ]	/* ShiftZoneByPixel */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        POP[ ]	/* PopTopStack */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        EQ[ ]	/* Equal */
+        IF[ ]	/* If */
+          SHPIX[ ]	/* ShiftZoneByPixel */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        RS[ ]	/* ReadStore */
+        EQ[ ]	/* Equal */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          70
+          CALL[ ]	/* CallFunction */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        RS[ ]	/* ReadStore */
+        EQ[ ]	/* Equal */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          71
+          CALL[ ]	/* CallFunction */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        EQ[ ]	/* Equal */
+        SWAP[ ]	/* SwapTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        EQ[ ]	/* Equal */
+        OR[ ]	/* LogicalOr */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          128
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          RS[ ]	/* ReadStore */
+          LT[ ]	/* LessThan */
+          PUSHB[ ]	/* 1 value pushed */
+          1
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          RS[ ]	/* ReadStore */
+          EQ[ ]	/* Equal */
+          OR[ ]	/* LogicalOr */
+          IF[ ]	/* If */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+          ELSE[ ]	/* Else */
+            PUSHB[ ]	/* 1 value pushed */
+            72
+            CALL[ ]	/* CallFunction */
+          EIF[ ]	/* EndIf */
+        ELSE[ ]	/* Else */
+          PUSHB[ ]	/* 1 value pushed */
+          128
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          RS[ ]	/* ReadStore */
+          LT[ ]	/* LessThan */
+          PUSHB[ ]	/* 1 value pushed */
+          1
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          RS[ ]	/* ReadStore */
+          EQ[ ]	/* Equal */
+          OR[ ]	/* LogicalOr */
+          IF[ ]	/* If */
+            PUSHB[ ]	/* 1 value pushed */
+            72
+            CALL[ ]	/* CallFunction */
+          ELSE[ ]	/* Else */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+          EIF[ ]	/* EndIf */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        EQ[ ]	/* Equal */
+        SWAP[ ]	/* SwapTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        EQ[ ]	/* Equal */
+        OR[ ]	/* LogicalOr */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          128
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          RS[ ]	/* ReadStore */
+          LT[ ]	/* LessThan */
+          PUSHB[ ]	/* 1 value pushed */
+          1
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          RS[ ]	/* ReadStore */
+          EQ[ ]	/* Equal */
+          OR[ ]	/* LogicalOr */
+          IF[ ]	/* If */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+          ELSE[ ]	/* Else */
+            PUSHB[ ]	/* 1 value pushed */
+            73
+            CALL[ ]	/* CallFunction */
+          EIF[ ]	/* EndIf */
+        ELSE[ ]	/* Else */
+          PUSHB[ ]	/* 1 value pushed */
+          128
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          RS[ ]	/* ReadStore */
+          LT[ ]	/* LessThan */
+          PUSHB[ ]	/* 1 value pushed */
+          1
+          PUSHB[ ]	/* 1 value pushed */
+          2
+          RS[ ]	/* ReadStore */
+          EQ[ ]	/* Equal */
+          OR[ ]	/* LogicalOr */
+          IF[ ]	/* If */
+            PUSHB[ ]	/* 1 value pushed */
+            73
+            CALL[ ]	/* CallFunction */
+          ELSE[ ]	/* Else */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+            POP[ ]	/* PopTopStack */
+          EIF[ ]	/* EndIf */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        ROLL[ ]	/* RollTopThreeStack */
+        SFVTL[0]	/* SetFVectorToLine */
+        SWAP[ ]	/* SwapTopStack */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        GTEQ[ ]	/* GreaterThanOrEqual */
+        ROLL[ ]	/* RollTopThreeStack */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        LTEQ[ ]	/* LessThenOrEqual */
+        AND[ ]	/* LogicalAnd */
+        IF[ ]	/* If */
+          SWAP[ ]	/* SwapTopStack */
+          SHPIX[ ]	/* ShiftZoneByPixel */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        CINDEX[ ]	/* CopyXToTopStack */
+        SRP1[ ]	/* SetRefPoint1 */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        CINDEX[ ]	/* CopyXToTopStack */
+        MD[0]	/* MeasureDistance */
+        ROUND[10]	/* Round */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        GTEQ[ ]	/* GreaterThanOrEqual */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          64
+          ADD[ ]	/* Add */
+          SHPIX[ ]	/* ShiftZoneByPixel */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        CINDEX[ ]	/* CopyXToTopStack */
+        SRP1[ ]	/* SetRefPoint1 */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        CINDEX[ ]	/* CopyXToTopStack */
+        MD[0]	/* MeasureDistance */
+        ROUND[10]	/* Round */
+        DUP[ ]	/* DuplicateTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 1 value pushed */
+          64
+          SUB[ ]	/* Subtract */
+          SHPIX[ ]	/* ShiftZoneByPixel */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        DUP[ ]	/* DuplicateTopStack */
+        ROLL[ ]	/* RollTopThreeStack */
+        SWAP[ ]	/* SwapTopStack */
+        MD[0]	/* MeasureDistance */
+        ABS[ ]	/* Absolute */
+        ROLL[ ]	/* RollTopThreeStack */
+        SWAP[ ]	/* SwapTopStack */
+        GTEQ[ ]	/* GreaterThanOrEqual */
+        IF[ ]	/* If */
+          ALIGNRP[ ]	/* AlignRelativePt */
+        ELSE[ ]	/* Else */
+          POP[ ]	/* PopTopStack */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        GT[ ]	/* GreaterThan */
+        IF[ ]	/* If */
+          RDTG[ ]	/* RoundDownToGrid */
+        ELSE[ ]	/* Else */
+          ROFF[ ]	/* RoundOff */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        18
+        SVTCA[0]	/* SetFPVectorToAxis */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        EQ[ ]	/* Equal */
+        WS[ ]	/* WriteStore */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 2 values pushed */
+        2 1
+        WS[ ]	/* WriteStore */
+        PUSHB[ ]	/* 2 values pushed */
+        35 1
+        GETINFO[ ]	/* GetInfo */
+        LTEQ[ ]	/* LessThenOrEqual */
+        PUSHB[ ]	/* 2 values pushed */
+        64 1
+        GETINFO[ ]	/* GetInfo */
+        GTEQ[ ]	/* GreaterThanOrEqual */
+        AND[ ]	/* LogicalAnd */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 2 values pushed */
+          2 0
+          WS[ ]	/* WriteStore */
+          PUSHW[ ]	/* 2 values pushed */
+          4096 32
+          GETINFO[ ]	/* GetInfo */
+          EQ[ ]	/* Equal */
+          IF[ ]	/* If */
+            PUSHB[ ]	/* 3 values pushed */
+            2 1 2
+            RS[ ]	/* ReadStore */
+            ADD[ ]	/* Add */
+            WS[ ]	/* WriteStore */
+          EIF[ ]	/* EndIf */
+          PUSHB[ ]	/* 2 values pushed */
+          36 1
+          GETINFO[ ]	/* GetInfo */
+          LTEQ[ ]	/* LessThenOrEqual */
+          IF[ ]	/* If */
+            PUSHW[ ]	/* 2 values pushed */
+            8192 64
+            GETINFO[ ]	/* GetInfo */
+            EQ[ ]	/* Equal */
+            IF[ ]	/* If */
+              PUSHB[ ]	/* 3 values pushed */
+              2 2 2
+              RS[ ]	/* ReadStore */
+              ADD[ ]	/* Add */
+              WS[ ]	/* WriteStore */
+              PUSHB[ ]	/* 2 values pushed */
+              36 1
+              GETINFO[ ]	/* GetInfo */
+              EQ[ ]	/* Equal */
+              IF[ ]	/* If */
+                PUSHB[ ]	/* 3 values pushed */
+                2 32 2
+                RS[ ]	/* ReadStore */
+                ADD[ ]	/* Add */
+                WS[ ]	/* WriteStore */
+                SVTCA[0]	/* SetFPVectorToAxis */
+                MPPEM[ ]	/* MeasurePixelPerEm */
+                SVTCA[1]	/* SetFPVectorToAxis */
+                MPPEM[ ]	/* MeasurePixelPerEm */
+                GT[ ]	/* GreaterThan */
+                IF[ ]	/* If */
+                  PUSHB[ ]	/* 3 values pushed */
+                  2 8 2
+                  RS[ ]	/* ReadStore */
+                  ADD[ ]	/* Add */
+                  WS[ ]	/* WriteStore */
+                EIF[ ]	/* EndIf */
+              ELSE[ ]	/* Else */
+                PUSHW[ ]	/* 2 values pushed */
+                16384 128
+                GETINFO[ ]	/* GetInfo */
+                EQ[ ]	/* Equal */
+                IF[ ]	/* If */
+                  PUSHB[ ]	/* 3 values pushed */
+                  2 4 2
+                  RS[ ]	/* ReadStore */
+                  ADD[ ]	/* Add */
+                  WS[ ]	/* WriteStore */
+                EIF[ ]	/* EndIf */
+                PUSHW[ ]	/* 2 values pushed */
+                16384 128
+                MUL[ ]	/* Multiply */
+                PUSHW[ ]	/* 1 value pushed */
+                256
+                GETINFO[ ]	/* GetInfo */
+                EQ[ ]	/* Equal */
+                IF[ ]	/* If */
+                  PUSHB[ ]	/* 3 values pushed */
+                  2 8 2
+                  RS[ ]	/* ReadStore */
+                  ADD[ ]	/* Add */
+                  WS[ ]	/* WriteStore */
+                EIF[ ]	/* EndIf */
+                PUSHW[ ]	/* 2 values pushed */
+                16384 256
+                MUL[ ]	/* Multiply */
+                PUSHW[ ]	/* 1 value pushed */
+                512
+                GETINFO[ ]	/* GetInfo */
+                EQ[ ]	/* Equal */
+                IF[ ]	/* If */
+                  PUSHB[ ]	/* 3 values pushed */
+                  2 16 2
+                  RS[ ]	/* ReadStore */
+                  ADD[ ]	/* Add */
+                  WS[ ]	/* WriteStore */
+                EIF[ ]	/* EndIf */
+                PUSHB[ ]	/* 2 values pushed */
+                38 1
+                GETINFO[ ]	/* GetInfo */
+                LTEQ[ ]	/* LessThenOrEqual */
+                IF[ ]	/* If */
+                  PUSHW[ ]	/* 2 values pushed */
+                  16384 512
+                  MUL[ ]	/* Multiply */
+                  PUSHW[ ]	/* 1 value pushed */
+                  1024
+                  GETINFO[ ]	/* GetInfo */
+                  EQ[ ]	/* Equal */
+                  IF[ ]	/* If */
+                    PUSHB[ ]	/* 3 values pushed */
+                    2 64 2
+                    RS[ ]	/* ReadStore */
+                    ADD[ ]	/* Add */
+                    WS[ ]	/* WriteStore */
+                  EIF[ ]	/* EndIf */
+                  PUSHW[ ]	/* 2 values pushed */
+                  16384 1024
+                  MUL[ ]	/* Multiply */
+                  PUSHW[ ]	/* 1 value pushed */
+                  2048
+                  GETINFO[ ]	/* GetInfo */
+                  EQ[ ]	/* Equal */
+                  IF[ ]	/* If */
+                    PUSHB[ ]	/* 3 values pushed */
+                    2 128 2
+                    RS[ ]	/* ReadStore */
+                    ADD[ ]	/* Add */
+                    WS[ ]	/* WriteStore */
+                  EIF[ ]	/* EndIf */
+                EIF[ ]	/* EndIf */
+              EIF[ ]	/* EndIf */
+            EIF[ ]	/* EndIf */
+          EIF[ ]	/* EndIf */
+        EIF[ ]	/* EndIf */
+        PUSHB[ ]	/* 2 values pushed */
+        0 2
+        RS[ ]	/* ReadStore */
+        EQ[ ]	/* Equal */
+        IF[ ]	/* If */
+          PUSHB[ ]	/* 2 values pushed */
+          2 1
+          WS[ ]	/* WriteStore */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        RCVT[ ]	/* ReadCVT */
+        RTG[ ]	/* RoundToGrid */
+        ROUND[00]	/* Round */
+        SWAP[ ]	/* SwapTopStack */
+        MPPEM[ ]	/* MeasurePixelPerEm */
+        LTEQ[ ]	/* LessThenOrEqual */
+        IF[ ]	/* If */
+          SWAP[ ]	/* SwapTopStack */
+          DUP[ ]	/* DuplicateTopStack */
+          RCVT[ ]	/* ReadCVT */
+          DUP[ ]	/* DuplicateTopStack */
+          ABS[ ]	/* Absolute */
+          PUSHB[ ]	/* 1 value pushed */
+          64
+          LT[ ]	/* LessThan */
+          IF[ ]	/* If */
+            RUTG[ ]	/* RoundUpToGrid */
+          EIF[ ]	/* EndIf */
+          ROUND[00]	/* Round */
+          ROLL[ ]	/* RollTopThreeStack */
+          ADD[ ]	/* Add */
+        EIF[ ]	/* EndIf */
+        WCVTP[ ]	/* WriteCVTInPixels */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        0
+        SZPS[ ]	/* SetZonePointerS */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        CINDEX[ ]	/* CopyXToTopStack */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        CINDEX[ ]	/* CopyXToTopStack */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        SWAP[ ]	/* SwapTopStack */
+        MIAP[0]	/* MoveIndirectAbsPt */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        SWAP[ ]	/* SwapTopStack */
+        MIAP[0]	/* MoveIndirectAbsPt */
+        PUSHB[ ]	/* 2 values pushed */
+        1 2
+        SPVTL[0]	/* SetPVectorToLine */
+        GPV[ ]	/* GetPVector */
+        PUSHB[ ]	/* 1 value pushed */
+        10
+        SWAP[ ]	/* SwapTopStack */
+        NEG[ ]	/* Negate */
+        WS[ ]	/* WriteStore */
+        PUSHB[ ]	/* 1 value pushed */
+        11
+        SWAP[ ]	/* SwapTopStack */
+        WS[ ]	/* WriteStore */
+        SVTCA[1]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        SWAP[ ]	/* SwapTopStack */
+        MIAP[1]	/* MoveIndirectAbsPt */
+        SVTCA[0]	/* SetFPVectorToAxis */
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        SWAP[ ]	/* SwapTopStack */
+        MIAP[1]	/* MoveIndirectAbsPt */
+        PUSHB[ ]	/* 2 values pushed */
+        1 2
+        SPVTL[0]	/* SetPVectorToLine */
+        GPV[ ]	/* GetPVector */
+        PUSHB[ ]	/* 1 value pushed */
+        6
+        SWAP[ ]	/* SwapTopStack */
+        NEG[ ]	/* Negate */
+        WS[ ]	/* WriteStore */
+        PUSHB[ ]	/* 1 value pushed */
+        7
+        SWAP[ ]	/* SwapTopStack */
+        WS[ ]	/* WriteStore */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        SZPS[ ]	/* SetZonePointerS */
+        SVTCA[1]	/* SetFPVectorToAxis */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        128
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        RS[ ]	/* ReadStore */
+        LT[ ]	/* LessThan */
+        PUSHB[ ]	/* 1 value pushed */
+        1
+        PUSHB[ ]	/* 1 value pushed */
+        2
+        RS[ ]	/* ReadStore */
+        EQ[ ]	/* Equal */
+        OR[ ]	/* LogicalOr */
+        IF[ ]	/* If */
+          POP[ ]	/* PopTopStack */
+          SWAP[ ]	/* SwapTopStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          PUSHB[ ]	/* 1 value pushed */
+          32
+          SMD[ ]	/* SetMinimumDistance */
+          MDRP[01001]	/* MoveDirectRelPt */
+        ELSE[ ]	/* Else */
+          ROLL[ ]	/* RollTopThreeStack */
+          SRP0[ ]	/* SetRefPoint0 */
+          MIRP[01101]	/* MoveIndirectRelPt */
+        EIF[ ]	/* EndIf */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        PUSHB[ ]	/* 1 value pushed */
+        89
+        CALL[ ]	/* CallFunction */
+      ENDF[ ]	/* EndFunctionDefinition */
+      FDEF[ ]	/* FunctionDefinition */
+        ROLL[ ]	/* RollTopThreeStack */
+        SRP0[ ]	/* SetRefPoint0 */
+        MIRP[00101]	/* MoveIndirectRelPt */
+      ENDF[ ]	/* EndFunctionDefinition */
+    </assembly>
+  </fpgm>
+
+  <prep>
+    <assembly>
+      PUSHB[ ]	/* 2 values pushed */
+      9 80
+      NPUSHW[ ]	/* 98 values pushed */
+      357 1 360 359 19 31 352 78 351 85 321 61 320 85 320 1 322 85 323 61 322 85 302 317 128
+      31 317 1 318 85 316 61 315 85 31 315 63 315 79 315 143 315 4 315 1 318 85 304 61 303
+      85 303 1 318 85 301 61 300 85 207 300 1 300 1 318 85 319 61 318 85 330 1 328 85 327
+      1 328 85 326 61 325 85 325 1 328 85 329 61 328 85 96 263 1 63 263 1 191 260
+      NPUSHB[ ]	/* 179 values pushed */
+      1 224 253 1 207 253 1 32 253 1 127 251 1 80 251 1 128 242 144 242 2 241 240 41 31
+      175 240 191 240 2 79 239 95 239 175 239 3 48 239 1 15 239 1 8 0 237 16 237 80 237
+      96 237 112 237 160 237 6 10 15 236 1 12 0 235 1 17 227 224 56 31 223 61 221 85 222
+      61 220 85 0 221 1 60 0 221 48 221 80 221 128 221 176 221 5 221 1 3 85 220 3 22
+      31 16 192 32 192 48 192 112 192 128 192 208 192 224 192 240 192 8 128 190 144 190 2 189 188
+      47 31 15 188 31 188 2 31 179 79 179 127 179 3 96 168 1 15 168 31 168 2 80 155 96
+      155 2 144 156 1 15 156 31 156 47 156 3 154 153 46 31 153 71 30 31 151 150 39 31 224
+      150 240 150 2
+      PUSHW[ ]	/* 1 value pushed */
+      -64
+      PUSHB[ ]	/* 4 values pushed */
+      150 13 17 70
+      PUSHW[ ]	/* 5 values pushed */
+      335 332 61 31 334
+      PUSHB[ ]	/* 4 values pushed */
+      3 255 31 175
+      NPUSHW[ ]	/* 21 values pushed */
+      333 1 15 333 31 333 47 333 79 333 111 333 143 333 6 15 332 31 332 47 332
+      NPUSHB[ ]	/* 56 values pushed */
+      3 95 149 1 11 146 27 146 43 146 123 146 139 146 5 112 134 128 134 144 134 3 128 133 144
+      133 2 175 118 191 118 2 115 80 41 31 111 110 43 31 110 71 42 31 25 51 24 85 7 51
+      3 85 6 3 255 31
+      PUSHW[ ]	/* 1 value pushed */
+      -64
+      NPUSHB[ ]	/* 73 values pushed */
+      98 37 40 70 96 95 64 31 95 80 41 31 91 90 48 31 90 71 41 31 19 51 18 85 5
+      1 3 85 4 51 3 85 15 3 31 3 63 3 79 3 111 3 143 3 191 3 7 8 82 80
+      30 31 81 80 30 31 224 80 240 80 2 64 80 9 12 70 15 79 31 79 47 79 3
+      PUSHW[ ]	/* 1 value pushed */
+      -32
+      NPUSHB[ ]	/* 101 values pushed */
+      75 33 40 70 96 74 112 74 128 74 3 73 70 41 31 72 71 56 31 15 71 31 71 47 71
+      207 71 223 71 239 71 6 95 71 1 159 71 1 159 70 175 70 191 70 3 64 70 41 47 70
+      64 70 30 33 70 28 72 27 85 22 51 21 85 17 1 15 85 16 51 15 85 2 1 0 85
+      1 51 0 85 47 15 255 15 2 15 15 95 15 127 15 3 15 0 63 0 2 128 22 1 5
+      1
+      PUSHW[ ]	/* 1 value pushed */
+      400
+      PUSHB[ ]	/* 2 values pushed */
+      84 83
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      MPPEM[ ]	/* MeasurePixelPerEm */
+      PUSHW[ ]	/* 1 value pushed */
+      2047
+      GT[ ]	/* GreaterThan */
+      MPPEM[ ]	/* MeasurePixelPerEm */
+      PUSHB[ ]	/* 1 value pushed */
+      8
+      LT[ ]	/* LessThan */
+      OR[ ]	/* LogicalOr */
+      PUSHB[ ]	/* 1 value pushed */
+      1
+      GETINFO[ ]	/* GetInfo */
+      PUSHB[ ]	/* 1 value pushed */
+      37
+      GTEQ[ ]	/* GreaterThanOrEqual */
+      PUSHB[ ]	/* 1 value pushed */
+      1
+      GETINFO[ ]	/* GetInfo */
+      PUSHB[ ]	/* 1 value pushed */
+      64
+      LTEQ[ ]	/* LessThenOrEqual */
+      AND[ ]	/* LogicalAnd */
+      PUSHB[ ]	/* 1 value pushed */
+      6
+      GETINFO[ ]	/* GetInfo */
+      PUSHB[ ]	/* 1 value pushed */
+      0
+      NEQ[ ]	/* NotEqual */
+      AND[ ]	/* LogicalAnd */
+      OR[ ]	/* LogicalOr */
+      IF[ ]	/* If */
+        PUSHB[ ]	/* 2 values pushed */
+        1 1
+        INSTCTRL[ ]	/* SetInstrExecControl */
+      EIF[ ]	/* EndIf */
+      SCANCTRL[ ]	/* ScanConversionControl */
+      SCANTYPE[ ]	/* ScanType */
+      SCANTYPE[ ]	/* ScanType */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      WS[ ]	/* WriteStore */
+      SCVTCI[ ]	/* SetCVTCutIn */
+      MPPEM[ ]	/* MeasurePixelPerEm */
+      PUSHB[ ]	/* 1 value pushed */
+      50
+      GTEQ[ ]	/* GreaterThanOrEqual */
+      IF[ ]	/* If */
+        PUSHB[ ]	/* 1 value pushed */
+        96
+        SCVTCI[ ]	/* SetCVTCutIn */
+      EIF[ ]	/* EndIf */
+      MPPEM[ ]	/* MeasurePixelPerEm */
+      PUSHB[ ]	/* 1 value pushed */
+      100
+      GTEQ[ ]	/* GreaterThanOrEqual */
+      IF[ ]	/* If */
+        PUSHB[ ]	/* 1 value pushed */
+        64
+        SCVTCI[ ]	/* SetCVTCutIn */
+      EIF[ ]	/* EndIf */
+      MPPEM[ ]	/* MeasurePixelPerEm */
+      PUSHB[ ]	/* 1 value pushed */
+      128
+      GTEQ[ ]	/* GreaterThanOrEqual */
+      IF[ ]	/* If */
+        PUSHB[ ]	/* 1 value pushed */
+        16
+        SCVTCI[ ]	/* SetCVTCutIn */
+        PUSHB[ ]	/* 2 values pushed */
+        22 0
+        WS[ ]	/* WriteStore */
+      EIF[ ]	/* EndIf */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC2[ ]	/* DeltaExceptionC2 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC2[ ]	/* DeltaExceptionC2 */
+      DELTAC3[ ]	/* DeltaExceptionC3 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      DELTAC3[ ]	/* DeltaExceptionC3 */
+      CALL[ ]	/* CallFunction */
+      DELTAC2[ ]	/* DeltaExceptionC2 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      SDB[ ]	/* SetDeltaBaseInGState */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC2[ ]	/* DeltaExceptionC2 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      CALL[ ]	/* CallFunction */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SDB[ ]	/* SetDeltaBaseInGState */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      SDB[ ]	/* SetDeltaBaseInGState */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SDB[ ]	/* SetDeltaBaseInGState */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      SDB[ ]	/* SetDeltaBaseInGState */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SDB[ ]	/* SetDeltaBaseInGState */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[1]	/* SetFPVectorToAxis */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      SVTCA[0]	/* SetFPVectorToAxis */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      CALL[ ]	/* CallFunction */
+      DELTAC1[ ]	/* DeltaExceptionC1 */
+      RTG[ ]	/* RoundToGrid */
+      SDB[ ]	/* SetDeltaBaseInGState */
+    </assembly>
+  </prep>
+
+  <cvt>
+    <cv index="0" value="1421"/>
+    <cv index="1" value="21"/>
+    <cv index="2" value="72"/>
+    <cv index="3" value="1341"/>
+    <cv index="4" value="15"/>
+    <cv index="5" value="112"/>
+    <cv index="6" value="1341"/>
+    <cv index="7" value="15"/>
+    <cv index="8" value="0"/>
+    <cv index="9" value="0"/>
+    <cv index="10" value="0"/>
+    <cv index="11" value="0"/>
+    <cv index="12" value="0"/>
+    <cv index="13" value="0"/>
+    <cv index="14" value="0"/>
+    <cv index="15" value="940"/>
+    <cv index="16" value="25"/>
+    <cv index="17" value="153"/>
+    <cv index="18" value="0"/>
+    <cv index="19" value="-20"/>
+    <cv index="20" value="0"/>
+    <cv index="21" value="0"/>
+    <cv index="22" value="-20"/>
+    <cv index="23" value="0"/>
+    <cv index="24" value="0"/>
+    <cv index="25" value="-20"/>
+    <cv index="26" value="0"/>
+    <cv index="27" value="-436"/>
+    <cv index="28" value="-6"/>
+    <cv index="29" value="0"/>
+    <cv index="30" value="0"/>
+    <cv index="31" value="0"/>
+    <cv index="32" value="0"/>
+    <cv index="33" value="0"/>
+    <cv index="34" value="0"/>
+    <cv index="35" value="0"/>
+    <cv index="36" value="0"/>
+    <cv index="37" value="0"/>
+    <cv index="38" value="0"/>
+    <cv index="39" value="0"/>
+    <cv index="40" value="0"/>
+    <cv index="41" value="0"/>
+    <cv index="42" value="0"/>
+    <cv index="43" value="0"/>
+    <cv index="44" value="0"/>
+    <cv index="45" value="0"/>
+    <cv index="46" value="0"/>
+    <cv index="47" value="0"/>
+    <cv index="48" value="0"/>
+    <cv index="49" value="0"/>
+    <cv index="50" value="0"/>
+    <cv index="51" value="0"/>
+    <cv index="52" value="0"/>
+    <cv index="53" value="0"/>
+    <cv index="54" value="0"/>
+    <cv index="55" value="0"/>
+    <cv index="56" value="0"/>
+    <cv index="57" value="0"/>
+    <cv index="58" value="0"/>
+    <cv index="59" value="0"/>
+    <cv index="60" value="0"/>
+    <cv index="61" value="0"/>
+    <cv index="62" value="0"/>
+    <cv index="63" value="0"/>
+    <cv index="64" value="0"/>
+    <cv index="65" value="0"/>
+    <cv index="66" value="0"/>
+    <cv index="67" value="2048"/>
+    <cv index="68" value="0"/>
+    <cv index="69" value="0"/>
+    <cv index="70" value="152"/>
+    <cv index="71" value="166"/>
+    <cv index="72" value="180"/>
+    <cv index="73" value="141"/>
+    <cv index="74" value="217"/>
+    <cv index="75" value="93"/>
+    <cv index="76" value="0"/>
+    <cv index="77" value="0"/>
+    <cv index="78" value="0"/>
+    <cv index="79" value="70"/>
+    <cv index="80" value="80"/>
+    <cv index="81" value="105"/>
+    <cv index="82" value="117"/>
+    <cv index="83" value="217"/>
+    <cv index="84" value="0"/>
+    <cv index="85" value="0"/>
+    <cv index="86" value="0"/>
+    <cv index="87" value="0"/>
+    <cv index="88" value="0"/>
+    <cv index="89" value="0"/>
+    <cv index="90" value="193"/>
+    <cv index="91" value="209"/>
+    <cv index="92" value="105"/>
+    <cv index="93" value="0"/>
+    <cv index="94" value="0"/>
+    <cv index="95" value="80"/>
+    <cv index="96" value="90"/>
+    <cv index="97" value="170"/>
+    <cv index="98" value="138"/>
+    <cv index="99" value="0"/>
+    <cv index="100" value="0"/>
+    <cv index="101" value="0"/>
+    <cv index="102" value="0"/>
+    <cv index="103" value="0"/>
+    <cv index="104" value="0"/>
+    <cv index="105" value="0"/>
+    <cv index="106" value="0"/>
+    <cv index="107" value="0"/>
+    <cv index="108" value="0"/>
+    <cv index="109" value="0"/>
+    <cv index="110" value="172"/>
+    <cv index="111" value="184"/>
+    <cv index="112" value="90"/>
+    <cv index="113" value="0"/>
+    <cv index="114" value="0"/>
+    <cv index="115" value="80"/>
+    <cv index="116" value="96"/>
+    <cv index="117" value="143"/>
+    <cv index="118" value="153"/>
+    <cv index="119" value="0"/>
+    <cv index="120" value="0"/>
+    <cv index="121" value="0"/>
+    <cv index="122" value="0"/>
+    <cv index="123" value="0"/>
+    <cv index="124" value="0"/>
+    <cv index="125" value="0"/>
+    <cv index="126" value="0"/>
+    <cv index="127" value="0"/>
+    <cv index="128" value="0"/>
+    <cv index="129" value="0"/>
+    <cv index="130" value="80"/>
+    <cv index="131" value="151"/>
+    <cv index="132" value="179"/>
+    <cv index="133" value="199"/>
+    <cv index="134" value="217"/>
+    <cv index="135" value="0"/>
+    <cv index="136" value="0"/>
+    <cv index="137" value="0"/>
+    <cv index="138" value="0"/>
+    <cv index="139" value="0"/>
+    <cv index="140" value="80"/>
+    <cv index="141" value="109"/>
+    <cv index="142" value="123"/>
+    <cv index="143" value="141"/>
+    <cv index="144" value="181"/>
+    <cv index="145" value="217"/>
+    <cv index="146" value="305"/>
+    <cv index="147" value="201"/>
+    <cv index="148" value="0"/>
+    <cv index="149" value="367"/>
+    <cv index="150" value="242"/>
+    <cv index="151" value="264"/>
+    <cv index="152" value="129"/>
+    <cv index="153" value="197"/>
+    <cv index="154" value="184"/>
+    <cv index="155" value="242"/>
+    <cv index="156" value="305"/>
+    <cv index="157" value="77"/>
+    <cv index="158" value="0"/>
+    <cv index="159" value="0"/>
+    <cv index="160" value="0"/>
+    <cv index="161" value="0"/>
+    <cv index="162" value="0"/>
+    <cv index="163" value="0"/>
+    <cv index="164" value="0"/>
+    <cv index="165" value="0"/>
+    <cv index="166" value="0"/>
+    <cv index="167" value="0"/>
+    <cv index="168" value="526"/>
+    <cv index="169" value="0"/>
+    <cv index="170" value="102"/>
+    <cv index="171" value="0"/>
+    <cv index="172" value="0"/>
+    <cv index="173" value="102"/>
+    <cv index="174" value="0"/>
+    <cv index="175" value="0"/>
+    <cv index="176" value="0"/>
+    <cv index="177" value="0"/>
+    <cv index="178" value="0"/>
+    <cv index="179" value="731"/>
+    <cv index="180" value="155"/>
+    <cv index="181" value="651"/>
+    <cv index="182" value="74"/>
+    <cv index="183" value="740"/>
+    <cv index="184" value="0"/>
+    <cv index="185" value="153"/>
+    <cv index="186" value="102"/>
+    <cv index="187" value="0"/>
+    <cv index="188" value="559"/>
+    <cv index="189" value="528"/>
+    <cv index="190" value="196"/>
+    <cv index="191" value="156"/>
+    <cv index="192" value="350"/>
+    <cv index="193" value="0"/>
+    <cv index="194" value="372"/>
+    <cv index="195" value="70"/>
+    <cv index="196" value="141"/>
+    <cv index="197" value="0"/>
+    <cv index="198" value="0"/>
+    <cv index="199" value="0"/>
+    <cv index="200" value="70"/>
+    <cv index="201" value="60"/>
+    <cv index="202" value="0"/>
+    <cv index="203" value="0"/>
+    <cv index="204" value="0"/>
+    <cv index="205" value="0"/>
+    <cv index="206" value="0"/>
+    <cv index="207" value="0"/>
+    <cv index="208" value="0"/>
+    <cv index="209" value="0"/>
+    <cv index="210" value="135"/>
+    <cv index="211" value="125"/>
+    <cv index="212" value="0"/>
+    <cv index="213" value="83"/>
+    <cv index="214" value="104"/>
+    <cv index="215" value="118"/>
+    <cv index="216" value="135"/>
+    <cv index="217" value="0"/>
+    <cv index="218" value="0"/>
+    <cv index="219" value="0"/>
+    <cv index="220" value="1341"/>
+    <cv index="221" value="-806"/>
+    <cv index="222" value="9"/>
+    <cv index="223" value="-13"/>
+    <cv index="224" value="143"/>
+    <cv index="225" value="125"/>
+    <cv index="226" value="74"/>
+    <cv index="227" value="130"/>
+    <cv index="228" value="65"/>
+    <cv index="229" value="108"/>
+    <cv index="230" value="0"/>
+    <cv index="231" value="0"/>
+    <cv index="232" value="0"/>
+    <cv index="233" value="0"/>
+    <cv index="234" value="0"/>
+    <cv index="235" value="188"/>
+    <cv index="236" value="415"/>
+    <cv index="237" value="778"/>
+    <cv index="238" value="0"/>
+    <cv index="239" value="852"/>
+    <cv index="240" value="159"/>
+    <cv index="241" value="166"/>
+    <cv index="242" value="193"/>
+    <cv index="243" value="0"/>
+    <cv index="244" value="0"/>
+    <cv index="245" value="47"/>
+    <cv index="246" value="0"/>
+    <cv index="247" value="0"/>
+    <cv index="248" value="0"/>
+    <cv index="249" value="0"/>
+    <cv index="250" value="1864"/>
+    <cv index="251" value="874"/>
+    <cv index="252" value="694"/>
+    <cv index="253" value="514"/>
+    <cv index="254" value="-621"/>
+    <cv index="255" value="0"/>
+    <cv index="256" value="145"/>
+    <cv index="257" value="103"/>
+    <cv index="258" value="145"/>
+    <cv index="259" value="97"/>
+    <cv index="260" value="473"/>
+    <cv index="261" value="0"/>
+    <cv index="262" value="653"/>
+    <cv index="263" value="833"/>
+    <cv index="264" value="0"/>
+    <cv index="265" value="0"/>
+    <cv index="266" value="0"/>
+    <cv index="267" value="0"/>
+    <cv index="268" value="0"/>
+    <cv index="269" value="0"/>
+    <cv index="270" value="0"/>
+    <cv index="271" value="0"/>
+    <cv index="272" value="0"/>
+    <cv index="273" value="0"/>
+    <cv index="274" value="0"/>
+    <cv index="275" value="0"/>
+    <cv index="276" value="0"/>
+    <cv index="277" value="0"/>
+    <cv index="278" value="0"/>
+    <cv index="279" value="0"/>
+    <cv index="280" value="0"/>
+    <cv index="281" value="0"/>
+    <cv index="282" value="0"/>
+    <cv index="283" value="0"/>
+    <cv index="284" value="0"/>
+    <cv index="285" value="0"/>
+    <cv index="286" value="0"/>
+    <cv index="287" value="0"/>
+    <cv index="288" value="0"/>
+    <cv index="289" value="0"/>
+    <cv index="290" value="0"/>
+    <cv index="291" value="0"/>
+    <cv index="292" value="0"/>
+    <cv index="293" value="0"/>
+    <cv index="294" value="0"/>
+    <cv index="295" value="0"/>
+    <cv index="296" value="0"/>
+    <cv index="297" value="0"/>
+    <cv index="298" value="0"/>
+    <cv index="299" value="0"/>
+    <cv index="300" value="853"/>
+    <cv index="301" value="13"/>
+    <cv index="302" value="297"/>
+    <cv index="303" value="805"/>
+    <cv index="304" value="9"/>
+    <cv index="305" value="0"/>
+    <cv index="306" value="0"/>
+    <cv index="307" value="0"/>
+    <cv index="308" value="0"/>
+    <cv index="309" value="0"/>
+    <cv index="310" value="0"/>
+    <cv index="311" value="0"/>
+    <cv index="312" value="0"/>
+    <cv index="313" value="0"/>
+    <cv index="314" value="0"/>
+    <cv index="315" value="564"/>
+    <cv index="316" value="15"/>
+    <cv index="317" value="-262"/>
+    <cv index="318" value="562"/>
+    <cv index="319" value="-12"/>
+    <cv index="320" value="804"/>
+    <cv index="321" value="10"/>
+    <cv index="322" value="85"/>
+    <cv index="323" value="-16"/>
+    <cv index="324" value="0"/>
+    <cv index="325" value="564"/>
+    <cv index="326" value="15"/>
+    <cv index="327" value="-262"/>
+    <cv index="328" value="-181"/>
+    <cv index="329" value="-13"/>
+    <cv index="330" value="865"/>
+    <cv index="331" value="-402"/>
+    <cv index="332" value="1119"/>
+    <cv index="333" value="1052"/>
+    <cv index="334" value="1341"/>
+    <cv index="335" value="1227"/>
+    <cv index="336" value="0"/>
+    <cv index="337" value="0"/>
+    <cv index="338" value="0"/>
+    <cv index="339" value="0"/>
+    <cv index="340" value="0"/>
+    <cv index="341" value="0"/>
+    <cv index="342" value="0"/>
+    <cv index="343" value="0"/>
+    <cv index="344" value="0"/>
+    <cv index="345" value="0"/>
+    <cv index="346" value="0"/>
+    <cv index="347" value="0"/>
+    <cv index="348" value="0"/>
+    <cv index="349" value="0"/>
+    <cv index="350" value="1681"/>
+    <cv index="351" value="1133"/>
+    <cv index="352" value="10"/>
+    <cv index="353" value="0"/>
+    <cv index="354" value="-27"/>
+    <cv index="355" value="-389"/>
+    <cv index="356" value="-412"/>
+    <cv index="357" value="1358"/>
+    <cv index="358" value="1446"/>
+    <cv index="359" value="181"/>
+    <cv index="360" value="168"/>
+  </cvt>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef"/><!-- contains no outline data -->
+
+    <TTGlyph name="A" xMin="20" yMin="0" xMax="1464" yMax="1352">
+      <contour>
+        <pt x="461" y="53" on="1"/>
+        <pt x="461" y="0" on="1"/>
+        <pt x="20" y="0" on="1"/>
+        <pt x="20" y="53" on="1"/>
+        <pt x="172" y="80" on="1"/>
+        <pt x="629" y="1352" on="1"/>
+        <pt x="819" y="1352" on="1"/>
+        <pt x="1294" y="80" on="1"/>
+        <pt x="1464" y="53" on="1"/>
+        <pt x="1464" y="0" on="1"/>
+        <pt x="897" y="0" on="1"/>
+        <pt x="897" y="53" on="1"/>
+        <pt x="1077" y="80" on="1"/>
+        <pt x="944" y="467" on="1"/>
+        <pt x="416" y="467" on="1"/>
+        <pt x="281" y="80" on="1"/>
+      </contour>
+      <contour>
+        <pt x="676" y="1208" on="1"/>
+        <pt x="446" y="557" on="1"/>
+        <pt x="913" y="557" on="1"/>
+      </contour>
+      <instructions>
+        <assembly>
+          NPUSHB[ ]	/* 242 values pushed */
+          17 14 15 15 4 18 13 16 12 12 7 7 16 4 3 19 20 13 14 17 14 96 89 18 17
+          17 1 16 6 5 4 12 7 4 15 1 15 95 89 10 1 18 244 20 1 228 20 1 212 20
+          1 196 20 1 180 20 1 164 20 1 148 20 1 132 20 1 116 20 1 100 20 1 84 20 1
+          68 20 1 52 20 1 36 20 1 20 20 1 4 20 1 244 20 1 228 20 1 212 20 1 196
+          20 1 180 20 1 164 20 1 148 20 1 132 20 1 116 20 1 100 20 1 84 20 1 68 20
+          1 52 20 1 36 20 1 20 20 1 4 20 1 57 244 20 1 228 20 1 212 20 1 196 20
+          1 180 20 1 164 20 1 148 20 1 132 20 1 116 20 1 84 20 1 68 20 1 52 20 1
+          36 20 1 4 20 1 212 20 1 192 20 1 2 176 20 1 160 20 1 144 20 1 128 20 1
+          112 20 1 80 20 1 64 20 1 48 20 1 32 20 1 16 20 1 224 20 1 192 20 1 160
+          20 1 144 20 1 128 20 1 112 20 1 80 20 1 79 20 1
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          SDS[ ]	/* SetDeltaShiftInGState */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          SDB[ ]	/* SetDeltaBaseInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          SHP[1]	/* ShiftPointByLastPoint */
+          CALL[ ]	/* CallFunction */
+          SRP1[ ]	/* SetRefPoint1 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SHP[1]	/* ShiftPointByLastPoint */
+          RTG[ ]	/* RoundToGrid */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP2[ ]	/* SetRefPoint2 */
+          IP[ ]	/* InterpolatePts */
+          MDAP[1]	/* MoveDirectAbsPt */
+          SHP[1]	/* ShiftPointByLastPoint */
+          CALL[ ]	/* CallFunction */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          MDAP[0]	/* MoveDirectAbsPt */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          SVTCA[1]	/* SetFPVectorToAxis */
+          SLOOP[ ]	/* SetLoopVariable */
+          IP[ ]	/* InterpolatePts */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          IP[ ]	/* InterpolatePts */
+          IP[ ]	/* InterpolatePts */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          IP[ ]	/* InterpolatePts */
+          IP[ ]	/* InterpolatePts */
+          IUP[1]	/* InterpolateUntPts */
+          IUP[0]	/* InterpolateUntPts */
+        </assembly>
+      </instructions>
+    </TTGlyph>
+
+    <TTGlyph name="B" xMin="59" yMin="-6" xMax="1266" yMax="1341">
+      <contour>
+        <pt x="958" y="1016" on="1"/>
+        <pt x="958" y="1139" on="0"/>
+        <pt x="804" y="1251" on="0"/>
+        <pt x="631" y="1251" on="1"/>
+        <pt x="424" y="1251" on="1"/>
+        <pt x="424" y="744" on="1"/>
+        <pt x="643" y="744" on="1"/>
+        <pt x="805" y="744" on="0"/>
+        <pt x="958" y="872" on="0"/>
+      </contour>
+      <contour>
+        <pt x="1059" y="382" on="1"/>
+        <pt x="1059" y="523" on="0"/>
+        <pt x="871" y="654" on="0"/>
+        <pt x="664" y="654" on="1"/>
+        <pt x="424" y="654" on="1"/>
+        <pt x="424" y="90" on="1"/>
+        <pt x="562" y="84" on="0"/>
+        <pt x="718" y="84" on="1"/>
+        <pt x="889" y="84" on="0"/>
+        <pt x="1059" y="229" on="0"/>
+      </contour>
+      <contour>
+        <pt x="59" y="0" on="1"/>
+        <pt x="59" y="53" on="1"/>
+        <pt x="231" y="80" on="1"/>
+        <pt x="231" y="1262" on="1"/>
+        <pt x="59" y="1288" on="1"/>
+        <pt x="59" y="1341" on="1"/>
+        <pt x="672" y="1341" on="1"/>
+        <pt x="927" y="1341" on="0"/>
+        <pt x="1163" y="1190" on="0"/>
+        <pt x="1163" y="1026" on="1"/>
+        <pt x="1163" y="908" on="0"/>
+        <pt x="1018" y="742" on="0"/>
+        <pt x="887" y="714" on="1"/>
+        <pt x="1068" y="695" on="0"/>
+        <pt x="1266" y="522" on="0"/>
+        <pt x="1266" y="386" on="1"/>
+        <pt x="1266" y="193" on="0"/>
+        <pt x="999" y="-6" on="0"/>
+        <pt x="743" y="-6" on="1"/>
+        <pt x="315" y="0" on="1"/>
+      </contour>
+      <instructions>
+        <assembly>
+          NPUSHB[ ]	/* 147 values pushed */
+          9 34 0 28 5 14 14 21 21 31 28 34 4 40 39 37 16 96 89 37 18 31 5 12 5
+          12 96 89 15 5 1 11 3 5 5 24 19 24 22 95 89 24 4 96 89 24 3 19 21 95
+          89 19 18 160 40 1 144 40 1 128 40 1 112 40 1 96 40 1 64 40 1 224 40 1 159
+          40 1 128 40 1 96 40 1 80 40 1 64 40 1 32 40 1 223 40 1 192 40 1 96 40
+          1 48 40 1 32 40 1 0 40 1 58 207 40 1 80 40 1 16 40 1 240 40 1 144 40
+          1 0 40 1 224 40 1 208 40 1 160 40 1 112 40 1 80 40 1 64 40 1
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          SDB[ ]	/* SetDeltaBaseInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          CALL[ ]	/* CallFunction */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          RTG[ ]	/* RoundToGrid */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          CALL[ ]	/* CallFunction */
+          CALL[ ]	/* CallFunction */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          IP[ ]	/* InterpolatePts */
+          RTG[ ]	/* RoundToGrid */
+          MDAP[1]	/* MoveDirectAbsPt */
+          SDS[ ]	/* SetDeltaShiftInGState */
+          SDB[ ]	/* SetDeltaBaseInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          CALL[ ]	/* CallFunction */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          IP[ ]	/* InterpolatePts */
+          RTG[ ]	/* RoundToGrid */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          CALL[ ]	/* CallFunction */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          SVTCA[1]	/* SetFPVectorToAxis */
+          SLOOP[ ]	/* SetLoopVariable */
+          IP[ ]	/* InterpolatePts */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          IUP[1]	/* InterpolateUntPts */
+          IUP[0]	/* InterpolateUntPts */
+        </assembly>
+      </instructions>
+    </TTGlyph>
+
+    <TTGlyph name="a" xMin="72" yMin="-20" xMax="881" yMax="961">
+      <contour>
+        <pt x="465" y="961" on="1"/>
+        <pt x="619" y="961" on="0"/>
+        <pt x="764" y="835" on="0"/>
+        <pt x="764" y="705" on="1"/>
+        <pt x="764" y="70" on="1"/>
+        <pt x="881" y="45" on="1"/>
+        <pt x="881" y="0" on="1"/>
+        <pt x="623" y="0" on="1"/>
+        <pt x="604" y="94" on="1"/>
+        <pt x="490" y="-20" on="0"/>
+        <pt x="313" y="-20" on="1"/>
+        <pt x="72" y="-20" on="0"/>
+        <pt x="72" y="260" on="1"/>
+        <pt x="72" y="354" on="0"/>
+        <pt x="145" y="477" on="0"/>
+        <pt x="305" y="542" on="0"/>
+        <pt x="457" y="545" on="1"/>
+        <pt x="598" y="549" on="1"/>
+        <pt x="598" y="696" on="1"/>
+        <pt x="598" y="793" on="0"/>
+        <pt x="527" y="885" on="0"/>
+        <pt x="453" y="885" on="1"/>
+        <pt x="353" y="885" on="0"/>
+        <pt x="270" y="838" on="1"/>
+        <pt x="236" y="721" on="1"/>
+        <pt x="180" y="721" on="1"/>
+        <pt x="180" y="926" on="1"/>
+        <pt x="342" y="961" on="0"/>
+      </contour>
+      <contour>
+        <pt x="598" y="479" on="1"/>
+        <pt x="467" y="475" on="1"/>
+        <pt x="333" y="470" on="0"/>
+        <pt x="238" y="376" on="0"/>
+        <pt x="238" y="266" on="1"/>
+        <pt x="238" y="90" on="0"/>
+        <pt x="381" y="90" on="1"/>
+        <pt x="449" y="90" on="0"/>
+        <pt x="548" y="121" on="0"/>
+        <pt x="598" y="145" on="1"/>
+      </contour>
+      <instructions>
+        <assembly>
+          NPUSHB[ ]	/* 63 values pushed */
+          17 8 37 37 4 32 12 12 25 4 3 39 38 37 34 10 34 81 89 24 21 17 17 28 80
+          89 15 17 31 17 2 12 3 17 17 0 8 10 22 7 4 80 89 7 21 0 21 80 89 0
+          16 128 39 1 95 39 1 64 39 1 128 39 1
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          CALL[ ]	/* CallFunction */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          RTG[ ]	/* RoundToGrid */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          CALL[ ]	/* CallFunction */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          RTG[ ]	/* RoundToGrid */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP2[ ]	/* SetRefPoint2 */
+          IP[ ]	/* InterpolatePts */
+          MDAP[1]	/* MoveDirectAbsPt */
+          SDS[ ]	/* SetDeltaShiftInGState */
+          SDB[ ]	/* SetDeltaBaseInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          CALL[ ]	/* CallFunction */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          IP[ ]	/* InterpolatePts */
+          CALL[ ]	/* CallFunction */
+          SRP1[ ]	/* SetRefPoint1 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          SVTCA[1]	/* SetFPVectorToAxis */
+          SLOOP[ ]	/* SetLoopVariable */
+          IP[ ]	/* InterpolatePts */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SHP[1]	/* ShiftPointByLastPoint */
+          IUP[1]	/* InterpolateUntPts */
+          IUP[0]	/* InterpolateUntPts */
+        </assembly>
+      </instructions>
+    </TTGlyph>
+
+    <TTGlyph name="b" xMin="0" yMin="-20" xMax="946" yMax="1421">
+      <contour>
+        <pt x="766" y="496" on="1"/>
+        <pt x="766" y="680" on="0"/>
+        <pt x="638" y="860" on="0"/>
+        <pt x="504" y="860" on="1"/>
+        <pt x="445" y="860" on="0"/>
+        <pt x="329" y="839" on="0"/>
+        <pt x="303" y="827" on="1"/>
+        <pt x="303" y="82" on="1"/>
+        <pt x="387" y="66" on="0"/>
+        <pt x="504" y="66" on="1"/>
+        <pt x="642" y="66" on="0"/>
+        <pt x="766" y="282" on="0"/>
+      </contour>
+      <contour>
+        <pt x="137" y="1352" on="1"/>
+        <pt x="0" y="1376" on="1"/>
+        <pt x="0" y="1421" on="1"/>
+        <pt x="303" y="1421" on="1"/>
+        <pt x="303" y="1085" on="1"/>
+        <pt x="303" y="1031" on="0"/>
+        <pt x="297" y="887" on="1"/>
+        <pt x="397" y="965" on="0"/>
+        <pt x="549" y="965" on="1"/>
+        <pt x="741" y="965" on="0"/>
+        <pt x="946" y="732" on="0"/>
+        <pt x="946" y="496" on="1"/>
+        <pt x="946" y="243" on="0"/>
+        <pt x="721" y="-20" on="0"/>
+        <pt x="508" y="-20" on="1"/>
+        <pt x="422" y="-20" on="0"/>
+        <pt x="215" y="18" on="0"/>
+        <pt x="137" y="49" on="1"/>
+      </contour>
+      <instructions>
+        <assembly>
+          NPUSHB[ ]	/* 81 values pushed */
+          18 7 7 29 0 23 29 23 30 31 26 9 80 89 26 22 6 18 18 20 20 3 81 89 20
+          16 15 12 80 89 15 0 64 31 1 128 31 1 0 31 1 57 144 31 1 16 31 1 224 31
+          1 192 31 1 176 31 1 144 31 1 128 31 1 96 31 1 64 31 1 192 31 1 128 31 1
+          96 31 1 32 31 1
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          SDB[ ]	/* SetDeltaBaseInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          CALL[ ]	/* CallFunction */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          RTG[ ]	/* RoundToGrid */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          CALL[ ]	/* CallFunction */
+          SRP1[ ]	/* SetRefPoint1 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          RTG[ ]	/* RoundToGrid */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          CALL[ ]	/* CallFunction */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          SVTCA[1]	/* SetFPVectorToAxis */
+          IP[ ]	/* InterpolatePts */
+          IP[ ]	/* InterpolatePts */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          IUP[1]	/* InterpolateUntPts */
+          IUP[0]	/* InterpolateUntPts */
+        </assembly>
+      </instructions>
+    </TTGlyph>
+
+    <TTGlyph name="quotedbl" xMin="127" yMin="860" xMax="709" yMax="1341">
+      <contour>
+        <pt x="512" y="1341" on="1"/>
+        <pt x="709" y="1341" on="1"/>
+        <pt x="647" y="860" on="1"/>
+        <pt x="573" y="860" on="1"/>
+      </contour>
+      <contour>
+        <pt x="127" y="1341" on="1"/>
+        <pt x="324" y="1341" on="1"/>
+        <pt x="262" y="860" on="1"/>
+        <pt x="188" y="860" on="1"/>
+      </contour>
+      <instructions>
+        <assembly>
+          NPUSHB[ ]	/* 179 values pushed */
+          5 4 1 0 4 0 8 9 7 6 2 1 10 2 4 0 3 182 9 1 166 9 1 105 9
+          1 89 9 1 75 9 1 4 9 1 246 9 1 230 9 1 214 9 1 169 9 1 153 9 1
+          137 9 1 121 9 1 54 9 1 38 9 1 22 9 1 233 9 1 198 9 1 116 9 1 102
+          9 1 82 9 1 1 64 9 1 48 9 1 32 9 1 20 9 1 4 9 1 58 192 9 1
+          180 9 1 164 9 1 128 9 1 112 9 1 100 9 1 84 9 1 36 9 1 0 9 1 244
+          9 1 228 9 1 212 9 1 164 9 1 148 9 1 100 9 1 64 9 1 52 9 1 36 9
+          1 20 9 1 196 9 1 128 9 1 112 9 1 2 96 9 1 80 9 1 79 9 1 47 9
+          1 0 9 1
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          SDS[ ]	/* SetDeltaShiftInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          SDB[ ]	/* SetDeltaBaseInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          SDS[ ]	/* SetDeltaShiftInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP2[ ]	/* DeltaExceptionP2 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          DELTAP3[ ]	/* DeltaExceptionP3 */
+          SVTCA[0]	/* SetFPVectorToAxis */
+          MIAP[1]	/* MoveIndirectAbsPt */
+          SHP[0]	/* ShiftPointByLastPoint */
+          MDRP[01101]	/* MoveDirectRelPt */
+          SDB[ ]	/* SetDeltaBaseInGState */
+          DELTAP1[ ]	/* DeltaExceptionP1 */
+          SHP[0]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SRP2[ ]	/* SetRefPoint2 */
+          SVTCA[1]	/* SetFPVectorToAxis */
+          IP[ ]	/* InterpolatePts */
+          IP[ ]	/* InterpolatePts */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          SRP1[ ]	/* SetRefPoint1 */
+          SHP[1]	/* ShiftPointByLastPoint */
+          IUP[1]	/* InterpolateUntPts */
+          IUP[0]	/* InterpolateUntPts */
+        </assembly>
+      </instructions>
+    </TTGlyph>
+
+    <TTGlyph name="space"/><!-- contains no outline data -->
+
+  </glyf>
+
+  <name>
+    <namerecord nameID="0" platformID="3" platEncID="1" langID="0x409">
+      Digitized data copyright (c) 2010-2012 Google Corporation.
+    </namerecord>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      Tinos
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="3" platformID="3" platEncID="1" langID="0x409">
+      1.23;MONO;Tinos-Regular
+    </namerecord>
+    <namerecord nameID="4" platformID="3" platEncID="1" langID="0x409">
+      Tinos Regular
+    </namerecord>
+    <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
+      Version 1.23
+    </namerecord>
+    <namerecord nameID="6" platformID="3" platEncID="1" langID="0x409">
+      Tinos-Regular
+    </namerecord>
+  </name>
+
+  <post>
+    <formatType value="3.0"/>
+    <italicAngle value="0.0"/>
+    <underlinePosition value="-223"/>
+    <underlineThickness value="100"/>
+    <isFixedPitch value="0"/>
+    <minMemType42 value="0"/>
+    <maxMemType42 value="0"/>
+    <minMemType1 value="0"/>
+    <maxMemType1 value="0"/>
+  </post>
+
+  <gasp>
+    <gaspRange rangeMaxPPEM="10" rangeGaspBehavior="14"/>
+    <gaspRange rangeMaxPPEM="16" rangeGaspBehavior="7"/>
+    <gaspRange rangeMaxPPEM="65535" rangeGaspBehavior="15"/>
+  </gasp>
+
+  <GDEF>
+    <Version value="0x00010000"/>
+    <GlyphClassDef>
+      <ClassDef glyph=".notdef" class="1"/>
+      <ClassDef glyph="A" class="1"/>
+      <ClassDef glyph="B" class="1"/>
+      <ClassDef glyph="a" class="1"/>
+      <ClassDef glyph="b" class="1"/>
+      <ClassDef glyph="quotedbl" class="1"/>
+      <ClassDef glyph="space" class="1"/>
+    </GlyphClassDef>
+  </GDEF>
+
+  <GPOS>
+    <Version value="0x00010000"/>
+    <ScriptList>
+      <!-- ScriptCount=3 -->
+      <ScriptRecord index="0">
+        <ScriptTag value="cyrl"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="0"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="1">
+        <ScriptTag value="grek"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="1"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="2">
+        <ScriptTag value="latn"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="2"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+    </ScriptList>
+    <FeatureList>
+      <!-- FeatureCount=3 -->
+      <FeatureRecord index="0">
+        <FeatureTag value="kern"/>
+        <Feature>
+          <!-- LookupCount=1 -->
+          <LookupListIndex index="0" value="0"/>
+        </Feature>
+      </FeatureRecord>
+      <FeatureRecord index="1">
+        <FeatureTag value="kern"/>
+        <Feature>
+          <!-- LookupCount=1 -->
+          <LookupListIndex index="0" value="0"/>
+        </Feature>
+      </FeatureRecord>
+      <FeatureRecord index="2">
+        <FeatureTag value="kern"/>
+        <Feature>
+          <!-- LookupCount=1 -->
+          <LookupListIndex index="0" value="0"/>
+        </Feature>
+      </FeatureRecord>
+    </FeatureList>
+    <LookupList>
+      <!-- LookupCount=1 -->
+      <Lookup index="0">
+        <LookupType value="2"/>
+        <LookupFlag value="8"/><!-- ignoreMarks -->
+        <!-- SubTableCount=1 -->
+        <PairPos index="0" Format="1">
+          <Coverage>
+            <Glyph value="space"/>
+            <Glyph value="A"/>
+          </Coverage>
+          <ValueFormat1 value="4"/>
+          <ValueFormat2 value="0"/>
+          <!-- PairSetCount=2 -->
+          <PairSet index="0">
+            <!-- PairValueCount=1 -->
+            <PairValueRecord index="0">
+              <SecondGlyph value="A"/>
+              <Value1 XAdvance="-113"/>
+            </PairValueRecord>
+          </PairSet>
+          <PairSet index="1">
+            <!-- PairValueCount=1 -->
+            <PairValueRecord index="0">
+              <SecondGlyph value="space"/>
+              <Value1 XAdvance="-113"/>
+            </PairValueRecord>
+          </PairSet>
+        </PairPos>
+      </Lookup>
+    </LookupList>
+  </GPOS>
+
+  <GSUB>
+    <Version value="0x00010000"/>
+    <ScriptList>
+      <!-- ScriptCount=4 -->
+      <ScriptRecord index="0">
+        <ScriptTag value="cyrl"/>
+        <Script>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="1">
+        <ScriptTag value="grek"/>
+        <Script>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="2">
+        <ScriptTag value="hebr"/>
+        <Script>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="3">
+        <ScriptTag value="latn"/>
+        <Script>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+    </ScriptList>
+    <FeatureList>
+      <!-- FeatureCount=0 -->
+    </FeatureList>
+    <LookupList>
+      <!-- LookupCount=0 -->
+    </LookupList>
+  </GSUB>
+
+</ttFont>

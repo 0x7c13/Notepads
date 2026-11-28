@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="OTTO" ttLibVersion="4.37">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="i"/>
+    <GlyphID id="2" name="j"/>
+    <GlyphID id="3" name="k"/>
+    <GlyphID id="4" name="l"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="2.009"/>
+    <checkSumAdjustment value="0x759e3d53"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1000"/>
+    <created value="Mon Oct  4 15:48:16 2021"/>
+    <modified value="Mon Jul 18 16:14:35 2022"/>
+    <xMin value="-693"/>
+    <yMin value="-470"/>
+    <xMax value="2797"/>
+    <yMax value="1048"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="1069"/>
+    <descent value="-293"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="2837"/>
+    <minLeftSideBearing value="-693"/>
+    <minRightSideBearing value="-617"/>
+    <xMaxExtent value="2797"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="5"/>
+  </hhea>
+
+  <maxp>
+    <tableVersion value="0x5000"/>
+    <numGlyphs value="5"/>
+  </maxp>
+
+  <OS_2>
+    <!-- The fields 'usFirstCharIndex' and 'usLastCharIndex'
+         will be recalculated by the compiler -->
+    <version value="4"/>
+    <xAvgCharWidth value="595"/>
+    <usWeightClass value="400"/>
+    <usWidthClass value="5"/>
+    <fsType value="00000000 00000000"/>
+    <ySubscriptXSize value="650"/>
+    <ySubscriptYSize value="600"/>
+    <ySubscriptXOffset value="0"/>
+    <ySubscriptYOffset value="75"/>
+    <ySuperscriptXSize value="650"/>
+    <ySuperscriptYSize value="600"/>
+    <ySuperscriptXOffset value="0"/>
+    <ySuperscriptYOffset value="350"/>
+    <yStrikeoutSize value="50"/>
+    <yStrikeoutPosition value="322"/>
+    <sFamilyClass value="0"/>
+    <panose>
+      <bFamilyType value="2"/>
+      <bSerifStyle value="2"/>
+      <bWeight value="5"/>
+      <bProportion value="2"/>
+      <bContrast value="8"/>
+      <bStrokeVariation value="5"/>
+      <bArmStyle value="5"/>
+      <bLetterForm value="2"/>
+      <bMidline value="2"/>
+      <bXHeight value="4"/>
+    </panose>
+    <ulUnicodeRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulUnicodeRange2 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="GOOG"/>
+    <fsSelection value="00000000 11000000"/>
+    <usFirstCharIndex value="105"/>
+    <usLastCharIndex value="108"/>
+    <sTypoAscender value="1069"/>
+    <sTypoDescender value="-293"/>
+    <sTypoLineGap value="0"/>
+    <usWinAscent value="1069"/>
+    <usWinDescent value="293"/>
+    <ulCodePageRange1 value="00000000 00000000 00000001 10011111"/>
+    <ulCodePageRange2 value="00000000 00000000 00000000 00000000"/>
+    <sxHeight value="536"/>
+    <sCapHeight value="714"/>
+    <usDefaultChar value="0"/>
+    <usBreakChar value="32"/>
+    <usMaxContext value="3"/>
+  </OS_2>
+
+  <name>
+    <namerecord nameID="0" platformID="3" platEncID="1" langID="0x409">
+      Copyright 2022 The Noto Project Authors (https://github.com/notofonts/latin-greek-cyrillic)
+    </namerecord>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      Noto Serif Display
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="3" platformID="3" platEncID="1" langID="0x409">
+      2.009;GOOG;NotoSerifDisplay-Regular
+    </namerecord>
+    <namerecord nameID="4" platformID="3" platEncID="1" langID="0x409">
+      Noto Serif Display Regular
+    </namerecord>
+    <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
+      Version 2.009
+    </namerecord>
+    <namerecord nameID="6" platformID="3" platEncID="1" langID="0x409">
+      NotoSerifDisplay-Regular
+    </namerecord>
+  </name>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0x69" name="i"/><!-- LATIN SMALL LETTER I -->
+      <map code="0x6a" name="j"/><!-- LATIN SMALL LETTER J -->
+      <map code="0x6b" name="k"/><!-- LATIN SMALL LETTER K -->
+      <map code="0x6c" name="l"/><!-- LATIN SMALL LETTER L -->
+    </cmap_format_4>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x69" name="i"/><!-- LATIN SMALL LETTER I -->
+      <map code="0x6a" name="j"/><!-- LATIN SMALL LETTER J -->
+      <map code="0x6b" name="k"/><!-- LATIN SMALL LETTER K -->
+      <map code="0x6c" name="l"/><!-- LATIN SMALL LETTER L -->
+    </cmap_format_4>
+  </cmap>
+
+  <post>
+    <formatType value="3.0"/>
+    <italicAngle value="0.0"/>
+    <underlinePosition value="-100"/>
+    <underlineThickness value="50"/>
+    <isFixedPitch value="0"/>
+    <minMemType42 value="0"/>
+    <maxMemType42 value="0"/>
+    <minMemType1 value="0"/>
+    <maxMemType1 value="0"/>
+  </post>
+
+  <CFF>
+    <major value="1"/>
+    <minor value="0"/>
+    <CFFFont name="NotoSerifDisplay-Regular">
+      <version value="2.9"/>
+      <Notice value="Noto is a trademark of Google LLC."/>
+      <Copyright value="Copyright 2022 The Noto Project Authors https:github.comnotofontslatin-greek-cyrillic"/>
+      <FullName value="Noto Serif Display Regular"/>
+      <FamilyName value="Noto Serif Display"/>
+      <isFixedPitch value="0"/>
+      <ItalicAngle value="0"/>
+      <UnderlinePosition value="-100"/>
+      <UnderlineThickness value="50"/>
+      <PaintType value="0"/>
+      <CharstringType value="2"/>
+      <FontMatrix value="0.001 0 0 0.001 0 0"/>
+      <FontBBox value="-693 -470 2797 1048"/>
+      <StrokeWidth value="0"/>
+      <!-- charset is dumped separately as the 'GlyphOrder' element -->
+      <Encoding name="StandardEncoding"/>
+      <Private>
+        <BlueValues value="-15 0 536 547 571 582 714 726 760 772"/>
+        <OtherBlues value="-255 -240"/>
+        <BlueScale value="0.05"/>
+        <BlueShift value="7"/>
+        <BlueFuzz value="0"/>
+        <StdHW value="10"/>
+        <StdVW value="94"/>
+        <StemSnapV value="94 101"/>
+        <ForceBold value="0"/>
+        <LanguageGroup value="0"/>
+        <ExpansionFactor value="0.06"/>
+        <initialRandomSeed value="0"/>
+        <defaultWidthX value="0"/>
+        <nominalWidthX value="598"/>
+        <Subrs>
+          <!-- The 'index' attribute is only for humans; it is ignored when parsed. -->
+          <CharString index="0">
+            150 632 -107 callgsubr
+            -162 -872 -103 callgsubr
+          </CharString>
+          <CharString index="1">
+            -96 callgsubr
+            endchar
+          </CharString>
+        </Subrs>
+      </Private>
+      <CharStrings>
+        <CharString name=".notdef">
+          2 endchar
+        </CharString>
+        <CharString name="i">
+          -278 -106 callsubr
+        </CharString>
+        <CharString name="j">
+          -298 -107 callsubr
+        </CharString>
+        <CharString name="k">
+          -13 -99 callgsubr
+          endchar
+        </CharString>
+        <CharString name="l">
+          -288 -101 callgsubr
+          endchar
+        </CharString>
+      </CharStrings>
+    </CFFFont>
+
+    <GlobalSubrs>
+      <!-- The 'index' attribute is only for humans; it is ignored when parsed. -->
+      <CharString index="0">
+        rmoveto
+        24 20 15 41 42 -20 14 -24 -25 -19 -14 -42 -41 19 -15 25 hvcurveto
+        return
+      </CharString>
+      <CharString index="1">
+        vlineto
+        -55 -23 -22 -59 vhcurveto
+        return
+      </CharString>
+      <CharString index="2">
+        hlineto
+        -102 callgsubr
+        return
+      </CharString>
+      <CharString index="3">
+        -179 -10 3 vlineto
+        return
+      </CharString>
+      <CharString index="4">
+        rmoveto
+        16 hlineto
+        116 82 53 179 hvcurveto
+        544 -104 callgsubr
+        59 23 -22 -56 hvcurveto
+        -457 vlineto
+        -178 -41 -43 -72 vhcurveto
+        -7 hlineto
+        endchar
+      </CharString>
+      <CharString index="5">
+        -59 -23 23 59 hvcurveto
+        return
+      </CharString>
+      <CharString index="6">
+        13 hmoveto
+        -98 callgsubr
+        return
+      </CharString>
+      <CharString index="7">
+        -189 -10 13 vlineto
+        59 23 -22 -56 hvcurveto
+        return
+      </CharString>
+      <CharString index="8">
+        18 hmoveto
+        -91 callgsubr
+        return
+      </CharString>
+      <CharString index="9">
+        -93 callgsubr
+        -95 callgsubr
+        return
+      </CharString>
+      <CharString index="10">
+        -94 callgsubr
+        rlineto
+        -58 37 37 -18 79 hhcurveto
+        44 10 -3 hlineto
+        -26 -20 6 94 -61 hvcurveto
+        -154 237 -92 callgsubr
+        return
+      </CharString>
+      <CharString index="11">
+        160 632 -107 callgsubr
+        -137 -632 rmoveto
+        284 10 -13 -105 callgsubr
+        444 -104 callgsubr
+        59 23 -22 -56 hvcurveto
+        -361 -106 callgsubr
+        -13 hlineto
+        return
+      </CharString>
+      <CharString index="12">
+        -102 callgsubr
+        668 -100 callgsubr
+        -585 -106 callgsubr
+        -13 hlineto
+        return
+      </CharString>
+      <CharString index="13">
+        269 10 -3 -105 callgsubr
+        120 vlineto
+        59 66 128 -202 return
+      </CharString>
+      <CharString index="14">
+        284 10 -13 hlineto
+        return
+      </CharString>
+      <CharString index="15">
+        78 88 rlineto
+        86 77 22 5 51 hhcurveto
+        10 -221 -10 vlineto
+        61 29 -8 -23 -17 -17 -25 -32 -36 hvcurveto
+        -170 -190 rlineto
+        2 40 0 39 40 vvcurveto
+        return
+      </CharString>
+      <CharString index="16">
+        -97 callgsubr
+        414 -104 callgsubr
+        59 23 -22 -56 hvcurveto
+        -585 -106 callgsubr
+        -8 hlineto
+        return
+      </CharString>
+    </GlobalSubrs>
+  </CFF>
+
+  <GDEF>
+    <Version value="0x00010002"/>
+    <GlyphClassDef>
+      <ClassDef glyph="i" class="1"/>
+      <ClassDef glyph="j" class="1"/>
+      <ClassDef glyph="k" class="1"/>
+      <ClassDef glyph="l" class="1"/>
+    </GlyphClassDef>
+    <MarkGlyphSetsDef>
+      <MarkSetTableFormat value="1"/>
+      <!-- MarkSetCount=4 -->
+      <Coverage index="0">
+      </Coverage>
+      <Coverage index="1">
+      </Coverage>
+      <Coverage index="2">
+      </Coverage>
+      <Coverage index="3">
+      </Coverage>
+    </MarkGlyphSetsDef>
+  </GDEF>
+
+  <GPOS>
+    <Version value="0x00010000"/>
+    <ScriptList>
+      <!-- ScriptCount=4 -->
+      <ScriptRecord index="0">
+        <ScriptTag value="DFLT"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="0"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="1">
+        <ScriptTag value="cyrl"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="0"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="2">
+        <ScriptTag value="grek"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="0"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="3">
+        <ScriptTag value="latn"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="0"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+    </ScriptList>
+    <FeatureList>
+      <!-- FeatureCount=1 -->
+      <FeatureRecord index="0">
+        <FeatureTag value="kern"/>
+        <Feature>
+          <!-- LookupCount=1 -->
+          <LookupListIndex index="0" value="0"/>
+        </Feature>
+      </FeatureRecord>
+    </FeatureList>
+    <LookupList>
+      <!-- LookupCount=1 -->
+      <Lookup index="0">
+        <LookupType value="2"/>
+        <LookupFlag value="8"/><!-- ignoreMarks -->
+        <!-- SubTableCount=1 -->
+        <PairPos index="0" Format="2">
+          <Coverage>
+            <Glyph value="k"/>
+          </Coverage>
+          <ValueFormat1 value="4"/>
+          <ValueFormat2 value="0"/>
+          <ClassDef1>
+          </ClassDef1>
+          <ClassDef2>
+            <ClassDef glyph="i" class="2"/>
+            <ClassDef glyph="k" class="1"/>
+            <ClassDef glyph="l" class="1"/>
+          </ClassDef2>
+          <!-- Class1Count=1 -->
+          <!-- Class2Count=3 -->
+          <Class1Record index="0">
+            <Class2Record index="0">
+              <Value1 XAdvance="0"/>
+            </Class2Record>
+            <Class2Record index="1">
+              <Value1 XAdvance="0"/>
+            </Class2Record>
+            <Class2Record index="2">
+              <Value1 XAdvance="0"/>
+            </Class2Record>
+          </Class1Record>
+        </PairPos>
+      </Lookup>
+    </LookupList>
+  </GPOS>
+
+  <GSUB>
+    <Version value="0x00010000"/>
+    <ScriptList>
+      <!-- ScriptCount=4 -->
+      <ScriptRecord index="0">
+        <ScriptTag value="DFLT"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=0 -->
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="1">
+        <ScriptTag value="cyrl"/>
+        <Script>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="2">
+        <ScriptTag value="grek"/>
+        <Script>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="3">
+        <ScriptTag value="latn"/>
+        <Script>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+    </ScriptList>
+    <FeatureList>
+      <!-- FeatureCount=0 -->
+    </FeatureList>
+    <LookupList>
+      <!-- LookupCount=0 -->
+    </LookupList>
+  </GSUB>
+
+  <gasp>
+    <gaspRange rangeMaxPPEM="65535" rangeGaspBehavior="15"/>
+  </gasp>
+
+  <hmtx>
+    <mtx name=".notdef" width="600" lsb="94"/>
+    <mtx name="i" width="320" lsb="23"/>
+    <mtx name="j" width="300" lsb="-12"/>
+    <mtx name="k" width="585" lsb="18"/>
+    <mtx name="l" width="310" lsb="13"/>
+  </hmtx>
+
+  <prep>
+    <assembly>
+      PUSHW[ ]	/* 1 value pushed */
+      511
+      SCANCTRL[ ]	/* ScanConversionControl */
+      PUSHB[ ]	/* 1 value pushed */
+      4
+      SCANTYPE[ ]	/* ScanType */
+    </assembly>
+  </prep>
+
+</ttFont>

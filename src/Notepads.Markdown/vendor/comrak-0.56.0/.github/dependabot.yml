@@ -1,0 +1,9 @@
+version: 2
+updates:
+    - package-ecosystem: "cargo"
+      directory: "/"
+      schedule:
+          interval: weekly
+      cooldown:
+          default-days: 90
+      labels: ["dependencies"]

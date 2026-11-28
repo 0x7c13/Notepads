@@ -1,0 +1,804 @@
+--- a/src/parsing/mod.rs
++++ b/src/parsing/mod.rs
+@@ -3,6 +3,12 @@
+ //! The most important struct here is [`SyntaxSet`], check out the docs for that.
+ //!
+ //! [`SyntaxSet`]: struct.SyntaxSet.html
++
++// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
++#[cfg(feature = "parsing")]
++mod execution;
++#[cfg(feature = "parsing")]
++pub use self::execution::*;
+ 
+ #[cfg(feature = "metadata")]
+ pub mod metadata;
+--- a/src/parsing/parser.rs
++++ b/src/parsing/parser.rs
+@@ -10,6 +10,8 @@
+ // See https://github.com/rust-lang/rust/blob/1.54.0/library/core/src/hash/mod.rs#L717-L725
+ #![allow(clippy::mutable_key_type)]
+ 
++// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
++use super::execution::{ExecutionControl, ExecutionError, Stage};
+ use super::regex::Region;
+ use super::scope::*;
+ use super::syntax_definition::*;
+@@ -23,6 +25,8 @@
+ #[derive(Debug, thiserror::Error)]
+ #[non_exhaustive]
+ pub enum ParsingError {
++    #[error(transparent)]
++    Execution(#[from] ExecutionError),
+     #[error("Somehow main context was popped from the stack")]
+     MissingMainContext,
+     /// A context is missing. Usually caused by a syntax referencing a another
+@@ -214,6 +218,31 @@
+         line: &str,
+         syntax_set: &SyntaxSet,
+     ) -> Result<Vec<(usize, ScopeStackOp)>, ParsingError> {
++        self.parse_line_with_control(line, syntax_set, &mut ExecutionControl::uncontrolled())
++    }
++
++    /// Cooperative block-scoped path. Any error terminates the control; discard the parser
++    /// and all block tokens. Opaque regex/initialization calls cannot be preempted.
++    pub fn parse_line_with_control(
++        &mut self,
++        line: &str,
++        syntax_set: &SyntaxSet,
++        control: &mut ExecutionControl<'_>,
++    ) -> Result<Vec<(usize, ScopeStackOp)>, ParsingError> {
++        control.checkpoint(Stage::Line, 0)?;
++        let result = self.parse_line_inner(line, syntax_set, control);
++        if result.is_err() {
++            control.parsing_error();
++        }
++        result
++    }
++
++    fn parse_line_inner(
++        &mut self,
++        line: &str,
++        syntax_set: &SyntaxSet,
++        control: &mut ExecutionControl<'_>,
++    ) -> Result<Vec<(usize, ScopeStackOp)>, ParsingError> {
+         if self.stack.is_empty() {
+             return Err(ParsingError::MissingMainContext);
+         }
+@@ -222,8 +251,11 @@
+ 
+         if self.first_line {
+             let cur_level = &self.stack[self.stack.len() - 1];
++            control.checkpoint(Stage::ContextVisit, 0)?;
+             let context = syntax_set.get_context(&cur_level.context)?;
++            control.checkpoint(Stage::ContextVisit, 0)?;
+             if !context.meta_content_scope.is_empty() {
++                control.checkpoint(Stage::ScopeOperation, 1)?;
+                 res.push((0, ScopeStackOp::Push(context.meta_content_scope[0])));
+             }
+             self.first_line = false;
+@@ -243,8 +275,10 @@
+             &mut regions,
+             &mut non_consuming_push_at,
+             &mut res,
++            control,
+         )? {}
+ 
++        control.checkpoint(Stage::Line, 0)?;
+         Ok(res)
+     }
+ 
+@@ -258,7 +292,9 @@
+         regions: &mut Region,
+         non_consuming_push_at: &mut (usize, usize),
+         ops: &mut Vec<(usize, ScopeStackOp)>,
++        control: &mut ExecutionControl<'_>,
+     ) -> Result<bool, ParsingError> {
++        control.checkpoint(Stage::Token, 1)?;
+         let check_pop_loop = {
+             let (pos, stack_depth) = *non_consuming_push_at;
+             pos == *start && stack_depth == self.stack.len()
+@@ -271,6 +307,7 @@
+             .map(|start| *start >= self.stack.len())
+             .unwrap_or(false)
+         {
++            control.checkpoint(Stage::ContextChange, 1)?;
+             self.proto_starts.pop();
+         }
+ 
+@@ -281,6 +318,7 @@
+             search_cache,
+             regions,
+             check_pop_loop,
++            control,
+         )?;
+ 
+         if let Some(reg_match) = best_match {
+@@ -335,7 +373,7 @@
+                 let id = &self.stack[self.stack.len() - 1].context;
+                 syntax_set.get_context(id)?
+             };
+-            self.exec_pattern(line, &reg_match, level_context, syntax_set, ops)?;
++            self.exec_pattern(line, &reg_match, level_context, syntax_set, ops, control)?;
+ 
+             Ok(true)
+         } else {
+@@ -351,9 +389,12 @@
+         search_cache: &mut SearchCache,
+         regions: &mut Region,
+         check_pop_loop: bool,
++        control: &mut ExecutionControl<'_>,
+     ) -> Result<Option<RegexMatch<'a>>, ParsingError> {
+         let cur_level = &self.stack[self.stack.len() - 1];
++        control.checkpoint(Stage::ContextVisit, 0)?;
+         let context = syntax_set.get_context(&cur_level.context)?;
++        control.checkpoint(Stage::ContextVisit, 0)?;
+         let prototype = if let Some(ref p) = context.prototype {
+             Some(p)
+         } else {
+@@ -383,12 +424,21 @@
+         let mut pop_would_loop = false;
+ 
+         for (from_with_proto, ctx, captures) in context_chain {
+-            for (pat_context, pat_index) in context_iter(syntax_set, syntax_set.get_context(ctx)?) {
++            control.checkpoint(Stage::ContextVisit, 1)?;
++            let mut patterns = context_iter(syntax_set, syntax_set.get_context(ctx)?);
++            while let Some((pat_context, pat_index)) = patterns.try_next_with_control(control)? {
++                control.checkpoint(Stage::PatternVisit, 1)?;
+                 let match_pat = pat_context.match_at(pat_index)?;
+ 
+-                if let Some(match_region) =
+-                    self.search(line, start, match_pat, captures, search_cache, regions)
+-                {
++                if let Some(match_region) = self.search(
++                    line,
++                    start,
++                    match_pat,
++                    captures,
++                    search_cache,
++                    regions,
++                    control,
++                )? {
+                     let (match_start, match_end) = match_region.pos(0).unwrap();
+ 
+                     // println!("matched pattern {:?} at start {} end {} (pop would loop: {}, min start: {}, initial start: {}, check_pop_loop: {}, stack_len: {})", match_pat, match_start, match_end, pop_would_loop, min_start, start, check_pop_loop, self.stack.len());
+@@ -442,33 +492,40 @@
+         captures: Option<&(Region, String)>,
+         search_cache: &mut SearchCache,
+         regions: &mut Region,
+-    ) -> Option<Region> {
++        control: &mut ExecutionControl<'_>,
++    ) -> Result<Option<Region>, ParsingError> {
+         // println!("{} - {:?} - {:?}", match_pat.regex_str, match_pat.has_captures, cur_level.captures.is_some());
+         let match_ptr = match_pat as *const MatchPattern;
+ 
+         if let Some(maybe_region) = search_cache.get(&match_ptr) {
++            control.checkpoint(Stage::CacheHit, 1)?;
+             if let Some(ref region) = *maybe_region {
+                 let match_start = region.pos(0).unwrap().0;
+                 if match_start >= start {
+                     // Cached match is valid, return it. Otherwise do another
+                     // search below.
+-                    return Some(region.clone());
++                    return Ok(Some(region.clone()));
+                 }
+             } else {
+                 // Didn't find a match earlier, so no point trying to match it again
+-                return None;
++                return Ok(None);
+             }
+         }
+ 
++        let dynamic;
+         let (regex, can_cache) = match (match_pat.has_captures, captures) {
+             (true, Some(captures)) => {
++                control.checkpoint(Stage::Backreference, 1)?;
+                 let (region, s) = captures;
+-                (&match_pat.regex_with_refs(region, s), false)
++                dynamic = match_pat.regex_with_refs(region, s);
++                control.checkpoint(Stage::Backreference, 0)?;
++                (&dynamic, false)
+             }
+             _ => (match_pat.regex(), true),
+         };
+         // print!("  executing regex: {:?} at pos {} on line {}", regex.regex_str(), start, line);
+-        let matched = regex.search(line, start, line.len(), Some(regions));
++        let matched =
++            regex.try_search_with_control(line, start, line.len(), Some(regions), control)?;
+ 
+         if matched {
+             let (match_start, match_end) = regions.pos(0).unwrap();
+@@ -479,16 +536,18 @@
+                 _ => true,
+             };
+             if can_cache && does_something {
++                control.checkpoint(Stage::CacheWrite, 1)?;
+                 search_cache.insert(match_pat, Some(regions.clone()));
+             }
+             if does_something {
+                 // print!("catch {} at {} on {}", match_pat.regex_str, match_start, line);
+-                return Some(regions.clone());
++                return Ok(Some(regions.clone()));
+             }
+         } else if can_cache {
++            control.checkpoint(Stage::CacheWrite, 1)?;
+             search_cache.insert(match_pat, None);
+         }
+-        None
++        Ok(None)
+     }
+ 
+     /// Returns true if the stack was changed
+@@ -499,6 +558,7 @@
+         level_context: &'a Context,
+         syntax_set: &'a SyntaxSet,
+         ops: &mut Vec<(usize, ScopeStackOp)>,
++        control: &mut ExecutionControl<'_>,
+     ) -> Result<bool, ParsingError> {
+         let (match_start, match_end) = reg_match.regions.pos(0).unwrap();
+         let context = reg_match.context;
+@@ -512,9 +572,11 @@
+             &pat.operation,
+             syntax_set,
+             ops,
++            control,
+         )?;
+         for s in &pat.scope {
+             // println!("pushing {:?} at {}", s, match_start);
++            control.checkpoint(Stage::ScopeOperation, 1)?;
+             ops.push((match_start, ScopeStackOp::Push(*s)));
+         }
+         if let Some(ref capture_map) = pat.captures {
+@@ -523,6 +585,7 @@
+             // we don't have to handle a capture matching multiple times, Sublime doesn't
+             let mut map: Vec<((usize, i32), ScopeStackOp)> = Vec::new();
+             for &(cap_index, ref scopes) in capture_map.iter() {
++                control.checkpoint(Stage::Capture, 1)?;
+                 if let Some((cap_start, cap_end)) = reg_match.regions.pos(cap_index) {
+                     // marking up empty captures causes pops to be sorted wrong
+                     if cap_start == cap_end {
+@@ -530,6 +593,7 @@
+                     }
+                     // println!("capture {:?} at {:?}-{:?}", scopes[0], cap_start, cap_end);
+                     for scope in scopes.iter() {
++                        control.checkpoint(Stage::Capture, 1)?;
+                         map.push((
+                             (cap_start, -((cap_end - cap_start) as i32)),
+                             ScopeStackOp::Push(*scope),
+@@ -538,13 +602,17 @@
+                     map.push(((cap_end, i32::MIN), ScopeStackOp::Pop(scopes.len())));
+                 }
+             }
++            control.checkpoint(Stage::Capture, 0)?;
+             map.sort_by(|a, b| a.0.cmp(&b.0));
++            control.checkpoint(Stage::Capture, 0)?;
+             for ((index, _), op) in map.into_iter() {
++                control.checkpoint(Stage::ScopeOperation, 1)?;
+                 ops.push((index, op));
+             }
+         }
+         if !pat.scope.is_empty() {
+             // println!("popping at {}", match_end);
++            control.checkpoint(Stage::ScopeOperation, 1)?;
+             ops.push((match_end, ScopeStackOp::Pop(pat.scope.len())));
+         }
+         self.push_meta_ops(
+@@ -554,9 +622,10 @@
+             &pat.operation,
+             syntax_set,
+             ops,
++            control,
+         )?;
+ 
+-        self.perform_op(line, &reg_match.regions, pat, syntax_set)
++        self.perform_op(line, &reg_match.regions, pat, syntax_set, control)
+     }
+ 
+     fn push_meta_ops(
+@@ -567,6 +636,7 @@
+         match_op: &MatchOperation,
+         syntax_set: &SyntaxSet,
+         ops: &mut Vec<(usize, ScopeStackOp)>,
++        control: &mut ExecutionControl<'_>,
+     ) -> Result<(), ParsingError> {
+         // println!("metas ops for {:?}, initial: {}",
+         //          match_op,
+@@ -580,11 +650,13 @@
+                     &cur_context.meta_scope
+                 };
+                 if !v.is_empty() {
++                    control.checkpoint(Stage::ScopeOperation, 1)?;
+                     ops.push((index, ScopeStackOp::Pop(v.len())));
+                 }
+ 
+                 // cleared scopes are restored after the scopes from match pattern that invoked the pop are applied
+                 if !initial && cur_context.clear_scopes.is_some() {
++                    control.checkpoint(Stage::ScopeOperation, 1)?;
+                     ops.push((index, ScopeStackOp::Restore))
+                 }
+             }
+@@ -598,41 +670,56 @@
+                 if initial {
+                     if is_set && cur_context.clear_scopes.is_some() {
+                         // cleared scopes from the old context are restored immediately
++                        control.checkpoint(Stage::ScopeOperation, 1)?;
+                         ops.push((index, ScopeStackOp::Restore));
+                     }
+                     // add each context's meta scope
+                     for r in context_refs.iter() {
++                        control.checkpoint(Stage::ContextVisit, 1)?;
++                        control.checkpoint(Stage::ContextVisit, 0)?;
+                         let ctx = r.resolve(syntax_set)?;
++                        control.checkpoint(Stage::ContextVisit, 0)?;
+ 
+                         if !is_set {
+                             if let Some(clear_amount) = ctx.clear_scopes {
++                                control.checkpoint(Stage::ScopeOperation, 1)?;
+                                 ops.push((index, ScopeStackOp::Clear(clear_amount)));
+                             }
+                         }
+ 
+                         for scope in ctx.meta_scope.iter() {
++                            control.checkpoint(Stage::ScopeOperation, 1)?;
+                             ops.push((index, ScopeStackOp::Push(*scope)));
+                         }
+                     }
+                 } else {
+-                    let repush = (is_set
++                    let mut repush = is_set
+                         && (!cur_context.meta_scope.is_empty()
+-                            || !cur_context.meta_content_scope.is_empty()))
+-                        || context_refs.iter().any(|r| {
+-                            let ctx = r.resolve(syntax_set).unwrap();
+-
+-                            !ctx.meta_content_scope.is_empty()
++                            || !cur_context.meta_content_scope.is_empty());
++                    if !repush {
++                        for r in context_refs {
++                            control.checkpoint(Stage::ContextVisit, 1)?;
++                            control.checkpoint(Stage::ContextVisit, 0)?;
++                            let ctx = r.resolve(syntax_set)?;
++                            control.checkpoint(Stage::ContextVisit, 0)?;
++                            if !ctx.meta_content_scope.is_empty()
+                                 || (ctx.clear_scopes.is_some() && is_set)
+-                        });
++                            {
++                                repush = true;
++                                break;
++                            }
++                        }
++                    }
+                     if repush {
+                         // remove previously pushed meta scopes, so that meta content scopes will be applied in the correct order
+-                        let mut num_to_pop: usize = context_refs
+-                            .iter()
+-                            .map(|r| {
+-                                let ctx = r.resolve(syntax_set).unwrap();
+-                                ctx.meta_scope.len()
+-                            })
+-                            .sum();
++                        let mut num_to_pop = 0usize;
++                        for r in context_refs {
++                            control.checkpoint(Stage::ContextVisit, 1)?;
++                            control.checkpoint(Stage::ContextVisit, 0)?;
++                            let ctx = r.resolve(syntax_set)?;
++                            control.checkpoint(Stage::ContextVisit, 0)?;
++                            num_to_pop += ctx.meta_scope.len();
++                        }
+ 
+                         // also pop off the original context's meta scopes
+                         if is_set {
+@@ -642,24 +729,31 @@
+ 
+                         // do all the popping as one operation
+                         if num_to_pop > 0 {
++                            control.checkpoint(Stage::ScopeOperation, 1)?;
+                             ops.push((index, ScopeStackOp::Pop(num_to_pop)));
+                         }
+ 
+                         // now we push meta scope and meta context scope for each context pushed
+                         for r in context_refs {
++                            control.checkpoint(Stage::ContextVisit, 1)?;
++                            control.checkpoint(Stage::ContextVisit, 0)?;
+                             let ctx = r.resolve(syntax_set)?;
++                            control.checkpoint(Stage::ContextVisit, 0)?;
+ 
+                             // for some reason, contrary to my reading of the docs, set does this after the token
+                             if is_set {
+                                 if let Some(clear_amount) = ctx.clear_scopes {
++                                    control.checkpoint(Stage::ScopeOperation, 1)?;
+                                     ops.push((index, ScopeStackOp::Clear(clear_amount)));
+                                 }
+                             }
+ 
+                             for scope in ctx.meta_scope.iter() {
++                                control.checkpoint(Stage::ScopeOperation, 1)?;
+                                 ops.push((index, ScopeStackOp::Push(*scope)));
+                             }
+                             for scope in ctx.meta_content_scope.iter() {
++                                control.checkpoint(Stage::ScopeOperation, 1)?;
+                                 ops.push((index, ScopeStackOp::Push(*scope)));
+                             }
+                         }
+@@ -679,7 +773,9 @@
+         regions: &Region,
+         pat: &MatchPattern,
+         syntax_set: &SyntaxSet,
++        control: &mut ExecutionControl<'_>,
+     ) -> Result<bool, ParsingError> {
++        control.checkpoint(Stage::ContextChange, 0)?;
+         let (ctx_refs, old_proto_ids) = match pat.operation {
+             MatchOperation::Push(ref ctx_refs) => (ctx_refs, None),
+             MatchOperation::Set(ref ctx_refs) => {
+@@ -695,6 +791,7 @@
+             MatchOperation::None => return Ok(false),
+         };
+         for (i, r) in ctx_refs.iter().enumerate() {
++            control.checkpoint(Stage::ContextChange, 1)?;
+             let mut proto_ids = if i == 0 {
+                 // it is only necessary to preserve the old prototypes
+                 // at the first stack frame pushed
+@@ -713,17 +810,30 @@
+                 }
+             }
+             let context_id = r.id()?;
++            control.checkpoint(Stage::ContextVisit, 0)?;
+             let context = syntax_set.get_context(&context_id)?;
++            control.checkpoint(Stage::ContextVisit, 0)?;
+             let captures = {
+                 let mut uses_backrefs = context.uses_backrefs;
+                 if !proto_ids.is_empty() {
+-                    uses_backrefs = uses_backrefs
+-                        || proto_ids
+-                            .iter()
+-                            .any(|id| syntax_set.get_context(id).unwrap().uses_backrefs);
++                    if !uses_backrefs {
++                        for id in &proto_ids {
++                            control.checkpoint(Stage::ContextVisit, 1)?;
++                            control.checkpoint(Stage::ContextVisit, 0)?;
++                            let uses = syntax_set.get_context(id)?.uses_backrefs;
++                            control.checkpoint(Stage::ContextVisit, 0)?;
++                            if uses {
++                                uses_backrefs = true;
++                                break;
++                            }
++                        }
++                    }
+                 }
+                 if uses_backrefs {
+-                    Some((regions.clone(), line.to_owned()))
++                    control.checkpoint(Stage::Backreference, 1)?;
++                    let captures = Some((regions.clone(), line.to_owned()));
++                    control.checkpoint(Stage::Backreference, 0)?;
++                    captures
+                 } else {
+                     None
+                 }
+--- a/src/parsing/regex.rs
++++ b/src/parsing/regex.rs
+@@ -2,6 +2,10 @@
+ use serde::de::{Deserialize, Deserializer};
+ use serde::ser::{Serialize, Serializer};
+ use std::error::Error;
++
++// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
++#[cfg(feature = "parsing")]
++use super::execution::{ExecutionControl, ExecutionError, RegexPhase, Stage};
+ 
+ /// An abstraction for regex patterns.
+ ///
+@@ -65,6 +69,34 @@
+             .search(text, begin, end, region.map(|r| &mut r.region))
+     }
+ 
++    /// Controlled parser path: backend errors are errors, never negative matches.
++    /// Successful shared compilation retains no control/monitor reference.
++    #[cfg(feature = "parsing")]
++    pub fn try_search_with_control(
++        &self,
++        text: &str,
++        begin: usize,
++        end: usize,
++        region: Option<&mut Region>,
++        control: &mut ExecutionControl<'_>,
++    ) -> Result<bool, ExecutionError> {
++        control.checkpoint(Stage::RegexCompile, 0)?;
++        if !control.is_controlled() {
++            return Ok(self.search(text, begin, end, region));
++        }
++        let compiled = self.regex.get_or_try_init(|| {
++            control.checkpoint(Stage::RegexCompile, 1)?;
++            regex_impl::Regex::new(&self.regex_str)
++                .map_err(|source| control.regex_error(RegexPhase::Compile, source))
++        })?;
++        control.checkpoint(Stage::RegexCompile, 0)?;
++        control.checkpoint(Stage::RegexSearch, 1)?;
++        let matched =
++            compiled.try_search(text, begin, end, region.map(|r| &mut r.region), control)?;
++        control.checkpoint(Stage::RegexSearch, 0)?;
++        Ok(matched)
++    }
++
+     fn regex(&self) -> &regex_impl::Regex {
+         self.regex.get_or_init(|| {
+             regex_impl::Regex::new(&self.regex_str).expect("regex string should be pre-tested")
+@@ -184,6 +216,28 @@
+             // For example, in case of catastrophic backtracking, onig should
+             // fail with a "retry-limit-in-match over" error eventually.
+             matches!(matched, Ok(Some(_)))
++        }
++
++        #[cfg(feature = "parsing")]
++        pub fn try_search(
++            &self,
++            text: &str,
++            begin: usize,
++            end: usize,
++            region: Option<&mut Region>,
++            control: &mut super::ExecutionControl<'_>,
++        ) -> Result<bool, super::ExecutionError> {
++            self.regex
++                .search_with_param(
++                    text,
++                    begin,
++                    end,
++                    SearchOptions::SEARCH_OPTION_NONE,
++                    region,
++                    MatchParam::default(),
++                )
++                .map(|matched| matched.is_some())
++                .map_err(|error| control.regex_error(super::RegexPhase::Search, Box::new(error)))
+         }
+     }
+ }
+@@ -244,6 +298,33 @@
+                 false
+             }
+         }
++
++        #[cfg(feature = "parsing")]
++        pub fn try_search(
++            &self,
++            text: &str,
++            begin: usize,
++            end: usize,
++            region: Option<&mut Region>,
++            control: &mut super::ExecutionControl<'_>,
++        ) -> Result<bool, super::ExecutionError> {
++            match self.regex.captures_from_pos(&text[..end], begin) {
++                Ok(Some(captures)) => {
++                    if let Some(region) = region {
++                        region.positions.clear();
++                        for i in 0..captures.len() {
++                            control.checkpoint(super::Stage::Capture, 1)?;
++                            region
++                                .positions
++                                .push(captures.get(i).map(|m| (m.start(), m.end())));
++                        }
++                    }
++                    Ok(true)
++                }
++                Ok(None) => Ok(false),
++                Err(error) => Err(control.regex_error(super::RegexPhase::Search, Box::new(error))),
++            }
++        }
+     }
+ 
+     impl Region {
+--- a/src/parsing/syntax_definition.rs
++++ b/src/parsing/syntax_definition.rs
+@@ -12,6 +12,9 @@
+ use serde_derive::{Deserialize, Serialize};
+ use std::collections::{BTreeMap, HashMap};
+ use std::hash::Hash;
++
++// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
++use super::execution::{ExecutionControl, Stage};
+ 
+ pub type CaptureMapping = Vec<(usize, Vec<Scope>)>;
+ 
+@@ -179,6 +182,52 @@
+     }
+ }
+ 
++impl<'a> MatchIter<'a> {
++    /// Controlled traversal checks inside includes, even when no match is ever yielded.
++    /// A terminal error poisons this block's control; discard this iterator and parser.
++    pub fn try_next_with_control(
++        &mut self,
++        control: &mut ExecutionControl<'_>,
++    ) -> Result<Option<(&'a Context, usize)>, ParsingError> {
++        let result = self.next_controlled(control);
++        if result.is_err() {
++            control.parsing_error();
++        }
++        result
++    }
++
++    fn next_controlled(
++        &mut self,
++        control: &mut ExecutionControl<'_>,
++    ) -> Result<Option<(&'a Context, usize)>, ParsingError> {
++        loop {
++            control.checkpoint(Stage::IncludeStep, 1)?;
++            if self.ctx_stack.is_empty() {
++                return Ok(None);
++            }
++            let last_index = self.ctx_stack.len() - 1;
++            let context = self.ctx_stack[last_index];
++            let index = self.index_stack[last_index];
++            self.index_stack[last_index] = index + 1;
++            if index < context.patterns.len() {
++                match &context.patterns[index] {
++                    Pattern::Match(_) => return Ok(Some((context, index))),
++                    Pattern::Include(ContextReference::Direct(context_id)) => {
++                        let included = self.syntax_set.get_context(context_id)?;
++                        control.checkpoint(Stage::IncludeStep, 0)?;
++                        self.ctx_stack.push(included);
++                        self.index_stack.push(0);
++                    }
++                    Pattern::Include(_) => continue,
++                }
++            } else {
++                self.ctx_stack.pop();
++                self.index_stack.pop();
++            }
++        }
++    }
++}
++
+ /// Returns an iterator over all the match patterns in this context.
+ ///
+ /// It recursively follows include directives. Can only be run on contexts that have already been
+--- /dev/null
++++ b/src/parsing/execution.rs
+@@ -0,0 +1,149 @@
++// ---------------------------------------------------------------------------------------------
++//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
++//  See LICENSE.txt in this vendored crate for upstream license information.
++// ---------------------------------------------------------------------------------------------
++
++//! Borrowed, block-scoped cooperative execution control. No TLS or platform callbacks.
++//! Opaque regex calls, lazy context decoding, OnceCell waits and allocation cannot be preempted.
++
++use std::error::Error;
++use std::fmt;
++
++/// Observation points; units count parser work events, not regex VM instructions or bytes.
++#[derive(Clone, Copy, Debug, Eq, PartialEq)]
++pub enum Stage {
++    Line,
++    Token,
++    ContextVisit,
++    IncludeStep,
++    PatternVisit,
++    Backreference,
++    RegexCompile,
++    RegexSearch,
++    CacheHit,
++    CacheWrite,
++    Capture,
++    ScopeOperation,
++    ContextChange,
++}
++
++/// The owner supplies cancellation, an actual clock-based deadline check, and checked accounting.
++/// A zero-unit observation must still check cancellation and the deadline.
++pub trait ExecutionMonitor {
++    fn checkpoint(&mut self, stage: Stage, units: u32) -> Result<(), StopReason>;
++}
++
++#[derive(Clone, Copy, Debug, Eq, PartialEq)]
++pub enum StopReason {
++    Cancelled,
++    DeadlineExceeded,
++    WorkLimitExceeded,
++    ResourceLimitExceeded,
++}
++
++#[derive(Clone, Copy, Debug, Eq, PartialEq)]
++pub enum RegexPhase {
++    Compile,
++    Search,
++}
++
++/// Compact mirror of the first observed terminal event, without retaining backend allocations.
++#[derive(Clone, Copy, Debug, Eq, PartialEq)]
++pub enum Termination {
++    Stopped(StopReason),
++    Regex(RegexPhase),
++    Parsing,
++}
++
++#[derive(Debug)]
++pub enum ExecutionError {
++    Stopped(StopReason),
++    Regex {
++        phase: RegexPhase,
++        source: Box<dyn Error + Send + Sync + 'static>,
++    },
++    AlreadyTerminated(Termination),
++}
++
++impl fmt::Display for ExecutionError {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        match self {
++            Self::Stopped(reason) => write!(f, "execution stopped: {reason:?}"),
++            Self::Regex { phase, source } => write!(f, "regex {phase:?} failed: {source}"),
++            Self::AlreadyTerminated(reason) => {
++                write!(f, "execution already terminated: {reason:?}")
++            }
++        }
++    }
++}
++
++impl Error for ExecutionError {
++    fn source(&self) -> Option<&(dyn Error + 'static)> {
++        match self {
++            Self::Regex { source, .. } => Some(source.as_ref()),
++            _ => None,
++        }
++    }
++}
++
++/// Borrow for one block, across all its lines. After any error discard the parser and all tokens.
++/// The monitor retains budget/first-fault authority; this object only mirrors terminal state.
++pub struct ExecutionControl<'a> {
++    monitor: Option<&'a mut dyn ExecutionMonitor>,
++    terminal: Option<Termination>,
++}
++
++impl<'a> ExecutionControl<'a> {
++    pub fn new(monitor: &'a mut dyn ExecutionMonitor) -> Self {
++        Self {
++            monitor: Some(monitor),
++            terminal: None,
++        }
++    }
++
++    pub(crate) fn uncontrolled() -> Self {
++        Self {
++            monitor: None,
++            terminal: None,
++        }
++    }
++
++    pub fn termination(&self) -> Option<Termination> {
++        self.terminal
++    }
++
++    pub(crate) fn is_controlled(&self) -> bool {
++        self.monitor.is_some()
++    }
++
++    pub fn checkpoint(&mut self, stage: Stage, units: u32) -> Result<(), ExecutionError> {
++        if let Some(reason) = self.terminal {
++            return Err(ExecutionError::AlreadyTerminated(reason));
++        }
++        if let Some(monitor) = self.monitor.as_mut() {
++            if let Err(reason) = monitor.checkpoint(stage, units) {
++                self.terminal = Some(Termination::Stopped(reason));
++                return Err(ExecutionError::Stopped(reason));
++            }
++        }
++        Ok(())
++    }
++
++    pub(crate) fn regex_error(
++        &mut self,
++        phase: RegexPhase,
++        source: Box<dyn Error + Send + Sync + 'static>,
++    ) -> ExecutionError {
++        if let Some(reason) = self.terminal {
++            return ExecutionError::AlreadyTerminated(reason);
++        }
++        self.terminal = Some(Termination::Regex(phase));
++        ExecutionError::Regex { phase, source }
++    }
++
++    pub(crate) fn parsing_error(&mut self) {
++        if self.terminal.is_none() {
++            self.terminal = Some(Termination::Parsing);
++        }
++    }
++}

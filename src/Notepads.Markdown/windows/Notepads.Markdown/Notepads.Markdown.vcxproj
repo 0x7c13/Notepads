@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE file in the project root for license information.
+-->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="..\..\build\Notepads.Markdown.props" />
+    <Import Project="$(NotepadsMarkdownPackagesRoot)Microsoft.Windows.CppWinRT.3.0.260818.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('$(NotepadsMarkdownPackagesRoot)Microsoft.Windows.CppWinRT.3.0.260818.1\build\native\Microsoft.Windows.CppWinRT.props')" />
+    <ItemGroup Label="ProjectConfigurations">
+        <ProjectConfiguration Include="Debug|Win32"><Configuration>Debug</Configuration><Platform>Win32</Platform></ProjectConfiguration>
+        <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+        <ProjectConfiguration Include="Debug|ARM64"><Configuration>Debug</Configuration><Platform>ARM64</Platform></ProjectConfiguration>
+        <ProjectConfiguration Include="Release|Win32"><Configuration>Release</Configuration><Platform>Win32</Platform></ProjectConfiguration>
+        <ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration>
+        <ProjectConfiguration Include="Release|ARM64"><Configuration>Release</Configuration><Platform>ARM64</Platform></ProjectConfiguration>
+    </ItemGroup>
+    <PropertyGroup Label="Globals">
+        <ProjectGuid>{D6DBBF35-E2F3-4949-A62D-D56B919346C1}</ProjectGuid>
+        <ProjectName>Notepads.Markdown</ProjectName>
+        <RootNamespace>Notepads.Markdown</RootNamespace>
+        <MinimumVisualStudioVersion>18.0</MinimumVisualStudioVersion>
+        <DefaultLanguage>en-US</DefaultLanguage>
+        <AppContainerApplication>true</AppContainerApplication>
+        <ApplicationType>Windows Store</ApplicationType>
+        <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+        <WindowsTargetPlatformVersion Condition="'$(WindowsTargetPlatformVersion)' == ''">10.0.26100.0</WindowsTargetPlatformVersion>
+        <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+        <CppWinRTOptimized>true</CppWinRTOptimized>
+        <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
+        <MinimalCoreWin>true</MinimalCoreWin>
+        <GenerateProjectSpecificOutputFolder>false</GenerateProjectSpecificOutputFolder>
+        <TargetName>Notepads.Markdown</TargetName>
+        <OutDir>$(NotepadsMarkdownNativeDir)</OutDir>
+        <IntDir>$(NotepadsMarkdownNativeIntDir)</IntDir>
+        <GeneratedFilesDir>$(IntDir)Generated Files\</GeneratedFilesDir>
+        <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    </PropertyGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+    <PropertyGroup Label="Configuration">
+        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <PlatformToolset>v145</PlatformToolset>
+        <CharacterSet>Unicode</CharacterSet>
+        <GenerateManifest>false</GenerateManifest>
+        <UseDebugLibraries Condition="'$(Configuration)' == 'Debug'">true</UseDebugLibraries>
+        <UseDebugLibraries Condition="'$(Configuration)' != 'Debug'">false</UseDebugLibraries>
+    </PropertyGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <LanguageStandard>stdcpp20</LanguageStandard>
+            <WarningLevel>Level4</WarningLevel>
+            <PrecompiledHeader>Use</PrecompiledHeader>
+            <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+            <AdditionalIncludeDirectories>$(NotepadsMarkdownRoot)include;$(ProjectDir);$(ProjectDir)Control;$(ProjectDir)Automation;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+            <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;NOMINMAX;_WINRT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+            <ControlFlowGuard>Guard</ControlFlowGuard>
+            <AdditionalOptions>/bigobj /utf-8 %(AdditionalOptions)</AdditionalOptions>
+        </ClCompile>
+        <Midl><AdditionalIncludeDirectories>$(ProjectDir)Control;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></Midl>
+        <Link>
+            <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
+            <AdditionalDependencies>$(NotepadsMarkdownRustLibrary);d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;ole32.lib;uiautomationcore.lib;kernel32.lib;ntdll.lib;userenv.lib;ws2_32.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+            <ModuleDefinitionFile>Notepads.Markdown.def</ModuleDefinitionFile>
+        </Link>
+    </ItemDefinitionGroup>
+    <ItemGroup>
+        <ClInclude Include="pch.h" />
+        <ClInclude Include="Control\DocumentUpdateResult.h" />
+        <ClInclude Include="Control\MarkdownSelection.h" />
+        <ClInclude Include="Control\MarkdownFindResult.h" />
+        <ClInclude Include="Control\MarkdownHeading.h" />
+        <ClInclude Include="Control\MarkdownOutline.h" />
+        <ClInclude Include="Reading\NativeReadingOutline.h" />
+        <ClInclude Include="Reading\NativeReadingSearch.h" />
+        <ClInclude Include="Control\NativeWheelScroll.h" />
+        <ClInclude Include="Control\NativeContinuousFollow.h" />
+        <ClInclude Include="Control\MarkdownLinkRequestedEventArgs.h" />
+        <ClInclude Include="Control\MarkdownTaskToggleRequestedEventArgs.h" />
+        <ClInclude Include="Control\MarkdownTheme.h" />
+        <ClInclude Include="Reading\NativeReadingSnapshot.h" />
+        <ClInclude Include="Reading\NativeHighlightSnapshot.h" />
+        <ClInclude Include="Core\NativeFailure.h" />
+        <ClInclude Include="Core\NativeThreadpool.h" />
+        <ClInclude Include="Control\MarkdownMappedPosition.h" />
+        <ClInclude Include="Control\MarkdownMappedSpan.h" />
+        <ClInclude Include="Control\MarkdownViewportAnchor.h" />
+        <ClInclude Include="Control\MarkdownImageRequest.h" />
+        <ClInclude Include="Resources\Images\NativeImageResources.h" />
+        <ClInclude Include="Resources\Images\NativeImageReuseCache.h" />
+        <ClInclude Include="Resources\Images\NativeImagePresentation.h" />
+        <ClInclude Include="Resources\Images\NativeImageCoordinator.h" />
+        <ClInclude Include="Resources\Svg\NativeSvgJob.h" />
+        <ClInclude Include="Resources\Svg\NativeSvgFontSession.h" />
+        <ClInclude Include="Resources\Svg\NativeSvgFontMemory.h" />
+        <ClInclude Include="Resources\Svg\NativeSvgCoverageFont.h" />
+        <ClInclude Include="Resources\Svg\NativeSvgCoverageSampling.h" />
+        <ClInclude Include="Resources\Svg\NativeSvgCoverageSession.h" />
+        <ClInclude Include="Reading\NativeSourceNavigation.h" />
+        <ClInclude Include="Resources\Math\NativeMathGeometry.h" />
+        <ClInclude Include="Resources\Math\NativeMathWorker.h" />
+        <ClInclude Include="Resources\Math\NativeMathText.h" />
+        <ClInclude Include="Resources\Math\NativeMathCoordinator.h" />
+        <ClInclude Include="Resources\Diagrams\NativeDiagramCoordinator.h" />
+        <ClInclude Include="Resources\Diagrams\NativeDiagramWorker.h" />
+        <ClInclude Include="Resources\Diagrams\NativeDiagramPresentation.h" />
+        <ClInclude Include="Resources\Diagrams\NativeDiagramArtifact.h" />
+        <ClInclude Include="Resources\Diagrams\NativeDiagramRenderer.h" />
+        <ClInclude Include="Resources\Math\NativeMathPresentation.h" />
+        <ClInclude Include="Resources\Math\NativeMathMemory.h" />
+        <ClInclude Include="Resources\Math\NativeMathArtifact.h" />
+        <ClInclude Include="Reading\NativeReadingNavigation.h" />
+        <ClInclude Include="Automation\ReadingObjectProvider.h" />
+        <ClInclude Include="Rendering\NativeDocumentRenderer.h" />
+        <ClInclude Include="Text\NativeScriptLayout.h" />
+        <ClInclude Include="Text\NativeScriptFonts.h" />
+    <ClInclude Include="Reading\NativeReadingPreparation.h" />
+        <ClInclude Include="Text\NativeScriptTextRenderer.h" />
+        <ClInclude Include="Core\CoreController.h" />
+        <ClInclude Include="Control\MarkdownView.h" />
+        <ClInclude Include="Control\ViewportPresentation.h" />
+        <ClInclude Include="Control\ViewportRasterBand.h" />
+        <ClInclude Include="Control\PreviewUpdate.h" />
+        <ClInclude Include="Rendering\NativeMeasurementCache.h" />
+        <ClInclude Include="Rendering\NativeTextBitmapCache.h" />
+        <ClInclude Include="Automation\MarkdownViewAutomationPeer.h" />
+        <ClInclude Include="Automation\TextRangeProvider.h" />
+        <ClCompile Include="pch.cpp"><PrecompiledHeader>Create</PrecompiledHeader></ClCompile>
+        <ClCompile Include="Control\DocumentUpdateResult.cpp" />
+        <ClCompile Include="Control\MarkdownSelection.cpp" />
+        <ClCompile Include="Control\MarkdownFindResult.cpp" />
+        <ClCompile Include="Control\MarkdownHeading.cpp" />
+        <ClCompile Include="Control\MarkdownOutline.cpp" />
+        <ClCompile Include="Control\MarkdownTaskToggleRequestedEventArgs.cpp" />
+        <ClCompile Include="Control\MarkdownView.Tasks.cpp" />
+        <ClCompile Include="Reading\NativeReadingOutline.cpp" />
+        <ClCompile Include="Control\MarkdownView.ReadingNavigation.cpp" />
+        <ClCompile Include="Control\MarkdownView.Embeds.cpp" />
+        <ClCompile Include="Control\MarkdownView.Search.cpp" />
+        <ClCompile Include="Reading\NativeReadingSearch.cpp" />
+        <ClCompile Include="Control\MarkdownLinkRequestedEventArgs.cpp" />
+        <ClCompile Include="Control\MarkdownTheme.cpp" />
+        <ClCompile Include="Control\MarkdownMappedPosition.cpp" />
+        <ClCompile Include="Control\MarkdownViewportAnchor.cpp" />
+        <ClCompile Include="Control\MarkdownImageRequest.cpp" />
+        <ClCompile Include="Resources\Images\NativeImageResources.cpp" />
+        <ClCompile Include="Resources\Images\NativeImagePresentation.cpp" />
+        <ClCompile Include="Resources\Images\NativeImageCoordinator.cpp" />
+        <ClCompile Include="Resources\Svg\NativeSvgJob.cpp" />
+        <ClCompile Include="Resources\Svg\NativeSvgFontSession.cpp">
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+        </ClCompile>
+        <ClCompile Include="Resources\Svg\NativeSvgCoverageFont.cpp">
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+            <FloatingPointModel>Strict</FloatingPointModel>
+        </ClCompile>
+        <ClCompile Include="Resources\Svg\NativeSvgCoverageSampling.cpp">
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+        </ClCompile>
+        <ClCompile Include="Resources\Svg\NativeSvgCoverageSession.cpp">
+            <PrecompiledHeader>NotUsing</PrecompiledHeader>
+        </ClCompile>
+        <ClCompile Include="Reading\NativeSourceNavigation.cpp" />
+        <ClCompile Include="Control\MarkdownView.SourceNavigation.cpp" />
+        <ClCompile Include="Control\MarkdownView.Edits.cpp" />
+        <ClCompile Include="Control\MarkdownView.Measurement.cpp" />
+        <ClCompile Include="Rendering\NativeMeasurementCache.cpp" />
+        <ClCompile Include="Rendering\NativeTextBitmapCache.cpp" />
+        <ClCompile Include="Control\MarkdownView.Images.cpp" />
+        <ClCompile Include="Control\MarkdownView.Scrolling.cpp" />
+        <ClCompile Include="Control\MarkdownView.Math.cpp" />
+        <ClCompile Include="Control\MarkdownView.Diagrams.cpp" />
+        <ClCompile Include="Resources\Diagrams\NativeDiagramWorker.cpp" />
+        <ClCompile Include="Resources\Diagrams\NativeDiagramCoordinator.cpp" />
+        <ClCompile Include="Resources\Diagrams\NativeDiagramPresentation.cpp" />
+        <ClCompile Include="Resources\Diagrams\NativeDiagramArtifact.cpp" />
+        <ClCompile Include="Resources\Diagrams\NativeDiagramRenderer.cpp" />
+        <ClCompile Include="Reading\NativeReadingSnapshot.cpp" />
+        <ClCompile Include="Reading\NativeHighlightSnapshot.cpp" />
+        <ClCompile Include="Reading\NativeReadingHighlights.cpp" />
+        <ClCompile Include="Resources\Math\NativeMathGeometry.cpp" />
+        <ClCompile Include="Resources\Math\NativeMathWorker.cpp" />
+        <ClCompile Include="Resources\Math\NativeMathText.cpp" />
+        <ClCompile Include="Resources\Math\NativeMathCoordinator.cpp" />
+        <ClCompile Include="Resources\Math\NativeMathPresentation.cpp" />
+        <ClCompile Include="Resources\Math\NativeMathMemory.cpp" />
+        <ClCompile Include="Resources\Math\NativeMathArtifact.cpp" />
+        <ClCompile Include="Reading\NativeReadingNavigation.cpp" />
+        <ClCompile Include="Automation\ReadingObjectProvider.cpp" />
+        <ClCompile Include="Rendering\NativeDocumentRenderer.cpp" />
+        <ClCompile Include="Text\NativeScriptLayout.cpp" />
+        <ClCompile Include="Text\NativeScriptFonts.cpp" />
+        <ClCompile Include="Text\NativeScriptTextRenderer.cpp" />
+        <ClCompile Include="Core\CoreController.cpp" />
+        <ClCompile Include="Control\MarkdownView.cpp" />
+        <ClCompile Include="Automation\MarkdownViewAutomationPeer.cpp" />
+        <ClCompile Include="Automation\TextRangeProvider.cpp" />
+        <ClInclude Include="Core\ModuleLifetime.h" />
+        <ClCompile Include="Control\MarkdownView.Input.cpp" />
+        <ClCompile Include="Control\MarkdownView.Selection.cpp" />
+        <ClInclude Include="Control\MarkdownView.ReadingState.h" />
+        <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+        <Midl Include="Control\MarkdownView.idl" />
+        <Midl Include="Automation\MarkdownViewAutomationPeer.idl" />
+        <Page Include="Themes\Generic.xaml" />
+        <None Include="Notepads.Markdown.def" />
+        <None Include="packages.config" />
+    </ItemGroup>
+    <Import Project="..\..\tests\native\Notepads.Markdown.Tests.items" Condition="'$(NotepadsMarkdownEnableDiagnostics)' == 'true'" />
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+    <Import Project="$(NotepadsMarkdownPackagesRoot)Microsoft.Windows.CppWinRT.3.0.260818.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('$(NotepadsMarkdownPackagesRoot)Microsoft.Windows.CppWinRT.3.0.260818.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Target Name="ValidateNotepadsMarkdownNativeInputs" BeforeTargets="PrepareForBuild">
+        <Error Condition="!Exists('$(NotepadsMarkdownPackagesRoot)Microsoft.Windows.CppWinRT.3.0.260818.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="Restore the pinned C++/WinRT package into src/packages." />
+        <Error Condition="'$(Configuration)' != 'Release'" Text="Notepads.Markdown uses Release /MD native dependencies in all host configurations." />
+        <Error Condition="'$(NotepadsMarkdownRustTarget)' == ''" Text="Notepads.Markdown requires Win32, x64 or ARM64." />
+    </Target>
+    <!-- XAML's generated activation table references the implementation class.
+         Keep this dependency local to generated XAML units rather than the PCH. -->
+    <Target Name="PrepareNotepadsMarkdownXamlCompile" BeforeTargets="ClCompile">
+        <ItemGroup>
+            <ClCompile>
+                <ForcedIncludeFiles Condition="'%(ClCompile.Filename)' == 'XamlTypeInfo.g' or '%(ClCompile.Filename)' == 'XamlTypeInfo.Impl.g'">pch.h;Control\MarkdownView.h;%(ClCompile.ForcedIncludeFiles)</ForcedIncludeFiles>
+            </ClCompile>
+        </ItemGroup>
+    </Target>
+    <!-- Output-group queries do not execute CreateWinMD/Link. Cargo fingerprints every real
+         native link invocation, including an otherwise up-to-date build. -->
+    <Target Name="BuildNotepadsMarkdownRust" BeforeTargets="CreateWinMD;Link" Condition="'$(DesignTimeBuild)' != 'true'">
+        <Exec Command="&quot;$(SystemRoot)\System32\WindowsPowerShell\v1.0\powershell.exe&quot; -NoLogo -NoProfile -ExecutionPolicy Bypass -File &quot;$(NotepadsMarkdownRoot)scripts\Build-Rust.ps1&quot; -Target &quot;$(NotepadsMarkdownRustTarget)&quot; -TargetDirectory &quot;$(NotepadsMarkdownRustTargetDir).&quot; -StagedLibrary &quot;$(NotepadsMarkdownRustLibrary)&quot; -NativeOutput &quot;$(OutDir)$(TargetName).dll&quot; -TrackedHeader &quot;$(GeneratedFilesDir)winrt\Notepads.Markdown.h&quot; -VsInstallRoot &quot;$(VsInstallRoot)\.&quot; -Diagnostics &quot;$(NotepadsMarkdownEnableDiagnostics)&quot;" />
+        <Error Condition="!Exists('$(NotepadsMarkdownRustLibrary)')" Text="Cargo did not produce the matching Rust static library." />
+    </Target>
+</Project>

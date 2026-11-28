@@ -1,0 +1,6 @@
+see the [many] [articles] [on] [QuickCheck].
+
+[many]: https://medium.com/@jlouis666/quickcheck-advice-c357efb4e7e6
+[articles]: http://www.quviq.com/products/erlang-quickcheck/
+[on]: https://wiki.haskell.org/Introduction_to_QuickCheck1
+[QuickCheck]: https://hackage.haskell.org/package/QuickCheck

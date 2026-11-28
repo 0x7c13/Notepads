@@ -1,0 +1,14 @@
+target
+comrak-*
+.vscode
+.idea
+vendor/comrak
+benches/cmark-gfm
+benches/comrak-*
+benches/pulldown-cmark
+benches/markdown-it
+/result
+/bench-output.md
+
+benches/samply-bench-input.md
+/profile-*.json.gz

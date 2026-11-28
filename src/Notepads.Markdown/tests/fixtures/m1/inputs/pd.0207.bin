@@ -1,0 +1,3 @@
+the trailing space after the &gt; should be stripped
+    > {.bar}
+===

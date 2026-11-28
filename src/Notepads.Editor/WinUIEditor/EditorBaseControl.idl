@@ -1,0 +1,85 @@
+// Copyright 2026 by Breece Walker
+// See src/Notepads.Editor/LICENSE for the original WinUIEdit license.
+//
+// Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+// See LICENSE.txt in the project root for the Notepads modifications.
+
+#include "Defines.idl"
+import "EditorWrapper.idl";
+import "IEditorAccess.idl";
+
+namespace WinUIEditor
+{
+    // An immutable snapshot of the first actual display row and its next source boundary.
+    // Byte positions are counted UTF-8; Fraction uses the source's painted physical row.
+    struct SourceViewportSpan
+    {
+        Int64 StartByte;
+        Int64 EndByte;
+        Int64 DisplayRow;
+        Double Fraction;
+        Boolean IsAvailable;
+    };
+
+	[default_interface]
+	[webhosthidden]
+	runtimeclass EditorBaseControl : DUX.Controls.Control, IEditorAccess
+	{
+		EditorBaseControl();
+		Editor Editor { get; };
+		Boolean IsComposing { get; };
+		Boolean HasTextStoreLock { get; };
+		// Hosts that own zoom policy can handle the unconsumed routed wheel event.
+		Boolean MouseWheelZoomEnabled;
+		// Unlike SCI_STYLESETBACK, this preserves alpha for XAML backdrops.
+		void SetBackgroundColor(Windows.UI.Color color);
+		// Apply a saved document anchor before drawing, after DPI and layout are ready.
+		// horizontalOffset is a DIP distance from the reading-order leading edge.
+		// documentLine -1 follows the current caret once layout is ready.
+		// Temporary view changes may preserve the existing vertical-navigation column.
+		void RestoreViewport(Double horizontalOffset, Int64 documentLine, Int64 subLine, Double verticalOffset, Boolean preservePreferredColumn);
+		// Unwrapped display rows and a DIP offset from the reading-order leading edge.
+		// Applied before paint; retained across canvas growth, resize and DPI changes.
+		void SetDisplayViewport(Int64 row, Double leadingOffset, Double verticalOffset);
+		// An immediate display-row anchor and a local DIP offset, clamped to the viewport.
+		void SetVerticalViewport(Int64 row, Double offset);
+		Double DisplayVerticalOffset { get; };
+		// Relative screen-axis DIPs: positive is right/down, also in RTL.
+		// Animated requests respect Windows animation settings; wrap suppresses X.
+		void ScrollBy(Double horizontalDelta, Double verticalDelta, Boolean animated);
+		Boolean IsScrollAnimating { get; };
+		void CancelScrollAnimation();
+        static UInt32 VerticalWheelScrollLines { get; };
+		// Raised once per user scroll interaction, before the viewport moves.
+		// Horizontal-only input raises it too: observers that share a viewport
+		// should retire their own motion regardless of the axis.
+		event Windows.Foundation.EventHandler<Object> ScrollStarted;
+		// Current or pending DIP offset from the reading-order leading edge.
+		Double DisplayHorizontalOffset { get; };
+		Int64 DisplayFirstVisibleRow { get; };
+		// Counted UTF-8 anchor for the first actual display row, including soft wraps.
+		// Unavailable while a saved viewport or its layout is awaiting paint.
+		Int64 ViewportSourceByte { get; };
+        SourceViewportSpan GetSourceViewport();
+        Boolean SetViewportBetweenSourcePositions(Int64 start, Int64 end, Double progress);
+        // Actual vertical travel; -1 when the view has no usable scroll range.
+        Double VerticalScrollProgress { get; };
+        Double VerticalScrollExtent { get; };
+        Boolean TrySetVerticalScrollProgress(Double progress);
+		// Align the display row containing this UTF-8 byte without moving selection/focus.
+		void RevealSourceByte(Int64 position);
+		Boolean IsViewportRestorePending { get; };
+		// Native gutter in control-relative DIPs, excluding text padding and scrollbars.
+		Windows.Foundation.Rect GutterBounds { get; };
+		// Coalesced after arrangement, including position-only scrollbar-side changes.
+		event Windows.Foundation.EventHandler<Object> ViewportGeometryChanged;
+		event Windows.Foundation.EventHandler<Double> DpiChanged;
+        // Current native selection origin; invalidated by a newer edit or navigation.
+        Boolean IsSelectionFromScroll { get; };
+        UInt64 DocumentAttachmentGeneration { get; };
+        UInt64 SelectionRevision { get; };
+		// Forward-only byte snapshot. Editing continues while the captured revision is read.
+		// During a native edit callback use ReadAsync to resume after the mutation.
+		EditorUtf8Reader AcquireSaveReader();
+	}
+}

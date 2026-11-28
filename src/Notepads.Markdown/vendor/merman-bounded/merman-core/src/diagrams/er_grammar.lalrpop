@@ -1,0 +1,251 @@
+// ER diagram grammar, based on pinned Mermaid 12.1.0 `erDiagram.jison`.
+
+grammar(arena: &mut ErActionArena);
+
+use crate::diagrams::er::{Action, Attribute, ErActionArena, ErActionList, RelSpec, SpannedDirection, SpannedIdList, Tok};
+
+extern {
+  type Location = usize;
+  type Error = crate::diagrams::er::LexError;
+
+  enum Tok {
+    Newline => Tok::Newline,
+
+    "erDiagram" => Tok::ErDiagram,
+
+    Name => Tok::Name(<String>),
+    Str => Tok::Str(<String>),
+    IdList => Tok::IdList(<SpannedIdList>),
+    RestOfLine => Tok::RestOfLine(<String>),
+
+    AccTitle => Tok::AccTitle(<String>),
+    AccDescr => Tok::AccDescr(<String>),
+    AccDescrMultiline => Tok::AccDescrMultiline(<String>),
+
+    Direction => Tok::Direction(<SpannedDirection>),
+
+    BlockStart => Tok::BlockStart,
+    BlockStop => Tok::BlockStop,
+    SquareStart => Tok::SquareStart,
+    SquareStop => Tok::SquareStop,
+    StyleSeparator => Tok::StyleSeparator,
+    Colon => Tok::Colon,
+    Comma => Tok::Comma,
+    Question => Tok::Question,
+
+    "style" => Tok::StyleKw,
+    "classDef" => Tok::ClassDefKw,
+    "class" => Tok::ClassKw,
+    "subgraph" => Tok::SubgraphKw,
+    "end" => Tok::EndKw,
+
+    ZeroOrOne => Tok::ZeroOrOne,
+    ZeroOrMore => Tok::ZeroOrMore,
+    OneOrMore => Tok::OneOrMore,
+    OnlyOne => Tok::OnlyOne,
+    MdParent => Tok::MdParent,
+    Identifying => Tok::Identifying,
+    NonIdentifying => Tok::NonIdentifying,
+
+    AttrWord => Tok::AttrWord(<String>),
+    AttrKey => Tok::AttrKey(<String>),
+    Comment => Tok::Comment(<String>),
+  }
+}
+
+pub Actions: ErActionList = {
+  <_n:Newlines> "erDiagram" <_n1:Newlines> <s:Statements> => s
+};
+
+Newlines: () = {
+  => (),
+  Newline <rest:Newlines> => rest,
+};
+
+Newlines1: () = {
+  Newline <_n:Newlines> => ()
+};
+
+Statements: ErActionList = {
+  => ErActionList::default(),
+  <s:Statement> <_n:Newlines> <rest:Statements> => arena.append(s, rest),
+};
+
+Statement: ErActionList = {
+  <v:RelationshipStatement> => arena.actions(v),
+  <v:EntityStatement> => arena.actions(v),
+  <a:AccStatement> => arena.push(a),
+  <a:DirectionStatement> => arena.push(a),
+  <a:ClassDefStatement> => arena.push(a),
+  <a:ClassStatement> => arena.push(a),
+  <a:StyleStatement> => arena.push(a),
+  <a:SubgraphStatement> => arena.push(a),
+};
+
+SubgraphStatement: Action = {
+  "subgraph" <header:SubgraphHeader> <_n:Newlines1> <body:SubgraphBody> => {
+    let (id, title, label_type) = header;
+    Action::AddSubgraph { id, title, label_type, body }
+  },
+};
+
+SubgraphBody: ErActionList = {
+  "end" => ErActionList::default(),
+  <s:Statement> <_n:Newlines> <rest:SubgraphBody> => arena.append(s, rest),
+};
+
+SubgraphHeader: (String, String, String) = {
+  <id:SubgraphName> => (id.clone(), id, "markdown".to_string()),
+  <id:SubgraphName> SquareStart <title:SubgraphTitle> SquareStop => {
+    (id, title, "markdown".to_string())
+  },
+};
+
+SubgraphName: String = {
+  Name => <>,
+  Str => <>,
+};
+
+SubgraphTitle: String = {
+  <part:SubgraphTitlePart> => part,
+  <left:SubgraphTitle> <part:SubgraphTitlePart> => format!("{left} {part}"),
+};
+
+SubgraphTitlePart: String = {
+  Name => <>,
+  Str => <>,
+};
+
+AccStatement: Action = {
+  AccTitle => Action::SetAccTitle(<>),
+  AccDescr => Action::SetAccDescr(<>),
+  AccDescrMultiline => Action::SetAccDescr(<>),
+};
+
+DirectionStatement: Action = {
+  <direction:Direction> => Action::SetDirection(direction.value),
+};
+
+StyleStatement: Action = {
+  "style" <ids:IdNames> <raw:RestOfLine> => Action::AddCssStyles { entities: ids, raw },
+};
+
+ClassDefStatement: Action = {
+  "classDef" <ids:IdNames> <raw:RestOfLine> => Action::AddClassDef { classes: ids, raw },
+};
+
+ClassStatement: Action = {
+  "class" <entities:IdNames> <classes:IdNames> => Action::SetClass { entities, classes },
+};
+
+RelationshipStatement: Vec<Action> = {
+  <a:Name> <spec:RelSpec> <b:Name> Colon <role:Role> => vec![
+    Action::AddRelationship { a, role, b, spec },
+  ],
+
+  <a:Name> StyleSeparator <classes_a:IdNames> <spec:RelSpec> <b:Name> StyleSeparator <classes_b:IdNames> Colon <role:Role> => vec![
+    Action::AddRelationship { a: a.clone(), role, b: b.clone(), spec },
+    Action::SetClass { entities: vec![a], classes: classes_a },
+    Action::SetClass { entities: vec![b], classes: classes_b },
+  ],
+
+  <a:Name> StyleSeparator <classes_a:IdNames> <spec:RelSpec> <b:Name> Colon <role:Role> => vec![
+    Action::AddRelationship { a: a.clone(), role, b: b.clone(), spec },
+    Action::SetClass { entities: vec![a], classes: classes_a },
+  ],
+
+  <a:Name> <spec:RelSpec> <b:Name> StyleSeparator <classes_b:IdNames> Colon <role:Role> => vec![
+    Action::AddRelationship { a: a.clone(), role, b: b.clone(), spec },
+    Action::SetClass { entities: vec![b], classes: classes_b },
+  ],
+};
+
+EntityStatement: Vec<Action> = {
+  <name:Name> BlockStart <attrs:Attributes> BlockStop => vec![
+    Action::AddEntity { name: name.clone(), alias: None },
+    Action::AddAttributes { entity: name, attributes: attrs },
+  ],
+  <name:Name> StyleSeparator <classes:IdNames> BlockStart <attrs:Attributes> BlockStop => vec![
+    Action::AddEntity { name: name.clone(), alias: None },
+    Action::AddAttributes { entity: name.clone(), attributes: attrs },
+    Action::SetClass { entities: vec![name], classes },
+  ],
+  <name:Name> StyleSeparator <classes:IdNames> => vec![
+    Action::AddEntity { name: name.clone(), alias: None },
+    Action::SetClass { entities: vec![name], classes },
+  ],
+  <name:Name> => vec![
+    Action::AddEntity { name, alias: None },
+  ],
+
+  // alias forms
+  <name:Name> SquareStart <alias:Name> SquareStop BlockStart <attrs:Attributes> BlockStop => vec![
+    Action::AddEntity { name: name.clone(), alias: Some(alias) },
+    Action::AddAttributes { entity: name, attributes: attrs },
+  ],
+  <name:Name> SquareStart <alias:Name> SquareStop => vec![
+    Action::AddEntity { name, alias: Some(alias) },
+  ],
+
+  <name:Name> SquareStart <alias:Name> SquareStop StyleSeparator <classes:IdNames> BlockStart <attrs:Attributes> BlockStop => vec![
+    Action::AddEntity { name: name.clone(), alias: Some(alias) },
+    Action::AddAttributes { entity: name.clone(), attributes: attrs },
+    Action::SetClass { entities: vec![name], classes },
+  ],
+  <name:Name> SquareStart <alias:Name> SquareStop StyleSeparator <classes:IdNames> => vec![
+    Action::AddEntity { name: name.clone(), alias: Some(alias) },
+    Action::SetClass { entities: vec![name], classes },
+  ],
+};
+
+IdNames: Vec<String> = {
+  <ids:IdList> => ids.into_names(),
+};
+
+Role: String = {
+  Name => <>,
+  Str => <>,
+};
+
+RelSpec: RelSpec = {
+  <left:Cardinality> <t:RelType> <right:Cardinality> => RelSpec { card_a: right, card_b: left, rel_type: t }
+};
+
+Cardinality: String = {
+  ZeroOrOne => "ZERO_OR_ONE".to_string(),
+  ZeroOrMore => "ZERO_OR_MORE".to_string(),
+  OneOrMore => "ONE_OR_MORE".to_string(),
+  OnlyOne => "ONLY_ONE".to_string(),
+  MdParent => "MD_PARENT".to_string(),
+};
+
+RelType: String = {
+  Identifying => "IDENTIFYING".to_string(),
+  NonIdentifying => "NON_IDENTIFYING".to_string(),
+};
+
+Attributes: Vec<Attribute> = {
+  => Vec::new(),
+  <a:Attribute> <rest:Attributes> => {
+    let mut v = vec![a];
+    v.extend(rest);
+    v
+  }
+};
+
+Attribute: Attribute = {
+  <ty:AttributeType> <name:AttrWord> => Attribute { ty, name, keys: Vec::new(), comment: String::new() },
+  <ty:AttributeType> <name:AttrWord> <keys:AttributeKeys> => Attribute { ty, name, keys, comment: String::new() },
+  <ty:AttributeType> <name:AttrWord> <c:Comment> => Attribute { ty, name, keys: Vec::new(), comment: c },
+  <ty:AttributeType> <name:AttrWord> <keys:AttributeKeys> <c:Comment> => Attribute { ty, name, keys, comment: c },
+};
+
+AttributeType: String = {
+  AttrWord => <>,
+  <w:AttrWord> Question => format!("{w}?"),
+};
+
+AttributeKeys: Vec<String> = {
+  <k:AttrKey> => vec![k],
+  <ks:AttributeKeys> Comma <k:AttrKey> => { let mut v = ks; v.push(k); v },
+};

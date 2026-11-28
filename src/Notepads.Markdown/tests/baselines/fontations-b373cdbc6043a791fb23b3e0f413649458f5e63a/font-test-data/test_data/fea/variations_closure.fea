@@ -1,0 +1,12 @@
+feature test {
+    sub a by b;
+} test;
+
+
+conditionset heavy {
+	wght 700 900;
+} heavy;
+
+variation test heavy {
+     sub a by c;
+} test;

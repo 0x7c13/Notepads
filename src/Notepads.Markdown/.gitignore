@@ -1,0 +1,11 @@
+/target/
+/artifacts/
+/windows/packages/
+**/bin/
+**/obj/
+**/__pycache__/
+*.pyc
+*.user
+# Cargo source bins are source code, not MSBuild output directories.
+!vendor/**/src/bin/
+!vendor/**/src/bin/**

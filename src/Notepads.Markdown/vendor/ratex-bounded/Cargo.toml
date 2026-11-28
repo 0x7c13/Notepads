@@ -1,0 +1,15 @@
+# Notepads Markdown bounded-candidate workspace; original package manifests/ownership retained.
+[workspace]
+members = ["ratex-types", "ratex-font", "ratex-lexer", "ratex-parser", "ratex-layout"]
+resolver = "3"
+
+[patch.crates-io]
+ratex-types = { path = "ratex-types" }
+ratex-font = { path = "ratex-font" }
+ratex-lexer = { path = "ratex-lexer" }
+ratex-parser = { path = "ratex-parser" }
+ratex-layout = { path = "ratex-layout" }
+
+[profile.release]
+panic = "unwind"
+codegen-units = 1

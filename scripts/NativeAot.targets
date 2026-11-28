@@ -1,0 +1,43 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE.txt in the project root for license information.
+-->
+<Project>
+  <!-- Import before Microsoft.NET.Sdk.targets. A previous restore can load older
+       ILCompiler targets which overwrite KnownILCompilerPack, even for an implicit
+       package reference. Preserve the SDK's choices before that happens. -->
+  <ItemGroup Condition="'$(PublishAot)' == 'true'">
+    <_NotepadsSdkILCompilerPack Include="@(KnownILCompilerPack)" />
+  </ItemGroup>
+
+  <Target Name="UseNotepadsSdkNativeAot" BeforeTargets="ProcessFrameworkReferences"
+          Condition="'$(PublishAot)' == 'true'">
+    <Error Condition="'@(_NotepadsSdkILCompilerPack)' == ''"
+           Text="The selected .NET SDK does not define a NativeAOT compiler pack." />
+    <ItemGroup>
+      <_NotepadsExplicitILCompiler Include="@(PackageReference)"
+          Condition="'%(PackageReference.Identity)' == 'Microsoft.DotNet.ILCompiler' and '%(PackageReference.IsImplicitlyDefined)' != 'true'" />
+    </ItemGroup>
+    <Error Condition="'@(_NotepadsExplicitILCompiler)' != ''"
+           Text="Notepads uses the NativeAOT compiler supplied by the selected .NET SDK. Remove the explicit Microsoft.DotNet.ILCompiler reference and restore packages." />
+    <ItemGroup>
+      <KnownILCompilerPack Remove="@(KnownILCompilerPack)" />
+      <KnownILCompilerPack Include="@(_NotepadsSdkILCompilerPack)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Restore must be followed by a new evaluation so the new compiler targets
+       are imported too. /restore and Visual Studio's package restore do this;
+       never run a compiler whose imported targets still belong to the old SDK. -->
+  <Target Name="ValidateNotepadsNativeAotRestore" BeforeTargets="PrepareForBuild"
+          DependsOnTargets="ProcessFrameworkReferences"
+          Condition="'$(PublishAot)' == 'true' and '$(DesignTimeBuild)' != 'true' and '$(ILCompilerTargetsPath)' != ''">
+    <PropertyGroup>
+      <_NotepadsExpectedAotVersion>@(_NotepadsSdkILCompilerPack->WithMetadataValue('TargetFramework', 'net$(_TargetFrameworkVersionWithoutV)')->'%(ILCompilerPackVersion)')</_NotepadsExpectedAotVersion>
+      <_NotepadsImportedAotVersion>$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName($([System.IO.Path]::GetDirectoryName('$(ILCompilerTargetsPath)'))))))</_NotepadsImportedAotVersion>
+    </PropertyGroup>
+    <Error Code="NOTEPADSBUILD001"
+           Condition="'$(_NotepadsImportedAotVersion)' != '$(_NotepadsExpectedAotVersion)'"
+           Text="Stale NativeAOT restore: SDK $(NETCoreSdkVersion) requires $(_NotepadsExpectedAotVersion), but imported targets use $(_NotepadsImportedAotVersion). Restore NuGet packages and rebuild, or run scripts/Run-Dev.ps1 -BuildOnly. After updating Visual Studio or .NET, restart Visual Studio first." />
+  </Target>
+</Project>

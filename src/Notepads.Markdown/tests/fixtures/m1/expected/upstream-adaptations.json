@@ -1,0 +1,1301 @@
+{
+  "schema_version": 1,
+  "policy": "Independent explicit adaptation; each case retains original upstream attribution/license and transformation. Null mapping is not checked.",
+  "cases": [
+    {
+      "id": "ck.unicode.one_byte",
+      "input_utf8": "a",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>a</p>\n",
+      "expected_readable_text": "a",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "a"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              1
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_one_byte: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.unicode.two_byte",
+      "input_utf8": "ɽ",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>ɽ</p>\n",
+      "expected_readable_text": "ɽ",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "ɽ"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              2
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          2
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_two_byte: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.unicode.three_byte",
+      "input_utf8": "好",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>好</p>\n",
+      "expected_readable_text": "好",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "好"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              3
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          3
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_three_byte: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.unicode.four_byte",
+      "input_utf8": "𐀀",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>𐀀</p>\n",
+      "expected_readable_text": "𐀀",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "𐀀"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              4
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          4
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_four_byte: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.unicode.multiple_one_byte_characters",
+      "input_utf8": "aaa",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>aaa</p>\n",
+      "expected_readable_text": "aaa",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "aaa"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              3
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          3
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_multiple_one_byte_characters: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.unicode.multiple_two_byte_characters",
+      "input_utf8": "ɽɽɽ",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>ɽɽɽ</p>\n",
+      "expected_readable_text": "ɽɽɽ",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "ɽɽɽ"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              6
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          6
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_multiple_two_byte_characters: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.unicode.multiple_three_byte_characters",
+      "input_utf8": "好好好",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>好好好</p>\n",
+      "expected_readable_text": "好好好",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "好好好"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              9
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          9
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_multiple_three_byte_characters: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.unicode.multiple_four_byte_characters",
+      "input_utf8": "𐀀𐀀𐀀",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>𐀀𐀀𐀀</p>\n",
+      "expected_readable_text": "𐀀𐀀𐀀",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "𐀀𐀀𐀀"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              12
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          12
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_multiple_four_byte_characters: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.unicode.multiple_mixed_characters",
+      "input_utf8": "aɽ好𐀀",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>aɽ好𐀀</p>\n",
+      "expected_readable_text": "aɽ好𐀀",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "block",
+            "node_kind": "paragraph",
+            "count": 1
+          },
+          {
+            "kind": "text",
+            "text": "aɽ好𐀀"
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "paragraph",
+            "source": [
+              0,
+              10
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          1,
+          1,
+          1,
+          10
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos_chars.rs",
+        "original_sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+        "selector": "sourcepos_chars_multiple_mixed_characters: INPUT and sourcepos_chars=false assertion",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Retain original const INPUT; independently convert inclusive byte-column assertion (1:1-1:N) to UTF-8 half-open [0,N)"
+        ],
+        "original_expected": "Original sourcepos assertion plus independently derived plain paragraph HTML/text",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.code-newline.lf",
+      "input_utf8": "Before\n\nLead\n`a\nb` tail\n",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>Before</p>\n<p>Lead\n<code>a b</code> tail</p>\n",
+      "expected_readable_text": "Before\nLead a b tail",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "inline",
+            "node_kind": "code",
+            "text": "a b",
+            "count": 1
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "code",
+            "source": [
+              13,
+              18
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          4,
+          1,
+          5,
+          2
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos.rs",
+        "original_sha256": "7E62868E1D44E11BE4FBA9A531D0DB3057E7D2E7350F874A6E60FA5A79D78D6C",
+        "selector": "multiline_inline_sourcepos: code variant, first_indent=last_indent=0, newline=lf",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Instantiate original parameterized code case and its sourcepos (4:1-5:2); preserve the chosen original newline bytes; independently convert line/column range"
+        ],
+        "original_expected": "Original parameterized code sourcepos; semantic/HTML manually derived from pinned code-span rules"
+      }
+    },
+    {
+      "id": "ck.code-newline.cr",
+      "input_utf8": "Before\r\rLead\r`a\rb` tail\r",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>Before</p>\n<p>Lead\n<code>a b</code> tail</p>\n",
+      "expected_readable_text": "Before\nLead a b tail",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "inline",
+            "node_kind": "code",
+            "text": "a b",
+            "count": 1
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "code",
+            "source": [
+              13,
+              18
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          4,
+          1,
+          5,
+          2
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos.rs",
+        "original_sha256": "7E62868E1D44E11BE4FBA9A531D0DB3057E7D2E7350F874A6E60FA5A79D78D6C",
+        "selector": "multiline_inline_sourcepos: code variant, first_indent=last_indent=0, newline=cr",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Instantiate original parameterized code case and its sourcepos (4:1-5:2); preserve the chosen original newline bytes; independently convert line/column range"
+        ],
+        "original_expected": "Original parameterized code sourcepos; semantic/HTML manually derived from pinned code-span rules"
+      }
+    },
+    {
+      "id": "ck.code-newline.crlf",
+      "input_utf8": "Before\r\n\r\nLead\r\n`a\r\nb` tail\r\n",
+      "category": "source_envelope",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>Before</p>\n<p>Lead\n<code>a b</code> tail</p>\n",
+      "expected_readable_text": "Before\nLead a b tail",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "inline",
+            "node_kind": "code",
+            "text": "a b",
+            "count": 1
+          }
+        ],
+        "envelopes": [
+          {
+            "node_kind": "code",
+            "source": [
+              16,
+              22
+            ]
+          }
+        ],
+        "upstream_sourcepos": [
+          4,
+          1,
+          5,
+          2
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/sourcepos.rs",
+        "original_sha256": "7E62868E1D44E11BE4FBA9A531D0DB3057E7D2E7350F874A6E60FA5A79D78D6C",
+        "selector": "multiline_inline_sourcepos: code variant, first_indent=last_indent=0, newline=crlf",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Instantiate original parameterized code case and its sourcepos (4:1-5:2); preserve the chosen original newline bytes; independently convert line/column range"
+        ],
+        "original_expected": "Original parameterized code sourcepos; semantic/HTML manually derived from pinned code-span rules"
+      }
+    },
+    {
+      "id": "vs.target.1",
+      "input_utf8": "[target](https://github.com/microsoft/vscode/issues/123)",
+      "category": "editor_behavior_input",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"https://github.com/microsoft/vscode/issues/123\">target</a></p>\n",
+      "expected_readable_text": "target",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "https://github.com/microsoft/vscode/issues/123",
+            "text": "target",
+            "count": 1
+          }
+        ],
+        "host_action": "Target acceptance/opening remains host policy; no VS Code protocol copied"
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "VS",
+        "version": "1.140.0",
+        "commit": "07f806f999227108933c2e30515b26eecc1fda74",
+        "original_path": "vscode-1.140.0/openDocumentLink.test.ts",
+        "original_sha256": "78BC1B6141E154B0F5F8B14A3FB1AE52BB8FAE7BF6BB838E8E6C045710D5FDBA",
+        "selector": "recognizes absolute links without treating relative links as URIs: source literal target https://github.com/microsoft/vscode/issues/123",
+        "license": "MIT",
+        "attribution": "Microsoft Corporation",
+        "transformations": [
+          "Wrap original target literal as a Markdown link with label target; independently derive Markdown semantic/HTML expected"
+        ],
+        "original_expected": "Original getAbsoluteUri classification retained in source; Markdown syntax expected is an explicit adaptation, not a VS Code UI assertion"
+      }
+    },
+    {
+      "id": "vs.target.2",
+      "input_utf8": "[target](./readme.md)",
+      "category": "editor_behavior_input",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"./readme.md\">target</a></p>\n",
+      "expected_readable_text": "target",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "./readme.md",
+            "text": "target",
+            "count": 1
+          }
+        ],
+        "host_action": "Target acceptance/opening remains host policy; no VS Code protocol copied"
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "VS",
+        "version": "1.140.0",
+        "commit": "07f806f999227108933c2e30515b26eecc1fda74",
+        "original_path": "vscode-1.140.0/openDocumentLink.test.ts",
+        "original_sha256": "78BC1B6141E154B0F5F8B14A3FB1AE52BB8FAE7BF6BB838E8E6C045710D5FDBA",
+        "selector": "recognizes absolute links without treating relative links as URIs: source literal target ./readme.md",
+        "license": "MIT",
+        "attribution": "Microsoft Corporation",
+        "transformations": [
+          "Wrap original target literal as a Markdown link with label target; independently derive Markdown semantic/HTML expected"
+        ],
+        "original_expected": "Original getAbsoluteUri classification retained in source; Markdown syntax expected is an explicit adaptation, not a VS Code UI assertion"
+      }
+    },
+    {
+      "id": "vs.target.3",
+      "input_utf8": "[target](file:///workspace/readme.md)",
+      "category": "editor_behavior_input",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"file:///workspace/readme.md\">target</a></p>\n",
+      "expected_readable_text": "target",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "file:///workspace/readme.md",
+            "text": "target",
+            "count": 1
+          }
+        ],
+        "host_action": "Target acceptance/opening remains host policy; no VS Code protocol copied"
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "VS",
+        "version": "1.140.0",
+        "commit": "07f806f999227108933c2e30515b26eecc1fda74",
+        "original_path": "vscode-1.140.0/openDocumentLink.test.ts",
+        "original_sha256": "78BC1B6141E154B0F5F8B14A3FB1AE52BB8FAE7BF6BB838E8E6C045710D5FDBA",
+        "selector": "recognizes absolute links without treating relative links as URIs: source literal target file:///workspace/readme.md",
+        "license": "MIT",
+        "attribution": "Microsoft Corporation",
+        "transformations": [
+          "Wrap original target literal as a Markdown link with label target; independently derive Markdown semantic/HTML expected"
+        ],
+        "original_expected": "Original getAbsoluteUri classification retained in source; Markdown syntax expected is an explicit adaptation, not a VS Code UI assertion"
+      }
+    },
+    {
+      "id": "vs.target.4",
+      "input_utf8": "[target](C:/workspace/readme.md)",
+      "category": "editor_behavior_input",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"C:/workspace/readme.md\">target</a></p>\n",
+      "expected_readable_text": "target",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "C:/workspace/readme.md",
+            "text": "target",
+            "count": 1
+          }
+        ],
+        "host_action": "Target acceptance/opening remains host policy; no VS Code protocol copied"
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "VS",
+        "version": "1.140.0",
+        "commit": "07f806f999227108933c2e30515b26eecc1fda74",
+        "original_path": "vscode-1.140.0/openDocumentLink.test.ts",
+        "original_sha256": "78BC1B6141E154B0F5F8B14A3FB1AE52BB8FAE7BF6BB838E8E6C045710D5FDBA",
+        "selector": "recognizes absolute links without treating relative links as URIs: source literal target C:/workspace/readme.md",
+        "license": "MIT",
+        "attribution": "Microsoft Corporation",
+        "transformations": [
+          "Wrap original target literal as a Markdown link with label target; independently derive Markdown semantic/HTML expected"
+        ],
+        "original_expected": "Original getAbsoluteUri classification retained in source; Markdown syntax expected is an explicit adaptation, not a VS Code UI assertion"
+      }
+    },
+    {
+      "id": "wt.table-simple",
+      "input_utf8": "| Column 1 | Column 2 | Column 3 |\r\n|----------|----------|----------|\r\n| A **cat**| Bob      | Chow     |",
+      "category": "viewer_behavior_input",
+      "profiles": [
+        "G3",
+        "G4"
+      ],
+      "expected_html": null,
+      "expected_readable_text": "Column 1\tColumn 2\tColumn 3\nA cat\tBob\tChow",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "table",
+            "alignments": [
+              "none",
+              "none",
+              "none"
+            ],
+            "header": [
+              "Column 1",
+              "Column 2",
+              "Column 3"
+            ],
+            "rows": [
+              [
+                "A cat",
+                "Bob",
+                "Chow"
+              ]
+            ],
+            "columns": 3,
+            "count": 1
+          },
+          {
+            "kind": "inline",
+            "node_kind": "strong",
+            "text": "cat",
+            "count": 1
+          }
+        ],
+        "native_ui": "Future M2 geometry/selection specimen; original object assertions retained"
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "WT",
+        "version": "legacy UWP fixed commit",
+        "commit": "c8f76d072df53d3622fb5440d63afb06cb9e7a10",
+        "original_path": "toolkit-c8f76d0/TableTests.cs",
+        "original_sha256": "A707E1C3140CAA2729783C00C91B5DCDA0379CC800A898F93F7209C6223292B9",
+        "selector": "Table_Simple CollapseWhitespace verbatim literal and TableBlock assertions",
+        "license": "MIT",
+        "attribution": ".NET Foundation and Contributors",
+        "transformations": [
+          "Interpret original C# verbatim multiline literal under its Windows CRLF checkout; apply original TestBase.cs CollapseWhitespace min-leading-space removal and first CRLF removal"
+        ],
+        "transformation_source": "toolkit-c8f76d0/TestBase.cs",
+        "original_expected": "Three unspecified-alignment columns, two rows, Strong(cat) from original TableBlock/Inline assertions; no pixel geometry inherited"
+      }
+    },
+    {
+      "id": "wt.hyperlink-http",
+      "input_utf8": "http://reddit.com",
+      "category": "viewer_behavior_input",
+      "profiles": [
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"http://reddit.com\">http://reddit.com</a></p>\n",
+      "expected_readable_text": "http://reddit.com",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "http://reddit.com",
+            "text": "http://reddit.com",
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "WT",
+        "version": "legacy UWP fixed commit",
+        "commit": "c8f76d072df53d3622fb5440d63afb06cb9e7a10",
+        "original_path": "toolkit-c8f76d0/HyperlinkTests.cs",
+        "original_sha256": "FA532BBC5029F85CEEDD24AA3768A01195862D9C136BAECB1EC0D06BFF1AC6B4",
+        "selector": "Hyperlink_Http",
+        "license": "MIT",
+        "attribution": ".NET Foundation and Contributors",
+        "transformations": [
+          "Retain original input literal and link URL/text assertion; derive equivalent selected GFM extended-autolink HTML independently"
+        ],
+        "original_expected": "Original HyperlinkInline Url/Text plus TextRunInline surrounding text; UI/opening behavior not inherited"
+      }
+    },
+    {
+      "id": "wt.hyperlink-surrounding",
+      "input_utf8": "Narwhal http://reddit.com fail whale",
+      "category": "viewer_behavior_input",
+      "profiles": [
+        "G4"
+      ],
+      "expected_html": "<p>Narwhal <a href=\"http://reddit.com\">http://reddit.com</a> fail whale</p>\n",
+      "expected_readable_text": "Narwhal http://reddit.com fail whale",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "http://reddit.com",
+            "text": "http://reddit.com",
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "WT",
+        "version": "legacy UWP fixed commit",
+        "commit": "c8f76d072df53d3622fb5440d63afb06cb9e7a10",
+        "original_path": "toolkit-c8f76d0/HyperlinkTests.cs",
+        "original_sha256": "FA532BBC5029F85CEEDD24AA3768A01195862D9C136BAECB1EC0D06BFF1AC6B4",
+        "selector": "Hyperlink_WithSurroundingText",
+        "license": "MIT",
+        "attribution": ".NET Foundation and Contributors",
+        "transformations": [
+          "Retain original input literal and link URL/text assertion; derive equivalent selected GFM extended-autolink HTML independently"
+        ],
+        "original_expected": "Original HyperlinkInline Url/Text plus TextRunInline surrounding text; UI/opening behavior not inherited"
+      }
+    },
+    {
+      "id": "ck.autolink.www",
+      "input_utf8": "www.autolink.com\n",
+      "category": "extended_autolink",
+      "profiles": [
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"http://www.autolink.com\">www.autolink.com</a></p>\n",
+      "expected_readable_text": "www.autolink.com",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "http://www.autolink.com",
+            "text": "www.autolink.com",
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/autolink.rs",
+        "original_sha256": "5ED5605CAD30ACE708BD19414C3D473A4B0A81313DFE7510D1CB1CA91F8122D8",
+        "selector": "autolink_www: first original input/HTML pair, extension.autolink only",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Decode original Rust normal string literals, concatenate original concat! parts where present; preserve original Markdown/HTML, select first parentheses pair with relaxed_autolinks=false",
+          "Derive semantic target from source link slice; HTML escape_href percent encoding is serializer-only, not semantic URL normalization"
+        ],
+        "original_expected": "Original upstream HTML bytes; independently derive link destination/display text from the source",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.autolink.email",
+      "input_utf8": "john@smith.com\n",
+      "category": "extended_autolink",
+      "profiles": [
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"mailto:john@smith.com\">john@smith.com</a></p>\n",
+      "expected_readable_text": "john@smith.com",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "mailto:john@smith.com",
+            "text": "john@smith.com",
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/autolink.rs",
+        "original_sha256": "5ED5605CAD30ACE708BD19414C3D473A4B0A81313DFE7510D1CB1CA91F8122D8",
+        "selector": "autolink_email: first original input/HTML pair, extension.autolink only",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Decode original Rust normal string literals, concatenate original concat! parts where present; preserve original Markdown/HTML, select first parentheses pair with relaxed_autolinks=false",
+          "Derive semantic target from source link slice; HTML escape_href percent encoding is serializer-only, not semantic URL normalization"
+        ],
+        "original_expected": "Original upstream HTML bytes; independently derive link destination/display text from the source",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.autolink.scheme",
+      "input_utf8": "https://google.com/search\nrdar://localhost.com/blah",
+      "category": "extended_autolink",
+      "profiles": [
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"https://google.com/search\">https://google.com/search</a>\nrdar://localhost.com/blah</p>\n",
+      "expected_readable_text": "https://google.com/search rdar://localhost.com/blah",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "https://google.com/search",
+            "text": "https://google.com/search",
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/autolink.rs",
+        "original_sha256": "5ED5605CAD30ACE708BD19414C3D473A4B0A81313DFE7510D1CB1CA91F8122D8",
+        "selector": "autolink_scheme: first original input/HTML pair, extension.autolink only",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Decode original Rust normal string literals, concatenate original concat! parts where present; preserve original Markdown/HTML, select first parentheses pair with relaxed_autolinks=false",
+          "Derive semantic target from source link slice; HTML escape_href percent encoding is serializer-only, not semantic URL normalization"
+        ],
+        "original_expected": "Original upstream HTML bytes; independently derive link destination/display text from the source",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.autolink.parentheses",
+      "input_utf8": "http://www.pokemon.com/Pikachu_(Electric)",
+      "category": "extended_autolink",
+      "profiles": [
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"http://www.pokemon.com/Pikachu_(Electric)\">http://www.pokemon.com/Pikachu_(Electric)</a></p>\n",
+      "expected_readable_text": "http://www.pokemon.com/Pikachu_(Electric)",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "http://www.pokemon.com/Pikachu_(Electric)",
+            "text": "http://www.pokemon.com/Pikachu_(Electric)",
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/autolink.rs",
+        "original_sha256": "5ED5605CAD30ACE708BD19414C3D473A4B0A81313DFE7510D1CB1CA91F8122D8",
+        "selector": "autolink_parentheses_balanced: first original input/HTML pair, extension.autolink only",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Decode original Rust normal string literals, concatenate original concat! parts where present; preserve original Markdown/HTML, select first parentheses pair with relaxed_autolinks=false",
+          "Derive semantic target from source link slice; HTML escape_href percent encoding is serializer-only, not semantic URL normalization"
+        ],
+        "original_expected": "Original upstream HTML bytes; independently derive link destination/display text from the source",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "ck.autolink.brackets",
+      "input_utf8": "http://example.com/[abc]]...\n",
+      "category": "extended_autolink",
+      "profiles": [
+        "G4"
+      ],
+      "expected_html": "<p><a href=\"http://example.com/%5Babc%5D%5D\">http://example.com/[abc]]</a>...</p>\n",
+      "expected_readable_text": "http://example.com/[abc]]...",
+      "expected_semantic": {
+        "checks": [
+          {
+            "kind": "link",
+            "destination": "http://example.com/[abc]]",
+            "text": "http://example.com/[abc]]",
+            "count": 1
+          }
+        ]
+      },
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "upstream",
+        "upstream_id": "CK",
+        "version": "0.56.0",
+        "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+        "original_path": "comrak-0.56.0/autolink.rs",
+        "original_sha256": "5ED5605CAD30ACE708BD19414C3D473A4B0A81313DFE7510D1CB1CA91F8122D8",
+        "selector": "autolink_brackets_unbalanced: first original input/HTML pair, extension.autolink only",
+        "license": "BSD-2-Clause",
+        "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+        "transformations": [
+          "Decode original Rust normal string literals, concatenate original concat! parts where present; preserve original Markdown/HTML, select first parentheses pair with relaxed_autolinks=false",
+          "Derive semantic target from source link slice; HTML escape_href percent encoding is serializer-only, not semantic URL normalization"
+        ],
+        "original_expected": "Original upstream HTML bytes; independently derive link destination/display text from the source",
+        "original_expected_license": "BSD-2-Clause"
+      }
+    },
+    {
+      "id": "project.unfinished-emphasis",
+      "input_utf8": "*a",
+      "category": "input_boundary",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>*a</p>\n",
+      "expected_readable_text": null,
+      "expected_semantic": null,
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "attribution": "2026, Jiaqi (0x7c13) Liu",
+        "derivation": "Pinned CommonMark 0.31.2 delimiter/link/code/fence/line-ending/empty-document rules, manually authored before either candidate runs",
+        "transformations": [
+          "Encode explicit UTF-8 string; keep original CR/LF/CRLF and incomplete syntax"
+        ],
+        "original_expected": "Independent manual normative HTML, not parser generated"
+      }
+    },
+    {
+      "id": "project.unfinished-link",
+      "input_utf8": "[x](u",
+      "category": "input_boundary",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>[x](u</p>\n",
+      "expected_readable_text": null,
+      "expected_semantic": null,
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "attribution": "2026, Jiaqi (0x7c13) Liu",
+        "derivation": "Pinned CommonMark 0.31.2 delimiter/link/code/fence/line-ending/empty-document rules, manually authored before either candidate runs",
+        "transformations": [
+          "Encode explicit UTF-8 string; keep original CR/LF/CRLF and incomplete syntax"
+        ],
+        "original_expected": "Independent manual normative HTML, not parser generated"
+      }
+    },
+    {
+      "id": "project.unfinished-code",
+      "input_utf8": "`a",
+      "category": "input_boundary",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>`a</p>\n",
+      "expected_readable_text": null,
+      "expected_semantic": null,
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "attribution": "2026, Jiaqi (0x7c13) Liu",
+        "derivation": "Pinned CommonMark 0.31.2 delimiter/link/code/fence/line-ending/empty-document rules, manually authored before either candidate runs",
+        "transformations": [
+          "Encode explicit UTF-8 string; keep original CR/LF/CRLF and incomplete syntax"
+        ],
+        "original_expected": "Independent manual normative HTML, not parser generated"
+      }
+    },
+    {
+      "id": "project.unfinished-fence",
+      "input_utf8": "```rs\r\n中😀\r\n",
+      "category": "input_boundary",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<pre><code class=\"language-rs\">中😀\n</code></pre>\n",
+      "expected_readable_text": null,
+      "expected_semantic": null,
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "attribution": "2026, Jiaqi (0x7c13) Liu",
+        "derivation": "Pinned CommonMark 0.31.2 delimiter/link/code/fence/line-ending/empty-document rules, manually authored before either candidate runs",
+        "transformations": [
+          "Encode explicit UTF-8 string; keep original CR/LF/CRLF and incomplete syntax"
+        ],
+        "original_expected": "Independent manual normative HTML, not parser generated"
+      }
+    },
+    {
+      "id": "project.mixed-newlines",
+      "input_utf8": "one\r\ntwo\nthree\rfour",
+      "category": "input_boundary",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "<p>one\ntwo\nthree\nfour</p>\n",
+      "expected_readable_text": null,
+      "expected_semantic": null,
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "attribution": "2026, Jiaqi (0x7c13) Liu",
+        "derivation": "Pinned CommonMark 0.31.2 delimiter/link/code/fence/line-ending/empty-document rules, manually authored before either candidate runs",
+        "transformations": [
+          "Encode explicit UTF-8 string; keep original CR/LF/CRLF and incomplete syntax"
+        ],
+        "original_expected": "Independent manual normative HTML, not parser generated"
+      }
+    },
+    {
+      "id": "project.empty",
+      "input_utf8": "",
+      "category": "input_boundary",
+      "profiles": [
+        "C0",
+        "G3",
+        "G4"
+      ],
+      "expected_html": "",
+      "expected_readable_text": null,
+      "expected_semantic": null,
+      "expected_mapping": null,
+      "provenance": {
+        "kind": "project",
+        "license": "MIT",
+        "attribution": "2026, Jiaqi (0x7c13) Liu",
+        "derivation": "Pinned CommonMark 0.31.2 delimiter/link/code/fence/line-ending/empty-document rules, manually authored before either candidate runs",
+        "transformations": [
+          "Encode explicit UTF-8 string; keep original CR/LF/CRLF and incomplete syntax"
+        ],
+        "original_expected": "Independent manual normative HTML, not parser generated"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[package]
+name = "font-test-data"
+version = "0.7.0"
+description = "Test data for the fontations crates"
+readme = "README.md"
+
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+# do NOT create circular deps, even with dev-dependencies. It messes with google3 import.
+[dependencies]
+font-types = { workspace = true }

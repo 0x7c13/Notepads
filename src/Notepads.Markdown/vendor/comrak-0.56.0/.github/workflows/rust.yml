@@ -1,0 +1,127 @@
+name: Rust
+
+on: [push, pull_request]
+
+env:
+  MSRV: "1.89"
+
+jobs:
+  build_lib_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - nightly
+          - beta
+          - stable
+          - $MSRV
+    steps:
+    - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      with:
+        submodules: true
+    - name: Double test timeouts
+      run: |
+        find src -name '*.rs' -type f -exec perl -pi -e 's/#\[timeout\((\d+)\)\]/"#[timeout(" . ($1 * 2) . ")]"/ge' '{}' \;
+    - name: Obtain Rust
+      run: rustup override set ${{ matrix.rust }}
+    - name: Build library
+      run: cargo build --locked --verbose --lib
+    - name: Build examples
+      run: cargo build --locked --verbose --examples
+    - name: Run unit tests
+      run: cargo test --locked --verbose
+    - name: "Run README sample"
+      run: cargo run --locked --example sample
+  build_bin_spec:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - nightly
+          - beta
+          - stable
+          - $MSRV
+    steps:
+    - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      with:
+        submodules: true
+    - name: Obtain Rust
+      run: rustup override set ${{ matrix.rust }}
+    - name: Build binary
+      run: cargo build --locked --verbose --bin comrak --release
+    - name: Run spec tests
+      run: script/cibuild
+  build_wasm:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - nightly
+          - beta
+          - stable
+          - $MSRV
+    steps:
+    - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      with:
+        submodules: true
+    - name: Double test timeouts
+      run: |
+        find src -name '*.rs' -type f -exec perl -pi -e 's/#\[timeout\((\d+)\)\]/"#[timeout(" . ($1 * 2) . ")]"/ge' '{}' \;
+    - name: Obtain Rust
+      run: rustup override set ${{ matrix.rust }}
+    - name: Setup for wasm
+      run: rustup target add wasm32-unknown-unknown
+    - name: Build
+      run: cargo build --locked --verbose --target wasm32-unknown-unknown --lib --no-default-features --features cli,syntect-fancy,bon
+  no_features_build_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - nightly
+          - beta
+          - stable
+          - $MSRV
+    steps:
+    - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      with:
+        submodules: true
+    - name: Double test timeouts
+      run: |
+        find src -name '*.rs' -type f -exec perl -pi -e 's/#\[timeout\((\d+)\)\]/"#[timeout(" . ($1 * 2) . ")]"/ge' '{}' \;
+    - name: Obtain Rust
+      run: rustup override set ${{ matrix.rust }}
+    - name: Build and test with no features
+      run: cargo test --locked --no-default-features
+  all_features_build_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - nightly
+          - beta
+          - stable
+          - $MSRV
+    steps:
+    - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      with:
+        submodules: true
+    - name: Double test timeouts
+      run: |
+        find src -name '*.rs' -type f -exec perl -pi -e 's/#\[timeout\((\d+)\)\]/"#[timeout(" . ($1 * 2) . ")]"/ge' '{}' \;
+    - name: Obtain Rust
+      run: rustup override set ${{ matrix.rust }}
+    - name: Build and test with all features
+      run: cargo test --locked --all-features
+  clippy_format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      with:
+        submodules: true
+    - name: Obtain Rust
+      run: rustup override set $MSRV
+    - name: Check clippy
+      run: rustup component add clippy && cargo clippy --lib --bin comrak --tests -- -Dwarnings
+    - name: Check formatting
+      run: rustup component add rustfmt && cargo fmt -- --check

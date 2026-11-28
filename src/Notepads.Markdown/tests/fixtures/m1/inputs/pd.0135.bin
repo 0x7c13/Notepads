@@ -1,0 +1,7 @@
+[linkme-3]:
+   [^foo]:
+
+[linkme-4]:
+    [^bar]:
+
+GFM footnotes can interrupt link defs if they have three spaces, but not four.

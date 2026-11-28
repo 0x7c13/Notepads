@@ -1,0 +1,44 @@
+{
+  "source_key": {
+    "document_id": "04030000000000000000000000000001",
+    "revision": 1
+  },
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          24
+        ]
+      ],
+      "readable_utf8": "A中😀é👩‍💻B\n",
+      "logical_utf16": 13,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            24
+          ],
+          "logical": [
+            0,
+            13
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [],
+  "payloads": [],
+  "structures": [],
+  "reference_edges": []
+}

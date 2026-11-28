@@ -1,0 +1,860 @@
+{
+  "description": "Byte-identical test payload is stored once; original upstream revisions and hashes remain applicable.",
+  "originalRevision": "fontations-cd4aaef57887dd1d8a5875e38c406843e66c9cab",
+  "retainedRevision": "fontations-b373cdbc6043a791fb23b3e0f413649458f5e63a",
+  "identicalFiles": [
+    {
+      "path": "font-test-data/LICENSE-APACHE",
+      "sha256": "EBA684204073ED715C4ABB48129ACDFD2BFF8AE48339E6A7DA3B341D3027B7F0"
+    },
+    {
+      "path": "font-test-data/LICENSE-MIT",
+      "sha256": "7B4C9A3946DFCEA7967582760E963E27799E225DCF20565C8EF55324BB017427"
+    },
+    {
+      "path": "font-test-data/README.md",
+      "sha256": "249BE2953072680ABDD3A599129934BD6304C63AA878FDAE6CCDAAD9D51019A4"
+    },
+    {
+      "path": "font-test-data/src/bebuffer.rs",
+      "sha256": "8FAAE37F3095C0F0238136F000806B494ABFBF49E794B45FBF30C39FEED2156A"
+    },
+    {
+      "path": "font-test-data/src/cmap.rs",
+      "sha256": "994F74D59420B4D36BB6B040990DCB95963F21DC5CF3AA892A3A9564E6357A5D"
+    },
+    {
+      "path": "font-test-data/src/gdef.rs",
+      "sha256": "0DC8D456A97F47ADF9A15FBF5220DCEF509E93EB83B3F3CDABF095EA8DA63AD9"
+    },
+    {
+      "path": "font-test-data/src/gpos.rs",
+      "sha256": "F773FF3D834B87CFECF06505EB1C3314E1144D11BB548993582EDCA2EF8282C6"
+    },
+    {
+      "path": "font-test-data/src/gsub.rs",
+      "sha256": "008EBBB926A16D9542D0E6C4C17CE4ED7EC5056A842605B665342DBB5676514C"
+    },
+    {
+      "path": "font-test-data/src/ift.rs",
+      "sha256": "17289FB86120C6A72133902DDAB10594846F8B614A79F3F9A6D1C1FC75CCCB12"
+    },
+    {
+      "path": "font-test-data/src/layout.rs",
+      "sha256": "1E82029AB16984DE4C2A917BF4AFD7BC68B5B4848E8BE4496FA6D591EBF42A5E"
+    },
+    {
+      "path": "font-test-data/src/lib.rs",
+      "sha256": "3CEC380BAA5AFFC176A6E4EE00F8C0AC0E14114EBDCB15848BE8B38D6B403423"
+    },
+    {
+      "path": "font-test-data/src/type1.rs",
+      "sha256": "9D77FCF4876D0EB762EBEC85C1F624513A810A90AC2C69829F72EA7CBD59A894"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_clipbox",
+      "sha256": "493F0751F1308DE6A1E3A1C892303F574DD04DC738832415EDB7D543CA3B96E3"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_clipbox_CLIO_200",
+      "sha256": "B3F21821342FD8E006993D0F9A493D536A410A0AABFFBF29A91214D3E191E0F1"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_colored_circles_v0",
+      "sha256": "2EDEE56060D29EF516B2A65833A0F2F9E852653B30CFD98B609D562C072346B4"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_composite_mode",
+      "sha256": "E4E3E0C8D555B7E92E887B7EF023DFB26BA4F85B73428F4034B0B29213E77785"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode",
+      "sha256": "94EE0EB0E1D89C4DD792E323787D2EAC1666ECBB354467AF7713C4ECF918B7DF"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_COL1_-0.25_COL3_0.25",
+      "sha256": "2D90472C4D90CFC816D4B3439FD1132D60090BAF14378615C99E96EC322F719B"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_COL1_-1.5",
+      "sha256": "0A507D122E90122042DA090D84926F129CB75F28542D75A0836FF8CCAE2CD796"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_COL1_0.5_COL3_-0.5",
+      "sha256": "2DE477821620119E42D2BAF62806113E0DA9715206BFEA00E15E00E88F9B7FFC"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_COL2_-0.3",
+      "sha256": "B4EFB1BA7F2CA72D166328ACEDC41C76CD6C587B688FA8AB18B94DFF5AAA6DCF"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_COL3_0.5",
+      "sha256": "5082E2CD9F63A76CC80F78000FADDA9C8E36EFC8E720189305A594AD224DB079"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_COL3_1",
+      "sha256": "5D80188D0985C3C9BCCF33C787E9B4854BAE427B72ECAD69068154305FB3EF60"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_COL3_1_COL2_1.5_COL1_2",
+      "sha256": "26B16C07DA5FB7AFB50915E63EB4E9FA49D9758E72AB4E5FE9DD91D53508EABD"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_GRR0_-200_GRR1_-300",
+      "sha256": "8AB5CD5AC45A842C5DCB45C6221F538E265980410A0076B6D838E3D225EAFB2E"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_GRR0_-50_COL3_-2_COL2_-2_COL1_-0.9",
+      "sha256": "8B12ADF30FD94BC313E7AAEBADA9825D3D0B42D80794F04EADB1EA0009390393"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_GRR0_-50_COL3_-2_COL2_-2_COL1_-1.1",
+      "sha256": "DDBB75BDEA884DD67479990EABA0F21C8D4C453B19984E99035B808CE59247D0"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_GRR0_430_GRR1_40",
+      "sha256": "DD786E4745A3986CD6AAE85A0815FBA5E1AA5F713751B6D1DD9CA417BBDC623D"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_GRX0_-1000_GRX1_-1000_GRR0_-1000_GRR1_-900",
+      "sha256": "6C2859575E6E4C4FB65E1D273B311B8DF9DF5C0C137366AFA44FDD28A910BB46"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_extend_mode_GRX0_1000_GRX1_-1000_GRR0_-1000_GRR1_200",
+      "sha256": "523621AD152644C5617C668622FBF4E7911C48027D35F4F4BB548409E113B8B9"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_foreground_color",
+      "sha256": "FDABD82EE1B9EFC2FF6748C444B7AEEE4B0212334A2C614C7A3F33FDDD85922B"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_gradient_p2_skewed",
+      "sha256": "1D401C18C2A4A6DB5163AED58C7F61BF8F0F976272C6790F40844C12680A8FA5"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_gradient_stops_repeat",
+      "sha256": "86A1206662105D524A8FF9FF080BC274498B9F0F964A305315308B235CEDFE47"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_no_cycle_multi_colrglyph",
+      "sha256": "5EE871582F07DCE037C7D219AB932B0F3F953CC312050C3680056278A9865035"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_glyph_nested",
+      "sha256": "BE594FC7819631AB86EE2CE0C34314C164E7F6F14343E892589F43FC9B44ABE0"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_rotate",
+      "sha256": "5E9A2FF59386475A7AA353FB8666C5525960144707D54E1DD2DDCC36D7AFF9CC"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_rotate_ROTA_40",
+      "sha256": "5C1E1B3DF49E037954EBDBE0AAEF059956B25EA8F8643D5FF84DF932506DA955"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_rotate_ROTX_-250_ROTY_-250",
+      "sha256": "43289A45A2644C7F3EC89DAE4853DE3127E6A9726A94A3F579389F2D697DDF0D"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_scale",
+      "sha256": "6D116E5C9CD2CD5F6025EE9875246B07A55C7777779794B904F487BF822295CD"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_scale_SCOX_200_SCOY_200",
+      "sha256": "91ECCB36C6B57DF776AE1171CB46EEB4D4DCD15A20ADC15BF695220C16753824"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_scale_SCSX_-1_SCOY_-1",
+      "sha256": "01ECDA0ADC995F17A11515433B18AB12BDE06CE25D0E0C9EBDCFA059D5041C6E"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_scale_SCSX_0.25_SCOY_0.25",
+      "sha256": "03A5842D9150122DFB76DC3C66266846EB83F749E2A01DF7E4E20CFF3952ACB4"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_skew",
+      "sha256": "D8247B57DCD776BA22A03EA5416F030D3244569B24915C5728A31AC7FA2D7CE1"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_skew_SKCX_200_SKCY_200",
+      "sha256": "FCEA5012E552F5AD5FFE480DE91C08A6EBCFB543CD07614949CB630A89E772B6"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_skew_SKXA_20",
+      "sha256": "CB930BE070ED9F6511BF82DF75DBE8F8A3B37505185141D684D83B89B5DDFB7F"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_skew_SKYA_20",
+      "sha256": "0F4483E63C8640B4EE20727917C6982C9ED6D236593AAF7EC77BBEC6071F621E"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_transform",
+      "sha256": "F61B1F766B1635580411C0FF4E55FE30F5AD950D04C99728FECD0DAAB53E857B"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_translate",
+      "sha256": "D26BB40493A147BCFD2FAAB0770099D8BAFAC3FC4700850E39D30DD6D555CB19"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_paint_translate_TLDX_100_TLDY_100",
+      "sha256": "8019F23589E2EB47A87F43C82682AACA674258ACF2D1355EC10BB1C845FED205"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_coincident",
+      "sha256": "42A0DAF4176B76651A2447388B23CC4D690AC08127253984CFC718BB86F9190E"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_varsweep",
+      "sha256": "5BA2DB46E7F5AAD1CB9FAABAFCFAC1F248DA0B05FBA261DF60FAC2F4462B0C63"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_varsweep_SWC1_-0.25_SWC2_0.083333336_SWC3_0.083333336_SWC4_0.25",
+      "sha256": "66CBA3B39608F56C3F95E71108B64F80DDB59D9DDF480A2567C2F49C5F467104"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_varsweep_SWPE_-45",
+      "sha256": "A3E873DF255E35FB416EA521B34A40C44B27ED0C9DB0322E73535FA2BD196A27"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_varsweep_SWPE_-90",
+      "sha256": "17773BE2A7D933A8CE860C27A341656C6BA5D2E177B5F4C0B9DA7BCDF5334456"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_varsweep_SWPS_-45_SWPE_45",
+      "sha256": "480E241DA56A9022F3A746BB93DBACBBED054980410B78A94ECCB42BE7F2470A"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_varsweep_SWPS_0",
+      "sha256": "5BA2DB46E7F5AAD1CB9FAABAFCFAC1F248DA0B05FBA261DF60FAC2F4462B0C63"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_varsweep_SWPS_45_SWPE_-45_SWC1_-0.25_SWC2_-0.416687_SWC3_-0.583313_SWC4_-0.75",
+      "sha256": "758FF002209D03029E3DB5258AF875BD0C9D4031CA58B0A1A7D7BD44B8CA1FF4"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_sweep_varsweep_SWPS_90",
+      "sha256": "C65424C5267078FA4BCDD88211D08898B4DEDEC66421C98D7456A48608FB10C3"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_variable_alpha",
+      "sha256": "B58A962573C0D057F96FB4539C736778D7D9565F68A16997F75E8AECAA736798"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_variable_alpha_APH1_-0.7",
+      "sha256": "66A8EFFAFFF1E9C77C3BE14D82E63C014D61E1254BEDCA27269C48BD46AACC32"
+    },
+    {
+      "path": "font-test-data/test_data/colrv1_json/colrv1_variable_alpha_APH2_-0.7_APH3_-0.2",
+      "sha256": "4E17A608E3741B1F0A3924A5BF47DB118AD3B620844AFABA9875C3795DFD8569"
+    },
+    {
+      "path": "font-test-data/test_data/compile_fea.py",
+      "sha256": "F7183D63955835CA5B08C47F5C2CA90F6566A65A04968BB84A651A940413DFC7"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/cantarell_vf_trimmed-glyphs.txt",
+      "sha256": "0E076D7D5590DABC1D6B6F105FA0E958878CFFE490935F270A333640AC119961"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/charstring_path_ops-glyphs.txt",
+      "sha256": "53E7495A2EAC6575E54D64BBABDD26C2E509F7A71D341F8D484F8F7EAE6DB651"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/cubic_glyf-glyphs.txt",
+      "sha256": "EBA976896C0CBE83D8BAB7DB9E42B7D3DBC3B8E48A7217F05404607422523C41"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/cvar-glyphs.txt",
+      "sha256": "FFBA22B22F0E3BB98D4438385E519A3B6C0AB6A64A1DB1A2857C05973E994869"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/glyf_components-glyphs.txt",
+      "sha256": "2ADC1B5E1E852F748D6D0F523D86564071AA62F1C4FE1CD79F6090F2F9CCCCEA"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/hvar_with_truncated_adv_index_map-glyphs.txt",
+      "sha256": "9C766D433593374616FF0E9A106FA06CF6168E00D768881F2063E8083AEBD585"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/interpolate_this-glyphs.txt",
+      "sha256": "727C67FB58770FD0CFAED105E3C55856BDF35EC7B24B364AE3C7259CFAF5A86C"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/material_symbols_subset-glyphs.txt",
+      "sha256": "B0FBF18EED2DACCDEF92BFEBF27DC8BAA62B2424668D2585422490A4A24BE6E3"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/mostly_off_curve-glyphs.txt",
+      "sha256": "E8BE899C9F92DB7B72BCF682C9E6824771A1B8C713AAB0A6547094837F7BF0FB"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/noto_serif_display_trimmed-glyphs.txt",
+      "sha256": "8D40D7D0537EC156520E311E46FA5521F48A0BD18F486B37851EB45F8D0E3A67"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/starts_off_curve-glyphs.txt",
+      "sha256": "FBAF4ADDC97B9E13E64CC5C2FD125712466F15DD2BC37267DD0A1332BB529B3A"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/test_glyphs-glyf_colr_1-glyphs.txt",
+      "sha256": "0AC512773E9D2BD96E51D7B0C554887CE8F3B36D2C60A1B5472AE6FDBB6E5EF7"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/test_glyphs-glyf_colr_1_no_cliplist.subset-glyphs.txt",
+      "sha256": "34446D4209218DD8FC10A3C08D119AE618A40D33F577B724019B6F14847BF5B4"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/test_glyphs-glyf_colr_1_variable-glyphs.txt",
+      "sha256": "A2749F02EC0288B58CBA357C8512EB01D3055BEA25EDC792341F772BD67B973D"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/varc-6868-glyphs.txt",
+      "sha256": "CBD7BCC7EF823D807390A081F782BC74767D7C629B8C70EF65896590C52ADB0E"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/varc-ac00-ac01-500upem-glyphs.txt",
+      "sha256": "B7DF1D7D90714CA59E9A199F52703EBFDD71DDF637FB03DB9881263B2A278516"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/varc-ac00-ac01-glyphs.txt",
+      "sha256": "1286EAAA5000846BBE0EBD6C6D9AB751DAAD7B196B68485802B53A847307E572"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/varc-ac01-conditional-glyphs.txt",
+      "sha256": "B7DF1D7D90714CA59E9A199F52703EBFDD71DDF637FB03DB9881263B2A278516"
+    },
+    {
+      "path": "font-test-data/test_data/extracted/vazirmatn_var_trimmed-glyphs.txt",
+      "sha256": "6916B7F64A1C38839F5EBCB9A940D3C7B6B3AA31A938DF23B516A24C36DEA4B5"
+    },
+    {
+      "path": "font-test-data/test_data/extract_glyphs.py",
+      "sha256": "DD93EDEC8D09CDE046A9C5D30BBA80E6C24C9D56F75F4E0D5727D2127DA947D6"
+    },
+    {
+      "path": "font-test-data/test_data/fea/context_closure.fea",
+      "sha256": "29D569924A03FD9B0CDA25CEC3205E811B202E466BCC57578BD99FD12F552214"
+    },
+    {
+      "path": "font-test-data/test_data/fea/context_closure_glyphs.txt",
+      "sha256": "4C063D21431A12B2D1FE70D744B773DEBD11EF5C46840821D740FF4D73C8F664"
+    },
+    {
+      "path": "font-test-data/test_data/fea/context_closure_unreachable_rule.fea",
+      "sha256": "87444AD7309CC9FDF5FB78705D3C2BD29E03E324F1AF5BD38A6835E4243F9BAE"
+    },
+    {
+      "path": "font-test-data/test_data/fea/context_closure_unreachable_rule_glyphs.txt",
+      "sha256": "30982B5711D894066D67F135C15DA7EC34B52C74E8BC6FF7DE9625ACB6294D83"
+    },
+    {
+      "path": "font-test-data/test_data/fea/context_only_reachable.fea",
+      "sha256": "D0486B264386C42163D4C2297B91F61DA207187D361E27140ADA2D308322DCD2"
+    },
+    {
+      "path": "font-test-data/test_data/fea/context_only_reachable_glyphs.txt",
+      "sha256": "14F950A206386141E66DE9E8D555E5449D8D791ABC7A0AFC41E85299CE8994B5"
+    },
+    {
+      "path": "font-test-data/test_data/fea/recursive_closure.fea",
+      "sha256": "4CDC3A14AD007EA87DFE8359F51C1107B31EB5B87E84AF3B5C4EE5739DEC4D1A"
+    },
+    {
+      "path": "font-test-data/test_data/fea/recursive_closure_glyphs.txt",
+      "sha256": "4782B48482051096075D4E1FDBDC9655AF9486957C36686265ED40CF4D452435"
+    },
+    {
+      "path": "font-test-data/test_data/fea/recursive_context_closure.fea",
+      "sha256": "9625121663CA49B728A945CB8A8BF1710059965191A28CD837F73377542F34B4"
+    },
+    {
+      "path": "font-test-data/test_data/fea/recursive_context_closure_glyphs.txt",
+      "sha256": "53E1E8DFFD72B440A522031F3A6942DEF67F46D7F18CD3456EAD8FBC3E725590"
+    },
+    {
+      "path": "font-test-data/test_data/fea/simple_closure.fea",
+      "sha256": "5543409930EF3C630BB8E3C587289E0C56ADF5D38C25A8413562BD29009CA8C3"
+    },
+    {
+      "path": "font-test-data/test_data/fea/simple_closure_glyphs.txt",
+      "sha256": "389159DBD63C45A1F59858B08A38D2C04633470BE55A9EA1E1501417C7351D6C"
+    },
+    {
+      "path": "font-test-data/test_data/fea/variations_closure.fea",
+      "sha256": "B5746665E1EEF0B768D754F59A4BA266D5E6B8BBFD5A0B09614CAFC94BCB8857"
+    },
+    {
+      "path": "font-test-data/test_data/fea/variations_closure_glyphs.txt",
+      "sha256": "880553FCA8FCEA94E325EE2CFB48E5A985CC797F39A14CC6D3CEDECFEB2AE4D2"
+    },
+    {
+      "path": "font-test-data/test_data/README.md",
+      "sha256": "74AA99ACB70109398B6CA62963D1365931A784174CA9586F32EECF5B07408ACA"
+    },
+    {
+      "path": "font-test-data/test_data/rebuild.sh",
+      "sha256": "8F42F305625BBE5561AA3D9735F9FD1549009B488FF21A6B312C5038B17C744A"
+    },
+    {
+      "path": "font-test-data/test_data/requirements.txt",
+      "sha256": "9B10A91E7D415ABEDDD6F687B9721BB99A2382184B1613B8CCEEACC0342BF7F5"
+    },
+    {
+      "path": "font-test-data/test_data/ttc/README.md",
+      "sha256": "C3E003925C2F9A352C12F4EA82475F0D2F556CF2B9603BCA123747DAE622D0CF"
+    },
+    {
+      "path": "font-test-data/test_data/ttc/TTC.ttc",
+      "sha256": "A8521588045ED5F1F8B07EECAAC06ED3186C644655BFAC00DD4507CD316FBDC5"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/ahem.ttf",
+      "sha256": "F0A92CD0CC45735591C9B5B1FA8AECD5194E8DC518895CA22AF94A46C23550DC"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/Amstelvar-avar2.A.ttf",
+      "sha256": "31BB38AAC3A9F94DC3FFA6D3DC87B9006C4059058FDE083778255012DE91DB29"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/autohint_cmap.ttf",
+      "sha256": "B8ADA2E4BBFE6A35FB738E15F3177374FBDD28432022F75D4F1DF75D0D9DD0B8"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/avar2checker.ttf",
+      "sha256": "0BA0A52F502F27A7D5E70A62E1B16A70A11B1D054B51D490480B127E1643F790"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cantarell_vf_trimmed.ttf",
+      "sha256": "4B3C5E4DBC6437F04FEA1FD3C45F96746C8851B4EBB09881B47CC4E44C5ECFA4"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cbdt.ttf",
+      "sha256": "15E37B3D03BB7FB3200BA07357432832D507EFDD4EEDF18B440FFF4F56F2C7B1"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/charstring_path_ops.ttf",
+      "sha256": "57539CBEBAC7537621C7C94D46DF6CFC7C90E1C33A737B00792C3AB6F1A0009B"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cmap10.ttf",
+      "sha256": "F5C18E994C2691CE66100BC0BDFAB85367E0148EBD2CC1D210E7B4330586232A"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cmap12_font1.ttf",
+      "sha256": "1134860FCFA1AB18AC0F4020C30B40AA8CAF6BF0287DBC3854CCEB97B169A34D"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cmap14_font1.ttf",
+      "sha256": "9E3F0FF71BF961702F81F485030095AD78794654C9D6B3B1E1167469B9F8C30B"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cmap4_symbol_pua.ttf",
+      "sha256": "E3426DC8EB5C1F5AB301B52D74338FDE5F1D1687CCBA9B5FCCFFB8B7BE085163"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cmap6.ttf",
+      "sha256": "0C6926C4A334201A67377B8D990FE5DA4CF6241099E0DDF4E31AE4299DB9C9EE"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/context_closure.ttf",
+      "sha256": "91BAE652FB23F51AF31B78E30D46F1BD5B2250136F2E545D3AC87C44BEB934DF"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/context_closure_unreachable_rule.ttf",
+      "sha256": "11A76788D94170B330543C320AA18BEE1CFDE5BF8055AF7CAE0C49D5CFDA8546"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/context_only_reachable.ttf",
+      "sha256": "AFFF267FD0C60D1F3802CB9A534112D5CED3FF7A6BBC7F4F2E53EC48F3C9DE26"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cousine_hint_subset.ttf",
+      "sha256": "38E0A9957437763609BA58F5DC27CAD1865B77A13C6CC1190237E372B3B517E2"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cubic_glyf.ttf",
+      "sha256": "E039B9E77CB0B75B0CE6BBFDB7DC912A02F2862090F55EE1455F7B33C3CA22E2"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cvar.ttf",
+      "sha256": "9E7DB56F3FD846CC6A613C1873E826B967562F2BB4418190E2095839E4DB94AB"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/cyclic_context_closure.ttf",
+      "sha256": "62DCFCC664461B83A7AD9E15EB8830313A3D7297F0E8C2BE29F2CBD71858E7E3"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/embedded_bitmaps.ttf",
+      "sha256": "198A925444D20C08FF30A85F9BF56746A5D149685AD0E99F3A7F47A40B295DCA"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/glyf_components.ttf",
+      "sha256": "54EA04E57233ACFB14AAAE3ABA80B66DBD16DA7C3F0CA610432B175B0D3E9D7F"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/gvar_use_my_metrics.ttf",
+      "sha256": "A88B0850A2A8D2CFA972C3E8B0AB9EF15A45C91138896D6905A34F617C3F70DD"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/hvar_with_truncated_adv_index_map.ttf",
+      "sha256": "6549BBDE7CDB55869D167A2587FAD20DD33503A3B5C63DCD74B5BE20D1978D1A"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/ift_base.ttf",
+      "sha256": "AC68B75817F0483D28FFCC2A04F2072FEA5161068C292C3FE0354924BA6D512E"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/interpolate_this.ttf",
+      "sha256": "CCEC81F83F4DE1370C1E787471CCCC8E163063C26A5A42117F32B48926C1E2A0"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/linear_gradient_rect_colr_1.ttf",
+      "sha256": "F897658789D8C1D62DAF65F89D1F3FCF015CC4FA16028586445C4F90685DE494"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/material_icons_subset.ttf",
+      "sha256": "3E28A0BA5BD709F3184828CFF1CAF55ADB826239EF5F3EE76978890FEF2E19F7"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/material_icons_subset_matrix.ttf",
+      "sha256": "FC54C509AB53C87B9A37F7329E47216DA5F5E27141208615D1FF87A0DD07CCA7"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/material_symbols_subset.ttf",
+      "sha256": "FDD9BADE0CDE742725168298E39291309C95A826ACB979CEF1142063F17F44AB"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/mostly_off_curve.ttf",
+      "sha256": "58F156957E7E3EE60CD0491FA68FE517416D1DE2349D0FEBD60D8D00421BF028"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/names_only.ttf",
+      "sha256": "5B6607D13EC365CA5D706C7032BDE1E80727FA219A51BC49FA6C9A0E80634A24"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/NotoSansJP-Regular.subset.otf",
+      "sha256": "D3CA35B708367BFCBDA288048FCD6483E609D618511A913ECE34F4278E93A258"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/NotoSansJP-VF.subset.otf",
+      "sha256": "9A1D6C4E5AB1321FADE0BDE8905EE12EC7526C544223B55A0F20525CC3FA8EB5"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/notoserifhebrew_autohint_metrics.ttf",
+      "sha256": "2C0CD2A2C2CCB8B11A7B9CD6893602E1BF99EA9199B27531B0B78792740A8B0C"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/notoseriftc_autohint_metrics.ttf",
+      "sha256": "ABF3BCACDFD5B6490075EC772B25A17E7941992AD76A3C7FE47C8959443D38E4"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/notoserif_autohint_shaping.ttf",
+      "sha256": "9D9171950D1DE9AF33D97FC556E25CF2F58C969A1EC805D9B6A816AC020EB414"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/noto_handwriting-sbix.ttf",
+      "sha256": "8D9D94E60E93B72FF53C4C249954AA333C764DC6E40301A87DFE16834C134E3B"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/noto_serif_display_trimmed.ttf",
+      "sha256": "BD4D2631C3004B2C186E1D4F2BE410D11158C3CEEF4255474D0656393331E05D"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/recursive_closure.ttf",
+      "sha256": "900E9C8BA8F0D522F053E124065FB9DC39432D40CAC03061EBBEF567E0BADB18"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/recursive_context_closure.ttf",
+      "sha256": "877A432A0F730AFE3702C905C1B4B98B0A735D0D26A20E195C8D5D48AC396448"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/simple_closure.ttf",
+      "sha256": "BD332102C0C37EB787CB5382D23498D6E875C246C5B72369EB911D72C8ABA863"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/simple_glyf.ttf",
+      "sha256": "426163779071781433BF33D55449EC343CD13E1439D8F83747DC5B5655875D3D"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/starts_off_curve.ttf",
+      "sha256": "E61D70F6C959C0092630E40B3782A3A60B65205948DC7E9FFD6F1580A26E5110"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/TestMORXEighteen.ttf",
+      "sha256": "F515B0E5B3A0D517FC1598FD5F4374451F6C1C88C433A646C104A8AAB4345CEB"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/TestMORXFour.ttf",
+      "sha256": "D80EF2FB8CFE47D08D9736E7014669FE0672A3319D2DCF693FC8D3600DD85070"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/TestMORXFourtyone.ttf",
+      "sha256": "9FDCCA5F5D0939E7D8619E47B69C28B3D0579A04DE26A8FBE80F4390B9DC8013"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/TestMORXOne.ttf",
+      "sha256": "FA907C56191881A5734CBBEBEA55AE6DDBF3BA92C15093FB6EDF0ECF5B87D7AD"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/TestMORXThirtyfour.ttf",
+      "sha256": "5C71476AEB3C53AE370BD422969E964C524CBF0DD5494B5675054BB750C1CDDC"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/test_glyphs-glyf_colr_1.ttf",
+      "sha256": "7A69DEC6D8191CF7E3B9B59DE362B1D76007C322BE83B09B23E7C4B3940A5669"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/test_glyphs-glyf_colr_1_no_cliplist.subset.ttf",
+      "sha256": "E2F1703EA7168B47F25694931075D8BB4429F7C7F021653214A1490A011492C9"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/test_glyphs-glyf_colr_1_variable.ttf",
+      "sha256": "5647DE2386D42946624145A43E80982978727DD27701BB38B791474B8417B91F"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/tinos_subset.ttf",
+      "sha256": "F443F99843977AB03549BFC31CB6F2413416F04A06A0EACAE8815B537EC5CCA0"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/tthint_subset.ttf",
+      "sha256": "CD80E0AD893571D6EF6359EA2CB823BDE807ACEAF066DA033D8208FDBC86EBE5"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/varc-6868.ttf",
+      "sha256": "0015A3A87295A5522F87E32AF0FC9D56D667C23C78150B359BE1A65705ABEAA7"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/varc-ac00-ac01.ttf",
+      "sha256": "0D84BDD119C376AE3A666C71516C6AEFADBD2EC26371A4FC5DCF695F710447C2"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/varc-ac01-conditional.ttf",
+      "sha256": "3D6ECAE82B80870C4F4305FCEBB520FEC1B76D4C4EDC7EB8ADAD10BFDC5433C1"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/variations_closure.ttf",
+      "sha256": "0EE3BCC59069B3FA4942AC9B9E6E809C8D8BAC6879BB49F98A7859769EBA7F39"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/vazirmatn_var_trimmed.ttf",
+      "sha256": "C6F1E46D4ED8C59E14B5A90AF56378CA9D6C39BBA218BDA643F6FC0764F8DABB"
+    },
+    {
+      "path": "font-test-data/test_data/ttf/vorg.ttf",
+      "sha256": "B6F28D136848A9B94638C8A199DCBF0CCCB83593912D8F4D7BB12A8ECC0E31DC"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/ahem.ttx",
+      "sha256": "CAB0BFA149E117DEF166DF5BC6F70923D64EE51E72924F03D61263FC774DD3D8"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/Amstelvar-avar2.A.ttx",
+      "sha256": "35A56B4B612259A38B331807468AE137A84E118279B65073D7E84C004759C3B0"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/autohint_cmap.ttx",
+      "sha256": "BD6B189179A3E2E20E16B0B7324FA4F0DB6EB09F0F30665DCBAA74C5BE8B19E5"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/avar2checker.ttx",
+      "sha256": "85BB53EF198FB7A244B432163B1DE6525AED1D27654F4B8684DB2BB471ADA903"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cantarell_vf_trimmed.ttx",
+      "sha256": "B57D3BCC82CD24295A8F0AE3E32158E1FEC28C7DB465E41B9A449B9839C519E7"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cbdt.ttx",
+      "sha256": "A4135C884D4E7A064AC230589F8F55120064B52698E10EC341964CAD310722C4"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/charstring_path_ops.ttx",
+      "sha256": "42ADC74B98EC4BFB8BE94D775DCC88D332E3357D466AB5CE9275099F5534E9BF"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cmap10.ttx",
+      "sha256": "237BEFAA3D22DA512D472798FF47FDB146F5A339436C4B9B922E26C4318A0042"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cmap12_font1.ttx",
+      "sha256": "3A5FD9EE498C560D8132B5AD319A8FBCBF29E43FF3E843E23CE86984BFC2C512"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cmap14_font1.ttx",
+      "sha256": "C3F84A54783F0BCA81F90C4EA6676832C0CE1B53605728D8479B524D42C11673"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cmap4_symbol_pua.ttx",
+      "sha256": "1078300DC7557E2DAAAF0E33FBB649CD1A04C090AD638869AF344CF2BD5F07C2"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cmap6.ttx",
+      "sha256": "6D8CF96CC6B65F67CF31B548D7E6F6DB13C334AEDFB773D3D791596AE761BE2D"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cousine_hint_subset.ttx",
+      "sha256": "06D261ABD81F81DA9FD9B6737BB07CEE88CF3391353333DC579694EE3F320865"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cubic_glyf.ttx",
+      "sha256": "6C4C75FA5025B41B06F25AF551C21D47698AFC9B72E7FF3B5CB758CACD5B6897"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cvar.ttx",
+      "sha256": "970F6F5F3C6DEB5FC6BA32826E9CC723DF8C50655711FDD610BD954EE4D66A18"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/cyclic_context_closure.ttx",
+      "sha256": "39ADBD94EE38F0268F35280F34777BE689262AE93815C335CFA6EF8D24A95D1E"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/embedded_bitmaps.ttx",
+      "sha256": "80F7853A7D838675F7D3ED9D6151950E80D3A7458616E4DE9914A0C5F54292DE"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/glyf_components.ttx",
+      "sha256": "F21A69C07981CC3C072F462BC5A21FCAA31083FF4FD738998F328F398F0FBE25"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/gvar_use_my_metrics.ttx",
+      "sha256": "5CA2354FE9421D089407A83D7B0B38DAB572F7A1E4766C1FBCDFE63FEB9728FD"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/hvar_with_truncated_adv_index_map.ttx",
+      "sha256": "316E19B40287E8573CD0F3600995538230114F6A36F7EA216773732EB547BCD9"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/ift_base.ttx",
+      "sha256": "9722A58367CBF66CEC14BE643D0DF64CA6F69EDFD408A66B3A3297513805DB8C"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/interpolate_this.ttx",
+      "sha256": "706DB0B89D22A7DA4C604DF16BA4DD589DFB31843DC8A14FD1B21BEE1866AA44"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/linear_gradient_rect_colr_1.ttx",
+      "sha256": "1DD729591F649C5788B8A9B16F03C78ACF353844DC55BBFFBA081F479FF60304"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/material_icons_subset.ttx",
+      "sha256": "2DE67AB5C49B01A46E1F8D951594C4D4282E5A21D33B83DCA655592F22FF718A"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/material_icons_subset_matrix.ttx",
+      "sha256": "049D5ABB4D36427F505C03894E7214DC63BB11394DE8F162018699E3993776DD"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/material_symbols_subset.ttx",
+      "sha256": "99EF6A743541EC714A30E5888469E65587770FB30EEF6AB117C4A909DF9CBBB8"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/mostly_off_curve.ttx",
+      "sha256": "F3829B4F7544C200CFF406344D08A4BB8F37952BC8C8BB40F662470ED41C12B8"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/names_only.ttx",
+      "sha256": "0C271030BF978AF292BB2BE0C8561F2A99ABFB23BB413D2C71F3270EE16C7A41"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/notoserifhebrew_autohint_metrics.ttx",
+      "sha256": "B2F125F36FA7877A236EDB6A2D7CB573E9A3B0423F3304493B5B053FDB1D747F"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/notoseriftc_autohint_metrics.ttx",
+      "sha256": "3A2738D325DB9829707F9F1C22AEB30D6C5F7C3BDFFC55EB05201B55A8A7E6AD"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/notoserif_autohint_shaping.ttx",
+      "sha256": "2A93C824AC69687E6EA1CEA45D0AD22C91F8827ACA679B2898023FDE4835B2AD"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/noto_handwriting-sbix.ttx",
+      "sha256": "AD210CBA1C87B59CF361B672AFECAC86E102DA4F4284EA5F659D418B80CCC2F8"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/noto_serif_display_trimmed.ttx",
+      "sha256": "2AFFDC8293DDADD59082BCE0C7BBF7FA4E44B65F1E26139F9206C8642365BB77"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/simple_glyf.ttx",
+      "sha256": "8A9E91D686CCF061603962889EBA72DCFF5C91F68B43AC499E0D57C7CFCCDFC7"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/starts_off_curve.ttx",
+      "sha256": "755E505C446502C3F20EF709D4960726C42F5F1A4B4256EB42899AC8493289E8"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/TestMORXEighteen.ttx",
+      "sha256": "5CB292605E96432A7503D2F59FC25F4538280D80692B9E364CEEAB78092C2308"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/TestMORXFour.ttx",
+      "sha256": "3A59F3D32ED07CFB277B74325A58BD0753937482C4C3E9AD01586F3F26B293C9"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/TestMORXFourtyone.ttx",
+      "sha256": "9F5D79CE723594CB387EE735CD5804D770CA939AE5A42BE3DB842977438389B9"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/TestMORXOne.ttx",
+      "sha256": "DBD4D128EF1981A80B51DC7BDA68CC2939ED1F6F35BC67BAF5A7F706790F268A"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/TestMORXThirtyfour.ttx",
+      "sha256": "77CB8DF624456B266AC958B49587FD715FDB391A3147EF3263D2C19AB87311B5"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/test_glyphs-glyf_colr_1.ttx",
+      "sha256": "9697D8C681D5164B541ACF854C75CF22C3107E37682EEBB684E58AA4CE8309EE"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/test_glyphs-glyf_colr_1_no_cliplist.subset.ttx",
+      "sha256": "4BAC129F6AACF56D2EFFD06D8AEACAE6F20D20886BEC05C640777BE69B2BE9B9"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/test_glyphs-glyf_colr_1_variable.ttx",
+      "sha256": "E1908A7AF44388B90968DCF1E83A3DBE526866A0A423B11AE996FF9C45D2F9E5"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/tinos_subset.ttx",
+      "sha256": "130D49FAE6608633D8245ACA243CD03347C1C1233CC32283602448D0DD26E057"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/tthint_subset.ttx",
+      "sha256": "6A358AADD241FE5BE03641FCDC9E1DE23EDED00D98747305D16A1AC8BB5AFB0F"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/varc-6868.ttx",
+      "sha256": "F2D145E7E32BB07DC7D676CF94C6D616BE93CB0E852F394E5C9AD88D1AA761AC"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/varc-ac00-ac01.ttx",
+      "sha256": "A83F56121007B783BBD7098AEFD4D2D423E3B66F74C173E4504B6675BC40F16A"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/varc-ac01-conditional.ttx",
+      "sha256": "A9D8FFCC1E19334590A3CD3E24114FBB89C42D199C40BA9E1A127A5924CA30F4"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/vazirmatn_var_trimmed.ttx",
+      "sha256": "3AE1E395E322661A8A9DCC6AC0872B57C0DB8A25AED51A143DEF8B82D53E0938"
+    },
+    {
+      "path": "font-test-data/test_data/ttx/vorg.ttx",
+      "sha256": "850B87068A94AA1D6D595A168C999F45045944BA2EBEB93E145DDD8B16243CB2"
+    },
+    {
+      "path": "font-test-data/test_data/type1/notoserif-regular.subset.pfa",
+      "sha256": "F958D1DD15EEF71FD12F25207C9792606201DEF563C8B6B90CE7531F372D01A0"
+    },
+    {
+      "path": "font-test-data/test_data/type1/notoserif-regular.subset.pfb",
+      "sha256": "0FB2221267A3E3E5397F331A42AAD5AE7E09799EF2B59C3909E40B0A03C4EE19"
+    },
+    {
+      "path": "font-test-data/UPSTREAM-Cargo.toml",
+      "sha256": "98CB6E64A6A3D426E568A2A7208FBC0215E1CB19CDA949F622BA65BC912AD6F4"
+    }
+  ],
+  "excludedUpstreamManifest": "# Modifications Copyright (c) 2026, Jiaqi (0x7c13) Liu.\n# Exact upstream test-data package; standalone local test metadata only.\n[package]\nname = \"font-test-data\"\nversion = \"0.7.0\"\nedition = \"2021\"\nrust-version = \"1.85\"\nlicense = \"MIT OR Apache-2.0\"\nrepository = \"https://github.com/googlefonts/fontations\"\npublish = false\n[workspace]\n[dependencies]\nfont-types = \"=0.12.7\"\n"
+}

@@ -1,0 +1,79 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE file in the project root for license information.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Notepads.Markdown"
+    xmlns:primitives="using:Windows.UI.Xaml.Controls.Primitives">
+    <ControlTemplate x:Key="NotepadsMarkdownScrollViewerTemplate" TargetType="ScrollViewer">
+        <Grid Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ScrollContentPresenter x:Name="ScrollContentPresenter"
+                ContentTemplate="{TemplateBinding ContentTemplate}"
+                Margin="{TemplateBinding Padding}" />
+            <!-- The native surface covers the presenter. Continue its background under the transparent tracks. -->
+            <Border Grid.Column="1" Grid.RowSpan="2" Background="{TemplateBinding Background}" IsHitTestVisible="False" />
+            <Border Grid.Row="1" Background="{TemplateBinding Background}" IsHitTestVisible="False" />
+            <primitives:ScrollBar x:Name="VerticalScrollBar" Grid.Column="1"
+                IsTabStop="False" Orientation="Vertical" IndicatorMode="MouseIndicator"
+                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                Maximum="{TemplateBinding ScrollableHeight}"
+                Value="{TemplateBinding VerticalOffset}"
+                ViewportSize="{TemplateBinding ViewportHeight}" />
+            <primitives:ScrollBar x:Name="HorizontalScrollBar" Grid.Row="1"
+                IsTabStop="False" Orientation="Horizontal" IndicatorMode="MouseIndicator"
+                Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                Maximum="{TemplateBinding ScrollableWidth}"
+                Value="{TemplateBinding HorizontalOffset}"
+                ViewportSize="{TemplateBinding ViewportWidth}" />
+        </Grid>
+    </ControlTemplate>
+    <Style TargetType="local:MarkdownView">
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MarkdownView">
+                    <Grid>
+                    <ScrollViewer x:Name="PreviewScrollViewer" Background="Transparent"
+                        Template="{StaticResource NotepadsMarkdownScrollViewerTemplate}"
+                        HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Visible"
+                        HorizontalContentAlignment="Left" VerticalContentAlignment="Top"
+                        ZoomMode="Disabled" IsTabStop="False">
+                        <Canvas x:Name="DocumentExtent" Background="Transparent" />
+                    </ScrollViewer>
+                    <Canvas x:Name="ViewportOverlay" UseLayoutRounding="True">
+                        <Canvas.Resources>
+                            <DataTemplate x:Key="CodeCopyButtonTemplate">
+                                <Button x:Name="CodeCopyButton" Padding="0" CornerRadius="4"
+                                    MinWidth="0" MinHeight="0" AllowFocusOnInteraction="False"
+                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                    AutomationProperties.Name="Copy code block" ToolTipService.ToolTip="Copy code block">
+                                    <SymbolIcon Symbol="Copy" RenderTransformOrigin="0.5,0.5">
+                                        <SymbolIcon.RenderTransform>
+                                            <ScaleTransform ScaleX="0.68" ScaleY="0.68" />
+                                        </SymbolIcon.RenderTransform>
+                                    </SymbolIcon>
+                                </Button>
+                            </DataTemplate>
+                        </Canvas.Resources>
+                        <Border x:Name="SurfaceTarget" Background="Transparent" IsHitTestVisible="False" UseLayoutRounding="True" />
+                    </Canvas>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

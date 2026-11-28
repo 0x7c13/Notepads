@@ -1,0 +1,31 @@
+Not enough table
+
+|
+|
+
+Not enough table
+
+|x
+|
+
+Not enough table
+
+|
+|-
+
+Table
+
+|x
+|-
+
+Not enough table
+| col1 | col2 |
+|      | ---- |
+
+Not enough table
+| col1 | col2 |
+| :    | ---- |
+
+Table
+| col1 | col2 |
+| ---- | ---- |

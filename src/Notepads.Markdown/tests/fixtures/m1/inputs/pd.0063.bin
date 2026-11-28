@@ -1,0 +1,8 @@
+[][a]
+
+[a]: b
+
+# assimp-rs [![][crates-badge]][crates]
+
+[crates]: https://crates.io/crates/assimp
+[crates-badge]: http://meritbadge.herokuapp.com/assimp

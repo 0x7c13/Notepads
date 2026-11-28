@@ -1,0 +1,37 @@
+name: Benchmarks
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  run_benchmarks:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    # run  either when pull request is opened or when comment body (only on pr) is /run-bench
+    if: (github.event_name == 'pull_request') || ((github.event.issue.pull_request != null) && github.event.comment.body == '/run-bench')
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          submodules: true
+      - name: Obtain Rust
+        run: rustup override set stable
+      - name: Install hyperfine
+        run: cargo install hyperfine
+      - name: Install cmake
+        run: sudo apt-get update && sudo apt-get install cmake -y
+      - name: Build Binaries
+        run: make binaries
+      - name: Run Benchmarks
+        run: make bench-all
+      - name: Post result comment
+        uses: mshick/add-pr-comment@8e4927817251f1ff60c001f04568532b38e0b4a0 # v3.11.0
+        with:
+          message-path: bench-output.md
+        continue-on-error: true

@@ -1,0 +1,1177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.53">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="uniAC01"/>
+    <GlyphID id="2" name="glyph00002"/>
+    <GlyphID id="3" name="glyph00003"/>
+    <GlyphID id="4" name="glyph00004"/>
+    <GlyphID id="5" name="glyph00005"/>
+    <GlyphID id="6" name="glyph00006"/>
+    <GlyphID id="7" name="glyph00007"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0x43f42411"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1000"/>
+    <created value="Thu Jan  1 00:00:00 1970"/>
+    <modified value="Mon Apr 22 20:27:58 2024"/>
+    <xMin value="-7"/>
+    <yMin value="-82"/>
+    <xMax value="900"/>
+    <yMax value="803"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="3"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="800"/>
+    <descent value="-200"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="1000"/>
+    <minLeftSideBearing value="-7"/>
+    <minRightSideBearing value="20"/>
+    <xMaxExtent value="900"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="2"/>
+  </hhea>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="8"/>
+    <maxPoints value="16"/>
+    <maxContours value="2"/>
+    <maxCompositePoints value="0"/>
+    <maxCompositeContours value="0"/>
+    <maxZones value="2"/>
+    <maxTwilightPoints value="0"/>
+    <maxStorage value="0"/>
+    <maxFunctionDefs value="0"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="0"/>
+    <maxSizeOfInstructions value="0"/>
+    <maxComponentElements value="0"/>
+    <maxComponentDepth value="0"/>
+  </maxp>
+
+  <hmtx>
+    <mtx name=".notdef" width="1000" lsb="0"/>
+    <mtx name="glyph00002" width="920" lsb="0"/>
+    <mtx name="glyph00003" width="920" lsb="-7"/>
+    <mtx name="glyph00004" width="920" lsb="0"/>
+    <mtx name="glyph00005" width="920" lsb="679"/>
+    <mtx name="glyph00006" width="920" lsb="0"/>
+    <mtx name="glyph00007" width="920" lsb="90"/>
+    <mtx name="uniAC01" width="920" lsb="0"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0xac01" name="uniAC01"/><!-- HANGUL SYLLABLE GAG -->
+    </cmap_format_4>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0xac01" name="uniAC01"/><!-- HANGUL SYLLABLE GAG -->
+    </cmap_format_4>
+  </cmap>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef"/><!-- contains no outline data -->
+
+    <TTGlyph name="glyph00002"/><!-- contains no outline data -->
+
+    <TTGlyph name="glyph00003" xMin="-7" yMin="-35" xMax="840" yMax="698">
+      <contour>
+        <pt x="5" y="-35" on="1"/>
+        <pt x="200" y="-12" on="0"/>
+        <pt x="509" y="102" on="0"/>
+        <pt x="726" y="277" on="0"/>
+        <pt x="840" y="508" on="0"/>
+        <pt x="840" y="648" on="1"/>
+        <pt x="840" y="698" on="1"/>
+        <pt x="90" y="698" on="1"/>
+        <pt x="90" y="628" on="1"/>
+        <pt x="796" y="628" on="1"/>
+        <pt x="762" y="640" on="1"/>
+        <pt x="762" y="525" on="0"/>
+        <pt x="668" y="328" on="0"/>
+        <pt x="478" y="173" on="0"/>
+        <pt x="189" y="65" on="0"/>
+        <pt x="-7" y="37" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="glyph00004"/><!-- contains no outline data -->
+
+    <TTGlyph name="glyph00005" xMin="679" yMin="-82" xMax="900" yMax="803">
+      <contour>
+        <pt x="715" y="313" on="1"/>
+        <pt x="900" y="313" on="1"/>
+        <pt x="900" y="383" on="1"/>
+        <pt x="715" y="383" on="1"/>
+      </contour>
+      <contour>
+        <pt x="679" y="-82" on="1"/>
+        <pt x="755" y="-82" on="1"/>
+        <pt x="755" y="803" on="1"/>
+        <pt x="679" y="803" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="glyph00006"/><!-- contains no outline data -->
+
+    <TTGlyph name="glyph00007" xMin="90" yMin="-35" xMax="840" yMax="698">
+      <contour>
+        <pt x="840" y="-35" on="1"/>
+        <pt x="840" y="648" on="1"/>
+        <pt x="840" y="698" on="1"/>
+        <pt x="90" y="698" on="1"/>
+        <pt x="90" y="628" on="1"/>
+        <pt x="802" y="628" on="1"/>
+        <pt x="764" y="644" on="1"/>
+        <pt x="764" y="-35" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="uniAC01"/><!-- contains no outline data -->
+
+  </glyf>
+
+  <name>
+    <namerecord nameID="1" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      rcjk
+    </namerecord>
+    <namerecord nameID="2" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      varc
+    </namerecord>
+    <namerecord nameID="256" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      Weight
+    </namerecord>
+    <namerecord nameID="257" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      OpticalSize
+    </namerecord>
+    <namerecord nameID="258" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      0000
+    </namerecord>
+    <namerecord nameID="259" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      0001
+    </namerecord>
+    <namerecord nameID="260" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      0002
+    </namerecord>
+    <namerecord nameID="261" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      0003
+    </namerecord>
+    <namerecord nameID="262" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      0004
+    </namerecord>
+    <namerecord nameID="263" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      0005
+    </namerecord>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      rcjk
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      varc
+    </namerecord>
+    <namerecord nameID="256" platformID="3" platEncID="1" langID="0x409">
+      Weight
+    </namerecord>
+    <namerecord nameID="257" platformID="3" platEncID="1" langID="0x409">
+      OpticalSize
+    </namerecord>
+    <namerecord nameID="258" platformID="3" platEncID="1" langID="0x409">
+      0000
+    </namerecord>
+    <namerecord nameID="259" platformID="3" platEncID="1" langID="0x409">
+      0001
+    </namerecord>
+    <namerecord nameID="260" platformID="3" platEncID="1" langID="0x409">
+      0002
+    </namerecord>
+    <namerecord nameID="261" platformID="3" platEncID="1" langID="0x409">
+      0003
+    </namerecord>
+    <namerecord nameID="262" platformID="3" platEncID="1" langID="0x409">
+      0004
+    </namerecord>
+    <namerecord nameID="263" platformID="3" platEncID="1" langID="0x409">
+      0005
+    </namerecord>
+  </name>
+
+  <post>
+    <formatType value="3.0"/>
+    <italicAngle value="0.0"/>
+    <underlinePosition value="0"/>
+    <underlineThickness value="0"/>
+    <isFixedPitch value="0"/>
+    <minMemType42 value="0"/>
+    <maxMemType42 value="0"/>
+    <minMemType1 value="0"/>
+    <maxMemType1 value="0"/>
+  </post>
+
+  <VARC>
+    <Version value="0x00010000"/>
+    <Coverage>
+      <Glyph value="uniAC01"/>
+      <Glyph value="glyph00002"/>
+      <Glyph value="glyph00004"/>
+      <Glyph value="glyph00006"/>
+    </Coverage>
+    <MultiVarStore Format="1">
+      <Format value="1"/>
+      <SparseVarRegionList>
+        <!-- RegionCount=3 -->
+        <Region index="0">
+          <!-- SparseRegionCount=1 -->
+          <SparseVarRegionAxis index="0">
+            <AxisIndex value="0"/>
+            <StartCoord value="0.0"/>
+            <PeakCoord value="1.0"/>
+            <EndCoord value="1.0"/>
+          </SparseVarRegionAxis>
+        </Region>
+        <Region index="1">
+          <!-- SparseRegionCount=1 -->
+          <SparseVarRegionAxis index="0">
+            <AxisIndex value="1"/>
+            <StartCoord value="0.0"/>
+            <PeakCoord value="1.0"/>
+            <EndCoord value="1.0"/>
+          </SparseVarRegionAxis>
+        </Region>
+        <Region index="2">
+          <!-- SparseRegionCount=2 -->
+          <SparseVarRegionAxis index="0">
+            <AxisIndex value="0"/>
+            <StartCoord value="0.0"/>
+            <PeakCoord value="1.0"/>
+            <EndCoord value="1.0"/>
+          </SparseVarRegionAxis>
+          <SparseVarRegionAxis index="1">
+            <AxisIndex value="1"/>
+            <StartCoord value="0.0"/>
+            <PeakCoord value="1.0"/>
+            <EndCoord value="1.0"/>
+          </SparseVarRegionAxis>
+        </Region>
+      </SparseVarRegionList>
+      <!-- MultiVarDataCount=1 -->
+      <MultiVarData index="0" Format="1">
+        <Format value="1"/>
+        <!-- VarRegionCount=3 -->
+        <VarRegionIndex index="0" value="0"/>
+        <VarRegionIndex index="1" value="1"/>
+        <VarRegionIndex index="2" value="2"/>
+        <Item index="0" value="[-295, -327, 0, 1092, 273, 393, 0, 0, 0, 0, 0, 0, 0, 0, 0]"/>
+        <Item index="1" value="[0, 0, 0, 12, 0, 0]"/>
+        <Item index="2" value="[-964, 0, 406, 0, 16384, 0, 0, 0, 0]"/>
+        <Item index="3" value="[-328, 0, 2185, 0, 1546, 0, 0, 0, 0]"/>
+        <Item index="4" value="[0, -10, -52, 0, 0, 0]"/>
+      </MultiVarData>
+    </MultiVarStore>
+    <ConditionList>
+      <!-- ConditionCount=5 -->
+      <ConditionTable index="0" Format="1">
+        <AxisIndex value="0"/>
+        <FilterRangeMinValue value="0.5"/>
+        <FilterRangeMaxValue value="1.0"/>
+      </ConditionTable>
+      <ConditionTable index="1" Format="2">
+        <DefaultValue value="1"/>
+        <VarIdx value="2"/>
+      </ConditionTable>
+
+      <!-- AND of the first two conditions -->
+      <ConditionTable index="2" Format="3">
+        <!-- ConditionCount=2 -->
+        <ConditionTable index="0" Format="1">
+          <AxisIndex value="0"/>
+          <FilterRangeMinValue value="0.5"/>
+          <FilterRangeMaxValue value="1.0"/>
+        </ConditionTable>
+        <ConditionTable index="1" Format="2">
+          <DefaultValue value="1"/>
+          <VarIdx value="2"/>
+        </ConditionTable>
+      </ConditionTable>
+
+      <!-- OR of the first two conditions -->
+      <ConditionTable index="3" Format="4">
+        <!-- ConditionCount=2 -->
+        <ConditionTable index="0" Format="1">
+          <AxisIndex value="0"/>
+          <FilterRangeMinValue value="0.5"/>
+          <FilterRangeMaxValue value="1.0"/>
+        </ConditionTable>
+        <ConditionTable index="4" Format="2">
+          <DefaultValue value="1"/>
+          <VarIdx value="2"/>
+        </ConditionTable>
+      </ConditionTable>
+
+      <!-- NOT the first condition -->
+      <ConditionTable index="3" Format="5">
+        <ConditionTable index="0" Format="1">
+          <AxisIndex value="0"/>
+          <FilterRangeMinValue value="0.5"/>
+          <FilterRangeMaxValue value="1.0"/>
+        </ConditionTable>
+      </ConditionTable>
+    </ConditionList>
+    <AxisIndicesList>
+      <Item index="0" value="[2, 3, 4]"/>
+      <Item index="1" value="[2, 3, 4, 5, 6]"/>
+    </AxisIndicesList>
+    <VarCompositeGlyphs>
+      <VarCompositeGlyph index="0">
+        <VarComponent index="0">
+          <glyphName value="glyph00002"/>
+        </VarComponent>
+        <VarComponent index="1">
+          <glyphName value="glyph00004"/>
+          <conditionIndex value="0"/>
+        </VarComponent>
+        <VarComponent index="2">
+          <glyphName value="glyph00006"/>
+        </VarComponent>
+      </VarCompositeGlyph>
+      <VarCompositeGlyph index="1">
+        <VarComponent index="0">
+          <glyphName value="glyph00003"/>
+          <axisIndicesIndex value="1"/>
+          <axisValues value="[-0.54, 0.04, -0.5178, 0.0, 0.0]"/>
+          <axisValuesVarIndex value="0"/>
+          <transformVarIndex value="1"/>
+          <translateX value="-10.0"/>
+          <translateY value="48.0"/>
+        </VarComponent>
+      </VarCompositeGlyph>
+      <VarCompositeGlyph index="2">
+        <VarComponent index="0">
+          <glyphName value="glyph00005"/>
+          <axisIndicesIndex value="0"/>
+          <axisValues value="[-0.8047, 0.0, 0.4839]"/>
+          <axisValuesVarIndex value="2"/>
+          <translateX value="-6.0"/>
+        </VarComponent>
+      </VarCompositeGlyph>
+      <VarCompositeGlyph index="3">
+        <VarComponent index="0">
+          <glyphName value="glyph00007"/>
+          <axisIndicesIndex value="0"/>
+          <axisValues value="[-0.776, -0.3566, 0.0]"/>
+          <axisValuesVarIndex value="3"/>
+          <transformVarIndex value="4"/>
+          <translateX value="106.0"/>
+          <translateY value="-462.0"/>
+        </VarComponent>
+      </VarCompositeGlyph>
+    </VarCompositeGlyphs>
+  </VARC>
+
+  <fvar>
+
+    <!-- Weight -->
+    <Axis>
+      <AxisTag>wght</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>356.5</MinValue>
+      <DefaultValue>356.5</DefaultValue>
+      <MaxValue>840.3</MaxValue>
+      <AxisNameID>256</AxisNameID>
+    </Axis>
+
+    <!-- OpticalSize -->
+    <Axis>
+      <AxisTag>opsz</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>0.0</MinValue>
+      <DefaultValue>0.0</DefaultValue>
+      <MaxValue>1.0</MaxValue>
+      <AxisNameID>257</AxisNameID>
+    </Axis>
+
+    <!-- 0000 -->
+    <Axis>
+      <AxisTag>0000</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>-1.0</MinValue>
+      <DefaultValue>0.0</DefaultValue>
+      <MaxValue>1.0</MaxValue>
+      <AxisNameID>258</AxisNameID>
+    </Axis>
+
+    <!-- 0001 -->
+    <Axis>
+      <AxisTag>0001</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>-1.0</MinValue>
+      <DefaultValue>0.0</DefaultValue>
+      <MaxValue>1.0</MaxValue>
+      <AxisNameID>259</AxisNameID>
+    </Axis>
+
+    <!-- 0002 -->
+    <Axis>
+      <AxisTag>0002</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>-1.0</MinValue>
+      <DefaultValue>0.0</DefaultValue>
+      <MaxValue>1.0</MaxValue>
+      <AxisNameID>260</AxisNameID>
+    </Axis>
+
+    <!-- 0003 -->
+    <Axis>
+      <AxisTag>0003</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>-1.0</MinValue>
+      <DefaultValue>0.0</DefaultValue>
+      <MaxValue>1.0</MaxValue>
+      <AxisNameID>261</AxisNameID>
+    </Axis>
+
+    <!-- 0004 -->
+    <Axis>
+      <AxisTag>0004</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>-1.0</MinValue>
+      <DefaultValue>0.0</DefaultValue>
+      <MaxValue>1.0</MaxValue>
+      <AxisNameID>262</AxisNameID>
+    </Axis>
+
+    <!-- 0005 -->
+    <Axis>
+      <AxisTag>0005</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>-1.0</MinValue>
+      <DefaultValue>0.0</DefaultValue>
+      <MaxValue>1.0</MaxValue>
+      <AxisNameID>263</AxisNameID>
+    </Axis>
+  </fvar>
+
+  <gvar>
+    <version value="1"/>
+    <reserved value="0"/>
+    <glyphVariations glyph="glyph00003">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="10" y="-20"/>
+        <delta pt="1" x="13" y="-19"/>
+        <delta pt="2" x="17" y="-16"/>
+        <delta pt="3" x="19" y="-11"/>
+        <delta pt="4" x="20" y="-4"/>
+        <delta pt="5" x="20" y="0"/>
+        <delta pt="6" x="20" y="20"/>
+        <delta pt="7" x="-20" y="20"/>
+        <delta pt="8" x="-20" y="-44"/>
+        <delta pt="9" x="-20" y="-44"/>
+        <delta pt="10" x="-50" y="0"/>
+        <delta pt="11" x="-50" y="9"/>
+        <delta pt="12" x="-44" y="26"/>
+        <delta pt="13" x="-32" y="39"/>
+        <delta pt="14" x="-13" y="48"/>
+        <delta pt="15" x="0" y="50"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0000" value="-1.0"/>
+        <delta pt="0" x="85" y="500"/>
+        <delta pt="1" x="87" y="482"/>
+        <delta pt="2" x="62" y="397"/>
+        <delta pt="3" x="27" y="272"/>
+        <delta pt="4" x="0" y="113"/>
+        <delta pt="5" x="0" y="20"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="2" y="0"/>
+        <delta pt="10" x="-14" y="0"/>
+        <delta pt="11" x="-16" y="95"/>
+        <delta pt="12" x="-7" y="257"/>
+        <delta pt="13" x="16" y="385"/>
+        <delta pt="14" x="58" y="474"/>
+        <delta pt="15" x="91" y="499"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0002" value="-1.0"/>
+        <delta pt="0" x="115" y="0"/>
+        <delta pt="1" x="-56" y="24"/>
+        <delta pt="2" x="-328" y="42"/>
+        <delta pt="3" x="-521" y="38"/>
+        <delta pt="4" x="-622" y="16"/>
+        <delta pt="5" x="-622" y="0"/>
+        <delta pt="6" x="-622" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="-622" y="0"/>
+        <delta pt="10" x="-622" y="0"/>
+        <delta pt="11" x="-622" y="4"/>
+        <delta pt="12" x="-538" y="12"/>
+        <delta pt="13" x="-367" y="10"/>
+        <delta pt="14" x="-108" y="-7"/>
+        <delta pt="15" x="68" y="-26"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0001" value="1.0"/>
+        <delta pt="0" x="834" y="0"/>
+        <delta pt="1" x="639" y="52"/>
+        <delta pt="2" x="330" y="86"/>
+        <delta pt="3" x="113" y="72"/>
+        <delta pt="4" x="-1" y="28"/>
+        <delta pt="5" x="-1" y="0"/>
+        <delta pt="6" x="-1" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="-16" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="10"/>
+        <delta pt="12" x="94" y="27"/>
+        <delta pt="13" x="284" y="21"/>
+        <delta pt="14" x="573" y="-21"/>
+        <delta pt="15" x="769" y="-67"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0003" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="60"/>
+        <delta pt="9" x="0" y="60"/>
+        <delta pt="10" x="0" y="60"/>
+        <delta pt="11" x="0" y="37"/>
+        <delta pt="12" x="1" y="-6"/>
+        <delta pt="13" x="1" y="-40"/>
+        <delta pt="14" x="1" y="-60"/>
+        <delta pt="15" x="0" y="-60"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0005" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="60" y="0"/>
+        <delta pt="10" x="60" y="0"/>
+        <delta pt="11" x="60" y="0"/>
+        <delta pt="12" x="53" y="2"/>
+        <delta pt="13" x="38" y="3"/>
+        <delta pt="14" x="15" y="2"/>
+        <delta pt="15" x="0" y="0"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0004" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="60"/>
+        <delta pt="9" x="0" y="60"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+        <delta pt="12" x="0" y="0"/>
+        <delta pt="13" x="0" y="0"/>
+        <delta pt="14" x="0" y="0"/>
+        <delta pt="15" x="0" y="0"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0000" value="-1.0"/>
+        <delta pt="0" x="-25" y="0"/>
+        <delta pt="1" x="-18" y="-1"/>
+        <delta pt="2" x="-9" y="-1"/>
+        <delta pt="3" x="-3" y="0"/>
+        <delta pt="4" x="0" y="-1"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="20" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="1" y="0"/>
+        <delta pt="12" x="-2" y="1"/>
+        <delta pt="13" x="-6" y="1"/>
+        <delta pt="14" x="-14" y="2"/>
+        <delta pt="15" x="-20" y="0"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0002" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="-1" y="1"/>
+        <delta pt="3" x="0" y="1"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="20" y="0"/>
+        <delta pt="8" x="20" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="-20"/>
+        <delta pt="11" x="0" y="-23"/>
+        <delta pt="12" x="-4" y="-27"/>
+        <delta pt="13" x="-15" y="-28"/>
+        <delta pt="14" x="-34" y="-34"/>
+        <delta pt="15" x="-50" y="-40"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0001" value="1.0"/>
+        <delta pt="0" x="10" y="0"/>
+        <delta pt="1" x="7" y="1"/>
+        <delta pt="2" x="3" y="3"/>
+        <delta pt="3" x="1" y="2"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="-11"/>
+        <delta pt="12" x="-6" y="-34"/>
+        <delta pt="13" x="-18" y="-51"/>
+        <delta pt="14" x="-37" y="-64"/>
+        <delta pt="15" x="-50" y="-68"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0000" value="-1.0"/>
+        <coord axis="0002" value="-1.0"/>
+        <delta pt="0" x="-115" y="5"/>
+        <delta pt="1" x="-107" y="-16"/>
+        <delta pt="2" x="-71" y="-31"/>
+        <delta pt="3" x="-29" y="-27"/>
+        <delta pt="4" x="0" y="-6"/>
+        <delta pt="5" x="0" y="10"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="-2" y="0"/>
+        <delta pt="10" x="14" y="0"/>
+        <delta pt="11" x="16" y="-5"/>
+        <delta pt="12" x="9" y="-11"/>
+        <delta pt="13" x="-12" y="-6"/>
+        <delta pt="14" x="-53" y="14"/>
+        <delta pt="15" x="-86" y="31"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0000" value="-1.0"/>
+        <coord axis="0001" value="1.0"/>
+        <delta pt="0" x="-85" y="-10"/>
+        <delta pt="1" x="-87" y="-46"/>
+        <delta pt="2" x="-62" y="-67"/>
+        <delta pt="3" x="-27" y="-57"/>
+        <delta pt="4" x="0" y="-32"/>
+        <delta pt="5" x="0" y="-20"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="-2" y="0"/>
+        <delta pt="10" x="14" y="0"/>
+        <delta pt="11" x="16" y="-17"/>
+        <delta pt="12" x="7" y="-46"/>
+        <delta pt="13" x="-16" y="-56"/>
+        <delta pt="14" x="-58" y="-37"/>
+        <delta pt="15" x="-91" y="-9"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0001" value="1.0"/>
+        <coord axis="0002" value="-1.0"/>
+        <delta pt="0" x="-735" y="0"/>
+        <delta pt="1" x="-564" y="-24"/>
+        <delta pt="2" x="-292" y="-42"/>
+        <delta pt="3" x="-99" y="-38"/>
+        <delta pt="4" x="2" y="-16"/>
+        <delta pt="5" x="2" y="0"/>
+        <delta pt="6" x="2" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="4" y="0"/>
+        <delta pt="10" x="1" y="0"/>
+        <delta pt="11" x="1" y="-2"/>
+        <delta pt="12" x="-83" y="-10"/>
+        <delta pt="13" x="-254" y="-8"/>
+        <delta pt="14" x="-513" y="8"/>
+        <delta pt="15" x="-689" y="26"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0000" value="-1.0"/>
+        <coord axis="0002" value="-1.0"/>
+        <delta pt="0" x="15" y="0"/>
+        <delta pt="1" x="10" y="1"/>
+        <delta pt="2" x="6" y="0"/>
+        <delta pt="3" x="2" y="-1"/>
+        <delta pt="4" x="0" y="1"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="-20" y="0"/>
+        <delta pt="8" x="-20" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="20"/>
+        <delta pt="11" x="-1" y="25"/>
+        <delta pt="12" x="5" y="27"/>
+        <delta pt="13" x="18" y="27"/>
+        <delta pt="14" x="41" y="31"/>
+        <delta pt="15" x="60" y="40"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0000" value="-1.0"/>
+        <coord axis="0001" value="1.0"/>
+        <delta pt="0" x="25" y="0"/>
+        <delta pt="1" x="18" y="1"/>
+        <delta pt="2" x="9" y="1"/>
+        <delta pt="3" x="3" y="0"/>
+        <delta pt="4" x="0" y="1"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="-20"/>
+        <delta pt="11" x="-1" y="-21"/>
+        <delta pt="12" x="2" y="-17"/>
+        <delta pt="13" x="6" y="-10"/>
+        <delta pt="14" x="14" y="-4"/>
+        <delta pt="15" x="20" y="0"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0001" value="1.0"/>
+        <coord axis="0002" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="1" y="-1"/>
+        <delta pt="3" x="0" y="-1"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="-20" y="0"/>
+        <delta pt="8" x="-20" y="0"/>
+        <delta pt="9" x="20" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+        <delta pt="12" x="4" y="11"/>
+        <delta pt="13" x="15" y="19"/>
+        <delta pt="14" x="34" y="33"/>
+        <delta pt="15" x="50" y="40"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0000" value="-1.0"/>
+        <coord axis="0001" value="1.0"/>
+        <coord axis="0002" value="-1.0"/>
+        <delta pt="0" x="114" y="-5"/>
+        <delta pt="1" x="106" y="16"/>
+        <delta pt="2" x="70" y="31"/>
+        <delta pt="3" x="28" y="27"/>
+        <delta pt="4" x="-1" y="6"/>
+        <delta pt="5" x="-1" y="-10"/>
+        <delta pt="6" x="-1" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="-1" y="0"/>
+        <delta pt="10" x="-14" y="0"/>
+        <delta pt="11" x="-16" y="3"/>
+        <delta pt="12" x="-9" y="9"/>
+        <delta pt="13" x="12" y="4"/>
+        <delta pt="14" x="53" y="-15"/>
+        <delta pt="15" x="86" y="-31"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0000" value="-1.0"/>
+        <coord axis="0001" value="1.0"/>
+        <coord axis="0002" value="-1.0"/>
+        <delta pt="0" x="-15" y="0"/>
+        <delta pt="1" x="-10" y="-1"/>
+        <delta pt="2" x="-6" y="0"/>
+        <delta pt="3" x="-2" y="1"/>
+        <delta pt="4" x="0" y="-1"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="20" y="0"/>
+        <delta pt="8" x="20" y="0"/>
+        <delta pt="9" x="-20" y="0"/>
+        <delta pt="10" x="0" y="20"/>
+        <delta pt="11" x="1" y="17"/>
+        <delta pt="12" x="-5" y="3"/>
+        <delta pt="13" x="-18" y="-12"/>
+        <delta pt="14" x="-41" y="-29"/>
+        <delta pt="15" x="-60" y="-40"/>
+        <delta pt="16" x="0" y="0"/>
+        <delta pt="17" x="0" y="0"/>
+        <delta pt="18" x="0" y="0"/>
+        <delta pt="19" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="glyph00005">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="-30"/>
+        <delta pt="1" x="20" y="-30"/>
+        <delta pt="2" x="20" y="30"/>
+        <delta pt="3" x="0" y="30"/>
+        <delta pt="4" x="-50" y="-20"/>
+        <delta pt="5" x="20" y="-20"/>
+        <delta pt="6" x="20" y="20"/>
+        <delta pt="7" x="-50" y="20"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0000" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="457"/>
+        <delta pt="5" x="0" y="457"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0002" value="1.0"/>
+        <delta pt="0" x="0" y="403"/>
+        <delta pt="1" x="0" y="403"/>
+        <delta pt="2" x="0" y="403"/>
+        <delta pt="3" x="0" y="403"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0001" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="12"/>
+        <delta pt="5" x="0" y="12"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0003" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="-100" y="0"/>
+        <delta pt="2" x="-100" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0000" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0002" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="glyph00007">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="20" y="-20"/>
+        <delta pt="1" x="20" y="0"/>
+        <delta pt="2" x="20" y="20"/>
+        <delta pt="3" x="-20" y="20"/>
+        <delta pt="4" x="-20" y="-44"/>
+        <delta pt="5" x="-10" y="-44"/>
+        <delta pt="6" x="-50" y="-50"/>
+        <delta pt="7" x="-50" y="-20"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0000" value="-1.0"/>
+        <delta pt="0" x="0" y="520"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="2" y="0"/>
+        <delta pt="6" x="2" y="0"/>
+        <delta pt="7" x="2" y="520"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0001" value="-1.0"/>
+        <delta pt="0" x="-552" y="0"/>
+        <delta pt="1" x="-552" y="0"/>
+        <delta pt="2" x="-552" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="-552" y="0"/>
+        <delta pt="6" x="-552" y="0"/>
+        <delta pt="7" x="-552" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0002" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="60"/>
+        <delta pt="5" x="0" y="60"/>
+        <delta pt="6" x="0" y="60"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0003" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="60" y="0"/>
+        <delta pt="6" x="60" y="0"/>
+        <delta pt="7" x="60" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0000" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="-40" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0001" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="-40" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="0000" value="-1.0"/>
+        <coord axis="0001" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="-2" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <coord axis="0000" value="-1.0"/>
+        <coord axis="0001" value="-1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="0" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="40" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+        <delta pt="8" x="0" y="0"/>
+        <delta pt="9" x="0" y="0"/>
+        <delta pt="10" x="0" y="0"/>
+        <delta pt="11" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+  </gvar>
+
+</ttFont>

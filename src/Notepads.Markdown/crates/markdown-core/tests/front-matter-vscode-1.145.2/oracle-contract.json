@@ -1,0 +1,3497 @@
+{
+  "schema": "vscode-1.145.2-frontmatter-oracle-v1",
+  "versions": {
+    "vscode": "1.145.2",
+    "yaml": "2.9.0",
+    "markdownIt": "14.3.2",
+    "node": "24.22.1"
+  },
+  "notes": [
+    "Derived from already-recorded fixed-source probe-results.json; no new probes.",
+    "rawText preserves decoded scalar/object text; renderedText applies normal ASCII CSS whitespace collapse.",
+    "list.items contains one array of child nodes per li, retaining nested list hierarchy.",
+    "Error messages use the English l10n stub and are relative to delimiter-stripped YAML.",
+    "The two recursive-array throws and nested blockquote behavior are recorded upstream defects; bounded product errors/root-only recognition are approved safety differences."
+  ],
+  "cases": [
+    {
+      "name": "mapping",
+      "input": "---\ntitle: Hello\ncount: 3\nflag: true\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          5
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "title",
+          "count",
+          "flag"
+        ],
+        "rows": [
+          {
+            "key": "title",
+            "renderedKey": "title",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "Hello",
+                "renderedText": "Hello"
+              }
+            ]
+          },
+          {
+            "key": "count",
+            "renderedKey": "count",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "3",
+                "renderedText": "3"
+              }
+            ]
+          },
+          {
+            "key": "flag",
+            "renderedKey": "flag",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "true",
+                "renderedText": "true"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "title: Hello\ncount: 3\nflag: true"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "title",
+          "count",
+          "flag"
+        ],
+        "rows": [
+          {
+            "key": "title",
+            "renderedKey": "title",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "Hello",
+                "renderedText": "Hello"
+              }
+            ]
+          },
+          {
+            "key": "count",
+            "renderedKey": "count",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "3",
+                "renderedText": "3"
+              }
+            ]
+          },
+          {
+            "key": "flag",
+            "renderedKey": "flag",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "true",
+                "renderedText": "true"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "empty",
+      "input": "---\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          2
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "empty"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": ""
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "comment-only",
+      "input": "---\n# hello\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "empty"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "# hello"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "trailing-ascii-space",
+      "input": "--- \t\na: 1\n--- \t\n# Body",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "trailing-nbsp",
+      "input": "--- \na: 1\n--- \n# Body",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "leading-space",
+      "input": " ---\na: 1\n---\n# Body",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "blank-before",
+      "input": "\n---\na: 1\n---\n# Body\n",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "bom",
+      "input": "﻿---\na: 1\n---\n# Body\n",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "crlf",
+      "input": "---\r\na: 1\r\nb: 2\r\n---\r\n# Body\r\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "2",
+                "renderedText": "2"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1\nb: 2"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "2",
+                "renderedText": "2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "bare-cr",
+      "input": "---\ra: 1\rb: 2\r---\r# Body\r",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "2",
+                "renderedText": "2"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1\nb: 2"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "2",
+                "renderedText": "2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "no-close",
+      "input": "---\na: 1\n# Body",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "dots-close",
+      "input": "---\na: 1\n...\n# Body",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "indented-close",
+      "input": "---\na: 1\n ---\n# Body",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "comment-close",
+      "input": "---\na: 1\n--- # nope\n# Body",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "four-dashes",
+      "input": "----\na: 1\n----\n# Body",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "inside-quote",
+      "input": "> ---\n> a: 1\n> ---\n# Body",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": true
+      },
+      "table": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Implicit keys need to be on a single line at line 2, column 1:\n\na: 1\n> \n^\n"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1\n> "
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Implicit keys need to be on a single line at line 2, column 1:\n\na: 1\n> \n^\n"
+      }
+    },
+    {
+      "name": "later-frontmatter",
+      "input": "# A\n\n---\na: 1\n---\n# Body\n",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "fence-first",
+      "input": "```yaml\n---\na: 1\n---\n```\n",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "invalid-flow",
+      "input": "---\ntitle: [unclosed\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Flow sequence in block collection must be sufficiently indented and end with a ] at line 1, column 17:\n\ntitle: [unclosed\n                ^\n"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "title: [unclosed"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Flow sequence in block collection must be sufficiently indented and end with a ] at line 1, column 17:\n\ntitle: [unclosed\n                ^\n"
+      }
+    },
+    {
+      "name": "duplicate",
+      "input": "---\na: 1\na: 2\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Map keys must be unique at line 2, column 1:\n\na: 1\na: 2\n^\n"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1\na: 2"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Map keys must be unique at line 2, column 1:\n\na: 1\na: 2\n^\n"
+      }
+    },
+    {
+      "name": "null-root",
+      "input": "---\nnull\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "empty"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "null"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "null-values",
+      "input": "---\na: null\nb: ~\nc:\nd: []\ne: {}\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          7
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": []
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": []
+          },
+          {
+            "key": "c",
+            "renderedKey": "c",
+            "value": []
+          },
+          {
+            "key": "d",
+            "renderedKey": "d",
+            "value": []
+          },
+          {
+            "key": "e",
+            "renderedKey": "e",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "{}",
+                "renderedText": "{}"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: null\nb: ~\nc:\nd: []\ne: {}"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": []
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": []
+          },
+          {
+            "key": "c",
+            "renderedKey": "c",
+            "value": []
+          },
+          {
+            "key": "d",
+            "renderedKey": "d",
+            "value": []
+          },
+          {
+            "key": "e",
+            "renderedKey": "e",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "{}",
+                "renderedText": "{}"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "scalar-string",
+      "input": "---\nHello\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "Hello",
+                "renderedText": "Hello"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "Hello"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "Hello",
+                "renderedText": "Hello"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "scalar-number",
+      "input": "---\n3.14\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "3.14",
+                "renderedText": "3.14"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "3.14"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "3.14",
+                "renderedText": "3.14"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "scalar-false",
+      "input": "---\nfalse\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "false",
+                "renderedText": "false"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "false"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "false",
+                "renderedText": "false"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "root-list",
+      "input": "---\n- one\n- two\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "list",
+                "items": [
+                  [
+                    {
+                      "kind": "text",
+                      "rawText": "one",
+                      "renderedText": "one"
+                    }
+                  ],
+                  [
+                    {
+                      "kind": "text",
+                      "rawText": "two",
+                      "renderedText": "two"
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "- one\n- two"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "list",
+                "items": [
+                  [
+                    {
+                      "kind": "text",
+                      "rawText": "one",
+                      "renderedText": "one"
+                    }
+                  ],
+                  [
+                    {
+                      "kind": "text",
+                      "rawText": "two",
+                      "renderedText": "two"
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested",
+      "input": "---\nmeta:\n  x: 1\n  y: yes\nitems:\n  - a\n  - [b, c]\n  - {d: e}\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          9
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "meta",
+          "items"
+        ],
+        "rows": [
+          {
+            "key": "meta",
+            "renderedKey": "meta",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1\ny: yes",
+                "renderedText": "x: 1 y: yes"
+              }
+            ]
+          },
+          {
+            "key": "items",
+            "renderedKey": "items",
+            "value": [
+              {
+                "kind": "list",
+                "items": [
+                  [
+                    {
+                      "kind": "text",
+                      "rawText": "a",
+                      "renderedText": "a"
+                    }
+                  ],
+                  [
+                    {
+                      "kind": "list",
+                      "items": [
+                        [
+                          {
+                            "kind": "text",
+                            "rawText": "b",
+                            "renderedText": "b"
+                          }
+                        ],
+                        [
+                          {
+                            "kind": "text",
+                            "rawText": "c",
+                            "renderedText": "c"
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "kind": "code",
+                      "rawText": "d: e",
+                      "renderedText": "d: e"
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "meta:\n  x: 1\n  y: yes\nitems:\n  - a\n  - [b, c]\n  - {d: e}"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "meta",
+          "items"
+        ],
+        "rows": [
+          {
+            "key": "meta",
+            "renderedKey": "meta",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1\ny: yes",
+                "renderedText": "x: 1 y: yes"
+              }
+            ]
+          },
+          {
+            "key": "items",
+            "renderedKey": "items",
+            "value": [
+              {
+                "kind": "list",
+                "items": [
+                  [
+                    {
+                      "kind": "text",
+                      "rawText": "a",
+                      "renderedText": "a"
+                    }
+                  ],
+                  [
+                    {
+                      "kind": "list",
+                      "items": [
+                        [
+                          {
+                            "kind": "text",
+                            "rawText": "b",
+                            "renderedText": "b"
+                          }
+                        ],
+                        [
+                          {
+                            "kind": "text",
+                            "rawText": "c",
+                            "renderedText": "c"
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    {
+                      "kind": "code",
+                      "rawText": "d: e",
+                      "renderedText": "d: e"
+                    }
+                  ]
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "yaml12-scalars",
+      "input": "---\nyes: yes\nno: no\non: on\noff: off\nTrue: True\nFalse: FALSE\nleading: 012\nhex: 0x10\noctal: 0o10\ninf: .inf\nnan: .NaN\nnegativezero: -0\nlarge: 9007199254740993\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          15
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "yes",
+          "no",
+          "on",
+          "off",
+          "true",
+          "false",
+          "leading",
+          "hex",
+          "octal",
+          "inf",
+          "nan",
+          "negativezero",
+          "large"
+        ],
+        "rows": [
+          {
+            "key": "yes",
+            "renderedKey": "yes",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "yes",
+                "renderedText": "yes"
+              }
+            ]
+          },
+          {
+            "key": "no",
+            "renderedKey": "no",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "no",
+                "renderedText": "no"
+              }
+            ]
+          },
+          {
+            "key": "on",
+            "renderedKey": "on",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "on",
+                "renderedText": "on"
+              }
+            ]
+          },
+          {
+            "key": "off",
+            "renderedKey": "off",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "off",
+                "renderedText": "off"
+              }
+            ]
+          },
+          {
+            "key": "true",
+            "renderedKey": "true",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "true",
+                "renderedText": "true"
+              }
+            ]
+          },
+          {
+            "key": "false",
+            "renderedKey": "false",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "false",
+                "renderedText": "false"
+              }
+            ]
+          },
+          {
+            "key": "leading",
+            "renderedKey": "leading",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "12",
+                "renderedText": "12"
+              }
+            ]
+          },
+          {
+            "key": "hex",
+            "renderedKey": "hex",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "16",
+                "renderedText": "16"
+              }
+            ]
+          },
+          {
+            "key": "octal",
+            "renderedKey": "octal",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "8",
+                "renderedText": "8"
+              }
+            ]
+          },
+          {
+            "key": "inf",
+            "renderedKey": "inf",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "Infinity",
+                "renderedText": "Infinity"
+              }
+            ]
+          },
+          {
+            "key": "nan",
+            "renderedKey": "nan",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "NaN",
+                "renderedText": "NaN"
+              }
+            ]
+          },
+          {
+            "key": "negativezero",
+            "renderedKey": "negativezero",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "0",
+                "renderedText": "0"
+              }
+            ]
+          },
+          {
+            "key": "large",
+            "renderedKey": "large",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "9007199254740992",
+                "renderedText": "9007199254740992"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "yes: yes\nno: no\non: on\noff: off\nTrue: True\nFalse: FALSE\nleading: 012\nhex: 0x10\noctal: 0o10\ninf: .inf\nnan: .NaN\nnegativezero: -0\nlarge: 9007199254740993"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "yes",
+          "no",
+          "on",
+          "off",
+          "true",
+          "false",
+          "leading",
+          "hex",
+          "octal",
+          "inf",
+          "nan",
+          "negativezero",
+          "large"
+        ],
+        "rows": [
+          {
+            "key": "yes",
+            "renderedKey": "yes",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "yes",
+                "renderedText": "yes"
+              }
+            ]
+          },
+          {
+            "key": "no",
+            "renderedKey": "no",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "no",
+                "renderedText": "no"
+              }
+            ]
+          },
+          {
+            "key": "on",
+            "renderedKey": "on",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "on",
+                "renderedText": "on"
+              }
+            ]
+          },
+          {
+            "key": "off",
+            "renderedKey": "off",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "off",
+                "renderedText": "off"
+              }
+            ]
+          },
+          {
+            "key": "true",
+            "renderedKey": "true",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "true",
+                "renderedText": "true"
+              }
+            ]
+          },
+          {
+            "key": "false",
+            "renderedKey": "false",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "false",
+                "renderedText": "false"
+              }
+            ]
+          },
+          {
+            "key": "leading",
+            "renderedKey": "leading",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "12",
+                "renderedText": "12"
+              }
+            ]
+          },
+          {
+            "key": "hex",
+            "renderedKey": "hex",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "16",
+                "renderedText": "16"
+              }
+            ]
+          },
+          {
+            "key": "octal",
+            "renderedKey": "octal",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "8",
+                "renderedText": "8"
+              }
+            ]
+          },
+          {
+            "key": "inf",
+            "renderedKey": "inf",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "Infinity",
+                "renderedText": "Infinity"
+              }
+            ]
+          },
+          {
+            "key": "nan",
+            "renderedKey": "nan",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "NaN",
+                "renderedText": "NaN"
+              }
+            ]
+          },
+          {
+            "key": "negativezero",
+            "renderedKey": "negativezero",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "0",
+                "renderedText": "0"
+              }
+            ]
+          },
+          {
+            "key": "large",
+            "renderedKey": "large",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "9007199254740992",
+                "renderedText": "9007199254740992"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "date-plain",
+      "input": "---\ndate: 2001-12-15\ntime: 2001-12-15T02:59:43.1Z\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "date",
+          "time"
+        ],
+        "rows": [
+          {
+            "key": "date",
+            "renderedKey": "date",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "2001-12-15",
+                "renderedText": "2001-12-15"
+              }
+            ]
+          },
+          {
+            "key": "time",
+            "renderedKey": "time",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "2001-12-15T02:59:43.1Z",
+                "renderedText": "2001-12-15T02:59:43.1Z"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "date: 2001-12-15\ntime: 2001-12-15T02:59:43.1Z"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "date",
+          "time"
+        ],
+        "rows": [
+          {
+            "key": "date",
+            "renderedKey": "date",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "2001-12-15",
+                "renderedText": "2001-12-15"
+              }
+            ]
+          },
+          {
+            "key": "time",
+            "renderedKey": "time",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "2001-12-15T02:59:43.1Z",
+                "renderedText": "2001-12-15T02:59:43.1Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "tag-str",
+      "input": "---\na: !!str 123\nb: !custom text\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "123",
+                "renderedText": "123"
+              }
+            ]
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "text",
+                "renderedText": "text"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: !!str 123\nb: !custom text"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "123",
+                "renderedText": "123"
+              }
+            ]
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "text",
+                "renderedText": "text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "tag-timestamp",
+      "input": "---\na: !!timestamp 2001-12-15T02:59:43.1Z\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "2001-12-15T02:59:43.100Z",
+                "renderedText": "2001-12-15T02:59:43.100Z"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: !!timestamp 2001-12-15T02:59:43.1Z"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "2001-12-15T02:59:43.100Z",
+                "renderedText": "2001-12-15T02:59:43.100Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "tag-binary",
+      "input": "---\na: !!binary SGVsbG8=\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "type: Buffer\ndata:\n  - 72\n  - 101\n  - 108\n  - 108\n  - 111",
+                "renderedText": "type: Buffer data: - 72 - 101 - 108 - 108 - 111"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: !!binary SGVsbG8="
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "type: Buffer\ndata:\n  - 72\n  - 101\n  - 108\n  - 108\n  - 111",
+                "renderedText": "type: Buffer data: - 72 - 101 - 108 - 108 - 111"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "tag-invalid-int",
+      "input": "---\na: !!int nope\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "nope",
+                "renderedText": "nope"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: !!int nope"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "nope",
+                "renderedText": "nope"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "tag-set",
+      "input": "---\na: !!set\n  red:\n  blue:\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          5
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "- red\n- blue",
+                "renderedText": "- red - blue"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: !!set\n  red:\n  blue:"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "- red\n- blue",
+                "renderedText": "- red - blue"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "tag-map-root",
+      "input": "---\n!!set {a: null, b: null}\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "empty"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "!!set {a: null, b: null}"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "alias-values",
+      "input": "---\na: &base {x: 1, y: [a, b]}\nb: *base\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1\ny:\n  - a\n  - b",
+                "renderedText": "x: 1 y: - a - b"
+              }
+            ]
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1\ny:\n  - a\n  - b",
+                "renderedText": "x: 1 y: - a - b"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: &base {x: 1, y: [a, b]}\nb: *base"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a",
+          "b"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1\ny:\n  - a\n  - b",
+                "renderedText": "x: 1 y: - a - b"
+              }
+            ]
+          },
+          {
+            "key": "b",
+            "renderedKey": "b",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1\ny:\n  - a\n  - b",
+                "renderedText": "x: 1 y: - a - b"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "alias-unresolved",
+      "input": "---\na: *missing\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Unresolved alias (the anchor must be set before the alias): missing"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: *missing"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Unresolved alias (the anchor must be set before the alias): missing"
+      }
+    },
+    {
+      "name": "merge-not-enabled",
+      "input": "---\ndefaults: &d {x: 1}\nmerged: {<<: *d, y: 2}\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "defaults",
+          "merged"
+        ],
+        "rows": [
+          {
+            "key": "defaults",
+            "renderedKey": "defaults",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1",
+                "renderedText": "x: 1"
+              }
+            ]
+          },
+          {
+            "key": "merged",
+            "renderedKey": "merged",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "<<:\n  x: 1\ny: 2",
+                "renderedText": "<<: x: 1 y: 2"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "defaults: &d {x: 1}\nmerged: {<<: *d, y: 2}"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "defaults",
+          "merged"
+        ],
+        "rows": [
+          {
+            "key": "defaults",
+            "renderedKey": "defaults",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1",
+                "renderedText": "x: 1"
+              }
+            ]
+          },
+          {
+            "key": "merged",
+            "renderedKey": "merged",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "<<:\n  x: 1\ny: 2",
+                "renderedText": "<<: x: 1 y: 2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "recursive-map",
+      "input": "---\na: &a {self: *a}\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "&a1\nself: *a1",
+                "renderedText": "&a1 self: *a1"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: &a {self: *a}"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "&a1\nself: *a1",
+                "renderedText": "&a1 self: *a1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "multiline-literal",
+      "input": "---\na: |\n  hello\n  world\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          5
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello\nworld\n",
+                "renderedText": "hello world"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: |\n  hello\n  world"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello\nworld\n",
+                "renderedText": "hello world"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "multiline-folded",
+      "input": "---\na: >\n  hello\n  world\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          5
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello world\n",
+                "renderedText": "hello world"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: >\n  hello\n  world"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello world\n",
+                "renderedText": "hello world"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "multiline-chomp",
+      "input": "---\na: |+\n  hello\n\n\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          6
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello\n\n",
+                "renderedText": "hello"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: |+\n  hello\n\n"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello\n\n",
+                "renderedText": "hello"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "quoted-multiline",
+      "input": "---\na: \"hello\n  world\"\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello world",
+                "renderedText": "hello world"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: \"hello\n  world\""
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello world",
+                "renderedText": "hello world"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "escapes",
+      "input": "---\n\"<key>&\\\"\": \"<script>alert(1)</script>&\\\"'\"\nmd: \"**bold** [link](https://example.org) ![x](x.png)\"\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "<key>&\"",
+          "md"
+        ],
+        "rows": [
+          {
+            "key": "<key>&\"",
+            "renderedKey": "<key>&\"",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "<script>alert(1)</script>&\"'",
+                "renderedText": "<script>alert(1)</script>&\"'"
+              }
+            ]
+          },
+          {
+            "key": "md",
+            "renderedKey": "md",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "**bold** [link](https://example.org) ![x](x.png)",
+                "renderedText": "**bold** [link](https://example.org) ![x](x.png)"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "\"<key>&\\\"\": \"<script>alert(1)</script>&\\\"'\"\nmd: \"**bold** [link](https://example.org) ![x](x.png)\""
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "<key>&\"",
+          "md"
+        ],
+        "rows": [
+          {
+            "key": "<key>&\"",
+            "renderedKey": "<key>&\"",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "<script>alert(1)</script>&\"'",
+                "renderedText": "<script>alert(1)</script>&\"'"
+              }
+            ]
+          },
+          {
+            "key": "md",
+            "renderedKey": "md",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "**bold** [link](https://example.org) ![x](x.png)",
+                "renderedText": "**bold** [link](https://example.org) ![x](x.png)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "integer-keys",
+      "input": "---\nz: first\n10: ten\n2: two\na: last\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          6
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "2",
+          "10",
+          "z",
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "2",
+            "renderedKey": "2",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "two",
+                "renderedText": "two"
+              }
+            ]
+          },
+          {
+            "key": "10",
+            "renderedKey": "10",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "ten",
+                "renderedText": "ten"
+              }
+            ]
+          },
+          {
+            "key": "z",
+            "renderedKey": "z",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "first",
+                "renderedText": "first"
+              }
+            ]
+          },
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "last",
+                "renderedText": "last"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "z: first\n10: ten\n2: two\na: last"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "2",
+          "10",
+          "z",
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "2",
+            "renderedKey": "2",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "two",
+                "renderedText": "two"
+              }
+            ]
+          },
+          {
+            "key": "10",
+            "renderedKey": "10",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "ten",
+                "renderedText": "ten"
+              }
+            ]
+          },
+          {
+            "key": "z",
+            "renderedKey": "z",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "first",
+                "renderedText": "first"
+              }
+            ]
+          },
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "last",
+                "renderedText": "last"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "complex-key",
+      "input": "---\n? [a, b]\n: value\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "[ a, b ]"
+        ],
+        "rows": [
+          {
+            "key": "[ a, b ]",
+            "renderedKey": "[ a, b ]",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "value",
+                "renderedText": "value"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "? [a, b]\n: value"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "[ a, b ]"
+        ],
+        "rows": [
+          {
+            "key": "[ a, b ]",
+            "renderedKey": "[ a, b ]",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "value",
+                "renderedText": "value"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "proto-keys",
+      "input": "---\n__proto__: value\nconstructor: x\ntoString: y\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          5
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "__proto__",
+          "constructor",
+          "toString"
+        ],
+        "rows": [
+          {
+            "key": "__proto__",
+            "renderedKey": "__proto__",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "value",
+                "renderedText": "value"
+              }
+            ]
+          },
+          {
+            "key": "constructor",
+            "renderedKey": "constructor",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "x",
+                "renderedText": "x"
+              }
+            ]
+          },
+          {
+            "key": "toString",
+            "renderedKey": "toString",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "y",
+                "renderedText": "y"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "__proto__: value\nconstructor: x\ntoString: y"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "__proto__",
+          "constructor",
+          "toString"
+        ],
+        "rows": [
+          {
+            "key": "__proto__",
+            "renderedKey": "__proto__",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "value",
+                "renderedText": "value"
+              }
+            ]
+          },
+          {
+            "key": "constructor",
+            "renderedKey": "constructor",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "x",
+                "renderedText": "x"
+              }
+            ]
+          },
+          {
+            "key": "toString",
+            "renderedKey": "toString",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "y",
+                "renderedText": "y"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "early-close",
+      "input": "---\na: 1\n---\nb: 2\n---\n# Body",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "close-no-newline",
+      "input": "---\na: 1\n---",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "null-byte",
+      "input": "---\na: \"x\u0000y\"\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "x�y",
+                "renderedText": "x�y"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: \"x�y\""
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "x�y",
+                "renderedText": "x�y"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "trailing-final-newline",
+      "input": "---\na: |\n  hello\n\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          5
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello\n",
+                "renderedText": "hello"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: |\n  hello\n"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "hello\n",
+                "renderedText": "hello"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "leading-tab",
+      "input": "\t---\na: 1\n---\n# Body",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "trailing-bom",
+      "input": "---﻿\na: 1\n---﻿\n# Body",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: 1"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "1",
+                "renderedText": "1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "inside-list",
+      "input": "- ---\n  a: 1\n  ---\n# Body",
+      "recognition": {
+        "recognized": false,
+        "tokenMap": null,
+        "nested": false
+      },
+      "table": {
+        "kind": "ordinaryMarkdown"
+      },
+      "codeBlock": {
+        "kind": "ordinaryMarkdown"
+      },
+      "hide": {
+        "kind": "ordinaryMarkdown"
+      },
+      "invalidSetting": {
+        "kind": "ordinaryMarkdown"
+      }
+    },
+    {
+      "name": "unknown-map-tag",
+      "input": "---\na: !custom {x: 1}\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1",
+                "renderedText": "x: 1"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: !custom {x: 1}"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "a"
+        ],
+        "rows": [
+          {
+            "key": "a",
+            "renderedKey": "a",
+            "value": [
+              {
+                "kind": "code",
+                "rawText": "x: 1",
+                "renderedText": "x: 1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "root-timestamp",
+      "input": "---\n!!timestamp 2001-12-15\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "empty"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "!!timestamp 2001-12-15"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "empty"
+      }
+    },
+    {
+      "name": "coercing-key-collision",
+      "input": "---\n1: numeric\n\"1\": string\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          "1"
+        ],
+        "rows": [
+          {
+            "key": "1",
+            "renderedKey": "1",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "string",
+                "renderedText": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "1: numeric\n\"1\": string"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          "1"
+        ],
+        "rows": [
+          {
+            "key": "1",
+            "renderedKey": "1",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "string",
+                "renderedText": "string"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "recursive-array",
+      "input": "---\na: &a [*a]\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "throws",
+        "diagnostic": "RangeError: Maximum call stack size exceeded"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: &a [*a]"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "throws",
+        "diagnostic": "RangeError: Maximum call stack size exceeded"
+      }
+    },
+    {
+      "name": "recursive-root-array",
+      "input": "---\n&a [*a]\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          3
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "throws",
+        "diagnostic": "RangeError: Maximum call stack size exceeded"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "&a [*a]"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "throws",
+        "diagnostic": "RangeError: Maximum call stack size exceeded"
+      }
+    },
+    {
+      "name": "alias-expansion-limit",
+      "input": "---\na: &a [x,x,x,x,x,x,x,x,x,x,x]\nb: &b [*a,*a,*a,*a,*a,*a,*a,*a,*a,*a,*a]\nc: [*b,*b,*b,*b,*b,*b,*b,*b,*b,*b,*b]\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          5
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Excessive alias count indicates a resource exhaustion attack"
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "a: &a [x,x,x,x,x,x,x,x,x,x,x]\nb: &b [*a,*a,*a,*a,*a,*a,*a,*a,*a,*a,*a]\nc: [*b,*b,*b,*b,*b,*b,*b,*b,*b,*b,*b]"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "error",
+        "label": "Failed to parse frontmatter",
+        "message": "Excessive alias count indicates a resource exhaustion attack"
+      }
+    },
+    {
+      "name": "document-start-directive",
+      "input": "---\n%YAML 1.1\n--- x\n---\n# Body\n",
+      "recognition": {
+        "recognized": true,
+        "tokenMap": [
+          0,
+          4
+        ],
+        "nested": false
+      },
+      "table": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "x",
+                "renderedText": "x"
+              }
+            ]
+          }
+        ]
+      },
+      "codeBlock": {
+        "kind": "codeBlock",
+        "rawContent": "%YAML 1.1\n--- x"
+      },
+      "hide": {
+        "kind": "empty"
+      },
+      "invalidSetting": {
+        "kind": "table",
+        "keys": [
+          ""
+        ],
+        "rows": [
+          {
+            "key": "",
+            "renderedKey": "",
+            "value": [
+              {
+                "kind": "text",
+                "rawText": "x",
+                "renderedText": "x"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

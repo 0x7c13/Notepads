@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "checked_on": "2026-10-22",
+  "syntect_version": "5.3.0",
+  "syntect_release_commit": "e4670846ecf16d8832db6c43d531bec466214e27",
+  "syntect_crate_sha256": "656B45C05D95A5704399AEEF6BD0DDEC7B2B3531B7C9E900ABBF7C4D2190C925",
+  "selected_runtime_asset": {
+    "path": "vendor/syntect/assets/default_newlines.packdump",
+    "bytes": 368467,
+    "sha256": "D740B20C12E40B678B9F1012401E1969AAA5CD55F1AB329FFEB94D746B06A5C0",
+    "syntax_count": 75,
+    "grammar_source_count": 74,
+    "builtin_plain_text_count": 1
+  },
+  "package_source": {
+    "repository": "https://github.com/sublimehq/Packages",
+    "commit": "fa6b8629c95041bf262d4c1dab95c456a0530122",
+    "tree_sha256": "1030DCBE14B34026441EC538B754C7CDD8C0AF59E0D50E5566A320EA309B961E",
+    "basis": "Pinned gitlink, fixed upstream generation recipe and 74 original grammar source hashes; no claim of bit-identical regeneration."
+  },
+  "syntax_asset_licenses": {
+    "syntect_code": "MIT",
+    "sublime_packages_root": "LicenseRef-Sublime-Packages-permissive with original readable-text/accompanying-file exceptions",
+    "csharp": "MIT; original 2016 Sublime Text HQ Pty, @gwenzek, Matthew Winter @wintermi, Adam Lickel @lickel attribution",
+    "rust": "directory LICENSE.txt, original MIT text",
+    "yaml": "MIT; original 2015 FichteFoll attribution and full inline license, present in pack although yaml-load is disabled",
+    "collection_path": "third-party-notices/MarkdownCore/syntect-5.3.0/NOTEPADS-SYNTAX-NOTICES.txt",
+    "collection_sha256": "347A495203523822D865A90725D7722083B1AB8BA1A9F682F55857102EB73BA6"
+  },
+  "frozen_research_sources": {
+    "inventory_path": "third-party-notices/MarkdownCore/syntect-5.3.0/SYNTAX-INPUTS.lock.json",
+    "inventory_sha256": "0BD5895652D7E4BD84D69877D99BEE62B457C2940A8751801B5DE471E63F9597",
+    "total_source_assets": 93,
+    "original_scope_fixture_count": 12,
+    "original_grammar_count": 74,
+    "separate_original_license_count": 2,
+    "syntect_reference_source_count": 5,
+    "actual_source_assets_rechecked": 93,
+    "scope": "The 12 test fixtures and upstream expected assertions are research inputs, not runtime grammars or shipped test source. This file ships their fixed provenance, not those fixtures. Presence of 75 syntaxes does not assert 75-language compatibility qualification."
+  },
+  "modification_scope": "Local controlled execution/cancellation patch; original copyrights and source diff provenance preserved in NOTEPADS-PATCH.md and NOTEPADS-UPSTREAM.json."
+}

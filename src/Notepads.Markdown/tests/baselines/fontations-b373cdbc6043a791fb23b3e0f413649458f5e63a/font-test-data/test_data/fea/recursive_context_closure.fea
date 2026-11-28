@@ -1,0 +1,12 @@
+feature test {
+
+    lookup first {
+        sub a b' c by B;
+        sub a B.2' by B.3;
+    } first;
+
+    lookup second {
+        sub a B' c by B.2;
+    } second;
+
+} test;

@@ -1,0 +1,1359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.54">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="space"/>
+    <GlyphID id="2" name="u1F3FB"/>
+    <GlyphID id="3" name="u1F3FC"/>
+    <GlyphID id="4" name="u1F3FD"/>
+    <GlyphID id="5" name="u1F3FE"/>
+    <GlyphID id="6" name="u1F3FF"/>
+    <GlyphID id="7" name="uni270D"/>
+    <GlyphID id="8" name="glyph00008"/>
+    <GlyphID id="9" name="glyph00009"/>
+    <GlyphID id="10" name="glyph00010"/>
+    <GlyphID id="11" name="glyph00011"/>
+    <GlyphID id="12" name="glyph00012"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0xea7db69e"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1024"/>
+    <created value="Mon Apr 21 21:12:28 2025"/>
+    <modified value="Mon Apr 21 21:12:28 2025"/>
+    <xMin value="51"/>
+    <yMin value="-250"/>
+    <xMax value="461"/>
+    <yMax value="950"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="950"/>
+    <descent value="-250"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="1275"/>
+    <minLeftSideBearing value="51"/>
+    <minRightSideBearing value="814"/>
+    <xMaxExtent value="461"/>
+    <caretSlopeRise value="1024"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="8"/>
+  </hhea>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="13"/>
+    <maxPoints value="8"/>
+    <maxContours value="2"/>
+    <maxCompositePoints value="0"/>
+    <maxCompositeContours value="0"/>
+    <maxZones value="1"/>
+    <maxTwilightPoints value="0"/>
+    <maxStorage value="0"/>
+    <maxFunctionDefs value="0"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="0"/>
+    <maxSizeOfInstructions value="0"/>
+    <maxComponentElements value="0"/>
+    <maxComponentDepth value="0"/>
+  </maxp>
+
+  <OS_2>
+    <!-- The fields 'usFirstCharIndex' and 'usLastCharIndex'
+         will be recalculated by the compiler -->
+    <version value="4"/>
+    <xAvgCharWidth value="1275"/>
+    <usWeightClass value="400"/>
+    <usWidthClass value="5"/>
+    <fsType value="00000000 00000100"/>
+    <ySubscriptXSize value="666"/>
+    <ySubscriptYSize value="614"/>
+    <ySubscriptXOffset value="0"/>
+    <ySubscriptYOffset value="77"/>
+    <ySuperscriptXSize value="666"/>
+    <ySuperscriptYSize value="614"/>
+    <ySuperscriptXOffset value="0"/>
+    <ySuperscriptYOffset value="358"/>
+    <yStrikeoutSize value="51"/>
+    <yStrikeoutPosition value="307"/>
+    <sFamilyClass value="0"/>
+    <panose>
+      <bFamilyType value="0"/>
+      <bSerifStyle value="0"/>
+      <bWeight value="0"/>
+      <bProportion value="0"/>
+      <bContrast value="0"/>
+      <bStrokeVariation value="0"/>
+      <bArmStyle value="0"/>
+      <bLetterForm value="0"/>
+      <bMidline value="0"/>
+      <bXHeight value="0"/>
+    </panose>
+    <ulUnicodeRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulUnicodeRange2 value="00000010 00000000 10000000 00000000"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="NONE"/>
+    <fsSelection value="00000000 11000000"/>
+    <usFirstCharIndex value="32"/>
+    <usLastCharIndex value="65535"/>
+    <sTypoAscender value="950"/>
+    <sTypoDescender value="-250"/>
+    <sTypoLineGap value="0"/>
+    <usWinAscent value="950"/>
+    <usWinDescent value="250"/>
+    <ulCodePageRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulCodePageRange2 value="00000000 00000000 00000000 00000000"/>
+    <sxHeight value="512"/>
+    <sCapHeight value="717"/>
+    <usDefaultChar value="0"/>
+    <usBreakChar value="32"/>
+    <usMaxContext value="2"/>
+  </OS_2>
+
+  <hmtx>
+    <mtx name=".notdef" width="1275" lsb="51"/>
+    <mtx name="glyph00008" width="1275" lsb="0"/>
+    <mtx name="glyph00009" width="1275" lsb="0"/>
+    <mtx name="glyph00010" width="1275" lsb="0"/>
+    <mtx name="glyph00011" width="1275" lsb="0"/>
+    <mtx name="glyph00012" width="1275" lsb="0"/>
+    <mtx name="space" width="1275" lsb="0"/>
+    <mtx name="u1F3FB" width="0" lsb="0"/>
+    <mtx name="u1F3FC" width="0" lsb="0"/>
+    <mtx name="u1F3FD" width="0" lsb="0"/>
+    <mtx name="u1F3FE" width="0" lsb="0"/>
+    <mtx name="u1F3FF" width="0" lsb="0"/>
+    <mtx name="uni270D" width="1275" lsb="0"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0x20" name="space"/><!-- SPACE -->
+      <map code="0x270d" name="uni270D"/><!-- WRITING HAND -->
+    </cmap_format_4>
+    <cmap_format_12 platformID="0" platEncID="4" format="12" reserved="0" length="52" language="0" nGroups="3">
+      <map code="0x20" name="space"/><!-- SPACE -->
+      <map code="0x270d" name="uni270D"/><!-- WRITING HAND -->
+      <map code="0x1f3fb" name="u1F3FB"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-1-2 -->
+      <map code="0x1f3fc" name="u1F3FC"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-3 -->
+      <map code="0x1f3fd" name="u1F3FD"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-4 -->
+      <map code="0x1f3fe" name="u1F3FE"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-5 -->
+      <map code="0x1f3ff" name="u1F3FF"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-6 -->
+    </cmap_format_12>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x20" name="space"/><!-- SPACE -->
+      <map code="0x270d" name="uni270D"/><!-- WRITING HAND -->
+    </cmap_format_4>
+    <cmap_format_12 platformID="3" platEncID="10" format="12" reserved="0" length="52" language="0" nGroups="3">
+      <map code="0x20" name="space"/><!-- SPACE -->
+      <map code="0x270d" name="uni270D"/><!-- WRITING HAND -->
+      <map code="0x1f3fb" name="u1F3FB"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-1-2 -->
+      <map code="0x1f3fc" name="u1F3FC"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-3 -->
+      <map code="0x1f3fd" name="u1F3FD"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-4 -->
+      <map code="0x1f3fe" name="u1F3FE"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-5 -->
+      <map code="0x1f3ff" name="u1F3FF"/><!-- EMOJI MODIFIER FITZPATRICK TYPE-6 -->
+    </cmap_format_12>
+  </cmap>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef" xMin="51" yMin="-250" xMax="461" yMax="950">
+      <contour>
+        <pt x="51" y="-250" on="1"/>
+        <pt x="51" y="950" on="1"/>
+        <pt x="461" y="950" on="1"/>
+        <pt x="461" y="-250" on="1"/>
+      </contour>
+      <contour>
+        <pt x="102" y="-199" on="1"/>
+        <pt x="410" y="-199" on="1"/>
+        <pt x="410" y="899" on="1"/>
+        <pt x="102" y="899" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="glyph00008"/><!-- contains no outline data -->
+
+    <TTGlyph name="glyph00009"/><!-- contains no outline data -->
+
+    <TTGlyph name="glyph00010"/><!-- contains no outline data -->
+
+    <TTGlyph name="glyph00011"/><!-- contains no outline data -->
+
+    <TTGlyph name="glyph00012"/><!-- contains no outline data -->
+
+    <TTGlyph name="space"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1F3FB"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1F3FC"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1F3FD"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1F3FE"/><!-- contains no outline data -->
+
+    <TTGlyph name="u1F3FF"/><!-- contains no outline data -->
+
+    <TTGlyph name="uni270D"/><!-- contains no outline data -->
+
+  </glyf>
+
+  <name>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      noto_handwriting-sbix
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="3" platformID="3" platEncID="1" langID="0x409">
+      1.000;NONE;noto_handwriting-sbix-Regular
+    </namerecord>
+    <namerecord nameID="4" platformID="3" platEncID="1" langID="0x409">
+      noto_handwriting-sbix Regular
+    </namerecord>
+    <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
+      Version 1.000
+    </namerecord>
+    <namerecord nameID="6" platformID="3" platEncID="1" langID="0x409">
+      noto_handwriting-sbix-Regular
+    </namerecord>
+  </name>
+
+  <post>
+    <formatType value="3.0"/>
+    <italicAngle value="0.0"/>
+    <underlinePosition value="-77"/>
+    <underlineThickness value="51"/>
+    <isFixedPitch value="0"/>
+    <minMemType42 value="0"/>
+    <maxMemType42 value="0"/>
+    <minMemType1 value="0"/>
+    <maxMemType1 value="0"/>
+  </post>
+
+  <GSUB>
+    <Version value="0x00010000"/>
+    <ScriptList>
+      <!-- ScriptCount=2 -->
+      <ScriptRecord index="0">
+        <ScriptTag value="DFLT"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="0"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+      <ScriptRecord index="1">
+        <ScriptTag value="latn"/>
+        <Script>
+          <DefaultLangSys>
+            <ReqFeatureIndex value="65535"/>
+            <!-- FeatureCount=1 -->
+            <FeatureIndex index="0" value="0"/>
+          </DefaultLangSys>
+          <!-- LangSysCount=0 -->
+        </Script>
+      </ScriptRecord>
+    </ScriptList>
+    <FeatureList>
+      <!-- FeatureCount=1 -->
+      <FeatureRecord index="0">
+        <FeatureTag value="ccmp"/>
+        <Feature>
+          <!-- LookupCount=1 -->
+          <LookupListIndex index="0" value="0"/>
+        </Feature>
+      </FeatureRecord>
+    </FeatureList>
+    <LookupList>
+      <!-- LookupCount=1 -->
+      <Lookup index="0">
+        <LookupType value="4"/>
+        <LookupFlag value="0"/>
+        <!-- SubTableCount=1 -->
+        <LigatureSubst index="0">
+          <LigatureSet glyph="uni270D">
+            <Ligature components="u1F3FB" glyph="glyph00008"/>
+            <Ligature components="u1F3FC" glyph="glyph00009"/>
+            <Ligature components="u1F3FD" glyph="glyph00010"/>
+            <Ligature components="u1F3FE" glyph="glyph00011"/>
+            <Ligature components="u1F3FF" glyph="glyph00012"/>
+          </LigatureSet>
+        </LigatureSubst>
+      </Lookup>
+    </LookupList>
+  </GSUB>
+
+  <sbix>
+    <version value="1"/>
+    <flags value="00000000 00000001"/>
+    <strike>
+      <ppem value="109"/>
+      <resolution value="72"/>
+      <glyph name=".notdef"/>
+      <glyph name="space"/>
+      <glyph name="u1F3FB"/>
+      <glyph name="u1F3FC"/>
+      <glyph name="u1F3FD"/>
+      <glyph name="u1F3FE"/>
+      <glyph name="u1F3FF"/>
+      <glyph graphicType="png " name="uni270D" originOffsetX="4" originOffsetY="-27">
+        <hexdata>
+          89504e47 0d0a1a0a 0000000d 49484452
+          00000080 00000080 08030000 00f4e091
+          f9000001 14504c54 4547704c 479ade4e
+          9ad95d9e d23b93dd 589cd43c 99e84897
+          da61b3f6 5ca3db41 94da5eaa e764b5f6
+          5cb1f64f 99d73a91 dc539ad3 4f98d157
+          aff550ac f54da2e5 4ba9f599 aa8cf5ae
+          05f2ac05 909f76f7 b60bf3ad 07f0a902
+          eea600da a9206498 a74a96d2 b4a047f4
+          ac05f2aa 01e3be38 f1a901ed a906f6b3
+          0bffc51f ffca2867 a2b6caaa 3bf5ae04
+          ffbe12cc bb57ffb6 04ffb402 ffb300fc
+          b101f7b0 048da788 4693d145 a7f5ffb8
+          07f3aa01 f7ac04ff ba0bfcaf 00f3ac04
+          f9b71040 a4f4ffc7 223f9ce4 ffc219cb
+          ba57f3ab 023e90d0 ffc925ff bc0e4e92
+          bfffc015 ffc41c36 93dd38a1 f4fdae01
+          348cd127 99f32c88 d12690e4 ffaa00ff
+          ac002689 d92787d5 2885d1fb a900f7a8
+          002296f3 268cdd25 88d92587 d7714027
+          7e000000 5c74524e 53005dd9 ff41ff22
+          c6ffff94 fffffff0 78ffffff ffffff3c
+          6fdcff1f affaffff ffffff9c ffffedff
+          ffffffff ffffffff ffffffff 3affffff
+          ffc053ff 1084ffff ffffffff ceffffff
+          ffffffff ffffffff ffffffff c5eaffff
+          ffff5daf d4d543f0 0e000008 7e494441
+          547801ec 92d7b6db 300c0473 0dad4599
+          a20c90b7 f7f6ffdf 18b89229 8f39cbb4
+          3947cfb3 02e7cb7f 7e01ffb9 5889ac86
+          8e7ec88e d5bad700 c8018c7d fca3bb43
+          98c4c1a6 837f8048 9ce739ed 272c5bfa
+          8045649a f7c4430a 64ffd69d c9ed75c2
+          422f30ce 67f6290c ec02e716 5fb0e517
+          f8ed808b 2e05d60a c02fb012 4464c3f3
+          af7ff600 4bcf02a3 500b18e4 27075891
+          0b0ce1bb 03ac79fe 0d203138 bd0a5460
+          0a07fa14 084838d1 a3400031 54e6c02e
+          10985268 e0178898 529d903a 149852b3
+          805f20dc 5e274480 5aa01e1e a04e1080
+          5aa02a52 4b04c02c 5055636a 01c02cd0
+          54a79c1a 26805aa0 aa66e79b 07189805
+          aac5bca7 3ec0482e 301f391d c098059a
+          69c9b94e c8ec02cd 2e73cba4 4a2dd04c
+          734b5455 6681fb03 945c812a b5403394
+          dc70a94a 2ed0ae4a 29e71b14 55251678
+          edfecb9d debf0360 1678737b 67662eaf
+          132ecd58 05de3f3c 3e3d1f0e 50271435
+          1b493fff e4bcbcbe aa7beb84 4b335b73
+          7e7ec7db ebebeb55 a9e42bf7 bf3dbe33
+          7edef9f8 74ff6569 81d9cb57 5ecc43bd
+          512b0ac2 e9bd67fb 2e022fea 8215c242
+          f212a312 635c9152 dfff5572 86c3772e
+          d6b1c387 2267b6d7 f9efcc70 6599fea4
+          f3fcf10f dfedf507 c3bb0170 01230b02
+          c2631ede f30783c1 3b047007 80fced71
+          e009c223 1e1e22ff 1f9e92ee 04d01a07
+          93d0b5a0 17c78f77 78681a45 d18cfc05
+          010b9cce 0960a210 0e7d78a8 ed44d113
+          b80bc20f 8ef3e39c 010e8cf0 b6630e2f
+          1a4691f3 d4880aa0 4a460220 0827affe
+          abfd7b75 78e85d64 0260d1f9 ed98010e
+          8af0561f 1e723800 2304d08e e7630028
+          845ff6f7 3fc5e193 eae16581 8bd9ccf8
+          cf9cc899 c60220f2 b8bdbd2f c7e3ae65
+          b9cbc1ae dae4bf9a 3d9d1904 5aa03347
+          030ca010 f6bd9f5f 68ff7281 11b91b84
+          27d4c851 02800000 8743a001 aeb5ffaf
+          582079c3 9e096812 b6e5ce65 83f7239c
+          366f8006 30d0227f 07ee12c2 8a7ea745
+          618d7503 ac50eee7 c68f406f c0d20b34
+          080bfa8d 971614a2 8103229c 5956a217
+          98628155 fd183991 05b99e17 7a21091c
+          8740e8dc 3781619a 2200a327 14c01199
+          bb56555e 182804b7 29826559 e76a8169
+          9aae1655 02f2b777 dc11464f 2da231c2
+          7bdae0f9 f90e4294 a6ce8224 feb4c0a9
+          5bbaf67a bd04dfe2 8c14c778 2e1b21e8
+          0d7acb1d 82290500 7f415844 1723ce3c
+          f12f21c8 27094210 ec8b7042 1b5c1201
+          c9dc8128 80c5088e ddb5483d 765f43cc
+          c0088640 2354ef85 e30736e8 f7978cc0
+          10eb971c 804158bd e4172b36 37620421
+          d008ccd0 3939e974 3a0f7dec 4047bbbc
+          ea03a164 58b77881 464f8af8 13b6bf32
+          62062120 7f8da074 aaef418b feaf3e21
+          b0d65d3b 4dafabe7 1f227e37 863d6cfb
+          10845fec 1280a106 e158bd14 bbf21f03
+          c23da200 6e164653 ab8bf8f9 f4c20981
+          a10cc110 e88b21f4 3c2f24e1 e768416d
+          b0b72e93 0543d2ba 280a1084 22fe1e1f
+          bf2f6381 04810890 811ea2d6 2dfd676a
+          83542e23 40de4b04 20f65f72 fc3efbb3
+          fd80c50c 868023a8 9302a0d7 e2ecd2ac
+          9b177803 2185a945 f232f167 779121e0
+          12702b36 04c0067d df3cde09 1608777c
+          2be327ff cbaabf26 e0195423 9032ea00
+          de160764 04880ac8 717c203c 29e24f32
+          1f01687f 9610a004 019031d6 02bc0040
+          461eccd0 be487304 000d8bf8 e3ac0cc0
+          f86b022e 61770541 2d004f80 5f547c28
+          b3f33c2d 0378c9fe 31024001 ca5f5a90
+          08628940 13680099 404cca58 a33ccd79
+          814f5af8 503d9873 005c8078 2a0244a0
+          3ad0041a 001370e7 f3180240 9a9705f0
+          e5178c19 000bd001 883802dd 8126d000
+          98c09c14 177a99e7 bc40befc c87f5e69
+          c038ea15 a80e4435 00f4cb70 4c3e50d6
+          cacb008a fa6f2708 2046033a 00ddc17e
+          00cfd173 302681c0 2e0318a1 fe70520b
+          20322368 0a704645 d39dc10c 23f2a705
+          ae8afa27 935d80c1 7e0041f0 20003f84
+          788d6286 62819ba1 f80bc09a 010e9f00
+          1ab08414 0bdc94b7 cfe47f02 38c1594b
+          f102a73c 3f485770 78801738 6c291b01
+          c01fa540 0d4658f3 14040f02 9c99d38e
+          1000fcbb 1351f51e 582e0ffb 18aa0af2
+          7c5bfa1b 35bc88f8 266c94c0 7b091c0b
+          147f51fd 556c0268 0e007598 20685100
+          b6f29711 70077ee2 795e922c 7500dc40
+          fd0635c0 b14572c3 89bddde6 23f1d71d
+          d0f97ae6 1db17fae 02281b68 0a8012a0
+          16f9ff86 301440d9 810f7ba3 ae5ff5e7
+          0570000d 0190015a 40001bb7 04d01d64
+          6cef25f4 1b49c23f 5f1a7f5e 8004d010
+          009fa03e da6eb79b 4d8b2f05 dd41af5b
+          58defece fa23f110 4262fc77 02683042
+          d667e4ff db0697d0 7d1184ae b11784e2
+          b7cec95e fc4d00cd 01fe4400 a4ee3d04
+          6cef8662 ce0a8b10 d6b097b7 054ddf98
+          883e2902 207d0c02 4f7fe6cf a5d32b15
+          21244bb6 d7fe4d00 fec2020b 0dbb7c5c
+          3ebb87c3 936eff80 a152918d 7729fe0f
+          be2f0a6a 00be4201 a5562df6 745dd762
+          75b5bd2c a1c8a7a7 de9e374d e0efb200
+          0981a5c3 d70a2d92 9bfdab7f 5007f03d
+          0760648f 98c1fda7 3d336652 1706a2f8
+          168ec5bf b1c43f52 e1e4aa54 b1b830da
+          d9dd7013 141650bf fff7b845 30ab0933
+          725e91c6 5f1b9df7 f6ed8b16 91fef02e
+          f93504c9 fa2f2450 72003ddf c6fca715
+          d44fb439 04427e8e ebe7eab9 810af1c1
+          c0175572 27e853be 83ba691a 3a689aba
+          769b4097 c7d757c7 c3840410 b16d59bf
+          35c62c20 4e5c0735 49dfd3f0 693e1456
+          2a479e8e 9e1b3821 9a96b85b 4075fb8f
+          620d5677 3d7015f8 0213aa6f ef840e9c
+          118bb6b5 160a0a60 06446635 78f664a9
+          f52e8a52 2d3c0bc7 5b0c6ba9 942d6fae
+          e47a3ddc 6b29fb42 28c74065 0db4c302
+          cafb773c 46a41930 d9de5fc5 f1cac8d2
+          980fd965 25dc0a58 0a43c0c0 56f31793
+          d5065c52 9bc36104 5f9dd93c 56800d18
+          44634e60 d9a64290 b8f0d59d 187c0f37
+          e3fb5d04 4416452b 2dfa4c93 cca980b1
+          e3236235 8349b045 b7923cbe 6f3c8eb4
+          4e6318af 40814409 bf66b3e2 b274bf10
+          75d3cb2f 63980057 c020b180 97600f4c
+          0a939821 a21dbf9a c3cbc4e9 924d4c7a
+          c9e60a70 fc7f24ee 8a26c45e 6730990b
+          6231c47f 82102019 b0f10760 de1940e2
+          0c61f887 4488f8b9 021c7f10 90e30f03
+          c71f8812 2fc1e27f f3e60743 1a68b668
+          b2cf2c00 00000049 454e44ae 426082
+        </hexdata>
+      </glyph>
+      <glyph graphicType="png " name="glyph00008" originOffsetX="4" originOffsetY="-27">
+        <hexdata>
+          89504e47 0d0a1a0a 0000000d 49484452
+          00000080 00000080 08030000 00f4e091
+          f9000001 14504c54 4547704c 479ade4f
+          9ad75d9e d33b93dd 579cd43c 99e84998
+          da5face9 5fb3f65c a5df4194 da64b5f6
+          3a91dc52 99d2569a d05ab1f6 56aff550
+          a3e54f98 d352adf5 4dabf5e8 c293ecc0
+          8deabd88 a4aaa44b 96d1f2c9 99e9be89
+          e8ba83e6 b77ec7b1 907aa1ba 48a8f5ea
+          bf8ae7b8 80e9be8a d5c2a4e8 bb84e7ba
+          83edc391 f3d1a8f6 d7b3c9b8 9ef1cca0
+          f6d6b1f7 d8b5c4c5 bdf3d2aa f2d0a5db
+          cbb5f2ce a3ecc18e f7d9b68f b4cc4694
+          d289aec5 f4d3abee c594f5d4 adf7d9b7
+          ddd0be43 9de4f8da b8f5d5af efc99ae8
+          bb86eabd 88ebc18e c6c8c3ef c797e9bd
+          88f8dbba 41a5f4f0 ca9d3c8f d1f9dcbc
+          39a1f4c0 bdaf2a94 e876afd6 318ad1f9
+          ddbd289a f3288ddd 2886d127 89d92397
+          f3268cdd 2687d625 88d92488 d9f9e43b
+          66000000 5c74524e 53005ded ff41ff22
+          c9ffffff 94ff78fe ffffffff ffffff3a
+          6fd9ffff 1baef9ff ffffff9b feffffed
+          ffffffff ffffffff ffffffff ffffffff
+          ffffffff ffffffff ffffffff c053ffff
+          84ffffff ffffffff ffffffff ffffffc6
+          ff5de1af c5cf919a 5a000008 fc494441
+          547801ec d25172c3 200c8461 87f52640
+          1c098cdb fb1fb531 712bcfb4 8f1df192
+          ef02eca0 7f7afb07 6f970084 79e0fbc4
+          2e5ca741 88c36d1a e20620a6 8c27de27
+          7f3381b8 2c4bc42e 3c266f01 c84b1787
+          dce181d7 07d884e0 5e605e7e f41466ef
+          0297b30c 3c061468 005c8614 6815d0bf
+          409300dc 2737572b d00a0823 0b8cbe05
+          ccf8a3c0 9b6f81bf 3fe03ab9 b9938869
+          6481644e 298d2b90 44ea0615 4832a6c3
+          90024924 33a240c6 7446df02 e555a0f1
+          2e50c952 9289a46b 81aa9acb 790148d7
+          025559ba f492497a 16a8aab1 149b5048
+          ba16a89a 8b492593 ae058ab0 96934872
+          762c5044 d75a8ba1 738122ac bb72c84a
+          f12cb089 6cb5da84 aaaa9e05 36696b3d
+          f4095075 2db035d9 ea495455 cf025b6b
+          eb564fa8 ea5a606b dc9eeab7 55c4b7c0
+          d63eb6ae 769b8838 16f829fb 010e7547
+          11bf02bf 78278b74 57432088 0e6e64f6
+          0442a4e2 ee2ec4dd f7bfa0db fcd21fd3
+          e8896b9d 023a164f c05d0056 1034935f
+          3a81c954 3a930520 2236b422 e12f95cf
+          10392018 b11152d2 09fc4a79 4302405e
+          59f94aca bf8974e1 f3e58b26 be540620
+          14c10241 2973f449 25f6f9f2 d55abdf1
+          0340b9f0 06c826c9 7d4e81cb b7da9d4e
+          d75900cb 4051fe4f af5f6385 cf95ef18
+          24201543 0a021283 5eaf3e1c 650cf1e8
+          a7ca8f1d 265aebbc b2c80398 ce6664d0
+          6fbd5b81 cbcf176e fa72b9d2 1a6b5b20
+          625664b1 20837abd df6f95de a850a8f8
+          e53b269b d86c363f 24902758 4000e86e
+          d960b8db 6788e221 f96afc91 cbbbf11b
+          8793d65a 18015600 e44f7b4b 06ce2690
+          c1f0fc16 8542c62b cff10ed0 5a9a7456
+          580318b4 c9809760 386cbd41 e162ca9f
+          6774e839 fe4a9813 78f3e39d 7b404f1a
+          24601bb4 5aad5a35 63283c9b 1f2d52fb
+          59c3cde7 f8eb8af2 d726961d 24800609
+          589b3034 06f7fbc8 51283ea9 10a7fcad
+          957f75f9 b116c041 688dec6f 7b66dcdb
+          b41545f1 49edaa89 09551a52 1b80ba85
+          bcd92624 a59e5f49 e30c889d e252872c
+          98d494c2 f7ff1ebb f7be5cdb 97d7687a
+          03947f38 fb67cba2 9c1fe79c 675b78c4
+          041841b4 8aa048d3 6f418001 46b6ff1b
+          19000826 b18ba8bd 5b2248f3 5c798470
+          e1de80e7 65bd1efb bf650d87 b37bc2ff
+          15064061 c9080c40 9a278941 f0f7dd8f
+          80c60060 7feccf0b bc7cdc74 70091f1c
+          d159ed73 04cd0c11 204fc2d0 15812790
+          7e1dc0bb 97b3e1ec d525a806 b80700e4
+          afc3244e 5388fe64 243b4880 e0ff20f8
+          30010840 f8bfdb9a cd280050 5dc0f0d0
+          53266656 1016a283 10a43357 04f83607
+          50fbbfe1 0098010b d8d5ca13 eaaa242d
+          fa910470 4638870d 7200ecff 6e480190
+          10810238 5ad9ab3c cfe3342f e2a7cd10
+          eb11b823 d00609a0 e5ff0202 98330085
+          30bcf74f fb31a127 af063110 308033c2
+          d4f372f0 6f03bc84 004c01ac e19642fb
+          a2778a62 0441d04f 1940225c b44ffcda
+          0d7203e4 3f39e202 38825767 818741bd
+          06c18d9a 1098800e a3192211 480462f0
+          a753dff7 bbb89a8e cd009f8f 04c0e470
+          4601b43a c0f883e8 350b1104 41640864
+          068c20d5 bdb0af83 8198c024 d8c500c0
+          9ef51bc6 afc67c46 0c028640 04634380
+          0082601d 4277cfba 152b01a0 ee4300f3
+          f9bc4678 81f127a7 6f5b4284 3a031901
+          114806ad 94d25ad3 bf43de1d 7b836d80
+          d87b0005 803f1350 fc315b4b 02510202
+          70046ba5 20026b83 711b203c c200c09d
+          42e0f8df 5a320432 02bb035b f0731200
+          f21db501 6881e48e 1026fe63 3e9fa43a
+          03586213 81e8c001 0037d8eb 3500d12e
+          06c032f1 f3f1acb5 260202c8 dd00e83a
+          c8006874 bfe5ffd8 c42ffc05 01472047
+          e006d081 0d128089 00af818b 95ff7b8c
+          3fec1117 fbb39a08 a8033902 278003d8
+          600b60ab 09e08507 2ae0630e c022e00e
+          7804ee00 34016f80 00a68337 b37215c0
+          e59ff07f b293e353 19c00719 811801ad
+          d0118026 00001cc1 8c0330a7 6f702c01
+          3ea06407 df08408f 63833a82 b3b22c9b
+          fa13f818 a97e2800 5c19a301 47f0920a
+          589afa83 fec00610 04df0360 1f8c2606
+          0008b6ca 72c6a73f 23ae1f9c 00351002
+          8021785e 9a056658 ff6832a1 66e408bf
+          37001d42 70322b80 0220803b e8af4763
+          06f89b01 58dff114 5003e844 11e00297
+          f33bf8dc 923f3dc1 040604b0 f64224af
+          03ae1722 be1587a3 15c15fe0 bf989fe1
+          13431a01 c0782247 b0f64ac8 01b802f0
+          211c8d0d c12e2c60 49fe45d4 021004d6
+          bdc0be19 b9260000 2682e718 c0191dbf
+          382600d9 0168dddd 50de8e5d 01f48989
+          60569657 e45f0080 1d411b61 fd0349df
+          f581e41c feab4f04 b840f24f 8b7e9f01
+          280241c0 e2e7916f 7e22f2a1 f23e9480
+          0bfc15fd 7300b022 3004a751 aeb54ed3
+          9ee52f1b 7002d8c3 4317c6a3 5d007806
+          fe0900b4 3a68118c 138fa5e2 63cc9ffd
+          bf6ac001 804a4002 ef101788 d71f00e0
+          0804c184 ed8db2d8 f8730175 00d480e3
+          33a10f9f 3c80052e 03049011 8ccd356a
+          900768ab d322050f 93c298fd 6500ee00
+          f452aaac cac5122a 50e12d11 0cfa195a
+          26796894 a48a4e0b d84b7f0e c00580b4
+          53561000 5d843802 ba161882 98ec35db
+          1b040a61 c2fe3200 77808f78 13006572
+          05445028 ea3c0da5 728d97cc a7e46f05
+          e00ab04d 0580fec0 a6551341 1499eeb3
+          db7e37a7 5adafe7c 049c01aa aa820250
+          77c84f85 4450f05f 47adf9d5 1c035351
+          db9f409d 017eafca 6ab9d2fc 99f10c32
+          402105eb 7f34a11a 12e36f0a 70059001
+          90deb333 49097b1b 81be5308 7f6780bb
+          55555e5f 5f37085b 878621d3 fffd8339
+          b5a40bf2 27587780 8f100000 18846bf8
+          078ec451 96653ab4 b43684ae 667f6700
+          6a6081fe 1cc2159c 890bbc3a da045a29
+          150441a6 94964b00 29119723 00ba33c2
+          0202b8fb cbc30341 40e699d7 52375321
+          8b4f0b61 39037c6a 0008e1aa aa6ef81e
+          d578a8c0 b3d46d19 ae1032ed 0ef0d94c
+          80b58033 b95ddf25 03a5db7f f66e673a
+          bdd8df7f 34f5bb96 217f2950 5ae41618
+          f4a638fd 15c00d4d a0f1afaa 8ff57d5a
+          c87f74de be8b77ba 560c520c 2e0418f8
+          53d60458 907f59d5 ef51a70d c2c1a3bd
+          db5e7492 780d52b2 34a1ee9e 3d01f607
+          7d6abdca 7de2fb60 ee4b7719 c31a866c
+          05deb9d8 a76f5271 07c6ffdc 9e00c70f
+          da767bdb cc31c8ee 1581d9e0 0ff7a7d3
+          27f2f5e6 4d0d7055 51ffceda a337de24
+          1a1a544f f61d6924 655f8616 e47fd7dd
+          5f32905c 5e1f6eaf 2640f6d5 8ea3b1e8
+          a2c3102e af916902 ecffc5d1 d386c0a1
+          f97e672a 5666cb9e 4065d6bf 01d10468
+          fd373b1b f1df016b 8afff326 dce969ac
+          da60fc34 81cdc54f aa36183f 6993f193
+          be6c30fe 9ffaa97f 0108564e d141652b
+          ea000000 0049454e 44ae4260 82
+        </hexdata>
+      </glyph>
+      <glyph graphicType="png " name="glyph00009" originOffsetX="4" originOffsetY="-27">
+        <hexdata>
+          89504e47 0d0a1a0a 0000000d 49484452
+          00000080 00000080 08030000 00f4e091
+          f9000001 20504c54 4547704c 479ade4f
+          9ad95c9e d33b93dd 3c99e848 97da60ad
+          eb5fb3f6 5ba2da41 94da64b5 f6539ad3
+          3a91dc5b a8e54d97 d25ab0f6 55aef550
+          acf54ba0 e54caaf5 c5a27bc7 9e74c399
+          6f8d9493 caa97bc3 9a6fbe93 68ba8f63
+          aa8f7368 92b148a8 f5c59d72 c2996ed0
+          a9805e9a c8bf956a bc9266c7 9e73d9b3
+          8ce0bb95 8aa5b747 94d1b99a 79bb9165
+          d1aa81de b892c9b5 9fd8b28a d6af87c7
+          9e734499 ddcfb293 d6b088d4 ad85a7ac
+          aadbb58e caa177d4 b99a779f bcdcb690
+          dab48dcf a87eddb7 91d2ab82 cca47abe
+          9469c399 6ec89d74 dfb993d3 ac83cba7
+          7cc2996e cea67d43 a6f5e0ba 943e90d0
+          3ea3f4a8 9e8e389b ea37a0f4 358cd0cf
+          a680289a f32793e8 288ddd2c 88d13189
+          ce2689d9 2787d524 98f32885 d12196f3
+          268cdd25 88d92587 d7d21409 f6000000
+          6074524e 53005dde ff4122c6 ffffff94
+          ffff78ff fdffffff ffff3a71 daff1fae
+          faffffff ff9cffff ffedffff ffffffff
+          ffffffff ffffff64 ffffffff ffffffff
+          ffffffff ffffffff c253ffff 1089ffff
+          ffffffff ffffff64 ffffffff fdc5eaff
+          ffff5daf d45fb09f 04000008 fe494441
+          547801ec d40712db 20108561 aca702d6
+          330beedd beff2963 b540caf4 cc92f61d
+          80b6ff60 7e81fffe 5b554055 17dc1fa3
+          aa318560 d19a225a 009d7518 ac8dbe1a
+          40d7f77d 371e811b a3ad025c 3fea30a8
+          8caecdf8 00335fe0 04007c9f 3800b576
+          817dce01 1bed02bf 3fc0aa48 815905fa
+          052656f7 2f6808f8 ef07c092 0576502d
+          a0c64f1e a0327ae4 67053646 cd7a28d0
+          162d90de 5a5bb440 3b2a5520 e1ad4d47
+          b0050ab4 498902d9 d98c7a81 a4b339ed
+          0249069b d12e90a4 0f21e403 a06a81a4
+          0b233bf1 00350b24 d985908e 1040d502
+          85f42119 0b14ed02 63483a10 b57e8109
+          8856b9c0 1843e249 512d50b8 8d311d21
+          92542e70 174761e2 48ed02e3 621e0055
+          0b14fa98 8c03502e 9031e794 0b14917d
+          cc6c750b 3c8870b7 ddc60414 bd028fa7
+          b3886c07 71a658e0 e57abb3f 4464b71d
+          7d1d80b4 4a97bf7f 3c45b85d c48f1d45
+          1a9dcb0f 8601bcb6 993d85e7 db5be5f2
+          5f68330f c6c48d2f 88ffffe9 c5c9f52e
+          17011642 4620e293 e818c967 6261385b
+          d7cbf7ff 1e99f716 96879794 7599f45c
+          999f6666 572e8ee3 96ca28e0 a1f0a72b
+          60073f52 797cfb0f bfef55fd 5a10dc79
+          f8f0e1ca ff011a39 a83b8c70 cb0f1f36
+          7cbf19dc 091e0060 857067eb 4e2d6a79
+          0ae18f5b 7d785239 080ec95e 232080f2
+          cb6a1427 ae437af2 e8f61e9e d40e8260
+          17de1a61 17936c77 aa5114b7 423b048b
+          87ef76fc 857ae500 05486ddd 09fa83ce
+          1011c449 32ba4984 bdcaf2e1 fd956a14
+          c0aef047 01779a47 20a00892 649c668c
+          7cfcecba f6af8c87 2735e1ff 6017d200
+          f0af9d34 54040098 8c4bdd1b 41d8331e
+          5e2f7057 69114010 947b270d 44401db4
+          00109646 0aa17efc e7d5fd4f e91972f9
+          f07a8153 986b845d fc8fb67f 26222080
+          3c5567b2 7ee5cbf1 d13e9ede b0f77b5b
+          5c802038 44003e00 1081ee00 0079ba40
+          b8eafdfc 04fe0ddf 504d0640 4201779a
+          3e08a883 e1b283d1 0800d743 c00063e9
+          2c172844 05d47c48 7430511d b05c8570
+          6adf80e3 64c2582e 702a13e0 053280e8
+          4003ac10 2a8fed8f 8067fa63 81b3f914
+          5afa4f79 812cee60 31829047 702d044c
+          60642ef0 0e050069 04b540a8 9324499a
+          4fc6491c af56781d 84caa609 d466b3d9
+          544b1510 34fda3d0 7384326f 94946885
+          425dd7b1 44c0cf36 1708ff07 d395b880
+          da10ee52 fb6e372f 25492801 ec115e6d
+          da607936 3b9cce05 010ae8bb cad685c7
+          384ff371 dc190eab 783146f1 e41a081b
+          37d84600 d27e3a0f eebc561f 26240de8
+          081a0c06 1d4d1027 a32b231c 3b4e7e79
+          81010298 af05503e 50d77563 a9358298
+          2ea551be 11e1549e f8ffb6c1 e10e0500
+          69840735 7ae1782b 7b958224 a0235932
+          1198a172 7c5ca954 e878d49f 980c7811
+          747ca9ea 36fccfe7 826097e2 df1f374e
+          16d2084c a04a50b7 d2e622a4 eaa7e63d
+          b8bfeebf 8f000298 6b84df29 7e373e91
+          d2043202 be142e23 d4a53bfd 752983c7
+          f8bd7d29 f72902b8 98afa4e2 1fc0d524
+          502530c0 fa9b4132 78aeeb7a 9ec7ff0e
+          8427ffbc c1900a38 5cd94f39 fed289a1
+          4d113080 4120e521 02638389 04f076d6
+          0230e237 0874049b 2e6653f8 edd601b2
+          4b1bd40b 244dfb6a fd0bcbb3 8534818a
+          8001c487 073600c6 06137504 1711b439
+          fe4643fa 934404fa 20e81158 0118f7e0
+          d359313b bf803f18 a62a7ec3 1f921108
+          80c41ee0 c9fa067b b4c08b39 13fcac2f
+          1fedbf92 d9813a88 7600c687 6367fda2
+          985d28d5 1c283f3a 5a07f07d 09005d13
+          e0d1fabb b8597001 d09c4e5f d61ac05f
+          0230e5df 01c40b80 dc02e0d2 04cacb00
+          7ee6faab 0303c020 b80e8031 81765114
+          1c803a7d c3ce4680 b39b04c0 9b28126f
+          e1a2385c d65f1f0d 0170db15 3c46cf27
+          2a57a886 00c89feb 1f5701d0 19c8112a
+          dde808d1 40b7b124 68aa02e6 5c7f2baa
+          56250064 02c8bbd8 f61ed087 b0750402
+          b1409e9f 17470ca0 3bb8a58b e80da21e
+          10c0d962 816f2f7e c62a9c34 8e2310e8
+          11dcda55 7c4c371d 13d01d58 14ef2efa
+          75cc2f4d 62221023 600248da 1b17a1fd
+          cb880fe1 50119cf5 69017d9a 7f9e24ad
+          d8ec40ca 0c406cd0 2e81bcaa 086881ef
+          c83f1b8d 270cb01e 81c50724 a95d0591
+          22c002df b37f1e02 20896504 203011e4
+          47a5ba01 5b8057f8 af9009da c58742f9
+          8f4ae138 91116c24 68087f8b 068c6358
+          41e544f0 120bbc43 fe2903a0 03158124
+          e84cbaae eba6e910 eed2df08 c006e011
+          1d3a6f5c ed7ff850 bc26ff34 2782898a
+          4012c49e b3945bea ac7f6a14 898fcaed
+          00500211 38db1f3e 7c78877f eba6e932
+          8224d625 802082bd 50565a7e 5e640660
+          07800cd0 8233fbf0 e1fddb6c 09a022d0
+          25c0a25b 275b6f02 a771ae52 8806d25f
+          066009c0 df944200 e76f5181 9bea0804
+          c1086880 5bbd705c be2d387e f179990a
+          c01a00fa fe2305f0 1687a0ce 11ac1384
+          6cef45ab 079d4c4a 1c4215f6 f0970550
+          00f6009f 10c05be8 0004dea5 1272973b
+          4f16f6fc a0700a3d 0a21d1fe 22007b80
+          ef688104 70488374 45044937 63fb70a8
+          edc9879f 34e75ac8 def0b705 f84c05b0
+          b6c8afee 7699205f 7e6a9d56 853df9b0
+          7f9a6784 9b487f2a c01ee017 04f0e5ad
+          d2f981f2 ccb24c1f 383257f6 2a7e650f
+          e55c431a b7acfc4d 80af3a00 52999cb5
+          dcb17057 f6da9fc4 3f67a4fd af04f01b
+          05f0e58b 4078ad18 32afc4de 4b77b227
+          1be9a326 ea85c2df 1ae01302 00c00ae1
+          aff6cc58 c7511808 c32e92e6 a4940702
+          a4531c71 aeb807a0 c420057a f0050d24
+          efff163b e38cd088 ecae581a 37f9cad9
+          0dffc7ef 29a21885 fe586b2b 4ee6f497
+          78594261 f80f7b04 4680de0b b0c2e0dc
+          ff36a76f e54b38a7 5f2aa335 aa696dca
+          4a9640e8 8af2f708 00c044e9 acd06301
+          27956468 d0613265 53fabfce e842fe44
+          aa8d54f0 e8728fc0 0ce0289a a102461c
+          37985694 148d5c3a 6339583a 884056b0
+          e6e70277 80410850 0107c506 f8c0b2a3
+          e239328b eb3a8aa2 b4ceb90c 51032b16
+          96673cd5 d6fab13f 38e3472c 2057609a
+          64fe4ddc e309f2b4 111f6bea 625dc39a
+          52db4f5a a383ccd7 2b40f8fc c1218ab9
+          720691a5 bfd59a36 ffae77f3 771dbe50
+          c867cd2c 4006d300 e0dcac16 aee71ccb
+          ce72992e 69e2e22b 07cbe275 1bf9fff4
+          07973d67 cd7a05a6 27bd0380 f1a0b6c2
+          8afc5a56 9bf5ebbf 8a27515d b789928c
+          8bc000c8 6dc79d63 ba2c8b5f 34a3b58f
+          8f13b505 a01d5cf2 4f8ad9ed c06cbe44
+          3df00af4 808c47b5 9be41c67 227ef34d
+          36af80ac 7f3f092d 1a5d0d34 6a330f2f
+          e0009955 08680596 fa0370c4 685fff5d
+          85e11710 61eae715 08553f03 c1ea67c2
+          d5cfdce0 11acfe37 6f3e00be 64bcacea
+          84957400 00000049 454e44ae 426082
+        </hexdata>
+      </glyph>
+      <glyph graphicType="png " name="glyph00010" originOffsetX="4" originOffsetY="-27">
+        <hexdata>
+          89504e47 0d0a1a0a 0000000d 49484452
+          00000080 00000080 08030000 00f4e091
+          f9000001 08504c54 4547704c 479ade4e
+          9ad95c9e d33f93da 3c99e856 9bd33c92
+          da5fb3f6 5aa2dc3e 93da5ba9 e764b5f6
+          59aff44f 99d73a91 dc338eda 5ab1f650
+          98d250ac f554aef5 4caaf5a0 75594995
+          d29d7258 996f5463 7f98a876 639b7156
+          946b5091 674d876f 635b90bd 93684e78
+          767a48a8 f59a7156 976d53a5 7c62469e
+          e5956b51 9d7459b0 8465b88b 678a7d78
+          956c51a7 7c5eb689 67928a85 ae8364ac
+          8164b185 654493d1 9f8576ab 80639b71
+          57a97f63 b78a67b9 8c686b8c a8ad8264
+          a77d63a4 785ab487 66a78d77 ba8d68a2
+          795e9970 549e755a b588669f 765cab7c
+          6843a6f5 a47b6294 6b51b286 654b88bc
+          3da3f43b 8fd137a0 f4a38976 2991e331
+          8ad22899 f32986d1 2787d623 97f3268c
+          dd23d2af a1000000 5874524e 53005dd9
+          ff4122ff c6ffff90 fffffff0 78aaffff
+          ffffff3a ff70dcff 1faefbff ffffffff
+          ff95ffff fff6ffff ffffedff ffffffff
+          ffffffff ffffffff ffffffff ffffffff
+          c353ffff 10ffffff ffffffff ffffffff
+          ffffe6ff 5d87f397 ef000008 f8494441
+          547801ec d24b52c3 30108461 e2763a52
+          6439a8ed 10dedcff 96a80c55 e3054b6a
+          6693ff02 d3257d0f f7eefd43 870118c6
+          c0fbd81a 8e510388 df4e31f7 4f0052ca
+          e8f11c70 7f0450a6 69aae861 beb80f98
+          813c6d95 1f0acef7 2f006abf 6e136677
+          8165b232 80d15be0 b42f0397 00815606
+          0e21024d 01fd055a 09c0a3df fd23fff8
+          80395260 85090811 08600816 88a3dffd
+          33819a22 059239a5 14279044 da0a1248
+          b0f4eb36 213b0b24 73b20204 9225ed8b
+          1168f90b 646d767e 2a741648 96d6760b
+          407a0bec f76d4221 e92db035 9b50499e
+          1d058acc cdea0249 5781126b 6d562139
+          3a0a1455 ea6e4105 71f21428 e5ba650f
+          204f8192 965a6d82 bb4029af eb6a13fc
+          05aadfb7 09ee02a5 d2afdb04 92ce02d9
+          4fdb822c 790bbcae bb16498e 029f6e52
+          5e96d582 e427f0f9 e555d275 596c4291
+          e424f0ed fde3f34b ba957ede 1648f211
+          f8dd9e19 35a78d6c 4178abee c6aeda97
+          ddf2ad04 4812d9b2 11361064 63080223
+          a1188c16 03c66b59 c9feff7f 727bcef1
+          c041436a f6c2ba78 493f2532 457fd3a7
+          67a412c5 92039d14 0a0764af 115ebb81
+          62f1907b 5a2814ce d89d11de c2fff453
+          f9f5174f f22af03f a706681d 1c1d9de0
+          2f17c557 5fbce356 6bf51300 fcf7ed8a
+          e0ad6ae0 67d7811a c5575ebc 7f59af5f
+          51004a9a a080009a d75581f0 4a8b6fd5
+          95da85c2 11dc49d4 8073ec89 2fcd66b3
+          13384aa5 77afb2f8 a0dbbbb9 b9817f5f
+          3590ed19 e10c03e8 d700105e 475b22d8
+          173f88e1 4e005fdb 3400a103 10d56a20
+          08c3eb8e ff6f2294 978bbfbd d1a2069e
+          9d09ff73 5cb85a02 74bb43cf 511a7dd8
+          d5feeee2 65f1e35b e886754b 0d3c3b13
+          0828c049 4b004411 23b83b22 94f5e259
+          3a01d5c0 33d62a80 2fad9606 e80020aa
+          242f087f eee64f93 bf9504b7 fd76bb3d
+          617f4638 837fbf95 07b8bfaf 4e09a1bc
+          f5edd6c5 a68fc953 26f015fe 18802038
+          2a14dab3 0d001a61 dbf3b904 ff1e9b4a
+          80130a40 480de034 6cc90e30 c0ae08d8
+          7d4d3df6 95ff1505 2005ffb9 e3354d00
+          56e06e89 f0ce71a6 37a6e05f 984cd603
+          681f3b20 5803a800 40206c73 3ea38241
+          ddf0570d 7c9840da 7f8200de f35ee593
+          5002ec84 30721cbf 9e27f8ba c00026ac
+          e500da0e 340daa49 773088a2 6ea71331
+          c08e080d c7090580 68e0526a 0098c8a9
+          13248123 34adfadd fb9c7032 fd9f08f8
+          741d92f6 68e00201 08820980 e655b84b
+          b9dec0ef 5e87dddd 10eeb090 3a49002c
+          a8814208 a0efb16d 30180c3a fec0efd4
+          c6711ccf d4c1701d ed80401d cc11f417
+          8bc583f4 7f68173e f363c275 8f75098d
+          c76326c0 b6882adb 22a08383 fabad0c0
+          c5f98324 289c5495 bd3feead 94236876
+          a38d0865 b9e37fdc 41a9d6fb c5a2fda0
+          b41c407f aab217f6 a41c41d8 35532086
+          c668d468 345cb584 92c980eb b3ba54ed
+          78b14000 82e05cc5 ef767abd ba9649c0
+          67938990 975b36cf 41b7b7e6 efce9701
+          30c27f54 fc5e4d7e 0ad20432 029c4df9
+          3a06ae70 a7107219 1411ad5e 1ac93b45
+          008f0f2b 51fcd5b1 34970432 02221008
+          a4240982 204912fa 37beab64 76b0d75b
+          21f8d3b9 1e006942 f1fb1271 13818840
+          dc9f4c25 f832a383 18ee0a21 78bf16c0
+          b911bf41 2022b001 40f83ae3 5e3c6300
+          86d00d24 4d4e38fe 95ff0d49 105004ba
+          053c0300 542a5600 d1c1cbde 4a1d6aa0
+          4ee08ae3 0798b037 088c1928 f78a0540
+          9e839782 8006f0f8 28e317fe 4232029e
+          81041004 1680123a 7809f558 7f2180a7
+          472638a0 f8e31e64 faeb0ce4 0c240011
+          d801a802 9db12260 86390540 047d0702
+          9cf4975a 07884d00 10d80150 0167acc4
+          0c578b74 714efe74 f84dc3b1 09a09f19
+          379620b4 1208005d 81385e22 2c740007
+          811aff6c 6c0088a7 662b0008 6c005481
+          181a93fa 0880fc79 f7cd7099 06c3fe5b
+          0080c002 e0a202b3 f805e1af 34e506f6
+          69f7cd18 6087040c 0203a088 39cfa098
+          344f7900 34fe4e8b 00761881 4960028c
+          10348c18 e18a0338 a7f1375b 26000bf6
+          f612da8e 62b9095b b022a5d4 8023e51f
+          346b3505 10034096 40ca7a0e d8016802
+          35001042 3f4dd3e7 c72355bf 41d30480
+          36fadb01 2a26809c 40adc608 5fe0fff4
+          d87751bf 61180200 54b16c21 24fdad47
+          b13d01de 84002086 391af0cc f5bf0640
+          b3264b20 094c7fae c0360048 60082ba5
+          2b1580f2 9f46ddce 75a86720 2320b1bd
+          f576fccf 01822604 37f82fc8 bfc20062
+          06924048 f8e726f0 cf01eef0 bf880854
+          03c9ff3e 02809881 2430fc65 00f60948
+          00f13ce6 4670530d 6c937f25 8a364500
+          8d3b8320 0886c3d8 f2506a07 c8bd1d72
+          aa513807 c067f8ab 4da323a8 ad4550ab
+          3a5a9e7f 49f6d25f 06600710 ba731de8
+          5835708a 466a008a 4010b460 2f34f57b
+          d29f1b60 0f60f333 21a6e0a8 009e3d02
+          2002d902 10cc0680 43527e37 eafa4342
+          0866da3f 17c02680 8a092055 2c9da659
+          fafc8c11 04f79b22 f0d93eba 674551c0
+          215c0a7f 6b000680 d01bf83f 3dab43c8
+          a5198808 40d0f568 c56caf11 e8524cf6
+          797f0960 4f807498 6100d031 08929708
+          34814ff6 53b29708 557e60d3 fe3c007b
+          001b017e cdb2ec49 011454d4 81184298
+          4cc9fe5e f86bf90e 34803dfb eb00b601
+          f8c60140 6de5e77a 099d05be 7e1d3514
+          f64211e1 866bfe1b 03a85800 7ecbd2ec
+          3bf9d314 48538f96 6eaede18 833bb0f8
+          db13e001 689d788e 50b0c95e c881bc6e
+          93fda900 e616b401 fc9e6529 05a0353f
+          6506af3a b42e27a2 295543ed 6f040020
+          1bc02102 f82e09d2 347bef79 5e623367
+          0df9d559 e707fef6 11a08200 10044f38
+          14cb0dda 9079a917 1d1e1424 c97a13a0
+          a062f137 004405e0 bf44f88e fffffecb
+          874f7982 61e0b9f2 6620128a f4fbcbe1
+          9a39d9db 01fe2680 15020ec5 6f7c8f92
+          0455cf31 34158681 431254da dd0af007
+          4f40233c 81e757be 4b924782 e097ee9f
+          4aa351b1 58fc386a b87943fe e10ad098
+          8f285e82 91f1652f 78195c22 004405b4
+          e07ff872 9fc614a4 1a1fefe4 5d7c34cd
+          c7c0b615 39b40da9 05606f18 15d07aca
+          20fd973f 47aba15f 7c34df6f a2a924af
+          ba29e82a 016e94fb ceac002b cda0bfe9
+          3a23941b 08fb5343 ba4bdd95 dc1f3178
+          2fe0a372 913e4983 bbe041de e52a90ca
+          e57f4301 ac928817 0e0bb3cf 2fdf04ff
+          501c8dca 1f8c5340 f81f6ef1 9be34766
+          80e88440 efc8be44 4656651a 20837000
+          403b31c8 37d276f1 a3c02afe 373bfcf2
+          5f2e895d 63fb25db a8808c7f 07085534
+          f5d3005a 6697ac40 c6eddf83 a8023afe
+          7de80dac c9ff8f5f f6a3dfe0 bdbff8a9
+          02fb8b9f 94ed317e d23ee327 1dee31fe
+          9ffaa9ff 018462f3 ccce1616 46000000
+          0049454e 44ae4260 82 
+        </hexdata>
+      </glyph>
+      <glyph graphicType="png " name="glyph00011" originOffsetX="4" originOffsetY="-27">
+        <hexdata>
+          89504e47 0d0a1a0a 0000000d 49484452
+          00000080 00000080 08030000 00f4e091
+          f9000000 f3504c54 4547704c 479ade4e
+          9ad95c9e d33e92d9 3c99e857 9bd33c92
+          da5face9 61b3f659 a5e23e93 da64b5f6
+          4f99d73a 91dc338e da5cb1f6 4f9edc50
+          98d157af f652adf5 4eabf58f 58394995
+          d18e5938 8c573761 7c96915d 3d8d5838
+          89543587 5334835c 475789b4 7b6f6c49
+          a9f58c57 378d5738 906c5589 54358955
+          36945d3b a06741a3 6a427a65 5d8f5939
+          9a623e45 9fe79960 3d905a39 a16841a4
+          6b434291 d0965e3c 8e583846 a7f5a269
+          429c633f 935c3b8b 56378a56 358e593a
+          925b3a3e 97dd44a6 f54982b2 3ca3f48b
+          563640a5 f49f6640 9d653f39 8dd037a0
+          f44388c1 289af329 94e82f89 d0288ddd
+          2886d127 87d62397 f3268cdd 979d27be
+          00000051 74524e53 005dd9ff 4122ffc6
+          ffffff90 fff078aa ffffffff ffff3aff
+          70dcff1b aefaffff ffffff95 ffffedff
+          ffffffff ffffffff ffffffff ffffffff
+          ffffffbf 53ffffff ffffccff ffffffff
+          ffffffff ffffe6ff 5dd81088 6c000008
+          c0494441 547801ec d25d7683 2010c571
+          e2982b10 4d71a04d 3fd3fdef b29a6887
+          d3e79ecb 4b7e1be0 3afeddc3 c33f3874
+          225ddff0 7db9e98e ae11c866 704d0c22
+          e2439405 4e8eaf5f df1fc7d1 cb6a3a3b
+          b64944c6 c53ea173 5ce7ed00 3661a217
+          18c75fb7 147a7681 632d8a9c 1b146844
+          e4d0a440 ab00fc02 4d109127 4773b402
+          ad80a965 81de0a68 5660472e 30843f07
+          383a9a13 203e2c9a 1508c470 d7a64040
+          c2ae4581 007c3063 60170848 0a157e81
+          f029d984 d4a0c0b4 0a1b7e81 489bb0f2
+          00bbc098 52354100 728173aa 45000d0a
+          34004ec4 02158839 992000b5 4055e445
+          da79003d b14085c6 9c6d4216 c8c02c50
+          75ce9bbd 406516a8 aa25679b 90d905aa
+          c65c9be9 056ac915 7a81aab1 e40a0076
+          81659177 51955de0 732936a1 a82ab1c0
+          97cbfd00 b66056e5 15f8faf6 6e0758dd
+          7f00a9c0 8fcfafeb b7ea2596 9aaa0ea4
+          8fbf2e7e da3313ee 44953c8a cfbeef33
+          ee9d7223 8006151b 888221bb f68b86ce
+          fbfe9f66 6e5551fe 4bead092 ce36cbbb
+          7db606cf b9bfbaff 4b519a5e a3f1f75a
+          4d8b0001 347efd3e 8be7ea37 fed118d4
+          34821a02 e89f0cdf 63f19075 da900110
+          021ad8c3 1dbbf9f6 8b77dcd1 b80780da
+          5e583f6f e0196384 f0668bf7 26e3f1b8
+          0fff694d 17fc7b93 994f086f b5f8f9e7
+          cf0008e4 00481840 e374329b 8511e36a
+          d5df68f1 9f2100b4 11c0b9ee 3f4000ed
+          090066a1 6b11c22b 2f7ef139 9768e060
+          30d002c0 95a50408 c3387945 84212d7e
+          2fd140f8 13c11417 fa7b0037 f61cc6b5
+          eabcd4fe 8226af49 3410f684 803da1b7
+          5400ae1b a77ef42a 08436df1 24dec0cb
+          c15ef900 4ee1af01 7891c55e 8040fe4e
+          982f9ec4 1b7835d0 748e0bed 2501c402
+          20b21226 f4dd9b63 1d295aaa 78a4d320
+          684ccf75 0004102c f3091080 054984ef
+          dd9f5bdc 7f3cce7d a98100b8 3a3f2704
+          dec0b3c9 52eb60aa 005e8680 022ec75c
+          07fe7d11 00974280 ff354b26 3a80af00
+          20e77b11 ea8c25c2 9f08e41e 185c9e2b
+          f1022080 a08bcf1e 76500110 82dd7c7e
+          05fdb1a1 76100437 57e78470 c51bc8b8
+          dc830a00 e08508b7 8ccd8af6 a2819757
+          d01ee012 0130c8f1 fc344c63 d7754397
+          2af01204 5b554017 1a18c09e 10440359
+          94468c04 98d887e9 0b11f0e9 c5a21040
+          1ffed3bb 3b42b86a 048d6b8f dca5ac34
+          c628fc97 215ca057 8b2201fc 2fefa03d
+          c134087a 16138a78 fa611cce 266a4f08
+          63ef0508 bc830bae 42031100 21dc0441
+          9f71f993 11740fad 2145c063 88be1761
+          855a0b00 4238cd03 2084cb5e 9741e168
+          ce95331c 12c42508 43fd892f ebe0e240
+          6bf108de 91aea6ed 84af9edb e37e0e71
+          48c03705 731092c1 5ead6cdb 2e3b3be0
+          53ebf981 7f37d8f0 0190a667 0c9a2d34
+          290445c0 23287928 0b1a9afb 209b43e4
+          ef5c6300 373714c1 6f78fcd6 7a71289d
+          400e4100 44d13184 42064dd4 7a34d210
+          acfe2608 be004021 88f8d339 d5c420a0
+          08300402 c895248e e32449a2 5e592db3
+          8323682e b598757f d86c7800 0aa14ff1
+          8ff72282 3511a819 5008a638 81d1c1d9
+          fd8810fc f6668300 94fe4ef1 8f0f4404
+          7a047909 be416000 0069790f 8d727537
+          c166ba0f a0e7f0f8 47863f11 c821141f
+          84283a0e 401d5caf 019033cc aef90054
+          0232fe79 d19f0828 02aa2111 540118a2
+          836b2867 58f7379b cd972f12 60cae34f
+          96a29e07 070622a0 08e40c14 00145503
+          682161d8 2b8653de c02f9240 c4efdf8f
+          2800e94f 08fb0868 06048010 aa009c30
+          162e976b a56b1900 27683328 c45ce6e4
+          4fa20868 06a204e4 0a82e300 bc024b48
+          32880120 00486c7e ce648d00 1400f943
+          d402bd04 d4c23202 02a00a4c 964aebbd
+          7f433c7d a00280ee 6f12f012 1800a504
+          04401588 271385d0 06c003f7 97e307d1
+          7d05006a a179463b 0a00a310 0092e154
+          0520c6ef 4e5e0e70 b4034dcc 19f59d48
+          a9068af1 83eb5500 a2320075 20f60020
+          197803b7 a89f78fa 71e59500 a26f019c
+          20e999d2 66c70308 44fd4201 a04a4804
+          954b482a 03501308 439871b5 77bc8101
+          af9fe7ea 00144195 7d0000d5 3bb0622c
+          0a21ce70 badbedb6 b27e51ec 72280150
+          b211193b a1b11191 a2728016 5fac2b11
+          ae77bbcd 83f4f701 102a0073 2b26ff42
+          05682b2e 232000ea 60ec4261 7806ffad
+          f4f7fc54 00983380 c8de9c00 00fc8a00
+          34822486 8000ff47 e96f0120 a6122082
+          6aaf633a 1255efc0 05dfefd2 14086d34
+          40fa03d8 4bd50ca8 05e50792 b59c0055
+          a0720290 cd2b9fa6 6917fe3f e4fe5671
+          06f910e6 13d7f3bc 309c2b7b e97f7c02
+          2413a0ce a0c4f3af 017026fd 21350315
+          012758a7 4c299a08 773a1252 00d50168
+          085c3c80 2ddf7fa4 10414c11 7082b5cf
+          742533f2 a700cc09 543a13f2 292080c7
+          07470748 0f085c87 41beebf2 baca1410
+          0af91b01 54e800a9 d9eaf300 1e3002a7
+          18812008 1306a5a9 25e5bb91 7859695f
+          0e67d503 2000d2af 771902c0 26644600
+          0269efa5 16c90f45 08f037bf 1a564f80
+          f45b04f0 0089b760 81c015f6 896b1d2a
+          f5e5814d ff7a7ec4 bf1ce057 bb0c0380
+          367cd28e fe20f88e b04f7dcb 502cc642
+          fe14c0b3 47f09537 10920440 901178ea
+          17609fec 75a5fcb6 353bee1f 1d01f863
+          b6db3d3d 486dbb4c c8c13f29 a7fcf5ea
+          8b31a4cf f43701b2 2c43004a d7702625
+          c8e11bf2 653f9ee3 6f02fc25 cb764f4f
+          4f1ac299 64709288 dccb0822 0645c64f
+          b6958fe5 d06f1100 000861b7 cbdafc07
+          05ab927c c61591ff a1bce325 fc9a65db
+          278de011 cfe490ef 8e264102 2edc005c
+          a2594432 2fcb5454 e5ab19af c09312af
+          2102f8cb cf3a2706 81f02669 0979497e
+          c90cbf02 c08f04c0 c503f8aa de51e401
+          0b536418 39065554 f5cbe95f 790548db
+          6c97fd8a de924e02 f344adfd a4b55a35
+          9bcd4f2b db8821da 7f28a1e0 e92a0d4e
+          acc5ac00 f967d96f e9ef78ba ec4f17fa
+          5bfc562d 5a2b8390 39345de2 9a5da800
+          013ce27f 3b75a773 cbf63af9 64febe39
+          b4290653 092b57dd ac00f967 3fd2cdce
+          d0b6616e 17dc2986 162b6370 72f0db61
+          537c520c ee445ebb 302a40f1 675f5180
+          2a224446 1085e59b e09de66a 35ec1477
+          81475a3e e6ff6cd5 3f9d1c14 2dc947df
+          22a37251 05b6dc1f 1b00f432 06fa45ba
+          927e0557 8affd7cf f7a659b4 08a2ea9f
+          91a90214 ff4bd4e1 45b3eddb 155a5645
+          54818cda ff7ea20a 50fcefaf 5fc35ac4
+          ffd79f7d 8cfe08ef 0f899f2a f021f193
+          b28f899f f441f193 7efb81f1 ffa49ff4
+          6f29a1bf 458fb750 d9000000 0049454e
+          44ae4260 82  
+        </hexdata>
+      </glyph>
+      <glyph graphicType="png " name="glyph00012" originOffsetX="4" originOffsetY="-27">
+        <hexdata>
+          89504e47 0d0a1a0a 0000000d 49484452
+          00000080 00000080 08030000 00f4e091
+          f9000000 ea504c54 4547704c 479ade4e
+          9ad95d9e d33b93dd 579cd33c 99e84897
+          da61b3f6 5ba4dd41 94da5dab e964b5f6
+          4f99d73a 91dc5db2 f65199d2 58b0f654
+          aef54b96 d24caaf5 55779946 94d24aa0
+          e5543931 51362e45 6c924fac f55d3f3d
+          5539314d 322a4a2f 274c3d3d 4583b84b
+          30285151 5c48a8f5 53382f69 4c434e33
+          2b5c4037 6b4e4570 534a4e49 5262453c
+          5b5c685d 41383f8f d04f342c 4f332b56
+          39314279 aa5f433a 593d3457 3b325135
+          2d563933 52372f43 a6f56e51 48664a41
+          3da3f43a 99e56447 3e37a0f4 358bd02d
+          88d1298d dd2899f3 563b3425 93ea2789
+          d92397f3 2885d124 88d9268c dd2687d6
+          2588d913 b6f69f00 00004e74 524e5300
+          5dd9ff41 ff22c6ff ff94ffff f078ffff
+          ffffffff 3cffff6f d8ffff1b a1faffff
+          ffffffff fffff0ff ffffffff ffffffff
+          e63affff ffffbc57 88ffffff ffffffff
+          ffffffff 4affc6ff ffc55de1 afdaae62
+          0a000008 03494441 547801ec d25d92f2
+          20148461 4ca71524 9103f97e 67ff0b1d
+          0d1aa8a9 b99c6a6e 7c36c029 fa756f6f
+          3fe03401 d33cf07d e2613abb 41888a17
+          37c40580 f70177bc 3abd9940 5c9625e2
+          61bd39b5 1508cb2e d6149cd6 0df503da
+          09abbcc0 b01cf614 6675814b 2f00377d
+          811d00a7 2105b60a a82fb0f1 00ae4ee6
+          dc0a6c05 ac230b8c da02667c 53e0242d
+          90c1fb2f 1f707632 5712d1df 0d2b900c
+          be1a5320 09ff32a2 4092d137 8b571748
+          22f98ebe 40c694da 09495ca0 9121ed7c
+          a52f9039 a5764224 e505a683 f709a4b4
+          4033a65e 24a92cd0 cc624e4d 26292dd0
+          2ce4bbf4 12486981 66cc551b 601616b8
+          0ff0f21c e0222e30 977c4881 3479819d
+          222e7033 0ba5947c 8099b840 2bbb5c45
+          33531758 9eea0066 ea024be9 2e0866ea
+          027f954e 34336181 bfff6cdb dfd2c954
+          16f8efff c7b6d967 7be6c19d 381204e1
+          cb39e347 7290193c 8b30b218 8c823346
+          8eec7aff ffdfb9ee 69b919d4 f6db934c
+          b8541717 fc54df54 d78c76a5 ed6d0760
+          8d0ddcd9 ddf3f6c1 bfb10d7a f6df06ff
+          6fd7b478 0fd4b101 38048ddf 7eab7db3
+          9ec58354 b756ab1d 803b236c 4100ddbd
+          dd752c1e a4df6103 d19b11a0 811df8a6
+          d75cf9e2 3de5f70f 3b10c096 0bd08000
+          06ca5b21 022f3e38 3c3c3c02 ffc6964b
+          f05badd6 097dcd08 2b5c3c6a 080ddc02
+          31420388 ba61e8fb c6fed8e8 78558b27
+          8debf5fa c1964370 00feed08 01fc1810
+          40ade355 2d1e7404 fe30805c f900ea11
+          012c1961 77c48b9f ab53afd7 0e6c0224
+          3b80230b 404a6810 e9ce5bed 4f7ac5c5
+          73000720 2600ff4e c000cb43 d8958b47
+          0d310012 f94300f5 2e032c0f e1142f10
+          ba8be706 9e813923 d806060c c04a9407
+          aa7e381e 2b58fdf9 615147c3 7c004c00
+          0d1cb2ff 12115ad2 9f1a4801 b01a3091
+          41c400cb 4380dd77 c1b6b281 ac5abd3e
+          f64c4400 529a104e cb4fc0f3 8cb0a706
+          9e9d2d06 50df879f 1500ac8a e7336c81
+          44fa8feb c3fae519 e8d9ff0c fcdbb6ef
+          09fb2f07 012a10bd d8c0ab33 120f6068
+          fdb54ee2 248963df 0f9783d0 7ba9029d
+          e1b07ec6 ca0730f0 8c369e23 a325446c
+          bc9208f0 d3e72f04 306c9ccd 65073066
+          f75cca24 b11f46e1 db104e60 21e7e705
+          84210600 156035c0 3fb7d749 928471e2
+          87c16432 0940b82f de80b08b a7408160
+          0c0068cf baac0fbb 5480e8c2 d1641908
+          a9e7f9e7 241e00f8 5f5dba04 b5ce3eda
+          c713ebfb 0e3567b0 04e16b83 387577fc
+          2b1d9cf4 cf5dbd6b 0f710b5e ce111a6d
+          83d94f72 73162148 02462086 519a8e7a
+          3d854b68 4906f8fc a2dfef3b fefb1400
+          2af7c7f8 55c8f67d 14335008 9280108a
+          52a7f21c 54784966 b850630c 00958730
+          c4f84d40 f67d5792 402068e5 bae33f85
+          0c9a102d 5f18214c 1702b8be 9c6b4cf1
+          b33d47e5 22308154 9c688d3b c7fe3f20
+          b4440763 0e161499 8e1d00cb c6efdbe5
+          b33b8b10 f20c2480 5402175b 0418795e
+          48e11284 6e2f0450 b7f1470b fe872487
+          4044f0ba e0728b00 902f4c97 11a88122
+          7ef277ed 996181a0 14007790 36373144
+          dc40d411 6f7ef227 7b494035 e008ca00
+          ece20227 68418233 687a7d4d 23b8a2f8
+          e15be9cf 62028ea0 1c40cbf3 92098afc
+          bbd8c06b 22e8d8f8 a3800720 fc998086
+          c02d2803 b0e7797e 10000041 8ca7d3e1
+          35a9ed81 9220e000 a4bf8ca0 340054c0
+          0b50c470 04fe1000 e86a6077 5fe4021c
+          4ac9084a 02ece290 c1853499 0ef300e8
+          f0f3f12b 11809013 411900ae 40042280
+          f6743ab5 feb4fbfc 308a6400 52256620
+          0094e781 0d29e882 ffd5f3f8 55e28721
+          4f400620 665009a0 09462188 18c67900
+          5df48ffd 4f00c808 2a00c004 34181143
+          1e00ed7e df2f0248 5f3183f2 00b00963
+          1f1582b2 e9f4e6fa 7acafe0c 00fecb07
+          e009f037 6d1bc014 eb97f86b 0248ed04
+          4803ebdf 56b67e24 d9816503 4005d80c
+          1b78dba6 fa914aee 822a254c e700b681
+          6d1a3f4b 9c03cbde 86e9dc0f 1b48fe15
+          002a9f84 77f0ab98 1bc8feac 908f6231
+          037137aa 762fe8e5 231f64d3 ace3facb
+          12f4fb13 5f6b1d86 fd5703a8 0070acd0
+          35f6c759 36ed0a7f 00e0194c 12ef593a
+          385fdeed f84479a0 fd2ccbee 0d8d43ce
+          0008d89e 6402e9cf 1328fb7b c21e7c02
+          01dcdc4a 009e410c 9874db84 25520afd
+          457f0ea0 2c00a8d9 ea4200b7 b7033a95
+          6404b121 7b9f1405 1a4f8b88 fc1703a8
+          0000fa26 c300f010 522f4440 f61aec59
+          51643f3a 277bf2e7 002a003c 6000a07d
+          3e858b8f 614df1ba 5182215c 2ce10f26
+          a0afb081 08304533 2d1f3899 38f4856c
+          083ed94b ff520034 00548604 4a530ab1
+          369e55f2 f255238b 7b61edf9 11815f01
+          e0070078 bc25ddef 93a731c6 2399c24c
+          c4187cd7 bf12c00c 03608dc1 9924c297
+          0ae9582a e32f017e a1001c84 8121731d
+          fb9f52a4 ed8c02f6 af00f01e 02787409
+          00a86d0c 47ff29d1 b3db88fc ab00cc66
+          b3fb4787 e026cb66 a7237124 502db536
+          209d38df 85da43f1 13d32a00 e0cf08f7
+          10c02f9f edec3101 9b1bb5f8 88748e90
+          d7465702 f8309b65 8fb9f200 9ef27b94
+          4adce348 48391dd1 bc654a03 7c9ccd6e
+          1e593680 aff82e09 61c3dad9 7daf95a6
+          a7cde66e da530543 46548bd5 4d6064f4
+          b1c1c754 f6a302c0 13568085 fe0ff97d
+          7acf5bd0 68f7cebd 8bb75431 86503446
+          c606180a 2e253b98 eb2603f1 7bd4743e
+          f45e2a9f 6f9ef65e c85d0e4d 4a1d2f56
+          6036f787 3e641fdc 57b92308 7b6f44ee
+          52772df5 1a83791e da69d3fe 64b399a6
+          bd3dfaec a458018e 1ffc675f 957cdbdc
+          e37093e2 0b3409be 0318a78b af379f18
+          e0660682 f997d571 ca653140 9140efc8
+          de311292 15b8b7fe bf94f396 0c2cf517
+          5f1f7e05 aed67f86 fae62d6f fe5b0c51
+          e6353255 80e27f5f dd9e278c 6f055aa9
+          db322959 01681f08 dabf0161 056cfc4f
+          df6cc4ff 1bb0b6f1 7ffc6c33 fa01bc37
+          133f5760 33f1b366 1b8a9fb5 a9f859ef
+          3718ffff fa5f7f02 b6d0a3dc 45213647
+          00000000 49454e44 ae426082 
+        </hexdata>
+      </glyph>
+    </strike>
+  </sbix>
+
+</ttFont>

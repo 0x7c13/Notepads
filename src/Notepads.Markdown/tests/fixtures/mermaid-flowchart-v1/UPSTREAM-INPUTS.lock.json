@@ -1,0 +1,627 @@
+{
+  "schema": 1,
+  "state": "inputs-frozen-before-first-render",
+  "upstream": {
+    "repo": "https://github.com/Latias94/merman",
+    "commit": "f6202f702dbde0a75049b1a62b3124feae709b3d",
+    "version": "0.9.1",
+    "license": "MIT OR Apache-2.0 and preserved third-party notices"
+  },
+  "font": {
+    "repo": "https://github.com/google/fonts",
+    "commit": "45e3d5269e4a17d823f6d84470bc084dc5ae46f6",
+    "path": "fonts/NotoSansSC-wght.ttf",
+    "license": "OFL-1.1",
+    "system_discovery": false
+  },
+  "cases": [
+    {
+      "id": "flowchart-basic",
+      "family": "flowchart",
+      "input": "fixtures/flowchart/basic.mmd",
+      "source_sha256": "cbd5654e3f6524e99184339bbdac7673110e50818e10446b7fe51e6dcfcd86b7",
+      "upstream_svg": "upstream-svg/flowchart/basic.svg",
+      "upstream_svg_sha256": "f85e9aee11ffd553c2d3938bb6e56d76243159bf831b5f8117a67e40a90b4b70",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "flowchart-class_style",
+      "family": "flowchart",
+      "input": "fixtures/flowchart/class_style.mmd",
+      "source_sha256": "6653f8fc3ace8173ca91bcb015ffd2dca98e130a099628da8c0a8d83e417a1d9",
+      "upstream_svg": "upstream-svg/flowchart/class_style.svg",
+      "upstream_svg_sha256": "0a6eea5430ca5aa370ac5b1b5d03616c48df4659ce81ac128238ecc36380cf51",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "flowchart-stress_flowchart_long_labels_punctuation_unicode_006",
+      "family": "flowchart",
+      "input": "fixtures/flowchart/stress_flowchart_long_labels_punctuation_unicode_006.mmd",
+      "source_sha256": "40f4e258b286b242c277c3c028041304cac84ff46f9c06dcd41e228628ba8eea",
+      "upstream_svg": "upstream-svg/flowchart/stress_flowchart_long_labels_punctuation_unicode_006.svg",
+      "upstream_svg_sha256": "f79f0ad609bbd31dc2b46f8bfd71a221a0cf43fbe14da744a67e6920488a1afc",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "flowchart-stress_flowchart_subgraph_title_unicode_and_entities_043",
+      "family": "flowchart",
+      "input": "fixtures/flowchart/stress_flowchart_subgraph_title_unicode_and_entities_043.mmd",
+      "source_sha256": "9db87ac298ed94769cafc1edd132fa881b3c58f1c2458f9c3da382e67df80678",
+      "upstream_svg": "upstream-svg/flowchart/stress_flowchart_subgraph_title_unicode_and_entities_043.svg",
+      "upstream_svg_sha256": "bbb4b398dda99df003e3edd8f8a026780fbe812e149d7b43fec64ac5b07c73ae",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "sequence-activation_explicit",
+      "family": "sequence",
+      "input": "fixtures/sequence/activation_explicit.mmd",
+      "source_sha256": "cf08746ac1bc329a33cbb8525875ef56ec6615f0c4c842ae5575f6ad6ba3dec6",
+      "upstream_svg": "upstream-svg/sequence/activation_explicit.svg",
+      "upstream_svg_sha256": "b05e72098483793b459f5c3bea3a40f7256f5048f7ba2f86e5f71d732fadec97",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "sequence-activation_stacked",
+      "family": "sequence",
+      "input": "fixtures/sequence/activation_stacked.mmd",
+      "source_sha256": "ad1862835cf27c36528108757798c6d6675396f1db9533a7e709f860e7838d25",
+      "upstream_svg": "upstream-svg/sequence/activation_stacked.svg",
+      "upstream_svg_sha256": "1f63c8f4906b92c10162ee0433e1f0e4905ccab161690154386e7bd0a5c91da4",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "sequence-stress_unicode_longish_messages_027",
+      "family": "sequence",
+      "input": "fixtures/sequence/stress_unicode_longish_messages_027.mmd",
+      "source_sha256": "1c6132ca0193035605879d851b7bd600fce5327daeea427319214c634dd6b135",
+      "upstream_svg": "upstream-svg/sequence/stress_unicode_longish_messages_027.svg",
+      "upstream_svg_sha256": "31be260f0009cab0ce38cf7d281680e867b5863a92ff47c218d217820103424a",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "sequence-upstream_cypress_sequencediagram_spec_should_render_dark_theme_from_init_directive_and_configure_font_047",
+      "family": "sequence",
+      "input": "fixtures/sequence/upstream_cypress_sequencediagram_spec_should_render_dark_theme_from_init_directive_and_configure_font_047.mmd",
+      "source_sha256": "defd25313f7860633147575daa3e5818f9a03117b83d849690847738b37e7f07",
+      "upstream_svg": "upstream-svg/sequence/upstream_cypress_sequencediagram_spec_should_render_dark_theme_from_init_directive_and_configure_font_047.svg",
+      "upstream_svg_sha256": "ef3752a45bd00cadc15b5dfec771d935f979db0f400c66c559f6d964d1b2ed46",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "class-basic",
+      "family": "class",
+      "input": "fixtures/class/basic.mmd",
+      "source_sha256": "657197f4c304cdfe5c2eee70f8cd69c8df8f2fd04528ada78582dde13674d90a",
+      "upstream_svg": "upstream-svg/class/basic.svg",
+      "upstream_svg_sha256": "775f24eea26a65ef1621aa0b345286caf93690f64e55a937826efff91641de22",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "class-probe_class_direction_lr_members_994",
+      "family": "class",
+      "input": "fixtures/class/probe_class_direction_lr_members_994.mmd",
+      "source_sha256": "f7709a00b5370b0f68995e955f3a0f0011d8e265afd6f1d4781156629fc10de8",
+      "upstream_svg": "upstream-svg/class/probe_class_direction_lr_members_994.svg",
+      "upstream_svg_sha256": "96acfd21b5c9905f2a1d8c42f93000d72e94af777ae23330d2216820f853dba3",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "class-stress_class_long_labels_wrapping_002",
+      "family": "class",
+      "input": "fixtures/class/stress_class_long_labels_wrapping_002.mmd",
+      "source_sha256": "01d07d5de85886e1ffc3004d702c663b0c45eb5b334723adb88f80b07b28a020",
+      "upstream_svg": "upstream-svg/class/stress_class_long_labels_wrapping_002.svg",
+      "upstream_svg_sha256": "6ac63452113613fd564c7e67aa813734695e5841c5bf527f2a6c8385101dedf5",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "class-stress_class_unicode_and_entities_012",
+      "family": "class",
+      "input": "fixtures/class/stress_class_unicode_and_entities_012.mmd",
+      "source_sha256": "c8b9d333edb5ae452854e73e5a6e91a0fd563fafd1753dc2f969953ce271d3ce",
+      "upstream_svg": "upstream-svg/class/stress_class_unicode_and_entities_012.svg",
+      "upstream_svg_sha256": "2628498ea8dd7f83ea9bf7e1e36e9e612066dd4bfecbe24ee1a63f39a727d225",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "state-basic",
+      "family": "state",
+      "input": "fixtures/state/basic.mmd",
+      "source_sha256": "f263bae92d7767b33fcb22f7fc5b8bda74054749c7c0eb1be46f23532700988e",
+      "upstream_svg": "upstream-svg/state/basic.svg",
+      "upstream_svg_sha256": "622301577c5185ef91dccd9e0b0a44aee16c52dde7a7258b7c31b2dc505bf9db",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "state-stress_state_accdescr_block_and_markdown_labels_049",
+      "family": "state",
+      "input": "fixtures/state/stress_state_accdescr_block_and_markdown_labels_049.mmd",
+      "source_sha256": "a784ccaa9507ab907d0e131fcdcdb7b5e09bc1079374a199cf9a9525b99af622",
+      "upstream_svg": "upstream-svg/state/stress_state_accdescr_block_and_markdown_labels_049.svg",
+      "upstream_svg_sha256": "1825dac6aba3fa870e741e12d98948d4b73f66904162ccfe8fb2e4c743e9412d",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "state-stress_state_unicode_and_rtl_036",
+      "family": "state",
+      "input": "fixtures/state/stress_state_unicode_and_rtl_036.mmd",
+      "source_sha256": "afd57f615782bfcf877564dde11455060e5465737dd9fc4be64c28979eb301aa",
+      "upstream_svg": "upstream-svg/state/stress_state_unicode_and_rtl_036.svg",
+      "upstream_svg_sha256": "0e57cee3f8850aaf3ac5306ff40d98bd00f133331191f593af8afb152c1e4efc",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "state-stress_state_batch5_choice_fork_join_with_notes_markdown_062",
+      "family": "state",
+      "input": "fixtures/state/stress_state_batch5_choice_fork_join_with_notes_markdown_062.mmd",
+      "source_sha256": "00888deeeb9a53af3b1570d8f5c3871de69308e38b6bbf6ad221fbee749b3018",
+      "upstream_svg": "upstream-svg/state/stress_state_batch5_choice_fork_join_with_notes_markdown_062.svg",
+      "upstream_svg_sha256": "fb400995538a6432f5be4396f2f2cdc814247b47a3c9c562a4b18565f386c24f",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "er-basic",
+      "family": "er",
+      "input": "fixtures/er/basic.mmd",
+      "source_sha256": "0a2bc0cdf5e7ed558c92f78b1101ae550bb29d0e0eee0f492a93adb187e22695",
+      "upstream_svg": "upstream-svg/er/basic.svg",
+      "upstream_svg_sha256": "e3b7b67df57381e65a43755bda55e9cb7b74f1009006c5bb9fc4f10818d71964",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "er-stress_er_entity_label_inline_code_004",
+      "family": "er",
+      "input": "fixtures/er/stress_er_entity_label_inline_code_004.mmd",
+      "source_sha256": "ee50788d3b24fbd57e9643d6fe48b9f4042bf69121618f2588d0ea9ed40197c2",
+      "upstream_svg": "upstream-svg/er/stress_er_entity_label_inline_code_004.svg",
+      "upstream_svg_sha256": "3bc5a91dad67ac4caac510774aacbefc3b4e4d6ebc6de76ccde8328ef6a87dcf",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "er-upstream_docs_entityrelationshipdiagram_unicode_text_007",
+      "family": "er",
+      "input": "fixtures/er/upstream_docs_entityrelationshipdiagram_unicode_text_007.mmd",
+      "source_sha256": "99e1dfb4c158699e33a425420c1e9f3c85fa63c0c2274e46ee393970416065fc",
+      "upstream_svg": "upstream-svg/er/upstream_docs_entityrelationshipdiagram_unicode_text_007.svg",
+      "upstream_svg_sha256": "424be7fd416d79c5b9e3c56dec13ab0ba5236ce940a41db73cab7d204ff34d50",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "er-upstream_cypress_theme_spec_should_render_a_er_diagram_005",
+      "family": "er",
+      "input": "fixtures/er/upstream_cypress_theme_spec_should_render_a_er_diagram_005.mmd",
+      "source_sha256": "43d50ec077ce901285d8c2d4fe6076119e8ec9682a1ad330c25ba3a453428412",
+      "upstream_svg": "upstream-svg/er/upstream_cypress_theme_spec_should_render_a_er_diagram_005.svg",
+      "upstream_svg_sha256": "3ac39447008c4c2473a2e747b27d6f6391c1503a1bd75614228493f8fab85346",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "pie-upstream_cypress_pie_spec_example_001",
+      "family": "pie",
+      "input": "fixtures/pie/upstream_cypress_pie_spec_example_001.mmd",
+      "source_sha256": "bef0ab352bb07292c082bcd5bf8d9c565e9212e6a7710dd15ee392018aef610e",
+      "upstream_svg": "upstream-svg/pie/upstream_cypress_pie_spec_example_001.svg",
+      "upstream_svg_sha256": "5c02b8a91ce0ff4ac6abd96fa0892c3f7de2f6250602b4797e446ef33ac8fd9c",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "pie-upstream_cypress_pie_spec_should_render_a_pie_diagram_with_showdata_005",
+      "family": "pie",
+      "input": "fixtures/pie/upstream_cypress_pie_spec_should_render_a_pie_diagram_with_showdata_005.mmd",
+      "source_sha256": "2df77dbd0b7b9c22142f6ffefe76de4ab0d09a2cf4485e96480505bde5618b06",
+      "upstream_svg": "upstream-svg/pie/upstream_cypress_pie_spec_should_render_a_pie_diagram_with_showdata_005.svg",
+      "upstream_svg_sha256": "16edf718fa9c0e28c98e93ee722c00fd83025c95cb72427d1a07c90bd2357257",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "pie-upstream_cypress_pie_spec_should_render_a_simple_pie_diagram_with_long_labels_002",
+      "family": "pie",
+      "input": "fixtures/pie/upstream_cypress_pie_spec_should_render_a_simple_pie_diagram_with_long_labels_002.mmd",
+      "source_sha256": "b9659bc3cef2cb3b09bb00de257044b7c3307e5416aff0f0c2aefc8bf6d0733c",
+      "upstream_svg": "upstream-svg/pie/upstream_cypress_pie_spec_should_render_a_simple_pie_diagram_with_long_labels_002.svg",
+      "upstream_svg_sha256": "8631c0a31216f24755e26895b4d0f1c92dd8fbd44d094230eb019c4e11255060",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    },
+    {
+      "id": "pie-upstream_cypress_theme_spec_should_render_a_pie_diagram_003",
+      "family": "pie",
+      "input": "fixtures/pie/upstream_cypress_theme_spec_should_render_a_pie_diagram_003.mmd",
+      "source_sha256": "2f5243f452961a71b27a6549834170deccb19b19d287e0d07772b8cbbf714441",
+      "upstream_svg": "upstream-svg/pie/upstream_cypress_theme_spec_should_render_a_pie_diagram_003.svg",
+      "upstream_svg_sha256": "2d79e69465862154b6087dd6bfa91b8dbc595b7000f1693371f171d12ed9b420",
+      "source_mermaid_version": "12.1.0",
+      "source_mermaid_commit": "21f72f07ea22c0af48a3149c550654e80d8e40cb"
+    }
+  ],
+  "assets": [
+    {
+      "path": "upstream/flowchart-manifest.json",
+      "sha256": "99d568dc51369e42f626067abe0d2ca67a35a91a3f50398a37f4945061551af8",
+      "bytes": 404727,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/flowchart/_baseline-manifest.json"
+    },
+    {
+      "path": "fixtures/flowchart/basic.mmd",
+      "sha256": "cbd5654e3f6524e99184339bbdac7673110e50818e10446b7fe51e6dcfcd86b7",
+      "bytes": 78,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/flowchart/basic.mmd"
+    },
+    {
+      "path": "upstream-svg/flowchart/basic.svg",
+      "sha256": "f85e9aee11ffd553c2d3938bb6e56d76243159bf831b5f8117a67e40a90b4b70",
+      "bytes": 32162,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/flowchart/basic.svg"
+    },
+    {
+      "path": "fixtures/flowchart/class_style.mmd",
+      "sha256": "6653f8fc3ace8173ca91bcb015ffd2dca98e130a099628da8c0a8d83e417a1d9",
+      "bytes": 93,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/flowchart/class_style.mmd"
+    },
+    {
+      "path": "upstream-svg/flowchart/class_style.svg",
+      "sha256": "0a6eea5430ca5aa370ac5b1b5d03616c48df4659ce81ac128238ecc36380cf51",
+      "bytes": 30789,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/flowchart/class_style.svg"
+    },
+    {
+      "path": "fixtures/flowchart/stress_flowchart_long_labels_punctuation_unicode_006.mmd",
+      "sha256": "40f4e258b286b242c277c3c028041304cac84ff46f9c06dcd41e228628ba8eea",
+      "bytes": 381,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/flowchart/stress_flowchart_long_labels_punctuation_unicode_006.mmd"
+    },
+    {
+      "path": "upstream-svg/flowchart/stress_flowchart_long_labels_punctuation_unicode_006.svg",
+      "sha256": "f79f0ad609bbd31dc2b46f8bfd71a221a0cf43fbe14da744a67e6920488a1afc",
+      "bytes": 88826,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/flowchart/stress_flowchart_long_labels_punctuation_unicode_006.svg"
+    },
+    {
+      "path": "fixtures/flowchart/stress_flowchart_subgraph_title_unicode_and_entities_043.mmd",
+      "sha256": "9db87ac298ed94769cafc1edd132fa881b3c58f1c2458f9c3da382e67df80678",
+      "bytes": 234,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/flowchart/stress_flowchart_subgraph_title_unicode_and_entities_043.mmd"
+    },
+    {
+      "path": "upstream-svg/flowchart/stress_flowchart_subgraph_title_unicode_and_entities_043.svg",
+      "sha256": "bbb4b398dda99df003e3edd8f8a026780fbe812e149d7b43fec64ac5b07c73ae",
+      "bytes": 44085,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/flowchart/stress_flowchart_subgraph_title_unicode_and_entities_043.svg"
+    },
+    {
+      "path": "upstream/sequence-manifest.json",
+      "sha256": "f00ec9e6889df74dd85ba4e5a196c4ed8c14ff6bdbb784e2e263f976e28a93d5",
+      "bytes": 115317,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/sequence/_baseline-manifest.json"
+    },
+    {
+      "path": "fixtures/sequence/activation_explicit.mmd",
+      "sha256": "cf08746ac1bc329a33cbb8525875ef56ec6615f0c4c842ae5575f6ad6ba3dec6",
+      "bytes": 128,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/sequence/activation_explicit.mmd"
+    },
+    {
+      "path": "upstream-svg/sequence/activation_explicit.svg",
+      "sha256": "b05e72098483793b459f5c3bea3a40f7256f5048f7ba2f86e5f71d732fadec97",
+      "bytes": 24268,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/sequence/activation_explicit.svg"
+    },
+    {
+      "path": "fixtures/sequence/activation_stacked.mmd",
+      "sha256": "ad1862835cf27c36528108757798c6d6675396f1db9533a7e709f860e7838d25",
+      "bytes": 196,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/sequence/activation_stacked.mmd"
+    },
+    {
+      "path": "upstream-svg/sequence/activation_stacked.svg",
+      "sha256": "1f63c8f4906b92c10162ee0433e1f0e4905ccab161690154386e7bd0a5c91da4",
+      "bytes": 26450,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/sequence/activation_stacked.svg"
+    },
+    {
+      "path": "fixtures/sequence/stress_unicode_longish_messages_027.mmd",
+      "sha256": "1c6132ca0193035605879d851b7bd600fce5327daeea427319214c634dd6b135",
+      "bytes": 324,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/sequence/stress_unicode_longish_messages_027.mmd"
+    },
+    {
+      "path": "upstream-svg/sequence/stress_unicode_longish_messages_027.svg",
+      "sha256": "31be260f0009cab0ce38cf7d281680e867b5863a92ff47c218d217820103424a",
+      "bytes": 27171,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/sequence/stress_unicode_longish_messages_027.svg"
+    },
+    {
+      "path": "fixtures/sequence/upstream_cypress_sequencediagram_spec_should_render_dark_theme_from_init_directive_and_configure_font_047.mmd",
+      "sha256": "defd25313f7860633147575daa3e5818f9a03117b83d849690847738b37e7f07",
+      "bytes": 227,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/sequence/upstream_cypress_sequencediagram_spec_should_render_dark_theme_from_init_directive_and_configure_font_047.mmd"
+    },
+    {
+      "path": "upstream-svg/sequence/upstream_cypress_sequencediagram_spec_should_render_dark_theme_from_init_directive_and_configure_font_047.svg",
+      "sha256": "ef3752a45bd00cadc15b5dfec771d935f979db0f400c66c559f6d964d1b2ed46",
+      "bytes": 32544,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/sequence/upstream_cypress_sequencediagram_spec_should_render_dark_theme_from_init_directive_and_configure_font_047.svg"
+    },
+    {
+      "path": "upstream/class-manifest.json",
+      "sha256": "821844e4dadbfb5a87c1b3b73045de97a0cdc243e8534afea9d14473b130c131",
+      "bytes": 90873,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/class/_baseline-manifest.json"
+    },
+    {
+      "path": "fixtures/class/basic.mmd",
+      "sha256": "657197f4c304cdfe5c2eee70f8cd69c8df8f2fd04528ada78582dde13674d90a",
+      "bytes": 111,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/class/basic.mmd"
+    },
+    {
+      "path": "upstream-svg/class/basic.svg",
+      "sha256": "775f24eea26a65ef1621aa0b345286caf93690f64e55a937826efff91641de22",
+      "bytes": 19696,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/class/basic.svg"
+    },
+    {
+      "path": "fixtures/class/probe_class_direction_lr_members_994.mmd",
+      "sha256": "f7709a00b5370b0f68995e955f3a0f0011d8e265afd6f1d4781156629fc10de8",
+      "bytes": 79,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/class/probe_class_direction_lr_members_994.mmd"
+    },
+    {
+      "path": "upstream-svg/class/probe_class_direction_lr_members_994.svg",
+      "sha256": "96acfd21b5c9905f2a1d8c42f93000d72e94af777ae23330d2216820f853dba3",
+      "bytes": 23695,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/class/probe_class_direction_lr_members_994.svg"
+    },
+    {
+      "path": "fixtures/class/stress_class_long_labels_wrapping_002.mmd",
+      "sha256": "01d07d5de85886e1ffc3004d702c663b0c45eb5b334723adb88f80b07b28a020",
+      "bytes": 450,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/class/stress_class_long_labels_wrapping_002.mmd"
+    },
+    {
+      "path": "upstream-svg/class/stress_class_long_labels_wrapping_002.svg",
+      "sha256": "6ac63452113613fd564c7e67aa813734695e5841c5bf527f2a6c8385101dedf5",
+      "bytes": 25238,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/class/stress_class_long_labels_wrapping_002.svg"
+    },
+    {
+      "path": "fixtures/class/stress_class_unicode_and_entities_012.mmd",
+      "sha256": "c8b9d333edb5ae452854e73e5a6e91a0fd563fafd1753dc2f969953ce271d3ce",
+      "bytes": 244,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/class/stress_class_unicode_and_entities_012.mmd"
+    },
+    {
+      "path": "upstream-svg/class/stress_class_unicode_and_entities_012.svg",
+      "sha256": "2628498ea8dd7f83ea9bf7e1e36e9e612066dd4bfecbe24ee1a63f39a727d225",
+      "bytes": 27326,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/class/stress_class_unicode_and_entities_012.svg"
+    },
+    {
+      "path": "upstream/state-manifest.json",
+      "sha256": "b59653346027e40ec66f89a6a1f664d0a67b58d575a9f50d681b78c63dfabd3c",
+      "bytes": 99139,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/state/_baseline-manifest.json"
+    },
+    {
+      "path": "fixtures/state/basic.mmd",
+      "sha256": "f263bae92d7767b33fcb22f7fc5b8bda74054749c7c0eb1be46f23532700988e",
+      "bytes": 98,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/state/basic.mmd"
+    },
+    {
+      "path": "upstream-svg/state/basic.svg",
+      "sha256": "622301577c5185ef91dccd9e0b0a44aee16c52dde7a7258b7c31b2dc505bf9db",
+      "bytes": 36641,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/state/basic.svg"
+    },
+    {
+      "path": "fixtures/state/stress_state_accdescr_block_and_markdown_labels_049.mmd",
+      "sha256": "a784ccaa9507ab907d0e131fcdcdb7b5e09bc1079374a199cf9a9525b99af622",
+      "bytes": 402,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/state/stress_state_accdescr_block_and_markdown_labels_049.mmd"
+    },
+    {
+      "path": "upstream-svg/state/stress_state_accdescr_block_and_markdown_labels_049.svg",
+      "sha256": "1825dac6aba3fa870e741e12d98948d4b73f66904162ccfe8fb2e4c743e9412d",
+      "bytes": 45242,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/state/stress_state_accdescr_block_and_markdown_labels_049.svg"
+    },
+    {
+      "path": "fixtures/state/stress_state_unicode_and_rtl_036.mmd",
+      "sha256": "afd57f615782bfcf877564dde11455060e5465737dd9fc4be64c28979eb301aa",
+      "bytes": 240,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/state/stress_state_unicode_and_rtl_036.mmd"
+    },
+    {
+      "path": "upstream-svg/state/stress_state_unicode_and_rtl_036.svg",
+      "sha256": "0e57cee3f8850aaf3ac5306ff40d98bd00f133331191f593af8afb152c1e4efc",
+      "bytes": 44041,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/state/stress_state_unicode_and_rtl_036.svg"
+    },
+    {
+      "path": "fixtures/state/stress_state_batch5_choice_fork_join_with_notes_markdown_062.mmd",
+      "sha256": "00888deeeb9a53af3b1570d8f5c3871de69308e38b6bbf6ad221fbee749b3018",
+      "bytes": 509,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/state/stress_state_batch5_choice_fork_join_with_notes_markdown_062.mmd"
+    },
+    {
+      "path": "upstream-svg/state/stress_state_batch5_choice_fork_join_with_notes_markdown_062.svg",
+      "sha256": "fb400995538a6432f5be4396f2f2cdc814247b47a3c9c562a4b18565f386c24f",
+      "bytes": 59689,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/state/stress_state_batch5_choice_fork_join_with_notes_markdown_062.svg"
+    },
+    {
+      "path": "upstream/er-manifest.json",
+      "sha256": "8a4dbde628bf4b4b3f9efd9adaab64a5d1cae5c85cc482701bfdbcc9b0b25ae1",
+      "bytes": 35656,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/er/_baseline-manifest.json"
+    },
+    {
+      "path": "fixtures/er/basic.mmd",
+      "sha256": "0a2bc0cdf5e7ed558c92f78b1101ae550bb29d0e0eee0f492a93adb187e22695",
+      "bytes": 80,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/er/basic.mmd"
+    },
+    {
+      "path": "upstream-svg/er/basic.svg",
+      "sha256": "e3b7b67df57381e65a43755bda55e9cb7b74f1009006c5bb9fc4f10818d71964",
+      "bytes": 11660,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/er/basic.svg"
+    },
+    {
+      "path": "fixtures/er/stress_er_entity_label_inline_code_004.mmd",
+      "sha256": "ee50788d3b24fbd57e9643d6fe48b9f4042bf69121618f2588d0ea9ed40197c2",
+      "bytes": 37,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/er/stress_er_entity_label_inline_code_004.mmd"
+    },
+    {
+      "path": "upstream-svg/er/stress_er_entity_label_inline_code_004.svg",
+      "sha256": "3bc5a91dad67ac4caac510774aacbefc3b4e4d6ebc6de76ccde8328ef6a87dcf",
+      "bytes": 11492,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/er/stress_er_entity_label_inline_code_004.svg"
+    },
+    {
+      "path": "fixtures/er/upstream_docs_entityrelationshipdiagram_unicode_text_007.mmd",
+      "sha256": "99e1dfb4c158699e33a425420c1e9f3c85fa63c0c2274e46ee393970416065fc",
+      "bytes": 33,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/er/upstream_docs_entityrelationshipdiagram_unicode_text_007.mmd"
+    },
+    {
+      "path": "upstream-svg/er/upstream_docs_entityrelationshipdiagram_unicode_text_007.svg",
+      "sha256": "424be7fd416d79c5b9e3c56dec13ab0ba5236ce940a41db73cab7d204ff34d50",
+      "bytes": 13122,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/er/upstream_docs_entityrelationshipdiagram_unicode_text_007.svg"
+    },
+    {
+      "path": "fixtures/er/upstream_cypress_theme_spec_should_render_a_er_diagram_005.mmd",
+      "sha256": "43d50ec077ce901285d8c2d4fe6076119e8ec9682a1ad330c25ba3a453428412",
+      "bytes": 452,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/er/upstream_cypress_theme_spec_should_render_a_er_diagram_005.mmd"
+    },
+    {
+      "path": "upstream-svg/er/upstream_cypress_theme_spec_should_render_a_er_diagram_005.svg",
+      "sha256": "3ac39447008c4c2473a2e747b27d6f6391c1503a1bd75614228493f8fab85346",
+      "bytes": 28047,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/er/upstream_cypress_theme_spec_should_render_a_er_diagram_005.svg"
+    },
+    {
+      "path": "upstream/pie-manifest.json",
+      "sha256": "729ed83f5273e60646c76165a7cbb6f360bad8fb5f30abbdbc09880dde617dce",
+      "bytes": 24251,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/pie/_baseline-manifest.json"
+    },
+    {
+      "path": "fixtures/pie/upstream_cypress_pie_spec_example_001.mmd",
+      "sha256": "bef0ab352bb07292c082bcd5bf8d9c565e9212e6a7710dd15ee392018aef610e",
+      "bytes": 102,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/pie/upstream_cypress_pie_spec_example_001.mmd"
+    },
+    {
+      "path": "upstream-svg/pie/upstream_cypress_pie_spec_example_001.svg",
+      "sha256": "5c02b8a91ce0ff4ac6abd96fa0892c3f7de2f6250602b4797e446ef33ac8fd9c",
+      "bytes": 5384,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/pie/upstream_cypress_pie_spec_example_001.svg"
+    },
+    {
+      "path": "fixtures/pie/upstream_cypress_pie_spec_should_render_a_pie_diagram_with_showdata_005.mmd",
+      "sha256": "2df77dbd0b7b9c22142f6ffefe76de4ab0d09a2cf4485e96480505bde5618b06",
+      "bytes": 58,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/pie/upstream_cypress_pie_spec_should_render_a_pie_diagram_with_showdata_005.mmd"
+    },
+    {
+      "path": "upstream-svg/pie/upstream_cypress_pie_spec_should_render_a_pie_diagram_with_showdata_005.svg",
+      "sha256": "16edf718fa9c0e28c98e93ee722c00fd83025c95cb72427d1a07c90bd2357257",
+      "bytes": 6165,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/pie/upstream_cypress_pie_spec_should_render_a_pie_diagram_with_showdata_005.svg"
+    },
+    {
+      "path": "fixtures/pie/upstream_cypress_pie_spec_should_render_a_simple_pie_diagram_with_long_labels_002.mmd",
+      "sha256": "b9659bc3cef2cb3b09bb00de257044b7c3307e5416aff0f0c2aefc8bf6d0733c",
+      "bytes": 105,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/pie/upstream_cypress_pie_spec_should_render_a_simple_pie_diagram_with_long_labels_002.mmd"
+    },
+    {
+      "path": "upstream-svg/pie/upstream_cypress_pie_spec_should_render_a_simple_pie_diagram_with_long_labels_002.svg",
+      "sha256": "8631c0a31216f24755e26895b4d0f1c92dd8fbd44d094230eb019c4e11255060",
+      "bytes": 6588,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/pie/upstream_cypress_pie_spec_should_render_a_simple_pie_diagram_with_long_labels_002.svg"
+    },
+    {
+      "path": "fixtures/pie/upstream_cypress_theme_spec_should_render_a_pie_diagram_003.mmd",
+      "sha256": "2f5243f452961a71b27a6549834170deccb19b19d287e0d07772b8cbbf714441",
+      "bytes": 145,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/pie/upstream_cypress_theme_spec_should_render_a_pie_diagram_003.mmd"
+    },
+    {
+      "path": "upstream-svg/pie/upstream_cypress_theme_spec_should_render_a_pie_diagram_003.svg",
+      "sha256": "2d79e69465862154b6087dd6bfa91b8dbc595b7000f1693371f171d12ed9b420",
+      "bytes": 6573,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/fixtures/upstream-svgs/pie/upstream_cypress_theme_spec_should_render_a_pie_diagram_003.svg"
+    },
+    {
+      "path": "licenses/merman-LICENSE-MIT",
+      "sha256": "645fe3acd17f0ec18b05a5cbc8071c16fc888bfa8356d9087c265df69464d893",
+      "bytes": 1076,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/LICENSE-MIT"
+    },
+    {
+      "path": "licenses/merman-LICENSE-APACHE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "bytes": 11357,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/LICENSE-APACHE"
+    },
+    {
+      "path": "licenses/merman-THIRD_PARTY_NOTICES.md",
+      "sha256": "dd1bdd8440a6acf6ac3e556f21dfb9461e6d8ea3e8a2756d326d62aad642f992",
+      "bytes": 38112,
+      "url": "https://raw.githubusercontent.com/Latias94/merman/f6202f702dbde0a75049b1a62b3124feae709b3d/THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "path": "licenses/mermaid-LICENSE",
+      "sha256": "ec9fb67dcb25eccc416ed56e1aab819222c805a2a4bfe4cb19e7556bf2ffde80",
+      "bytes": 1089,
+      "url": "https://raw.githubusercontent.com/mermaid-js/mermaid/21f72f07ea22c0af48a3149c550654e80d8e40cb/LICENSE"
+    },
+    {
+      "path": "licenses/NotoSansSC-OFL.txt",
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+      "bytes": 4388,
+      "url": "https://raw.githubusercontent.com/google/fonts/45e3d5269e4a17d823f6d84470bc084dc5ae46f6/ofl/notosanssc/OFL.txt"
+    },
+    {
+      "path": "fonts/NotoSansSC-METADATA.pb",
+      "sha256": "c6c4bdb785793b2de1da177caeeffcd0c90d7680bdab2de8f88ab45007bc59bc",
+      "bytes": 1296,
+      "url": "https://raw.githubusercontent.com/google/fonts/45e3d5269e4a17d823f6d84470bc084dc5ae46f6/ofl/notosanssc/METADATA.pb"
+    },
+    {
+      "path": "fonts/NotoSansSC-wght.ttf",
+      "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+      "bytes": 17772300,
+      "url": "https://raw.githubusercontent.com/google/fonts/45e3d5269e4a17d823f6d84470bc084dc5ae46f6/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf"
+    }
+  ]
+}

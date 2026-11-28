@@ -1,0 +1,28 @@
+// ---------------------------------------------------------------------------------------------
+//  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+//  See LICENSE file in the project root for license information.
+// ---------------------------------------------------------------------------------------------
+import "MarkdownView.idl";
+namespace Notepads.Markdown
+{
+    [default_interface]
+    [webhosthidden]
+    runtimeclass MarkdownViewAutomationPeer : Windows.UI.Xaml.Automation.Peers.FrameworkElementAutomationPeer,
+        Windows.UI.Xaml.Automation.Provider.ITextProvider
+    {
+        MarkdownViewAutomationPeer(MarkdownView owner);
+    }
+
+    [default_interface]
+    [webhosthidden]
+    runtimeclass ReadingObjectProvider : Windows.UI.Xaml.Automation.Peers.AutomationPeer,
+        Windows.UI.Xaml.Automation.Provider.IInvokeProvider,
+        Windows.UI.Xaml.Automation.Provider.IToggleProvider,
+        Windows.UI.Xaml.Automation.Provider.IExpandCollapseProvider,
+        Windows.UI.Xaml.Automation.Provider.ITextChildProvider,
+        Windows.UI.Xaml.Automation.Provider.IScrollProvider,
+        Windows.UI.Xaml.Automation.Provider.ITransformProvider,
+        Windows.UI.Xaml.Automation.Provider.ITransformProvider2
+    {
+    }
+}

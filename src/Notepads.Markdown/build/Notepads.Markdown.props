@@ -1,0 +1,25 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE file in the project root for license information.
+-->
+<Project>
+  <PropertyGroup>
+    <NotepadsMarkdownRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..'))</NotepadsMarkdownRoot>
+    <NotepadsMarkdownEnableDiagnostics Condition="'$(NotepadsMarkdownEnableDiagnostics)' == ''">false</NotepadsMarkdownEnableDiagnostics>
+    <NotepadsMarkdownVariant>production</NotepadsMarkdownVariant>
+    <NotepadsMarkdownVariant Condition="'$(NotepadsMarkdownEnableDiagnostics)' == 'true'">diagnostics</NotepadsMarkdownVariant>
+    <NotepadsMarkdownBuildRoot Condition="'$(NotepadsMarkdownBuildRoot)' == ''">$(USERPROFILE)\.notepads-build\Markdown\$([MSBuild]::StableStringHash('$(NotepadsMarkdownRoot)'))\</NotepadsMarkdownBuildRoot>
+    <NotepadsMarkdownBuildRoot>$([MSBuild]::NormalizeDirectory('$(NotepadsMarkdownBuildRoot)'))</NotepadsMarkdownBuildRoot>
+    <NotepadsMarkdownPackagesRoot>$([MSBuild]::NormalizeDirectory('$(NotepadsMarkdownRoot)', '..', 'packages'))</NotepadsMarkdownPackagesRoot>
+    <NotepadsMarkdownNativePlatform Condition="'$(Platform)' == 'x86' or '$(Platform)' == 'Win32'">Win32</NotepadsMarkdownNativePlatform>
+    <NotepadsMarkdownNativePlatform Condition="'$(Platform)' == 'x64'">x64</NotepadsMarkdownNativePlatform>
+    <NotepadsMarkdownNativePlatform Condition="'$(Platform)' == 'ARM64' or '$(Platform)' == 'arm64'">ARM64</NotepadsMarkdownNativePlatform>
+    <NotepadsMarkdownNativeDir>$(NotepadsMarkdownBuildRoot)native\$(NotepadsMarkdownVariant)\$(NotepadsMarkdownNativePlatform)\Release\bin\</NotepadsMarkdownNativeDir>
+    <NotepadsMarkdownNativeIntDir>$(NotepadsMarkdownBuildRoot)native\$(NotepadsMarkdownVariant)\$(NotepadsMarkdownNativePlatform)\Release\obj\</NotepadsMarkdownNativeIntDir>
+    <NotepadsMarkdownRustTargetDir>$(NotepadsMarkdownBuildRoot)cargo\$(NotepadsMarkdownVariant)\</NotepadsMarkdownRustTargetDir>
+    <NotepadsMarkdownRustTarget Condition="'$(NotepadsMarkdownNativePlatform)' == 'Win32'">i686-pc-windows-msvc</NotepadsMarkdownRustTarget>
+    <NotepadsMarkdownRustTarget Condition="'$(NotepadsMarkdownNativePlatform)' == 'x64'">x86_64-pc-windows-msvc</NotepadsMarkdownRustTarget>
+    <NotepadsMarkdownRustTarget Condition="'$(NotepadsMarkdownNativePlatform)' == 'ARM64'">aarch64-pc-windows-msvc</NotepadsMarkdownRustTarget>
+    <NotepadsMarkdownRustLibrary>$(NotepadsMarkdownBuildRoot)link-inputs\$(NotepadsMarkdownVariant)\$(NotepadsMarkdownNativePlatform)\Release\markdown_ffi.lib</NotepadsMarkdownRustLibrary>
+  </PropertyGroup>
+</Project>

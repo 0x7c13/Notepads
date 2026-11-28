@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.37">
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0xe34c4a3"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1024"/>
+    <created value="Sat Nov  5 18:46:15 2022"/>
+    <modified value="Sat Nov  5 18:46:15 2022"/>
+    <xMin value="51"/>
+    <yMin value="-250"/>
+    <xMax value="998"/>
+    <yMax value="950"/>
+    <macStyle value="00000000 00000011"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="g1"/>
+    <GlyphID id="2" name="g2"/>
+    <GlyphID id="3" name="g3"/>
+    <GlyphID id="4" name="g4"/>
+    <GlyphID id="5" name="g5"/>
+  </GlyphOrder>
+
+  <maxp>
+    <tableVersion value="0x5000"/>
+    <numGlyphs value="100"/>
+  </maxp>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_6 platformID="3" platEncID="1" language="0">
+      <map code="0x1723" name="g1"/>
+      <map code="0x1724" name="g2"/>
+      <map code="0x1725" name="g3"/>
+      <map code="0x1726" name="g4"/>
+      <map code="0x1727" name="g5"/>
+    </cmap_format_6>
+  </cmap>
+
+</ttFont>

@@ -1,0 +1,2 @@
+fonttools[unicode]==4.53.0
+freetype-py==2.4.0

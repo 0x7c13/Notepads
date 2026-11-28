@@ -1,0 +1,208 @@
+{
+  "original": true,
+  "goldens": false,
+  "files": [
+    {
+      "file": "cbdt-png-v1.svg",
+      "bytes": 187,
+      "sha256": "575554EB895C865C092244C8B96482312E9648EA90B8D75D60EA3F517F3DFEA1",
+      "original_import": {
+        "bytes": 179,
+        "sha256": "76024FF4C5864C9DEE6C821044C166E30087BB5E8424EF02849C5E4CBD5DA1E0"
+      }
+    },
+    {
+      "file": "cbdt-png-v1.ttf",
+      "bytes": 1888,
+      "sha256": "617939CB09ECA334207F3B1DAF83E1C2CDCE8F13F3DA0DB78DB1DAC219927441",
+      "original_import": {
+        "bytes": 1780,
+        "sha256": "D39717C6509BA9694C9D058CABBA8C583860C9923569D0926831662C36A6633C"
+      }
+    },
+    {
+      "file": "colr-normal-basic-v1.svg",
+      "bytes": 365,
+      "sha256": "4B1CA9422CD20BCA03122841908A70890F25FFACDF4C7AAB86383C4311A7EBC6",
+      "original_import": {
+        "bytes": 349,
+        "sha256": "9D32B88FBC9781DCFDB30BDD9F8D1C6E2880DC8C2F6CD82EC76B450F82AD19E8"
+      }
+    },
+    {
+      "file": "colr-normal-v1.svg",
+      "bytes": 512,
+      "sha256": "0FD165169EB9A14C934AA3656F1234C19DBF52DAB7A07C1CBB30AB4618D4DFCF",
+      "original_import": {
+        "bytes": 488,
+        "sha256": "08B43A79C059B4F5019C1E4DA91F8A53602B0FAD07B0CF9E808098C44C316054"
+      }
+    },
+    {
+      "file": "colr-normal-v1.ttf",
+      "bytes": 7808,
+      "sha256": "EAEC0787209CDA1D485CD437CC20507CAA9126530F3E7C46CE0A55806E29A624",
+      "original_import": {
+        "bytes": 7700,
+        "sha256": "9C211EC94E6E4A7DD8BF4F22A96304DAE42BC460F8092CDCCC93B6725A23B3B9"
+      }
+    },
+    {
+      "file": "colr-var-basic-v1-wght400.svg",
+      "bytes": 433,
+      "sha256": "51F790A8571272A2FB3EA751162FB1D79EB317EA07377F78C54EA33A8D162693",
+      "original_import": {
+        "bytes": 417,
+        "sha256": "ED3CE7D01B3B7D0ECDD1504FAC40386AC99ED61B0A67A15E918494B79DDD3FEB"
+      }
+    },
+    {
+      "file": "colr-var-basic-v1-wght650.svg",
+      "bytes": 433,
+      "sha256": "656A274D15E8EFC43DBDB3B43AAABC73A3894429414B2714B7AD1F708F93F69C",
+      "original_import": {
+        "bytes": 417,
+        "sha256": "5DC38FD170E56195DE0459AF1017D911745DFDAFC148A48882920F0EE5B1CE67"
+      }
+    },
+    {
+      "file": "colr-var-basic-v1-wght900.svg",
+      "bytes": 433,
+      "sha256": "22EFFCEF4FBF6A9BB5E3B8D4ADCF82570B07A155CE9BDA312CF29BFF11EC52CB",
+      "original_import": {
+        "bytes": 417,
+        "sha256": "A96E09A29FE9E41B35D61E7A6B923C4B01294DD3A33EAF58956D41CB8B02CF92"
+      }
+    },
+    {
+      "file": "colr-var-v1-wght400.svg",
+      "bytes": 614,
+      "sha256": "800D3D625F07620384671D1B6D30CEE867142157BA1F61391A4E7CB108BDBF07",
+      "original_import": {
+        "bytes": 590,
+        "sha256": "4F82D678D0C266019974B8400CF2234B39722E8CDC4D25A3AD0D7F94C3B2DCB1"
+      }
+    },
+    {
+      "file": "colr-var-v1-wght650.svg",
+      "bytes": 614,
+      "sha256": "7A229838710B5E34F9A5C13349F99F0BE012B8A6D32B77685DDB13469D62FBC8",
+      "original_import": {
+        "bytes": 590,
+        "sha256": "872AFC7AAE521159FD8DF5B2973FF14C3AE44CEF30336405128F736D0A512908"
+      }
+    },
+    {
+      "file": "colr-var-v1-wght900.svg",
+      "bytes": 614,
+      "sha256": "861885E30296CFDCB378ACC33FCA6219A8F601DC9BFDB50EDF803DBB4933647D",
+      "original_import": {
+        "bytes": 590,
+        "sha256": "F8704E052509EE3662E578CECD1060DEDF2F6E422298156CD16E31D8E15ADD41"
+      }
+    },
+    {
+      "file": "colr-var-v1.ttf",
+      "bytes": 12492,
+      "sha256": "BA3C8F17BDD7916D28298ED97B5849111489F30DD6EE7AB8DE8CF11A4CE8B373",
+      "original_import": {
+        "bytes": 12384,
+        "sha256": "1F54C58F5BDC062F15289936F8AEEA17E4C32B1EDC1422B288A1ECF72FA9190B"
+      }
+    },
+    {
+      "file": "sbix-png-v1.svg",
+      "bytes": 187,
+      "sha256": "B97775D052D4676C15A566EC77F4A02DD7A7AEA9BDD8DAAD94C4212A718E7555",
+      "original_import": {
+        "bytes": 179,
+        "sha256": "DF354668C362A9AC8EE114C71113D7D05953B8636C5AE1539609E4FC676734F2"
+      }
+    },
+    {
+      "file": "sbix-png-v1.ttf",
+      "bytes": 1820,
+      "sha256": "2AAFBE08E19A7C54DD5943D6FD9A79C74DED85930D9ACD968A28D1A4B145C6D9",
+      "original_import": {
+        "bytes": 1712,
+        "sha256": "A2F71FBB3A3960CC8DF2970659AF0B7F80406ADB01AC018A8FACEE532CD9C4E6"
+      }
+    },
+    {
+      "file": "svg-gzip-v1.svg",
+      "bytes": 191,
+      "sha256": "561EB1C8BB3BB632CDB043DD04CA7E364BCAFA81355637E669FF4D0ADA5069F6",
+      "original_import": {
+        "bytes": 183,
+        "sha256": "0CDC5B53783E3910731C1BD4B79D939B63F4F305B79B04212F96069AAB972E12"
+      }
+    },
+    {
+      "file": "svg-gzip-v1.ttf",
+      "bytes": 1908,
+      "sha256": "E4A39D98588EFC155F647AAED48DBC7C72B157E761CFEAEC5C688D6A601F362F",
+      "original_import": {
+        "bytes": 1800,
+        "sha256": "148B8DF55A8495D3C0D0B16A1C06FBC478B816BD4C7870DEF217A6A282BE73D3"
+      }
+    },
+    {
+      "file": "svg-plain-v1.svg",
+      "bytes": 192,
+      "sha256": "321BD063732440297B1ABC69C74477A8520F277442BCDE9F3C665C19B2E1B88A",
+      "original_import": {
+        "bytes": 184,
+        "sha256": "A44ECA4237E10DFC95E7E9FD280D3C46723073F9D2B221F52BE6D0939954E373"
+      }
+    },
+    {
+      "file": "svg-plain-v1.ttf",
+      "bytes": 1920,
+      "sha256": "1F72565D6860E0BEDA88969E5FC718657A57807460895EF469FB4FFB0B4FED21",
+      "original_import": {
+        "bytes": 1812,
+        "sha256": "FE2B38A52711BB2392030E0165E6D4C8F93F527E8A1F1E1454FE42E941686ACC"
+      }
+    }
+  ],
+  "supportFiles": [
+    {
+      "file": "README.md",
+      "bytes": 1477,
+      "sha256": "A9C9A813D58AF5793D4B468782F0481C2541B6A7279E1CB403F6CA1C70D5CD34",
+      "original_import": {
+        "bytes": 1369,
+        "sha256": "6651C34926EFED5BE37F29148278554D86DC13547F627A1DEABB3DDBAC4BA304"
+      }
+    },
+    {
+      "file": "CASES-V1.json",
+      "bytes": 11415,
+      "sha256": "5B63F609FA2D08D70E6AD97149E85D3AC665131A7D73127477D009EFF1FB463C",
+      "original_import": {
+        "bytes": 7767,
+        "sha256": "549A7E250FFF913A31D44A14866461F077F5E496874AA3F45443CADB29117A73"
+      }
+    }
+  ],
+  "archivedSupportFiles": [
+    {
+      "file": "Generate.py",
+      "bytes": 13140,
+      "sha256": "0856D8402CA260267F8A4C974A6207BB2BEBCC297BCA193C053A614877ECA150",
+      "scope": "Recorded historical generation tooling; not a current runnable entry."
+    },
+    {
+      "file": "Build-Cases.py",
+      "bytes": 3013,
+      "sha256": "094197F4888A9A7BB495DCAC7C5FA0780B212F50E0E0A737BB4E4459FC02C1CA",
+      "scope": "Recorded historical generation tooling; not a current runnable entry."
+    }
+  ],
+  "namespace_migration": {
+    "date": "2026-11-15",
+    "scope": "Font name records, required checksums and SVG family attributes only. Glyph, metric, pixel and expected-result data unchanged.",
+    "tool": "fontTools 4.68.0",
+    "original_identities": "original_import fields; complete original files preserved in the verified external source snapshot."
+  }
+}

@@ -1,0 +1,2826 @@
+Run this with `cargo test --features gen-tests suite::regression`.
+
+Regression tests for issues on the github issue tracker.
+
+ISSUE #162
+
+```````````````````````````````` example
+<details><summary>Testing 1..2..3..</summary>
+
+This is a test of the details element.
+
+</details>
+.
+<details><summary>Testing 1..2..3..</summary>
+<p>This is a test of the details element.</p>
+</details>
+````````````````````````````````
+
+ISSUE #133
+
+```````````````````````````````` example
+see the [many] [articles] [on] [QuickCheck].
+
+[many]: https://medium.com/@jlouis666/quickcheck-advice-c357efb4e7e6
+[articles]: http://www.quviq.com/products/erlang-quickcheck/
+[on]: https://wiki.haskell.org/Introduction_to_QuickCheck1
+[QuickCheck]: https://hackage.haskell.org/package/QuickCheck
+.
+<p>see the <a href="https://medium.com/@jlouis666/quickcheck-advice-c357efb4e7e6">many</a> <a href="http://www.quviq.com/products/erlang-quickcheck/">articles</a> <a href="https://wiki.haskell.org/Introduction_to_QuickCheck1">on</a> <a href="https://hackage.haskell.org/package/QuickCheck">QuickCheck</a>.</p>
+````````````````````````````````
+
+ISSUE #135
+
+```````````````````````````````` example
+[![debug-stub-derive on crates.io][cratesio-image]][cratesio]
+[![debug-stub-derive on docs.rs][docsrs-image]][docsrs]
+
+[cratesio-image]: https://img.shields.io/crates/v/debug_stub_derive.svg
+[cratesio]: https://crates.io/crates/debug_stub_derive
+[docsrs-image]: https://docs.rs/debug_stub_derive/badge.svg?version=0.3.0
+[docsrs]: https://docs.rs/debug_stub_derive/0.3.0/
+.
+<p><a href="https://crates.io/crates/debug_stub_derive"><img src="https://img.shields.io/crates/v/debug_stub_derive.svg" alt="debug-stub-derive on crates.io" /></a>
+<a href="https://docs.rs/debug_stub_derive/0.3.0/"><img src="https://docs.rs/debug_stub_derive/badge.svg?version=0.3.0" alt="debug-stub-derive on docs.rs" /></a></p>
+````````````````````````````````
+
+ISSUE #145
+
+```````````````````````````````` example
+|  Title A  |  Title B  |
+| --------- | --------- |
+| Content   | Content   |
+
+|  Title A  |  Title B  |  Title C  |  Title D  |
+| --------- | --------- | --------- | ---------:|
+| Content   | Content   | Conent    | Content   |
+.
+<table><thead><tr><th>Title A</th><th>Title B</th></tr></thead><tbody>
+<tr><td>Content</td><td>Content</td></tr>
+</tbody></table>
+<table><thead><tr><th>Title A</th><th>Title B</th><th>Title C</th><th style="text-align: right">Title D</th></tr></thead><tbody>
+<tr><td>Content</td><td>Content</td><td>Conent</td><td style="text-align: right">Content</td></tr>
+</tbody></table>
+````````````````````````````````
+
+Unicode punctuation and emphasis
+
+```````````````````````````````` example
+foo§__(bar)__
+.
+<p>foo§<strong>(bar)</strong></p>
+````````````````````````````````
+
+ISSUE #213
+
+```````````````````````````````` example
+<https://example.com> hello
+.
+<p><a href="https://example.com">https://example.com</a> hello</p>
+````````````````````````````````
+
+ISSUE #43 (1)
+
+```````````````````````````````` example
+[foo][bar]
+
+<!-- foo -->
+[bar]: a
+.
+<p><a href="a">foo</a></p>
+<!-- foo -->
+````````````````````````````````
+
+ISSUE #43 (2)
+
+```````````````````````````````` example
+<!-- <dl> -->
+- **foo** (u8, u8)
+
+  make something
+
+- **bar** (u16, u16)
+
+  make something
+.
+<!-- <dl> -->
+<ul>
+<li>
+<p><strong>foo</strong> (u8, u8)</p>
+<p>make something</p>
+</li>
+<li>
+<p><strong>bar</strong> (u16, u16)</p>
+<p>make something</p>
+</li>
+</ul>
+````````````````````````````````
+
+ISSUE #239
+
+```````````````````````````````` example
+[`
+i8
+`](
+../../../std/primitive.i8.html
+)
+.
+<p><a href="../../../std/primitive.i8.html"><code>i8</code></a></p>
+````````````````````````````````
+
+ISSUE #270
+
+```````````````````````````````` example
+[a]
+
+[a]: /url (title\\*)
+.
+<p><a href="/url" title="title\*">a</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+[a]
+
+[a]: /url (title\))
+.
+<p><a href="/url" title="title)">a</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+[a]
+
+[a]: /url (title))
+.
+<p>[a]</p>
+<p>[a]: /url (title))</p>
+````````````````````````````````
+
+Inline HTML
+
+```````````````````````````````` example
+a <?php this is not a valid processing tag
+---
+b <?php but this is ?>
+.
+<h2>a &lt;?php this is not a valid processing tag</h2>
+<p>b <?php but this is ?></p>
+````````````````````````````````
+
+ISSUE #288
+
+```````````````````````````````` example
+[a]: u\
+foo
+.
+<p>foo</p>
+````````````````````````````````
+
+ISSUE #314
+
+```````````````````````````````` example
+\`foo`
+.
+<p>`foo`</p>
+````````````````````````````````
+
+ISSUE #317
+
+```````````````````````````````` example
+foo\\
+bar
+.
+<p>foo\
+bar</p>
+````````````````````````````````
+
+ISSUE #315
+
+```````````````````````````````` example
+1\. foo
+
+1\) bar
+.
+<p>1. foo</p>
+<p>1) bar</p>
+````````````````````````````````
+
+ISSUE #294
+
+```````````````````````````````` example
+1...
+
+1.2.3.
+
+1 2 3 .
+
+1.|2.-3.
+
+1)2)3)
+.
+<p>1...</p>
+<p>1.2.3.</p>
+<p>1 2 3 .</p>
+<p>1.|2.-3.</p>
+<p>1)2)3)</p>
+````````````````````````````````
+
+ISSUE #296
+
+```````````````````````````````` example
+[](<<>)
+.
+<p>[](&lt;&lt;&gt;)</p>
+````````````````````````````````
+
+BACKTICKS
+
+```````````````````````````````` example
+\``foo``bar`
+.
+<p>`<code>foo``bar</code></p>
+````````````````````````````````
+
+MORE BACKTICKS
+
+```````````````````````````````` example
+\\`foo`
+.
+<p>\<code>foo</code></p>
+````````````````````````````````
+
+ISSUE #300
+
+```````````````````````````````` example
+[\\]: x
+
+YOLO
+.
+<p>YOLO</p>
+````````````````````````````````
+
+ISSUE #293
+
+```````````````````````````````` example
+lorem ipsum
+A | B
+---|---
+foo | bar
+.
+<p>lorem ipsum
+A | B
+---|---
+foo | bar</p>
+````````````````````````````````
+
+ISSUE #318 (note the trailing whitespace on the first line)
+
+```````````````````````````````` example
+foo|bar  
+---|---
+foo|bar
+.
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+</table>
+````````````````````````````````
+
+ISSUE #318
+
+```````````````````````````````` example
+foo|bar\\
+---|---
+foo|bar
+.
+<table><thead><tr><th>foo</th><th>bar\</th></tr></thead>
+<tbody><tr><td>foo</td><td>bar</td></tr></tbody>
+</table>
+````````````````````````````````
+
+ISSUE #328
+
+```````````````````````````````` example
+[<foo>](url)
+.
+<p><a href="url"><foo></a></p>
+````````````````````````````````
+
+ISSUE #328
+
+```````````````````````````````` example
+[<foo>bar</foo>](url)
+.
+<p><a href="url"><foo>bar</foo></a></p>
+````````````````````````````````
+
+ISSUE #328
+
+```````````````````````````````` example
+![<http://example.com>](http://example.com/logo.png)
+.
+<p><img src="http://example.com/logo.png" alt="http://example.com" /></p>
+````````````````````````````````
+
+ISSUE #328
+
+```````````````````````````````` example
+[<http://one> <http://two>](url)
+.
+<p><a href="url"><a href="http://one">http://one</a> <a href="http://two">http://two</a></a></p>
+````````````````````````````````
+
+ISSUE #330 (NOTE THERE IS A SPACE ON THE LINE BETWEEN THE TABLE AND THE PARAGRAPH!)
+
+```````````````````````````````` example
+Markdown | Less | Pretty
+--- | --- | ---
+ 
+some text
+.
+<table><thead><tr><th>Markdown</th><th>Less</th><th>Pretty</th></tr></thead><tbody>
+</tbody></table>
+<p>some text</p>
+````````````````````````````````
+
+ISSUE #331
+
+```````````````````````````````` example
+1. > foo
+2. >
+.
+<ol>
+<li>
+<blockquote>
+<p>foo</p>
+</blockquote>
+</li>
+<li>
+<blockquote>
+</blockquote>
+</li>
+</ol>
+````````````````````````````````
+
+ISSUE #326
+
+```````````````````````````````` example
+[
+x
+
+]: f
+.
+<p>[
+x</p>
+<p>]: f</p>
+````````````````````````````````
+
+ISSUE #295
+
+```````````````````````````````` example
+[foo]:
+.
+<p>[foo]:</p>
+````````````````````````````````
+
+ISSUE #298
+
+```````````````````````````````` example
+> [foo
+> bar]: /url
+>
+> [foo bar]
+.
+<blockquote>
+<p><a href="/url">foo bar</a></p>
+</blockquote>
+````````````````````````````````
+
+TABLES IN BROKEN CONTAINERS
+
+```````````````````````````````` example
+> foo | bar
+> --- | ---
+yolo | swag
+.
+<blockquote>
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead><tbody></tbody></table>
+</blockquote>
+<p>yolo | swag</p>
+````````````````````````````````
+
+ISSUE #336
+
+```````````````````````````````` example
+<foo bar>
+.
+<foo bar>
+````````````````````````````````
+
+ISSUE #336
+
+```````````````````````````````` example
+<foo bar =
+ "hi"> 
+.
+<p><foo bar =
+ "hi"></p>
+````````````````````````````````
+
+EMPHASIS ACROSS PARAGRAPHS
+
+```````````````````````````````` example
+~~*_**__
+
+__a__
+.
+<p>~~*_**__</p>
+<p><strong>a</strong></p>
+````````````````````````````````
+
+EMPTY CODE IN BLOCKQUOTE
+
+```````````````````````````````` example
+> `
+> `
+.
+<blockquote>
+<p><code> </code></p>
+</blockquote>
+````````````````````````````````
+
+ISSUE #356
+
+```````````````````````````````` example
+`\|`
+.
+<p><code>\|</code></p>
+````````````````````````````````
+
+ISSUE 370
+
+```````````````````````````````` example
+Paragraph 1
+    
+Paragraph 2
+.
+<p>Paragraph 1</p>
+<p>Paragraph 2</p>
+````````````````````````````````
+
+ISSUE 375
+
+```````````````````````````````` example
+\[[link text](https://www.google.com/)\]
+.
+<p>[<a href="https://www.google.com/">link text</a>]</p>
+````````````````````````````````
+
+ISSUE 351
+
+```````````````````````````````` example
+foo | bar
+--- | ---
+[a](< | url>)
+.
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead><tbody><tr><td>[a](&lt;</td><td>url&gt;)</td></tr></tbody></table>
+````````````````````````````````
+
+ISSUE 351
+
+```````````````````````````````` example
+[a](url "
+- - -
+")
+.
+<p>[a](url "</p>
+<hr>
+<p>")</p>
+````````````````````````````````
+
+ISSUE 351
+
+```````````````````````````````` example
+[a](url
+
+)
+.
+<p>[a](url</p>
+<p>)</p>
+````````````````````````````````
+
+ISSUE 351
+
+```````````````````````````````` example
+[a](b "
+
+")
+.
+<p>[a](b "</p>
+<p>")</p>
+````````````````````````````````
+
+ISSUE 382
+
+```````````````````````````````` example
+<http:// >
+.
+<p>&lt;http:// &gt;</p>
+````````````````````````````````
+
+ISSUE 382 (control chars)
+
+```````````````````````````````` example
+<http://>
+.
+<p>&lt;http://&gt;</p>
+````````````````````````````````
+
+ISSUE 382
+
+```````````````````````````````` example
+foo | bar
+--- | ---
+<http://| baz
+.
+<table>
+<thead>
+<tr><th>foo</th><th>bar</th></tr>
+</thead>
+<tbody>
+<tr><td>&lt;http://</td><td>baz</td></tr>
+</tbody>
+</table>
+````````````````````````````````
+
+ISSUE 381
+
+```````````````````````````````` example
+foo | bar
+--- | ---
+<http://|>
+.
+<table>
+<thead>
+<tr><th>foo</th><th>bar</th></tr>
+</thead>
+<tbody>
+<tr><td>&lt;http://</td><td>&gt;</td></tr>
+</tbody>
+</table>
+````````````````````````````````
+
+ISSUE 389
+
+```````````````````````````````` example
+<sup>\*hi</sup>\_
+.
+<p><sup>*hi</sup>_</p>
+````````````````````````````````
+
+ISSUE 389
+
+```````````````````````````````` example
+email: <john@example.com>\_
+.
+<p>email: <a href="mailto:john@example.com">john@example.com</a>_</p>
+````````````````````````````````
+
+ISSUE 301
+
+```````````````````````````````` example
+> [link](/url 'foo
+> bar')
+.
+<blockquote>
+<p><a href="/url" title="foo
+bar">link</a></p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 298
+
+```````````````````````````````` example
+> [foo
+> bar]: /url
+>
+> [foo bar]
+.
+<blockquote>
+<p><a href="/url">foo bar</a></p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 298
+
+```````````````````````````````` example
+> [foo   bar]: /url
+>
+> [foo
+> bar]
+.
+<blockquote>
+<p><a href="/url">foo
+bar</a></p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 298
+
+```````````````````````````````` example
+> - [a
+> b c]: /foo
+
+[a b c]
+.
+<blockquote>
+<ul>
+<li></li>
+</ul>
+</blockquote>
+<p><a href="/foo">a b c</a></p>
+````````````````````````````````
+
+ISSUE 298
+
+```````````````````````````````` example
+[a
+> b]: /foo
+
+[a b] [a > b]
+.
+<p>[a</p>
+<blockquote>
+<p>b]: /foo</p>
+</blockquote>
+<p>[a b] [a &gt; b]</p>
+````````````````````````````````
+
+ISSUE 398
+
+```````````````````````````````` example
+[`cargo
+package`]
+
+[`cargo package`]: https://example.com
+.
+<p><a href="https://example.com"><code>cargo package</code></a></p>
+````````````````````````````````
+
+ISSUE 398
+
+```````````````````````````````` example
+> [`cargo
+> package`]
+
+[`cargo package`]: https://example.com
+.
+<blockquote>
+<p><a href="https://example.com"><code>cargo package</code></a></p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 398
+
+```````````````````````````````` example
+> `cargo
+> package`
+.
+<blockquote>
+<p><code>cargo package</code></p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 399
+
+```````````````````````````````` example
+> Note: Though you should not rely on this, all pointers to <abbr
+> title="Dynamically Sized Types">DSTs</abbr> are currently twice the size of
+> the size of `usize` and have the same alignment.
+.
+<blockquote>
+<p>Note: Though you should not rely on this, all pointers to <abbr
+title="Dynamically Sized Types">DSTs</abbr> are currently twice the size of
+the size of <code>usize</code> and have the same alignment.</p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 413
+
+```````````````````````````````` example
+Lorem ipsum.[^a]
+
+An unordered list before the footnotes:
+* Ipsum
+* Lorem
+
+[^a]: Cool.
+.
+<p>Lorem ipsum.<sup class="footnote-reference"><a href="#a">1</a></sup></p>
+<p>An unordered list before the footnotes:</p>
+<ul>
+<li>Ipsum</li>
+<li>Lorem</li>
+</ul>
+<div class="footnote-definition" id="a"><sup class="footnote-definition-label">1</sup>
+<p>Cool.</p>
+</div>
+````````````````````````````````
+
+ISSUE 421
+
+```````````````````````````````` example
+[][a]
+
+[a]: b
+
+# assimp-rs [![][crates-badge]][crates]
+
+[crates]: https://crates.io/crates/assimp
+[crates-badge]: http://meritbadge.herokuapp.com/assimp
+.
+<p><a href="b"></a></p>
+<h1>assimp-rs <a href="https://crates.io/crates/assimp"><img src="http://meritbadge.herokuapp.com/assimp" alt="" /></a></h1>
+````````````````````````````````
+
+ISSUE 443 (note the spaces on the blank lines)
+
+```````````````````````````````` example
+* A list.
+
+   * A sublist.
+
+   * Another sublist.
+
+
+* A list.
+ 
+   * A sublist.
+ 
+   * Another sublist.
+ 
+.
+<ul>
+<li>
+<p>A list.</p>
+<ul>
+<li>
+<p>A sublist.</p>
+</li>
+<li>
+<p>Another sublist.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>A list.</p>
+<ul>
+<li>
+<p>A sublist.</p>
+</li>
+<li>
+<p>Another sublist.</p>
+</li>
+</ul>
+</li>
+</ul>
+````````````````````````````````
+
+ISSUE 437
+
+```````````````````````````````` example
+<foo
+.
+<p>&lt;foo</p>
+````````````````````````````````
+
+Inline HTML stress test
+
+```````````````````````````````` example
+> > a <a href
+> > ="yo
+> > lo">
+.
+<blockquote>
+<blockquote>
+<p>a <a href
+="yo
+lo"></p>
+</blockquote>
+</blockquote>
+````````````````````````````````
+
+ISSUE 487
+
+```````````````````````````````` example
+	-	the whitespace here are tabs
+.
+<pre><code>-	the whitespace here are tabs
+</code></pre>
+````````````````````````````````
+
+ISSUE 553
+
+```````````````````````````````` example
+1. a
+   1. a
+
+a
+2. a
+.
+<ol>
+<li>a
+<ol>
+<li>a</li>
+</ol>
+</li>
+</ol>
+<p>a
+2. a</p>
+````````````````````````````````
+
+ISSUE 553
+
+```````````````````````````````` example
+1. a
+2. a
+   2. a
+.
+<ol>
+<li>a</li>
+<li>a
+2. a</li>
+</ol>
+````````````````````````````````
+
+ISSUE 557
+
+```````````````````````````````` example
+* [ ] foo
+
+* [ ] bar
+
+baz
+.
+<ul>
+<li><p><input disabled="" type="checkbox"/>
+foo</p></li><li><p><input disabled="" type="checkbox"/>
+bar</p></li>
+</ul>
+<p>baz</p>
+````````````````````````````````
+
+ISSUE 567
+
+```````````````````````````````` example
+* foo
+    + bar
+    + baz
+.
+<ul>
+<li>foo
+<ul>
+<li>bar</li>
+<li>baz</li>
+</ul>
+</li>
+</ul>
+````````````````````````````````
+
+ISSUE 642
+
+```````````````````````````````` example
+[`]: xx:
+
+[`]`]
+.
+<p>[<code>]</code>]</p>
+````````````````````````````````
+
+ISSUE 532
+
+```````````````````````````````` example
+~~foo~~bar
+.
+<p><del>foo</del>bar</p>
+````````````````````````````````
+
+```````````````````````````````` example
+foo~~bar~~
+.
+<p>foo<del>bar</del></p>
+````````````````````````````````
+
+ISSUE 551
+
+```````````````````````````````` example
+*~~__emphasis strike strong__~~* ~~*__strike emphasis strong__*~~
+.
+<p><em><del><strong>emphasis strike strong</strong></del></em> <del><em><strong>strike emphasis strong</strong></em></del></p>
+````````````````````````````````
+
+```````````````````````````````` example
+*~~__emphasis strike strong__~~* ~~*__`strike emphasis strong code`__*~~
+.
+<p><em><del><strong>emphasis strike strong</strong></del></em> <del><em><strong><code>strike emphasis strong code</code></strong></em></del></p>
+````````````````````````````````
+
+```````````````````````````````` example
+*~~`emphasis strike code`~~* ~~*__strike emphasis strong__*~~
+.
+<p><em><del><code>emphasis strike code</code></del></em> <del><em><strong>strike emphasis strong</strong></em></del></p>
+````````````````````````````````
+
+```````````````````````````````` example
+*~~`emphasis strike code`~~* ~~*__`strike emphasis strong code`__*~~
+.
+<p><em><del><code>emphasis strike code</code></del></em> <del><em><strong><code>strike emphasis strong code</code></strong></em></del></p>
+````````````````````````````````
+
+```````````````````````````````` example
+**~~_strong strike emphasis_~~** ~~*__strike emphasis strong__*~~
+.
+<p><strong><del><em>strong strike emphasis</em></del></strong> <del><em><strong>strike emphasis strong</strong></em></del></p>
+````````````````````````````````
+
+```````````````````````````````` example
+**~~_strong strike emphasis_~~** ~~*__`strike emphasis strong code`__*~~
+.
+<p><strong><del><em>strong strike emphasis</em></del></strong> <del><em><strong><code>strike emphasis strong code</code></strong></em></del></p>
+````````````````````````````````
+
+```````````````````````````````` example
+**~~`strong strike code`~~** ~~*__strike emphasis strong__*~~
+.
+<p><strong><del><code>strong strike code</code></del></strong> <del><em><strong>strike emphasis strong</strong></em></del></p>
+````````````````````````````````
+
+```````````````````````````````` example
+**~~`strong strike code`~~** ~~*__`strike emphasis strong code`__*~~
+.
+<p><strong><del><code>strong strike code</code></del></strong> <del><em><strong><code>strike emphasis strong code</code></strong></em></del></p>
+````````````````````````````````
+
+ISSUE 656
+
+```````````````````````````````` example
+  | foo | bar  |
+  |-----|------|
+  | baz | alef |
+
+  | foo | bar  |
+  |-----|------|
+| baz | alef |
+
+  | foo | bar  |
+|-----|------|
+  | baz | alef |
+
+| foo | bar  |
+  |-----|------|
+  | baz | alef |
+
+  | foo | bar  |
+|-----|------|
+| baz | alef |
+
+| foo | bar  |
+|-----|------|
+  | baz | alef |
+
+| foo | bar  |
+|-----|------|
+| baz | alef |
+
+| foo | bar  |
+  |-----|------|
+| baz | alef |
+
+    | foo | bar  |
+    |-----|------|
+    | baz | alef |
+
+| foo | bar  |
+    |-----|------|
+| baz | alef |
+
+→| foo | bar  |
+→|-----|------|
+→| baz | alef |
+
+| foo | bar  |
+→|-----|------|
+| baz | alef |
+.
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>baz</td><td>alef</td></tr></tbody>
+</table>
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>baz</td><td>alef</td></tr></tbody>
+</table>
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>baz</td><td>alef</td></tr></tbody>
+</table>
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>baz</td><td>alef</td></tr></tbody>
+</table>
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>baz</td><td>alef</td></tr></tbody>
+</table>
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>baz</td><td>alef</td></tr></tbody>
+</table>
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>baz</td><td>alef</td></tr></tbody>
+</table>
+<table><thead><tr><th>foo</th><th>bar</th></tr></thead>
+<tbody><tr><td>baz</td><td>alef</td></tr></tbody>
+</table>
+<pre><code>| foo | bar  |
+|-----|------|
+| baz | alef |
+</code></pre>
+<p>| foo | bar  |
+|-----|------|
+| baz | alef |</p>
+<pre><code>| foo | bar  |
+|-----|------|
+| baz | alef |
+</code></pre>
+<p>| foo | bar  |
+|-----|------|
+| baz | alef |</p>
+````````````````````````````````
+
+
+ISSUE 592
+
+```````````````````````````````` example
+### ###
+.
+<h3></h3>
+````````````````````````````````
+
+```````````````````````````````` example
+### 
+.
+<h3></h3>
+````````````````````````````````
+
+
+
+ISSUE 659
+
+```````````````````````````````` example
+<!doctype html>
+.
+<!doctype html>
+````````````````````````````````
+
+
+ISSUE 540
+
+```````````````````````````````` example
+| A | table    |
+| ------ | ---- |
+| not   |  in  |
+| a     | list|
+
+* A blockquote:
+  > inside a list item
+* A Heading:
+  # inside a list item
+* A table:
+
+  | inside | a       |
+  | ------ | ------- |
+  | list   | item    |
+  | with   | leading |
+  | empty  | lines   |
+* A table:
+  | inside  | a       |
+  | ------- | ------- |
+  | list    | item    |
+  | without | leading |
+  | empty   | lines   |
+.
+<table><thead><tr><th>A</th><th>table</th></tr></thead><tbody>
+<tr><td>not</td><td>in</td></tr>
+<tr><td>a</td><td>list</td></tr>
+</tbody></table>
+<ul>
+<li>
+<p>A blockquote:</p>
+<blockquote>
+<p>inside a list item</p>
+</blockquote>
+</li>
+<li>
+<p>A Heading:</p>
+<h1>inside a list item</h1>
+</li>
+<li>
+<p>A table:</p>
+<table><thead><tr><th>inside</th><th>a</th></tr></thead><tbody>
+<tr><td>list</td><td>item</td></tr>
+<tr><td>with</td><td>leading</td></tr>
+<tr><td>empty</td><td>lines</td></tr>
+</tbody></table>
+</li>
+<li>
+<p>A table:</p>
+<table><thead><tr><th>inside</th><th>a</th></tr></thead><tbody>
+<tr><td>list</td><td>item</td></tr>
+<tr><td>without</td><td>leading</td></tr>
+<tr><td>empty</td><td>lines</td></tr>
+</tbody></table>
+</li>
+</ul>
+````````````````````````````````
+
+
+ISSUE 658
+
+```````````````````````````````` example
+a\
+
+b
+.
+<p>a\</p>
+<p>b</p>
+````````````````````````````````
+
+```````````````````````````````` example
+a\
+* b
+.
+<p>a\</p>
+<ul>
+<li>b</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+a\
+> b
+.
+<p>a\</p>
+<blockquote>
+<p>b</p>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+a\
+# b
+.
+<p>a\</p>
+<h1>b</h1>
+````````````````````````````````
+
+```````````````````````````````` example
+a\
+==
+.
+<h1>a\</h1>
+````````````````````````````````
+
+```````````````````````````````` example
+> a\
+>
+.
+<blockquote>
+<p>a\</p>
+</blockquote>
+````````````````````````````````
+
+
+ISSUE 674
+
+```````````````````````````````` example
+<a
+>
+.
+<p>&lt;a</p>
+<blockquote></blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+<div
+>
+.
+<div
+>
+````````````````````````````````
+
+```````````````````````````````` example
+<a
+> quote
+.
+<p>&lt;a</p>
+<blockquote><p>quote</p></blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+<div
+> not quote
+.
+<div
+> not quote
+````````````````````````````````
+
+```````````````````````````````` example
+<a
+>quote
+.
+<p>&lt;a</p>
+<blockquote><p>quote</p></blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+<div
+>not quote
+.
+<div
+>not quote
+````````````````````````````````
+
+Table interruption when nested inside paragraph.
+
+```````````````````````````````` example
+> alpha
+> | a | b |
+> |---|---|
+> | c | d |
+.
+<blockquote>
+<p>alpha</p>
+<table>
+<thead><tr><th>a</th><th>b</th></tr></thead><tbody>
+<tr><td>c</td><td>d</td></tr>
+</tbody></table>
+</blockquote>
+````````````````````````````````
+
+
+ISSUE 657
+
+```````````````````````````````` example
+***R]*-*
+.
+<p>*<em><em>R]</em>-</em></p>
+````````````````````````````````
+
+```````````````````````````````` example
+****foo*bar*baz****
+.
+<p><strong><em><em>foo</em>bar</em>baz</strong>**</p>
+````````````````````````````````
+
+
+ISSUE 680
+
+```````````````````````````````` example
+;
+*
+%
+.
+<p>;
+*
+%</p>
+````````````````````````````````
+
+The below example adds a trailing space.
+
+```````````````````````````````` example
+;
+* 
+%
+.
+<p>;
+*
+%</p>
+````````````````````````````````
+
+
+ISSUE 687
+
+```````````````````````````````` example
+<@1>
+.
+<p>&lt;@1&gt;</p>
+````````````````````````````````
+
+
+ISSUE 689
+
+```````````````````````````````` example_metadata_blocks
+---
+anything:
+    indented4Spaces: true
+---
+Things
+.
+<p>Things</p>
+````````````````````````````````
+
+```````````````````````````````` example_metadata_blocks
+---
+something:
+  nested:
+    twice: true
+---
+Things
+.
+<p>Things</p>
+````````````````````````````````
+
+```````````````````````````````` example_metadata_blocks
+---
+lists:
+    - indented 4 spaces
+---
+Things
+.
+<p>Things</p>
+````````````````````````````````
+
+ISSUE #727
+
+```````````````````````````````` example
+-
+
+-
+
+
+-
+
+
+
+-
+.
+<ul>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+-
+
+  -  .
+.
+<ul>
+<li></li>
+<li><p>.</p></li>
+</ul>
+````````````````````````````````
+
+ISSUE #729
+
+```````````````````````````````` example
+j***5*=*
+.
+<p>j*<em><em>5</em>=</em></p>
+````````````````````````````````
+
+
+ISSUE 731
+
+```````````````````````````````` example
+Not enough table
+
+|
+|
+
+Not enough table
+
+|x
+|
+
+Not enough table
+
+|
+|-
+
+Table
+
+|x
+|-
+
+Not enough table
+| col1 | col2 |
+|      | ---- |
+
+Not enough table
+| col1 | col2 |
+| :    | ---- |
+
+Table
+| col1 | col2 |
+| ---- | ---- |
+.
+<p>Not enough table</p>
+<p>|
+|</p>
+<p>Not enough table</p>
+<p>|x
+|</p>
+<p>Not enough table</p>
+<p>|
+|-</p>
+<p>Table</p>
+<table>
+<thead><tr><th>x</th></tr></thead>
+<tbody>
+</tbody>
+</table>
+<p>Not enough table
+| col1 | col2 |
+|      | ---- |</p>
+<p>Not enough table
+| col1 | col2 |
+| :    | ---- |</p>
+<p>Table</p>
+<table>
+<thead><tr><th>col1</th><th>col2</th></tr></thead>
+<tbody>
+</tbody>
+</table>
+````````````````````````````````
+
+ISSUE 737
+
+```````````````````````````````` example
+[x] is not a valid link definition, because parens aren't balanced.
+
+[x]: (
+.
+<p>[x] is not a valid link definition, because parens aren't balanced.</p>
+<p>[x]: (</p>
+````````````````````````````````
+
+ISSUE 739
+
+```````````````````````````````` example
+Both of these two paragraphs are structurally the same, but the first one has
+an unmatched asterisk.
+
+_*_
+*{*{
+
+_x_
+*{*{
+.
+<p>Both of these two paragraphs are structurally the same, but the first one has
+an unmatched asterisk.</p>
+<p><em>*</em>
+<em>{</em>{</p>
+<p><em>x</em>
+<em>{</em>{</p>
+````````````````````````````````
+
+ISSUE 741
+
+```````````````````````````````` example
+**a.*.**a*.**.
+.
+<p>*<em>a.*.<em><em>a</em>.</em></em>.</p>
+````````````````````````````````
+
+ISSUE 747
+
+```````````````````````````````` example
+_*__*_*
+
+_*xx*_*
+
+_*__-_-
+
+_*xx-_-
+.
+<p><em><em>__</em></em>*</p>
+<p><em><em>xx</em></em>*</p>
+<p><em>*__-</em>-</p>
+<p><em>*xx-</em>-</p>
+````````````````````````````````
+
+
+ISSUE 751
+
+```````````````````````````````` example
+-
+
+→-
+
+
+- x
+
+→-
+.
+<ul>
+<li></li>
+</ul>
+<pre><code>-
+</code></pre>
+<ul>
+<li>
+<p>x</p>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+-
+
+    -
+
+
+- x
+
+    -
+.
+<ul>
+<li></li>
+</ul>
+<pre><code>-
+</code></pre>
+<ul>
+<li>
+<p>x</p>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+````````````````````````````````
+
+ISSUE 753
+
+```````````````````````````````` example
+[x\
+
+]: https://rust-lang.org
+.
+<p>[x\</p>
+<p>]: https://rust-lang.org</p>
+````````````````````````````````
+
+ISSUE 755
+
+```````````````````````````````` example
+>>**#*
+>
+>**#*
+
+**#*
+
+|**#*|
+|----|
+|**#*|
+|**#*
+**#*|
+**#*
+.
+<blockquote>
+<blockquote>
+<p>*<em>#</em></p>
+</blockquote>
+<p>*<em>#</em></p>
+</blockquote>
+<p>*<em>#</em></p>
+<table><thead><tr><th>*<em>#</em></th></tr></thead><tbody>
+<tr><td>*<em>#</em></td></tr>
+<tr><td>*<em>#</em></td></tr>
+<tr><td>*<em>#</em></td></tr>
+<tr><td>*<em>#</em></td></tr>
+</tbody></table>
+````````````````````````````````
+
+ISSUE #762
+
+```````````````````````````````` example
+The second hyphen should parse the same way in both samples.
+
+ - >*
+
+   -
+
+The second hyphen should parse the same way in both samples.
+
+ - >x
+
+   -
+.
+<p>The second hyphen should parse the same way in both samples.</p>
+<ul>
+<li>
+<blockquote>
+<ul>
+<li></li>
+</ul>
+</blockquote>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+<p>The second hyphen should parse the same way in both samples.</p>
+<ul>
+<li>
+<blockquote>
+<p>x</p>
+</blockquote>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+````````````````````````````````
+
+Laziness rules apply to link definition.
+ISSUE #764
+
+```````````````````````````````` example
+> Rewriting it in [Rust] is usually a bad idea.
+>
+> [Rust]:
+https://rust-lang.org
+.
+<blockquote>
+<p>Rewriting it in <a href="https://rust-lang.org">Rust</a> is usually a bad idea.</p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 768
+
+```````````````````````````````` example
+[First try
+----------
+Second try]: https://rust-lang.org
+.
+<h2>[First try</h2>
+<p>Second try]: https://rust-lang.org</p>
+````````````````````````````````
+
+ISSUE 772
+
+```````````````````````````````` example
+[^foo][]
+
+[^foo][baz]
+
+[baz][^foo]
+
+[^foo]: bar
+
+[baz]: https://rust-lang.org
+.
+<p><sup class="footnote-reference"><a href="#foo">1</a></sup>[]</p>
+<p><a href="https://rust-lang.org">^foo</a></p>
+<p><a href="https://rust-lang.org">baz</a><sup class="footnote-reference"><a href="#foo">1</a></sup></p>
+<div class="footnote-definition" id="foo"><sup class="footnote-definition-label">1</sup>
+<p>bar</p>
+</div>
+````````````````````````````````
+
+ISSUE 774
+
+```````````````````````````````` example
+# foo \
+bar \
+.
+<h1>foo \</h1>
+<p>bar \</p>
+````````````````````````````````
+
+ISSUE 779
+
+```````````````````````````````` example
+[third try]:
+-
+
+[third try]
+.
+<h2>[third try]:</h2>
+<p>[third try]</p>
+````````````````````````````````
+
+
+ISSUE 781
+
+```````````````````````````````` example
+- [foo]: test
+bar
+
+> [bar]: test
+[baz]: rstr
+[bar]
+.
+<ul>
+<li>bar</li>
+</ul>
+<blockquote>
+<p><a href="test">bar</a></p>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+> - [foo]: test
+> bar
+> 
+> > [bar]: test
+> [baz]: rstr
+> [bar]
+.
+<blockquote>
+<ul>
+<li>bar</li>
+</ul>
+<blockquote>
+<p><a href="test">bar</a></p>
+</blockquote>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+[bar]: test
+-
+.
+<p>-</p>
+````````````````````````````````
+
+Nested link destinations with line breaks
+
+```````````````````````````````` example
+[link](
+foo)
+
+> [link](
+> foo)
+.
+<p><a href="foo">link</a></p>
+<blockquote>
+<p><a href="foo">link</a></p>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+[link](foo
+)
+
+> [link](foo
+> )
+.
+<p><a href="foo">link</a></p>
+<blockquote>
+<p><a href="foo">link</a></p>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+[link](foo
+"bar"
+)
+
+> [link](foo
+> "bar"
+> )
+.
+<p><a href="foo" title="bar">link</a></p>
+<blockquote>
+<p><a href="foo" title="bar">link</a></p>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+[link](→
+→foo→
+→"bar"→
+→)
+
+> [link](→
+> →foo→
+> →"bar"→
+> →)
+.
+<p><a href="foo" title="bar">link</a></p>
+<blockquote>
+<p><a href="foo" title="bar">link</a></p>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+[linkme]: foo
+    - baz
+.
+<p>- baz</p>
+````````````````````````````````
+
+https://gist.github.com/notriddle/0048782ad2e819a134c094a1cc52df84
+
+```````````````````````````````` example
+[linkme-3]:
+   [^foo]:
+
+[linkme-4]:
+    [^bar]:
+
+GFM footnotes can interrupt link defs if they have three spaces, but not four.
+.
+<p>[linkme-3]:</p>
+<div class="footnote-definition" id="foo"><sup class="footnote-definition-label">1</sup></div>
+<p>GFM footnotes can interrupt link defs if they have three spaces, but not four.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+[linkme-3]:
+   ===
+
+[linkme-4]:
+    ===
+
+Setext heading can interrupt link def if it has three spaces, but not four.
+.
+<h1>[linkme-3]:</h1>
+<p>Setext heading can interrupt link def if it has three spaces, but not four.</p>
+````````````````````````````````
+
+```````````````````````````````` example
+[linkme-3]: a
+   - a
+
+[linkme-4]: a
+    - b
+
+List can interrupt the paragraph at the start of a link definition if it starts with three spaces, but not four.
+.
+<ul>
+<li>a</li>
+</ul>
+<p>- b</p>
+<p>List can interrupt the paragraph at the start of a link definition if it starts with three spaces, but not four.</p>
+````````````````````````````````
+
+
+ISSUE 789
+
+```````````````````````````````` example
+[first
+-
+second]: https://example.com
+
+[first
+-
+second]
+.
+<h2>[first</h2>
+<p>second]: https://example.com</p>
+<h2>[first</h2>
+<p>second]</p>
+````````````````````````````````
+
+```````````````````````````````` example
+[first
+    -
+second]: https://example.com
+
+[first
+    -
+second]
+.
+<p><a href="https://example.com">first
+-
+second</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+[first]: https://example.com
+"
+-
+"
+
+[first]
+.
+<h2>"</h2>
+<p>"</p>
+<p><a href="https://example.com">first</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+[first]: https://example.com
+"
+    -
+"
+
+[first]
+.
+<p><a href="https://example.com" title="
+-
+">first</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+> [first]: https://example.com
+> "
+> -
+> "
+>
+> [first]
+.
+<blockquote>
+<h2>"</h2>
+<p>"</p>
+<p><a href="https://example.com">first</a></p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 795
+
+```````````````````````````````` example
+> ```
+> code
+
+> text
+.
+<blockquote>
+<pre><code>code
+</code></pre>
+</blockquote>
+<blockquote>
+<p>text</p>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+> [first]: https://example.com
+> "
+>     -
+> "
+>
+> [first]
+.
+<blockquote>
+<p><a href="https://example.com" title="
+-
+">first</a></p>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+[first]: https://example.com
+"
+\
+"
+
+[first]
+.
+<p><a href="https://example.com" title="
+\
+">first</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+[first]: https://example.com
+"
+\
+
+"
+
+[first]
+.
+<p>"
+\</p>
+<p>"</p>
+<p><a href="https://example.com">first</a></p>
+````````````````````````````````
+
+
+ISSUE 791
+
+```````````````````````````````` example
+[foo]: https://example.com
+'[foo]'bar
+.
+<p>'<a href="https://example.com">foo</a>'bar</p>
+````````````````````````````````
+
+```````````````````````````````` example
+- [foo]: https://example.com
+'[foo]'
+[foo]
+.
+<ul>
+<li>
+<a href="https://example.com" title="[foo]">foo</a>
+</li>
+</ul>
+````````````````````````````````
+
+
+ISSUE 793
+
+```````````````````````````````` example
+[
+a]: https://example.com
+
+[b
+]: https://example.com
+
+[a] [b]
+.
+<p><a href="https://example.com">a</a> <a href="https://example.com">b</a></p>
+````````````````````````````````
+
+ISSUE 795
+
+```````````````````````````````` example
+> > ```
+> > code
+>
+> > text
+.
+<blockquote>
+<blockquote>
+<pre><code>code
+</code></pre>
+</blockquote>
+<blockquote>
+<p>text</p>
+</blockquote>
+</blockquote>
+````````````````````````````````
+
+
+ISSUE 797
+
+```````````````````````````````` example
+- *foo
+  - - 
+  baz*
+.
+<ul>
+<li>*foo
+<ul>
+<li>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+baz*</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+- `foo
+  - - 
+  baz`
+.
+<ul>
+<li>`foo
+<ul>
+<li>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+baz`</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+- [foo
+  - - 
+  baz](https://example.com)
+.
+<ul>
+<li>[foo
+<ul>
+<li>
+<ul>
+<li></li>
+</ul>
+</li>
+</ul>
+baz](https://example.com)</li>
+</ul>
+````````````````````````````````
+
+ISSUE 808
+
+```````````````````````````````` example
+[mylink]
+
+[mylink]: https://example.com
+'
+part of the title'
+.
+<p><a href="https://example.com" title="
+part of the title">mylink</a></p>
+````````````````````````````````
+
+ISSUE 810
+
+```````````````````````````````` example
+1.
+      pulldown-cmark used to think this was code, but commonmark.js and commonmark-hs didn't.
+      The dot in the list marker is at column two, so the child paragraph actually
+      starts in column *three*.
+.
+<ol>
+<li>pulldown-cmark used to think this was code, but commonmark.js and commonmark-hs didn't.
+The dot in the list marker is at column two, so the child paragraph actually
+starts in column <em>three</em>.</li>
+</ol>
+````````````````````````````````
+
+```````````````````````````````` example
+1.
+  This is not in the list at all. It's a paragraph after it.
+.
+<ol>
+<li></li>
+</ol>
+<p>This is not in the list at all. It's a paragraph after it.</p>
+````````````````````````````````
+
+ISSUE 716
+
+```````````````````````````````` example
+`\!\&quot;\#\$\%\&
+\!\&quot;\#\$\%\&
+\!\&quot;\#\$\%\&`
+.
+<p><code>\!\&amp;quot;\#\$\%\&amp; \!\&amp;quot;\#\$\%\&amp; \!\&amp;quot;\#\$\%\&amp;</code></p>
+````````````````````````````````
+
+ISSUE 813
+
+```````````````````````````````` example
+|
+-|- *
+.
+<p>|
+-|- *</p>
+````````````````````````````````
+
+
+ISSUE 715
+```````````````````````````````` example
+ A paragraph is a paragraph and spaces must be removed. 
+
+   Another paragraph whose spaces must be removed.  
+.
+<p>A paragraph is a paragraph and spaces must be removed.</p>
+<p>Another paragraph whose spaces must be removed.</p>
+````````````````````````````````
+
+ISSUE 817
+
+```````````````````````````````` example
+![^1]
+
+[^1]: foo
+.
+<p>!<sup class="footnote-reference"><a href="#1">1</a></sup></p>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>foo</p>
+</div>
+````````````````````````````````
+
+```````````````````````````````` example
+First ![^1][] Second
+
+[^1]: foo
+.
+<p>First !<sup class="footnote-reference"><a href="#1">1</a></sup>[] Second</p>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>foo</p>
+</div>
+````````````````````````````````
+
+ISSUE 826
+
+HTML entities can only have up to seven digits,
+or six hexits.
+
+```````````````````````````````` example
+&#00000000; &#x0000000;
+.
+<p>&amp;#00000000; &amp;#x0000000;</p>
+````````````````````````````````
+
+&#5307530; is invalid unicode. As described in the spec,
+invalid unicode is replaced with the unknown U+FFFD.
+
+```````````````````````````````` example
+&#5307530;
+.
+<p>�</p>
+````````````````````````````````
+
+ISSUE 828
+
+```````````````````````````````` example
+- _t
+  # test
+  t_
+.
+<ul>
+<li>_t
+<h1>test</h1>
+t_</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+* *_
+  #
+  N*
+.
+<ul>
+<li>*_
+<h1></h1>
+N*</li>
+</ul>
+````````````````````````````````
+
+ISSUE 662
+
+```````````````````````````````` example
+
+ <foo>
+.
+ <foo>
+````````````````````````````````
+
+```````````````````````````````` example
+
+<foo>
+.
+<foo>
+````````````````````````````````
+ 
+```````````````````````````````` example
+
+   <foo>
+.
+   <foo>
+````````````````````````````````
+
+```````````````````````````````` example
+* <foo>
+→<bar>
+.
+<ul>
+<li>
+<foo>
+  <bar>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+* test
+
+→ <foo>
+→<bar>
+.
+<ul>
+<li>
+<p>test</p>
+   <foo>
+  <bar>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+*
+→ <div>
+→ <div>
+.
+<ul>
+<li>   <div>
+   <div>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+*
+→<div>
+→<div>
+.
+<ul>
+<li>  <div>
+  <div>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+*
+     <div>
+  <div>
+.
+<ul>
+<li>   <div>
+<div>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+*
+     <div>
+   <div>
+.
+<ul>
+<li>   <div>
+ <div>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+*
+      <div>
+     <div>
+.
+<ul>
+<li>
+<pre><code>&lt;div&gt;
+</code></pre>
+   <div>
+</li>
+</ul>
+````````````````````````````````
+
+ISSUE 840
+
+```````````````````````````````` example
+[link]: test (()
+
+[link]
+.
+<p>[link]: test (()</p>
+<p>[link]</p>
+````````````````````````````````
+
+```````````````````````````````` example
+[link]: test (())
+
+[link]
+.
+<p>[link]: test (())</p>
+<p>[link]</p>
+````````````````````````````````
+
+```````````````````````````````` example
+[link]: test (\(\))
+
+[link]
+.
+<p><a href="test" title="()">link</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+[link]: test """
+
+[link]
+.
+<p>[link]: test """</p>
+<p>[link]</p>
+````````````````````````````````
+
+```````````````````````````````` example
+[link]: test "\""
+
+[link]
+.
+<p><a href="test" title="&quot;">link</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+[link]: test '''
+
+[link]
+.
+<p>[link]: test '''</p>
+<p>[link]</p>
+````````````````````````````````
+
+```````````````````````````````` example
+[link]: test '\''
+
+[link]
+.
+<p><a href="test" title="&#39;">link</a></p>
+````````````````````````````````
+
+ISSUE 850
+
+```````````````````````````````` example
+-     test
+
+  test2
+.
+<ul>
+<li>
+<pre><code>test
+</code></pre>
+<p>test2</p>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+    test
+
+test2
+.
+<pre><code>test
+</code></pre>
+<p>test2</p>
+````````````````````````````````
+
+```````````````````````````````` example
+-     test
+  test2
+.
+<ul>
+<li>
+<pre><code>test
+</code></pre>
+test2</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+-     test
+- test2
+.
+<ul>
+<li>
+<pre><code>test
+</code></pre>
+</li>
+<li>test2</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+-     test
+
+- test2
+.
+<ul>
+<li>
+<pre><code>test
+</code></pre>
+</li>
+<li>
+<p>test2</p>
+</li>
+</ul>
+````````````````````````````````
+
+ISSUE 847
+
+```````````````````````````````` example
+<!p>
+
+<\!p>
+.
+<!p>
+<p>&lt;!p&gt;</p>
+````````````````````````````````
+
+ISSUE 853
+
+```````````````````````````````` example
+[linky]
+
+[linky]: ((()))
+.
+<p><a href="((()))">linky</a></p>
+````````````````````````````````
+
+ISSUE 857
+
+```````````````````````````````` example
+><span
+title
+>junk
+.
+<blockquote>
+<p>&lt;span
+title
+junk</p>
+</blockquote>
+````````````````````````````````
+
+ISSUE 861
+
+```````````````````````````````` example
+ ~~~
+    ~~~
+.
+<pre><code>   ~~~
+</code></pre>
+````````````````````````````````
+
+```````````````````````````````` example
+ ~~~
+   ~~~
+.
+<pre><code></code></pre>
+````````````````````````````````
+
+ISSUE 867
+
+```````````````````````````````` example
+[link]: destination "
+          text          "
+
+[link]
+.
+<p><a href="destination" title="
+text          ">link</a></p>
+````````````````````````````````
+
+ISSUE 878
+
+```````````````````````````````` example
+* _
+_**
+  ___
+  ^_
+.
+<ul>
+<li>_
+_**
+<hr />
+^_</li>
+</ul>
+````````````````````````````````
+
+ISSUE #907
+
+```````````````````````````````` example
+> [!Note]
+> - Foo
+.
+<blockquote class="markdown-alert-note">
+<ul>
+<li>Foo</li>
+</ul>
+</blockquote>
+````````````````````````````````
+
+ISSUE #912
+
+```````````````````````````````` example_metadata_blocks
+ ---
+--
+---
+.
+<hr />
+<h2>--</h2>
+````````````````````````````````
+
+ISSUE #917
+
+Technically, commonmark only requires our nesting cutoff to stop at 3.
+However, real user reports show that this limit is low enough to hit in reasonable circumstances.
+We instead set the limit at 32, which is the same limit used by cmark-gfm and markdown-it (making it a de facto standard).
+
+```````````````````````````````` example_metadata_blocks
+[30](https://rust.org/something%3A((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))
+[40](https://rust.org/something%3A((((((((((((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))))))))))))
+.
+<p><a href="https://rust.org/something%3A((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))">30</a>
+[40](https://rust.org/something%3A((((((((((((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))))))))))))</p>
+````````````````````````````````
+
+ISSUE #921
+
+```````````````````````````````` example_metadata_blocks
+- [x]		
+\
+-
+.
+<ul>
+<li><input disabled="" type="checkbox" checked=""/></li>
+</ul>
+<h2>\</h2>
+````````````````````````````````
+
+ISSUE #882
+
+```````````````````````````````` example_metadata_blocks
+* [ ] 
+---
+bar
+.
+<ul>
+<li><input disabled="" type="checkbox"/></li>
+</ul>
+<hr />
+<p>bar</p>
+````````````````````````````````
+
+ISSUE #655
+
+```````````````````````````````` example
+`
+`
+.
+<p><code> </code></p>
+````````````````````````````````
+
+ISSUE #949
+
+```````````````````````````````` example
+* def this
+  : def text def text
+.
+<ul>
+<li>
+<dl>
+<dt>def this</dt>
+<dd>def text def text</dd>
+</dl>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+* def this
+
+  : def text def text
+.
+<ul>
+<li>
+<dl>
+<dt>def this</dt>
+<dd><p>def text def text</p></dd>
+</dl>
+</li>
+</ul>
+````````````````````````````````
+
+```````````````````````````````` example
+**A:**
+
+> B C
+> I J :x: K
+> :x: L M
+> N O _P_ Q R. (S
+> T U, V W
+> :x:,:x:,:x:, and :x: but no :x: or
+> :x:.)
+.
+<p><strong>A:</strong></p><blockquote>
+<dl><dt>B C
+I J :x: K</dt><dd>x: L M
+N O <em>P</em> Q R. (S
+T U, V W</dd>
+<dd>x:,:x:,:x:, and :x: but no :x: or</dd>
+<dd>x:.)</dd></dl></blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+[abc] check `foobar_raz`
+ Some preamble `foobar_raz`, not `barfoo_raz`
+ :D
+ 
+ This should fix:
+ 
+ &gt; Something is wrong!
+.
+<dl>
+<dt>[abc] check <code>foobar_raz</code>
+Some preamble <code>foobar_raz</code>, not <code>barfoo_raz</code></dt>
+<dd>D</dd>
+</dl>
+<p>This should fix:</p>
+<p>&gt; Something is wrong!</p>
+````````````````````````````````
+
+```````````````````````````````` example
+- Item definition [it
+  ```rust
+  ```
+  stuff](https://example.com)
+.
+<ul>
+<li>Item definition [it
+<pre><code class="language-rust"></code></pre>
+stuff](https://example.com)</li>
+</ul>
+````````````````````````````````
+
+ISSUE #963
+
+```````````````````````````````` example
+foo
+{.class}
+===
+
+> foo
+> {.class}
+> ===
+>
+> > foo
+> > {.class}
+> > ===
+
+* > foo
+  > {.class}
+  > ===
+
+> foo
+>→{.class}
+>→===
+.
+<h1 class="class">foo
+</h1>
+<blockquote>
+<h1 class="class">foo
+</h1>
+<blockquote>
+<h1 class="class">foo
+</h1>
+</blockquote>
+</blockquote>
+<ul>
+<li>
+<blockquote>
+<h1 class="class">foo
+</h1>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<h1 class="class">foo
+</h1>
+</blockquote>
+````````````````````````````````
+
+```````````````````````````````` example
+the trailing space after the &gt; should be stripped
+    > {.bar}
+===
+.
+<h1 class="bar">the trailing space after the &gt; should be stripped
+&gt;</h1>
+````````````````````````````````
+
+```````````````````````````````` example_wikilinks
+[[Wiki<|Link]]
+.
+<p><a href="Wiki%3C">Link</a></p>
+````````````````````````````````
+
+```````````````````````````````` example_wikilinks
+* <c
+  >
+.
+<ul>
+<li>&lt;c
+<blockquote></blockquote></li>
+</ul>
+````````````````````````````````
+
+https://github.com/pulldown-cmark/pulldown-cmark/issues/999
+
+```````````````````````````````` example_wikilinks
+- [x] * some text
+- [ ] > some text
+- [x]
+  * some text
+- [ ]
+  > some text
+.
+<ul>
+<li><input disabled="" type="checkbox" checked=""/>
+* some text</li>
+<li><input disabled="" type="checkbox"/>
+&gt; some text</li>
+<li><input disabled="" type="checkbox" checked=""/>
+<ul>
+<li>some text</li>
+</ul></li>
+<li><input disabled="" type="checkbox"/>
+<blockquote>
+<p>some text</p>
+</blockquote></li>
+</ul>
+````````````````````````````````

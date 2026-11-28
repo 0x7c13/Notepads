@@ -1,0 +1,121 @@
+{
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          6
+        ]
+      ],
+      "readable_utf8": "\t\nf",
+      "logical_utf16": 3,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            2
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 1,
+          "source": [
+            2,
+            4
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 2,
+          "source": [
+            4,
+            4
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "ControlSeparator"
+          ],
+          "output_utf8": "\t"
+        },
+        {
+          "id": 3,
+          "source": [
+            4,
+            5
+          ],
+          "logical": [
+            1,
+            1
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "ControlOnly"
+          ]
+        },
+        {
+          "id": 4,
+          "source": [
+            5,
+            5
+          ],
+          "logical": [
+            1,
+            2
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "ControlSeparator"
+          ],
+          "output_utf8": "\n"
+        },
+        {
+          "id": 5,
+          "source": [
+            5,
+            6
+          ],
+          "logical": [
+            2,
+            3
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [],
+  "payloads": [],
+  "structures": [],
+  "reference_edges": [],
+  "source_key": {
+    "document_id": "04000000000000000000000000000003",
+    "revision": 1
+  }
+}

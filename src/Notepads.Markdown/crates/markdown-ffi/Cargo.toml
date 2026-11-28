@@ -1,0 +1,31 @@
+[package]
+name = "markdown-ffi"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Private versioned native boundary for Notepads Markdown"
+
+[lib]
+crate-type = ["staticlib", "rlib"]
+
+[features]
+default = []
+diagnostics = []
+quality-observation = ["markdown-svg/quality-observation"]
+
+[dependencies]
+markdown-svg = { path = "../markdown-svg" }
+markdown-svg-budget = { path = "../markdown-svg-budget" }
+markdown-core = { path = "../markdown-core" }
+markdown-math = { version = "=0.0.1", path = "../markdown-math" }
+markdown-mermaid = { path = "../markdown-mermaid" }
+merman-core = { version = "=0.9.2", default-features = false, features = ["diagram-flowchart"] }
+markdown-memory = { path = "../markdown-memory" }
+
+[target.'cfg(windows)'.dependencies]
+markdown-diagram-platform = { path = "../../windows/markdown-diagram-platform" }
+
+[lints]
+workspace = true

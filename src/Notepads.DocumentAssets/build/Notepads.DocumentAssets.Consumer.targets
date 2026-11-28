@@ -1,0 +1,23 @@
+<!--
+  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+  See LICENSE.txt in the project root for license information.
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)' != 'Production'">
+    <NotepadsDocumentAssetsPlatform>$(Platform)</NotepadsDocumentAssetsPlatform>
+    <NotepadsDocumentAssetsPlatform Condition="'$(Platform)' == 'x86'">Win32</NotepadsDocumentAssetsPlatform>
+    <NotepadsDocumentAssetsRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..'))</NotepadsDocumentAssetsRoot>
+    <NotepadsDocumentAssetsExecutable>$(NotepadsDocumentAssetsRoot)bin\$(NotepadsDocumentAssetsPlatform)\Notepads.DocumentAssets.exe</NotepadsDocumentAssetsExecutable>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)' != 'Production'">
+    <Content Include="$(NotepadsDocumentAssetsExecutable)" Link="Notepads.DocumentAssets.exe"
+             CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromResourceIndex="true" />
+  </ItemGroup>
+  <Target Name="BuildNotepadsDocumentAssets" BeforeTargets="PrepareForBuild;ComputeFilesToPublish;_GetPackageFiles"
+          Condition="'$(Configuration)' != 'Production' and '$(DesignTimeBuild)' != 'true'">
+    <MSBuild Projects="$(NotepadsDocumentAssetsRoot)Notepads.DocumentAssets.vcxproj"
+             Properties="Configuration=Release;Platform=$(NotepadsDocumentAssetsPlatform)"
+             RemoveProperties="OutDir;IntDir;RuntimeIdentifier" />
+  </Target>
+</Project>

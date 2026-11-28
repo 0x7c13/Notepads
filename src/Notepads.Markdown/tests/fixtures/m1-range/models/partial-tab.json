@@ -1,0 +1,99 @@
+{
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          7
+        ]
+      ],
+      "readable_utf8": "  foo\n",
+      "logical_utf16": 6,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            2
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "BlockQuotePrefix",
+            "CodeIndent"
+          ]
+        },
+        {
+          "id": 1,
+          "source": [
+            2,
+            3
+          ],
+          "logical": [
+            0,
+            2
+          ],
+          "kind": "Transform",
+          "reasons": [
+            "PartialTab"
+          ],
+          "output_utf8": "  "
+        },
+        {
+          "id": 2,
+          "source": [
+            3,
+            7
+          ],
+          "logical": [
+            2,
+            6
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "CodeLiteral"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [],
+  "payloads": [],
+  "structures": [
+    {
+      "kind": "Block",
+      "id": 0,
+      "parent": null,
+      "node_kind": "BlockQuote",
+      "source_envelope": [
+        0,
+        7
+      ],
+      "flow_id": 0
+    },
+    {
+      "kind": "Block",
+      "id": 1,
+      "parent": 0,
+      "node_kind": "IndentedCode",
+      "source_envelope": [
+        0,
+        7
+      ],
+      "flow_id": 0
+    }
+  ],
+  "reference_edges": [],
+  "source_key": {
+    "document_id": "04000000000000000000000000000009",
+    "revision": 1
+  }
+}

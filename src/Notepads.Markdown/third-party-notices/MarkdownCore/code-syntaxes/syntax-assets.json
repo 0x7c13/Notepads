@@ -1,0 +1,57 @@
+[
+  {
+    "sha256": "D740B20C12E40B678B9F1012401E1969AAA5CD55F1AB329FFEB94D746B06A5C0",
+    "path": "vendor/syntect/assets/default_newlines.packdump",
+    "bytes": 368467
+  },
+  {
+    "sha256": "9A9B547669EA53D2E992F1DFA42505AADB6FE1FA93FA1C1C5550C14F3C0D876B",
+    "path": "crates/markdown-core/assets/code-syntaxes/highlight.packdump",
+    "bytes": 437353
+  },
+  {
+    "sha256": "28EE3A665973468BE16E44C89FDAE5CF1F865680132C086B6973C2B3900DFB5E",
+    "path": "crates/markdown-core/assets/code-syntaxes/TypeScript.sublime-syntax",
+    "bytes": 201893
+  },
+  {
+    "sha256": "3EB1604174189B235D0DC116BC919118205A0B9AD084BDFBEA1148EEE1F85E4B",
+    "path": "crates/markdown-core/assets/code-syntaxes/TypeScriptReact.sublime-syntax",
+    "bytes": 200576
+  },
+  {
+    "sha256": "CA72D05CBB1D9ECF3588ED666D86CE9234600238B650D8A379256AEBE47C5DDB",
+    "path": "crates/markdown-core/assets/code-syntaxes/PowerShell.sublime-syntax",
+    "bytes": 22202
+  },
+  {
+    "sha256": "581328AEA6C0028AB613FF26B3114C4AE37F9FA29F7BE1042419BA353A6EABC6",
+    "path": "crates/markdown-core/assets/code-syntaxes/TOML.sublime-syntax",
+    "bytes": 11558
+  },
+  {
+    "sha256": "5F2C65B3F76BC21489A8CF8002D9B1EBF68FD1E2425FFEAABD470B60171EFB3A",
+    "path": "crates/markdown-core/assets/code-syntaxes/Dockerfile.sublime-syntax",
+    "bytes": 3091
+  },
+  {
+    "sha256": "CB5E8E7E5F4A3988E1063C142C60DC2DF75605F4C46515E776E3ACA6DF976E14",
+    "path": "third-party-notices/MarkdownCore/code-syntaxes/TypeScript-LICENSE.txt",
+    "bytes": 11325
+  },
+  {
+    "sha256": "1DD685A63AF94DF709490FBBC874CDA8A6E98BDD957DA4AE0BF7B85E363748A7",
+    "path": "third-party-notices/MarkdownCore/code-syntaxes/PowerShell-LICENSE.txt",
+    "bytes": 1095
+  },
+  {
+    "sha256": "87E6D5F3C4B540CBF3AE86BAFCE242A3CAD366EB16799A123CDE73B5FF5211F3",
+    "path": "third-party-notices/MarkdownCore/code-syntaxes/TOML-LICENSE.txt",
+    "bytes": 1070
+  },
+  {
+    "sha256": "D1458F02D452165E6DF0CFA8C4EC014A903844923D87C9583819366C7316B1CB",
+    "path": "third-party-notices/MarkdownCore/code-syntaxes/Dockerfile-LICENSE.txt",
+    "bytes": 1075
+  }
+]

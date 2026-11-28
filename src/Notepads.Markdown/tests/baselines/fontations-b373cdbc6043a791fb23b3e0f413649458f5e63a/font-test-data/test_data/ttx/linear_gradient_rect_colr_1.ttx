@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name=".space"/>
+    <GlyphID id="2" name="e000"/>
+    <GlyphID id="3" name="e000.0"/>
+  </GlyphOrder>
+
+  <hmtx>
+    <mtx name=".notdef" width="100" lsb="5"/>
+    <mtx name=".space" width="100" lsb="0"/>
+    <mtx name="e000" width="100" lsb="0"/>
+    <mtx name="e000.0" width="100" lsb="20"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0x20" name=".space"/><!-- SPACE -->
+      <map code="0xe000" name="e000"/><!-- ???? -->
+    </cmap_format_4>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x20" name=".space"/><!-- SPACE -->
+      <map code="0xe000" name="e000"/><!-- ???? -->
+    </cmap_format_4>
+  </cmap>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0xf20353fe"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1024"/>
+    <created value="Tue Feb 22 14:39:01 2022"/>
+    <modified value="Tue Feb 22 14:39:01 2022"/>
+    <xMin value="51"/>
+    <yMin value="-250"/>
+    <xMax value="1200"/>
+    <yMax value="950"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="23"/>
+    <maxPoints value="224"/>
+    <maxContours value="3"/>
+    <maxCompositePoints value="0"/>
+    <maxCompositeContours value="0"/>
+    <maxZones value="1"/>
+    <maxTwilightPoints value="0"/>
+    <maxStorage value="0"/>
+    <maxFunctionDefs value="0"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="0"/>
+    <maxSizeOfInstructions value="0"/>
+    <maxComponentElements value="0"/>
+    <maxComponentDepth value="0"/>
+  </maxp>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef" xMin="5" yMin="0" xMax="45" yMax="100">
+      <contour>
+        <pt x="5" y="0" on="1"/>
+        <pt x="5" y="100" on="1"/>
+        <pt x="45" y="100" on="1"/>
+        <pt x="45" y="0" on="1"/>
+      </contour>
+      <contour>
+        <pt x="10" y="5" on="1"/>
+        <pt x="40" y="5" on="1"/>
+        <pt x="40" y="95" on="1"/>
+        <pt x="10" y="95" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name=".space"/><!-- contains no outline data -->
+
+    <TTGlyph name="e000"/><!-- contains no outline data -->
+
+    <TTGlyph name="e000.0" xMin="20" yMin="60" xMax="80" yMax="80">
+      <contour>
+        <pt x="20" y="80" on="1"/>
+        <pt x="20" y="60" on="1"/>
+        <pt x="80" y="60" on="1"/>
+        <pt x="80" y="80" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+  </glyf>
+
+  <COLR>
+    <Version value="1"/>
+    <!-- BaseGlyphRecordCount=0 -->
+    <!-- LayerRecordCount=0 -->
+    <BaseGlyphList>
+      <!-- BaseGlyphCount=1 -->
+      <BaseGlyphPaintRecord index="0">
+        <BaseGlyph value="e000"/>
+        <Paint Format="10"><!-- PaintGlyph -->
+          <Paint Format="4"><!-- PaintLinearGradient -->
+            <ColorLine>
+              <Extend value="pad"/>
+              <!-- StopCount=2 -->
+              <ColorStop index="0">
+                <StopOffset value="0.1"/>
+                <PaletteIndex value="0"/>
+                <Alpha value="1.0"/>
+              </ColorStop>
+              <ColorStop index="1">
+                <StopOffset value="0.9"/>
+                <PaletteIndex value="1"/>
+                <Alpha value="0.8"/>
+              </ColorStop>
+            </ColorLine>
+            <x0 value="20"/>
+            <y0 value="80"/>
+            <x1 value="80"/>
+            <y1 value="80"/>
+            <x2 value="20"/>
+            <y2 value="60"/>
+          </Paint>
+          <Glyph value="e000.0"/>
+        </Paint>
+      </BaseGlyphPaintRecord>
+    </BaseGlyphList>
+    <ClipList Format="1">
+      <Clip>
+        <Glyph value="e000"/>
+        <ClipBox Format="1">
+          <xMin value="20"/>
+          <yMin value="60"/>
+          <xMax value="80"/>
+          <yMax value="80"/>
+        </ClipBox>
+      </Clip>
+    </ClipList>
+  </COLR>
+
+  <CPAL>
+    <version value="0"/>
+    <numPaletteEntries value="2"/>
+    <palette index="0">
+      <color index="0" value="#0000FFFF"/>
+      <color index="1" value="#00FFFFFF"/>
+    </palette>
+    <palette index="1">
+      <color index="0" value="#AA00FFFF"/>
+      <color index="1" value="#AAFFFFFF"/>
+    </palette>
+  </CPAL>
+
+</ttFont>

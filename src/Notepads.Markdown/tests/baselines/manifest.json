@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "data_version": "m1.1",
+  "date": "2026-10-07",
+  "upstreams": [
+    {
+      "id": "CM",
+      "version": "0.31.2",
+      "commit": "9103e341a973013013bb1a80e13567007c5cef6f",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "John MacFarlane",
+      "repository": "https://github.com/commonmark/commonmark-spec"
+    },
+    {
+      "id": "GFM",
+      "version": "0.29-gfm / cmark-gfm 0.29.0.gfm.13",
+      "commit": "587a12bb54d95ac37241377e6ddc93ea0e45439b",
+      "license": "CC-BY-SA-4.0",
+      "attribution": "John MacFarlane and GitHub contributors; complete COPYING retained",
+      "repository": "https://github.com/github/cmark-gfm"
+    },
+    {
+      "id": "PD",
+      "version": "0.13.4",
+      "commit": "38e4d08f14ec4bd9783270e9623db7681ebed968",
+      "license": "MIT",
+      "attribution": "Copyright 2015 Google Inc.; pulldown-cmark contributors",
+      "repository": "https://github.com/raphlinus/pulldown-cmark"
+    },
+    {
+      "id": "CK",
+      "version": "0.56.0",
+      "commit": "9a855892827cf3e7c3e377727cd93e9631a101d2",
+      "license": "BSD-2-Clause",
+      "attribution": "Copyright 2017-2025 Comrak contributors; complete inherited COPYING retained",
+      "repository": "https://github.com/kivikakk/comrak"
+    },
+    {
+      "id": "VS",
+      "version": "1.140.0",
+      "commit": "07f806f999227108933c2e30515b26eecc1fda74",
+      "license": "MIT",
+      "attribution": "Microsoft Corporation",
+      "repository": "https://github.com/microsoft/vscode"
+    },
+    {
+      "id": "WT",
+      "version": "legacy UWP fixed commit",
+      "commit": "c8f76d072df53d3622fb5440d63afb06cb9e7a10",
+      "license": "MIT",
+      "attribution": ".NET Foundation and Contributors",
+      "repository": "https://github.com/CommunityToolkit/WindowsCommunityToolkit"
+    }
+  ],
+  "files": [
+    {
+      "path": "commonmark-0.31.2/spec.txt",
+      "sha256": "257C41AD946F7A1414A499ACA402A1AA8FDAC3678532266611348C1CF54F4B80",
+      "bytes": 205025,
+      "upstream_id": "CM",
+      "license": "CC-BY-SA-4.0",
+      "source_url": "https://raw.githubusercontent.com/commonmark/commonmark-spec/9103e341a973013013bb1a80e13567007c5cef6f/spec.txt"
+    },
+    {
+      "path": "commonmark-0.31.2/spec.json",
+      "sha256": "D431B29D97B6F73E69D547109CF5081578FAC931E72AFE95639EBE766C1B2A20",
+      "bytes": 140487,
+      "upstream_id": "CM",
+      "license": "CC-BY-SA-4.0",
+      "source_url": "https://spec.commonmark.org/0.31.2/spec.json"
+    },
+    {
+      "path": "commonmark-0.31.2/LICENSE",
+      "sha256": "3E4806BA6F20073E8CE40DA5A0C4B59F7F44287965F538E195A4D734D833557B",
+      "bytes": 2792,
+      "upstream_id": "CM",
+      "license": "CC-BY-SA-4.0 AND BSD-2-Clause AND MIT",
+      "source_url": "https://raw.githubusercontent.com/commonmark/commonmark-spec/9103e341a973013013bb1a80e13567007c5cef6f/LICENSE"
+    },
+    {
+      "path": "gfm-0.29-gfm/spec.txt",
+      "sha256": "7D8E5814BEFEC287AC116786D81FF14E0ADC9B13295B4494649E995408FD871C",
+      "bytes": 216680,
+      "upstream_id": "GFM",
+      "license": "CC-BY-SA-4.0",
+      "source_url": "https://raw.githubusercontent.com/github/cmark-gfm/587a12bb54d95ac37241377e6ddc93ea0e45439b/test/spec.txt"
+    },
+    {
+      "path": "gfm-0.29-gfm/COPYING",
+      "sha256": "C22E885F33B821BDDB24CF007145E5540655B6C0F403E49E6C76A93C28E6D9A9",
+      "bytes": 7567,
+      "upstream_id": "GFM",
+      "license": "mixed-original-notices",
+      "source_url": "https://raw.githubusercontent.com/github/cmark-gfm/587a12bb54d95ac37241377e6ddc93ea0e45439b/COPYING"
+    },
+    {
+      "path": "pulldown-cmark-0.13.4/regression.txt",
+      "sha256": "2309BDF369BBCF2AD327F56E98182705C75FDDC52C014965DB00A45E831D0CC1",
+      "bytes": 46995,
+      "upstream_id": "PD",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/raphlinus/pulldown-cmark/38e4d08f14ec4bd9783270e9623db7681ebed968/pulldown-cmark/specs/regression.txt"
+    },
+    {
+      "path": "pulldown-cmark-0.13.4/harness.rs",
+      "sha256": "1A386244CB43259386684C82731E3BD55F1C92AC3277642C273680DAF2BB1911",
+      "bytes": 1833,
+      "upstream_id": "PD",
+      "license": "MIT",
+      "source_url": "https://github.com/raphlinus/pulldown-cmark/blob/38e4d08f14ec4bd9783270e9623db7681ebed968/pulldown-cmark/tests/lib.rs"
+    },
+    {
+      "path": "pulldown-cmark-0.13.4/LICENSE",
+      "sha256": "C4F10F55904BDB9F27D3FBF94C354926D6CFE8B982276E556238C258941B243B",
+      "bytes": 1089,
+      "upstream_id": "PD",
+      "license": "MIT",
+      "source_url": "https://github.com/raphlinus/pulldown-cmark/blob/38e4d08f14ec4bd9783270e9623db7681ebed968/LICENSE"
+    },
+    {
+      "path": "comrak-0.56.0/sourcepos.rs",
+      "sha256": "7E62868E1D44E11BE4FBA9A531D0DB3057E7D2E7350F874A6E60FA5A79D78D6C",
+      "bytes": 14820,
+      "upstream_id": "CK",
+      "license": "BSD-2-Clause",
+      "source_url": "https://github.com/kivikakk/comrak/blob/9a855892827cf3e7c3e377727cd93e9631a101d2/src/tests/sourcepos.rs"
+    },
+    {
+      "path": "comrak-0.56.0/sourcepos_chars.rs",
+      "sha256": "7A6CE45948AED7324D5C3E22B46471244AB2C6DCE864DF0C9D0E59F0C86CE9BC",
+      "bytes": 24107,
+      "upstream_id": "CK",
+      "license": "BSD-2-Clause",
+      "source_url": "https://github.com/kivikakk/comrak/blob/9a855892827cf3e7c3e377727cd93e9631a101d2/src/tests/sourcepos_chars.rs"
+    },
+    {
+      "path": "comrak-0.56.0/autolink.rs",
+      "sha256": "5ED5605CAD30ACE708BD19414C3D473A4B0A81313DFE7510D1CB1CA91F8122D8",
+      "bytes": 25597,
+      "upstream_id": "CK",
+      "license": "BSD-2-Clause",
+      "source_url": "https://github.com/kivikakk/comrak/blob/9a855892827cf3e7c3e377727cd93e9631a101d2/src/tests/autolink.rs"
+    },
+    {
+      "path": "comrak-0.56.0/regressions.rs",
+      "sha256": "90187890BBC0C49E9B85DF1A766F13CCDB7BCECE0916573BCB82BBC20E9730E6",
+      "bytes": 9020,
+      "upstream_id": "CK",
+      "license": "BSD-2-Clause",
+      "source_url": "https://github.com/kivikakk/comrak/blob/9a855892827cf3e7c3e377727cd93e9631a101d2/src/tests/regressions.rs"
+    },
+    {
+      "path": "comrak-0.56.0/COPYING",
+      "sha256": "27293E2353CE5D83E07331FFC423051908B062787D148193B8927D50D9873BD5",
+      "bytes": 8967,
+      "upstream_id": "CK",
+      "license": "mixed-original-notices",
+      "source_url": "https://github.com/kivikakk/comrak/blob/9a855892827cf3e7c3e377727cd93e9631a101d2/COPYING"
+    },
+    {
+      "path": "vscode-1.140.0/LICENSE.txt",
+      "sha256": "9480271317925265E806A9A196AAA33410A962FA9D4D1E248A4A5187BC8C9DF9",
+      "bytes": 1088,
+      "upstream_id": "VS",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/microsoft/vscode/07f806f999227108933c2e30515b26eecc1fda74/LICENSE.txt"
+    },
+    {
+      "path": "vscode-1.140.0/openDocumentLink.test.ts",
+      "sha256": "78BC1B6141E154B0F5F8B14A3FB1AE52BB8FAE7BF6BB838E8E6C045710D5FDBA",
+      "bytes": 2897,
+      "upstream_id": "VS",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/microsoft/vscode/07f806f999227108933c2e30515b26eecc1fda74/extensions/markdown-language-features/src/test/openDocumentLink.test.ts"
+    },
+    {
+      "path": "toolkit-c8f76d0/License.md",
+      "sha256": "134AA3B1D2C509DCF57196CCAA7B69DB0EB9AE34FA9189C3D683C02D9923175D",
+      "bytes": 1148,
+      "upstream_id": "WT",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/CommunityToolkit/WindowsCommunityToolkit/c8f76d072df53d3622fb5440d63afb06cb9e7a10/License.md"
+    },
+    {
+      "path": "toolkit-c8f76d0/InitialContent.md",
+      "sha256": "D68CAD1FE546EDCA43F0339923C1BDAA2F24B38E665D639E4595462C2D99AAD0",
+      "bytes": 15023,
+      "upstream_id": "WT",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/CommunityToolkit/WindowsCommunityToolkit/c8f76d072df53d3622fb5440d63afb06cb9e7a10/Microsoft.Toolkit.Uwp.SampleApp/SamplePages/MarkdownTextBlock/InitialContent.md"
+    },
+    {
+      "path": "toolkit-c8f76d0/TableTests.cs",
+      "sha256": "A707E1C3140CAA2729783C00C91B5DCDA0379CC800A898F93F7209C6223292B9",
+      "bytes": 14122,
+      "upstream_id": "WT",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/CommunityToolkit/WindowsCommunityToolkit/c8f76d072df53d3622fb5440d63afb06cb9e7a10/UnitTests/UnitTests.UWP/Markdown/Parse/TableTests.cs"
+    },
+    {
+      "path": "toolkit-c8f76d0/HyperlinkTests.cs",
+      "sha256": "FA532BBC5029F85CEEDD24AA3768A01195862D9C136BAECB1EC0D06BFF1AC6B4",
+      "bytes": 38643,
+      "upstream_id": "WT",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/CommunityToolkit/WindowsCommunityToolkit/c8f76d072df53d3622fb5440d63afb06cb9e7a10/UnitTests/UnitTests.UWP/Markdown/Parse/HyperlinkTests.cs"
+    },
+    {
+      "path": "toolkit-c8f76d0/ParseTestBase.cs",
+      "sha256": "7DEB53D631521FE24566B4BD0AE2A0CCA3278B6297688350DBB1232780F5C88C",
+      "bytes": 1320,
+      "upstream_id": "WT",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/CommunityToolkit/WindowsCommunityToolkit/c8f76d072df53d3622fb5440d63afb06cb9e7a10/UnitTests/UnitTests.UWP/Markdown/Parse/ParseTestBase.cs"
+    },
+    {
+      "path": "toolkit-c8f76d0/TestBase.cs",
+      "sha256": "CAAD6425DECDE744F05023699F0E659A9A7CF0E05EED28C637EA708A9B87E444",
+      "bytes": 6932,
+      "upstream_id": "WT",
+      "license": "MIT",
+      "source_url": "https://raw.githubusercontent.com/CommunityToolkit/WindowsCommunityToolkit/c8f76d072df53d3622fb5440d63afb06cb9e7a10/UnitTests/UnitTests.UWP/Markdown/TestBase.cs"
+    },
+    {
+      "path": "licenses/CC-BY-SA-4.0.txt",
+      "sha256": "23EE78C8BAE49CF08EA2F0C84945C66B987EBE4520881FB51B3DAD4FB43D07C2",
+      "bytes": 20137,
+      "upstream_id": "CM/GFM",
+      "license": "CC-BY-SA-4.0",
+      "source_url": "https://creativecommons.org/licenses/by-sa/4.0/legalcode"
+    }
+  ],
+  "policy": "Original bytes/notices retained. Derived spec examples are CC-BY-SA-4.0; project MIT does not relicense them."
+}

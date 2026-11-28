@@ -1,0 +1,33 @@
+# Sublime Text
+
+#                                       tabs indentation,         no trailing
+*.stTheme                     eol=lf    whitespace=-tab-in-indent,trailing-space,tabwidth=4
+#                                       spaces indentation,      no trailing
+*.sublime-color-scheme        eol=lf    whitespace=tab-in-indent,trailing-space,tabwidth=4
+*.hidden-color-scheme         eol=lf    whitespace=tab-in-indent,trailing-space,tabwidth=4
+*.sublime-settings            eol=lf    whitespace=tab-in-indent,trailing-space,tabwidth=4
+*.sublime-syntax              eol=lf    whitespace=tab-in-indent,trailing-space,tabwidth=2
+*.sublime-theme               eol=lf    whitespace=tab-in-indent,trailing-space,tabwidth=4
+
+# TextMate
+
+#                                       tabs indentation,         no trailing
+*.tmLanguage                  eol=lf    whitespace=-tab-in-indent,trailing-space,tabwidth=4
+*.hidden-tmLanguage           eol=lf    whitespace=-tab-in-indent,trailing-space,tabwidth=4
+*.tmPreferences               eol=lf    whitespace=-tab-in-indent,trailing-space,tabwidth=4
+*.tmTheme                     eol=lf    whitespace=-tab-in-indent,trailing-space,tabwidth=4
+*.hidden-tmTheme              eol=lf    whitespace=-tab-in-indent,trailing-space,tabwidth=4
+
+# syntect
+
+testdata/*                              linguist-vendored
+
+# General
+
+#                                       spaces indentation,      no trailing
+*.md                          eol=lf    whitespace=tab-in-indent,trailing-space,tabwidth=4
+#                             binary
+*.png                         binary
+*.tex                                   diff=tex
+*.pdf                         binary    diff=astextplain
+*.snap                                  linguist-language=txt

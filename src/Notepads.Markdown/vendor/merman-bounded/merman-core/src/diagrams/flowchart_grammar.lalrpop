@@ -1,0 +1,286 @@
+// Notepads modifications: Copyright (c) 2026, Jiaqi (0x7c13) Liu.
+// Original upstream grammar and licenses are preserved.
+// Flowchart minimal grammar (phase 1).
+
+grammar(statements: &mut StatementArena, control: &crate::OperationControl);
+
+use crate::diagrams::flowchart::{
+  ArrowToken, ClassAssignStmt, ClassDefStmt, ClickStmt, DirectionStatementToken, Edge, FlowchartAst,
+  FlowNodeProvenance, FlowNodeSyntax, LabeledText, LinkStyleStmt, LinkToken, Node, NodeLabelToken,
+  StatementArena, StatementId, StatementList, Stmt, StyleStmt, SubgraphBlock, SubgraphHeader, TitleKind, Tok
+};
+use crate::SourceSpan;
+
+extern {
+  type Location = usize;
+  type Error = crate::diagrams::flowchart::LexError;
+
+  enum Tok {
+    "graph" => Tok::KwGraph,
+    "flowchart" => Tok::KwFlowchart,
+    "flowchart-elk" => Tok::KwFlowchartElk,
+    "swimlane-beta" => Tok::KwSwimlane,
+    "subgraph" => Tok::KwSubgraph,
+    "end" => Tok::KwEnd,
+
+    Sep => Tok::Sep,
+    Amp => Tok::Amp,
+    StyleSep => Tok::StyleSep,
+
+    Direction => Tok::Direction(<String>),
+    DirectionStmt => Tok::DirectionStmt(<DirectionStatementToken>),
+    Id => Tok::Id(<String>),
+    NodeLabel => Tok::NodeLabel(<NodeLabelToken>),
+    Arrow => Tok::Arrow(<ArrowToken>),
+    EdgeLabel => Tok::EdgeLabel(<LabeledText>),
+    SubgraphHeader => Tok::SubgraphHeader(<SubgraphHeader>),
+
+    StyleStmt => Tok::StyleStmt(<StyleStmt>),
+    ClassDefStmt => Tok::ClassDefStmt(<ClassDefStmt>),
+    ClassAssignStmt => Tok::ClassAssignStmt(<ClassAssignStmt>),
+    ClickStmt => Tok::ClickStmt(<ClickStmt>),
+    LinkStyleStmt => Tok::LinkStyleStmt(<LinkStyleStmt>),
+
+    EdgeId => Tok::EdgeId(<String>),
+    ShapeData => Tok::ShapeData(<String>),
+  }
+}
+
+pub FlowchartAst: FlowchartAst = {
+  <_lead:Seps> <h:Header> <_s:Seps> <st:Statements> => {
+    let (keyword, direction, header_span) = h;
+    FlowchartAst { keyword, direction, header_span, statements: std::mem::take(statements), root: st }
+  },
+};
+
+Header: (String, Option<String>, SourceSpan) = {
+  <l:@L> "graph" <d:Direction?> <r:@R> =>? Ok((StatementArena::owned_keyword("graph", control)?, d, SourceSpan::new(l, r))),
+  <l:@L> "flowchart" <d:Direction?> <r:@R> =>? Ok((StatementArena::owned_keyword("flowchart", control)?, d, SourceSpan::new(l, r))),
+  <l:@L> "flowchart-elk" <d:Direction?> <r:@R> =>? Ok((StatementArena::owned_keyword("flowchart-elk", control)?, d, SourceSpan::new(l, r))),
+  <l:@L> "swimlane-beta" <d:Direction?> <r:@R> =>? Ok((StatementArena::owned_keyword("swimlane-beta", control)?, d, SourceSpan::new(l, r))),
+};
+
+Statements: StatementList = {
+  => StatementList::default(),
+  <s:Statement> <rest:StatementRest> =>? statements.prepend(s, rest, control),
+};
+
+StatementRest: StatementList = {
+  <_sep:Sep> <_seps:Seps> <s:Statement> <rest:StatementRest> =>? statements.prepend(s, rest, control),
+  Seps => StatementList::default(),
+};
+
+Seps: () = {
+  => (),
+  Sep Seps => (),
+};
+
+Statement: StatementId = {
+  <c:Chain> =>? statements.push(Stmt::Chain { node_groups: c.0, edge_groups: c.1 }, control),
+  <l:@L> <id:Id> <r:@R> <sd:ShapeData> =>? statements.push(Stmt::ShapeData {
+    target: id,
+    target_span: Some(SourceSpan::new(l, r)),
+    yaml: sd,
+  }, control),
+  <g:NodeGroupOnly> =>? statements.push_group(g, control),
+  <n:NodeRef> =>? statements.push_node(n, control),
+  <sg:SubgraphBlock> =>? statements.push(Stmt::Subgraph(sg), control),
+  <d:DirectionStmt> =>? statements.push(Stmt::Direction(d.direction), control),
+  <s:StyleStmt> =>? statements.push(Stmt::Style(s), control),
+  <c:ClassDefStmt> =>? statements.push(Stmt::ClassDef(c), control),
+  <c:ClassAssignStmt> =>? statements.push(Stmt::ClassAssign(c), control),
+  <c:ClickStmt> =>? statements.push(Stmt::Click(c), control),
+  <ls:LinkStyleStmt> =>? statements.push(Stmt::LinkStyle(ls), control),
+};
+
+Chain: (Vec<Vec<Node>>, Vec<Vec<Edge>>) = {
+  <start:NodeGroup> <segs:EdgeSegments> =>? statements.chain(start, segs, control)
+};
+
+EdgeSegments: Vec<(Option<String>, LinkToken, Option<LabeledText>, Vec<Node>)> = {
+  <segment:EdgeSeg> =>? StatementArena::vector_one(segment, control),
+  <segments:EdgeSegments> <segment:EdgeSeg> =>? StatementArena::vector_push(segments, segment, control),
+};
+
+Seps1: () = {
+  Sep Seps => (),
+};
+
+SubgraphBlock: SubgraphBlock = {
+  "subgraph" <h:SubgraphHeader?> <_s:Seps1> <inner:Statements> "end" => SubgraphBlock { header: h.unwrap_or_default(), statements: inner }
+};
+
+EdgeSeg: (Option<String>, LinkToken, Option<LabeledText>, Vec<Node>) = {
+  <eid:EdgeId?> <a:Arrow> <l:EdgeLabel?> <n:NodeGroup> => (eid, a.link, l, n),
+};
+
+NodeGroup: Vec<Node> = {
+  <first:NodeRefChain> <rest:NodeGroupRestList> =>? StatementArena::vector_prepend(first, rest, control),
+};
+
+NodeGroupOnly: Vec<Node> = {
+  <first:NodeRefChain> <rest:NodeGroupRestNonempty> =>? StatementArena::vector_prepend(first, rest, control),
+};
+
+NodeGroupRestList: Vec<Node> = {
+  => Vec::new(),
+  <rest:NodeGroupRestNonempty> => rest,
+};
+
+NodeGroupRestNonempty: Vec<Node> = {
+  <node:NodeGroupRest> =>? StatementArena::vector_one(node, control),
+  <rest:NodeGroupRestNonempty> <node:NodeGroupRest> =>? StatementArena::vector_push(rest, node, control),
+};
+
+NodeGroupRest: Node = {
+  Amp <n:NodeRefChain> => n,
+};
+
+NodeRef: Node = {
+  <l:@L> <id:Id> <r:@R> <nl:NodeLabel> <sd:ShapeData?> <cls:ClassOpt> => {
+    let NodeLabelToken { shape, text, .. } = nl;
+    let label_span = text.span;
+    let label_selection = text.selection;
+    Node {
+      id_span: Some(SourceSpan::new(l, r)),
+      id,
+      provenance: FlowNodeProvenance::Authored,
+      syntax: FlowNodeSyntax::ExplicitDefinition,
+      label: Some(text.text),
+      label_type: text.kind,
+      label_span,
+      label_selection,
+      shape: Some(shape),
+      shape_data: sd,
+      icon: None,
+      form: None,
+      pos: None,
+      img: None,
+      constraint: None,
+      asset_width: None,
+      asset_height: None,
+      styles: Vec::new(),
+      classes: cls,
+      link: None,
+      link_target: None,
+      have_callback: false,
+    }
+  },
+  <l:@L> <id:Id> <r:@R> <cls:ClassOpt> => Node {
+    id_span: Some(SourceSpan::new(l, r)),
+    id,
+    provenance: FlowNodeProvenance::Authored,
+    syntax: if cls.is_empty() {
+      FlowNodeSyntax::BareReference
+    } else {
+      FlowNodeSyntax::ExplicitDefinition
+    },
+    label: None,
+    label_type: TitleKind::Text,
+    label_span: None,
+    label_selection: None,
+    shape: None,
+    shape_data: None,
+    icon: None,
+    form: None,
+    pos: None,
+    img: None,
+    constraint: None,
+    asset_width: None,
+    asset_height: None,
+    styles: Vec::new(),
+    classes: cls,
+    link: None,
+    link_target: None,
+    have_callback: false,
+  },
+};
+
+NodeRefChain: Node = {
+  <l:@L> <id:Id> <r:@R> <nl:NodeLabel> <sd:ShapeData?> <cls:ClassOpt> => {
+    let NodeLabelToken { shape, text, .. } = nl;
+    let label_span = text.span;
+    let label_selection = text.selection;
+    Node {
+      id_span: Some(SourceSpan::new(l, r)),
+      id,
+      provenance: FlowNodeProvenance::Authored,
+      syntax: FlowNodeSyntax::ExplicitDefinition,
+      label: Some(text.text),
+      label_type: text.kind,
+      label_span,
+      label_selection,
+      shape: Some(shape),
+      shape_data: sd,
+      icon: None,
+      form: None,
+      pos: None,
+      img: None,
+      constraint: None,
+      asset_width: None,
+      asset_height: None,
+      styles: Vec::new(),
+      classes: cls,
+      link: None,
+      link_target: None,
+      have_callback: false,
+    }
+  },
+  <l:@L> <id:Id> <r:@R> <sd:ShapeData> <cls:ClassOpt> => Node {
+    id_span: Some(SourceSpan::new(l, r)),
+    id,
+    provenance: FlowNodeProvenance::Authored,
+    syntax: FlowNodeSyntax::ExplicitDefinition,
+    label: None,
+    label_type: TitleKind::Text,
+    label_span: None,
+    label_selection: None,
+    shape: None,
+    shape_data: Some(sd),
+    icon: None,
+    form: None,
+    pos: None,
+    img: None,
+    constraint: None,
+    asset_width: None,
+    asset_height: None,
+    styles: Vec::new(),
+    classes: cls,
+    link: None,
+    link_target: None,
+    have_callback: false,
+  },
+  <l:@L> <id:Id> <r:@R> <cls:ClassOpt> => Node {
+    id_span: Some(SourceSpan::new(l, r)),
+    id,
+    provenance: FlowNodeProvenance::Authored,
+    syntax: if cls.is_empty() {
+      FlowNodeSyntax::BareReference
+    } else {
+      FlowNodeSyntax::ExplicitDefinition
+    },
+    label: None,
+    label_type: TitleKind::Text,
+    label_span: None,
+    label_selection: None,
+    shape: None,
+    shape_data: None,
+    icon: None,
+    form: None,
+    pos: None,
+    img: None,
+    constraint: None,
+    asset_width: None,
+    asset_height: None,
+    styles: Vec::new(),
+    classes: cls,
+    link: None,
+    link_target: None,
+    have_callback: false,
+  },
+};
+
+ClassOpt: Vec<String> = {
+  StyleSep <c:Id> =>? StatementArena::vector_one(c, control),
+  => Vec::new(),
+};

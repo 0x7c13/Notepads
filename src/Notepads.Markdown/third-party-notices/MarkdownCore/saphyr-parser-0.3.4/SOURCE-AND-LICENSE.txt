@@ -1,0 +1,7 @@
+saphyr-parser 0.3.4
+https://crates.io/crates/saphyr-parser/0.3.4
+https://github.com/saphyr-rs/saphyr/tree/c4f88314c98142cfac783dffb4748dbd1e5495d0/parser
+Registry crate SHA256: c98d2738e44a25e6ba2e6d83d91805648df204768abc96f4f1278cb3d5c90bbe
+License: MIT OR Apache-2.0. See LICENSE and the four unchanged owner license texts.
+Both Chen Yuheng and Ethiraric notices are included as required by the upstream LICENSE.
+Used as a fixed streaming YAML 1.2 syntax parser. Notepads supplies its own bounded values/rendering adapter.

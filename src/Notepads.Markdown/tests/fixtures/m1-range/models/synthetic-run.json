@@ -1,0 +1,107 @@
+{
+  "source_key": {
+    "document_id": "04030000000000000000000000000003",
+    "revision": 1
+  },
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          2
+        ]
+      ],
+      "readable_utf8": "A\n\t B",
+      "logical_utf16": 5,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            1
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        },
+        {
+          "id": 1,
+          "source": [
+            1,
+            1
+          ],
+          "logical": [
+            1,
+            2
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "ControlSeparator"
+          ],
+          "output_utf8": "\n"
+        },
+        {
+          "id": 2,
+          "source": [
+            1,
+            1
+          ],
+          "logical": [
+            2,
+            3
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "ControlSeparator"
+          ],
+          "output_utf8": "\t"
+        },
+        {
+          "id": 3,
+          "source": [
+            1,
+            1
+          ],
+          "logical": [
+            3,
+            4
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "ControlSeparator"
+          ],
+          "output_utf8": " "
+        },
+        {
+          "id": 4,
+          "source": [
+            1,
+            2
+          ],
+          "logical": [
+            4,
+            5
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [],
+  "payloads": [],
+  "structures": [],
+  "reference_edges": []
+}

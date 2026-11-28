@@ -1,0 +1,19 @@
+root = false
+
+[*]
+insert_final_newline = true
+
+[*.{cpp,cxx,h,idl,inc,props}]
+indent_style = tab
+tab_width = 4
+end_of_line = crlf
+
+[*.cs]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+
+[*.{vcxproj,filters,xaml,config}]
+indent_style = space
+indent_size = 2
+end_of_line = crlf

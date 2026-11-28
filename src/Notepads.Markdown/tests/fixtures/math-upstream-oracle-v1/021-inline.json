@@ -1,0 +1,133 @@
+{
+  "items": [
+    {
+      "type": "GlyphPath",
+      "x": 0.0,
+      "y": 1.0090080000000001,
+      "scale": 1.0,
+      "font": "Size1-Regular",
+      "char_code": 8747,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    },
+    {
+      "type": "GlyphPath",
+      "x": 0.66667,
+      "y": 0.45110800000000006,
+      "scale": 0.7,
+      "font": "Main-Regular",
+      "char_code": 49,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    },
+    {
+      "type": "GlyphPath",
+      "x": 0.47222,
+      "y": 1.3648280000000002,
+      "scale": 0.7,
+      "font": "Main-Regular",
+      "char_code": 48,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    },
+    {
+      "type": "GlyphPath",
+      "x": 1.2333366666666667,
+      "y": 1.0090080000000001,
+      "scale": 1.0,
+      "font": "Math-Italic",
+      "char_code": 102,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    },
+    {
+      "type": "GlyphPath",
+      "x": 1.830566666666667,
+      "y": 1.0090080000000001,
+      "scale": 1.0,
+      "font": "Main-Regular",
+      "char_code": 40,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    },
+    {
+      "type": "GlyphPath",
+      "x": 2.219456666666667,
+      "y": 1.0090080000000001,
+      "scale": 1.0,
+      "font": "Math-Italic",
+      "char_code": 120,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    },
+    {
+      "type": "GlyphPath",
+      "x": 2.790986666666667,
+      "y": 1.0090080000000001,
+      "scale": 1.0,
+      "font": "Main-Regular",
+      "char_code": 41,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    },
+    {
+      "type": "GlyphPath",
+      "x": 3.3465433333333334,
+      "y": 1.0090080000000001,
+      "scale": 1.0,
+      "font": "Math-Italic",
+      "char_code": 100,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    },
+    {
+      "type": "GlyphPath",
+      "x": 3.8670333333333335,
+      "y": 1.0090080000000001,
+      "scale": 1.0,
+      "font": "Math-Italic",
+      "char_code": 120,
+      "color": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0,
+        "a": 1.0
+      }
+    }
+  ],
+  "width": 4.438563333333334,
+  "height": 1.0090080000000001,
+  "depth": 0.35582
+}

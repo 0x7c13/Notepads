@@ -1,0 +1,636 @@
+{
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          41
+        ]
+      ],
+      "readable_utf8": "A\tB\nx|y\t￼\nz\t",
+      "logical_utf16": 12,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            1
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "TableOuterPipe"
+          ]
+        },
+        {
+          "id": 1,
+          "source": [
+            1,
+            2
+          ],
+          "logical": [
+            0,
+            0
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "EmphasisDelimiter"
+          ]
+        },
+        {
+          "id": 2,
+          "source": [
+            2,
+            3
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        },
+        {
+          "id": 3,
+          "source": [
+            3,
+            4
+          ],
+          "logical": [
+            1,
+            1
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "EmphasisDelimiter"
+          ]
+        },
+        {
+          "id": 4,
+          "source": [
+            4,
+            5
+          ],
+          "logical": [
+            1,
+            1
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "TableCellPipe"
+          ]
+        },
+        {
+          "id": 5,
+          "source": [
+            5,
+            5
+          ],
+          "logical": [
+            1,
+            2
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "TableCellSeparator"
+          ],
+          "output_utf8": "\t"
+        },
+        {
+          "id": 6,
+          "source": [
+            5,
+            6
+          ],
+          "logical": [
+            2,
+            3
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        },
+        {
+          "id": 7,
+          "source": [
+            6,
+            17
+          ],
+          "logical": [
+            3,
+            3
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "TableOuterPipe",
+            "TableLineEnding",
+            "TableDelimiterRow"
+          ]
+        },
+        {
+          "id": 8,
+          "source": [
+            17,
+            17
+          ],
+          "logical": [
+            3,
+            4
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "TableRowSeparator"
+          ],
+          "output_utf8": "\n"
+        },
+        {
+          "id": 9,
+          "source": [
+            17,
+            18
+          ],
+          "logical": [
+            4,
+            4
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "CodeDelimiter"
+          ]
+        },
+        {
+          "id": 10,
+          "source": [
+            18,
+            19
+          ],
+          "logical": [
+            4,
+            5
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "CodeLiteral"
+          ]
+        },
+        {
+          "id": 11,
+          "source": [
+            19,
+            21
+          ],
+          "logical": [
+            5,
+            6
+          ],
+          "kind": "Transform",
+          "reasons": [
+            "TableEscapedPipe"
+          ],
+          "output_utf8": "|"
+        },
+        {
+          "id": 12,
+          "source": [
+            21,
+            22
+          ],
+          "logical": [
+            6,
+            7
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "CodeLiteral"
+          ]
+        },
+        {
+          "id": 13,
+          "source": [
+            22,
+            23
+          ],
+          "logical": [
+            7,
+            7
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "CodeDelimiter"
+          ]
+        },
+        {
+          "id": 14,
+          "source": [
+            23,
+            24
+          ],
+          "logical": [
+            7,
+            7
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "TableCellPipe"
+          ]
+        },
+        {
+          "id": 15,
+          "source": [
+            24,
+            24
+          ],
+          "logical": [
+            7,
+            8
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "TableCellSeparator"
+          ],
+          "output_utf8": "\t"
+        },
+        {
+          "id": 16,
+          "source": [
+            24,
+            33
+          ],
+          "logical": [
+            8,
+            9
+          ],
+          "kind": "Object",
+          "reasons": [
+            "ImageSyntax"
+          ],
+          "object_id": 0
+        },
+        {
+          "id": 17,
+          "source": [
+            33,
+            38
+          ],
+          "logical": [
+            9,
+            9
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "IgnoredExtraTableCell",
+            "TableLineEnding",
+            "TableOuterPipe"
+          ]
+        },
+        {
+          "id": 18,
+          "source": [
+            38,
+            38
+          ],
+          "logical": [
+            9,
+            10
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "TableRowSeparator"
+          ],
+          "output_utf8": "\n"
+        },
+        {
+          "id": 19,
+          "source": [
+            38,
+            39
+          ],
+          "logical": [
+            10,
+            11
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        },
+        {
+          "id": 20,
+          "source": [
+            39,
+            40
+          ],
+          "logical": [
+            11,
+            11
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "TableOuterPipe"
+          ]
+        },
+        {
+          "id": 21,
+          "source": [
+            40,
+            40
+          ],
+          "logical": [
+            11,
+            12
+          ],
+          "kind": "Synthetic",
+          "reasons": [
+            "TableCellSeparator"
+          ],
+          "output_utf8": "\t"
+        },
+        {
+          "id": 22,
+          "source": [
+            40,
+            41
+          ],
+          "logical": [
+            12,
+            12
+          ],
+          "kind": "Hidden",
+          "reasons": [
+            "TableLineEnding"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "scope": {
+        "kind": "ImageAlt",
+        "object_id": 0
+      },
+      "source_domains": [
+        [
+          26,
+          29
+        ]
+      ],
+      "readable_utf8": "中",
+      "logical_utf16": 1,
+      "fragments": [
+        {
+          "id": 23,
+          "source": [
+            26,
+            29
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "id": 0,
+      "kind": "Image",
+      "flow_id": 0,
+      "logical_span": [
+        8,
+        9
+      ],
+      "source_envelope": [
+        24,
+        33
+      ],
+      "alt_flow_id": 1,
+      "destination_payload": 0,
+      "title_payload": null,
+      "source_edit_action_span": null,
+      "source_key": {
+        "document_id": "0402000000000000000000000000000f",
+        "revision": 1
+      }
+    }
+  ],
+  "payloads": [
+    {
+      "id": 0,
+      "role": "Destination",
+      "decoded_utf8": "u",
+      "source_parts": [
+        {
+          "source": [
+            31,
+            32
+          ],
+          "payload_utf8": [
+            0,
+            1
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "structures": [
+    {
+      "kind": "Block",
+      "id": 0,
+      "parent": null,
+      "node_kind": "Table",
+      "source_envelope": [
+        0,
+        41
+      ],
+      "flow_id": 0
+    },
+    {
+      "kind": "Table",
+      "id": 1,
+      "block_id": 0,
+      "columns": 2,
+      "alignments": [
+        "Left",
+        "Right"
+      ]
+    },
+    {
+      "kind": "Row",
+      "id": 2,
+      "table_id": 1,
+      "index": 0,
+      "is_header": true
+    },
+    {
+      "kind": "Cell",
+      "id": 3,
+      "row_id": 2,
+      "column": 0,
+      "flow_id": 0,
+      "logical_span": [
+        0,
+        1
+      ],
+      "is_missing": false
+    },
+    {
+      "kind": "Cell",
+      "id": 4,
+      "row_id": 2,
+      "column": 1,
+      "flow_id": 0,
+      "logical_span": [
+        2,
+        3
+      ],
+      "is_missing": false
+    },
+    {
+      "kind": "Inline",
+      "id": 5,
+      "parent": 3,
+      "node_kind": "Emphasis",
+      "flow_id": 0,
+      "logical_span": [
+        0,
+        1
+      ],
+      "source_envelope": [
+        1,
+        4
+      ]
+    },
+    {
+      "kind": "Row",
+      "id": 6,
+      "table_id": 1,
+      "index": 1,
+      "is_header": false
+    },
+    {
+      "kind": "Cell",
+      "id": 7,
+      "row_id": 6,
+      "column": 0,
+      "flow_id": 0,
+      "logical_span": [
+        4,
+        7
+      ],
+      "is_missing": false
+    },
+    {
+      "kind": "Cell",
+      "id": 8,
+      "row_id": 6,
+      "column": 1,
+      "flow_id": 0,
+      "logical_span": [
+        8,
+        9
+      ],
+      "is_missing": false
+    },
+    {
+      "kind": "Inline",
+      "id": 9,
+      "parent": 7,
+      "node_kind": "Code",
+      "flow_id": 0,
+      "logical_span": [
+        4,
+        7
+      ],
+      "source_envelope": [
+        17,
+        23
+      ]
+    },
+    {
+      "kind": "Inline",
+      "id": 10,
+      "parent": 8,
+      "node_kind": "Image",
+      "flow_id": 0,
+      "logical_span": [
+        8,
+        9
+      ],
+      "source_envelope": [
+        24,
+        33
+      ]
+    },
+    {
+      "kind": "Inline",
+      "id": 11,
+      "parent": null,
+      "node_kind": "AltLabel",
+      "flow_id": 1,
+      "logical_span": [
+        0,
+        1
+      ],
+      "source_envelope": [
+        26,
+        29
+      ]
+    },
+    {
+      "kind": "Row",
+      "id": 12,
+      "table_id": 1,
+      "index": 2,
+      "is_header": false
+    },
+    {
+      "kind": "Cell",
+      "id": 13,
+      "row_id": 12,
+      "column": 0,
+      "flow_id": 0,
+      "logical_span": [
+        10,
+        11
+      ],
+      "is_missing": false
+    },
+    {
+      "kind": "Cell",
+      "id": 14,
+      "row_id": 12,
+      "column": 1,
+      "flow_id": 0,
+      "logical_span": [
+        12,
+        12
+      ],
+      "is_missing": true
+    }
+  ],
+  "reference_edges": [],
+  "source_key": {
+    "document_id": "0402000000000000000000000000000f",
+    "revision": 1
+  }
+}

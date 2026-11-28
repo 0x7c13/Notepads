@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.37">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="g1"/>
+    <GlyphID id="2" name="g2"/>
+    <GlyphID id="3" name="g3"/>
+    <GlyphID id="4" name="g4"/>
+    <GlyphID id="5" name="g5"/>
+    <GlyphID id="6" name="g6"/>
+    <GlyphID id="7" name="g7"/>
+    <GlyphID id="8" name="g8"/>
+    <GlyphID id="9" name="g9"/>
+    <GlyphID id="10" name="g10"/>
+    <GlyphID id="11" name="g11"/>
+    <GlyphID id="12" name="g12"/>
+    <GlyphID id="13" name="g13"/>
+    <GlyphID id="14" name="g14"/>
+    <GlyphID id="15" name="g15"/>
+    <GlyphID id="16" name="g16"/>
+    <GlyphID id="17" name="g17"/>
+    <GlyphID id="18" name="g18"/>
+    <GlyphID id="19" name="g19"/>
+    <GlyphID id="20" name="g20"/>
+    <GlyphID id="21" name="g21"/>
+    <GlyphID id="22" name="g22"/>
+    <GlyphID id="23" name="g23"/>
+    <GlyphID id="24" name="g24"/>
+    <GlyphID id="25" name="g25"/>
+    <GlyphID id="26" name="g26"/>
+    <GlyphID id="27" name="g27"/>
+    <GlyphID id="28" name="g28"/>
+    <GlyphID id="29" name="g29"/>
+    <GlyphID id="30" name="g30"/>
+    <GlyphID id="31" name="g31"/>
+    <GlyphID id="32" name="g32"/>
+    <GlyphID id="33" name="g33"/>
+    <GlyphID id="34" name="g34"/>
+    <GlyphID id="35" name="g35"/>
+    <GlyphID id="36" name="g36"/>
+    <GlyphID id="37" name="g37"/>
+    <GlyphID id="38" name="g38"/>
+    <GlyphID id="39" name="g39"/>
+    <GlyphID id="40" name="g40"/>
+    <GlyphID id="41" name="g41"/>
+    <GlyphID id="42" name="g42"/>
+    <GlyphID id="43" name="g43"/>
+    <GlyphID id="44" name="g44"/>
+    <GlyphID id="45" name="g45"/>
+    <GlyphID id="46" name="g46"/>
+    <GlyphID id="47" name="g47"/>
+    <GlyphID id="48" name="g48"/>
+    <GlyphID id="49" name="g49"/>
+    <GlyphID id="50" name="g50"/>
+    <GlyphID id="51" name="g51"/>
+    <GlyphID id="52" name="g52"/>
+    <GlyphID id="53" name="g53"/>
+    <GlyphID id="54" name="g54"/>
+    <GlyphID id="55" name="g55"/>
+    <GlyphID id="56" name="g56"/>
+    <GlyphID id="57" name="g57"/>
+    <GlyphID id="58" name="g58"/>
+    <GlyphID id="59" name="g59"/>
+    <GlyphID id="60" name="g60"/>
+    <GlyphID id="61" name="g61"/>
+    <GlyphID id="62" name="g62"/>
+    <GlyphID id="63" name="g63"/>
+    <GlyphID id="64" name="g64"/>
+    <GlyphID id="65" name="g65"/>
+    <GlyphID id="66" name="g66"/>
+    <GlyphID id="67" name="g67"/>
+    <GlyphID id="68" name="g68"/>
+    <GlyphID id="69" name="g69"/>
+    <GlyphID id="70" name="g70"/>
+    <GlyphID id="71" name="g71"/>
+    <GlyphID id="72" name="g72"/>
+    <GlyphID id="73" name="g73"/>
+    <GlyphID id="74" name="g74"/>
+    <GlyphID id="75" name="g75"/>
+    <GlyphID id="76" name="g76"/>
+    <GlyphID id="77" name="g77"/>
+    <GlyphID id="78" name="g78"/>
+    <GlyphID id="79" name="g79"/>
+    <GlyphID id="80" name="g80"/>
+    <GlyphID id="81" name="g81"/>
+    <GlyphID id="82" name="g82"/>
+    <GlyphID id="83" name="g83"/>
+    <GlyphID id="84" name="g84"/>
+    <GlyphID id="85" name="g85"/>
+    <GlyphID id="86" name="g86"/>
+    <GlyphID id="87" name="g87"/>
+    <GlyphID id="88" name="g88"/>
+    <GlyphID id="89" name="g89"/>
+    <GlyphID id="90" name="g90"/>
+    <GlyphID id="91" name="g91"/>
+    <GlyphID id="92" name="g92"/>
+    <GlyphID id="93" name="g93"/>
+    <GlyphID id="94" name="g94"/>
+    <GlyphID id="95" name="g95"/>
+    <GlyphID id="96" name="g96"/>
+    <GlyphID id="97" name="g97"/>
+    <GlyphID id="98" name="g98"/>
+    <GlyphID id="99" name="g99"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0x48933e7b"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000001"/>
+    <unitsPerEm value="1500"/>
+    <created value="Thu Jan  1 00:00:00 1970"/>
+    <modified value="Wed Aug 21 18:13:13 2019"/>
+    <xMin value="22"/>
+    <yMin value="-114"/>
+    <xMax value="1074"/>
+    <yMax value="691"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="3"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="2500"/>
+    <descent value="0"/>
+    <lineGap value="200"/>
+    <advanceWidthMax value="1500"/>
+    <minLeftSideBearing value="300"/>
+    <minRightSideBearing value="161"/>
+    <xMaxExtent value="1339"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="1"/>
+  </hhea>
+
+  <maxp>
+    <tableVersion value="0x5000"/>
+    <numGlyphs value="100"/>
+  </maxp>
+
+  <OS_2>
+    <!-- The fields 'usFirstCharIndex' and 'usLastCharIndex'
+         will be recalculated by the compiler -->
+    <version value="4"/>
+    <xAvgCharWidth value="2500"/>
+    <usWeightClass value="800"/>
+    <usWidthClass value="4"/>
+    <fsType value="00000000 00001100"/>
+    <ySubscriptXSize value="500"/>
+    <ySubscriptYSize value="500"/>
+    <ySubscriptXOffset value="250"/>
+    <ySubscriptYOffset value="50"/>
+    <ySuperscriptXSize value="500"/>
+    <ySuperscriptYSize value="500"/>
+    <ySuperscriptXOffset value="0"/>
+    <ySuperscriptYOffset value="500"/>
+    <yStrikeoutSize value="50"/>
+    <yStrikeoutPosition value="500"/>
+    <sFamilyClass value="0"/>
+    <panose>
+      <bFamilyType value="2"/>
+      <bSerifStyle value="10"/>
+      <bWeight value="6"/>
+      <bProportion value="3"/>
+      <bContrast value="6"/>
+      <bStrokeVariation value="5"/>
+      <bArmStyle value="11"/>
+      <bLetterForm value="2"/>
+      <bMidline value="2"/>
+      <bXHeight value="4"/>
+    </panose>
+    <ulUnicodeRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulUnicodeRange2 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="ADBE"/>
+    <fsSelection value="00000010 01000000"/>
+    <usFirstCharIndex value="19968"/>
+    <usLastCharIndex value="19977"/>
+    <sTypoAscender value="2500"/>
+    <sTypoDescender value="0"/>
+    <sTypoLineGap value="200"/>
+    <usWinAscent value="2500"/>
+    <usWinDescent value="0"/>
+    <ulCodePageRange1 value="11100000 00111111 00000001 11111111"/>
+    <ulCodePageRange2 value="11111111 11111111 00000000 00000000"/>
+    <sxHeight value="2500"/>
+    <sCapHeight value="2500"/>
+    <usDefaultChar value="65"/>
+    <usBreakChar value="65"/>
+    <usMaxContext value="0"/>
+  </OS_2>
+
+  <name>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      cmap14_font1
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="3" platformID="3" platEncID="1" langID="0x409">
+      cmap14_font1
+    </namerecord>
+    <namerecord nameID="4" platformID="3" platEncID="1" langID="0x409">
+      cmap14_font1
+    </namerecord>
+    <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
+      Version1.0
+    </namerecord>
+    <namerecord nameID="6" platformID="3" platEncID="1" langID="0x409">
+      cmap14_font1
+    </namerecord>
+  </name>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_14 platformID="0" platEncID="5">
+      <map uv="0x4e00" uvs="0xe0100"/>
+      <map uv="0x4e03" uvs="0xe0100"/>
+      <map uv="0x4e04" uvs="0xe0100"/>
+      <map uv="0x4e05" uvs="0xe0100"/>
+      <map uv="0x4e06" uvs="0xe0100"/>
+      <map uv="0x4e08" uvs="0xe0100" name="g25"/>
+      <map uv="0x4e09" uvs="0xe0100" name="g26"/>
+    </cmap_format_14>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x4e00" name="g10"/><!-- CJK UNIFIED IDEOGRAPH-4E00 -->
+      <map code="0x4e01" name="g11"/><!-- CJK UNIFIED IDEOGRAPH-4E01 -->
+      <map code="0x4e02" name="g12"/><!-- CJK UNIFIED IDEOGRAPH-4E02 -->
+      <map code="0x4e03" name="g13"/><!-- CJK UNIFIED IDEOGRAPH-4E03 -->
+      <map code="0x4e04" name="g14"/><!-- CJK UNIFIED IDEOGRAPH-4E04 -->
+      <map code="0x4e05" name="g15"/><!-- CJK UNIFIED IDEOGRAPH-4E05 -->
+      <map code="0x4e06" name="g16"/><!-- CJK UNIFIED IDEOGRAPH-4E06 -->
+      <map code="0x4e07" name="g17"/><!-- CJK UNIFIED IDEOGRAPH-4E07 -->
+      <map code="0x4e08" name="g18"/><!-- CJK UNIFIED IDEOGRAPH-4E08 -->
+      <map code="0x4e09" name="g19"/><!-- CJK UNIFIED IDEOGRAPH-4E09 -->
+    </cmap_format_4>
+  </cmap>
+
+  <post>
+    <formatType value="3.0"/>
+    <italicAngle value="-14.0"/>
+    <underlinePosition value="-100"/>
+    <underlineThickness value="50"/>
+    <isFixedPitch value="0"/>
+    <minMemType42 value="0"/>
+    <maxMemType42 value="0"/>
+    <minMemType1 value="0"/>
+    <maxMemType1 value="0"/>
+  </post> 
+
+  <hmtx>
+    <mtx name=".notdef" width="1500" lsb="300"/>
+    <mtx name="g1" width="1500" lsb="300"/>
+    <mtx name="g10" width="1500" lsb="300"/>
+    <mtx name="g11" width="1500" lsb="300"/>
+    <mtx name="g12" width="1500" lsb="300"/>
+    <mtx name="g13" width="1500" lsb="300"/>
+    <mtx name="g14" width="1500" lsb="300"/>
+    <mtx name="g15" width="1500" lsb="300"/>
+    <mtx name="g16" width="1500" lsb="300"/>
+    <mtx name="g17" width="1500" lsb="300"/>
+    <mtx name="g18" width="1500" lsb="300"/>
+    <mtx name="g19" width="1500" lsb="300"/>
+    <mtx name="g2" width="1500" lsb="300"/>
+    <mtx name="g20" width="1500" lsb="300"/>
+    <mtx name="g21" width="1500" lsb="300"/>
+    <mtx name="g22" width="1500" lsb="300"/>
+    <mtx name="g23" width="1500" lsb="300"/>
+    <mtx name="g24" width="1500" lsb="300"/>
+    <mtx name="g25" width="1500" lsb="300"/>
+    <mtx name="g26" width="1500" lsb="300"/>
+    <mtx name="g27" width="1500" lsb="300"/>
+    <mtx name="g28" width="1500" lsb="300"/>
+    <mtx name="g29" width="1500" lsb="300"/>
+    <mtx name="g3" width="1500" lsb="300"/>
+    <mtx name="g30" width="1500" lsb="300"/>
+    <mtx name="g31" width="1500" lsb="300"/>
+    <mtx name="g32" width="1500" lsb="300"/>
+    <mtx name="g33" width="1500" lsb="300"/>
+    <mtx name="g34" width="1500" lsb="300"/>
+    <mtx name="g35" width="1500" lsb="300"/>
+    <mtx name="g36" width="1500" lsb="300"/>
+    <mtx name="g37" width="1500" lsb="300"/>
+    <mtx name="g38" width="1500" lsb="300"/>
+    <mtx name="g39" width="1500" lsb="300"/>
+    <mtx name="g4" width="1500" lsb="300"/>
+    <mtx name="g40" width="1500" lsb="300"/>
+    <mtx name="g41" width="1500" lsb="300"/>
+    <mtx name="g42" width="1500" lsb="300"/>
+    <mtx name="g43" width="1500" lsb="300"/>
+    <mtx name="g44" width="1500" lsb="300"/>
+    <mtx name="g45" width="1500" lsb="300"/>
+    <mtx name="g46" width="1500" lsb="300"/>
+    <mtx name="g47" width="1500" lsb="300"/>
+    <mtx name="g48" width="1500" lsb="300"/>
+    <mtx name="g49" width="1500" lsb="300"/>
+    <mtx name="g5" width="1500" lsb="300"/>
+    <mtx name="g50" width="1500" lsb="300"/>
+    <mtx name="g51" width="1500" lsb="300"/>
+    <mtx name="g52" width="1500" lsb="300"/>
+    <mtx name="g53" width="1500" lsb="300"/>
+    <mtx name="g54" width="1500" lsb="300"/>
+    <mtx name="g55" width="1500" lsb="300"/>
+    <mtx name="g56" width="1500" lsb="300"/>
+    <mtx name="g57" width="1500" lsb="300"/>
+    <mtx name="g58" width="1500" lsb="300"/>
+    <mtx name="g59" width="1500" lsb="300"/>
+    <mtx name="g6" width="1500" lsb="300"/>
+    <mtx name="g60" width="1500" lsb="300"/>
+    <mtx name="g61" width="1500" lsb="300"/>
+    <mtx name="g62" width="1500" lsb="300"/>
+    <mtx name="g63" width="1500" lsb="300"/>
+    <mtx name="g64" width="1500" lsb="300"/>
+    <mtx name="g65" width="1500" lsb="300"/>
+    <mtx name="g66" width="1500" lsb="300"/>
+    <mtx name="g67" width="1500" lsb="300"/>
+    <mtx name="g68" width="1500" lsb="300"/>
+    <mtx name="g69" width="1500" lsb="300"/>
+    <mtx name="g7" width="1500" lsb="300"/>
+    <mtx name="g70" width="1500" lsb="300"/>
+    <mtx name="g71" width="1500" lsb="300"/>
+    <mtx name="g72" width="1500" lsb="300"/>
+    <mtx name="g73" width="1500" lsb="300"/>
+    <mtx name="g74" width="1500" lsb="300"/>
+    <mtx name="g75" width="1500" lsb="300"/>
+    <mtx name="g76" width="1500" lsb="300"/>
+    <mtx name="g77" width="1500" lsb="300"/>
+    <mtx name="g78" width="1500" lsb="300"/>
+    <mtx name="g79" width="1500" lsb="300"/>
+    <mtx name="g8" width="1500" lsb="300"/>
+    <mtx name="g80" width="1500" lsb="300"/>
+    <mtx name="g81" width="1500" lsb="300"/>
+    <mtx name="g82" width="1500" lsb="300"/>
+    <mtx name="g83" width="1500" lsb="300"/>
+    <mtx name="g84" width="1500" lsb="300"/>
+    <mtx name="g85" width="1500" lsb="300"/>
+    <mtx name="g86" width="1500" lsb="300"/>
+    <mtx name="g87" width="1500" lsb="300"/>
+    <mtx name="g88" width="1500" lsb="300"/>
+    <mtx name="g89" width="1500" lsb="300"/>
+    <mtx name="g9" width="1500" lsb="300"/>
+    <mtx name="g90" width="1500" lsb="300"/>
+    <mtx name="g91" width="1500" lsb="300"/>
+    <mtx name="g92" width="1500" lsb="300"/>
+    <mtx name="g93" width="1500" lsb="300"/>
+    <mtx name="g94" width="1500" lsb="300"/>
+    <mtx name="g95" width="1500" lsb="300"/>
+    <mtx name="g96" width="1500" lsb="300"/>
+    <mtx name="g97" width="1500" lsb="300"/>
+    <mtx name="g98" width="1500" lsb="300"/>
+    <mtx name="g99" width="1500" lsb="300"/>
+  </hmtx>
+
+</ttFont>

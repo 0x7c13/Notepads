@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.43">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="space"/>
+    <GlyphID id="2" name="A"/>
+    <GlyphID id="3" name="I"/>
+    <GlyphID id="4" name="T"/>
+    <GlyphID id="5" name="Aacute"/>
+    <GlyphID id="6" name="Agrave"/>
+    <GlyphID id="7" name="Iacute"/>
+    <GlyphID id="8" name="Igrave"/>
+    <GlyphID id="9" name="Amacron"/>
+    <GlyphID id="10" name="Imacron"/>
+    <GlyphID id="11" name="acutecomb"/>
+    <GlyphID id="12" name="gravecomb"/>
+    <GlyphID id="13" name="macroncomb"/>
+    <GlyphID id="14" name="A.001"/>
+    <GlyphID id="15" name="A.002"/>
+    <GlyphID id="16" name="A.003"/>
+    <GlyphID id="17" name="A.004"/>
+    <GlyphID id="18" name="A.005"/>
+    <GlyphID id="19" name="A.006"/>
+    <GlyphID id="20" name="A.007"/>
+    <GlyphID id="21" name="A.008"/>
+    <GlyphID id="22" name="A.009"/>
+    <GlyphID id="23" name="A.010"/>
+  </GlyphOrder>
+
+  <head>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="1.0"/>
+    <fontRevision value="1.0"/>
+    <checkSumAdjustment value="0xe0ec9674"/>
+    <magicNumber value="0x5f0f3cf5"/>
+    <flags value="00000000 00000011"/>
+    <unitsPerEm value="1000"/>
+    <created value="Thu Sep 28 11:48:51 2023"/>
+    <modified value="Mon Oct 23 16:46:52 2023"/>
+    <xMin value="-62"/>
+    <yMin value="-200"/>
+    <xMax value="572"/>
+    <yMax value="921"/>
+    <macStyle value="00000000 00000000"/>
+    <lowestRecPPEM value="6"/>
+    <fontDirectionHint value="2"/>
+    <indexToLocFormat value="0"/>
+    <glyphDataFormat value="0"/>
+  </head>
+
+  <hhea>
+    <tableVersion value="0x00010000"/>
+    <ascent value="1000"/>
+    <descent value="-200"/>
+    <lineGap value="0"/>
+    <advanceWidthMax value="580"/>
+    <minLeftSideBearing value="-62"/>
+    <minRightSideBearing value="-273"/>
+    <xMaxExtent value="572"/>
+    <caretSlopeRise value="1"/>
+    <caretSlopeRun value="0"/>
+    <caretOffset value="0"/>
+    <reserved0 value="0"/>
+    <reserved1 value="0"/>
+    <reserved2 value="0"/>
+    <reserved3 value="0"/>
+    <metricDataFormat value="0"/>
+    <numberOfHMetrics value="15"/>
+  </hhea>
+
+  <maxp>
+    <!-- Most of this table will be recalculated by the compiler -->
+    <tableVersion value="0x10000"/>
+    <numGlyphs value="24"/>
+    <maxPoints value="11"/>
+    <maxContours value="2"/>
+    <maxCompositePoints value="15"/>
+    <maxCompositeContours value="3"/>
+    <maxZones value="1"/>
+    <maxTwilightPoints value="0"/>
+    <maxStorage value="0"/>
+    <maxFunctionDefs value="0"/>
+    <maxInstructionDefs value="0"/>
+    <maxStackElements value="0"/>
+    <maxSizeOfInstructions value="0"/>
+    <maxComponentElements value="2"/>
+    <maxComponentDepth value="1"/>
+  </maxp>
+
+  <OS_2>
+    <!-- The fields 'usFirstCharIndex' and 'usLastCharIndex'
+         will be recalculated by the compiler -->
+    <version value="4"/>
+    <xAvgCharWidth value="399"/>
+    <usWeightClass value="400"/>
+    <usWidthClass value="5"/>
+    <fsType value="00000000 00001000"/>
+    <ySubscriptXSize value="650"/>
+    <ySubscriptYSize value="600"/>
+    <ySubscriptXOffset value="0"/>
+    <ySubscriptYOffset value="75"/>
+    <ySuperscriptXSize value="650"/>
+    <ySuperscriptYSize value="600"/>
+    <ySuperscriptXOffset value="0"/>
+    <ySuperscriptYOffset value="350"/>
+    <yStrikeoutSize value="50"/>
+    <yStrikeoutPosition value="300"/>
+    <sFamilyClass value="0"/>
+    <panose>
+      <bFamilyType value="0"/>
+      <bSerifStyle value="0"/>
+      <bWeight value="0"/>
+      <bProportion value="0"/>
+      <bContrast value="0"/>
+      <bStrokeVariation value="0"/>
+      <bArmStyle value="0"/>
+      <bLetterForm value="0"/>
+      <bMidline value="0"/>
+      <bXHeight value="0"/>
+    </panose>
+    <ulUnicodeRange1 value="00000000 00000000 00000000 01000111"/>
+    <ulUnicodeRange2 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange3 value="00000000 00000000 00000000 00000000"/>
+    <ulUnicodeRange4 value="00000000 00000000 00000000 00000000"/>
+    <achVendID value="NONE"/>
+    <fsSelection value="00000000 01000000"/>
+    <usFirstCharIndex value="32"/>
+    <usLastCharIndex value="772"/>
+    <sTypoAscender value="800"/>
+    <sTypoDescender value="-200"/>
+    <sTypoLineGap value="200"/>
+    <usWinAscent value="1000"/>
+    <usWinDescent value="200"/>
+    <ulCodePageRange1 value="00000000 00000000 00000000 00000001"/>
+    <ulCodePageRange2 value="00000000 00000000 00000000 00000000"/>
+    <sxHeight value="500"/>
+    <sCapHeight value="700"/>
+    <usDefaultChar value="0"/>
+    <usBreakChar value="32"/>
+    <usMaxContext value="0"/>
+  </OS_2>
+
+  <hmtx>
+    <mtx name=".notdef" width="500" lsb="50"/>
+    <mtx name="A" width="580" lsb="10"/>
+    <mtx name="A.001" width="400" lsb="0"/>
+    <mtx name="A.002" width="400" lsb="0"/>
+    <mtx name="A.003" width="400" lsb="0"/>
+    <mtx name="A.004" width="400" lsb="0"/>
+    <mtx name="A.005" width="400" lsb="0"/>
+    <mtx name="A.006" width="400" lsb="0"/>
+    <mtx name="A.007" width="400" lsb="0"/>
+    <mtx name="A.008" width="400" lsb="0"/>
+    <mtx name="A.009" width="400" lsb="0"/>
+    <mtx name="A.010" width="400" lsb="0"/>
+    <mtx name="Aacute" width="580" lsb="10"/>
+    <mtx name="Agrave" width="580" lsb="10"/>
+    <mtx name="Amacron" width="580" lsb="10"/>
+    <mtx name="I" width="190" lsb="51"/>
+    <mtx name="Iacute" width="190" lsb="51"/>
+    <mtx name="Igrave" width="190" lsb="-10"/>
+    <mtx name="Imacron" width="190" lsb="-26"/>
+    <mtx name="T" width="400" lsb="7"/>
+    <mtx name="acutecomb" width="0" lsb="146"/>
+    <mtx name="gravecomb" width="0" lsb="76"/>
+    <mtx name="macroncomb" width="0" lsb="-62"/>
+    <mtx name="space" width="400" lsb="0"/>
+  </hmtx>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="0" platEncID="3" language="0">
+      <map code="0x20" name="space"/><!-- SPACE -->
+      <map code="0x41" name="A"/><!-- LATIN CAPITAL LETTER A -->
+      <map code="0x49" name="I"/><!-- LATIN CAPITAL LETTER I -->
+      <map code="0x54" name="T"/><!-- LATIN CAPITAL LETTER T -->
+      <map code="0xc0" name="Agrave"/><!-- LATIN CAPITAL LETTER A WITH GRAVE -->
+      <map code="0xc1" name="Aacute"/><!-- LATIN CAPITAL LETTER A WITH ACUTE -->
+      <map code="0xcc" name="Igrave"/><!-- LATIN CAPITAL LETTER I WITH GRAVE -->
+      <map code="0xcd" name="Iacute"/><!-- LATIN CAPITAL LETTER I WITH ACUTE -->
+      <map code="0x100" name="Amacron"/><!-- LATIN CAPITAL LETTER A WITH MACRON -->
+      <map code="0x12a" name="Imacron"/><!-- LATIN CAPITAL LETTER I WITH MACRON -->
+      <map code="0x300" name="gravecomb"/><!-- COMBINING GRAVE ACCENT -->
+      <map code="0x301" name="acutecomb"/><!-- COMBINING ACUTE ACCENT -->
+      <map code="0x304" name="macroncomb"/><!-- COMBINING MACRON -->
+    </cmap_format_4>
+    <cmap_format_4 platformID="3" platEncID="1" language="0">
+      <map code="0x20" name="space"/><!-- SPACE -->
+      <map code="0x41" name="A"/><!-- LATIN CAPITAL LETTER A -->
+      <map code="0x49" name="I"/><!-- LATIN CAPITAL LETTER I -->
+      <map code="0x54" name="T"/><!-- LATIN CAPITAL LETTER T -->
+      <map code="0xc0" name="Agrave"/><!-- LATIN CAPITAL LETTER A WITH GRAVE -->
+      <map code="0xc1" name="Aacute"/><!-- LATIN CAPITAL LETTER A WITH ACUTE -->
+      <map code="0xcc" name="Igrave"/><!-- LATIN CAPITAL LETTER I WITH GRAVE -->
+      <map code="0xcd" name="Iacute"/><!-- LATIN CAPITAL LETTER I WITH ACUTE -->
+      <map code="0x100" name="Amacron"/><!-- LATIN CAPITAL LETTER A WITH MACRON -->
+      <map code="0x12a" name="Imacron"/><!-- LATIN CAPITAL LETTER I WITH MACRON -->
+      <map code="0x300" name="gravecomb"/><!-- COMBINING GRAVE ACCENT -->
+      <map code="0x301" name="acutecomb"/><!-- COMBINING ACUTE ACCENT -->
+      <map code="0x304" name="macroncomb"/><!-- COMBINING MACRON -->
+    </cmap_format_4>
+  </cmap>
+
+  <loca>
+    <!-- The 'loca' table will be calculated by the compiler -->
+  </loca>
+
+  <glyf>
+
+    <!-- The xMin, yMin, xMax and yMax values
+         will be recalculated by the compiler. -->
+
+    <TTGlyph name=".notdef" xMin="50" yMin="-200" xMax="450" yMax="800">
+      <contour>
+        <pt x="50" y="-200" on="1"/>
+        <pt x="50" y="800" on="1"/>
+        <pt x="450" y="800" on="1"/>
+        <pt x="450" y="-200" on="1"/>
+      </contour>
+      <contour>
+        <pt x="100" y="-150" on="1"/>
+        <pt x="400" y="-150" on="1"/>
+        <pt x="400" y="750" on="1"/>
+        <pt x="100" y="750" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="A" xMin="10" yMin="-20" xMax="572" yMax="718">
+      <contour>
+        <pt x="10" y="11" on="1"/>
+        <pt x="289" y="718" on="1"/>
+        <pt x="289" y="718" on="1"/>
+        <pt x="572" y="11" on="1"/>
+        <pt x="500" y="-20" on="1"/>
+        <pt x="291" y="554" on="1"/>
+        <pt x="83" y="1" on="1"/>
+      </contour>
+      <contour>
+        <pt x="123" y="199" on="1"/>
+        <pt x="143" y="287" on="1"/>
+        <pt x="435" y="277" on="1"/>
+        <pt x="442" y="207" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="A.001"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.002"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.003"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.004"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.005"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.006"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.007"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.008"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.009"/><!-- contains no outline data -->
+
+    <TTGlyph name="A.010"/><!-- contains no outline data -->
+
+    <TTGlyph name="Aacute" xMin="10" yMin="-20" xMax="572" yMax="919">
+      <component glyphName="A" x="0" y="0" flags="0x204"/>
+      <component glyphName="acutecomb" x="129" y="157" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="Agrave" xMin="10" yMin="-20" xMax="572" yMax="921">
+      <component glyphName="A" x="0" y="0" flags="0x204"/>
+      <component glyphName="gravecomb" x="105" y="159" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="Amacron" xMin="10" yMin="-20" xMax="572" yMax="803">
+      <component glyphName="A" x="0" y="0" flags="0x204"/>
+      <component glyphName="macroncomb" x="217" y="103" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="I" xMin="51" yMin="0" xMax="139" yMax="715">
+      <contour>
+        <pt x="51" y="715" on="1"/>
+        <pt x="139" y="715" on="1"/>
+        <pt x="139" y="0" on="1"/>
+        <pt x="51" y="0" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="Iacute" xMin="51" yMin="0" xMax="203" yMax="912">
+      <component glyphName="I" x="0" y="0" flags="0x204"/>
+      <component glyphName="acutecomb" x="-70" y="150" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="Igrave" xMin="-10" yMin="0" xMax="139" yMax="913">
+      <component glyphName="I" x="0" y="0" flags="0x204"/>
+      <component glyphName="gravecomb" x="-86" y="151" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="Imacron" xMin="-26" yMin="0" xMax="225" yMax="806">
+      <component glyphName="I" x="0" y="0" flags="0x204"/>
+      <component glyphName="macroncomb" x="36" y="106" flags="0x4"/>
+    </TTGlyph>
+
+    <TTGlyph name="T" xMin="7" yMin="0" xMax="391" yMax="700">
+      <contour>
+        <pt x="7" y="700" on="1"/>
+        <pt x="391" y="700" on="1"/>
+        <pt x="391" y="629" on="1"/>
+        <pt x="7" y="629" on="1"/>
+      </contour>
+      <contour>
+        <pt x="153" y="648" on="1"/>
+        <pt x="239" y="648" on="1"/>
+        <pt x="239" y="0" on="1"/>
+        <pt x="153" y="0" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="acutecomb" xMin="146" yMin="594" xMax="273" yMax="762">
+      <contour>
+        <pt x="146" y="594" on="1"/>
+        <pt x="200" y="762" on="1"/>
+        <pt x="273" y="760" on="1"/>
+        <pt x="186" y="595" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="gravecomb" xMin="76" yMin="594" xMax="203" yMax="762">
+      <contour>
+        <pt x="203" y="594" on="1"/>
+        <pt x="163" y="595" on="1"/>
+        <pt x="76" y="760" on="1"/>
+        <pt x="149" y="762" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="macroncomb" xMin="-62" yMin="644" xMax="189" yMax="700">
+      <contour>
+        <pt x="-62" y="700" on="1"/>
+        <pt x="189" y="700" on="1"/>
+        <pt x="189" y="644" on="1"/>
+        <pt x="-62" y="644" on="1"/>
+      </contour>
+      <instructions/>
+    </TTGlyph>
+
+    <TTGlyph name="space"/><!-- contains no outline data -->
+
+  </glyf>
+
+  <name>
+    <namerecord nameID="256" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      Weight
+    </namerecord>
+    <namerecord nameID="257" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      Regular
+    </namerecord>
+    <namerecord nameID="258" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      Medium
+    </namerecord>
+    <namerecord nameID="259" platformID="1" platEncID="0" langID="0x0" unicode="True">
+      Bold
+    </namerecord>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      HVAR SingleModel Indirect
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="3" platformID="3" platEncID="1" langID="0x409">
+      1.000;NONE;HVARSingleModelIndirect-Regular
+    </namerecord>
+    <namerecord nameID="4" platformID="3" platEncID="1" langID="0x409">
+      HVAR SingleModel Indirect Regular
+    </namerecord>
+    <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
+      Version 1.000
+    </namerecord>
+    <namerecord nameID="6" platformID="3" platEncID="1" langID="0x409">
+      HVARSingleModelIndirect-Regular
+    </namerecord>
+    <namerecord nameID="256" platformID="3" platEncID="1" langID="0x409">
+      Weight
+    </namerecord>
+    <namerecord nameID="257" platformID="3" platEncID="1" langID="0x409">
+      Regular
+    </namerecord>
+    <namerecord nameID="258" platformID="3" platEncID="1" langID="0x409">
+      Medium
+    </namerecord>
+    <namerecord nameID="259" platformID="3" platEncID="1" langID="0x409">
+      Bold
+    </namerecord>
+  </name>
+
+  <post>
+    <formatType value="2.0"/>
+    <italicAngle value="0.0"/>
+    <underlinePosition value="-100"/>
+    <underlineThickness value="50"/>
+    <isFixedPitch value="0"/>
+    <minMemType42 value="0"/>
+    <maxMemType42 value="0"/>
+    <minMemType1 value="0"/>
+    <maxMemType1 value="0"/>
+    <psNames>
+      <!-- This file uses unique glyph names based on the information
+           found in the 'post' table. Since these names might not be unique,
+           we have to invent artificial names in case of clashes. In order to
+           be able to retain the original information, we need a name to
+           ps name mapping for those cases where they differ. That's what
+           you see below.
+            -->
+    </psNames>
+    <extraNames>
+      <!-- following are the name that are not taken from the standard Mac glyph order -->
+      <psName name="Amacron"/>
+      <psName name="Imacron"/>
+      <psName name="acutecomb"/>
+      <psName name="gravecomb"/>
+      <psName name="macroncomb"/>
+      <psName name="A.001"/>
+      <psName name="A.002"/>
+      <psName name="A.003"/>
+      <psName name="A.004"/>
+      <psName name="A.005"/>
+      <psName name="A.006"/>
+      <psName name="A.007"/>
+      <psName name="A.008"/>
+      <psName name="A.009"/>
+      <psName name="A.010"/>
+    </extraNames>
+  </post>
+
+  <GDEF>
+    <Version value="0x00010000"/>
+    <GlyphClassDef>
+      <ClassDef glyph="acutecomb" class="3"/>
+      <ClassDef glyph="gravecomb" class="3"/>
+      <ClassDef glyph="macroncomb" class="3"/>
+    </GlyphClassDef>
+  </GDEF>
+
+  <HVAR>
+    <Version value="0x00010000"/>
+    <VarStore Format="1">
+      <Format value="1"/>
+      <VarRegionList>
+        <!-- RegionAxisCount=1 -->
+        <!-- RegionCount=1 -->
+        <Region index="0">
+          <VarRegionAxis index="0">
+            <StartCoord value="0.0"/>
+            <PeakCoord value="1.0"/>
+            <EndCoord value="1.0"/>
+          </VarRegionAxis>
+        </Region>
+      </VarRegionList>
+      <!-- VarDataCount=1 -->
+      <VarData index="0">
+        <!-- ItemCount=4 -->
+        <NumShorts value="0"/>
+        <!-- VarRegionCount=1 -->
+        <VarRegionIndex index="0" value="0"/>
+        <Item index="0" value="[0]"/>
+        <Item index="1" value="[70]"/>
+        <Item index="2" value="[100]"/>
+        <Item index="3" value="[120]"/>
+      </VarData>
+    </VarStore>
+    <AdvWidthMap>
+      <Map glyph=".notdef" outer="0" inner="0"/>
+      <Map glyph="A" outer="0" inner="3"/>
+      <Map glyph="A.001" outer="0" inner="2"/>
+      <Map glyph="A.002" outer="0" inner="2"/>
+      <Map glyph="A.003" outer="0" inner="2"/>
+      <Map glyph="A.004" outer="0" inner="2"/>
+      <Map glyph="A.005" outer="0" inner="2"/>
+      <Map glyph="A.006" outer="0" inner="2"/>
+      <Map glyph="A.007" outer="0" inner="2"/>
+      <Map glyph="A.008" outer="0" inner="2"/>
+      <Map glyph="A.009" outer="0" inner="2"/>
+      <Map glyph="A.010" outer="0" inner="2"/>
+      <Map glyph="Aacute" outer="0" inner="3"/>
+      <Map glyph="Agrave" outer="0" inner="3"/>
+      <Map glyph="Amacron" outer="0" inner="3"/>
+      <Map glyph="I" outer="0" inner="1"/>
+      <Map glyph="Iacute" outer="0" inner="1"/>
+      <Map glyph="Igrave" outer="0" inner="1"/>
+      <Map glyph="Imacron" outer="0" inner="1"/>
+      <Map glyph="T" outer="0" inner="2"/>
+      <Map glyph="acutecomb" outer="0" inner="0"/>
+      <Map glyph="gravecomb" outer="0" inner="0"/>
+      <Map glyph="macroncomb" outer="0" inner="0"/>
+      <Map glyph="space" outer="0" inner="2"/>
+    </AdvWidthMap>
+  </HVAR>
+
+  <STAT>
+    <Version value="0x00010001"/>
+    <DesignAxisRecordSize value="8"/>
+    <!-- DesignAxisCount=1 -->
+    <DesignAxisRecord>
+      <Axis index="0">
+        <AxisTag value="wght"/>
+        <AxisNameID value="256"/>  <!-- Weight -->
+        <AxisOrdering value="0"/>
+      </Axis>
+    </DesignAxisRecord>
+    <!-- AxisValueCount=0 -->
+    <ElidedFallbackNameID value="2"/>  <!-- Regular -->
+  </STAT>
+
+  <fvar>
+
+    <!-- Weight -->
+    <Axis>
+      <AxisTag>wght</AxisTag>
+      <Flags>0x0</Flags>
+      <MinValue>400.0</MinValue>
+      <DefaultValue>400.0</DefaultValue>
+      <MaxValue>700.0</MaxValue>
+      <AxisNameID>256</AxisNameID>
+    </Axis>
+
+    <!-- Regular -->
+    <NamedInstance flags="0x0" subfamilyNameID="257">
+      <coord axis="wght" value="400.0"/>
+    </NamedInstance>
+
+    <!-- Medium -->
+    <NamedInstance flags="0x0" subfamilyNameID="258">
+      <coord axis="wght" value="500.0"/>
+    </NamedInstance>
+
+    <!-- Bold -->
+    <NamedInstance flags="0x0" subfamilyNameID="259">
+      <coord axis="wght" value="700.0"/>
+    </NamedInstance>
+  </fvar>
+
+  <gvar>
+    <version value="1"/>
+    <reserved value="0"/>
+    <glyphVariations glyph="A">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="9" y="25"/>
+        <delta pt="1" x="11" y="-1"/>
+        <delta pt="2" x="125" y="-1"/>
+        <delta pt="3" x="112" y="13"/>
+        <delta pt="4" x="32" y="1"/>
+        <delta pt="5" x="61" y="-44"/>
+        <delta pt="6" x="86" y="-21"/>
+        <delta pt="7" x="16" y="-29"/>
+        <delta pt="8" x="29" y="14"/>
+        <delta pt="9" x="86" y="30"/>
+        <delta pt="10" x="96" y="-24"/>
+        <delta pt="11" x="0" y="0"/>
+        <delta pt="12" x="120" y="0"/>
+        <delta pt="13" x="0" y="0"/>
+        <delta pt="14" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.001">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.002">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.003">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.004">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.005">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.006">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.007">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.008">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.009">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="A.010">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="Aacute">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="70" y="15"/>
+        <delta pt="3" x="120" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="Agrave">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="62" y="14"/>
+        <delta pt="3" x="120" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="Amacron">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="61" y="50"/>
+        <delta pt="3" x="120" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="I">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="14" y="0"/>
+        <delta pt="1" x="56" y="0"/>
+        <delta pt="2" x="56" y="0"/>
+        <delta pt="3" x="14" y="0"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="70" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="Iacute">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="35" y="9"/>
+        <delta pt="3" x="70" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="Igrave">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="27" y="1"/>
+        <delta pt="3" x="70" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="Imacron">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="13" y="56"/>
+        <delta pt="3" x="70" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="T">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="3" x="2" y="-30"/>
+        <delta pt="5" x="83" y="-30"/>
+        <delta pt="7" x="33" y="0"/>
+        <delta pt="9" x="100" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="acutecomb">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="-19" y="-2"/>
+        <delta pt="1" x="-11" y="-7"/>
+        <delta pt="2" x="32" y="-9"/>
+        <delta pt="3" x="16" y="-6"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="gravecomb">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="22" y="-2"/>
+        <delta pt="1" x="-13" y="-6"/>
+        <delta pt="2" x="-29" y="-9"/>
+        <delta pt="3" x="14" y="-7"/>
+        <delta pt="4" x="0" y="0"/>
+        <delta pt="5" x="0" y="0"/>
+        <delta pt="6" x="0" y="0"/>
+        <delta pt="7" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="macroncomb">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="1" x="37" y="0"/>
+        <delta pt="3" x="-20" y="-39"/>
+      </tuple>
+    </glyphVariations>
+    <glyphVariations glyph="space">
+      <tuple>
+        <coord axis="wght" value="1.0"/>
+        <delta pt="0" x="0" y="0"/>
+        <delta pt="1" x="100" y="0"/>
+        <delta pt="2" x="0" y="0"/>
+        <delta pt="3" x="0" y="0"/>
+      </tuple>
+    </glyphVariations>
+  </gvar>
+
+</ttFont>

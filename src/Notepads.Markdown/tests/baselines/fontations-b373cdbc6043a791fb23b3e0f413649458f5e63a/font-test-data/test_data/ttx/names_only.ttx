@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.37">
+  <name>
+    <namerecord nameID="1" platformID="3" platEncID="1" langID="0x409">
+      NameTest
+    </namerecord>
+    <namerecord nameID="2" platformID="1" platEncID="0" langID="0x0">
+      Regular
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x408">
+      Κανονικά
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x415">
+      Normalny
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x42d">
+      Arrunta
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x804">
+      正常
+    </namerecord>
+    <namerecord nameID="2" platformID="3" platEncID="1" langID="0x401">
+      عادي
+    </namerecord>
+  </name>
+</ttFont>

@@ -1,0 +1,45 @@
+{
+  "fontsUnchanged": true,
+  "faces": [
+    {
+      "face": 0,
+      "headByteDifferences": [
+        8,
+        9,
+        10,
+        11,
+        24,
+        25,
+        26,
+        27,
+        32,
+        33,
+        34,
+        35
+      ],
+      "scope": "head/name are rebuilt container metadata; preservedHead in V1 records interpreted field values, not byte identity. Low source timestamps may be normalized by FontTools; generator warnings are retained.",
+      "otherTablesExactlyPreserved": true
+    },
+    {
+      "face": 1,
+      "headByteDifferences": [
+        8,
+        10,
+        11,
+        24,
+        25,
+        26,
+        27,
+        32,
+        33,
+        34,
+        35
+      ],
+      "scope": "head/name are rebuilt container metadata; preservedHead in V1 records interpreted field values, not byte identity. Low source timestamps may be normalized by FontTools; generator warnings are retained.",
+      "otherTablesExactlyPreserved": true
+    }
+  ],
+  "originalOutputSha256": "DA89CD3651E9126801D5D2DD1F5A4EA57E2C7C7CDA9212DD13D7F1E804F2C38A",
+  "currentOutputSha256": "0EC59A653501E5DFFF4D8C6046C4DB0D9B0A824CC17A6906094F4A9A60BD4D63",
+  "scope": "Historical original TTC generation addendum: fontsUnchanged refers to the source TTFs; faces describes the original TTC versus those source TTFs. The later namespace migration changes only name records and required checksum adjustment, with current output identity recorded separately in PROVENANCE-V1.json."
+}

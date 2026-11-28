@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_DependenciesAndReferences_Title.Text" xml:space="preserve"><value>დამოკიდებულებები და მითითებები</value><comment>AboutPage DependenciesAndReferences Title display text.</comment></data>
+  <data name="AboutPage_Disclaimer_Content.Text" xml:space="preserve"><value>პროგრამული უზრუნველყოფა მოწოდებულია „როგორც არის“, ყოველგვარი პირდაპირი ან ნაგულისხმევი გარანტიის გარეშე, მათ შორის, მაგრამ არა მხოლოდ, კომერციული ვარგისიანობის, კონკრეტული მიზნისთვის შესაბამისობისა და უფლებების დაურღვევლობის გარანტიების გარეშე. ავტორები ან საავტორო უფლებების მფლობელები არავითარ შემთხვევაში არ არიან პასუხისმგებელი რაიმე მოთხოვნაზე, ზიანზე ან სხვა ვალდებულებაზე, იქნება ეს სახელშეკრულებო, დელიქტური თუ სხვა საფუძვლით, რომელიც წარმოიშობა პროგრამული უზრუნველყოფიდან, მისი გამოყენებიდან ან მასთან დაკავშირებული სხვა გარიგებებიდან, ან მათ უკავშირდება.</value><comment>AboutPage Disclaimer Content display text. (The MIT License Disclaimer)</comment></data>
+  <data name="AboutPage_Disclaimer_Title.Text" xml:space="preserve"><value>პასუხისმგებლობის შეზღუდვა</value><comment>AboutPage Disclaimer Title display text.</comment></data>
+  <data name="AboutPage_NotepadsShortDescription.Text" xml:space="preserve"><value>უფასო, ღია კოდის მქონე ტექსტური რედაქტორი, შექმნილი Jiaqi (0x7c13) Liu-ს მიერ</value><comment>AboutPage NotepadsShortDescription display text.</comment></data>
+  <data name="AboutPage_Notepads_AuthorContactsTitle.Text" xml:space="preserve"><value>ავტორებთან დასაკავშირებლად:</value><comment>AboutPage Notepads AuthorContacts Title display text.</comment></data>
+  <data name="AboutPage_Notepads_IssueAndFeatureRequestsTitle.Text" xml:space="preserve"><value>პრობლემების შესატყობინებლად და ფუნქციების მოსათხოვად:</value><comment>AboutPage Notepads IssueAndFeatureRequests Title display text.</comment></data>
+  <data name="AboutPage_Notepads_SourceCodeTitle.Text" xml:space="preserve"><value>საწყისი კოდი ხელმისაწვდომია GitHub-ზე:</value><comment>AboutPage Notepads SourceCode Title display text.</comment></data>
+  <data name="AboutPage_Notepads_WebsiteTitle.Text" xml:space="preserve"><value>დამატებითი ინფორმაციისთვის, ესტუმრეთ ვებსაიტს:</value><comment>AboutPage Notepads Website Title display text.</comment></data>
+  <data name="AboutPage_PrivacyStatementTitle.Text" xml:space="preserve"><value>კონფიდენციალურობის განცხადება</value><comment>AboutPage PrivacyStatementTitle display text.</comment></data>
+  <data name="AboutPage_Title.Content" xml:space="preserve"><value>შესახებ</value><comment>AboutPage Title display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OffContent" xml:space="preserve"><value>მდგომარეობის ზოლის ჩვენება</value><comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_ShowHideStatusBarToggleSwitch.OnContent" xml:space="preserve"><value>მდგომარეობის ზოლის ჩვენება</value><comment>AdvancedPage StatusBarSettings ShowHideStatusBarToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_StatusBarSettings_Title.Text" xml:space="preserve"><value>მდგომარეობის ზოლის პარამეტრები</value><comment>AdvancedPage StatusBarSettings Title display text.</comment></data>
+  <data name="AdvancedPage_Title.Content" xml:space="preserve"><value>გაფართოებული</value><comment>AdvancedPage Title display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_Title.Text" xml:space="preserve"><value>აქცენტის ფერი</value><comment>PersonalizationPage AccentColorSettings Title display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OffContent" xml:space="preserve"><value>გამოიყენე ჩემი Windows-ის აქცენტის ფერი</value><comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch Off display text.</comment></data>
+  <data name="PersonalizationPage_AccentColorSettings_UseWindowsAccentColorToggleSwitch.OnContent" xml:space="preserve"><value>გამოიყენე ჩემი Windows-ის აქცენტის ფერი</value><comment>PersonalizationPage AccentColorSettings UseWindowsAccentColorToggleSwitch On display text.</comment></data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Description.Text" xml:space="preserve"><value>აკრილის ფონის შეფერილობის გაუმჭვირვალობა. აკრილის ეფექტი ითიშება ენერგიის დაზოგვის რეჟიმში ან Windows-ის პარამეტრებში გამჭვირვალობის ეფექტების გამორთვისას.</value><comment>PersonalizationPage BackgroundTintOpacitySettings Description display text.</comment></data>
+  <data name="PersonalizationPage_BackgroundTintOpacitySettings_Title.Text" xml:space="preserve"><value>ფონის შეფერილობის გაუმჭვირვალობა</value><comment>PersonalizationPage BackgroundTintOpacitySettings Title display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_DarkModeRadioButton.Content" xml:space="preserve"><value>მუქი</value><comment>PersonalizationPage ThemeModeSettings DarkModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_LightModeRadioButton.Content" xml:space="preserve"><value>ღია</value><comment>PersonalizationPage ThemeModeSettings LightModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_Title.Text" xml:space="preserve"><value>თემის რეჟიმი</value><comment>PersonalizationPage ThemeModeSettings Title display text.</comment></data>
+  <data name="PersonalizationPage_ThemeModeSettings_WindowsModeRadioButton.Content" xml:space="preserve"><value>გამოიყენე ჩემი Windows-ის რეჟიმი</value><comment>PersonalizationPage ThemeModeSettings WindowsModeRadioButton content display text.</comment></data>
+  <data name="PersonalizationPage_Title.Content" xml:space="preserve"><value>პერსონალიზაცია</value><comment>PersonalizationPage Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_AnsiRadioButton.Content" xml:space="preserve"><value>ANSI (Windows-ის კოდური გვერდი)</value><comment>TextAndEditorPage DecodingSettings AnsiRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Description.Text" xml:space="preserve"><value>თუ ფაილს არ აქვს ბაიტების მიმდევრობის ნიშანი (BOM), გამოიყენება ეს კოდირება ან კოდირება ავტომატურად განისაზღვრება.</value><comment>TextAndEditorPage DecodingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Title.Text" xml:space="preserve"><value>სათადარიგო დეკოდირება</value><comment>TextAndEditorPage DecodingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_Utf8RadioButton.Content" xml:space="preserve"><value>UTF-8</value><comment>TextAndEditorPage DecodingSettings Utf8RadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_EncodingSettings_Description.Text" xml:space="preserve"><value>გავრცელდება მხოლოდ ახალ დოკუმენტებზე.</value><comment>TextAndEditorPage EncodingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_EncodingSettings_Title.Text" xml:space="preserve"><value>საწყისი ენკოდირება</value><comment>TextAndEditorPage EncodingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_FontSettings_Title.Text" xml:space="preserve"><value>ნაგულისხმევი შრიფტი და ზომა</value><comment>TextAndEditorPage FontSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineEndingSettings_Description.Text" xml:space="preserve"><value>გავრცელდება მხოლოდ ახალ დოკუმენტებზე.</value><comment>TextAndEditorPage LineEndingSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineEndingSettings_Title.Text" xml:space="preserve"><value>ნაგულისხმევი სტრიქონის დასასრული</value><comment>TextAndEditorPage LineEndingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_DefaultRadioButton.Content" xml:space="preserve"><value>ნაგულისხმევი (\t)</value><comment>TextAndEditorPage TabKeySettings DefaultRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Description.Text" xml:space="preserve"><value>Notepads მიჰყვება ფაილში უკვე გამოყენებულ შეწევას და გავრცელებული პროგრამირების ენების წესებს. ეს პარამეტრი ნაგულისხმევად გამოიყენება, როდესაც Notepads ვერ ადგენს, რომელი შეწევაა შესაფერისი, მაგალითად, უბრალო ტექსტში.</value><comment>TextAndEditorPage TabKeySettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_EightSpacesRadioButton.Content" xml:space="preserve"><value>8 ჰარი</value><comment>TextAndEditorPage TabKeySettings EightSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_FourSpacesRadioButton.Content" xml:space="preserve"><value>4 ჰარი</value><comment>TextAndEditorPage TabKeySettings FourSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_Title.Text" xml:space="preserve"><value>Tab ღილაკის ქცევა</value><comment>TextAndEditorPage TabKeySettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TabKeySettings_TwoSpacesRadioButton.Content" xml:space="preserve"><value>2 ჰარი</value><comment>TextAndEditorPage TabKeySettings TwoSpacesRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_Title.Text" xml:space="preserve"><value>ტექსტის გადატანა</value><comment>TextAndEditorPage TextWrappingSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>სიტყვების გადატანა</value><comment>TextAndEditorPage TextWrappingSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_TextWrappingSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>სიტყვების გადატანა</value><comment>TextAndEditorPage TextWrappingSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_Title.Content" xml:space="preserve"><value>ტექსტი და რედაქტორი</value><comment>TextAndEditorPage Title display text.</comment></data>
+  <data name="AboutPage_ChangelogUrl_Title.Text" xml:space="preserve"><value>ცვლილებების ლოგი</value><comment>AboutPage Changelog Title display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Description.Text" xml:space="preserve"><value>ჩართვისას Notepads პერიოდულად ქმნის შეუნახავი სამუშაოს სარეზერვო ასლებს. მთავარი ფანჯარა აღდგება შემდეგი გაშვებისას და იხურება შენახვის მოთხოვნის გარეშე. დამატებითი ფანჯრების სარეზერვო ასლებიც იქმნება შეფერხების შემდეგ აღსადგენად, თუმცა მათი დახურვისას შენახვა კვლავ მოითხოვება.</value><comment>AdvancedPage SessionSnapshotSettings Description display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OffContent" xml:space="preserve"><value>სესიის ასლების შენახვის ჩართვა</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_OnOffToggleSwitch.OnContent" xml:space="preserve"><value>სესიის ასლების შენახვის ჩართვა</value><comment>AdvancedPage SessionSnapshotSettings OnOffToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_SessionSnapshotSettings_Title.Text" xml:space="preserve"><value>სესიის ასლების პარამეტრები</value><comment>AdvancedPageSessionSnapshotSettings Title display text.</comment></data>
+  <data name="AdvancedPage_AlwaysOpenNewWindow_Description.Text" xml:space="preserve"><value>ჩართვისას Notepads ფაილს ყოველთვის ახალ ფანჯარაში გახსნის და არა ახალ ჩანართში.</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow Description display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OffContent" xml:space="preserve"><value>ყოველთვის გახსენი ახალ ფანჯარაში</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_AlwaysOpenNewWindowToggleSwitch.OnContent" xml:space="preserve"><value>ყოველთვის გახსენი ახალ ფანჯარაში</value><comment>AdvancedPage LaunchPreferenceSettings AlwaysOpenNewWindow OnOffToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_Title.Text" xml:space="preserve"><value>გაშვების პრეფერენციები</value><comment>AdvancedPage LaunchPreferenceSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>აღნიშნე მიმდინარე ხაზი</value><comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>აღნიშნე მიმდინარე ხაზი</value><comment>TextAndEditorPage LineHighlighterSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton.Text" xml:space="preserve"><value>მორგებული ძიების ძრავი</value><comment>TextAndEditorPage CustomSearchUrlRadioButton display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_CustomSearchUrlRadioButton_CustomUrlErrorReport.Text" xml:space="preserve"><value>*შეიყვანე url ამ ფორმატით https://www.example.com/search?q={0}</value><comment>TextAndEditorPage CustomSearchUrl Textbox display text when entered text is not a valid format.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Description.Text" xml:space="preserve"><value>აირჩიეთ ნაგულისხმევი საძიებო სისტემა ვებში ძიებისთვის.</value><comment>TextAndEditorPage SearchEngineSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_SearchEngineSettings_Title.Text" xml:space="preserve"><value>სტანდარტული ძიების ძრავი</value><comment>TextAndEditorPage SearchEngineSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_DecodingSettings_AutoGuessRadioButton.Content" xml:space="preserve"><value>კოდირების ავტომატური ამოცნობა (რეკომენდებულია)</value><comment>TextAndEditorPage DecodingSettings AutoGuessDecodingRadioButton content display text.</comment></data>
+  <data name="TextAndEditorPage_DisplaySettings_Title.Text" xml:space="preserve"><value>ჩვენება</value><comment>TextAndEditorPage DisplaySettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_Description.Text" xml:space="preserve"><value>ტექსტის გვერდით სტრიქონების ნომრების ჩვენება მათი ადვილად პოვნისა და მითითებისთვის.</value><comment>TextAndEditorPage LineNumbersSettings Description display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OffContent" xml:space="preserve"><value>აჩვენე ხაზების ნომრები</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch Off display text.</comment></data>
+  <data name="TextAndEditorPage_LineNumbersSettings_ToggleSwitch.OnContent" xml:space="preserve"><value>აჩვენე ხაზების ნომრები</value><comment>TextAndEditorPage LineNumbersSettings ToggleSwitch On display text.</comment></data>
+  <data name="TextAndEditorPage_FontStyleSettings_Title.Text" xml:space="preserve"><value>სტანდარტული შრიფტის სტილი</value><comment>TextAndEditorPage FontStyleSettings Title display text.</comment></data>
+  <data name="TextAndEditorPage_FontWeightSettings_Title.Text" xml:space="preserve"><value>სტანდარტული შრიფტის წონა</value><comment>TextAndEditorPage FontWeightSettings Title display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Description.Text" xml:space="preserve"><value>აირჩიეთ Notepads-ის ენა სისტემის ნაგულისხმევი ენის ნაცვლად. ცვლილებების გამოსაყენებლად საჭიროა აპის ხელახლა გაშვება.</value><comment>AdvancedPage LanguagePreferenceSettings Description display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_RestartPrompt.Text" xml:space="preserve"><value>*ცვლილებების გამოსაყენებლად ხელახლა გაუშვით Notepads.</value><comment>AdvancedPage LanguagePreferenceSettings RestartPrompt display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_Title.Text" xml:space="preserve"><value>ენის პრეფერენციები</value><comment>AdvancedPage LanguagePreferenceSettings Title display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_Description.Text" xml:space="preserve"><value>ჩართვისას Notepads მონიშნული ტექსტის ბუფერში კოპირებამდე მის დასაწყისსა და ბოლოში არსებულ ჰარებს, ტაბულაციებსა და ცარიელ სტრიქონებს მოაშორებს.</value><comment>AdvancedPage SmartCopySettings Description display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OffContent" xml:space="preserve"><value>ჩართეთ ჭკვიანი კოპირება</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_EnableSmartCopyToggleSwitch.OnContent" xml:space="preserve"><value>ჩართეთ ჭკვიანი კოპირება</value><comment>AdvancedPage SmartCopySettings EnableSmartCopyToggleSwitch On display text.</comment></data>
+  <data name="AdvancedPage_SmartCopySettings_Title.Text" xml:space="preserve"><value>ჭკვიანი კოპირების პარამეტრები</value><comment>AdvancedPage SmartCopySettings Title display text.</comment></data>
+  <data name="AdvancedPage_LanguagePreferenceSettings_SystemDefaultText" xml:space="preserve"><value>სისტემის ძირითადი</value><comment>AdvancedPage LanguagePreferenceSettings System Default option text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OffContent" xml:space="preserve"><value>გასვლა აპლიკაციიდან, როდესაც ბოლო ჩანართი იქნება დახურული</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch Off display text.</comment></data>
+  <data name="AdvancedPage_LaunchPreferenceSettings_ExitWhenLastTabClosedToggleSwitch.OnContent" xml:space="preserve"><value>გასვლა აპლიკაციიდან, როდესაც ბოლო ჩანართი იქნება დახურული</value><comment>AdvancedPage AppLifecyclePreferenceSettings ExitingLastTabClosesWindowToggleSwitch On display text.</comment></data>
+  <data name="EditorWhitespace.OffContent" xml:space="preserve"><value>გამოტოვებებისა და ტაბულაციის ნიშნების ჩვენება</value></data>
+  <data name="EditorWhitespace.OnContent" xml:space="preserve"><value>გამოტოვებებისა და ტაბულაციის ნიშნების ჩვენება</value></data>
+  <data name="EditorIndentGuides.OffContent" xml:space="preserve"><value>შეწევის მიმმართველი ხაზების ჩვენება</value></data>
+  <data name="EditorIndentGuides.OnContent" xml:space="preserve"><value>შეწევის მიმმართველი ხაზების ჩვენება</value></data>
+  <data name="EditorBraceMatching.OffContent" xml:space="preserve"><value>შესაბამისი ფრჩხილების გამოკვეთა</value></data>
+  <data name="EditorBraceMatching.OnContent" xml:space="preserve"><value>შესაბამისი ფრჩხილების გამოკვეთა</value></data>
+  <data name="EditorOccurrences.OffContent" xml:space="preserve"><value>მონიშნული ტექსტის დამთხვევების გამოკვეთა</value></data>
+  <data name="EditorOccurrences.OnContent" xml:space="preserve"><value>მონიშნული ტექსტის დამთხვევების გამოკვეთა</value></data>
+  <data name="TextAndEditorPage_LineHighlighterSettings_Description.Text" xml:space="preserve"><value>აფერადებს კურსორის შემცველი სტრიქონის ფონს, რათა მიმდინარე პოზიცია ადვილად იპოვოთ.</value></data>
+  <data name="EditorWhitespace_Description.Text" xml:space="preserve"><value>გამოტოვებებს წერტილებით, ტაბულაციის ნიშნებს კი ისრებით აჩვენებს. ეს ნიშნები ტექსტს არ ცვლის.</value></data>
+  <data name="EditorIndentGuides_Description.Text" xml:space="preserve"><value>შეწევის ადგილებში აჩვენებს ვერტიკალურ მიმმართველ ხაზებს, რათა ჩადგმული ბლოკების გარჩევა გამარტივდეს.</value></data>
+  <data name="EditorBraceMatching_Description.Text" xml:space="preserve"><value>გამოკვეთს შესაბამის (), [] და {} წყვილებს, როცა კურსორი ფრჩხილის გვერდითაა.</value></data>
+  <data name="EditorOccurrences_Description.Text" xml:space="preserve"><value>მონიშნეთ მოკლე ტექსტი ერთ სტრიქონში, რათა ხილულ არეში გამოიკვეთოს იდენტური დამთხვევები, დიდი და პატარა ასოების გათვალისწინებით.</value></data>
+</root>

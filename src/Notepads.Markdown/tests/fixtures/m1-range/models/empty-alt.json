@@ -1,0 +1,147 @@
+{
+  "main_flow_id": 0,
+  "flows": [
+    {
+      "id": 0,
+      "scope": {
+        "kind": "Main"
+      },
+      "source_domains": [
+        [
+          0,
+          6
+        ]
+      ],
+      "readable_utf8": "￼",
+      "logical_utf16": 1,
+      "fragments": [
+        {
+          "id": 0,
+          "source": [
+            0,
+            6
+          ],
+          "logical": [
+            0,
+            1
+          ],
+          "kind": "Object",
+          "reasons": [
+            "ImageSyntax"
+          ],
+          "object_id": 0
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "scope": {
+        "kind": "ImageAlt",
+        "object_id": 0
+      },
+      "source_domains": [
+        [
+          2,
+          2
+        ]
+      ],
+      "empty_anchor": 2,
+      "readable_utf8": "",
+      "logical_utf16": 0,
+      "fragments": []
+    }
+  ],
+  "objects": [
+    {
+      "id": 0,
+      "kind": "Image",
+      "flow_id": 0,
+      "logical_span": [
+        0,
+        1
+      ],
+      "source_envelope": [
+        0,
+        6
+      ],
+      "alt_flow_id": 1,
+      "destination_payload": 0,
+      "title_payload": null,
+      "source_key": {
+        "document_id": "0400000000000000000000000000000d",
+        "revision": 1
+      }
+    }
+  ],
+  "payloads": [
+    {
+      "id": 0,
+      "role": "Destination",
+      "decoded_utf8": "u",
+      "source_parts": [
+        {
+          "source": [
+            4,
+            5
+          ],
+          "payload_utf8": [
+            0,
+            1
+          ],
+          "kind": "Copy",
+          "reasons": [
+            "Literal"
+          ]
+        }
+      ]
+    }
+  ],
+  "structures": [
+    {
+      "kind": "Block",
+      "id": 0,
+      "parent": null,
+      "node_kind": "Paragraph",
+      "source_envelope": [
+        0,
+        6
+      ],
+      "flow_id": 0
+    },
+    {
+      "kind": "Inline",
+      "id": 1,
+      "parent": 0,
+      "node_kind": "Image",
+      "flow_id": 0,
+      "logical_span": [
+        0,
+        1
+      ],
+      "source_envelope": [
+        0,
+        6
+      ]
+    },
+    {
+      "kind": "Inline",
+      "id": 2,
+      "parent": null,
+      "node_kind": "AltLabel",
+      "flow_id": 1,
+      "logical_span": [
+        0,
+        0
+      ],
+      "source_envelope": [
+        2,
+        2
+      ]
+    }
+  ],
+  "reference_edges": [],
+  "source_key": {
+    "document_id": "0400000000000000000000000000000d",
+    "revision": 1
+  }
+}

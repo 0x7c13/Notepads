@@ -1,0 +1,8 @@
+Both of these two paragraphs are structurally the same, but the first one has
+an unmatched asterisk.
+
+_*_
+*{*{
+
+_x_
+*{*{

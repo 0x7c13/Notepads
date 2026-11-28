@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ttFont sfntVersion="\x00\x01\x00\x00" ttLibVersion="4.37">
+
+  <GlyphOrder>
+    <!-- The 'id' attribute is only for humans; it is ignored when parsed. -->
+    <GlyphID id="0" name=".notdef"/>
+    <GlyphID id="1" name="g1"/>
+    <GlyphID id="2" name="g2"/>
+    <GlyphID id="3" name="g3"/>
+    <GlyphID id="4" name="g4"/>    
+  </GlyphOrder>
+
+  <maxp>
+    <tableVersion value="0x5000"/>
+    <numGlyphs value="100"/>
+  </maxp>
+
+  <cmap>
+    <tableVersion version="0"/>
+    <cmap_format_4 platformID="3" platEncID="0" language="0">
+      <map code="0xF001" name="g1"/>
+      <map code="0xF002" name="g2"/>
+      <map code="0xF003" name="g3"/>
+      <map code="0xF0FE" name="g4"/>
+    </cmap_format_4>
+    <cmap_format_12 platformID="3" platEncID="1" format="12" reserved="0" length="40" language="0" nGroups="2">
+      <map code="0x101723" name="g1"/>
+      <map code="0x101724" name="g2"/>
+      <map code="0x101725" name="g3"/>
+      <map code="0x101726" name="g4"/>
+    </cmap_format_12>
+  </cmap>
+
+</ttFont>

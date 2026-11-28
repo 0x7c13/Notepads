@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------------------------
+#  Copyright (c) 2026, Jiaqi (0x7c13) Liu. All rights reserved.
+#  See LICENSE file in the project root for license information.
+# ---------------------------------------------------------------------------------------------
+[package]
+name = "markdown-math"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.99"
+license = "MIT"
+authors = ["Jiaqi (0x7c13) Liu"]
+description = "Bounded native math outlines for Notepads Markdown"
+publish = false
+
+# Standalone workspace for focused math tests; the product uses this crate by path.
+[workspace]
+resolver = "3"
+
+[dependencies]
+markdown-core = { version = "=0.0.1", path = "../markdown-core" }
+ratex-font = { version = "=0.1.15", path = "../../vendor/ratex-bounded/ratex-font" }
+ratex-layout = { version = "=0.1.15", path = "../../vendor/ratex-bounded/ratex-layout" }
+ratex-parser = { version = "=0.1.15", path = "../../vendor/ratex-bounded/ratex-parser" }
+ratex-types = { version = "=0.1.15", path = "../../vendor/ratex-bounded/ratex-types" }
+ttf-parser = "=0.25.1"
+
+[patch.crates-io]
+ratex-types = { path = "../../vendor/ratex-bounded/ratex-types" }
+ratex-font = { path = "../../vendor/ratex-bounded/ratex-font" }
+ratex-lexer = { path = "../../vendor/ratex-bounded/ratex-lexer" }
+ratex-parser = { path = "../../vendor/ratex-bounded/ratex-parser" }
+ratex-layout = { path = "../../vendor/ratex-bounded/ratex-layout" }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[profile.release]
+panic = "unwind"
+codegen-units = 1

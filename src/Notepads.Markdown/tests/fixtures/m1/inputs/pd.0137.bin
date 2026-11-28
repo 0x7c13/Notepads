@@ -1,0 +1,7 @@
+[linkme-3]: a
+   - a
+
+[linkme-4]: a
+    - b
+
+List can interrupt the paragraph at the start of a link definition if it starts with three spaces, but not four.

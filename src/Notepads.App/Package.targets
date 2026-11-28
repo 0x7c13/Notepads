@@ -1,0 +1,100 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Remove `Language` identifier to embed all languages in package by default -->
+    <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
+    <AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
+  </PropertyGroup>
+  
+  <Import Project="..\Notepads.DocumentAssets\build\Notepads.DocumentAssets.Consumer.targets" />
+
+  <UsingTask TaskName="UpdateNotepadsPackageManifest" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ManifestPath ParameterType="System.String" Required="true" Output="true" />
+      <OutDir ParameterType="System.String" />
+      <Configuration ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.IO" />
+      <Reference Include="System.Xml" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Xml" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          Directory.CreateDirectory(OutDir);
+          var appName = "Notepads" + (Configuration.Equals("Production") ? "" : "-Dev");
+          var manifest = new XmlDocument();
+          manifest.Load(ManifestPath);
+          ManifestPath = OutDir.TrimEnd('\\') + @"\Package.appxmanifest";
+          manifest["Package"]["Identity"].SetAttribute("Name", appName);
+          manifest["Package"]["Applications"]["Application"]["uap:VisualElements"].SetAttribute("DisplayName", appName);
+          var package = manifest["Package"];
+          var extensions = package["Applications"]["Application"]["Extensions"];
+          extensions["uap5:Extension"]["uap5:AppExecutionAlias"]["uap5:ExecutionAlias"].SetAttribute("Alias", appName + ".exe");
+
+          const string desktopNamespace = "http://schemas.microsoft.com/appx/manifest/desktop/windows10";
+          var bridge = manifest.CreateElement("desktop", "Extension", desktopNamespace);
+          bridge.SetAttribute("Category", "windows.fullTrustProcess");
+          bridge.SetAttribute("Executable", "Notepads.DocumentAssets.exe");
+          extensions.AppendChild(bridge);
+          package.SetAttribute("xmlns:desktop", desktopNamespace);
+          package.SetAttribute("IgnorableNamespaces", package.GetAttribute("IgnorableNamespaces") + " desktop");
+          var capability = manifest.CreateElement("rescap", "Capability",
+              "http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities");
+          capability.SetAttribute("Name", "runFullTrust");
+          package["Capabilities"].AppendChild(capability);
+          manifest.Save(ManifestPath);
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  
+  <UsingTask TaskName="GenerateAppxDefaultResourceQualifiers" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ResourceGroupPath ParameterType="System.String" Required="true" />
+      <AppxDefaultResourceQualifiers ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System" />
+      <Reference Include="System.IO" />
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          ResourceGroupPath = Path.GetFullPath(ResourceGroupPath);
+          AppxDefaultResourceQualifiers = "Language=" +
+                string.Join(
+                    ";",
+                    Array.ConvertAll<DirectoryInfo, string>(
+                        new DirectoryInfo(ResourceGroupPath).GetDirectories(),
+                        dir => dir.Name));
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="UpdateAppxManifest" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' != 'Production'">
+    <UpdateNotepadsPackageManifest ManifestPath="%(AppxManifest.FullPath)"
+                            OutDir="$([MSBuild]::NormalizeDirectory('$(ProjectDir)', '$(IntermediateOutputPath)'))"
+                            Configuration="$(Configuration)">
+      <Output TaskParameter="ManifestPath" PropertyName="GeneratedAppxManifest" />
+    </UpdateNotepadsPackageManifest>
+    <ItemGroup>
+      <AppxManifest Remove="%(AppxManifest.Identity)" />
+      <AppxManifest Include="$(GeneratedAppxManifest)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- The UWP upload/bundle path can reach symbol packaging without the
+       GenerateMsixPackage dependency chain that normally resolves this tool. -->
+  <Target Name="EnsureNotepadsSymbolPackagingTools"
+          BeforeTargets="_GenerateAppxUploadSymbolPackage"
+          DependsOnTargets="_EnsurePdbCmfExeFullPath" />
+
+  <!-- Manually set resource qualifiers after removing `Language` qualifier from Resource Package Qualifiers-->
+  <!-- https://docs.microsoft.com/en-us/windows/uwp/app-resources/build-resources-into-app-package -->
+  <Target Name="SetAppxDefaultResourceQualifiers" BeforeTargets="BeforeBuild">
+    <GenerateAppxDefaultResourceQualifiers ResourceGroupPath="$(ProjectDir)Strings">
+      <Output TaskParameter="AppxDefaultResourceQualifiers" PropertyName="AppxDefaultResourceQualifiers" />
+    </GenerateAppxDefaultResourceQualifiers>
+  </Target>
+</Project>

@@ -1,0 +1,23 @@
+languagesystem DFLT dflt;
+
+lookup ToUpper {
+sub a by A;
+sub b by B;
+sub c by C;
+sub d by D;
+sub e by E;
+sub f by F;
+sub g by G;
+} ToUpper;
+
+@abc = [a b c];
+
+feature psts {
+
+    lookup test {
+        # only A B and C should be made reachable from this lookup
+        sub @abc' lookup ToUpper period;
+    } test ;
+
+} psts;
+

@@ -1,0 +1,13 @@
+lookup MyLookup {
+    sub a by A;
+    sub b by B;
+    sub c by C;
+} MyLookup;
+
+@abNotc = [a b];
+
+feature oops {
+    # 'sub c by C', though in lookup, is unreachable bc 'c' is not in the input
+    sub @abNotc' lookup MyLookup z;
+}oops;
+
